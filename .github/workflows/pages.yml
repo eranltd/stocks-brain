@@ -2,7 +2,8 @@ name: pages
 
 on:
   push:
-    branches: [main]
+    # The scaffold branch is the repo's first (default) branch until main exists; drop it then.
+    branches: [main, claude/stock-analysis-agent-scaffold-3e6lsx]
   workflow_dispatch:
 
 permissions:

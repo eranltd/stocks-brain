@@ -17,7 +17,7 @@ from _common import (  # noqa: E402
 )
 
 SKIP_DIRS = {".git", "_site", "__pycache__", ".venv", "node_modules"}
-TEXT_EXT = {".py", ".json", ".md", ".html", ".css", ".js", ".jsx", ".yml", ".yaml", ".txt", ".svg", ".toml", ""}
+TEXT_EXT = {".py", ".json", ".md", ".html", ".css", ".js", ".jsx", ".webmanifest", ".yml", ".yaml", ".txt", ".svg", ".toml", ""}
 GENERATED = ("site/public/data",)  # written by build_site.py, gitignored
 SECRET_PATTERNS = [
     ("Anthropic key", re.compile(r"sk-ant-[A-Za-z0-9_\-]{10,}")),
@@ -34,7 +34,7 @@ FORBIDDEN_FILES = re.compile(r"(^\.env(\..*)?$|\.pem$|\.key$|^id_(rsa|ed25519)|\
 EXTERNAL_URL = re.compile(r"(?:https?:)?//[a-z0-9.-]+\.[a-z]{2,}", re.I)
 # Plain links are fine (e.g. "edit on GitHub"); scripts, styles and fonts must be bundled.
 SITE_URL_ALLOW = {"http://www.w3.org/2000/svg", "https://github.com"}
-SITE_SOURCES = ("site/src/", "site/index.html", "site/vite.config.js")
+SITE_SOURCES = ("site/src/", "site/public/", "site/index.html", "site/vite.config.js")
 
 
 class Lint:
@@ -302,11 +302,27 @@ def _rel(p: Path | str) -> str:
 
 
 def _walk(base: Path):
+    """Files git would commit (tracked + untracked-not-ignored); plain walk if git is unavailable."""
+    import subprocess
+    try:
+        out = subprocess.run(["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard"],
+                             cwd=base, capture_output=True, check=True).stdout.decode()
+        for rel in sorted(filter(None, out.split("\0"))):
+            p = base / rel
+            if p.is_file():
+                yield p
+        return
+    except (OSError, subprocess.CalledProcessError):
+        pass
+    yield from _walk_fs(base)
+
+
+def _walk_fs(base: Path):
     for p in sorted(base.iterdir()):
         if p.name in SKIP_DIRS:
             continue
         if p.is_dir():
-            yield from _walk(p)
+            yield from _walk_fs(p)
         elif p.is_file():
             yield p
 

@@ -1,0 +1,17 @@
+{
+  "name": "stocks·brain",
+  "short_name": "stocks·brain",
+  "description": "A personal, public stock-analysis notebook. Analysis only, not financial advice.",
+  "start_url": "./#today",
+  "scope": "./",
+  "id": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0b0c",
+  "theme_color": "#0a0b0c",
+  "icons": [
+    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}

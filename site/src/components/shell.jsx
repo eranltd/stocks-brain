@@ -146,7 +146,7 @@ export function Header({ tabs, active, onNav, sample, theme, onTheme }) {
   };
 
   return (
-    <header className={`sticky top-0 z-40 border-b border-line backdrop-blur-xl transition-colors duration-500 ${scrolled ? "bg-bg/80" : "bg-bg/60"}`}>
+    <header className={`sticky top-0 z-40 border-b border-line pt-[env(safe-area-inset-top)] backdrop-blur-xl transition-colors duration-500 ${scrolled ? "bg-bg/80" : "bg-bg/60"}`}>
       <Container className="flex flex-wrap items-center gap-x-4 gap-y-3 py-4 lg:flex-nowrap lg:gap-x-6">
         <a href="#today" className="flex shrink-0 items-center gap-3" onClick={(e) => { e.preventDefault(); onNav("today"); }}>
           <Logo />

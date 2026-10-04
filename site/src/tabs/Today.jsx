@@ -22,7 +22,8 @@ export default function Today({ data, go }) {
     <>
       {/* hero */}
       <section className="relative isolate -mt-[76px] overflow-hidden pt-[76px]">
-      <HeroWall items={data.kb} />
+      {/* Decoration must not show fake calls: while picks are sample, the wall shows real library principles. */}
+      <HeroWall items={sample ? libraryWall(data.library) : data.kb} />
       <Container className="flex min-h-[86vh] flex-col items-center justify-center py-20 text-center">
         {showBrief ? <BriefHero data={data} brief={brief} go={go} /> : (<>
         <Reveal>
@@ -125,6 +126,12 @@ export default function Today({ data, go }) {
 }
 
 /** Tilted wall of faded KB cards drifting in opposite directions behind the hero headline. */
+function libraryWall(library) {
+  return (library?.sources ?? []).flatMap((s) => s.principles.map((p) => ({
+    id: p.id, principle: true, title: (s.title.match(/\(([^()]*)\)\s*$/) || [, s.title])[1], text: p.text, tag: p.tags[0], date: s.published ?? String(s.year),
+  })));
+}
+
 function HeroWall({ items }) {
   const COLS = 7;
   const pool = items.length ? items : [];
@@ -146,6 +153,18 @@ function HeroWall({ items }) {
 }
 
 function WallCard({ k }) {
+  if (k.principle) {
+    return (
+      <div className="rounded-[22px] border border-line-2 bg-surface/80 p-6 opacity-35 sm:opacity-50">
+        <div className="flex items-center justify-between">
+          <span className="font-mono text-[11px] tracking-[0.18em] text-ink-3 uppercase">{k.id}</span>
+          <span className="font-mono text-[11px] tracking-[0.14em] text-accent uppercase">{k.tag.replaceAll("_", " ")}</span>
+        </div>
+        <p className="mt-5 line-clamp-4 text-[17px] leading-snug text-ink-2">{k.text}</p>
+        <div className="mt-5 truncate font-mono text-[11px] tracking-[0.14em] text-ink-3">{k.date} · {k.title}</div>
+      </div>
+    );
+  }
   const tone = k.stance === "bullish" ? "text-accent" : k.stance === "bearish" ? "text-down" : "text-ink-2";
   return (
     <div className="rounded-[22px] border border-line-2 bg-surface/80 p-6 opacity-35 sm:opacity-50">

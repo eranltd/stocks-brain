@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "run_id": "run.2026-09-01",
+  "date": "2026-09-01",
+  "generated_at": "2026-09-01T21:39:00Z",
+  "status": "ok",
+  "sample": true,
+  "model": "sample-model",
+  "cost": {
+    "usd": 0.748,
+    "input_tokens": 7980,
+    "output_tokens": 1658,
+    "cap_usd": 2.5
+  },
+  "duration_minutes": 2.89,
+  "pack": {
+    "hash": "26f833b7ba6c49d4f6d066e32c1783c1012a216c7f8e138a151c47afe22fba32",
+    "tokens": 7505,
+    "cap_tokens": 12000
+  },
+  "doc_versions": {
+    "strategy": "0.1.0",
+    "methodology": "0.1.0",
+    "guardrails": "0.1.0",
+    "learnings": "0.1.0"
+  },
+  "repair_retries": 0,
+  "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
+  "picks": [
+    {
+      "id": "2026-09-01:NVDA",
+      "ref_date": "2026-09-01",
+      "ref_price": 550.46,
+      "pick": {
+        "ticker": "NVDA",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "NVIDIA has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "risks": [
+          "Momentum reversal after an extended run",
+          "Macro data surprise"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.nvda.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "$id": "watchlist.schema.json",
+  "title": "Watchlist (config/watchlist.json)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "updated_at", "change_note", "symbols"],
+  "properties": {
+    "version": {"$ref": "common.schema.json#/$defs/semver"},
+    "updated_at": {"$ref": "common.schema.json#/$defs/date"},
+    "change_note": {"$ref": "common.schema.json#/$defs/change_note"},
+    "symbols": {
+      "type": "array", "minItems": 1, "maxItems": 40,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["symbol", "name"],
+        "properties": {
+          "symbol": {"$ref": "common.schema.json#/$defs/ticker"},
+          "name": {"type": "string", "minLength": 1, "maxLength": 60}
+        }
+      }
+    }
+  }
+}

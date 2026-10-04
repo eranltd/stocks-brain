@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "run_id": "run.2026-10-02",
+  "date": "2026-10-02",
+  "generated_at": "2026-10-02T21:38:00Z",
+  "status": "ok",
+  "sample": true,
+  "model": "sample-model",
+  "cost": {
+    "usd": 0.749,
+    "input_tokens": 8375,
+    "output_tokens": 1013,
+    "cap_usd": 2.5
+  },
+  "duration_minutes": 2.14,
+  "pack": {
+    "hash": "fe9ec1ce50db5941ca5ecaa85dd39179997e21f95d2ee3a29f236fdded067283",
+    "tokens": 7867,
+    "cap_tokens": 12000
+  },
+  "doc_versions": {
+    "strategy": "0.1.0",
+    "methodology": "0.1.0",
+    "guardrails": "0.1.0",
+    "learnings": "0.1.0"
+  },
+  "repair_retries": 1,
+  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
+  "picks": [
+    {
+      "id": "2026-10-02:META",
+      "ref_date": "2026-10-02",
+      "ref_price": 644.6,
+      "pick": {
+        "ticker": "META",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Meta Platforms has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "risks": [
+          "Macro data surprise",
+          "Momentum reversal after an extended run"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.meta.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-10-02:COST",
+      "ref_date": "2026-10-02",
+      "ref_price": 87.43,
+      "pick": {
+        "ticker": "COST",
+        "stance": "bearish",
+        "conviction": "high",
+        "thesis": "Costco broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
+        "risks": [
+          "Short-covering rally",
+          "Positive company news flow"
+        ],
+        "invalidation": "A close back above the recent range high on rising volume.",
+        "evidence": [
+          "prices.cost.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-10-02:AAPL",
+      "ref_date": "2026-10-02",
+      "ref_price": 219.82,
+      "pick": {
+        "ticker": "AAPL",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Apple is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "risks": [
+          "Volatility expansion",
+          "Breakout in either direction"
+        ],
+        "invalidation": "A sustained move away from the benchmark in either direction.",
+        "evidence": [
+          "prices.aapl.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    }
+  ]
+}

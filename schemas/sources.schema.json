@@ -1,0 +1,33 @@
+{
+  "$id": "sources.schema.json",
+  "title": "Connector registry (config/sources.json)",
+  "description": "Where data comes from. Secrets are referenced by environment-variable NAME only.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "updated_at", "change_note", "sources"],
+  "properties": {
+    "version": {"$ref": "common.schema.json#/$defs/semver"},
+    "updated_at": {"$ref": "common.schema.json#/$defs/date"},
+    "change_note": {"$ref": "common.schema.json#/$defs/change_note"},
+    "sources": {
+      "type": "array", "maxItems": 40,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "kind", "label", "status", "provider", "cadence", "feeds", "secret_env", "follow", "note"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z][a-z0-9_]{1,30}$"},
+          "kind": {"enum": ["prices", "social", "news", "filings", "library", "other"]},
+          "label": {"type": "string", "minLength": 1, "maxLength": 60},
+          "status": {"enum": ["planned", "active", "disabled"]},
+          "provider": {"type": ["string", "null"], "maxLength": 40},
+          "cadence": {"type": "string", "maxLength": 40},
+          "feeds": {"type": "array", "items": {"type": "string", "maxLength": 80}},
+          "secret_env": {"anyOf": [{"type": "null"}, {"type": "string", "pattern": "^[A-Z][A-Z0-9_]{2,60}$"}]},
+          "follow": {"type": "array", "maxItems": 200, "uniqueItems": true,
+                     "items": {"type": "string", "pattern": "^@?[A-Za-z0-9_]{1,30}$"}},
+          "note": {"type": "string", "maxLength": 300}
+        }
+      }
+    }
+  }
+}

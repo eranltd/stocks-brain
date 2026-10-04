@@ -1,0 +1,33 @@
+{
+  "version": "0.1.0",
+  "updated_at": "2026-10-04",
+  "change_note": "Seed guardrails.",
+  "max_picks": 5,
+  "allowed_stances": [
+    "bullish",
+    "bearish",
+    "neutral"
+  ],
+  "picks_must_be_on_watchlist": true,
+  "no_digits_in_pick_text": true,
+  "banned_phrases": [
+    "guaranteed",
+    "can't lose",
+    "cannot lose",
+    "risk-free",
+    "risk free",
+    "sure thing",
+    "financial advice"
+  ],
+  "forbidden_keys": [
+    "shares",
+    "quantity",
+    "cost_basis",
+    "position_size",
+    "account_id",
+    "account_number",
+    "holdings",
+    "portfolio_value",
+    "broker"
+  ]
+}

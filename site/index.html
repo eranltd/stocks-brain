@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="A personal, public stock-analysis notebook. Analysis only, not financial advice.">
+  <title>stocks·brain</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <script>
+    try { var t = localStorage.getItem("sb-theme"); if (t) document.documentElement.dataset.theme = t; } catch (_) {}
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+  <noscript>This dashboard needs JavaScript. The raw data is in the repository under runs/ and data/.</noscript>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>

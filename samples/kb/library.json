@@ -1,0 +1,86 @@
+{
+  "version": "0.1.0",
+  "updated_at": "2026-10-02",
+  "change_note": "Synthetic placeholder sources.",
+  "sample": true,
+  "sources": [
+    {
+      "id": "S-001",
+      "kind": "lecture",
+      "title": "Sample lecture: relative strength",
+      "author": "Sample author",
+      "year": null,
+      "added": "2026-10-02",
+      "principles": [
+        {
+          "id": "S-001.P01",
+          "text": "Leaders tend to keep leading over weeks, so rank names against the benchmark, not in isolation.",
+          "tags": [
+            "relative_strength",
+            "momentum"
+          ]
+        },
+        {
+          "id": "S-001.P02",
+          "text": "A trend that needs good news to continue is weaker than one that shrugs off bad news.",
+          "tags": [
+            "trend",
+            "news"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-002",
+      "kind": "book",
+      "title": "Sample book: risk before return",
+      "author": "Sample author",
+      "year": null,
+      "added": "2026-10-02",
+      "principles": [
+        {
+          "id": "S-002.P01",
+          "text": "Write down what would prove the idea wrong before you act on it.",
+          "tags": [
+            "invalidation",
+            "process"
+          ]
+        },
+        {
+          "id": "S-002.P02",
+          "text": "Volatility expansion after a long calm stretch often marks a regime change.",
+          "tags": [
+            "volatility",
+            "regime"
+          ]
+        },
+        {
+          "id": "S-002.P03",
+          "text": "Fewer, clearer bets are easier to learn from than many small ones.",
+          "tags": [
+            "process",
+            "sizing"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-003",
+      "kind": "course",
+      "title": "Sample course: reading the tape",
+      "author": "Sample author",
+      "year": null,
+      "added": "2026-10-02",
+      "principles": [
+        {
+          "id": "S-003.P01",
+          "text": "Breadth matters: a benchmark rising on a handful of names is fragile.",
+          "tags": [
+            "breadth",
+            "benchmark"
+          ]
+        }
+      ]
+    }
+  ]
+}

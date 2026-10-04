@@ -1,0 +1,15 @@
+{
+  "version": "0.1.0",
+  "updated_at": "2026-10-04",
+  "change_note": "Seed watchlist. Edit freely.",
+  "symbols": [
+    {"symbol": "AAPL", "name": "Apple"},
+    {"symbol": "MSFT", "name": "Microsoft"},
+    {"symbol": "NVDA", "name": "NVIDIA"},
+    {"symbol": "AMZN", "name": "Amazon"},
+    {"symbol": "GOOGL", "name": "Alphabet"},
+    {"symbol": "META", "name": "Meta Platforms"},
+    {"symbol": "AVGO", "name": "Broadcom"},
+    {"symbol": "COST", "name": "Costco"}
+  ]
+}

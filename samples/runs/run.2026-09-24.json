@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "run_id": "run.2026-09-24",
+  "date": "2026-09-24",
+  "generated_at": "2026-09-24T21:21:00Z",
+  "status": "ok",
+  "sample": true,
+  "model": "sample-model",
+  "cost": {
+    "usd": 0.89,
+    "input_tokens": 7861,
+    "output_tokens": 1573,
+    "cap_usd": 2.5
+  },
+  "duration_minutes": 2.88,
+  "pack": {
+    "hash": "927990b1295cfaa8a79f74e69e69bae6336127459556815cd7cbb0e5c2d25fc2",
+    "tokens": 7413,
+    "cap_tokens": 12000
+  },
+  "doc_versions": {
+    "strategy": "0.1.0",
+    "methodology": "0.1.0",
+    "guardrails": "0.1.0",
+    "learnings": "0.1.0"
+  },
+  "repair_retries": 0,
+  "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
+  "picks": [
+    {
+      "id": "2026-09-24:GOOGL",
+      "ref_date": "2026-09-24",
+      "ref_price": 681.27,
+      "pick": {
+        "ticker": "GOOGL",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Alphabet has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "risks": [
+          "Sector-wide de-rating",
+          "Momentum reversal after an extended run"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.googl.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "run_id": "run.2026-08-13",
+  "date": "2026-08-13",
+  "generated_at": "2026-08-13T21:40:00Z",
+  "status": "ok",
+  "sample": true,
+  "model": "sample-model",
+  "cost": {
+    "usd": 0.6,
+    "input_tokens": 8607,
+    "output_tokens": 1851,
+    "cap_usd": 2.5
+  },
+  "duration_minutes": 3.42,
+  "pack": {
+    "hash": "3ac7e5e607c7092e1d237c506b3b88e9f23718704c592effcc78b972626d220e",
+    "tokens": 8107,
+    "cap_tokens": 12000
+  },
+  "doc_versions": {
+    "strategy": "0.1.0",
+    "methodology": "0.1.0",
+    "guardrails": "0.1.0",
+    "learnings": "0.1.0"
+  },
+  "repair_retries": 0,
+  "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
+  "picks": [
+    {
+      "id": "2026-08-13:AAPL",
+      "ref_date": "2026-08-13",
+      "ref_price": 213.27,
+      "pick": {
+        "ticker": "AAPL",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Apple keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "risks": [
+          "Macro data surprise",
+          "Momentum reversal after an extended run"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.aapl.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-13:COST",
+      "ref_date": "2026-08-13",
+      "ref_price": 97.79,
+      "pick": {
+        "ticker": "COST",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Costco has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "risks": [
+          "Momentum reversal after an extended run",
+          "Macro data surprise"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.cost.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-13:META",
+      "ref_date": "2026-08-13",
+      "ref_price": 578.24,
+      "pick": {
+        "ticker": "META",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Meta Platforms has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "risks": [
+          "Macro data surprise",
+          "Momentum reversal after an extended run"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.meta.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-13:AMZN",
+      "ref_date": "2026-08-13",
+      "ref_price": 562.71,
+      "pick": {
+        "ticker": "AMZN",
+        "stance": "bearish",
+        "conviction": "medium",
+        "thesis": "Amazon has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "risks": [
+          "Short-covering rally",
+          "Benchmark weakness narrows the gap"
+        ],
+        "invalidation": "A close back above the recent range high on rising volume.",
+        "evidence": [
+          "prices.amzn.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    }
+  ]
+}

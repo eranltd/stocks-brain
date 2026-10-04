@@ -1,0 +1,18 @@
+{
+  "$id": "pick.schema.json",
+  "title": "Pick (LLM output)",
+  "description": "What the model returns for one pick. It is all words and enums with no numbers. Code attaches prices and dates.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["ticker", "stance", "conviction", "thesis", "risks", "invalidation", "evidence"],
+  "properties": {
+    "ticker": {"$ref": "common.schema.json#/$defs/ticker"},
+    "stance": {"enum": ["bullish", "bearish", "neutral"]},
+    "conviction": {"enum": ["low", "medium", "high"]},
+    "thesis": {"type": "string", "minLength": 20, "maxLength": 600},
+    "risks": {"type": "array", "minItems": 1, "maxItems": 4, "items": {"$ref": "common.schema.json#/$defs/short_text"}},
+    "invalidation": {"type": "string", "minLength": 10, "maxLength": 300},
+    "evidence": {"type": "array", "minItems": 1, "maxItems": 8, "uniqueItems": true,
+                 "items": {"type": "string", "pattern": "^[a-z0-9_.:\\-]{1,80}$"}}
+  }
+}

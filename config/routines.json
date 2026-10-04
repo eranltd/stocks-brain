@@ -1,0 +1,92 @@
+{
+  "version": "0.1.0",
+  "updated_at": "2026-10-04",
+  "change_note": "Seed routine registry. All planned; activated milestone by milestone.",
+  "timezone": "UTC",
+  "routines": [
+    {
+      "id": "premarket_brief", "name": "Pre-market brief", "cadence": "daily", "cron": "40 12 * * 1-5",
+      "status": "planned", "milestone": "M5", "uses_llm": false, "max_cost_usd": 0,
+      "inputs": ["prices", "news", "filings"], "outputs": ["runs/brief.<date>.json"], "human_gate": false,
+      "why": "Information arrives overnight. Gaps, filings and headlines on watchlist names set the day's context before prices react. Code only: it lists events and does not interpret them."
+    },
+    {
+      "id": "close_run", "name": "Daily close run", "cadence": "daily", "cron": "10 21 * * 1-5",
+      "status": "planned", "milestone": "M3", "uses_llm": true, "max_cost_usd": 1.0,
+      "inputs": ["prices", "library"], "outputs": ["runs/run.<date>.json"], "human_gate": false,
+      "why": "The core loop: fetch, pack, one model call, schema check. Running after the close uses settled prices and avoids reacting to intraday noise."
+    },
+    {
+      "id": "score_picks", "name": "Score matured picks", "cadence": "daily", "cron": "30 21 * * 1-5",
+      "status": "planned", "milestone": "M4", "uses_llm": false, "max_cost_usd": 0,
+      "inputs": ["prices"], "outputs": ["data/kb/outcomes.json"], "human_gate": false,
+      "why": "Without scoring there is no feedback. Each pick is compared with the benchmark after the horizon, so the measure is excess return, not luck from a rising market."
+    },
+    {
+      "id": "regime_monitor", "name": "Regime and risk monitor", "cadence": "daily", "cron": "20 21 * * 1-5",
+      "status": "planned", "milestone": "M3", "uses_llm": false, "max_cost_usd": 0,
+      "inputs": ["prices"], "outputs": ["pack:regime"], "human_gate": false,
+      "why": "The same signal behaves differently in calm and stressed markets. Benchmark volatility, drawdown and trend set a regime tag that the packer passes to the brain."
+    },
+    {
+      "id": "news_social_digest", "name": "News and social digest", "cadence": "daily", "cron": "0 20 * * 1-5",
+      "status": "planned", "milestone": "M5", "uses_llm": false, "max_cost_usd": 0,
+      "inputs": ["news", "x_accounts"], "outputs": ["pack:attention"], "human_gate": false,
+      "why": "Attention moves prices in the short run. It counts mentions and links per watchlist name from followed sources and stores derived signals only, never post text."
+    },
+    {
+      "id": "opportunity_scan", "name": "Opportunity scan", "cadence": "weekly", "cron": "0 13 * * 6",
+      "status": "planned", "milestone": "M5", "uses_llm": true, "max_cost_usd": 0.5,
+      "inputs": ["prices", "news"], "outputs": ["proposal: watchlist PR"], "human_gate": true,
+      "why": "The watchlist goes stale. A code screen looks beyond it for relative-strength leaders, unusual volume and new highs, then one call writes a short case for each candidate. You merge or reject the PR."
+    },
+    {
+      "id": "thesis_review", "name": "Thesis and invalidation review", "cadence": "weekly", "cron": "0 14 * * 6",
+      "status": "planned", "milestone": "M5", "uses_llm": true, "max_cost_usd": 0.5,
+      "inputs": ["prices", "news"], "outputs": ["runs/review.<date>.json"], "human_gate": false,
+      "why": "Every pick states what would prove it wrong. This checks open picks against their own invalidation conditions, which guards against sunk-cost thinking."
+    },
+    {
+      "id": "sector_breadth", "name": "Sector rotation and breadth", "cadence": "weekly", "cron": "30 13 * * 6",
+      "status": "planned", "milestone": "M5", "uses_llm": false, "max_cost_usd": 0,
+      "inputs": ["prices"], "outputs": ["pack:sectors"], "human_gate": false,
+      "why": "Index moves hide what is underneath. Sector relative strength and breadth show whether leadership is broad, which is healthy, or narrow, which is fragile."
+    },
+    {
+      "id": "event_calendar", "name": "Earnings and macro calendar", "cadence": "weekly", "cron": "0 12 * * 0",
+      "status": "planned", "milestone": "M5", "uses_llm": false, "max_cost_usd": 0,
+      "inputs": ["filings", "news"], "outputs": ["pack:events"], "human_gate": false,
+      "why": "Scheduled events such as earnings, rate decisions and inflation prints create jump risk. The brain should know when a pick's horizon spans one."
+    },
+    {
+      "id": "cost_hygiene_audit", "name": "Cost and hygiene audit", "cadence": "weekly", "cron": "0 15 * * 0",
+      "status": "planned", "milestone": "M3", "uses_llm": false, "max_cost_usd": 0,
+      "inputs": [], "outputs": ["issue if over budget"], "human_gate": false,
+      "why": "The system's own costs compound too. It tracks cost per run, pack growth and lint warnings, and opens an issue before the budget drifts."
+    },
+    {
+      "id": "factor_check", "name": "Factor and style check", "cadence": "monthly", "cron": "0 13 1 * *",
+      "status": "planned", "milestone": "M5", "uses_llm": false, "max_cost_usd": 0,
+      "inputs": ["prices"], "outputs": ["pack:factors"], "human_gate": false,
+      "why": "Returns are partly explained by common factors such as momentum, value, quality and size. Knowing which style is being paid tells you whether a pick is skill or factor exposure."
+    },
+    {
+      "id": "calibration", "name": "Conviction calibration", "cadence": "monthly", "cron": "30 13 1 * *",
+      "status": "planned", "milestone": "M4", "uses_llm": false, "max_cost_usd": 0,
+      "inputs": [], "outputs": ["data/kb/calibration.json"], "human_gate": false,
+      "why": "A forecaster is useful only if confidence matches outcomes. It checks whether high-conviction picks really beat low ones, by stance, and whether conviction carries any information."
+    },
+    {
+      "id": "post_mortem", "name": "Monthly post-mortem", "cadence": "monthly", "cron": "0 14 1 * *",
+      "status": "planned", "milestone": "M5", "uses_llm": true, "max_cost_usd": 1.0,
+      "inputs": ["library"], "outputs": ["proposal: learnings PR"], "human_gate": true,
+      "why": "Turns scored outcomes into candidate lessons with evidence. The model drafts and a person decides, so the brain never edits its own rules."
+    },
+    {
+      "id": "library_ingest", "name": "Library ingest", "cadence": "on_demand", "cron": null,
+      "status": "planned", "milestone": "M5", "uses_llm": true, "max_cost_usd": 1.0,
+      "inputs": ["library"], "outputs": ["proposal: library PR"], "human_gate": true,
+      "why": "Books and lectures become short, paraphrased, tagged principles with a citation. No source text is committed, and you approve each batch."
+    }
+  ]
+}

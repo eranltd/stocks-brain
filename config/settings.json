@@ -1,0 +1,43 @@
+{
+  "version": "0.1.0",
+  "updated_at": "2026-10-04",
+  "change_note": "Seed settings.",
+  "pack": {
+    "token_cap": 12000,
+    "recent_runs": 5,
+    "price_lookback_days": 60,
+    "library_principles_max": 40
+  },
+  "cost": {
+    "target_usd": 1.0,
+    "warn_usd": 2.0,
+    "hard_cap_usd": 2.5
+  },
+  "llm": {
+    "model": null,
+    "max_output_tokens": 2000,
+    "repair_retries": 1
+  },
+  "scoring": {
+    "horizon_days": 20,
+    "flat_band_pct": 1.0,
+    "benchmark": {
+      "symbol": "QQQ",
+      "label": "Nasdaq-100 (QQQ proxy)"
+    }
+  },
+  "prices": {
+    "provider": null,
+    "keep_days": 260
+  },
+  "lint": {
+    "max_file_kb": 512,
+    "max_total_data_mb": 50
+  },
+  "site": {
+    "title": "stocks·brain",
+    "repo": "eranltd/stocks-brain",
+    "runs_shown": 30,
+    "sparkline_days": 60
+  }
+}

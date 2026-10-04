@@ -1,0 +1,64 @@
+{
+  "$id": "run.schema.json",
+  "title": "Run record",
+  "description": "One per run, written by code. Only `summary` and each `picks[].pick` come from the model.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "date", "generated_at", "status", "sample", "model", "cost",
+               "duration_minutes", "pack", "doc_versions", "repair_retries", "summary", "picks"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "run_id": {"type": "string", "pattern": "^run\\.\\d{4}-\\d{2}-\\d{2}$"},
+    "date": {"$ref": "common.schema.json#/$defs/date"},
+    "generated_at": {"$ref": "common.schema.json#/$defs/datetime"},
+    "status": {"enum": ["ok", "failed"]},
+    "failure_reason": {"type": "string", "maxLength": 300},
+    "sample": {"type": "boolean"},
+    "model": {"type": "string", "minLength": 1, "maxLength": 80},
+    "cost": {
+      "type": "object", "additionalProperties": false,
+      "required": ["usd", "input_tokens", "output_tokens", "cap_usd"],
+      "properties": {
+        "usd": {"type": "number", "minimum": 0},
+        "input_tokens": {"type": "integer", "minimum": 0},
+        "output_tokens": {"type": "integer", "minimum": 0},
+        "cap_usd": {"type": "number", "minimum": 0}
+      }
+    },
+    "duration_minutes": {"type": "number", "minimum": 0},
+    "pack": {
+      "type": "object", "additionalProperties": false,
+      "required": ["hash", "tokens", "cap_tokens"],
+      "properties": {
+        "hash": {"$ref": "common.schema.json#/$defs/sha256"},
+        "tokens": {"type": "integer", "minimum": 0},
+        "cap_tokens": {"type": "integer", "minimum": 1}
+      }
+    },
+    "doc_versions": {
+      "type": "object", "additionalProperties": false,
+      "required": ["strategy", "guardrails", "methodology", "learnings"],
+      "properties": {
+        "strategy": {"$ref": "common.schema.json#/$defs/semver"},
+        "guardrails": {"$ref": "common.schema.json#/$defs/semver"},
+        "methodology": {"$ref": "common.schema.json#/$defs/semver"},
+        "learnings": {"$ref": "common.schema.json#/$defs/semver"}
+      }
+    },
+    "repair_retries": {"type": "integer", "minimum": 0, "maximum": 1},
+    "summary": {"type": "string", "maxLength": 600},
+    "picks": {
+      "type": "array", "maxItems": 10,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "ref_date", "ref_price", "pick"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}:[A-Z][A-Z0-9.\\-]{0,9}$"},
+          "ref_date": {"$ref": "common.schema.json#/$defs/date"},
+          "ref_price": {"type": "number", "exclusiveMinimum": 0},
+          "pick": {"$ref": "pick.schema.json"}
+        }
+      }
+    }
+  }
+}

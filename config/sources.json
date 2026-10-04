@@ -1,0 +1,67 @@
+{
+  "version": "0.1.0",
+  "updated_at": "2026-10-04",
+  "change_note": "Seed connector registry. No provider chosen yet.",
+  "sources": [
+    {
+      "id": "prices",
+      "kind": "prices",
+      "label": "Daily prices",
+      "status": "planned",
+      "provider": null,
+      "cadence": "daily after US close",
+      "feeds": ["data/prices"],
+      "secret_env": null,
+      "follow": [],
+      "note": "Provider adapter lands in milestone 2. Watchlist and benchmark come from config."
+    },
+    {
+      "id": "x_accounts",
+      "kind": "social",
+      "label": "Accounts to follow on X",
+      "status": "planned",
+      "provider": null,
+      "cadence": "daily",
+      "feeds": ["pack"],
+      "secret_env": null,
+      "follow": [],
+      "note": "Store derived signals and links only, never post text. Handles are public; add them to follow[]."
+    },
+    {
+      "id": "news",
+      "kind": "news",
+      "label": "Headlines for watchlist names",
+      "status": "planned",
+      "provider": null,
+      "cadence": "daily",
+      "feeds": ["pack"],
+      "secret_env": null,
+      "follow": [],
+      "note": "Headlines and links only; summaries are computed, not copied."
+    },
+    {
+      "id": "filings",
+      "kind": "filings",
+      "label": "Company filings",
+      "status": "planned",
+      "provider": null,
+      "cadence": "daily",
+      "feeds": ["pack"],
+      "secret_env": null,
+      "follow": [],
+      "note": "Public filings metadata for watchlist names."
+    },
+    {
+      "id": "library",
+      "kind": "library",
+      "label": "Books and lectures",
+      "status": "active",
+      "provider": "manual",
+      "cadence": "when added",
+      "feeds": ["data/kb/library.json"],
+      "secret_env": null,
+      "follow": [],
+      "note": "Paraphrased principles with a citation. The repo is public: never commit source text."
+    }
+  ]
+}

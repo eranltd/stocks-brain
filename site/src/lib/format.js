@@ -1,0 +1,25 @@
+const dateFmt = new Intl.DateTimeFormat("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+const shortFmt = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
+const usd = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+const parse = (iso) => new Date(iso.length === 10 ? iso + "T00:00:00Z" : iso);
+export const fmtDate = (iso) => dateFmt.format(parse(iso));
+export const fmtShort = (iso) => shortFmt.format(parse(iso));
+export const fmtUsd = (v) => usd.format(v);
+export const fmtNum = (v, d = 2) => v.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
+export const fmtPct = (v, d = 2) => `${v > 0 ? "+" : v < 0 ? "−" : ""}${Math.abs(v).toFixed(d)}%`;
+export const fmtK = (v) => (v >= 1000 ? `${(v / 1000).toFixed(1)}k` : String(v));
+
+export function relDays(iso, ref = new Date()) {
+  const today = Date.UTC(ref.getUTCFullYear(), ref.getUTCMonth(), ref.getUTCDate());
+  const days = Math.floor((today - parse(iso)) / 86400000);
+  if (days <= 0) return "today";
+  if (days === 1) return "yesterday";
+  if (days < 30) return `${days} days ago`;
+  return fmtShort(iso);
+}
+
+const WORDS = ["No", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"];
+export const numWord = (n) => WORDS[n] ?? String(n);
+export const pad2 = (n) => String(n).padStart(2, "0");
+export const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);

@@ -1,0 +1,41 @@
+{
+  "$id": "outcome.schema.json",
+  "title": "Scored outcomes (data/kb/outcomes.json)",
+  "description": "Written by score_picks.py only. No LLM involvement.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "updated_at", "change_note", "sample", "items"],
+  "properties": {
+    "version": {"$ref": "common.schema.json#/$defs/semver"},
+    "updated_at": {"$ref": "common.schema.json#/$defs/date"},
+    "change_note": {"$ref": "common.schema.json#/$defs/change_note"},
+    "sample": {"type": "boolean"},
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["pick_id", "run_date", "ticker", "stance", "conviction", "ref_date", "ref_price",
+                     "horizon_days", "scored_date", "exit_price", "return_pct", "benchmark_symbol",
+                     "benchmark_return_pct", "excess_pct", "verdict", "methodology_version"],
+        "properties": {
+          "pick_id": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}:[A-Z][A-Z0-9.\\-]{0,9}$"},
+          "run_date": {"$ref": "common.schema.json#/$defs/date"},
+          "ticker": {"$ref": "common.schema.json#/$defs/ticker"},
+          "stance": {"enum": ["bullish", "bearish", "neutral"]},
+          "conviction": {"enum": ["low", "medium", "high"]},
+          "ref_date": {"$ref": "common.schema.json#/$defs/date"},
+          "ref_price": {"type": "number", "exclusiveMinimum": 0},
+          "horizon_days": {"type": "integer", "minimum": 1},
+          "scored_date": {"$ref": "common.schema.json#/$defs/date"},
+          "exit_price": {"type": "number", "exclusiveMinimum": 0},
+          "return_pct": {"type": "number"},
+          "benchmark_symbol": {"$ref": "common.schema.json#/$defs/ticker"},
+          "benchmark_return_pct": {"type": "number"},
+          "excess_pct": {"type": "number"},
+          "verdict": {"enum": ["hit", "miss", "flat"]},
+          "methodology_version": {"$ref": "common.schema.json#/$defs/semver"}
+        }
+      }
+    }
+  }
+}

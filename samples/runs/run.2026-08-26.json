@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "run_id": "run.2026-08-26",
+  "date": "2026-08-26",
+  "generated_at": "2026-08-26T21:15:00Z",
+  "status": "ok",
+  "sample": true,
+  "model": "sample-model",
+  "cost": {
+    "usd": 0.658,
+    "input_tokens": 10036,
+    "output_tokens": 1302,
+    "cap_usd": 2.5
+  },
+  "duration_minutes": 4.02,
+  "pack": {
+    "hash": "703d7324bb19307e7581090b9d03f48d5f8479201f83e2bbddcf57b2fe863364",
+    "tokens": 9337,
+    "cap_tokens": 12000
+  },
+  "doc_versions": {
+    "strategy": "0.1.0",
+    "methodology": "0.1.0",
+    "guardrails": "0.1.0",
+    "learnings": "0.1.0"
+  },
+  "repair_retries": 0,
+  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
+  "picks": [
+    {
+      "id": "2026-08-26:COST",
+      "ref_date": "2026-08-26",
+      "ref_price": 109.14,
+      "pick": {
+        "ticker": "COST",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Costco has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "risks": [
+          "Sector-wide de-rating",
+          "Macro data surprise"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.cost.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-26:NVDA",
+      "ref_date": "2026-08-26",
+      "ref_price": 542.06,
+      "pick": {
+        "ticker": "NVDA",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "NVIDIA keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "risks": [
+          "Sector-wide de-rating",
+          "Macro data surprise"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.nvda.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-26:GOOGL",
+      "ref_date": "2026-08-26",
+      "ref_price": 577.6,
+      "pick": {
+        "ticker": "GOOGL",
+        "stance": "neutral",
+        "conviction": "medium",
+        "thesis": "Alphabet is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "risks": [
+          "Breakout in either direction",
+          "Volatility expansion"
+        ],
+        "invalidation": "A sustained move away from the benchmark in either direction.",
+        "evidence": [
+          "prices.googl.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    }
+  ]
+}

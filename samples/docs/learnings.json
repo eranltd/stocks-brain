@@ -1,0 +1,38 @@
+{
+  "version": "0.3.0",
+  "updated_at": "2026-10-02",
+  "change_note": "Synthetic sample lessons so the Learnings view renders.",
+  "items": [
+    {
+      "id": "L-001",
+      "added": "2026-10-02",
+      "status": "active",
+      "lesson": "Bullish picks with low conviction rarely beat the benchmark by more than the flat band. Prefer zero picks over a weak bullish one.",
+      "evidence": [
+        "2026-08-03:AAPL"
+      ]
+    },
+    {
+      "id": "L-002",
+      "added": "2026-10-02",
+      "status": "active",
+      "lesson": "Bearish calls on names that already lagged badly tend to mean-revert inside the horizon. Require fresh weakness, not just a long slide.",
+      "evidence": [
+        "2026-08-03:AMZN",
+        "2026-08-04:AMZN",
+        "2026-08-07:AMZN"
+      ]
+    },
+    {
+      "id": "L-003",
+      "added": "2026-10-02",
+      "status": "retired",
+      "lesson": "Neutral stances score well when the benchmark is calm, but miss in rotation weeks. Check benchmark volatility before choosing neutral.",
+      "evidence": [
+        "2026-08-04:NVDA",
+        "2026-08-20:AMZN",
+        "2026-08-21:AMZN"
+      ]
+    }
+  ]
+}

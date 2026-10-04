@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "run_id": "run.2026-08-21",
+  "date": "2026-08-21",
+  "generated_at": "2026-08-21T21:30:00Z",
+  "status": "ok",
+  "sample": true,
+  "model": "sample-model",
+  "cost": {
+    "usd": 1.293,
+    "input_tokens": 8129,
+    "output_tokens": 1361,
+    "cap_usd": 2.5
+  },
+  "duration_minutes": 2.8,
+  "pack": {
+    "hash": "fc13087480441c3855600f841755a2f5d45a2fe0fd15b28ae7129421fbe96675",
+    "tokens": 7449,
+    "cap_tokens": 12000
+  },
+  "doc_versions": {
+    "strategy": "0.1.0",
+    "methodology": "0.1.0",
+    "guardrails": "0.1.0",
+    "learnings": "0.1.0"
+  },
+  "repair_retries": 0,
+  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
+  "picks": [
+    {
+      "id": "2026-08-21:COST",
+      "ref_date": "2026-08-21",
+      "ref_price": 107.38,
+      "pick": {
+        "ticker": "COST",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Costco has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "risks": [
+          "Macro data surprise",
+          "Sector-wide de-rating"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.cost.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-21:NVDA",
+      "ref_date": "2026-08-21",
+      "ref_price": 501.07,
+      "pick": {
+        "ticker": "NVDA",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "NVIDIA keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "risks": [
+          "Macro data surprise",
+          "Momentum reversal after an extended run"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.nvda.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-21:AMZN",
+      "ref_date": "2026-08-21",
+      "ref_price": 602.02,
+      "pick": {
+        "ticker": "AMZN",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Amazon is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "risks": [
+          "Breakout in either direction",
+          "Volatility expansion"
+        ],
+        "invalidation": "A sustained move away from the benchmark in either direction.",
+        "evidence": [
+          "prices.amzn.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    }
+  ]
+}

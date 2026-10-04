@@ -1,0 +1,42 @@
+{
+  "$id": "library.schema.json",
+  "title": "Library (data/kb/library.json)",
+  "description": "Principles distilled from books and lectures, written in our own words with a citation. The repo is public: never paste source text. Each principle is short by design.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "updated_at", "change_note", "sample", "sources"],
+  "properties": {
+    "version": {"$ref": "common.schema.json#/$defs/semver"},
+    "updated_at": {"$ref": "common.schema.json#/$defs/date"},
+    "change_note": {"$ref": "common.schema.json#/$defs/change_note"},
+    "sample": {"type": "boolean"},
+    "sources": {
+      "type": "array", "maxItems": 500,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "kind", "title", "author", "year", "added", "principles"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^S-\\d{3}$"},
+          "kind": {"enum": ["book", "lecture", "article", "course"]},
+          "title": {"type": "string", "minLength": 1, "maxLength": 160},
+          "author": {"type": "string", "minLength": 1, "maxLength": 120},
+          "year": {"type": ["integer", "null"], "minimum": 1800, "maximum": 2100},
+          "added": {"$ref": "common.schema.json#/$defs/date"},
+          "principles": {
+            "type": "array", "minItems": 1, "maxItems": 40,
+            "items": {
+              "type": "object", "additionalProperties": false,
+              "required": ["id", "text", "tags"],
+              "properties": {
+                "id": {"type": "string", "pattern": "^S-\\d{3}\\.P\\d{2}$"},
+                "text": {"type": "string", "minLength": 20, "maxLength": 280},
+                "tags": {"type": "array", "minItems": 1, "maxItems": 6, "uniqueItems": true,
+                         "items": {"type": "string", "pattern": "^[a-z_]{2,30}$"}}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,6 +1,42 @@
 {
   "version": "0.1.0",
   "updated_at": "2026-10-04",
-  "change_note": "Empty log. Each daily.yml run appends one entry, success or failure.",
-  "items": []
+  "change_note": "Run 37211858847: success.",
+  "items": [
+    {
+      "run_id": "37211858847",
+      "workflow": "daily",
+      "trigger": "workflow_dispatch",
+      "started_at": "2026-10-04T15:08:05Z",
+      "finished_at": "2026-10-04T15:08:09Z",
+      "status": "success",
+      "steps": [
+        {
+          "routine": "calibration",
+          "outcome": "success"
+        },
+        {
+          "routine": "derive_market",
+          "outcome": "success"
+        },
+        {
+          "routine": "fetch_prices",
+          "outcome": "success"
+        },
+        {
+          "routine": "lint",
+          "outcome": "success"
+        },
+        {
+          "routine": "regime_monitor",
+          "outcome": "success"
+        },
+        {
+          "routine": "score_picks",
+          "outcome": "success"
+        }
+      ],
+      "url": "https://github.com/eranltd/stocks-brain/actions/runs/37211858847"
+    }
+  ]
 }

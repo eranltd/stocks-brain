@@ -1,7 +1,7 @@
 {
-  "version": "0.4.0",
+  "version": "0.6.0",
   "updated_at": "2026-10-04",
-  "change_note": "Trust ladder thresholds (when the household may act on calls).",
+  "change_note": "Household goal (+20%/yr) and portfolio rule v1: a diversified 4-5 stock satellite, monthly, empty slots stay in the core.",
   "pack": {
     "token_cap": 12000,
     "recent_runs": 5,
@@ -29,7 +29,7 @@
   },
   "prices": {
     "provider": "tiingo",
-    "keep_days": 260
+    "keep_days": 2600
   },
   "lint": {
     "max_file_kb": 512,
@@ -46,18 +46,43 @@
   },
   "setup": {
     "stretch_pct": 8,
-    "rel_days": 20
+    "rs_short_days": 60,
+    "rs_long_days": 120,
+    "trend_long_days": 200,
+    "veto_stretched": true
   },
   "trust": {
-    "paper_min_scored": 30,
-    "small_min_scored": 60,
-    "min_hit_rate_pct": 55,
-    "min_avg_excess_pct": 0.5
+    "min_effective_picks": 30,
+    "trusted_min_effective_picks": 60,
+    "min_hit_ci_lower_pct": 50,
+    "ci_z": 1.645,
+    "min_avg_signed_excess_pct": 0.5,
+    "min_calendar_days": 120
+  },
+  "backtest": {
+    "horizon_days": 20,
+    "step_days": 20,
+    "min_history_days": 250
+  },
+  "goal": {
+    "annual_return_pct": 20
+  },
+  "portfolio": {
+    "slots": 5,
+    "target_min_names": 4,
+    "entry_min_checks": 3,
+    "keep_min_checks": 2,
+    "max_per_sector": 2,
+    "max_pair_corr": 0.85,
+    "corr_days": 252,
+    "cost_bps": 10,
+    "weekly_step_days": 5
   },
   "site": {
     "title": "stocks·brain",
     "repo": "eranltd/stocks-brain",
     "runs_shown": 30,
-    "sparkline_days": 60
+    "sparkline_days": 60,
+    "series_days": 260
   }
 }

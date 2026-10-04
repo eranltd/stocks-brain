@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-08-06",
   "date": "2026-08-06",
-  "generated_at": "2026-08-06T21:15:00Z",
+  "generated_at": "2026-08-06T21:14:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 1.184,
-    "input_tokens": 6630,
-    "output_tokens": 1645,
+    "usd": 1.566,
+    "input_tokens": 9880,
+    "output_tokens": 943,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.66,
+  "duration_minutes": 3.7,
   "pack": {
     "hash": "bd38051448d4f64030d5db1ba616e59a150a3b7d70a03728f5fc127b22514171",
-    "tokens": 6140,
+    "tokens": 9547,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -28,21 +28,21 @@
   "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
   "picks": [
     {
-      "id": "2026-08-06:AAPL",
+      "id": "2026-08-06:COST",
       "ref_date": "2026-08-06",
-      "ref_price": 208.26,
+      "ref_price": 1595.95,
       "pick": {
-        "ticker": "AAPL",
+        "ticker": "COST",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Apple keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "Costco has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Momentum reversal after an extended run",
+          "Macro data surprise",
           "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.aapl.rel_20d",
+          "prices.cost.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

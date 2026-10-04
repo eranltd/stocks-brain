@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-09-02",
   "date": "2026-09-02",
-  "generated_at": "2026-09-02T21:13:00Z",
+  "generated_at": "2026-09-02T21:18:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.861,
-    "input_tokens": 7670,
-    "output_tokens": 1260,
+    "usd": 0.456,
+    "input_tokens": 7623,
+    "output_tokens": 974,
     "cap_usd": 2.5
   },
-  "duration_minutes": 1.55,
+  "duration_minutes": 4.03,
   "pack": {
     "hash": "87c1f55d67a22faf6f10730446cddfe1ed8dff6ede37c0a83bc6f076f675a634",
-    "tokens": 7187,
+    "tokens": 6831,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,24 +25,24 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
+  "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
   "picks": [
     {
-      "id": "2026-09-02:COST",
+      "id": "2026-09-02:GOOGL",
       "ref_date": "2026-09-02",
-      "ref_price": 109.33,
+      "ref_price": 1380.21,
       "pick": {
-        "ticker": "COST",
+        "ticker": "GOOGL",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Costco keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "Alphabet has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Momentum reversal after an extended run",
-          "Sector-wide de-rating"
+          "Macro data surprise",
+          "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.cost.rel_20d",
+          "prices.googl.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
@@ -51,14 +51,14 @@
     {
       "id": "2026-09-02:NVDA",
       "ref_date": "2026-09-02",
-      "ref_price": 541.42,
+      "ref_price": 148.48,
       "pick": {
         "ticker": "NVDA",
         "stance": "bullish",
         "conviction": "high",
         "thesis": "NVIDIA has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Sector-wide de-rating",
+          "Momentum reversal after an extended run",
           "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
@@ -70,42 +70,21 @@
       }
     },
     {
-      "id": "2026-09-02:GOOGL",
+      "id": "2026-09-02:META",
       "ref_date": "2026-09-02",
-      "ref_price": 588.69,
+      "ref_price": 127.97,
       "pick": {
-        "ticker": "GOOGL",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Alphabet has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "ticker": "META",
+        "stance": "bearish",
+        "conviction": "medium",
+        "thesis": "Meta Platforms broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
         "risks": [
-          "Momentum reversal after an extended run",
-          "Macro data surprise"
+          "Positive company news flow",
+          "Short-covering rally"
         ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.googl.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-09-02:AVGO",
-      "ref_date": "2026-09-02",
-      "ref_price": 604.74,
-      "pick": {
-        "ticker": "AVGO",
-        "stance": "neutral",
-        "conviction": "low",
-        "thesis": "Broadcom is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
-        "risks": [
-          "Breakout in either direction",
-          "Volatility expansion"
-        ],
-        "invalidation": "A sustained move away from the benchmark in either direction.",
-        "evidence": [
-          "prices.avgo.rel_20d",
+          "prices.meta.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

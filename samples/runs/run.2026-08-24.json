@@ -7,15 +7,15 @@
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.395,
-    "input_tokens": 8473,
-    "output_tokens": 1568,
+    "usd": 0.656,
+    "input_tokens": 6201,
+    "output_tokens": 1813,
     "cap_usd": 2.5
   },
-  "duration_minutes": 1.44,
+  "duration_minutes": 4.15,
   "pack": {
     "hash": "a3a36183d6e2f72f60ab56ac51deb0876b2d56b489f251af6f71fe4b1ba99cbd",
-    "tokens": 7942,
+    "tokens": 5377,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,40 +25,19 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
+  "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
   "picks": [
-    {
-      "id": "2026-08-24:COST",
-      "ref_date": "2026-08-24",
-      "ref_price": 109.63,
-      "pick": {
-        "ticker": "COST",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Costco keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
-        "risks": [
-          "Sector-wide de-rating",
-          "Momentum reversal after an extended run"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.cost.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
     {
       "id": "2026-08-24:NVDA",
       "ref_date": "2026-08-24",
-      "ref_price": 518.2,
+      "ref_price": 151.24,
       "pick": {
         "ticker": "NVDA",
         "stance": "bullish",
         "conviction": "high",
         "thesis": "NVIDIA has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Momentum reversal after an extended run",
+          "Macro data surprise",
           "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
@@ -70,21 +49,21 @@
       }
     },
     {
-      "id": "2026-08-24:AAPL",
+      "id": "2026-08-24:META",
       "ref_date": "2026-08-24",
-      "ref_price": 207.24,
+      "ref_price": 130.77,
       "pick": {
-        "ticker": "AAPL",
-        "stance": "bullish",
+        "ticker": "META",
+        "stance": "bearish",
         "conviction": "high",
-        "thesis": "Apple keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "Meta Platforms broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
         "risks": [
-          "Momentum reversal after an extended run",
-          "Macro data surprise"
+          "Benchmark weakness narrows the gap",
+          "Short-covering rally"
         ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.aapl.rel_20d",
+          "prices.meta.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

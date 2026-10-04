@@ -1,0 +1,96 @@
+{
+  "$id": "paper.schema.json",
+  "title": "Paper portfolio (data/portfolio/paper.json)",
+  "description": "Forward-only paper record of portfolio rule v1: holdings recorded once per month with data up to that day and never edited; the track is recomputed from them. Values indexed to 100. No money, no household holdings.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "as_of",
+    "sample",
+    "started",
+    "note",
+    "rebalances",
+    "track"
+  ],
+  "properties": {
+    "as_of": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "sample": {
+      "type": "boolean"
+    },
+    "started": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "note": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "rebalances": {
+      "type": "array",
+      "maxItems": 600,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "date",
+          "rule",
+          "holdings",
+          "core_pct"
+        ],
+        "properties": {
+          "date": {
+            "$ref": "common.schema.json#/$defs/date"
+          },
+          "rule": {
+            "type": "string",
+            "pattern": "^v[0-9]+$"
+          },
+          "holdings": {
+            "type": "array",
+            "maxItems": 10,
+            "items": {
+              "$ref": "common.schema.json#/$defs/ticker"
+            }
+          },
+          "core_pct": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          }
+        }
+      }
+    },
+    "track": {
+      "type": "array",
+      "maxItems": 20000,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "date",
+          "v",
+          "core_v",
+          "bench_v"
+        ],
+        "properties": {
+          "date": {
+            "$ref": "common.schema.json#/$defs/date"
+          },
+          "v": {
+            "type": "number",
+            "minimum": 0
+          },
+          "core_v": {
+            "type": "number",
+            "minimum": 0
+          },
+          "bench_v": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
+      }
+    }
+  }
+}

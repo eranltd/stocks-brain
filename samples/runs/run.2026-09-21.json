@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-09-21",
   "date": "2026-09-21",
-  "generated_at": "2026-09-21T21:28:00Z",
+  "generated_at": "2026-09-21T21:35:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.894,
-    "input_tokens": 7497,
-    "output_tokens": 1580,
+    "usd": 0.648,
+    "input_tokens": 8637,
+    "output_tokens": 1803,
     "cap_usd": 2.5
   },
-  "duration_minutes": 1.87,
+  "duration_minutes": 3.7,
   "pack": {
     "hash": "72574ca1053dc47a6c68568fb38c587e062fafee419e43246c9160a03f41905f",
-    "tokens": 7059,
+    "tokens": 8085,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,66 +25,24 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
+  "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
   "picks": [
     {
-      "id": "2026-09-21:NVDA",
+      "id": "2026-09-21:GOOGL",
       "ref_date": "2026-09-21",
-      "ref_price": 614.72,
+      "ref_price": 1552.63,
       "pick": {
-        "ticker": "NVDA",
+        "ticker": "GOOGL",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "NVIDIA keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
-        "risks": [
-          "Sector-wide de-rating",
-          "Macro data surprise"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.nvda.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-09-21:AVGO",
-      "ref_date": "2026-09-21",
-      "ref_price": 697.5,
-      "pick": {
-        "ticker": "AVGO",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Broadcom has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Alphabet has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
           "Momentum reversal after an extended run",
-          "Macro data surprise"
+          "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.avgo.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-09-21:COST",
-      "ref_date": "2026-09-21",
-      "ref_price": 99.22,
-      "pick": {
-        "ticker": "COST",
-        "stance": "bearish",
-        "conviction": "medium",
-        "thesis": "Costco has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
-        "risks": [
-          "Short-covering rally",
-          "Benchmark weakness narrows the gap"
-        ],
-        "invalidation": "A close back above the recent range high on rising volume.",
-        "evidence": [
-          "prices.cost.rel_20d",
+          "prices.googl.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
@@ -93,17 +51,17 @@
     {
       "id": "2026-09-21:AMZN",
       "ref_date": "2026-09-21",
-      "ref_price": 604.25,
+      "ref_price": 752.07,
       "pick": {
         "ticker": "AMZN",
-        "stance": "neutral",
-        "conviction": "low",
-        "thesis": "Amazon is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Amazon has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Volatility expansion",
-          "Breakout in either direction"
+          "Macro data surprise",
+          "Sector-wide de-rating"
         ],
-        "invalidation": "A sustained move away from the benchmark in either direction.",
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
           "prices.amzn.rel_20d",
           "benchmark.trend",

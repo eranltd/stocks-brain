@@ -1,47 +1,47 @@
 {
   "as_of": "2026-10-02",
   "sample": true,
-  "n": 68,
+  "n": 78,
   "min_n": 10,
   "conviction_verdict": "insufficient_data",
   "by_conviction": [
     {
       "conviction": "low",
-      "n": 8,
-      "hit_rate_pct": 12.5,
-      "avg_excess_pct": 7.366
+      "n": 9,
+      "hit_rate_pct": 11.1,
+      "avg_signed_excess_pct": -4.341
     },
     {
       "conviction": "medium",
-      "n": 5,
-      "hit_rate_pct": 0.0,
-      "avg_excess_pct": 6.605
+      "n": 12,
+      "hit_rate_pct": 33.3,
+      "avg_signed_excess_pct": 1.765
     },
     {
       "conviction": "high",
-      "n": 55,
-      "hit_rate_pct": 56.4,
-      "avg_excess_pct": 2.446
+      "n": 57,
+      "hit_rate_pct": 70.2,
+      "avg_signed_excess_pct": 7.088
     }
   ],
   "by_stance": [
     {
       "stance": "bullish",
-      "n": 55,
-      "hit_rate_pct": 56.4,
-      "avg_excess_pct": 2.446
+      "n": 52,
+      "hit_rate_pct": 80.8,
+      "avg_signed_excess_pct": 9.219
     },
     {
       "stance": "bearish",
-      "n": 6,
-      "hit_rate_pct": 0.0,
-      "avg_excess_pct": 7.675
+      "n": 16,
+      "hit_rate_pct": 12.5,
+      "avg_signed_excess_pct": -3.304
     },
     {
       "stance": "neutral",
-      "n": 7,
-      "hit_rate_pct": 14.3,
-      "avg_excess_pct": 6.557
+      "n": 10,
+      "hit_rate_pct": 10.0,
+      "avg_signed_excess_pct": -4.041
     }
   ]
 }

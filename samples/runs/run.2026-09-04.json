@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-09-04",
   "date": "2026-09-04",
-  "generated_at": "2026-09-04T21:37:00Z",
+  "generated_at": "2026-09-04T21:11:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.442,
-    "input_tokens": 9239,
-    "output_tokens": 1287,
+    "usd": 0.705,
+    "input_tokens": 6377,
+    "output_tokens": 1245,
     "cap_usd": 2.5
   },
-  "duration_minutes": 1.48,
+  "duration_minutes": 2.25,
   "pack": {
     "hash": "a7721ffe6bffa27331d6ddf386864f3c69afd7f1814a4ed051f7de2aa15f58dd",
-    "tokens": 8893,
+    "tokens": 5734,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,24 +25,24 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
+  "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
   "picks": [
     {
-      "id": "2026-09-04:COST",
+      "id": "2026-09-04:GOOGL",
       "ref_date": "2026-09-04",
-      "ref_price": 106.28,
+      "ref_price": 1400.62,
       "pick": {
-        "ticker": "COST",
+        "ticker": "GOOGL",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Costco has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Alphabet has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
           "Momentum reversal after an extended run",
-          "Macro data surprise"
+          "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.cost.rel_20d",
+          "prices.googl.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
@@ -51,7 +51,7 @@
     {
       "id": "2026-09-04:NVDA",
       "ref_date": "2026-09-04",
-      "ref_price": 541.92,
+      "ref_price": 154.28,
       "pick": {
         "ticker": "NVDA",
         "stance": "bullish",
@@ -59,7 +59,7 @@
         "thesis": "NVIDIA has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
           "Macro data surprise",
-          "Momentum reversal after an extended run"
+          "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -70,21 +70,42 @@
       }
     },
     {
-      "id": "2026-09-04:MSFT",
+      "id": "2026-09-04:META",
       "ref_date": "2026-09-04",
-      "ref_price": 350.09,
+      "ref_price": 128.16,
       "pick": {
-        "ticker": "MSFT",
+        "ticker": "META",
+        "stance": "bearish",
+        "conviction": "high",
+        "thesis": "Meta Platforms has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "risks": [
+          "Positive company news flow",
+          "Benchmark weakness narrows the gap"
+        ],
+        "invalidation": "A close back above the recent range high on rising volume.",
+        "evidence": [
+          "prices.meta.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-09-04:AAPL",
+      "ref_date": "2026-09-04",
+      "ref_price": 263.56,
+      "pick": {
+        "ticker": "AAPL",
         "stance": "neutral",
         "conviction": "low",
-        "thesis": "Microsoft is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "thesis": "Apple is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
         "risks": [
           "Breakout in either direction",
           "Volatility expansion"
         ],
         "invalidation": "A sustained move away from the benchmark in either direction.",
         "evidence": [
-          "prices.msft.rel_20d",
+          "prices.aapl.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

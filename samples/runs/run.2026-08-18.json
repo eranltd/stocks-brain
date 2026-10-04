@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-08-18",
   "date": "2026-08-18",
-  "generated_at": "2026-08-18T21:11:00Z",
+  "generated_at": "2026-08-18T21:22:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.324,
-    "input_tokens": 6631,
-    "output_tokens": 711,
+    "usd": 0.683,
+    "input_tokens": 10491,
+    "output_tokens": 1123,
     "cap_usd": 2.5
   },
-  "duration_minutes": 2.53,
+  "duration_minutes": 2.3,
   "pack": {
     "hash": "d7c3ca4b331ee2257116d434dbcff16b987d28cf159d8f802d8a21a0d5310e19",
-    "tokens": 6314,
+    "tokens": 10083,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,45 +25,66 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
+  "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
   "picks": [
     {
-      "id": "2026-08-18:COST",
+      "id": "2026-08-18:NVDA",
       "ref_date": "2026-08-18",
-      "ref_price": 104.52,
+      "ref_price": 142.77,
       "pick": {
-        "ticker": "COST",
+        "ticker": "NVDA",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Costco keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "NVIDIA keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
           "Macro data surprise",
-          "Momentum reversal after an extended run"
+          "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.cost.rel_20d",
+          "prices.nvda.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-08-18:AMZN",
+      "id": "2026-08-18:AVGO",
       "ref_date": "2026-08-18",
-      "ref_price": 570.64,
+      "ref_price": 107.94,
       "pick": {
-        "ticker": "AMZN",
+        "ticker": "AVGO",
         "stance": "bearish",
-        "conviction": "low",
-        "thesis": "Amazon broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
+        "conviction": "high",
+        "thesis": "Broadcom has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
         "risks": [
-          "Positive company news flow",
-          "Short-covering rally"
+          "Benchmark weakness narrows the gap",
+          "Positive company news flow"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.amzn.rel_20d",
+          "prices.avgo.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-18:MSFT",
+      "ref_date": "2026-08-18",
+      "ref_price": 281.68,
+      "pick": {
+        "ticker": "MSFT",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Microsoft is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "risks": [
+          "Volatility expansion",
+          "Breakout in either direction"
+        ],
+        "invalidation": "A sustained move away from the benchmark in either direction.",
+        "evidence": [
+          "prices.msft.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

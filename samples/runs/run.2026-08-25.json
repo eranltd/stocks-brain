@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-08-25",
   "date": "2026-08-25",
-  "generated_at": "2026-08-25T21:36:00Z",
+  "generated_at": "2026-08-25T21:10:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.632,
-    "input_tokens": 9698,
-    "output_tokens": 1453,
+    "usd": 0.465,
+    "input_tokens": 6769,
+    "output_tokens": 1024,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.31,
+  "duration_minutes": 1.59,
   "pack": {
     "hash": "f67459407d6f0d32516ba9380ceb58c2f59352c12bf36244a4e6cbf9c8f71c1b",
-    "tokens": 9263,
+    "tokens": 6058,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,19 +25,61 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
+  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
   "picks": [
+    {
+      "id": "2026-08-25:NVDA",
+      "ref_date": "2026-08-25",
+      "ref_price": 152.19,
+      "pick": {
+        "ticker": "NVDA",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "NVIDIA has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "risks": [
+          "Momentum reversal after an extended run",
+          "Macro data surprise"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.nvda.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-25:GOOGL",
+      "ref_date": "2026-08-25",
+      "ref_price": 1258.87,
+      "pick": {
+        "ticker": "GOOGL",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Alphabet keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "risks": [
+          "Sector-wide de-rating",
+          "Macro data surprise"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.googl.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
     {
       "id": "2026-08-25:COST",
       "ref_date": "2026-08-25",
-      "ref_price": 110.67,
+      "ref_price": 1468.71,
       "pick": {
         "ticker": "COST",
         "stance": "bullish",
         "conviction": "high",
         "thesis": "Costco has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Macro data surprise",
+          "Momentum reversal after an extended run",
           "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
@@ -49,21 +91,21 @@
       }
     },
     {
-      "id": "2026-08-25:NVDA",
+      "id": "2026-08-25:AAPL",
       "ref_date": "2026-08-25",
-      "ref_price": 528.94,
+      "ref_price": 269.57,
       "pick": {
-        "ticker": "NVDA",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "NVIDIA keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "ticker": "AAPL",
+        "stance": "bearish",
+        "conviction": "medium",
+        "thesis": "Apple has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
         "risks": [
-          "Momentum reversal after an extended run",
-          "Macro data surprise"
+          "Positive company news flow",
+          "Benchmark weakness narrows the gap"
         ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.nvda.rel_20d",
+          "prices.aapl.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

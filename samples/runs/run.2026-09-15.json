@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-09-15",
   "date": "2026-09-15",
-  "generated_at": "2026-09-15T21:21:00Z",
+  "generated_at": "2026-09-15T21:36:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.814,
-    "input_tokens": 8898,
-    "output_tokens": 888,
+    "usd": 0.702,
+    "input_tokens": 7167,
+    "output_tokens": 1511,
     "cap_usd": 2.5
   },
-  "duration_minutes": 2.09,
+  "duration_minutes": 1.14,
   "pack": {
     "hash": "086c4da8a4114ef0722c02a5a79cd44378f0bc28ff1bb030ce85740b334dd0a2",
-    "tokens": 8231,
+    "tokens": 6288,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,45 +25,24 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 1,
-  "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
+  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
   "picks": [
     {
-      "id": "2026-09-15:NVDA",
+      "id": "2026-09-15:GOOGL",
       "ref_date": "2026-09-15",
-      "ref_price": 588.69,
+      "ref_price": 1511.28,
       "pick": {
-        "ticker": "NVDA",
+        "ticker": "GOOGL",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "NVIDIA has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Alphabet keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
           "Sector-wide de-rating",
           "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.nvda.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-09-15:AAPL",
-      "ref_date": "2026-09-15",
-      "ref_price": 208.96,
-      "pick": {
-        "ticker": "AAPL",
-        "stance": "bearish",
-        "conviction": "medium",
-        "thesis": "Apple has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
-        "risks": [
-          "Short-covering rally",
-          "Positive company news flow"
-        ],
-        "invalidation": "A close back above the recent range high on rising volume.",
-        "evidence": [
-          "prices.aapl.rel_20d",
+          "prices.googl.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

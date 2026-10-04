@@ -3,68 +3,453 @@
   "title": "Settings (config/settings.json)",
   "type": "object",
   "additionalProperties": false,
-  "required": ["version", "updated_at", "change_note", "pack", "cost", "llm", "scoring", "regime", "setup", "trust", "prices", "lint", "site"],
+  "required": [
+    "version",
+    "updated_at",
+    "change_note",
+    "pack",
+    "cost",
+    "llm",
+    "scoring",
+    "regime",
+    "setup",
+    "trust",
+    "backtest",
+    "goal",
+    "portfolio",
+    "prices",
+    "lint",
+    "site"
+  ],
   "properties": {
-    "version": {"$ref": "common.schema.json#/$defs/semver"},
-    "updated_at": {"$ref": "common.schema.json#/$defs/date"},
-    "change_note": {"$ref": "common.schema.json#/$defs/change_note"},
-    "pack": {"type": "object", "additionalProperties": false,
-             "required": ["token_cap", "recent_runs", "price_lookback_days", "library_principles_max"],
-             "properties": {"token_cap": {"type": "integer", "minimum": 1000, "maximum": 200000},
-                            "recent_runs": {"type": "integer", "minimum": 0, "maximum": 30},
-                            "price_lookback_days": {"type": "integer", "minimum": 5, "maximum": 260},
-                            "library_principles_max": {"type": "integer", "minimum": 0, "maximum": 200}}},
-    "cost": {"type": "object", "additionalProperties": false,
-             "required": ["target_usd", "warn_usd", "hard_cap_usd"],
-             "properties": {"target_usd": {"type": "number", "exclusiveMinimum": 0},
-                            "warn_usd": {"type": "number", "exclusiveMinimum": 0},
-                            "hard_cap_usd": {"type": "number", "exclusiveMinimum": 0}}},
-    "llm": {"type": "object", "additionalProperties": false,
-            "required": ["model", "max_output_tokens", "repair_retries"],
-            "properties": {"model": {"type": ["string", "null"]},
-                           "max_output_tokens": {"type": "integer", "minimum": 100, "maximum": 16000},
-                           "repair_retries": {"type": "integer", "minimum": 0, "maximum": 1}}},
-    "scoring": {"type": "object", "additionalProperties": false,
-                "required": ["horizon_days", "flat_band_pct", "calibration_min_n", "benchmark"],
-                "properties": {"horizon_days": {"type": "integer", "minimum": 1, "maximum": 260},
-                               "flat_band_pct": {"type": "number", "minimum": 0},
-                               "calibration_min_n": {"type": "integer", "minimum": 1},
-                               "benchmark": {"type": "object", "additionalProperties": false,
-                                             "required": ["symbol", "label"],
-                                             "properties": {"symbol": {"$ref": "common.schema.json#/$defs/ticker"},
-                                                            "label": {"type": "string", "maxLength": 60}}}}},
-    "regime": {"type": "object", "additionalProperties": false,
-               "required": ["vol_days", "vol_calm_pct", "vol_stressed_pct", "drawdown_days", "drawdown_stressed_pct", "trend_sma_days", "slope_days"],
-               "properties": {"vol_days": {"type": "integer", "minimum": 5, "maximum": 120},
-                              "vol_calm_pct": {"type": "number", "exclusiveMinimum": 0},
-                              "vol_stressed_pct": {"type": "number", "exclusiveMinimum": 0},
-                              "drawdown_days": {"type": "integer", "minimum": 20, "maximum": 1000},
-                              "drawdown_stressed_pct": {"type": "number", "exclusiveMinimum": 0},
-                              "trend_sma_days": {"type": "integer", "minimum": 5, "maximum": 200},
-                              "slope_days": {"type": "integer", "minimum": 1, "maximum": 60}}},
-    "setup": {"type": "object", "additionalProperties": false, "required": ["stretch_pct", "rel_days"],
-              "properties": {"stretch_pct": {"type": "number", "exclusiveMinimum": 0},
-                             "rel_days": {"type": "integer", "enum": [20]}}},
-    "trust": {"type": "object", "additionalProperties": false,
-              "required": ["paper_min_scored", "small_min_scored", "min_hit_rate_pct", "min_avg_excess_pct"],
-              "description": "Trust ladder: when real picks have earned paper, small-money and trusted status.",
-              "properties": {"paper_min_scored": {"type": "integer", "minimum": 1},
-                             "small_min_scored": {"type": "integer", "minimum": 1},
-                             "min_hit_rate_pct": {"type": "number", "minimum": 0, "maximum": 100},
-                             "min_avg_excess_pct": {"type": "number"}}},
-    "prices": {"type": "object", "additionalProperties": false,
-               "required": ["provider", "keep_days"],
-               "properties": {"provider": {"type": ["string", "null"]},
-                              "keep_days": {"type": "integer", "minimum": 20, "maximum": 1000}}},
-    "lint": {"type": "object", "additionalProperties": false,
-             "required": ["max_file_kb", "max_total_data_mb"],
-             "properties": {"max_file_kb": {"type": "integer", "minimum": 16},
-                            "max_total_data_mb": {"type": "number", "exclusiveMinimum": 0}}},
-    "site": {"type": "object", "additionalProperties": false,
-             "required": ["title", "repo", "runs_shown", "sparkline_days"],
-             "properties": {"title": {"type": "string", "maxLength": 40},
-                            "repo": {"type": "string", "pattern": "^[A-Za-z0-9_.\\-]+/[A-Za-z0-9_.\\-]+$"},
-                            "runs_shown": {"type": "integer", "minimum": 1, "maximum": 365},
-                            "sparkline_days": {"type": "integer", "minimum": 5, "maximum": 260}}}
+    "version": {
+      "$ref": "common.schema.json#/$defs/semver"
+    },
+    "updated_at": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "change_note": {
+      "$ref": "common.schema.json#/$defs/change_note"
+    },
+    "pack": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "token_cap",
+        "recent_runs",
+        "price_lookback_days",
+        "library_principles_max"
+      ],
+      "properties": {
+        "token_cap": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 200000
+        },
+        "recent_runs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 30
+        },
+        "price_lookback_days": {
+          "type": "integer",
+          "minimum": 5,
+          "maximum": 260
+        },
+        "library_principles_max": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 200
+        }
+      }
+    },
+    "cost": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target_usd",
+        "warn_usd",
+        "hard_cap_usd"
+      ],
+      "properties": {
+        "target_usd": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "warn_usd": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "hard_cap_usd": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+    "llm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model",
+        "max_output_tokens",
+        "repair_retries"
+      ],
+      "properties": {
+        "model": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "max_output_tokens": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 16000
+        },
+        "repair_retries": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "scoring": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "horizon_days",
+        "flat_band_pct",
+        "calibration_min_n",
+        "benchmark"
+      ],
+      "properties": {
+        "horizon_days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 260
+        },
+        "flat_band_pct": {
+          "type": "number",
+          "minimum": 0
+        },
+        "calibration_min_n": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "benchmark": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "symbol",
+            "label"
+          ],
+          "properties": {
+            "symbol": {
+              "$ref": "common.schema.json#/$defs/ticker"
+            },
+            "label": {
+              "type": "string",
+              "maxLength": 60
+            }
+          }
+        }
+      }
+    },
+    "regime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "vol_days",
+        "vol_calm_pct",
+        "vol_stressed_pct",
+        "drawdown_days",
+        "drawdown_stressed_pct",
+        "trend_sma_days",
+        "slope_days"
+      ],
+      "properties": {
+        "vol_days": {
+          "type": "integer",
+          "minimum": 5,
+          "maximum": 120
+        },
+        "vol_calm_pct": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "vol_stressed_pct": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "drawdown_days": {
+          "type": "integer",
+          "minimum": 20,
+          "maximum": 1000
+        },
+        "drawdown_stressed_pct": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "trend_sma_days": {
+          "type": "integer",
+          "minimum": 5,
+          "maximum": 200
+        },
+        "slope_days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 60
+        }
+      }
+    },
+    "setup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stretch_pct",
+        "rs_short_days",
+        "rs_long_days",
+        "trend_long_days",
+        "veto_stretched"
+      ],
+      "properties": {
+        "stretch_pct": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "rs_short_days": {
+          "type": "integer",
+          "minimum": 20,
+          "maximum": 250
+        },
+        "rs_long_days": {
+          "type": "integer",
+          "minimum": 20,
+          "maximum": 250
+        },
+        "trend_long_days": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 250
+        },
+        "veto_stretched": {
+          "type": "boolean"
+        }
+      }
+    },
+    "trust": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "min_effective_picks",
+        "trusted_min_effective_picks",
+        "min_hit_ci_lower_pct",
+        "ci_z",
+        "min_avg_signed_excess_pct",
+        "min_calendar_days"
+      ],
+      "description": "Trust ladder gates. Picks count once per ticker per horizon window (effective n); hit rate must clear a Wilson lower bound; excess is signed by stance.",
+      "properties": {
+        "min_effective_picks": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "trusted_min_effective_picks": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "min_hit_ci_lower_pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "ci_z": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "min_avg_signed_excess_pct": {
+          "type": "number"
+        },
+        "min_calendar_days": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "prices": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider",
+        "keep_days"
+      ],
+      "properties": {
+        "provider": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "keep_days": {
+          "type": "integer",
+          "minimum": 20,
+          "maximum": 3000
+        }
+      }
+    },
+    "lint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_file_kb",
+        "max_total_data_mb"
+      ],
+      "properties": {
+        "max_file_kb": {
+          "type": "integer",
+          "minimum": 16
+        },
+        "max_total_data_mb": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+    "site": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "repo",
+        "runs_shown",
+        "sparkline_days",
+        "series_days"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "repo": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.\\-]+/[A-Za-z0-9_.\\-]+$"
+        },
+        "runs_shown": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 365
+        },
+        "sparkline_days": {
+          "type": "integer",
+          "minimum": 5,
+          "maximum": 260
+        },
+        "series_days": {
+          "type": "integer",
+          "minimum": 60,
+          "maximum": 520
+        }
+      }
+    },
+    "backtest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "horizon_days",
+        "step_days",
+        "min_history_days"
+      ],
+      "properties": {
+        "horizon_days": {
+          "type": "integer",
+          "minimum": 5
+        },
+        "step_days": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "min_history_days": {
+          "type": "integer",
+          "minimum": 120
+        }
+      }
+    },
+    "goal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "annual_return_pct"
+      ],
+      "description": "The household's stated target. Shown next to what history says is realistic; never used to pick stocks.",
+      "properties": {
+        "annual_return_pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    },
+    "portfolio": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Portfolio rule v1 (docs/methodology.md): monthly, entry needs the setup gate, empty slots stay in the core.",
+      "required": [
+        "slots",
+        "target_min_names",
+        "entry_min_checks",
+        "keep_min_checks",
+        "max_per_sector",
+        "max_pair_corr",
+        "corr_days",
+        "cost_bps",
+        "weekly_step_days"
+      ],
+      "properties": {
+        "slots": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "target_min_names": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "entry_min_checks": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4
+        },
+        "keep_min_checks": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4
+        },
+        "max_per_sector": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "max_pair_corr": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "corr_days": {
+          "type": "integer",
+          "minimum": 60
+        },
+        "cost_bps": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 200
+        },
+        "weekly_step_days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 21
+        }
+      }
+    }
   }
 }

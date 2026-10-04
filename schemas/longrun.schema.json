@@ -1,0 +1,831 @@
+{
+  "$id": "longrun.schema.json",
+  "title": "Goal and portfolio rule (data/market/longrun.json)",
+  "description": "Long-run compounding, rolling 12-month outcomes vs the household goal, and portfolio rule v1 (monthly, diversified 4-5 names, empty slots in the core). Percentages and values indexed to 100 only; no absolute prices.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "as_of",
+    "sample",
+    "provider",
+    "core",
+    "benchmark",
+    "excluded",
+    "from",
+    "to",
+    "years",
+    "goal",
+    "rule",
+    "stats",
+    "members",
+    "rebalances",
+    "rebalances_total",
+    "avg_names_held",
+    "traded_per_year_pct",
+    "now",
+    "corr_1y",
+    "weekly"
+  ],
+  "properties": {
+    "as_of": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "sample": {
+      "type": "boolean"
+    },
+    "provider": {
+      "type": "string",
+      "maxLength": 40
+    },
+    "core": {
+      "$ref": "common.schema.json#/$defs/ticker"
+    },
+    "benchmark": {
+      "$ref": "common.schema.json#/$defs/ticker"
+    },
+    "excluded": {
+      "type": "array",
+      "maxItems": 60,
+      "items": {
+        "$ref": "common.schema.json#/$defs/ticker"
+      },
+      "description": "Watchlist names with too little history for the shared window."
+    },
+    "from": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "to": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "years": {
+      "type": "number",
+      "minimum": 0
+    },
+    "goal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "annual_return_pct",
+        "years_to_double",
+        "multiple_5y",
+        "multiple_10y"
+      ],
+      "properties": {
+        "annual_return_pct": {
+          "type": "number"
+        },
+        "years_to_double": {
+          "type": "number"
+        },
+        "multiple_5y": {
+          "type": "number"
+        },
+        "multiple_10y": {
+          "type": "number"
+        }
+      }
+    },
+    "rule": {
+      "type": "object",
+      "description": "Copy of settings.portfolio used for this run, plus the rule version."
+    },
+    "stats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rule",
+        "equal_weight",
+        "core",
+        "bench"
+      ],
+      "properties": {
+        "rule": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "years",
+            "cagr_pct",
+            "cagr_1y_pct",
+            "cagr_3y_pct",
+            "cagr_5y_pct",
+            "max_dd_pct",
+            "vol_pct",
+            "hit_goal_12m_pct",
+            "loss_12m_pct",
+            "worst_12m_pct",
+            "median_12m_pct",
+            "best_12m_pct",
+            "windows_12m"
+          ],
+          "properties": {
+            "years": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "cagr_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "cagr_1y_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "cagr_3y_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "cagr_5y_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "max_dd_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "vol_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "hit_goal_12m_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "loss_12m_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "worst_12m_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "median_12m_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "best_12m_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "windows_12m": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "equal_weight": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "years",
+            "cagr_pct",
+            "cagr_1y_pct",
+            "cagr_3y_pct",
+            "cagr_5y_pct",
+            "max_dd_pct",
+            "vol_pct",
+            "hit_goal_12m_pct",
+            "loss_12m_pct",
+            "worst_12m_pct",
+            "median_12m_pct",
+            "best_12m_pct",
+            "windows_12m"
+          ],
+          "properties": {
+            "years": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "cagr_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "cagr_1y_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "cagr_3y_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "cagr_5y_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "max_dd_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "vol_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "hit_goal_12m_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "loss_12m_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "worst_12m_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "median_12m_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "best_12m_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "windows_12m": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "core": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "years",
+            "cagr_pct",
+            "cagr_1y_pct",
+            "cagr_3y_pct",
+            "cagr_5y_pct",
+            "max_dd_pct",
+            "vol_pct",
+            "hit_goal_12m_pct",
+            "loss_12m_pct",
+            "worst_12m_pct",
+            "median_12m_pct",
+            "best_12m_pct",
+            "windows_12m"
+          ],
+          "properties": {
+            "years": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "cagr_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "cagr_1y_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "cagr_3y_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "cagr_5y_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "max_dd_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "vol_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "hit_goal_12m_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "loss_12m_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "worst_12m_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "median_12m_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "best_12m_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "windows_12m": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "bench": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "years",
+            "cagr_pct",
+            "cagr_1y_pct",
+            "cagr_3y_pct",
+            "cagr_5y_pct",
+            "max_dd_pct",
+            "vol_pct",
+            "hit_goal_12m_pct",
+            "loss_12m_pct",
+            "worst_12m_pct",
+            "median_12m_pct",
+            "best_12m_pct",
+            "windows_12m"
+          ],
+          "properties": {
+            "years": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "cagr_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "cagr_1y_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "cagr_3y_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "cagr_5y_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "max_dd_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "vol_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "hit_goal_12m_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "loss_12m_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "worst_12m_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "median_12m_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "best_12m_pct": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "windows_12m": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "members": {
+      "type": "array",
+      "maxItems": 60,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "symbol",
+          "sector",
+          "held_pct",
+          "years",
+          "cagr_pct",
+          "cagr_1y_pct",
+          "cagr_3y_pct",
+          "cagr_5y_pct",
+          "max_dd_pct",
+          "vol_pct",
+          "hit_goal_12m_pct",
+          "loss_12m_pct",
+          "worst_12m_pct",
+          "median_12m_pct",
+          "best_12m_pct",
+          "windows_12m"
+        ],
+        "properties": {
+          "symbol": {
+            "$ref": "common.schema.json#/$defs/ticker"
+          },
+          "sector": {
+            "type": "string",
+            "maxLength": 40
+          },
+          "held_pct": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "years": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "cagr_pct": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "cagr_1y_pct": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "cagr_3y_pct": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "cagr_5y_pct": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "max_dd_pct": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "vol_pct": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "hit_goal_12m_pct": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "loss_12m_pct": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "worst_12m_pct": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "median_12m_pct": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "best_12m_pct": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "windows_12m": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "rebalances": {
+      "type": "array",
+      "maxItems": 24,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "date",
+          "holdings",
+          "core_pct",
+          "traded_pct"
+        ],
+        "properties": {
+          "date": {
+            "$ref": "common.schema.json#/$defs/date"
+          },
+          "holdings": {
+            "type": "array",
+            "maxItems": 10,
+            "items": {
+              "$ref": "common.schema.json#/$defs/ticker"
+            }
+          },
+          "core_pct": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "traded_pct": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 200
+          }
+        }
+      }
+    },
+    "rebalances_total": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "avg_names_held": {
+      "type": "number",
+      "minimum": 0
+    },
+    "traded_per_year_pct": {
+      "type": "number",
+      "minimum": 0
+    },
+    "now": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "last_rebalance",
+        "holdings",
+        "if_rebalanced_today",
+        "status",
+        "diversification"
+      ],
+      "properties": {
+        "last_rebalance": {
+          "$ref": "common.schema.json#/$defs/date"
+        },
+        "holdings": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {
+            "$ref": "common.schema.json#/$defs/ticker"
+          }
+        },
+        "if_rebalanced_today": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {
+            "$ref": "common.schema.json#/$defs/ticker"
+          }
+        },
+        "status": {
+          "type": "array",
+          "maxItems": 60,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "symbol",
+              "status",
+              "sector"
+            ],
+            "properties": {
+              "symbol": {
+                "$ref": "common.schema.json#/$defs/ticker"
+              },
+              "status": {
+                "enum": [
+                  "kept",
+                  "added",
+                  "fails_checks",
+                  "stretched",
+                  "slots_full",
+                  "sector_cap",
+                  "too_correlated",
+                  "no_history"
+                ]
+              },
+              "sector": {
+                "type": "string",
+                "maxLength": 40
+              },
+              "passed": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4
+              },
+              "stretched": {
+                "type": "boolean"
+              },
+              "vs_bench_long_pct": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "diversification": {
+          "type": "object",
+          "description": "Slot-portfolio risk over the last year: names, core share, sectors, average pair correlation, volatility, 95% 20-day loss range."
+        }
+      }
+    },
+    "corr_1y": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "symbols",
+        "m"
+      ],
+      "properties": {
+        "symbols": {
+          "type": "array",
+          "maxItems": 60,
+          "items": {
+            "$ref": "common.schema.json#/$defs/ticker"
+          }
+        },
+        "m": {
+          "type": "array",
+          "maxItems": 60,
+          "items": {
+            "type": "array",
+            "maxItems": 60,
+            "items": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "weekly": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dates",
+        "rule",
+        "equal_weight",
+        "core",
+        "bench",
+        "members"
+      ],
+      "properties": {
+        "dates": {
+          "type": "array",
+          "maxItems": 800,
+          "items": {
+            "$ref": "common.schema.json#/$defs/date"
+          }
+        },
+        "rule": {
+          "type": "array",
+          "maxItems": 800,
+          "items": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "equal_weight": {
+          "type": "array",
+          "maxItems": 800,
+          "items": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "core": {
+          "type": "array",
+          "maxItems": 800,
+          "items": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "bench": {
+          "type": "array",
+          "maxItems": 800,
+          "items": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "members": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "maxItems": 800,
+            "items": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    }
+  }
+}

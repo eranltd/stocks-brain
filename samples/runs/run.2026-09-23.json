@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-09-23",
   "date": "2026-09-23",
-  "generated_at": "2026-09-23T21:28:00Z",
+  "generated_at": "2026-09-23T21:19:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.798,
-    "input_tokens": 10785,
-    "output_tokens": 1168,
+    "usd": 0.361,
+    "input_tokens": 7497,
+    "output_tokens": 1633,
     "cap_usd": 2.5
   },
-  "duration_minutes": 1.32,
+  "duration_minutes": 1.97,
   "pack": {
     "hash": "86f1d50f2312034c93d28eb7d093fc86363e8aa44aff3fb6b9438bc346fcaca1",
-    "tokens": 9946,
+    "tokens": 6855,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,19 +25,19 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
+  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
   "picks": [
     {
       "id": "2026-09-23:GOOGL",
       "ref_date": "2026-09-23",
-      "ref_price": 666.54,
+      "ref_price": 1572.44,
       "pick": {
         "ticker": "GOOGL",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Alphabet has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Alphabet keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Momentum reversal after an extended run",
+          "Macro data surprise",
           "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
@@ -49,42 +49,42 @@
       }
     },
     {
-      "id": "2026-09-23:NVDA",
+      "id": "2026-09-23:COST",
       "ref_date": "2026-09-23",
-      "ref_price": 618.61,
+      "ref_price": 1592.51,
       "pick": {
-        "ticker": "NVDA",
+        "ticker": "COST",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "NVIDIA keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "Costco keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
           "Momentum reversal after an extended run",
-          "Macro data surprise"
+          "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.nvda.rel_20d",
+          "prices.cost.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-09-23:MSFT",
+      "id": "2026-09-23:NVDA",
       "ref_date": "2026-09-23",
-      "ref_price": 362.58,
+      "ref_price": 142.56,
       "pick": {
-        "ticker": "MSFT",
-        "stance": "neutral",
-        "conviction": "low",
-        "thesis": "Microsoft is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "ticker": "NVDA",
+        "stance": "bearish",
+        "conviction": "medium",
+        "thesis": "NVIDIA has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
         "risks": [
-          "Breakout in either direction",
-          "Volatility expansion"
+          "Short-covering rally",
+          "Benchmark weakness narrows the gap"
         ],
-        "invalidation": "A sustained move away from the benchmark in either direction.",
+        "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.msft.rel_20d",
+          "prices.nvda.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

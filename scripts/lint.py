@@ -106,6 +106,8 @@ class Lint:
             if not c["target_usd"] <= c["warn_usd"] <= c["hard_cap_usd"]:
                 self.err(CONFIG / "settings.json", "cost must satisfy target_usd <= warn_usd <= hard_cap_usd")
         if wl:
+            if wl.get("core") and wl["core"]["symbol"] not in {c["symbol"] for c in wl.get("context", [])}:
+                self.err(CONFIG / "watchlist.json", "core.symbol must also be listed in context (so it is fetched)")
             syms = [s["symbol"] for s in wl["symbols"]]
             if len(syms) != len(set(syms)):
                 self.err(CONFIG / "watchlist.json", "duplicate symbols")
@@ -154,6 +156,7 @@ class Lint:
     def check_data(self, guard: dict | None, wl: dict | None, st: dict | None) -> None:
         on_list = {s["symbol"] for s in wl["symbols"]} if wl else set()
         bench = st["scoring"]["benchmark"]["symbol"] if st else None
+        ctx = {c["symbol"] for c in wl.get("context", [])} if wl else set()
         for base in (ROOT, SAMPLES):
             runs_dir = RUNS if base is ROOT else SAMPLES / "runs"
             kb_dir = KB if base is ROOT else SAMPLES / "kb"
@@ -188,8 +191,8 @@ class Lint:
                 if obj:
                     if p.stem != obj["symbol"]:
                         self.err(p, f"filename does not match symbol {obj['symbol']}")
-                    if obj["symbol"] not in on_list | {bench}:
-                        self.warn(p, f"{obj['symbol']} is not on the watchlist or the benchmark")
+                    if obj["symbol"] not in on_list | ctx | {bench}:
+                        self.warn(p, f"{obj['symbol']} is not on the watchlist, the context list or the benchmark")
                     dates = [b["date"] for b in obj["bars"]]
                     if dates != sorted(set(dates)):
                         self.err(p, "bars must be strictly ascending by date")
@@ -256,9 +259,11 @@ class Lint:
             self.err(path, "banned phrase in summary")
 
     def check_market(self) -> None:
-        derived = DATA / "market" / "derived.json"
-        if derived.exists():
-            self.schema(derived, "derived.schema.json")
+        for path, schema in ((DATA / "market" / "derived.json", "derived.schema.json"),
+                             (DATA / "market" / "longrun.json", "longrun.schema.json"),
+                             (DATA / "portfolio" / "paper.json", "paper.schema.json")):
+            if path.exists():
+                self.schema(path, schema)
         for p in _walk(ROOT):
             rel = p.relative_to(ROOT).as_posix()
             if rel.startswith("data/") and p.suffix == ".json":
@@ -290,7 +295,7 @@ class Lint:
         max_kb = st["lint"]["max_file_kb"] if st else 512
         max_data = st["lint"]["max_total_data_mb"] if st else 50
         forbidden = set(guard["forbidden_keys"]) if guard else set()
-        literals = {s["symbol"] for s in wl["symbols"]} if wl else set()
+        literals = {s["symbol"] for s in [*wl["symbols"], *wl.get("context", [])]} if wl else set()
         if st:
             literals.add(st["scoring"]["benchmark"]["symbol"])
         lit_re = re.compile(r"[\"'`](" + "|".join(map(re.escape, sorted(literals))) + r")[\"'`]") if literals else None

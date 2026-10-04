@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-08-28",
   "date": "2026-08-28",
-  "generated_at": "2026-08-28T21:13:00Z",
+  "generated_at": "2026-08-28T21:25:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.407,
-    "input_tokens": 6469,
-    "output_tokens": 1612,
+    "usd": 0.78,
+    "input_tokens": 6577,
+    "output_tokens": 1764,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.63,
+  "duration_minutes": 2.19,
   "pack": {
     "hash": "ded7392e39d51b09bff8b83dadd290046cde8239f9c1d58e4d7cb2ca2272ce54",
-    "tokens": 5634,
+    "tokens": 6098,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,20 +25,20 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
+  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
   "picks": [
     {
       "id": "2026-08-28:NVDA",
       "ref_date": "2026-08-28",
-      "ref_price": 550.21,
+      "ref_price": 149.17,
       "pick": {
         "ticker": "NVDA",
         "stance": "bullish",
         "conviction": "high",
         "thesis": "NVIDIA keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Macro data surprise",
-          "Momentum reversal after an extended run"
+          "Momentum reversal after an extended run",
+          "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -49,42 +49,42 @@
       }
     },
     {
-      "id": "2026-08-28:COST",
+      "id": "2026-08-28:GOOGL",
       "ref_date": "2026-08-28",
-      "ref_price": 105.49,
+      "ref_price": 1342.69,
       "pick": {
-        "ticker": "COST",
+        "ticker": "GOOGL",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Costco has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Alphabet keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Momentum reversal after an extended run",
-          "Macro data surprise"
+          "Macro data surprise",
+          "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.cost.rel_20d",
+          "prices.googl.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-08-28:AAPL",
+      "id": "2026-08-28:META",
       "ref_date": "2026-08-28",
-      "ref_price": 214.47,
+      "ref_price": 134.57,
       "pick": {
-        "ticker": "AAPL",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Apple has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "ticker": "META",
+        "stance": "bearish",
+        "conviction": "medium",
+        "thesis": "Meta Platforms broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
         "risks": [
-          "Macro data surprise",
-          "Momentum reversal after an extended run"
+          "Short-covering rally",
+          "Positive company news flow"
         ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.aapl.rel_20d",
+          "prices.meta.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

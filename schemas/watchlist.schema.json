@@ -3,21 +3,120 @@
   "title": "Watchlist (config/watchlist.json)",
   "type": "object",
   "additionalProperties": false,
-  "required": ["version", "updated_at", "change_note", "symbols"],
+  "required": [
+    "version",
+    "updated_at",
+    "change_note",
+    "symbols"
+  ],
   "properties": {
-    "version": {"$ref": "common.schema.json#/$defs/semver"},
-    "updated_at": {"$ref": "common.schema.json#/$defs/date"},
-    "change_note": {"$ref": "common.schema.json#/$defs/change_note"},
+    "version": {
+      "$ref": "common.schema.json#/$defs/semver"
+    },
+    "updated_at": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "change_note": {
+      "$ref": "common.schema.json#/$defs/change_note"
+    },
     "symbols": {
-      "type": "array", "minItems": 1, "maxItems": 40,
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 40,
       "items": {
-        "type": "object", "additionalProperties": false,
-        "required": ["symbol", "name"],
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "symbol",
+          "name",
+          "sector"
+        ],
         "properties": {
-          "symbol": {"$ref": "common.schema.json#/$defs/ticker"},
-          "name": {"type": "string", "minLength": 1, "maxLength": 60},
-          "aliases": {"type": "array", "uniqueItems": true, "maxItems": 4, "items": {"$ref": "common.schema.json#/$defs/ticker"},
-                      "description": "Other tickers for the same company (share classes), used to match claims."}
+          "symbol": {
+            "$ref": "common.schema.json#/$defs/ticker"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "aliases": {
+            "type": "array",
+            "uniqueItems": true,
+            "maxItems": 4,
+            "items": {
+              "$ref": "common.schema.json#/$defs/ticker"
+            },
+            "description": "Other tickers for the same company (share classes), used to match claims."
+          },
+          "sector": {
+            "enum": [
+              "Information Technology",
+              "Communication Services",
+              "Consumer Discretionary",
+              "Consumer Staples",
+              "Health Care",
+              "Financials",
+              "Industrials",
+              "Energy",
+              "Materials",
+              "Utilities",
+              "Real Estate"
+            ],
+            "description": "GICS sector, used for the portfolio diversification rule (max names per sector)."
+          }
+        }
+      }
+    },
+    "core": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "symbol",
+        "label"
+      ],
+      "description": "Public proxy for the household's core index fund (no holdings). Must also be listed in context.",
+      "properties": {
+        "symbol": {
+          "$ref": "common.schema.json#/$defs/ticker"
+        },
+        "label": {
+          "type": "string",
+          "maxLength": 60
+        }
+      }
+    },
+    "context": {
+      "type": "array",
+      "maxItems": 20,
+      "description": "Market-context instruments: fetched and derived like the watchlist, but never picked.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "symbol",
+          "name",
+          "role"
+        ],
+        "properties": {
+          "symbol": {
+            "$ref": "common.schema.json#/$defs/ticker"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 60
+          },
+          "role": {
+            "enum": [
+              "spx",
+              "cash",
+              "eq_ndx",
+              "eq_spx",
+              "bonds",
+              "credit",
+              "other"
+            ]
+          }
         }
       }
     }

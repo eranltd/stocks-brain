@@ -57,6 +57,16 @@ jobs:
         if: env.MONTHLY != 'true' && env.DRY != 'true'
         run: python3 scripts/routines_code.py regime
 
+      - name: Goal check and portfolio rule
+        id: portfolio_rule
+        if: env.MONTHLY != 'true' && env.DRY != 'true'
+        run: python3 scripts/routines_code.py longrun
+
+      - name: Paper portfolio (forward only)
+        id: paper_portfolio
+        if: env.MONTHLY != 'true' && env.DRY != 'true'
+        run: python3 scripts/routines_code.py paper
+
       - name: Calibration
         id: calibration
         if: env.DRY != 'true' && (env.MONTHLY == 'true' || github.event_name == 'workflow_dispatch')
@@ -75,6 +85,8 @@ jobs:
           ROUTINE_DERIVE_MARKET: ${{ steps.derive_market.outcome }}
           ROUTINE_SCORE_PICKS: ${{ steps.score_picks.outcome }}
           ROUTINE_REGIME_MONITOR: ${{ steps.regime_monitor.outcome }}
+          ROUTINE_PORTFOLIO_RULE: ${{ steps.portfolio_rule.outcome }}
+          ROUTINE_PAPER_PORTFOLIO: ${{ steps.paper_portfolio.outcome }}
           ROUTINE_CALIBRATION: ${{ steps.calibration.outcome }}
           ROUTINE_LINT: ${{ steps.lint.outcome }}
         run: |

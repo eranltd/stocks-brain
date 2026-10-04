@@ -61,6 +61,21 @@ def main() -> int:
         from _common import watchlist
         dump_json(OUT / "market" / "derived.json",
                   routines_code.compute_derived(SAMPLES / "prices", st, watchlist(), sample=True, provider="sample"))
+    # Goal and portfolio rule: same source as prices (never sample numbers next to live prices).
+    longrun = None
+    if price_source == "live" and (MARKET / "longrun.json").exists():
+        _copy(MARKET / "longrun.json", OUT / "market" / "longrun.json")
+        longrun = "market/longrun.json"
+    elif price_source == "sample":
+        import routines_code
+        from _common import watchlist
+        doc = routines_code.compute_longrun(SAMPLES / "prices", st, watchlist(), sample=True, provider="sample")
+        if doc:
+            dump_json(OUT / "market" / "longrun.json", doc)
+            longrun = "market/longrun.json"
+    paper = DATA / "portfolio" / "paper.json"
+    if price_source == "live" and paper.exists():
+        _copy(paper, OUT / "portfolio" / "paper.json")
     kb = {}
     # Curated knowledge (library, observations) is always the real file once it has content.
     def curated(name: str, key: str) -> Path:
@@ -105,6 +120,8 @@ def main() -> int:
         "runs": [f"runs/{p.name}" for p in runs],
         "runs_shown": st["site"]["runs_shown"],
         "market": "market/derived.json",
+        "longrun": longrun,
+        "paper": "portfolio/paper.json" if price_source == "live" and paper.exists() else None,
         "kb": kb,
         "docs": docs,
     })

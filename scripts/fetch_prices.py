@@ -25,9 +25,12 @@ import providers  # noqa: E402
 
 def symbols() -> list[str]:
     st = settings()
-    out = [s["symbol"] for s in watchlist()["symbols"]]
+    wl = watchlist()
+    out = [s["symbol"] for s in wl["symbols"]]
     bench = st["scoring"]["benchmark"]["symbol"]
-    return out + ([bench] if bench not in out else [])
+    out += [bench] if bench not in out else []
+    # Market-context instruments (cash, breadth, bonds, credit, core proxy) are fetched but never picked.
+    return out + [c["symbol"] for c in wl.get("context", []) if c["symbol"] not in out]
 
 
 def check_provider(name: str | None) -> None:

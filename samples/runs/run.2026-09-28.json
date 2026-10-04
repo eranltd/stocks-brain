@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-09-28",
   "date": "2026-09-28",
-  "generated_at": "2026-09-28T21:24:00Z",
+  "generated_at": "2026-09-28T21:19:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.766,
-    "input_tokens": 6599,
-    "output_tokens": 1655,
+    "usd": 0.523,
+    "input_tokens": 7316,
+    "output_tokens": 1377,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.43,
+  "duration_minutes": 1.43,
   "pack": {
     "hash": "c3319d3dae178de082279a514536e3469615111c9367cf2fa117048f52e4ad87",
-    "tokens": 5926,
+    "tokens": 6477,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,33 +25,12 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
+  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
   "picks": [
-    {
-      "id": "2026-09-28:AVGO",
-      "ref_date": "2026-09-28",
-      "ref_price": 671.69,
-      "pick": {
-        "ticker": "AVGO",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Broadcom keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
-        "risks": [
-          "Momentum reversal after an extended run",
-          "Macro data surprise"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.avgo.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
     {
       "id": "2026-09-28:GOOGL",
       "ref_date": "2026-09-28",
-      "ref_price": 691.0,
+      "ref_price": 1625.46,
       "pick": {
         "ticker": "GOOGL",
         "stance": "bullish",
@@ -59,7 +38,7 @@
         "thesis": "Alphabet has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
           "Momentum reversal after an extended run",
-          "Sector-wide de-rating"
+          "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -72,19 +51,61 @@
     {
       "id": "2026-09-28:COST",
       "ref_date": "2026-09-28",
-      "ref_price": 95.09,
+      "ref_price": 1581.95,
       "pick": {
         "ticker": "COST",
+        "stance": "bullish",
+        "conviction": "medium",
+        "thesis": "Costco keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "risks": [
+          "Sector-wide de-rating",
+          "Momentum reversal after an extended run"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.cost.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-09-28:AMZN",
+      "ref_date": "2026-09-28",
+      "ref_price": 759.82,
+      "pick": {
+        "ticker": "AMZN",
+        "stance": "bullish",
+        "conviction": "medium",
+        "thesis": "Amazon has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "risks": [
+          "Sector-wide de-rating",
+          "Macro data surprise"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.amzn.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-09-28:NVDA",
+      "ref_date": "2026-09-28",
+      "ref_price": 133.82,
+      "pick": {
+        "ticker": "NVDA",
         "stance": "bearish",
-        "conviction": "high",
-        "thesis": "Costco broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
+        "conviction": "medium",
+        "thesis": "NVIDIA broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
         "risks": [
           "Benchmark weakness narrows the gap",
           "Short-covering rally"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.cost.rel_20d",
+          "prices.nvda.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-08-11",
   "date": "2026-08-11",
-  "generated_at": "2026-08-11T21:16:00Z",
+  "generated_at": "2026-08-11T21:38:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.768,
-    "input_tokens": 9080,
-    "output_tokens": 1794,
+    "usd": 0.338,
+    "input_tokens": 9857,
+    "output_tokens": 1261,
     "cap_usd": 2.5
   },
-  "duration_minutes": 1.66,
+  "duration_minutes": 3.44,
   "pack": {
     "hash": "a9a61b8d0369490e465cbdeb2531f2387c8a3247104f7f942132bccf8a511190",
-    "tokens": 8369,
+    "tokens": 9548,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,45 +25,45 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
+  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
   "picks": [
     {
-      "id": "2026-08-11:AAPL",
+      "id": "2026-08-11:COST",
       "ref_date": "2026-08-11",
-      "ref_price": 212.31,
+      "ref_price": 1673.61,
       "pick": {
-        "ticker": "AAPL",
+        "ticker": "COST",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Apple has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Costco has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Momentum reversal after an extended run",
+          "Sector-wide de-rating",
           "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.aapl.rel_20d",
+          "prices.cost.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-08-11:COST",
+      "id": "2026-08-11:NVDA",
       "ref_date": "2026-08-11",
-      "ref_price": 96.52,
+      "ref_price": 138.18,
       "pick": {
-        "ticker": "COST",
+        "ticker": "NVDA",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Costco keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "NVIDIA has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Momentum reversal after an extended run",
-          "Sector-wide de-rating"
+          "Sector-wide de-rating",
+          "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.cost.rel_20d",
+          "prices.nvda.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

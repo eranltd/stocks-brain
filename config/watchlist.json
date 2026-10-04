@@ -1,42 +1,86 @@
 {
-  "version": "0.2.0",
+  "version": "0.4.0",
   "updated_at": "2026-10-04",
-  "change_note": "Aliases for share classes (claims about GOOG match GOOGL).",
+  "change_note": "GICS sector per name (diversification checks for the 4-5 stock portfolio).",
   "symbols": [
     {
       "symbol": "AAPL",
-      "name": "Apple"
+      "name": "Apple",
+      "sector": "Information Technology"
     },
     {
       "symbol": "MSFT",
-      "name": "Microsoft"
+      "name": "Microsoft",
+      "sector": "Information Technology"
     },
     {
       "symbol": "NVDA",
-      "name": "NVIDIA"
+      "name": "NVIDIA",
+      "sector": "Information Technology"
     },
     {
       "symbol": "AMZN",
-      "name": "Amazon"
+      "name": "Amazon",
+      "sector": "Consumer Discretionary"
     },
     {
       "symbol": "GOOGL",
       "name": "Alphabet",
       "aliases": [
         "GOOG"
-      ]
+      ],
+      "sector": "Communication Services"
     },
     {
       "symbol": "META",
-      "name": "Meta Platforms"
+      "name": "Meta Platforms",
+      "sector": "Communication Services"
     },
     {
       "symbol": "AVGO",
-      "name": "Broadcom"
+      "name": "Broadcom",
+      "sector": "Information Technology"
     },
     {
       "symbol": "COST",
-      "name": "Costco"
+      "name": "Costco",
+      "sector": "Consumer Staples"
+    }
+  ],
+  "core": {
+    "symbol": "SPY",
+    "label": "S&P 500 index fund (core proxy)"
+  },
+  "context": [
+    {
+      "symbol": "SPY",
+      "name": "S&P 500",
+      "role": "spx"
+    },
+    {
+      "symbol": "SGOV",
+      "name": "0-3 month T-bills",
+      "role": "cash"
+    },
+    {
+      "symbol": "QQQE",
+      "name": "Nasdaq-100 equal weight",
+      "role": "eq_ndx"
+    },
+    {
+      "symbol": "RSP",
+      "name": "S&P 500 equal weight",
+      "role": "eq_spx"
+    },
+    {
+      "symbol": "IEF",
+      "name": "7-10 year Treasuries",
+      "role": "bonds"
+    },
+    {
+      "symbol": "HYG",
+      "name": "High-yield corporate bonds",
+      "role": "credit"
     }
   ]
 }

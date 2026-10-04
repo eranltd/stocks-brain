@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-09-30",
   "date": "2026-09-30",
-  "generated_at": "2026-09-30T21:36:00Z",
+  "generated_at": "2026-09-30T21:38:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.664,
-    "input_tokens": 11355,
-    "output_tokens": 1629,
+    "usd": 0.652,
+    "input_tokens": 10801,
+    "output_tokens": 844,
     "cap_usd": 2.5
   },
-  "duration_minutes": 1.28,
+  "duration_minutes": 3.08,
   "pack": {
     "hash": "7e22236aa6d3a8459bf206db6266b58386b22b536a46b1362509ebf4e49c2b99",
-    "tokens": 10506,
+    "tokens": 10481,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,20 +25,20 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
+  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
   "picks": [
     {
       "id": "2026-09-30:GOOGL",
       "ref_date": "2026-09-30",
-      "ref_price": 697.25,
+      "ref_price": 1626.38,
       "pick": {
         "ticker": "GOOGL",
         "stance": "bullish",
         "conviction": "high",
         "thesis": "Alphabet keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Macro data surprise",
-          "Sector-wide de-rating"
+          "Momentum reversal after an extended run",
+          "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -49,40 +49,19 @@
       }
     },
     {
-      "id": "2026-09-30:META",
-      "ref_date": "2026-09-30",
-      "ref_price": 639.84,
-      "pick": {
-        "ticker": "META",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Meta Platforms has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
-        "risks": [
-          "Momentum reversal after an extended run",
-          "Macro data surprise"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.meta.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
       "id": "2026-09-30:COST",
       "ref_date": "2026-09-30",
-      "ref_price": 89.04,
+      "ref_price": 1650.84,
       "pick": {
         "ticker": "COST",
-        "stance": "bearish",
+        "stance": "bullish",
         "conviction": "high",
-        "thesis": "Costco broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
+        "thesis": "Costco has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Short-covering rally",
-          "Positive company news flow"
+          "Momentum reversal after an extended run",
+          "Sector-wide de-rating"
         ],
-        "invalidation": "A close back above the recent range high on rising volume.",
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
           "prices.cost.rel_20d",
           "benchmark.trend",
@@ -91,21 +70,21 @@
       }
     },
     {
-      "id": "2026-09-30:AAPL",
+      "id": "2026-09-30:META",
       "ref_date": "2026-09-30",
-      "ref_price": 211.75,
+      "ref_price": 126.92,
       "pick": {
-        "ticker": "AAPL",
+        "ticker": "META",
         "stance": "neutral",
         "conviction": "low",
-        "thesis": "Apple is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "thesis": "Meta Platforms is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
         "risks": [
           "Volatility expansion",
           "Breakout in either direction"
         ],
         "invalidation": "A sustained move away from the benchmark in either direction.",
         "evidence": [
-          "prices.aapl.rel_20d",
+          "prices.meta.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

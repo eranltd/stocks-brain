@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-09-16",
   "date": "2026-09-16",
-  "generated_at": "2026-09-16T21:39:00Z",
+  "generated_at": "2026-09-16T21:34:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.326,
-    "input_tokens": 10037,
-    "output_tokens": 899,
+    "usd": 0.909,
+    "input_tokens": 9670,
+    "output_tokens": 877,
     "cap_usd": 2.5
   },
-  "duration_minutes": 1.77,
+  "duration_minutes": 3.38,
   "pack": {
     "hash": "9b10a282f99d49cd7876c3965af4270da0d60398d3e993938032bf1ebc9eb20c",
-    "tokens": 9516,
+    "tokens": 8946,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -28,21 +28,42 @@
   "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
   "picks": [
     {
-      "id": "2026-09-16:NVDA",
+      "id": "2026-09-16:GOOGL",
       "ref_date": "2026-09-16",
-      "ref_price": 599.52,
+      "ref_price": 1516.78,
       "pick": {
-        "ticker": "NVDA",
+        "ticker": "GOOGL",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "NVIDIA keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "Alphabet keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
           "Sector-wide de-rating",
           "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.nvda.rel_20d",
+          "prices.googl.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-09-16:MSFT",
+      "ref_date": "2026-09-16",
+      "ref_price": 305.79,
+      "pick": {
+        "ticker": "MSFT",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Microsoft has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "risks": [
+          "Macro data surprise",
+          "Momentum reversal after an extended run"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.msft.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
@@ -51,15 +72,15 @@
     {
       "id": "2026-09-16:AVGO",
       "ref_date": "2026-09-16",
-      "ref_price": 653.52,
+      "ref_price": 110.96,
       "pick": {
         "ticker": "AVGO",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Broadcom keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "Broadcom has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Momentum reversal after an extended run",
-          "Sector-wide de-rating"
+          "Sector-wide de-rating",
+          "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -70,21 +91,21 @@
       }
     },
     {
-      "id": "2026-09-16:AAPL",
+      "id": "2026-09-16:META",
       "ref_date": "2026-09-16",
-      "ref_price": 212.03,
+      "ref_price": 126.28,
       "pick": {
-        "ticker": "AAPL",
+        "ticker": "META",
         "stance": "bearish",
         "conviction": "low",
-        "thesis": "Apple broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
+        "thesis": "Meta Platforms broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
         "risks": [
           "Short-covering rally",
           "Positive company news flow"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.aapl.rel_20d",
+          "prices.meta.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

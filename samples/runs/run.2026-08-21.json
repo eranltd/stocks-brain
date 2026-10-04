@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-08-21",
   "date": "2026-08-21",
-  "generated_at": "2026-08-21T21:30:00Z",
+  "generated_at": "2026-08-21T21:18:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 1.293,
-    "input_tokens": 8129,
-    "output_tokens": 1361,
+    "usd": 1.145,
+    "input_tokens": 9471,
+    "output_tokens": 1511,
     "cap_usd": 2.5
   },
-  "duration_minutes": 2.8,
+  "duration_minutes": 3.65,
   "pack": {
     "hash": "fc13087480441c3855600f841755a2f5d45a2fe0fd15b28ae7129421fbe96675",
-    "tokens": 7449,
+    "tokens": 8739,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -28,38 +28,17 @@
   "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
   "picks": [
     {
-      "id": "2026-08-21:COST",
-      "ref_date": "2026-08-21",
-      "ref_price": 107.38,
-      "pick": {
-        "ticker": "COST",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Costco has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
-        "risks": [
-          "Macro data surprise",
-          "Sector-wide de-rating"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.cost.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
       "id": "2026-08-21:NVDA",
       "ref_date": "2026-08-21",
-      "ref_price": 501.07,
+      "ref_price": 150.54,
       "pick": {
         "ticker": "NVDA",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "NVIDIA keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "NVIDIA has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Macro data surprise",
-          "Momentum reversal after an extended run"
+          "Sector-wide de-rating",
+          "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -70,21 +49,42 @@
       }
     },
     {
-      "id": "2026-08-21:AMZN",
+      "id": "2026-08-21:COST",
       "ref_date": "2026-08-21",
-      "ref_price": 602.02,
+      "ref_price": 1518.82,
       "pick": {
-        "ticker": "AMZN",
-        "stance": "neutral",
-        "conviction": "low",
-        "thesis": "Amazon is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "ticker": "COST",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Costco keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Breakout in either direction",
-          "Volatility expansion"
+          "Sector-wide de-rating",
+          "Macro data surprise"
         ],
-        "invalidation": "A sustained move away from the benchmark in either direction.",
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.amzn.rel_20d",
+          "prices.cost.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-21:AVGO",
+      "ref_date": "2026-08-21",
+      "ref_price": 108.73,
+      "pick": {
+        "ticker": "AVGO",
+        "stance": "bearish",
+        "conviction": "high",
+        "thesis": "Broadcom has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "risks": [
+          "Positive company news flow",
+          "Short-covering rally"
+        ],
+        "invalidation": "A close back above the recent range high on rising volume.",
+        "evidence": [
+          "prices.avgo.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

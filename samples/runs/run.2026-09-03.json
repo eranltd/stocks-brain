@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-09-03",
   "date": "2026-09-03",
-  "generated_at": "2026-09-03T21:27:00Z",
+  "generated_at": "2026-09-03T21:40:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.616,
-    "input_tokens": 9327,
-    "output_tokens": 842,
+    "usd": 0.505,
+    "input_tokens": 11045,
+    "output_tokens": 1275,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.55,
+  "duration_minutes": 3.19,
   "pack": {
     "hash": "f350ad7106b2dcff533657c51a0040a7c4f2f7ed71a18ed4aac0f2b86e8a5c64",
-    "tokens": 8822,
+    "tokens": 10516,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,62 +25,20 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
+  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
   "picks": [
-    {
-      "id": "2026-09-03:COST",
-      "ref_date": "2026-09-03",
-      "ref_price": 106.31,
-      "pick": {
-        "ticker": "COST",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Costco keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
-        "risks": [
-          "Macro data surprise",
-          "Momentum reversal after an extended run"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.cost.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-09-03:NVDA",
-      "ref_date": "2026-09-03",
-      "ref_price": 533.58,
-      "pick": {
-        "ticker": "NVDA",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "NVIDIA has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
-        "risks": [
-          "Macro data surprise",
-          "Momentum reversal after an extended run"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.nvda.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
     {
       "id": "2026-09-03:GOOGL",
       "ref_date": "2026-09-03",
-      "ref_price": 596.66,
+      "ref_price": 1389.63,
       "pick": {
         "ticker": "GOOGL",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Alphabet has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Alphabet keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Momentum reversal after an extended run",
-          "Sector-wide de-rating"
+          "Sector-wide de-rating",
+          "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -91,21 +49,63 @@
       }
     },
     {
-      "id": "2026-09-03:MSFT",
+      "id": "2026-09-03:NVDA",
       "ref_date": "2026-09-03",
-      "ref_price": 351.53,
+      "ref_price": 150.97,
       "pick": {
-        "ticker": "MSFT",
-        "stance": "neutral",
-        "conviction": "medium",
-        "thesis": "Microsoft is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "ticker": "NVDA",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "NVIDIA keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Volatility expansion",
-          "Breakout in either direction"
+          "Macro data surprise",
+          "Sector-wide de-rating"
         ],
-        "invalidation": "A sustained move away from the benchmark in either direction.",
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.msft.rel_20d",
+          "prices.nvda.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-09-03:AMZN",
+      "ref_date": "2026-09-03",
+      "ref_price": 756.64,
+      "pick": {
+        "ticker": "AMZN",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Amazon keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "risks": [
+          "Macro data surprise",
+          "Sector-wide de-rating"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.amzn.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-09-03:META",
+      "ref_date": "2026-09-03",
+      "ref_price": 129.46,
+      "pick": {
+        "ticker": "META",
+        "stance": "bearish",
+        "conviction": "medium",
+        "thesis": "Meta Platforms has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "risks": [
+          "Benchmark weakness narrows the gap",
+          "Positive company news flow"
+        ],
+        "invalidation": "A close back above the recent range high on rising volume.",
+        "evidence": [
+          "prices.meta.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

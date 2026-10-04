@@ -17,13 +17,13 @@
   "$defs": {
     "row": {
       "type": "object", "additionalProperties": false,
-      "required": ["n", "hit_rate_pct", "avg_excess_pct"],
+      "required": ["n", "hit_rate_pct", "avg_signed_excess_pct"],
       "properties": {
         "conviction": {"enum": ["low", "medium", "high"]},
         "stance": {"enum": ["bullish", "bearish", "neutral"]},
         "n": {"type": "integer", "minimum": 0},
         "hit_rate_pct": {"type": ["number", "null"]},
-        "avg_excess_pct": {"type": ["number", "null"]}
+        "avg_signed_excess_pct": {"type": ["number", "null"], "description": "excess signed by stance (bullish +, bearish -, neutral -|x|)"}
       }
     }
   }

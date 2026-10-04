@@ -1,7 +1,7 @@
 {
-  "version": "0.3.0",
+  "version": "0.4.0",
   "updated_at": "2026-10-04",
-  "change_note": "Prices published as derived numbers only; raw bars never committed.",
+  "change_note": "Goal check and portfolio rule; forward-only paper portfolio.",
   "timezone": "UTC",
   "routines": [
     {
@@ -97,6 +97,45 @@
       ],
       "human_gate": false,
       "why": "The same signal behaves differently in calm and stressed markets. Benchmark volatility, drawdown and trend set a regime tag that the packer passes to the brain."
+    },
+    {
+      "id": "portfolio_rule",
+      "name": "Goal check and portfolio rule",
+      "cadence": "daily",
+      "cron": "40 23 * * 1-5",
+      "status": "active",
+      "milestone": "M4",
+      "uses_llm": false,
+      "max_cost_usd": 0,
+      "inputs": [
+        "prices",
+        "config/watchlist.json",
+        "config/settings.json"
+      ],
+      "outputs": [
+        "data/market/longrun.json"
+      ],
+      "human_gate": false,
+      "why": "The household goal is a diversified 4-5 stock satellite and +20% a year. This tests the rule over ~9 years against holding every name, the S&P 500 core and the benchmark, and counts how often +20% actually happened."
+    },
+    {
+      "id": "paper_portfolio",
+      "name": "Paper portfolio (forward only)",
+      "cadence": "daily",
+      "cron": "40 23 * * 1-5",
+      "status": "active",
+      "milestone": "M4",
+      "uses_llm": false,
+      "max_cost_usd": 0,
+      "inputs": [
+        "prices",
+        "data/portfolio/paper.json"
+      ],
+      "outputs": [
+        "data/portfolio/paper.json"
+      ],
+      "human_gate": false,
+      "why": "Backtests can be re-fitted; a forward record cannot. Holdings are written once a month with that day's data and never edited, so the track is an honest test before any money moves."
     },
     {
       "id": "news_social_digest",

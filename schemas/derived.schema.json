@@ -129,9 +129,146 @@
                 }
               }
             }
+          },
+          "ret_120d_pct": {
+            "type": "number"
+          },
+          "ret_250d_pct": {
+            "type": "number"
+          },
+          "vs_bench_60d_pct": {
+            "type": "number"
+          },
+          "vs_bench_120d_pct": {
+            "type": "number"
+          },
+          "vs_bench_250d_pct": {
+            "type": "number"
+          },
+          "setup": {
+            "type": "object",
+            "required": [
+              "checks",
+              "passed",
+              "stretched"
+            ],
+            "description": "Setup checks v2 (docs/methodology.md). Code only, not a recommendation.",
+            "properties": {
+              "checks": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "trend",
+                  "rs_3m",
+                  "rs_6m",
+                  "calm"
+                ],
+                "properties": {
+                  "trend": {
+                    "type": "boolean"
+                  },
+                  "rs_3m": {
+                    "type": "boolean"
+                  },
+                  "rs_6m": {
+                    "type": "boolean"
+                  },
+                  "calm": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "passed": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4
+              },
+              "stretched": {
+                "type": "boolean"
+              }
+            }
+          },
+          "risk": {
+            "type": "object",
+            "required": [
+              "ret_1y_pct",
+              "max_dd_1y_pct",
+              "worst_20d_1y_pct",
+              "vol_1y_pct",
+              "loss_95_20d_pct"
+            ],
+            "properties": {
+              "ret_1y_pct": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "max_dd_1y_pct": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "worst_20d_1y_pct": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "vol_1y_pct": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "loss_95_20d_pct": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "beta_1y": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "corr_1y": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "vs_bench_1y_pct": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            }
           }
         }
       }
+    },
+    "basket": {
+      "type": "object",
+      "description": "Equal-weight watchlist basket vs the benchmark, percent only."
+    },
+    "context": {
+      "type": "object",
+      "description": "Cash hurdle, equal vs cap weight participation, bonds, credit, core trend filter. Percent only."
+    },
+    "base_rates": {
+      "type": "object",
+      "required": [
+        "all",
+        "by_score",
+        "by_check",
+        "gate",
+        "horizon_days"
+      ],
+      "description": "Historical forward excess return vs the benchmark by setup state (code backtest, non-overlapping samples)."
     }
   }
 }

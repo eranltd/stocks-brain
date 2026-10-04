@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-08-19",
   "date": "2026-08-19",
-  "generated_at": "2026-08-19T21:12:00Z",
+  "generated_at": "2026-08-19T21:20:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.757,
-    "input_tokens": 6293,
-    "output_tokens": 1564,
+    "usd": 0.82,
+    "input_tokens": 9958,
+    "output_tokens": 1460,
     "cap_usd": 2.5
   },
-  "duration_minutes": 2.6,
+  "duration_minutes": 3.51,
   "pack": {
     "hash": "00c6dead753f6d2e802fc8aea196c7d8b2730c3d5d8a4a10c23545c9d3927f51",
-    "tokens": 5967,
+    "tokens": 9535,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,19 +25,40 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
+  "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
   "picks": [
+    {
+      "id": "2026-08-19:NVDA",
+      "ref_date": "2026-08-19",
+      "ref_price": 145.92,
+      "pick": {
+        "ticker": "NVDA",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "NVIDIA has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "risks": [
+          "Momentum reversal after an extended run",
+          "Macro data surprise"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.nvda.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
     {
       "id": "2026-08-19:COST",
       "ref_date": "2026-08-19",
-      "ref_price": 104.23,
+      "ref_price": 1544.36,
       "pick": {
         "ticker": "COST",
         "stance": "bullish",
         "conviction": "high",
         "thesis": "Costco keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Macro data surprise",
+          "Momentum reversal after an extended run",
           "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
@@ -49,21 +70,21 @@
       }
     },
     {
-      "id": "2026-08-19:AAPL",
+      "id": "2026-08-19:AMZN",
       "ref_date": "2026-08-19",
-      "ref_price": 213.15,
+      "ref_price": 755.99,
       "pick": {
-        "ticker": "AAPL",
+        "ticker": "AMZN",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Apple keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "Amazon has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Sector-wide de-rating",
-          "Momentum reversal after an extended run"
+          "Momentum reversal after an extended run",
+          "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.aapl.rel_20d",
+          "prices.amzn.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-09-01",
   "date": "2026-09-01",
-  "generated_at": "2026-09-01T21:39:00Z",
+  "generated_at": "2026-09-01T21:38:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.748,
-    "input_tokens": 7980,
-    "output_tokens": 1658,
+    "usd": 0.874,
+    "input_tokens": 9277,
+    "output_tokens": 743,
     "cap_usd": 2.5
   },
-  "duration_minutes": 2.89,
+  "duration_minutes": 1.18,
   "pack": {
     "hash": "26f833b7ba6c49d4f6d066e32c1783c1012a216c7f8e138a151c47afe22fba32",
-    "tokens": 7505,
+    "tokens": 8896,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,20 +25,41 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
+  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
   "picks": [
+    {
+      "id": "2026-09-01:GOOGL",
+      "ref_date": "2026-09-01",
+      "ref_price": 1354.76,
+      "pick": {
+        "ticker": "GOOGL",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Alphabet has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "risks": [
+          "Macro data surprise",
+          "Sector-wide de-rating"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.googl.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
     {
       "id": "2026-09-01:NVDA",
       "ref_date": "2026-09-01",
-      "ref_price": 550.46,
+      "ref_price": 149.15,
       "pick": {
         "ticker": "NVDA",
         "stance": "bullish",
         "conviction": "high",
         "thesis": "NVIDIA has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Momentum reversal after an extended run",
-          "Macro data surprise"
+          "Macro data surprise",
+          "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [

@@ -1,7 +1,7 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "updated_at": "2026-10-04",
-  "change_note": "Batch 2: earnings-preview claims from April and May (historical, unverified).",
+  "change_note": "Batches 3-4: bond yields and breakouts, buying at highs, valuation vs euphoria, Mag 7 structure, overextension.",
   "sample": false,
   "items": [
     {
@@ -493,6 +493,373 @@
       "tags": [
         "earnings",
         "options"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0031",
+      "source_id": "S-006",
+      "as_of": "2026-09-24",
+      "expires": "2026-10-08",
+      "kind": "market",
+      "tickers": [],
+      "text": "Fear and Greed read 35 (fear) while the S&P 500 was two days from its all-time high.",
+      "tags": [
+        "sentiment",
+        "regime"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0032",
+      "source_id": "S-006",
+      "as_of": "2026-09-24",
+      "expires": "2026-10-08",
+      "kind": "market",
+      "tickers": [],
+      "text": "The 10-year Treasury yield was cited at 5.11%, driven by weak PMI data, hawkish Fed signals, a poor 5-year auction and crude near 92 dollars.",
+      "tags": [
+        "rates",
+        "macro"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0033",
+      "source_id": "S-006",
+      "as_of": "2026-09-24",
+      "expires": "2026-12-24",
+      "kind": "theme",
+      "tickers": [
+        "TSM"
+      ],
+      "text": "Inflation was described as driven by business inputs, chiefly memory and semiconductor pricing (for example TSMC price increases), rather than housing or retail.",
+      "tags": [
+        "inflation",
+        "semis"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0034",
+      "source_id": "S-006",
+      "as_of": "2026-09-24",
+      "expires": "2026-10-24",
+      "kind": "company",
+      "tickers": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "text": "Alphabet broke below its 150-day average. A thin-volume zone below 345 put 319 to 321 in play unless 345 was reclaimed.",
+      "tags": [
+        "technicals",
+        "volume"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0035",
+      "source_id": "S-006",
+      "as_of": "2026-09-24",
+      "expires": "2026-10-24",
+      "kind": "company",
+      "tickers": [
+        "PLTR"
+      ],
+      "text": "Palantir broke above 188 on rising volume after a base that followed a fall from 207 to 106. Next target cited near 271; 187 had to hold as support.",
+      "tags": [
+        "technicals",
+        "breakouts"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0036",
+      "source_id": "S-006",
+      "as_of": "2026-09-24",
+      "expires": "2026-12-24",
+      "kind": "theme",
+      "tickers": [
+        "AMZN",
+        "META"
+      ],
+      "text": "Amazon launched an AI seller-assistance plugin, read as a push back against Meta's shopping agent.",
+      "tags": [
+        "ai_agents",
+        "news"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0037",
+      "source_id": "S-007",
+      "as_of": "2026-08-15",
+      "expires": "2026-12-31",
+      "kind": "market",
+      "tickers": [],
+      "text": "Cited via Charlie Bilello: 57 all-time highs in 2024, 27 in 2026 to mid-August, and more than 1,400 since 1929, about one trading day in ten.",
+      "tags": [
+        "all_time_highs",
+        "base_rates"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0038",
+      "source_id": "S-008",
+      "as_of": "2026-07-09",
+      "expires": "2026-07-23",
+      "kind": "sector",
+      "tickers": [
+        "SOXX"
+      ],
+      "text": "The semiconductor index was cited about 18% below its peak, with a warning that euphoric chip runs often end in 30 to 50% corrections.",
+      "tags": [
+        "semis",
+        "euphoria"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0039",
+      "source_id": "S-008",
+      "as_of": "2026-07-09",
+      "expires": "2026-08-09",
+      "kind": "company",
+      "tickers": [
+        "NVDA"
+      ],
+      "text": "Bank of America defended Nvidia: forward P/E about 20 vs 21.3 for the S&P 500, trailing 31 vs 28. About 1T dollars of value was off the peak.",
+      "tags": [
+        "valuation",
+        "analysts"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0040",
+      "source_id": "S-008",
+      "as_of": "2026-07-09",
+      "expires": "2026-08-09",
+      "kind": "company",
+      "tickers": [
+        "NVDA"
+      ],
+      "text": "Nvidia tested its 150-day average three times and broke its descending line from the 232 and 213 peaks, with near-term resistance at 212.",
+      "tags": [
+        "technicals",
+        "breakouts"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0041",
+      "source_id": "S-008",
+      "as_of": "2026-07-09",
+      "expires": "2026-10-09",
+      "kind": "theme",
+      "tickers": [
+        "WGMI"
+      ],
+      "text": "Bitcoin miners pivoting to host AI compute (neo-cloud) were drawing new volume and buyers.",
+      "tags": [
+        "ai_capex",
+        "themes"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0042",
+      "source_id": "S-009",
+      "as_of": "2026-07-06",
+      "expires": "2026-07-20",
+      "kind": "market",
+      "tickers": [],
+      "text": "The S&P 500 and Nasdaq 100 had moved sideways at the same levels since mid-May, waiting on mega-cap earnings.",
+      "tags": [
+        "regime",
+        "megacap"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0043",
+      "source_id": "S-009",
+      "as_of": "2026-07-06",
+      "expires": "2026-07-31",
+      "kind": "company",
+      "tickers": [
+        "AAPL"
+      ],
+      "text": "Apple broke above 288.62 on rising volume, under 10 dollars from its high, making higher highs and lows.",
+      "tags": [
+        "technicals",
+        "breakouts"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0044",
+      "source_id": "S-009",
+      "as_of": "2026-07-06",
+      "expires": "2026-07-31",
+      "kind": "company",
+      "tickers": [
+        "AMZN"
+      ],
+      "text": "Amazon had traded sideways since December 2024. A breakout needed a move above 250, and the 150-day average near 234 had to hold.",
+      "tags": [
+        "technicals"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0045",
+      "source_id": "S-009",
+      "as_of": "2026-07-06",
+      "expires": "2026-07-31",
+      "kind": "company",
+      "tickers": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "text": "Alphabet was 12% off its highs but held support at 349 on its 150-day average, keeping the uptrend.",
+      "tags": [
+        "technicals"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0046",
+      "source_id": "S-009",
+      "as_of": "2026-07-06",
+      "expires": "2026-07-31",
+      "kind": "company",
+      "tickers": [
+        "META"
+      ],
+      "text": "Meta broke its uptrend on 1 Aug 2025 and sat in a falling channel on its 150-week average. It needed to clear 740 to reverse.",
+      "tags": [
+        "technicals",
+        "reversal"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0047",
+      "source_id": "S-009",
+      "as_of": "2026-07-06",
+      "expires": "2026-07-31",
+      "kind": "company",
+      "tickers": [
+        "MSFT"
+      ],
+      "text": "Microsoft was about 30% off its highs. Support was cited at 344.70, and it needed to clear 466 for a higher high.",
+      "tags": [
+        "technicals",
+        "reversal"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0048",
+      "source_id": "S-009",
+      "as_of": "2026-07-06",
+      "expires": "2026-07-31",
+      "kind": "company",
+      "tickers": [
+        "NVDA"
+      ],
+      "text": "Nvidia corrected from 236 to 194 and sat on long-term rising support and its 150-day average near 192. Holding 185 to 192 kept the bullish structure.",
+      "tags": [
+        "technicals"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0049",
+      "source_id": "S-009",
+      "as_of": "2026-07-06",
+      "expires": "2026-07-31",
+      "kind": "company",
+      "tickers": [
+        "TSLA"
+      ],
+      "text": "Tesla was described as flat since October 2021 despite wild swings, resting on long-term rising support near 372.",
+      "tags": [
+        "technicals",
+        "volatility"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0050",
+      "source_id": "S-010",
+      "as_of": "2026-04-19",
+      "expires": "2026-05-03",
+      "kind": "market",
+      "tickers": [
+        "IGV",
+        "ORCL"
+      ],
+      "text": "Weekly: Nasdaq +6.5%, S&P 500 +4.5% to 7,126 (about +12% in 11 days). Software ETF +13.9%, led by Oracle +26%.",
+      "tags": [
+        "relief_rally",
+        "rotation"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0051",
+      "source_id": "S-010",
+      "as_of": "2026-04-19",
+      "expires": "2026-05-03",
+      "kind": "market",
+      "tickers": [],
+      "text": "Rally drivers cited: ceasefire hopes, calmer Strait of Hormuz with oil down 7% to 92 dollars, strong bank earnings and a tame PPI print.",
+      "tags": [
+        "macro",
+        "geopolitics"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0052",
+      "source_id": "S-010",
+      "as_of": "2026-04-19",
+      "expires": "2026-05-03",
+      "kind": "theme",
+      "tickers": [
+        "NVDA",
+        "TSLA",
+        "MSFT",
+        "NFLX",
+        "BIRD",
+        "RKLB",
+        "ASTS",
+        "IONQ",
+        "OPEN",
+        "GME"
+      ],
+      "text": "Retail chatter focused on Nvidia, Tesla robotaxi, Microsoft, Netflix, an Allbirds pivot, space and quantum names, and squeeze talk in Opendoor and GameStop.",
+      "tags": [
+        "sentiment",
+        "speculation"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0053",
+      "source_id": "S-010",
+      "as_of": "2026-04-19",
+      "expires": "2026-05-03",
+      "kind": "market",
+      "tickers": [],
+      "text": "S&P 500 stretched above its 20- and 50-day averages with two or three unfilled gaps below. A pullback toward 7,000 was expected; Fear and Greed read greed.",
+      "tags": [
+        "overextension",
+        "gaps",
+        "sentiment"
       ],
       "status": "unverified"
     }

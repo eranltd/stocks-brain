@@ -1,7 +1,7 @@
 {
-  "version": "0.3.0",
+  "version": "0.4.0",
   "updated_at": "2026-10-04",
-  "change_note": "Batch 2: earnings-season videos (synchronized charts, implied moves, mega-cap AI capex).",
+  "change_note": "Batches 3-4: bond yields and breakouts, buying at highs, valuation vs euphoria, Mag 7 structure, overextension.",
   "sample": false,
   "sources": [
     {
@@ -273,6 +273,277 @@
             "earnings",
             "expectations",
             "technicals"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-006",
+      "kind": "video",
+      "ref": "youtube:BIgGw9THhLQ",
+      "title": "גוגל נשברת, פלנטיר פורצת — ומה קורה עם האג״ח 10? (Google breaks down, Palantir breaks out, and the 10-year)",
+      "author": "Micha (YouTube channel)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-006.P01",
+          "text": "When the 10-year yield climbs toward what stocks are expected to earn, money rotates into risk-free paper. Rising long yields are a headwind, hardest on long-duration growth names.",
+          "tags": [
+            "rates",
+            "bonds",
+            "macro",
+            "valuation"
+          ]
+        },
+        {
+          "id": "S-006.P02",
+          "text": "Read why yields rise. Weak growth data plus hawkish signals and a poor auction is worse for stocks than yields rising on strong growth.",
+          "tags": [
+            "rates",
+            "macro",
+            "regime"
+          ]
+        },
+        {
+          "id": "S-006.P03",
+          "text": "Know where inflation comes from. When it sits in business inputs such as memory and chips, the suppliers with pricing power gain and their customers' margins get squeezed.",
+          "tags": [
+            "inflation",
+            "pricing_power",
+            "semis"
+          ]
+        },
+        {
+          "id": "S-006.P04",
+          "text": "A thin-volume zone below a broken level is an air pocket. If the level is not reclaimed, price can drop quickly to the next heavy-volume area, which makes that level a clean invalidation.",
+          "tags": [
+            "technicals",
+            "volume",
+            "invalidation"
+          ]
+        },
+        {
+          "id": "S-006.P05",
+          "text": "A breakout is confirmed by rising volume and by old resistance holding as support on the retest. Losing that level again invalidates it.",
+          "tags": [
+            "technicals",
+            "breakouts",
+            "invalidation"
+          ]
+        },
+        {
+          "id": "S-006.P06",
+          "text": "Fear readings while the index sits near its high signal anxiety beneath the surface. Check breadth and rates before trusting the index level.",
+          "tags": [
+            "sentiment",
+            "breadth",
+            "regime"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-007",
+      "kind": "video",
+      "ref": "youtube:azWCH1BswAQ",
+      "title": "הטעות שכולם עושים כשהשוק בשיא — ואיך להימנע ממנה (The mistake everyone makes at market highs)",
+      "author": "Micha (YouTube channel)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-007.P01",
+          "text": "All-time highs cluster. Strong years print many of them, so a new high is more often followed by more highs than by a crash.",
+          "tags": [
+            "all_time_highs",
+            "base_rates",
+            "behavior"
+          ]
+        },
+        {
+          "id": "S-007.P02",
+          "text": "Reluctance to buy at a high is psychology, not math. People waiting for a dip tend to hold out for a bigger one and end up buying back higher.",
+          "tags": [
+            "behavior",
+            "timing",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-007.P03",
+          "text": "Historically, investing a lump sum at once beat holding cash for a better entry, partly because highs cluster. Long dry spells do happen, so horizon and diversification still matter.",
+          "tags": [
+            "lump_sum",
+            "timing",
+            "base_rates"
+          ]
+        },
+        {
+          "id": "S-007.P04",
+          "text": "Being near an all-time high is not, on its own, a reason for a bearish stance. A bearish call needs its own evidence.",
+          "tags": [
+            "all_time_highs",
+            "stance",
+            "discipline"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-008",
+      "kind": "video",
+      "ref": "youtube:taGOri7CI-0",
+      "title": "בנק אוף אמריקה קובע: המניה הזו עומדת להתחיל לעלות (Bank of America: this stock is about to rise)",
+      "author": "Micha (YouTube channel)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-008.P01",
+          "text": "Compare a leader's forward P/E with the index's. When a fast grower trades at or below the market multiple, the price implies little growth, and the question becomes what would break.",
+          "tags": [
+            "valuation",
+            "pe",
+            "expectations"
+          ]
+        },
+        {
+          "id": "S-008.P02",
+          "text": "Parabolic runs in cyclical sectors such as semiconductors often end in deep corrections. Size bullish conviction to how stretched the run is.",
+          "tags": [
+            "semis",
+            "cyclicals",
+            "euphoria",
+            "risk"
+          ]
+        },
+        {
+          "id": "S-008.P03",
+          "text": "Several successful tests of a long moving average followed by a break of the downtrend line is a classic base. Resistance above still caps the first move.",
+          "tags": [
+            "technicals",
+            "moving_averages",
+            "breakouts"
+          ]
+        },
+        {
+          "id": "S-008.P04",
+          "text": "When an industry repurposes its infrastructure for a new wave of demand, such as crypto miners hosting AI compute, new buyers and volume tend to show up before earnings do.",
+          "tags": [
+            "ai_capex",
+            "rotation",
+            "themes"
+          ]
+        },
+        {
+          "id": "S-008.P05",
+          "text": "An analyst upgrade is an input, not a verdict. Record it as a dated claim and let scoring judge it.",
+          "tags": [
+            "analysts",
+            "discipline"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-009",
+      "kind": "video",
+      "ref": "youtube:H9N_QMtpG4E",
+      "title": "מאגניפיסנט 7 יוציאו את הבורסה מהתקיעות שלה? (Will the Magnificent 7 break the market out of its rut?)",
+      "author": "Micha (YouTube channel)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-009.P01",
+          "text": "When the index goes sideways for weeks, check its largest members one by one. The next leg usually follows whichever group breaks first: leaders breaking down or laggards bouncing.",
+          "tags": [
+            "megacap",
+            "breadth",
+            "leadership"
+          ]
+        },
+        {
+          "id": "S-009.P02",
+          "text": "Classify each name by structure: higher highs and lows (healthy), a range (waiting for a breakout), or a broken uptrend in a falling channel (repair needed). Stance should follow structure.",
+          "tags": [
+            "technicals",
+            "trend",
+            "stance"
+          ]
+        },
+        {
+          "id": "S-009.P03",
+          "text": "A stock that has gone nowhere for years while swinging hard offers volatility, not trend. Keep conviction low until it leaves the range.",
+          "tags": [
+            "technicals",
+            "volatility",
+            "conviction"
+          ]
+        },
+        {
+          "id": "S-009.P04",
+          "text": "A broken name needs a higher high above a named level to reverse. Until then, rallies inside the channel are bounces, and that level is the natural invalidation for a bullish call.",
+          "tags": [
+            "technicals",
+            "reversal",
+            "invalidation"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-010",
+      "kind": "video",
+      "ref": "youtube:RtUl_TUqSsw",
+      "title": "13 ימים של ירוק ברצף — השוק חצה את הגבול? (13 green days in a row: did the market cross the line?)",
+      "author": "Micha (YouTube channel)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-010.P01",
+          "text": "A long streak of up days that lifts the index far above its 20- and 50-day averages is stretched. Expect digestion, often a pullback, before the next leg.",
+          "tags": [
+            "overextension",
+            "moving_averages",
+            "mean_reversion"
+          ]
+        },
+        {
+          "id": "S-010.P02",
+          "text": "Unfilled gaps below the price are often revisited. Treat them as likely pullback targets, not certainties.",
+          "tags": [
+            "technicals",
+            "gaps"
+          ]
+        },
+        {
+          "id": "S-010.P03",
+          "text": "Relief rallies on easing geopolitical risk can be fast and broad. Once that risk premium is gone, the next move needs earnings or data.",
+          "tags": [
+            "macro",
+            "geopolitics",
+            "relief_rally"
+          ]
+        },
+        {
+          "id": "S-010.P04",
+          "text": "When retail chatter crowds into squeezes and speculative themes and sentiment reads greed, tighten risk instead of adding aggressive bullish calls.",
+          "tags": [
+            "sentiment",
+            "speculation",
+            "risk"
+          ]
+        },
+        {
+          "id": "S-010.P05",
+          "text": "The sector that bounces hardest after a selloff is often short covering first. Confirm follow-through before calling it new leadership.",
+          "tags": [
+            "rotation",
+            "short_covering",
+            "sectors"
           ]
         }
       ]

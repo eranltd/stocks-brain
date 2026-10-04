@@ -101,5 +101,15 @@ class RoutinesTest(unittest.TestCase):
         self.assertEqual(doc["n"], len(outcomes))
 
 
+class IngestTest(unittest.TestCase):
+    def test_clean_strips_invisible_chars(self):
+        import kb_ingest
+        self.assertEqual(kb_ingest.clean({"ref": ["youtube:\u2060abc\u2060"]}), {"ref": ["youtube:abc"]})
+
+    def test_bump(self):
+        import kb_ingest
+        self.assertEqual(kb_ingest.bump("0.4.0"), "0.5.0")
+
+
 if __name__ == "__main__":
     unittest.main()

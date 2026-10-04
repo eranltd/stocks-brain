@@ -1,0 +1,68 @@
+name: daily
+
+# Code-only routines (config/routines.json). Lint fails if an active routine's cron is missing here.
+on:
+  schedule:
+    - cron: "40 23 * * 1-5"   # fetch_prices, score_picks, regime_monitor (after the US close)
+    - cron: "0 13 1 * *"      # calibration
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Fetch and validate only; write and commit nothing"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: daily
+  cancel-in-progress: false
+
+jobs:
+  routines:
+    runs-on: ubuntu-latest
+    env:
+      MONTHLY: ${{ github.event.schedule == '0 13 1 * *' }}
+      DRY: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Fetch prices (all-or-nothing)
+        if: env.MONTHLY != 'true'
+        run: python3 scripts/fetch_prices.py ${{ env.DRY == 'true' && '--dry-run' || '' }}
+
+      - name: Score matured picks + regime
+        if: env.MONTHLY != 'true' && env.DRY != 'true'
+        run: |
+          python3 scripts/routines_code.py score
+          python3 scripts/routines_code.py regime
+
+      - name: Calibration
+        if: env.DRY != 'true' && (env.MONTHLY == 'true' || github.event_name == 'workflow_dispatch')
+        run: python3 scripts/routines_code.py calibration
+
+      - name: Lint (fails closed)
+        run: python3 scripts/lint.py
+
+      - name: Commit data to main
+        id: commit
+        if: env.DRY != 'true' && github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "stocks-brain-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then echo "changed=false" >> "$GITHUB_OUTPUT"; exit 0; fi
+          git commit -m "data: routines $(date -u +%F)"
+          git push origin HEAD:main
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Redeploy Pages
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pages.yml --ref main

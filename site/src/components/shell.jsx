@@ -112,7 +112,7 @@ export function Field() {
 
 /* ----------------------------------------------------------------- header */
 
-export function Header({ tabs, active, onNav, sample, theme, onTheme }) {
+export function Header({ tabs, active, onNav, sample, livePrices, theme, onTheme }) {
   const track = useRef(null);
   const [ink, setInk] = useState({ x: 0, w: 0, ready: false });
   const [scrolled, setScrolled] = useState(false);
@@ -181,8 +181,8 @@ export function Header({ tabs, active, onNav, sample, theme, onTheme }) {
 
         <div className="ml-auto flex shrink-0 items-center gap-2 lg:ml-0">
           {sample && (
-            <span className="pill border-dashed border-people/60 text-people" title="Synthetic data until the live pipeline runs">
-              <span className="size-1.5 animate-pulse rounded-full bg-current" /> Sample data
+            <span className="pill border-dashed border-people/60 text-people" title={livePrices ? "Prices are live; picks stay synthetic until the brain runs" : "Synthetic data until the live pipeline runs"}>
+              <span className="size-1.5 animate-pulse rounded-full bg-current" /> {livePrices ? "Sample picks" : "Sample data"}
             </span>
           )}
           <button
@@ -225,7 +225,7 @@ export function Footer({ data }) {
       <Container className="flex flex-wrap items-center justify-between gap-x-10 gap-y-3 py-8 pb-[calc(2rem+env(safe-area-inset-bottom))]">
         <p className="m-0 font-semibold tracking-[-0.01em]">Analysis only, not financial advice. Data may be delayed.</p>
         <p className="meta m-0 normal-case tracking-[0.04em]">
-          {manifest.source === "sample" ? "Sample data" : "Live data"} · built {manifest.built_at.replace("T", " ").replace("Z", " UTC")}
+          Prices {manifest.price_source === "live" ? "live · Stooq" : "sample"} · picks {manifest.source} · built {manifest.built_at.replace("T", " ").replace("Z", " UTC")}
         </p>
       </Container>
     </footer>

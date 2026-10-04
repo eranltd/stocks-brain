@@ -2,10 +2,10 @@ import { useMemo, useState } from "react";
 import { dailyChange } from "../lib/data.js";
 import { fmtDate, fmtNum, fmtPct, numWord } from "../lib/format.js";
 import { Sparkline } from "../components/charts.jsx";
-import { Accent, Container, CountUp, Reveal, SectionHead, Segmented } from "../components/ui.jsx";
+import { Accent, Container, CountUp, Reveal, SectionHead, Segmented, Strip } from "../components/ui.jsx";
 
 export default function Watchlist({ data }) {
-  const { watchlist, prices, bench, settings } = data;
+  const { watchlist, prices, bench, settings, regime, livePrices } = data;
   const [sort, setSort] = useState("list");
   const days = settings.site.sparkline_days;
 
@@ -23,7 +23,7 @@ export default function Watchlist({ data }) {
   return (
     <Container className="pt-20">
       <SectionHead
-        eyebrow={`Watchlist · ${asOf ? fmtDate(asOf) : "no prices yet"}`}
+        eyebrow={`Watchlist · ${asOf ? fmtDate(asOf) : "no prices yet"} · ${livePrices ? "live · Stooq" : "sample prices"}`}
         title={<>{numWord(rows.length)} names, <Accent>one benchmark.</Accent></>}
         lede={`${up} of ${rows.length} closed higher on the day. The list lives in config/watchlist.json; scripts never hard-code a ticker.`}
         right={
@@ -35,6 +35,7 @@ export default function Watchlist({ data }) {
           />
         }
       />
+      {regime && <Regime regime={regime} />}
       <div className="grid gap-3">
         <Row r={bm} i={0} days={days} bench />
         {rows.map((r, i) => <Row key={r.symbol} r={r} i={i + 1} days={days} />)}
@@ -73,5 +74,24 @@ function Row({ r, i, days, bench = false }) {
         )}
       </div>
     </Reveal>
+  );
+}
+
+const STATE_TONE = { calm: "accent", normal: "flat", stressed: "down" };
+const TREND_TONE = { up: "accent", sideways: "flat", down: "down" };
+
+function Regime({ regime }) {
+  const m = regime.metrics;
+  return (
+    <div className="mb-10">
+      <Strip
+        cells={[
+          { value: regime.state, label: `regime · ${regime.benchmark}`, tone: STATE_TONE[regime.state], desc: `As of ${fmtDate(regime.as_of)}. Computed by code from benchmark closes; the brain reads it as context.` },
+          { value: regime.trend, label: `${regime.params.trend_sma_days}-day trend`, tone: TREND_TONE[regime.trend], desc: `Close ${fmtNum(m.close)} vs average ${fmtNum(m.sma)}; average ${m.sma_slope_pct >= 0 ? "rising" : "falling"} ${fmtPct(m.sma_slope_pct)} over ${regime.params.slope_days} days.` },
+          { value: `${fmtNum(m.vol_ann_pct, 1)}%`, label: "annualised vol", tone: "flat", desc: `${regime.params.vol_days}-day realised volatility of daily returns.` },
+          { value: fmtPct(m.drawdown_pct, 1), label: "from 1y high", tone: m.drawdown_pct < -10 ? "down" : "flat", desc: `Distance from the highest close in ${regime.params.drawdown_days} trading days.` },
+        ]}
+      />
+    </div>
   );
 }

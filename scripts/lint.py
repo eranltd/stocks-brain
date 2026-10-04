@@ -88,6 +88,7 @@ class Lint:
                     self.err(CONFIG / "sources.json", f"{s['id']}: active source needs a provider")
         rt = self.schema(CONFIG / "routines.json", "routines.schema.json")
         if rt and st:
+            workflows = "\n".join(p.read_text() for p in (ROOT / ".github" / "workflows").glob("*.yml"))
             ids = [r["id"] for r in rt["routines"]]
             if len(ids) != len(set(ids)):
                 self.err(CONFIG / "routines.json", "duplicate routine ids")
@@ -96,6 +97,8 @@ class Lint:
                     self.err(CONFIG / "routines.json", f"{r['id']}: LLM routine needs 0 < max_cost_usd <= hard_cap_usd")
                 if not r["uses_llm"] and r["max_cost_usd"] != 0:
                     self.err(CONFIG / "routines.json", f"{r['id']}: code-only routine must have max_cost_usd 0")
+                if r["status"] == "active" and r["cron"] and r["cron"] not in workflows:
+                    self.err(CONFIG / "routines.json", f"{r['id']}: active but cron {r['cron']!r} is in no workflow")
                 if (r["cadence"] == "on_demand") != (r["cron"] is None):
                     self.err(CONFIG / "routines.json", f"{r['id']}: cron must be null exactly for on_demand")
         if st:
@@ -165,12 +168,14 @@ class Lint:
             for p in _json_files(kb_dir):
                 if p.name == "outcomes.json":
                     obj = self.schema(p, "outcome.schema.json")
+                elif p.name in ("regime.json", "calibration.json"):
+                    obj = self.schema(p, p.name.replace(".json", ".schema.json"))
                 elif p.name == "library.json":
                     obj = self.schema(p, "library.schema.json")
                     if obj:
                         self.check_library(p, obj)
                 else:
-                    self.err(p, "unexpected file in kb/ (want outcomes.json or library.json)")
+                    self.err(p, "unexpected file in kb/ (outcomes, library, regime or calibration)")
                     continue
                 if obj and obj["sample"] != (base is SAMPLES):
                     self.err(p, "sample flag must be true exactly for files under samples/")

@@ -6,7 +6,7 @@ import { ExcessChart } from "../components/charts.jsx";
 import { Accent, Chip, Container, Conviction, Empty, Reveal, SectionHead, Strip } from "../components/ui.jsx";
 
 export default function TrackRecord({ data }) {
-  const { outcomes, settings, bench, kb } = data;
+  const { outcomes, settings, bench, kb, calibration } = data;
   const [all, setAll] = useState(false);
   const s = summarize(outcomes);
   const pending = kb.filter((k) => k.verdict === "pending").length;
@@ -53,6 +53,16 @@ export default function TrackRecord({ data }) {
         <Reveal delay={120} className="card p-6 sm:p-8">
           <h3 className="text-[19px] font-semibold tracking-[-0.02em]">Verdict split</h3>
           <Split s={s} />
+          {calibration && (
+            <p className="mt-8 rounded-2xl border border-line bg-bg/40 px-4 py-3 text-[13.5px] text-ink-2">
+              <span className="meta mr-2 text-ink">Calibration</span>
+              {{
+                informative: "High-conviction picks beat low-conviction ones. Conviction carries information.",
+                not_informative: "High conviction does not beat low conviction yet. Treat conviction as noise.",
+                insufficient_data: `Not enough scored picks per conviction level (need ${calibration.min_n}) to judge yet.`,
+              }[calibration.conviction_verdict]}
+            </p>
+          )}
           <div className="mt-8 meta mb-3">By stance and conviction</div>
           <div className="grid gap-2">
             {groups.map((g) => (

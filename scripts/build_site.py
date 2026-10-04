@@ -37,12 +37,16 @@ def main() -> int:
             print("build_site: lint failed; not exporting", file=sys.stderr)
             return 1
 
-    has_live = any(RUNS.glob("run.*.json"))
-    source = args.source if args.source != "auto" else ("live" if has_live else "sample")
+    # Each dataset goes live on its own: prices can be real while picks are still samples.
+    def pick(has_live: bool) -> str:
+        return args.source if args.source != "auto" else ("live" if has_live else "sample")
+    source = pick(any(RUNS.glob("run.*.json")))
+    price_source = pick(any(PRICES.glob("*.json")))
     live = source == "live"
     runs_dir = RUNS if live else SAMPLES / "runs"
     kb_dir = KB if live else SAMPLES / "kb"
-    prices_dir = PRICES if live else SAMPLES / "prices"
+    prices_dir = PRICES if price_source == "live" else SAMPLES / "prices"
+    regime_dir = KB if price_source == "live" else SAMPLES / "kb"
     learnings = DOCS / "learnings.json" if live else SAMPLES / "docs" / "learnings.json"
 
     shutil.rmtree(OUT, ignore_errors=True)
@@ -54,9 +58,9 @@ def main() -> int:
     for p in prices:
         _copy(p, OUT / "prices" / p.name)
     kb = {}
-    for name in ("outcomes", "library"):
-        if (kb_dir / f"{name}.json").exists():
-            _copy(kb_dir / f"{name}.json", OUT / "kb" / f"{name}.json")
+    for name, base in (("outcomes", kb_dir), ("library", kb_dir), ("calibration", kb_dir), ("regime", regime_dir)):
+        if (base / f"{name}.json").exists():
+            _copy(base / f"{name}.json", OUT / "kb" / f"{name}.json")
             kb[name] = f"kb/{name}.json"
     for name in ("watchlist", "settings", "sources", "routines"):
         _copy(CONFIG / f"{name}.json", OUT / "config" / f"{name}.json")
@@ -79,6 +83,7 @@ def main() -> int:
 
     dump_json(OUT / "manifest.json", {
         "source": source,
+        "price_source": price_source,
         "built_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
         "repo": st["site"]["repo"],
         "runs": [f"runs/{p.name}" for p in runs],
@@ -87,7 +92,7 @@ def main() -> int:
         "kb": kb,
         "docs": docs,
     })
-    print(f"build_site: {source} data, {len(runs)} runs, {len(prices)} price files -> {OUT}")
+    print(f"build_site: picks {source}, prices {price_source}, {len(runs)} runs, {len(prices)} price files -> {OUT}")
     return 0
 
 

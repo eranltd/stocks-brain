@@ -47,6 +47,8 @@ The dashboard uses live data (`runs/`, `data/`) as soon as any run exists. Until
 "Sample data" badge.
 
 **GitHub Pages:** go to Settings → Pages → Source and choose **GitHub Actions**. `pages.yml` deploys on every push to `main`.
+Live at https://eranltd.github.io/stocks-brain/. On iPhone, open it in Safari, then Share → Add to Home Screen.
+It runs full-screen and works offline with the last data it saw.
 
 ## Dashboard
 
@@ -54,6 +56,26 @@ Today · Watchlist · Track record · KB (every pick, plus the library) · Learn
 routines, roadmap) · Admin (the rule book with versions and GitHub edit links, plus connectors).
 It has no third-party runtime scripts or fonts: everything is bundled and served from the Pages origin. It honours
 `prefers-reduced-motion` and works at 393px.
+
+## Daily routines (code only, $0)
+
+`.github/workflows/daily.yml` runs on GitHub Actions (free for public repos):
+
+| Routine | When (UTC) | Writes |
+|---|---|---|
+| fetch_prices (Stooq, all-or-nothing) | Mon–Fri 23:40 | `data/prices/` |
+| score_picks | Mon–Fri 23:40 | `data/kb/outcomes.json` |
+| regime_monitor | Mon–Fri 23:40 | `data/kb/regime.json` |
+| calibration | 1st of month 13:00 | `data/kb/calibration.json` |
+
+It lints, commits the data to `main` and redeploys Pages. Lint fails if a routine marked `active` in
+`config/routines.json` has no matching cron in a workflow. To test, run the workflow by hand
+(Actions → daily → Run workflow). It defaults to a dry run.
+
+```bash
+python3 scripts/fetch_prices.py --dry-run     # fetch + validate, write nothing
+python3 scripts/routines_code.py all          # score, regime, calibration
+```
 
 ## Connectors and routines
 
@@ -74,9 +96,9 @@ tags match the day, up to `pack.library_principles_max`.
 | Milestone | Scope | Status |
 |---|---|---|
 | M1 | Folders, schemas, seed docs, lint, dashboard on sample data | done |
-| M2 | `fetch_prices.py` behind a provider adapter + `fetch.yml` | needs a provider decision |
+| M2 | `fetch_prices.py` behind a provider adapter (Stooq) + `daily.yml` with code-only routines | done |
 | M3 | `build_pack.py` + `run_brain.py` (target < $1/run, warn > $2, hard cap $2.50) | needs an LLM SDK decision |
-| M4 | `score_picks.py` (code only, pick vs benchmark after N days) | |
+| M4 | Scoring (code only, pick vs benchmark after N days) | done (`routines_code.py score`), waits for live picks |
 | M5 | Daily Claude Code routine | |
 
 ## Dependencies

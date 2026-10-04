@@ -1,19 +1,21 @@
 {
-  "version": "0.1.0",
+  "version": "0.2.0",
   "updated_at": "2026-10-04",
-  "change_note": "Seed connector registry. No provider chosen yet.",
+  "change_note": "Prices connected: Stooq (free end-of-day CSV, no key).",
   "sources": [
     {
       "id": "prices",
       "kind": "prices",
       "label": "Daily prices",
-      "status": "planned",
-      "provider": null,
-      "cadence": "daily after US close",
-      "feeds": ["data/prices"],
+      "status": "active",
+      "provider": "stooq",
+      "cadence": "Mon–Fri 23:40 UTC",
+      "feeds": [
+        "data/prices"
+      ],
       "secret_env": null,
       "follow": [],
-      "note": "Provider adapter lands in milestone 2. Watchlist and benchmark come from config."
+      "note": "Free end-of-day bars, no key. Behind scripts/providers/ so it can be swapped. All-or-nothing writes."
     },
     {
       "id": "x_accounts",
@@ -22,7 +24,9 @@
       "status": "planned",
       "provider": null,
       "cadence": "daily",
-      "feeds": ["pack"],
+      "feeds": [
+        "pack"
+      ],
       "secret_env": null,
       "follow": [],
       "note": "Store derived signals and links only, never post text. Handles are public; add them to follow[]."
@@ -34,7 +38,9 @@
       "status": "planned",
       "provider": null,
       "cadence": "daily",
-      "feeds": ["pack"],
+      "feeds": [
+        "pack"
+      ],
       "secret_env": null,
       "follow": [],
       "note": "Headlines and links only; summaries are computed, not copied."
@@ -46,7 +52,9 @@
       "status": "planned",
       "provider": null,
       "cadence": "daily",
-      "feeds": ["pack"],
+      "feeds": [
+        "pack"
+      ],
       "secret_env": null,
       "follow": [],
       "note": "Public filings metadata for watchlist names."
@@ -58,7 +66,9 @@
       "status": "active",
       "provider": "manual",
       "cadence": "when added",
-      "feeds": ["data/kb/library.json"],
+      "feeds": [
+        "data/kb/library.json"
+      ],
       "secret_env": null,
       "follow": [],
       "note": "Paraphrased principles with a citation. The repo is public: never commit source text."

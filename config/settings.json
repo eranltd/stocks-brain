@@ -1,7 +1,7 @@
 {
-  "version": "0.1.0",
+  "version": "0.2.0",
   "updated_at": "2026-10-04",
-  "change_note": "Seed settings.",
+  "change_note": "Stooq as price provider; regime and calibration parameters.",
   "pack": {
     "token_cap": 12000,
     "recent_runs": 5,
@@ -24,15 +24,25 @@
     "benchmark": {
       "symbol": "QQQ",
       "label": "Nasdaq-100 (QQQ proxy)"
-    }
+    },
+    "calibration_min_n": 10
   },
   "prices": {
-    "provider": null,
+    "provider": "stooq",
     "keep_days": 260
   },
   "lint": {
     "max_file_kb": 512,
     "max_total_data_mb": 50
+  },
+  "regime": {
+    "vol_days": 20,
+    "vol_calm_pct": 15,
+    "vol_stressed_pct": 30,
+    "drawdown_days": 252,
+    "drawdown_stressed_pct": 15,
+    "trend_sma_days": 50,
+    "slope_days": 10
   },
   "site": {
     "title": "stocks·brain",

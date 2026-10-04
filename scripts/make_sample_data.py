@@ -184,6 +184,10 @@ def main() -> int:
     dump_json(SAMPLES / "kb" / "outcomes.json", {
         "version": "0.1.0", "updated_at": end.isoformat(),
         "change_note": "Synthetic sample outcomes for the dashboard.", "sample": True, "items": outcomes})
+    import routines_code
+    dump_json(SAMPLES / "kb" / "regime.json", routines_code.compute_regime(series[bench], st, sample=True))
+    dump_json(SAMPLES / "kb" / "calibration.json",
+              routines_code.compute_calibration(outcomes, end.isoformat(), True, st["scoring"]["calibration_min_n"]))
     write_sample_learnings(end, outcomes)
     write_sample_library(end)
     print(f"samples: {len(series)} price files, {len(run_days)} runs, {len(outcomes)} scored picks")

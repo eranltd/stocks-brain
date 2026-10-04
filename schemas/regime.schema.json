@@ -1,0 +1,35 @@
+{
+  "$id": "regime.schema.json",
+  "title": "Market regime (data/kb/regime.json)",
+  "description": "Computed by scripts/routines_code.py from benchmark closes. No LLM.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["as_of", "sample", "benchmark", "state", "trend", "label", "metrics", "params"],
+  "properties": {
+    "as_of": {"$ref": "common.schema.json#/$defs/date"},
+    "sample": {"type": "boolean"},
+    "benchmark": {"$ref": "common.schema.json#/$defs/ticker"},
+    "state": {"enum": ["calm", "normal", "stressed"]},
+    "trend": {"enum": ["up", "down", "sideways"]},
+    "label": {"type": "string", "maxLength": 40},
+    "metrics": {
+      "type": "object", "additionalProperties": false,
+      "required": ["vol_ann_pct", "drawdown_pct", "close", "sma", "sma_slope_pct"],
+      "properties": {
+        "vol_ann_pct": {"type": "number", "minimum": 0},
+        "drawdown_pct": {"type": "number", "maximum": 0},
+        "close": {"type": "number", "exclusiveMinimum": 0},
+        "sma": {"type": "number", "exclusiveMinimum": 0},
+        "sma_slope_pct": {"type": "number"}
+      }
+    },
+    "params": {
+      "type": "object", "additionalProperties": false,
+      "required": ["vol_days", "trend_sma_days", "slope_days", "drawdown_days"],
+      "properties": {
+        "vol_days": {"type": "integer"}, "trend_sma_days": {"type": "integer"},
+        "slope_days": {"type": "integer"}, "drawdown_days": {"type": "integer"}
+      }
+    }
+  }
+}

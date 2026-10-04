@@ -75,7 +75,7 @@ export default function App() {
       <Field />
       <Loader progress={progress} done={Boolean(data || error)} />
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-lg focus:bg-ink focus:px-3 focus:py-2 focus:text-bg">Skip to content</a>
-      <Header tabs={TABS} active={tab} onNav={go} sample={data?.sample} theme={theme} onTheme={toggleTheme} />
+      <Header tabs={TABS} active={tab} onNav={go} sample={data?.sample} livePrices={data?.livePrices} theme={theme} onTheme={toggleTheme} />
       <main id="main" className="relative min-h-[70vh] [view-transition-name:main]">
         {error && (
           <Container className="py-24">

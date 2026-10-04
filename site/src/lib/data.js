@@ -40,6 +40,8 @@ export function derive(manifest, files) {
   const routines = files[doc("routines").file];
   const outcomes = manifest.kb.outcomes ? files[manifest.kb.outcomes].items : [];
   const library = manifest.kb.library ? files[manifest.kb.library] : null;
+  const regime = manifest.kb.regime ? files[manifest.kb.regime] : null;
+  const calibration = manifest.kb.calibration ? files[manifest.kb.calibration] : null;
   const names = Object.fromEntries(watchlist.symbols.map((s) => [s.symbol, s.name]));
   const bench = settings.scoring.benchmark;
   names[bench.symbol] = bench.label;
@@ -74,7 +76,8 @@ export function derive(manifest, files) {
 
   return {
     manifest, runs, shownRuns, latest, lastOk, prices, watchlist, settings, learnings, guardrails,
-    outcomes, library, sources, routines, names, bench, kb, docs, sample: manifest.source === "sample",
+    outcomes, library, sources, routines, names, bench, kb, docs, regime, calibration,
+    sample: manifest.source === "sample", livePrices: manifest.price_source === "live",
   };
 }
 

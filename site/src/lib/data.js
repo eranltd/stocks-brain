@@ -18,6 +18,8 @@ export async function loadAll(onProgress = () => {}) {
     manifest.market,
     ...(manifest.longrun ? [manifest.longrun] : []),
     ...(manifest.paper ? [manifest.paper] : []),
+    ...(manifest.rules_result ? [manifest.rules_result] : []),
+    ...(manifest.paper_rules ? [manifest.paper_rules] : []),
     ...Object.values(manifest.kb),
     ...manifest.docs.map((d) => d.file),
     ...(manifest.ops ? [manifest.ops] : []),
@@ -39,6 +41,9 @@ export function derive(manifest, files) {
   // Goal check and portfolio rule (data/market/longrun.json) and the forward-only paper record.
   const longrun = manifest.longrun ? files[manifest.longrun] : null;
   const paper = manifest.paper ? files[manifest.paper] : null;
+  // Rule registry (config/rules.json) and its backtests (data/market/rules.json).
+  const rulesResult = manifest.rules_result ? files[manifest.rules_result] : null;
+  const ledger = manifest.paper_rules ? files[manifest.paper_rules] : null;
   // Indexed sparklines (100 = start of window). No absolute prices are published.
   const prices = Object.fromEntries(market.symbols.map((s) => [s.symbol, { ...s, bars: s.spark.map((p) => ({ date: p.date, close: p.v })) }]));
   const doc = (name) => manifest.docs.find((d) => d.name === name);
@@ -48,6 +53,7 @@ export function derive(manifest, files) {
   const guardrails = files[doc("guardrails").file];
   const sources = files[doc("sources").file];
   const routines = files[doc("routines").file];
+  const rulebook = doc("rules") ? files[doc("rules").file] : null;
   const outcomes = manifest.kb.outcomes ? files[manifest.kb.outcomes].items : [];
   const library = manifest.kb.library ? files[manifest.kb.library] : null;
   const regime = manifest.kb.regime ? files[manifest.kb.regime] : null;
@@ -91,7 +97,7 @@ export function derive(manifest, files) {
 
   return {
     market, manifest, runs, shownRuns, latest, lastOk, prices, watchlist, settings, learnings, guardrails,
-    outcomes, library, sources, routines, names, bench, kb, docs, regime, calibration, observations, opsLog, longrun, paper, sectors, core,
+    outcomes, library, sources, routines, names, bench, kb, docs, regime, calibration, observations, opsLog, longrun, paper, sectors, core, rulebook, rulesResult, ledger,
     sample: manifest.source === "sample", livePrices: manifest.price_source === "live",
   };
 }

@@ -108,6 +108,11 @@ class Lint:
             bars_cap = load_json(SCHEMAS / "prices.schema.json")["properties"]["bars"]["maxItems"]
             if st["prices"]["keep_days"] > bars_cap:
                 self.err(CONFIG / "settings.json", f"prices.keep_days {st['prices']['keep_days']} > prices schema maxItems {bars_cap}: every fetch would fail")
+        rules_path = CONFIG / "rules.json"
+        if rules_path.exists():
+            rc = self.schema(rules_path, "rules.schema.json")
+            if rc:
+                self.check_rules(rules_path, rc)
         if wl:
             if wl.get("core") and wl["core"]["symbol"] not in {c["symbol"] for c in wl.get("context", [])}:
                 self.err(CONFIG / "watchlist.json", "core.symbol must also be listed in context (so it is fetched)")
@@ -115,6 +120,77 @@ class Lint:
             if len(syms) != len(set(syms)):
                 self.err(CONFIG / "watchlist.json", "duplicate symbols")
         return st, wl
+
+    def check_rules(self, path: Path, rc: dict) -> None:
+        """The registry must match what the engine can run, cite real library ids, and count its tries honestly."""
+        import rules as rl
+        ids = [r["id"] for r in rc["rules"]]
+        if len(ids) != len(set(ids)):
+            self.err(path, "duplicate rule ids")
+        lib_path = KB / "library.json"
+        known = set()
+        if lib_path.exists():
+            for src in load_json(lib_path)["sources"]:
+                known.add(src["id"])
+                known.update(p["id"] for p in src["principles"])
+        testable = 0
+        sat_methods = {"v1", "filters", "random", "all", "core"}
+        keeps = {"none", "same_filters", "rank_top"}
+        exits = {"none", "atr_trail", "trend_break"}
+        for r in rc["rules"]:
+            where = f"{r['id']}"
+            for ref in r["library_refs"]:
+                if known and ref not in known:
+                    self.err(path, f"{where}: library ref {ref} is not in data/kb/library.json")
+            eng, st = r.get("engine"), r["status"]
+            live = st in ("testable_now", "reference_baseline", "control")
+            if live != bool(eng):
+                self.err(path, f"{where}: status {st} {'needs' if live else 'must not have'} an engine")
+            if r["family"] == "fundamental" and live:
+                self.err(path, f"{where}: a fundamental rule cannot be testable until the owner approves a data provider")
+            if not eng:
+                continue
+            testable += 1
+            kind = eng.get("kind")
+            if kind == "savings_contribute":
+                if eng.get("every_weeks", 1) not in (1, 2, 4, 13) and eng.get("mode", "stream") == "stream":
+                    self.err(path, f"{where}: every_weeks must be 1, 2, 4 or 13")
+                if eng.get("gate", "none") not in ("none", "core_trend") or eng.get("mode", "stream") not in ("stream", "windfall"):
+                    self.err(path, f"{where}: unknown savings gate or mode")
+            elif kind == "satellite_select":
+                sel = eng.get("selection", {})
+                if sel.get("method") not in sat_methods:
+                    self.err(path, f"{where}: unknown selection method {sel.get('method')!r}")
+                if not 1 <= eng.get("slots", 0) <= 30:
+                    self.err(path, f"{where}: slots must be 1..30")
+                if sel.get("method") == "filters":
+                    for f in sel.get("filters", []):
+                        if f.get("f") not in rl.FILTERS:
+                            self.err(path, f"{where}: unknown filter {f.get('f')!r}")
+                    if sel.get("rank") not in (*rl.RANKS, "checks_then_rs6"):
+                        self.err(path, f"{where}: unknown rank {sel.get('rank')!r}")
+                    if sel.get("keep", {"mode": "none"}).get("mode") not in keeps:
+                        self.err(path, f"{where}: unknown keep mode")
+                if eng.get("exit", {"kind": "none"}).get("kind") not in exits:
+                    self.err(path, f"{where}: unknown exit kind")
+                if eng.get("sizing", "equal") not in ("equal", "inverse_vol") or eng.get("regime", "none") not in ("none", "core_trend"):
+                    self.err(path, f"{where}: unknown sizing or regime")
+            elif kind != "control":
+                self.err(path, f"{where}: unknown engine kind {kind!r}")
+        savings = [r for r in rc["rules"] if r.get("engine") and r["engine"].get("kind") == "savings_contribute"]
+        if savings and sum(1 for r in savings if r["engine"].get("baseline")) != 1:
+            self.err(path, "exactly one savings rule must have engine.baseline = true")
+        if rc["tries_counted"] < testable:
+            self.err(path, f"tries_counted {rc['tries_counted']} < {testable} testable rules (count every variant tried)")
+        rid = set(ids)
+        for grp, items in (("sets", rc["sets"]), ("experiments", rc["experiments"])):
+            for it in items:
+                for x in it["rule_ids"]:
+                    if x not in rid:
+                        self.err(path, f"{grp} {it['id']}: unknown rule id {x}")
+        for ex in rc["experiments"]:
+            if not ex["rule_ids"]:
+                self.err(path, f"experiment {ex['id']} names no rules")
 
     # --------------------------------------------------------------------- docs
     def check_docs(self) -> tuple[dict | None, dict]:
@@ -264,6 +340,8 @@ class Lint:
     def check_market(self) -> None:
         for path, schema in ((DATA / "market" / "derived.json", "derived.schema.json"),
                              (DATA / "market" / "longrun.json", "longrun.schema.json"),
+                             (DATA / "market" / "rules.json", "rules_result.schema.json"),
+                             (DATA / "portfolio" / "paper_rules.json", "paper_rules.schema.json"),
                              (DATA / "portfolio" / "paper.json", "paper.schema.json")):
             if path.exists():
                 self.schema(path, schema)

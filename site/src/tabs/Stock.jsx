@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { fmtDate, fmtNum, fmtPct, fmtShort, cap } from "../lib/format.js";
 import { useInView } from "../lib/motion.js";
 import { Accent, ArrowRight, Chip, Container, Conviction, Empty, Headline, Reveal, Segmented, Strip } from "../components/ui.jsx";
@@ -289,6 +289,16 @@ function StockChart({ row, bench, benchSymbol, picks }) {
   const [ref, inView] = useInView();
   const [hover, setHover] = useState(null);
   const svg = useRef(null);
+  const box = useRef(null);
+  // Draw at real pixel size so axis text stays readable on phones.
+  const [W, setW] = useState(1000);
+  useEffect(() => {
+    const el = box.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([e]) => setW(Math.max(300, Math.round(e.contentRect.width))));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
   const full = row.series ?? row.spark.map((p) => ({ date: p.date, v: p.v }));
   const maxRange = full.length;
   const n = Math.min(range, maxRange);
@@ -305,7 +315,8 @@ function StockChart({ row, bench, benchSymbol, picks }) {
     return { pts, bpts, spts, lo: Math.min(...all), hi: Math.max(...all), dates: s.map((p) => p.date) };
   }, [full, n, bench]);
 
-  const W = 1000, H = 420, L = 54, R = 70, T = 16, B = 34;
+  const narrowW = W < 640;
+  const H = narrowW ? 260 : 400, L = narrowW ? 34 : 48, R = narrowW ? 54 : 68, T = 14, B = 28;
   const x = (i) => L + (i / Math.max(1, pts.length - 1)) * (W - L - R);
   const pad = (hi - lo) * 0.08 || 1;
   const y = (v) => T + (1 - (v - (lo - pad)) / (hi - lo + 2 * pad)) * (H - T - B);
@@ -322,7 +333,7 @@ function StockChart({ row, bench, benchSymbol, picks }) {
     setHover(Math.max(0, Math.min(pts.length - 1, i)));
   };
   const h = hover;
-  const labelEvery = Math.ceil(pts.length / 5);
+  const labelEvery = Math.ceil(pts.length / (narrowW ? 3 : 5));
 
   return (
     <div ref={ref}>
@@ -334,28 +345,28 @@ function StockChart({ row, bench, benchSymbol, picks }) {
         </div>
         <Segmented label="Range" value={range} onChange={setRange} options={RANGES.filter((r) => r.value <= Math.max(21, maxRange)).map((r) => ({ ...r }))} />
       </div>
-      <div className="relative">
+      <div ref={box} className="relative">
         <svg ref={svg} viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full touch-pan-y overflow-visible" role="img"
           aria-label={`${row.symbol} over ${n} trading days, indexed to 100${bench ? `, against ${benchSymbol}` : ""}`}
           onPointerMove={onMove} onPointerDown={onMove} onPointerLeave={() => setHover(null)}>
           {ticks.map((t) => (
             <g key={t}>
               <line x1={L} x2={W - R} y1={y(t)} y2={y(t)} stroke={t === 100 ? "var(--line-2)" : "var(--line)"} />
-              <text x={L - 10} y={y(t) + 5} textAnchor="end" className="fill-ink-3 font-mono text-[15px]">{t}</text>
+              <text x={L - 8} y={y(t) + 4} textAnchor="end" className="fill-ink-3 font-mono text-[11.5px]">{t}</text>
             </g>
           ))}
           {lo < 100 && hi > 100 && <line x1={L} x2={W - R} y1={y(100)} y2={y(100)} stroke="var(--line-2)" strokeDasharray="2 4" />}
           {dates.map((d, i) => i % labelEvery === 0 && (
-            <text key={d} x={x(i)} y={H - 8} textAnchor="middle" className="fill-ink-3 font-mono text-[15px]">{fmtShort(d)}</text>
+            <text key={d} x={Math.max(L + 18, x(i))} y={H - 6} textAnchor="middle" className="fill-ink-3 font-mono text-[11.5px]">{fmtShort(d)}</text>
           ))}
           <path d={path(spts)} fill="none" stroke="var(--ink-2)" strokeWidth="1.2" opacity="0.6" vectorEffect="non-scaling-stroke" />
           {bpts.length > 0 && <path d={path(bpts)} fill="none" stroke="var(--ink-3)" strokeWidth="2" strokeDasharray="6 5" vectorEffect="non-scaling-stroke" />}
           <path d={path(pts)} fill="none" stroke={color} strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke"
             style={{ opacity: inView ? 1 : 0, transition: "opacity 900ms cubic-bezier(.16,1,.3,1)" }} />
           {/* end labels */}
-          <text x={W - R + 10} y={y(pts.at(-1)) + 5} className="font-mono text-[15px] font-semibold" fill={color}>{fmtPct(pts.at(-1) - 100, 1)}</text>
-          {bpts.length > 0 && bpts.at(-1) != null && Math.abs(y(bpts.at(-1)) - y(pts.at(-1))) > 18 && (
-            <text x={W - R + 10} y={y(bpts.at(-1)) + 5} className="fill-ink-3 font-mono text-[15px]">{fmtPct(bpts.at(-1) - 100, 1)}</text>
+          <text x={W - R + 8} y={y(pts.at(-1)) + 4} className="font-mono text-[12px] font-semibold" fill={color}>{fmtPct(pts.at(-1) - 100, 1)}</text>
+          {bpts.length > 0 && bpts.at(-1) != null && Math.abs(y(bpts.at(-1)) - y(pts.at(-1))) > 14 && (
+            <text x={W - R + 8} y={y(bpts.at(-1)) + 4} className="fill-ink-3 font-mono text-[12px]">{fmtPct(bpts.at(-1) - 100, 1)}</text>
           )}
           {markers.map(({ k, i }) => (
             <circle key={k.id} cx={x(i)} cy={y(pts[i])} r="7" stroke="var(--surface)" strokeWidth="2"

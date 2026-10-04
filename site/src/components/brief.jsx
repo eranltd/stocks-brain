@@ -19,7 +19,7 @@ export function marketBrief(data) {
 
   // Conditions -> library tags. Each condition contributes at most one principle.
   const conds = [
-    narrow && { why: "Leadership is narrow", tags: ["breadth", "leadership", "megacap"] },
+    narrow && { why: "Leadership is narrow", tags: ["breadth", "benchmark", "conviction", "leadership"] },
     nearHigh && { why: `${bench.symbol} is at a 1-year high`, tags: ["all_time_highs"] },
     (regime?.metrics.dist_sma_pct ?? 0) > 5 && { why: "The index is stretched above its trend", tags: ["overextension"] },
     regime?.state === "stressed" && { why: "Volatility is stressed", tags: ["volatility", "risk"] },

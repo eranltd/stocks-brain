@@ -1,7 +1,7 @@
 {
-  "version": "0.2.0",
+  "version": "0.4.0",
   "updated_at": "2026-10-04",
-  "change_note": "Tiingo as price provider; regime and calibration parameters.",
+  "change_note": "Trust ladder thresholds (when the household may act on calls).",
   "pack": {
     "token_cap": 12000,
     "recent_runs": 5,
@@ -43,6 +43,16 @@
     "drawdown_stressed_pct": 15,
     "trend_sma_days": 50,
     "slope_days": 10
+  },
+  "setup": {
+    "stretch_pct": 8,
+    "rel_days": 20
+  },
+  "trust": {
+    "paper_min_scored": 30,
+    "small_min_scored": 60,
+    "min_hit_rate_pct": 55,
+    "min_avg_excess_pct": 0.5
   },
   "site": {
     "title": "stocks·brain",

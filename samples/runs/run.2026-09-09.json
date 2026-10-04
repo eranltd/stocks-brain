@@ -20,7 +20,7 @@
   },
   "doc_versions": {
     "strategy": "0.1.0",
-    "methodology": "0.2.0",
+    "methodology": "0.3.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },

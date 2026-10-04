@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { flushSync } from "react-dom";
 import { loadAll } from "./lib/data.js";
-import { Field, Footer, Header, Loader } from "./components/shell.jsx";
+import { Field, Footer, Header, Loader, MobileNav } from "./components/shell.jsx";
 import { Container } from "./components/ui.jsx";
 import Today from "./tabs/Today.jsx";
 import Watchlist from "./tabs/Watchlist.jsx";
@@ -13,6 +13,7 @@ import Runs from "./tabs/Runs.jsx";
 import Routines from "./tabs/Routines.jsx";
 import HowItWorks from "./tabs/HowItWorks.jsx";
 import Admin from "./tabs/Admin.jsx";
+import Stock from "./tabs/Stock.jsx";
 
 const TABS = [
   { id: "today", label: "Today", C: Today },
@@ -26,8 +27,12 @@ const TABS = [
   { id: "how", label: "How it works", C: HowItWorks },
   { id: "admin", label: "Admin", C: Admin },
 ];
+// Tabs that show synthetic data until the brain (M3) produces real picks.
+const SAMPLE_TABS = ["track", "kb", "learnings", "runs"];
+// Routes: a tab id, or "stock/<SYMBOL>" for a stock page.
 const fromHash = () => {
-  const h = window.location.hash.replace("#", "");
+  const h = decodeURIComponent(window.location.hash.replace("#", ""));
+  if (/^stock\/[A-Z][A-Z0-9.\-]{0,9}$/.test(h)) return h;
   return TABS.some((t) => t.id === h) ? h : "today";
 };
 
@@ -72,14 +77,16 @@ export default function App() {
   };
 
   const openKB = (q) => { setQuery(q); go("kb"); };
-  const Active = TABS.find((t) => t.id === tab).C;
+  const symbol = tab.startsWith("stock/") ? tab.slice(6) : null;
+  const navTab = symbol ? "watchlist" : tab;
+  const Active = symbol ? Stock : TABS.find((t) => t.id === tab).C;
 
   return (
     <>
       <Field />
       <Loader progress={progress} done={Boolean(data || error)} />
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-lg focus:bg-ink focus:px-3 focus:py-2 focus:text-bg">Skip to content</a>
-      <Header tabs={TABS} active={tab} onNav={go} sample={data?.sample} livePrices={data?.livePrices} theme={theme} onTheme={toggleTheme} />
+      <Header tabs={TABS} active={navTab} onNav={go} sample={data?.sample} livePrices={data?.livePrices} theme={theme} onTheme={toggleTheme} />
       <main id="main" className="relative min-h-[70vh] [view-transition-name:main]">
         {error && (
           <Container className="py-24">
@@ -90,9 +97,10 @@ export default function App() {
             </div>
           </Container>
         )}
-        {data && <Active key={tab} data={data} go={go} query={query} setQuery={setQuery} openKB={openKB} />}
+        {data && <Active key={tab} data={data} go={go} query={query} setQuery={setQuery} openKB={openKB} symbol={symbol} />}
       </main>
       {data && <Footer data={data} />}
+      <MobileNav tabs={TABS} active={navTab} onNav={go} sampleTabs={data?.sample ? SAMPLE_TABS : []} />
     </>
   );
 }

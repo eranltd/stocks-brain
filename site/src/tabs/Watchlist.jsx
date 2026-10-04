@@ -3,7 +3,7 @@ import { fmtDate, fmtNum, fmtPct, numWord } from "../lib/format.js";
 import { Sparkline } from "../components/charts.jsx";
 import { Accent, Container, Reveal, SectionHead, Segmented, Strip } from "../components/ui.jsx";
 
-export default function Watchlist({ data }) {
+export default function Watchlist({ data, go }) {
   const { watchlist, prices, bench, settings, regime, livePrices, market } = data;
   const [sort, setSort] = useState("list");
   const days = settings.site.sparkline_days;
@@ -38,25 +38,30 @@ export default function Watchlist({ data }) {
         <span>Name</span><span>{days} days, indexed</span><span className="text-right">20d vs {bench.symbol}</span><span className="text-right">Today</span>
       </div>
       <div className="grid gap-3">
-        <Row r={bm} i={0} bench />
-        {rows.map((r, i) => <Row key={r.symbol} r={r} i={i + 1} />)}
+        <Row r={bm} i={0} bench go={go} />
+        {rows.map((r, i) => <Row key={r.symbol} r={r} i={i + 1} go={go} />)}
       </div>
     </Container>
   );
 }
 
-function Row({ r, i, bench = false }) {
+function Row({ r, i, bench = false, go }) {
   const m = r.m;
   const tone = (m?.ret_20d_pct ?? 0) < 0 ? "down" : "accent";
   return (
     <Reveal
       delay={i * 45}
-      className={`card card-hover grid grid-cols-[minmax(0,1fr)_88px_auto] items-center gap-x-4 gap-y-1 px-5 py-4 sm:grid-cols-[minmax(150px,1.1fr)_minmax(140px,2fr)_minmax(100px,.8fr)_minmax(130px,.9fr)] sm:gap-6 sm:px-7 sm:py-5 ${bench ? "border-dashed bg-transparent" : ""}`}
+      role="link"
+      tabIndex={0}
+      aria-label={`Open ${r.symbol}`}
+      onClick={() => go(`stock/${r.symbol}`)}
+      onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), go(`stock/${r.symbol}`))}
+      className={`card card-hover grid cursor-pointer grid-cols-[minmax(0,1fr)_88px_auto] items-center gap-x-4 gap-y-1 px-5 py-4 sm:grid-cols-[minmax(150px,1.1fr)_minmax(140px,2fr)_minmax(100px,.8fr)_minmax(130px,.9fr)] sm:gap-6 sm:px-7 sm:py-5 ${bench ? "border-dashed bg-transparent" : ""}`}
     >
       <div className="row-span-2 min-w-0 sm:row-span-1">
         <div className="flex items-center gap-2">
           <span className="text-[22px] font-semibold tracking-[-0.03em]">{r.symbol}</span>
-          {bench && <span className="pill hidden py-1 text-[10px] text-ink-3 sm:inline-flex">benchmark</span>}
+          {bench && <span className="pill hidden py-1 text-[11px] text-ink-3 sm:inline-flex">benchmark</span>}
         </div>
         <div className="truncate text-[13px] text-ink-3">{bench ? <span className="sm:hidden">Benchmark · </span> : null}{r.name}</div>
       </div>
@@ -89,6 +94,7 @@ function Regime({ regime, breadth }) {
   return (
     <div className="mb-10">
       <Strip
+        dense
         cells={[
           { value: regime.state, label: `regime · ${regime.benchmark}`, tone: STATE_TONE[regime.state], desc: `As of ${fmtDate(regime.as_of)}. Computed by code from benchmark closes; the brain reads it as context.` },
           { value: regime.trend, label: `${regime.params.trend_sma_days}-day trend`, tone: TREND_TONE[regime.trend], desc: `${fmtPct(m.dist_sma_pct, 1)} vs its ${regime.params.trend_sma_days}-day average, which is ${m.sma_slope_pct >= 0 ? "rising" : "falling"} ${fmtPct(m.sma_slope_pct)} over ${regime.params.slope_days} days.` },

@@ -1,20 +1,33 @@
 ---
-version: 0.2.0
+version: 0.3.0
 updated_at: 2026-10-04
-change_note: Prices published as derived numbers only; Tiingo key connected.
+change_note: Product pass for household trust; stock pages; phone navigation.
 ---
 # Decision log
 
 Every decision that shapes the system, with the reason. Newest first. Nothing lives only in a chat session.
 
 ## Open items (waiting on the owner)
-- **Default branch**: set to `main` (Settings → General). Scheduled runs only fire from the default branch.
 - **Author of sources S-001 to S-005**: confirm they are the same channel (Micha) as the later batches.
 - **Reference prices in pick records**: runs and outcomes store single reference and exit closes. This is minor, but revisit at M3: drop them, or keep them as computed returns only.
 - **LLM step (M3)**: run the daily brain as a scheduled Claude Code routine on the owner's subscription (preferred) or through a paid API key.
 - **Paid connectors** (news, X, options data for implied moves): parked until the owner wants to spend.
 
 ## 2026-10-04
+- **Product goal: household trust and good decisions.** Added in response:
+  - a trust ladder (Observe, Paper, Small money, Trusted) computed from real scored picks, with thresholds under `trust` in settings
+  - house rules in `docs/household.md`: core index first, size limits, and the conditions before acting
+  - "Can we act on this?" on each stock page, which applies those rules
+  - "In plain words" summaries written by code
+- **Stock pages** (`#stock/SYMBOL`) show:
+  - the chart vs the benchmark, indexed, with the 50-day average and 1M to 1Y ranges
+  - code-only setup checks (methodology "Setup checks")
+  - lessons matched to the stock's condition
+  - claims that name it
+  - the brain's call, sample-labelled until M3
+- **Today leads with a live market brief while picks are sample.** It shows a computed headline, lessons in play (library principles matched to conditions by tag), relative strength vs the benchmark, and live claims on watchlist names. Sample picks follow as a labelled preview.
+- **Phones get a bottom tab bar** (Today, Watchlist, Insights, Routines, More). Ten tabs in a scrolling strip hid most of them on an iPhone.
+- **Default branch is `main`**, so scheduled runs fire.
 - **Prices are derived-only (owner's choice).** Tiingo's free plan forbids redistribution and the repo is public. Raw bars live only in a git-ignored `.cache/` inside each Action run (each fetch returns the full window, so nothing raw needs to persist). The public repo gets `data/market/derived.json`: 1-, 20- and 60-day returns, return vs the benchmark, distance from the 50-day average, breadth, and sparklines indexed to 100. The regime file now uses percentages instead of absolute closes. Lint fails if raw bars are ever committed.
 - **Tiingo key connected.** The dry run on main fetched 260 bars per symbol.
 - **Routines get their own tab**, with a run log in `data/ops/routine_runs.json`. Each workflow run appends its outcome, failures included, so the site shows what actually ran.

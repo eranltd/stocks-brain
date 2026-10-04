@@ -4,31 +4,131 @@
   "description": "Public numbers computed from provider bars: returns, distances, breadth and sparklines indexed to 100. Contains no absolute prices; raw bars are never committed (provider terms).",
   "type": "object",
   "additionalProperties": false,
-  "required": ["as_of", "sample", "provider", "benchmark", "breadth_above_sma50_pct", "symbols"],
+  "required": [
+    "as_of",
+    "sample",
+    "provider",
+    "benchmark",
+    "breadth_above_sma50_pct",
+    "symbols"
+  ],
   "properties": {
-    "as_of": {"$ref": "common.schema.json#/$defs/date"},
-    "sample": {"type": "boolean"},
-    "provider": {"type": "string", "maxLength": 40},
-    "benchmark": {"$ref": "common.schema.json#/$defs/ticker"},
-    "breadth_above_sma50_pct": {"type": ["number", "null"], "minimum": 0, "maximum": 100},
+    "as_of": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "sample": {
+      "type": "boolean"
+    },
+    "provider": {
+      "type": "string",
+      "maxLength": 40
+    },
+    "benchmark": {
+      "$ref": "common.schema.json#/$defs/ticker"
+    },
+    "breadth_above_sma50_pct": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 100
+    },
     "symbols": {
-      "type": "array", "maxItems": 60,
+      "type": "array",
+      "maxItems": 60,
       "items": {
-        "type": "object", "additionalProperties": false,
-        "required": ["symbol", "last_date", "change_1d_pct", "ret_20d_pct", "ret_60d_pct", "dist_sma50_pct", "above_sma50", "spark"],
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "symbol",
+          "last_date",
+          "change_1d_pct",
+          "ret_20d_pct",
+          "ret_60d_pct",
+          "dist_sma50_pct",
+          "above_sma50",
+          "spark"
+        ],
         "properties": {
-          "symbol": {"$ref": "common.schema.json#/$defs/ticker"},
-          "last_date": {"$ref": "common.schema.json#/$defs/date"},
-          "change_1d_pct": {"type": "number"},
-          "ret_20d_pct": {"type": "number"},
-          "ret_60d_pct": {"type": "number"},
-          "vs_bench_20d_pct": {"type": "number"},
-          "dist_sma50_pct": {"type": "number"},
-          "above_sma50": {"type": "boolean"},
+          "symbol": {
+            "$ref": "common.schema.json#/$defs/ticker"
+          },
+          "last_date": {
+            "$ref": "common.schema.json#/$defs/date"
+          },
+          "change_1d_pct": {
+            "type": "number"
+          },
+          "ret_20d_pct": {
+            "type": "number"
+          },
+          "ret_60d_pct": {
+            "type": "number"
+          },
+          "vs_bench_20d_pct": {
+            "type": "number"
+          },
+          "dist_sma50_pct": {
+            "type": "number"
+          },
+          "above_sma50": {
+            "type": "boolean"
+          },
           "spark": {
-            "type": "array", "maxItems": 260,
-            "items": {"type": "object", "additionalProperties": false, "required": ["date", "v"],
-                      "properties": {"date": {"$ref": "common.schema.json#/$defs/date"}, "v": {"type": "number", "exclusiveMinimum": 0}}}
+            "type": "array",
+            "maxItems": 260,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "date",
+                "v"
+              ],
+              "properties": {
+                "date": {
+                  "$ref": "common.schema.json#/$defs/date"
+                },
+                "v": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                }
+              }
+            }
+          },
+          "from_high_pct": {
+            "type": "number",
+            "maximum": 0
+          },
+          "vol20_pct": {
+            "type": "number",
+            "minimum": 0
+          },
+          "series": {
+            "type": "array",
+            "maxItems": 1000,
+            "description": "Whole window indexed to 100 at its first bar; sma50 on the same index.",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "date",
+                "v"
+              ],
+              "properties": {
+                "date": {
+                  "$ref": "common.schema.json#/$defs/date"
+                },
+                "v": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "sma50": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                }
+              }
+            }
           }
         }
       }

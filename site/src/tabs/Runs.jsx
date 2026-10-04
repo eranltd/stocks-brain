@@ -54,7 +54,7 @@ export default function Runs({ data }) {
               {[...runs].reverse().map((r) => (
                 <tr key={r.run_id} className="border-b border-line transition-colors last:border-0 hover:bg-ink/[0.03]" title={r.failure_reason}>
                   <td className="px-5 py-3.5 font-mono">{r.date}</td>
-                  <td className="px-5 py-3.5"><Chip kind={r.status} icon={false} className="py-1 text-[10px]">{r.status}{r.repair_retries ? " · retry" : ""}</Chip></td>
+                  <td className="px-5 py-3.5"><Chip kind={r.status} icon={false} className="py-1 text-[11px]">{r.status}{r.repair_retries ? " · retry" : ""}</Chip></td>
                   <td className={`num px-5 py-3.5 text-right font-mono ${r.cost.usd > settings.cost.warn_usd ? "text-people" : ""}`}>{fmtUsd(r.cost.usd)}</td>
                   <td className="num px-5 py-3.5 text-right font-mono text-ink-2">{fmtNum(r.duration_minutes, 1)}</td>
                   <td className="px-5 py-3.5">

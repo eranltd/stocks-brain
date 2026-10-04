@@ -20,7 +20,7 @@
       "benchmark_return_pct": -8.028,
       "excess_pct": 15.64,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-03:MSFT",
@@ -38,7 +38,7 @@
       "benchmark_return_pct": -8.028,
       "excess_pct": 9.429,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-03:AVGO",
@@ -56,7 +56,7 @@
       "benchmark_return_pct": -8.028,
       "excess_pct": -3.294,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-03:AMZN",
@@ -74,7 +74,7 @@
       "benchmark_return_pct": -8.028,
       "excess_pct": 5.068,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-04:AAPL",
@@ -92,7 +92,7 @@
       "benchmark_return_pct": -6.582,
       "excess_pct": 8.967,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-04:MSFT",
@@ -110,7 +110,7 @@
       "benchmark_return_pct": -6.582,
       "excess_pct": 7.855,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-04:AMZN",
@@ -128,7 +128,7 @@
       "benchmark_return_pct": -6.582,
       "excess_pct": 4.989,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-04:NVDA",
@@ -146,7 +146,7 @@
       "benchmark_return_pct": -6.582,
       "excess_pct": 26.888,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-05:AAPL",
@@ -164,7 +164,7 @@
       "benchmark_return_pct": -7.378,
       "excess_pct": 10.1,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-05:MSFT",
@@ -182,7 +182,7 @@
       "benchmark_return_pct": -7.378,
       "excess_pct": 7.698,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-06:AAPL",
@@ -200,7 +200,7 @@
       "benchmark_return_pct": -6.564,
       "excess_pct": 5.277,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-07:AAPL",
@@ -218,7 +218,7 @@
       "benchmark_return_pct": -5.589,
       "excess_pct": 4.472,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-07:MSFT",
@@ -236,7 +236,7 @@
       "benchmark_return_pct": -5.589,
       "excess_pct": 1.365,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-07:AMZN",
@@ -254,7 +254,7 @@
       "benchmark_return_pct": -5.589,
       "excess_pct": 11.77,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-10:AAPL",
@@ -272,7 +272,7 @@
       "benchmark_return_pct": -4.343,
       "excess_pct": 5.481,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-10:COST",
@@ -290,7 +290,7 @@
       "benchmark_return_pct": -4.343,
       "excess_pct": 15.372,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-11:AAPL",
@@ -308,7 +308,7 @@
       "benchmark_return_pct": -3.91,
       "excess_pct": 0.604,
       "verdict": "flat",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-11:COST",
@@ -326,7 +326,7 @@
       "benchmark_return_pct": -3.91,
       "excess_pct": 14.582,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-12:AAPL",
@@ -344,7 +344,7 @@
       "benchmark_return_pct": -3.314,
       "excess_pct": -0.566,
       "verdict": "flat",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-12:COST",
@@ -362,7 +362,7 @@
       "benchmark_return_pct": -3.314,
       "excess_pct": 14.515,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-12:AMZN",
@@ -380,7 +380,7 @@
       "benchmark_return_pct": -3.314,
       "excess_pct": 8.39,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-13:AAPL",
@@ -398,7 +398,7 @@
       "benchmark_return_pct": -2.544,
       "excess_pct": -0.851,
       "verdict": "flat",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-13:COST",
@@ -416,7 +416,7 @@
       "benchmark_return_pct": -2.544,
       "excess_pct": 12.116,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-13:META",
@@ -434,7 +434,7 @@
       "benchmark_return_pct": -2.544,
       "excess_pct": -0.934,
       "verdict": "flat",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-13:AMZN",
@@ -452,7 +452,7 @@
       "benchmark_return_pct": -2.544,
       "excess_pct": 8.569,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-14:COST",
@@ -470,7 +470,7 @@
       "benchmark_return_pct": -2.336,
       "excess_pct": 6.35,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-14:AAPL",
@@ -488,7 +488,7 @@
       "benchmark_return_pct": -2.336,
       "excess_pct": -0.195,
       "verdict": "flat",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-17:COST",
@@ -506,7 +506,7 @@
       "benchmark_return_pct": -0.387,
       "excess_pct": 5.002,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-17:AAPL",
@@ -524,7 +524,7 @@
       "benchmark_return_pct": -0.387,
       "excess_pct": -3.658,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-17:META",
@@ -542,7 +542,7 @@
       "benchmark_return_pct": -0.387,
       "excess_pct": -4.206,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-18:COST",
@@ -560,7 +560,7 @@
       "benchmark_return_pct": 0.695,
       "excess_pct": -2.714,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-18:AMZN",
@@ -578,7 +578,7 @@
       "benchmark_return_pct": 0.695,
       "excess_pct": 7.264,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-19:COST",
@@ -596,7 +596,7 @@
       "benchmark_return_pct": 1.573,
       "excess_pct": -1.602,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-19:AAPL",
@@ -614,7 +614,7 @@
       "benchmark_return_pct": 1.573,
       "excess_pct": -2.098,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-20:COST",
@@ -632,7 +632,7 @@
       "benchmark_return_pct": -1.376,
       "excess_pct": -3.997,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-20:AAPL",
@@ -650,7 +650,7 @@
       "benchmark_return_pct": -1.376,
       "excess_pct": 2.162,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-20:AMZN",
@@ -668,7 +668,7 @@
       "benchmark_return_pct": -1.376,
       "excess_pct": 6.181,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-21:COST",
@@ -686,7 +686,7 @@
       "benchmark_return_pct": -1.568,
       "excess_pct": -5.761,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-21:NVDA",
@@ -704,7 +704,7 @@
       "benchmark_return_pct": -1.568,
       "excess_pct": 21.743,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-21:AMZN",
@@ -722,7 +722,7 @@
       "benchmark_return_pct": -1.568,
       "excess_pct": 0.586,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-24:COST",
@@ -740,7 +740,7 @@
       "benchmark_return_pct": -1.807,
       "excess_pct": -7.688,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-24:NVDA",
@@ -758,7 +758,7 @@
       "benchmark_return_pct": -1.807,
       "excess_pct": 20.433,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-24:AAPL",
@@ -776,7 +776,7 @@
       "benchmark_return_pct": -1.807,
       "excess_pct": 7.212,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-25:COST",
@@ -794,7 +794,7 @@
       "benchmark_return_pct": -0.954,
       "excess_pct": -9.338,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-25:NVDA",
@@ -812,7 +812,7 @@
       "benchmark_return_pct": -0.954,
       "excess_pct": 18.281,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-26:COST",
@@ -830,7 +830,7 @@
       "benchmark_return_pct": 0.281,
       "excess_pct": -10.003,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-26:NVDA",
@@ -848,7 +848,7 @@
       "benchmark_return_pct": 0.281,
       "excess_pct": 13.841,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-26:GOOGL",
@@ -866,7 +866,7 @@
       "benchmark_return_pct": 0.281,
       "excess_pct": 15.117,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-27:NVDA",
@@ -884,7 +884,7 @@
       "benchmark_return_pct": 0.653,
       "excess_pct": 10.229,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-27:COST",
@@ -902,7 +902,7 @@
       "benchmark_return_pct": 0.653,
       "excess_pct": -10.99,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-28:NVDA",
@@ -920,7 +920,7 @@
       "benchmark_return_pct": 2.254,
       "excess_pct": 8.023,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-28:COST",
@@ -938,7 +938,7 @@
       "benchmark_return_pct": 2.254,
       "excess_pct": -13.336,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-28:AAPL",
@@ -956,7 +956,7 @@
       "benchmark_return_pct": 2.254,
       "excess_pct": -0.73,
       "verdict": "flat",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-31:NVDA",
@@ -974,7 +974,7 @@
       "benchmark_return_pct": 2.258,
       "excess_pct": 6.954,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-31:COST",
@@ -992,7 +992,7 @@
       "benchmark_return_pct": 2.258,
       "excess_pct": -14.212,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-08-31:AAPL",
@@ -1010,7 +1010,7 @@
       "benchmark_return_pct": 2.258,
       "excess_pct": 1.541,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-09-01:NVDA",
@@ -1028,7 +1028,7 @@
       "benchmark_return_pct": 2.925,
       "excess_pct": 6.529,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-09-02:COST",
@@ -1046,7 +1046,7 @@
       "benchmark_return_pct": 4.192,
       "excess_pct": -22.751,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-09-02:NVDA",
@@ -1064,7 +1064,7 @@
       "benchmark_return_pct": 4.192,
       "excess_pct": 6.919,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-09-02:GOOGL",
@@ -1082,7 +1082,7 @@
       "benchmark_return_pct": 4.192,
       "excess_pct": 14.249,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-09-02:AVGO",
@@ -1100,7 +1100,7 @@
       "benchmark_return_pct": 4.192,
       "excess_pct": 6.252,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-09-03:COST",
@@ -1118,7 +1118,7 @@
       "benchmark_return_pct": 6.699,
       "excess_pct": -23.565,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-09-03:NVDA",
@@ -1136,7 +1136,7 @@
       "benchmark_return_pct": 6.699,
       "excess_pct": 3.41,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-09-03:GOOGL",
@@ -1154,7 +1154,7 @@
       "benchmark_return_pct": 6.699,
       "excess_pct": 13.694,
       "verdict": "hit",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-09-03:MSFT",
@@ -1172,7 +1172,7 @@
       "benchmark_return_pct": 6.699,
       "excess_pct": -4.119,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-09-04:COST",
@@ -1190,7 +1190,7 @@
       "benchmark_return_pct": 6.28,
       "excess_pct": -24.016,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-09-04:NVDA",
@@ -1208,7 +1208,7 @@
       "benchmark_return_pct": 6.28,
       "excess_pct": 0.984,
       "verdict": "flat",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     },
     {
       "pick_id": "2026-09-04:MSFT",
@@ -1226,7 +1226,7 @@
       "benchmark_return_pct": 6.28,
       "excess_pct": -5.006,
       "verdict": "miss",
-      "methodology_version": "0.2.0"
+      "methodology_version": "0.3.0"
     }
   ]
 }

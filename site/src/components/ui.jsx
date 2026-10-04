@@ -101,17 +101,18 @@ export function Dot({ tone = "accent", dashed = false }) {
 }
 
 /** The bracketed stat strip ("7 steps | 1 AI step | You"). */
-export function Strip({ cells }) {
+/** `dense`: two columns on phones with descriptions hidden, so key numbers fit on one screen. */
+export function Strip({ cells, dense = false }) {
   return (
-    <Reveal className="card brackets grid overflow-hidden sm:grid-cols-2 lg:[grid-template-columns:repeat(var(--n),minmax(0,1fr))]" style={{ "--n": cells.length }}>
+    <Reveal className={`card brackets grid overflow-hidden lg:[grid-template-columns:repeat(var(--n),minmax(0,1fr))] ${dense ? "grid-cols-2" : "sm:grid-cols-2"}`} style={{ "--n": cells.length }}>
       {cells.map((c, i) => (
-        <div key={i} className="border-line p-6 sm:p-8 [&:not(:last-child)]:border-b lg:[&:not(:last-child)]:border-r lg:[&:not(:last-child)]:border-b-0">
-          <div className="display text-[clamp(40px,5vw,64px)] num">{c.value}</div>
+        <div key={i} className={`border-line ${dense ? "border-b p-5 sm:p-8 [&:nth-child(odd)]:border-r lg:border-b-0 lg:[&:not(:last-child)]:border-r" : "p-6 sm:p-8 [&:not(:last-child)]:border-b lg:[&:not(:last-child)]:border-r lg:[&:not(:last-child)]:border-b-0"}`}>
+          <div className={`display num ${dense ? "text-[clamp(30px,5vw,64px)]" : "text-[clamp(40px,5vw,64px)]"}`}>{c.value}</div>
           <div className={`mt-3 flex items-center gap-2 text-[15px] font-semibold ${TONES[c.tone ?? "accent"]}`}>
             <Dot tone={c.tone ?? "accent"} dashed={c.dashed} />
             {c.label}
           </div>
-          {c.desc && <p className="mt-3 text-[14px] leading-relaxed text-ink-2">{c.desc}</p>}
+          {c.desc && <p className={`mt-3 text-[14px] leading-relaxed text-ink-2 ${dense ? "hidden sm:block" : ""}`}>{c.desc}</p>}
           {c.meter != null && (
             <div className="mt-4 h-1 overflow-hidden rounded bg-line">
               <MeterFill value={c.meter} tone={c.meter > 1 ? "down" : "accent"} />

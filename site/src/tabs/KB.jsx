@@ -104,7 +104,7 @@ function KBCard({ k, i, horizon }) {
       </h3>
       <p className="mt-2 line-clamp-3 text-[14.5px] leading-relaxed text-ink-2">{k.thesis}</p>
       <div className="mt-4 flex flex-wrap gap-1.5">
-        <Chip kind={k.stance} className="py-1 text-[10px]" />
+        <Chip kind={k.stance} className="py-1 text-[11px]" />
         {k.evidence.slice(0, 2).map((e) => <span key={e} className="rounded-full border border-line-2 px-2.5 py-1 font-mono text-[11.5px] text-ink-2">{e}</span>)}
         {k.evidence.length > 2 && <span className="rounded-full border border-line-2 px-2.5 py-1 font-mono text-[11.5px] text-ink-3">+{k.evidence.length - 2}</span>}
       </div>

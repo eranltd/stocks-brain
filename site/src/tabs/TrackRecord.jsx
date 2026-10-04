@@ -4,6 +4,7 @@ import { fmtNum, fmtPct } from "../lib/format.js";
 import { useInView } from "../lib/motion.js";
 import { ExcessChart } from "../components/charts.jsx";
 import { Accent, Chip, Container, Conviction, Empty, Reveal, SectionHead, Strip } from "../components/ui.jsx";
+import { TrustLadder } from "../components/trust.jsx";
 
 export default function TrackRecord({ data }) {
   const { outcomes, settings, bench, kb, calibration } = data;
@@ -29,6 +30,8 @@ export default function TrackRecord({ data }) {
         title={<>Every call, scored by <Accent>code.</Accent></>}
         lede={`Each pick is compared with ${bench.label} over ${settings.scoring.horizon_days} trading days. A flat band of ±${settings.scoring.flat_band_pct}% separates hits from noise. No model is involved in scoring.`}
       />
+      <div className="mb-6"><TrustLadder data={data} go={() => {}} compact /></div>
+      {data.sample && <p className="mb-6 rounded-2xl border border-dashed border-people/50 px-5 py-4 text-[15px] text-ink-2"><span className="pill mr-3 border-dashed border-people/60 text-people">sample</span>The numbers below are synthetic, to show the format. They do not count toward trust.</p>}
       <Strip
         cells={[
           { value: s.n, label: "scored", desc: `${pending} more waiting for their horizon.` },
@@ -67,7 +70,7 @@ export default function TrackRecord({ data }) {
           <div className="grid gap-2">
             {groups.map((g) => (
               <div key={g.st + g.cv} className="grid grid-cols-[1fr_auto_auto] items-center gap-3 text-[13.5px]">
-                <span className="flex items-center gap-2"><Chip kind={g.st} className="py-1 text-[10px]" /><Conviction level={g.cv} showLabel={false} /></span>
+                <span className="flex items-center gap-2"><Chip kind={g.st} className="py-1 text-[11px]" /><Conviction level={g.cv} showLabel={false} /></span>
                 <span className="num font-mono text-ink-3">{g.n}×</span>
                 <span className="num w-14 text-right font-mono">{fmtNum(g.hitRate, 0)}%</span>
               </div>
@@ -91,12 +94,12 @@ export default function TrackRecord({ data }) {
                 <tr key={o.pick_id} className="border-b border-line transition-colors last:border-0 hover:bg-ink/[0.03]">
                   <td className="px-5 py-3.5 font-mono text-ink-2">{o.run_date}</td>
                   <td className="px-5 py-3.5 font-semibold">{o.ticker}</td>
-                  <td className="px-5 py-3.5"><Chip kind={o.stance} className="py-1 text-[10px]" /></td>
+                  <td className="px-5 py-3.5"><Chip kind={o.stance} className="py-1 text-[11px]" /></td>
                   <td className="px-5 py-3.5"><Conviction level={o.conviction} /></td>
                   <td className="num px-5 py-3.5 text-right font-mono">{fmtPct(o.return_pct)}</td>
                   <td className="num px-5 py-3.5 text-right font-mono text-ink-3">{fmtPct(o.benchmark_return_pct)}</td>
                   <td className="num px-5 py-3.5 text-right font-mono font-semibold">{fmtPct(o.excess_pct)}</td>
-                  <td className="px-5 py-3.5"><Chip kind={o.verdict} className="py-1 text-[10px]" /></td>
+                  <td className="px-5 py-3.5"><Chip kind={o.verdict} className="py-1 text-[11px]" /></td>
                 </tr>
               ))}
             </tbody>

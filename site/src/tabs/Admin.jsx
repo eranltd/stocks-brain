@@ -3,7 +3,7 @@ import { Markdown, stripFrontMatter } from "../lib/markdown.jsx";
 import { cap, fmtK, fmtUsd, pad2, relDays } from "../lib/format.js";
 import { Accent, ArrowRight, Chip, Container, Reveal, SectionHead } from "../components/ui.jsx";
 
-const ORDER = ["strategy", "guardrails", "methodology", "learnings", "watchlist", "settings", "sources", "routines", "library", "decisions"];
+const ORDER = ["household", "strategy", "guardrails", "methodology", "learnings", "watchlist", "settings", "sources", "routines", "library", "decisions"];
 const ABOUT = {
   strategy: "What a pick is, and what the brain looks for.",
   guardrails: "The lines a pick never crosses.",
@@ -15,11 +15,16 @@ const ABOUT = {
   routines: "The schedule: what runs when, and what it may spend.",
   library: "Principles from books and lectures.",
   decisions: "Every decision and why, plus what is still open.",
+  household: "When and how much the household acts on anything here.",
 };
 
 function stats(doc, data) {
   const c = doc.content;
   switch (doc.name) {
+    case "household": {
+      const body = stripFrontMatter(c);
+      return `${(body.match(/^## /gm) || []).length} sections · ${(body.match(/^\s*(-|\d+\.)\s/gm) || []).length} rules`;
+    }
     case "decisions": {
       const body = stripFrontMatter(c);
       const open = body.split("## Open items")[1]?.split("\n## ")[0] ?? "";
@@ -76,7 +81,7 @@ export default function Admin({ data }) {
           <Reveal key={d.name} delay={(i % 3) * 80} as="article" className={`card card-hover group flex flex-col p-7 sm:p-8 ${d.name === "library" ? "border-dashed border-people/50" : ""}`}>
             <div className="flex items-center justify-between">
               <span className="meta">{pad2(i + 1)}</span>
-              <a href={editUrl(d.path)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-[14.5px] font-medium text-ink-2 transition hover:text-accent">
+              <a href={editUrl(d.path)} target="_blank" rel="noreferrer" className="-my-2 -mr-3 inline-flex min-h-[44px] items-center gap-1.5 px-3 text-[14.5px] font-medium text-ink-2 transition hover:text-accent">
                 Edit <ArrowRight className="size-4 transition group-hover:translate-x-0.5" />
               </a>
             </div>

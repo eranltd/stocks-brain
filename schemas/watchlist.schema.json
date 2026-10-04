@@ -15,7 +15,9 @@
         "required": ["symbol", "name"],
         "properties": {
           "symbol": {"$ref": "common.schema.json#/$defs/ticker"},
-          "name": {"type": "string", "minLength": 1, "maxLength": 60}
+          "name": {"type": "string", "minLength": 1, "maxLength": 60},
+          "aliases": {"type": "array", "uniqueItems": true, "maxItems": 4, "items": {"$ref": "common.schema.json#/$defs/ticker"},
+                      "description": "Other tickers for the same company (share classes), used to match claims."}
         }
       }
     }

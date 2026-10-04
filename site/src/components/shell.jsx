@@ -154,7 +154,7 @@ export function Header({ tabs, active, onNav, sample, livePrices, theme, onTheme
           <span className="pill hidden border-accent/40 bg-accent/10 font-sans text-[13px] font-medium tracking-normal text-accent normal-case sm:inline-flex">Nasdaq</span>
         </a>
 
-        <div className="order-3 flex w-full min-w-0 justify-center">
+        <div className="order-3 hidden w-full min-w-0 justify-center sm:flex">
           <nav aria-label="Sections" className="no-scrollbar max-w-full overflow-x-auto rounded-full border border-line bg-surface/70 p-1 backdrop-blur-xl">
             <div ref={track} role="tablist" onKeyDown={onKey} className="relative flex w-max">
               <span
@@ -222,12 +222,72 @@ export function Footer({ data }) {
   const { manifest } = data;
   return (
     <footer className="relative mt-24 border-t border-line">
-      <Container className="flex flex-wrap items-center justify-between gap-x-10 gap-y-3 py-8 pb-[calc(2rem+env(safe-area-inset-bottom))]">
+      <Container className="flex flex-wrap items-center justify-between gap-x-10 gap-y-3 py-8 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:pb-[calc(2rem+env(safe-area-inset-bottom))]">
         <p className="m-0 font-semibold tracking-[-0.01em]">Analysis only, not financial advice. Data may be delayed.</p>
         <p className="meta m-0 normal-case tracking-[0.04em]">
           Prices {manifest.price_source === "live" ? `live · ${manifest.price_provider}` : "sample"} · picks {manifest.source} · built {manifest.built_at.replace("T", " ").replace("Z", " UTC")}
         </p>
       </Container>
     </footer>
+  );
+}
+
+/* ------------------------------------------------- phone bottom tab bar */
+
+const ICONS = {
+  today: <path d="M4 12.5 12 5l8 7.5M6.5 10.5V19h11v-8.5" />,
+  watchlist: <path d="M4 17l5-5 4 3 7-8M15 7h5v5" />,
+  insights: <><path d="M9 18h6M10 21h4" /><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3Z" /></>,
+  routines: <><circle cx="12" cy="12" r="8" /><path d="M12 8v4l3 2" /></>,
+  more: <><circle cx="6" cy="12" r="1.3" /><circle cx="12" cy="12" r="1.3" /><circle cx="18" cy="12" r="1.3" /></>,
+};
+const PRIMARY = ["today", "watchlist", "insights", "routines"];
+
+export function MobileNav({ tabs, active, onNav, sampleTabs }) {
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => e.key === "Escape" && setOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+  const go = (id) => { setOpen(false); onNav(id); };
+  const moreActive = !PRIMARY.includes(active);
+  const Item = ({ id, label, on, onClick }) => (
+    <button type="button" onClick={onClick} aria-current={on ? "page" : undefined}
+      className={`flex min-h-[56px] flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors ${on ? "text-ink" : "text-ink-3"}`}>
+      <span className={`grid h-8 w-12 place-items-center rounded-full transition-colors duration-300 ${on ? "bg-ink text-bg" : ""}`}>
+        <svg viewBox="0 0 24 24" className="size-[19px]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{ICONS[id]}</svg>
+      </span>
+      {label}
+    </button>
+  );
+  return (
+    <>
+      <nav aria-label="Sections" className="fixed inset-x-0 bottom-0 z-50 border-t border-line bg-bg/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl sm:hidden">
+        <div className="grid grid-cols-5">
+          {PRIMARY.map((id) => <Item key={id} id={id} label={tabs.find((t) => t.id === id).label} on={active === id} onClick={() => go(id)} />)}
+          <Item id="more" label="More" on={moreActive || open} onClick={() => setOpen(!open)} />
+        </div>
+      </nav>
+      {open && (
+        <div className="fixed inset-0 z-40 sm:hidden" role="dialog" aria-modal="true" aria-label="All sections">
+          <button type="button" aria-label="Close" onClick={() => setOpen(false)} className="absolute inset-0 bg-black/55 backdrop-blur-sm" />
+          <div className="absolute inset-x-0 bottom-0 animate-rise rounded-t-3xl border-t border-line-2 bg-surface px-4 pt-3 pb-[calc(76px+env(safe-area-inset-bottom))]">
+            <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-line-2" />
+            <div className="meta mb-3 px-1">All sections</div>
+            <div className="grid grid-cols-2 gap-2">
+              {tabs.map((t) => (
+                <button key={t.id} type="button" onClick={() => go(t.id)}
+                  className={`flex min-h-[52px] items-center justify-between gap-2 rounded-2xl border px-4 text-left text-[15px] font-medium ${active === t.id ? "border-transparent bg-ink text-bg" : "border-line-2 text-ink"}`}>
+                  {t.label}
+                  {sampleTabs.includes(t.id) && <span className={`font-mono text-[9.5px] tracking-[0.12em] uppercase ${active === t.id ? "text-bg/60" : "text-people"}`}>sample</span>}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

@@ -113,8 +113,8 @@ export default function Routines({ data }) {
                 <dd>{lr ? <a href={lr.url} target="_blank" rel="noreferrer" className={`hover:underline ${lr.outcome === "success" ? "text-accent" : "text-down"}`}>{lr.outcome} · {lr.at.slice(0, 10)}</a> : <span className="text-ink-3">never ran</span>}</dd>
               </dl>
               <div className="mt-auto flex flex-wrap items-center gap-2 pt-5 [margin-top:max(1.25rem,auto)]">
-                {r.uses_llm ? <span className="pill border-ai/40 bg-ai/10 py-1 text-[10px] text-ai">✦ AI · cap ${r.max_cost_usd.toFixed(2)}</span> : <span className="pill py-1 text-[10px] text-ink-2">plain code · $0</span>}
-                {r.human_gate && <span className="pill border-dashed border-people/60 py-1 text-[10px] text-people">you approve</span>}
+                {r.uses_llm ? <span className="pill border-ai/40 bg-ai/10 py-1 text-[11px] text-ai">✦ AI · cap ${r.max_cost_usd.toFixed(2)}</span> : <span className="pill py-1 text-[11px] text-ink-2">plain code · $0</span>}
+                {r.human_gate && <span className="pill border-dashed border-people/60 py-1 text-[11px] text-people">you approve</span>}
               </div>
             </article>
           );

@@ -1,15 +1,42 @@
 {
-  "version": "0.1.0",
+  "version": "0.2.0",
   "updated_at": "2026-10-04",
-  "change_note": "Seed watchlist. Edit freely.",
+  "change_note": "Aliases for share classes (claims about GOOG match GOOGL).",
   "symbols": [
-    {"symbol": "AAPL", "name": "Apple"},
-    {"symbol": "MSFT", "name": "Microsoft"},
-    {"symbol": "NVDA", "name": "NVIDIA"},
-    {"symbol": "AMZN", "name": "Amazon"},
-    {"symbol": "GOOGL", "name": "Alphabet"},
-    {"symbol": "META", "name": "Meta Platforms"},
-    {"symbol": "AVGO", "name": "Broadcom"},
-    {"symbol": "COST", "name": "Costco"}
+    {
+      "symbol": "AAPL",
+      "name": "Apple"
+    },
+    {
+      "symbol": "MSFT",
+      "name": "Microsoft"
+    },
+    {
+      "symbol": "NVDA",
+      "name": "NVIDIA"
+    },
+    {
+      "symbol": "AMZN",
+      "name": "Amazon"
+    },
+    {
+      "symbol": "GOOGL",
+      "name": "Alphabet",
+      "aliases": [
+        "GOOG"
+      ]
+    },
+    {
+      "symbol": "META",
+      "name": "Meta Platforms"
+    },
+    {
+      "symbol": "AVGO",
+      "name": "Broadcom"
+    },
+    {
+      "symbol": "COST",
+      "name": "Costco"
+    }
   ]
 }

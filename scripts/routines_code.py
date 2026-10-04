@@ -186,8 +186,18 @@ def compute_derived(prices_dir: Path, st: dict, wl: dict, sample: bool, provider
         sma50 = sum(c[-50:]) / 50
         tail = bars[-spark_n:]
         base = tail[0]["close"]
+        # Full window indexed to 100 at its first bar, with the 50-day average on the same index.
+        sbase = bars[0]["close"]
+        series = [{"date": b["date"], "v": round(b["close"] / sbase * 100, 2),
+                   **({"sma50": round(sum(c[i - 49:i + 1]) / 50 / sbase * 100, 2)} if i >= 49 else {})}
+                  for i, b in enumerate(bars)]
+        rets = [math.log(c[i] / c[i - 1]) for i in range(len(c) - 20, len(c))]
+        mu = sum(rets) / len(rets)
+        vol20 = math.sqrt(sum((r - mu) ** 2 for r in rets) / (len(rets) - 1)) * math.sqrt(252) * 100
         row = {
             "symbol": sym, "last_date": bars[-1]["date"],
+            "from_high_pct": round((c[-1] / max(c[-252:]) - 1) * 100, 3), "vol20_pct": round(vol20, 2),
+            "series": series,
             "change_1d_pct": _pct(c[-2], c[-1]), "ret_20d_pct": _pct(c[-21], c[-1]), "ret_60d_pct": _pct(c[-61], c[-1]),
             "dist_sma50_pct": round((c[-1] / sma50 - 1) * 100, 3), "above_sma50": c[-1] > sma50,
             "spark": [{"date": b["date"], "v": round(b["close"] / base * 100, 2)} for b in tail],

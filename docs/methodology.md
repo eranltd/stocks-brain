@@ -1,7 +1,7 @@
 ---
-version: 0.2.0
+version: 0.3.0
 updated_at: 2026-10-04
-change_note: Prices from Tiingo (adjusted); scoring, regime and calibration now run as code-only routines.
+change_note: Setup checks for the stock page; derived-only price publication.
 ---
 # Methodology
 
@@ -42,3 +42,11 @@ Computed daily from benchmark closes; parameters live in `config/settings.json` 
 Monthly. Hit rate and average excess grouped by conviction and by stance. Conviction is `informative`
 only if high-conviction picks beat low-conviction picks on hit rate, with at least
 `scoring.calibration_min_n` scored picks in each group. Otherwise it is `not_informative`, or `insufficient_data`.
+
+## Setup checks (code only, not a recommendation)
+Four pass/fail checks per watchlist name, computed from adjusted closes. Thresholds live under `setup` in settings.
+1. **Trend**: the last close is above its 50-day average.
+2. **Relative strength**: the 20-day return beats the benchmark's 20-day return.
+3. **Momentum**: the 60-day return is positive.
+4. **Not stretched**: the close is less than `setup.stretch_pct` above its 50-day average.
+They describe the setup; they do not make a call. Calls come only from the brain (one schema-checked LLM call) and are scored by code.

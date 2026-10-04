@@ -77,10 +77,10 @@ export default function Insights({ data }) {
       </Reveal>
 
       <Reveal delay={80} className="no-scrollbar mt-4 flex gap-2 overflow-x-auto pb-1">
-        <button type="button" onClick={() => setTag(null)} className={`pill shrink-0 ${!tag ? "border-transparent bg-ink text-bg" : "text-ink-2"}`}>all themes</button>
+        <button type="button" onClick={() => setTag(null)} className={`pill shrink-0 py-2.5 ${!tag ? "border-transparent bg-ink text-bg" : "text-ink-2"}`}>all themes</button>
         {tags.map(([t, n]) => (
           <button key={t} type="button" onClick={() => setTag(t === tag ? null : t)}
-            className={`pill shrink-0 ${t === tag ? "border-transparent bg-ink text-bg" : "text-ink-2 hover:text-ink"}`}>
+            className={`pill shrink-0 py-2.5 ${t === tag ? "border-transparent bg-ink text-bg" : "text-ink-2 hover:text-ink"}`}>
             {t.replaceAll("_", " ")} <span className="num opacity-60">{n}</span>
           </button>
         ))}
@@ -107,6 +107,8 @@ export default function Insights({ data }) {
 
 function SourceCard({ s, n, principles, claims, filtered, delay }) {
   const [open, setOpen] = useState(false);
+  const [all, setAll] = useState(false);
+  const visible = all || filtered ? principles : principles.slice(0, 2);
   const { he, en } = splitTitle(s.title);
   const url = youtubeUrl(s.ref);
   const now = today();
@@ -137,7 +139,7 @@ function SourceCard({ s, n, principles, claims, filtered, delay }) {
         <div className="p-6 sm:p-8">
           <div className="meta mb-4">Principles · {principles.length}{filtered && principles.length !== s.principles.length ? ` of ${s.principles.length}` : ""}</div>
           <ol className="grid gap-4">
-            {principles.map((p) => (
+            {visible.map((p) => (
               <li key={p.id} className="grid grid-cols-[auto_minmax(0,1fr)] gap-4">
                 <span className="num pt-0.5 font-mono text-[12px] text-ink-3">{p.id.split(".")[1]}</span>
                 <div>
@@ -150,9 +152,12 @@ function SourceCard({ s, n, principles, claims, filtered, delay }) {
             ))}
             {!principles.length && <li className="text-ink-3">No principles match the filter.</li>}
           </ol>
+          {visible.length < principles.length && (
+            <button type="button" onClick={() => setAll(true)} className="btn mt-5 px-5 py-3 text-[14px]">Show all {principles.length} principles</button>
+          )}
         </div>
         <div className="border-t border-line p-6 sm:p-8 lg:border-t-0 lg:border-l">
-          <button type="button" onClick={() => setOpen(!open)} className="meta flex w-full items-center justify-between gap-3 text-left hover:text-ink" aria-expanded={open}>
+          <button type="button" onClick={() => setOpen(!open)} className="meta flex min-h-[44px] w-full items-center justify-between gap-3 text-left hover:text-ink" aria-expanded={open}>
             <span>Claims · {claims.length} <span className="text-people">({liveClaims} live)</span></span>
             <span className={`transition-transform duration-500 ${open ? "rotate-90" : ""}`}><ArrowRight className="size-4" /></span>
           </button>
@@ -236,7 +241,7 @@ function Claims({ claims, sources }) {
             <Reveal key={o.id} delay={(i % 6) * 40} as="article" className={`card flex flex-col p-6 ${expired ? "border-dashed opacity-60" : ""}`}>
               <div className="flex items-center justify-between gap-3">
                 <span className="meta">{o.id} · {o.kind}</span>
-                <span className={`pill py-1 text-[10px] ${o.status === "confirmed" ? "border-accent/40 text-accent" : o.status === "contradicted" ? "border-down/40 text-down" : "border-dashed border-people/60 text-people"}`}>{o.status}</span>
+                <span className={`pill py-1 text-[11px] ${o.status === "confirmed" ? "border-accent/40 text-accent" : o.status === "contradicted" ? "border-down/40 text-down" : "border-dashed border-people/60 text-people"}`}>{o.status}</span>
               </div>
               {o.tickers.length > 0 && (
                 <div className="mt-4 flex flex-wrap gap-2">{o.tickers.map((t) => <span key={t} className="font-mono text-[15px] font-medium text-accent">{t}</span>)}</div>

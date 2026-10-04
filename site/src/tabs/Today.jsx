@@ -1,5 +1,7 @@
 import { addTradingDays } from "../lib/data.js";
 import { cap, fmtDate, fmtK, fmtNum, fmtPct, fmtUsd, numWord, pad2 } from "../lib/format.js";
+import { BriefHero, BriefSections, marketBrief } from "../components/brief.jsx";
+import { TrustLadder } from "../components/trust.jsx";
 import { Accent, ArrowRight, Carousel, Chip, Container, Conviction, Empty, Headline, Reveal, SectionHead, Strip } from "../components/ui.jsx";
 
 const TONE = { bullish: "var(--accent)", bearish: "var(--down)", neutral: "var(--flat)" };
@@ -11,6 +13,9 @@ export default function Today({ data, go }) {
   const run = failed ? lastOk : latest;
   const picks = run?.picks ?? [];
   const n = picks.length;
+  // Until the brain produces real picks, Today leads with the live, code-computed market brief.
+  const showBrief = sample && data.livePrices;
+  const brief = data.market ? marketBrief(data) : null;
   const recent = data.outcomes.slice().sort((a, b) => b.scored_date.localeCompare(a.scored_date) || a.ticker.localeCompare(b.ticker)).slice(0, 8);
 
   return (
@@ -19,6 +24,7 @@ export default function Today({ data, go }) {
       <section className="relative isolate -mt-[76px] overflow-hidden pt-[76px]">
       <HeroWall items={data.kb} />
       <Container className="flex min-h-[86vh] flex-col items-center justify-center py-20 text-center">
+        {showBrief ? <BriefHero data={data} brief={brief} go={go} /> : (<>
         <Reveal>
           <span className={`pill mb-10 ${failed ? "border-down/50 text-down" : sample ? "border-dashed border-people/60 text-people" : "border-accent/40 text-accent"}`}>
             <span className={`size-2 rounded-full border-[1.5px] border-current ${failed ? "" : "border-dashed animate-[spin-slow_6s_linear_infinite]"}`} />
@@ -49,10 +55,20 @@ export default function Today({ data, go }) {
             Open the run log <ArrowRight />
           </button>
         </Reveal>
+        </>)}
       </Container>
       </section>
 
       <Container>
+        {brief && <BriefSections data={data} brief={brief} go={go} />}
+        <div className="pt-16"><TrustLadder data={data} go={go} /></div>
+        {showBrief && (
+          <Reveal className="mt-24 flex flex-wrap items-center gap-4 rounded-3xl border border-dashed border-people/50 p-6">
+            <span className="pill border-dashed border-people/60 text-people">Preview</span>
+            <p className="min-w-0 flex-1 text-[15px] text-ink-2">Below is <span className="text-ink">sample data</span>: how picks, costs and scoring will look once the brain (M3) runs. None of it is a real call.</p>
+          </Reveal>
+        )}
+        <div className={showBrief ? "mt-10" : ""}>
         {failed && (
           <Reveal className="card mb-8 flex items-start gap-4 border-down/40 p-6">
             <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-down/15 text-down">✕</span>
@@ -75,8 +91,8 @@ export default function Today({ data, go }) {
 
         <section id="picks" className="scroll-mt-28 pt-28">
           <SectionHead
-            eyebrow={`Today · ${run ? fmtDate(run.date) : ""}`}
-            title={<>What the brain <Accent>flagged.</Accent></>}
+            eyebrow={`${sample ? "Sample · " : "Today · "}${run ? fmtDate(run.date) : ""}`}
+            title={sample ? <>How picks <Accent>will look.</Accent></> : <>What the brain <Accent>flagged.</Accent></>}
             lede="Each pick is a stance, a thesis and the condition that would prove it wrong. Code attaches the reference price and scores it after the horizon."
           />
           {n ? (
@@ -88,6 +104,7 @@ export default function Today({ data, go }) {
           )}
         </section>
 
+        </div>
         <LatestInsights library={data.library} go={go} />
 
         {recent.length > 0 && (
@@ -139,7 +156,7 @@ function WallCard({ k }) {
       <div className={`mt-5 font-mono text-[34px] leading-none ${tone}`}>{k.ticker}</div>
       <p className="mt-4 line-clamp-3 text-[15px] leading-snug text-ink-2">{k.thesis}</p>
       <div className="mt-5 flex items-center justify-between">
-        <Chip kind={k.verdict} className="py-1 text-[10px]">{k.verdict}</Chip>
+        <Chip kind={k.verdict} className="py-1 text-[11px]">{k.verdict}</Chip>
         <span className="font-mono text-[11px] tracking-[0.14em] text-ink-3">{k.date}</span>
       </div>
     </div>

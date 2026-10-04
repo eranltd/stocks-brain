@@ -2,24 +2,24 @@
   "schema_version": 1,
   "run_id": "run.2026-09-23",
   "date": "2026-09-23",
-  "generated_at": "2026-09-23T21:12:00Z",
+  "generated_at": "2026-09-23T21:11:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.339,
-    "input_tokens": 10178,
-    "output_tokens": 1219,
+    "usd": 0.371,
+    "input_tokens": 10290,
+    "output_tokens": 1753,
     "cap_usd": 2.5
   },
-  "duration_minutes": 2.79,
+  "duration_minutes": 4.14,
   "pack": {
     "hash": "86f1d50f2312034c93d28eb7d093fc86363e8aa44aff3fb6b9438bc346fcaca1",
-    "tokens": 9398,
+    "tokens": 9769,
     "cap_tokens": 12000
   },
   "doc_versions": {
-    "strategy": "0.1.0",
+    "strategy": "0.2.0",
     "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
@@ -35,9 +35,9 @@
         "ticker": "FANG",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Diamondback Energy has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Diamondback Energy keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Momentum reversal after an extended run",
+          "Sector-wide de-rating",
           "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
@@ -70,42 +70,21 @@
       }
     },
     {
-      "id": "2026-09-23:PEP",
+      "id": "2026-09-23:CCJ",
       "ref_date": "2026-09-23",
-      "ref_price": 2707.81,
+      "ref_price": 101.08,
       "pick": {
-        "ticker": "PEP",
+        "ticker": "CCJ",
         "stance": "bearish",
         "conviction": "high",
-        "thesis": "PepsiCo broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
+        "thesis": "Cameco broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
         "risks": [
-          "Benchmark weakness narrows the gap",
-          "Positive company news flow"
+          "Positive company news flow",
+          "Benchmark weakness narrows the gap"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.pep.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-09-23:AVGO",
-      "ref_date": "2026-09-23",
-      "ref_price": 182.71,
-      "pick": {
-        "ticker": "AVGO",
-        "stance": "neutral",
-        "conviction": "low",
-        "thesis": "Broadcom is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
-        "risks": [
-          "Breakout in either direction",
-          "Volatility expansion"
-        ],
-        "invalidation": "A sustained move away from the benchmark in either direction.",
-        "evidence": [
-          "prices.avgo.rel_20d",
+          "prices.ccj.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

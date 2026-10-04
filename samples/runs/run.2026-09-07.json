@@ -2,24 +2,24 @@
   "schema_version": 1,
   "run_id": "run.2026-09-07",
   "date": "2026-09-07",
-  "generated_at": "2026-09-07T21:15:00Z",
+  "generated_at": "2026-09-07T21:11:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 1.895,
-    "input_tokens": 9300,
-    "output_tokens": 712,
+    "usd": 2.098,
+    "input_tokens": 9371,
+    "output_tokens": 1828,
     "cap_usd": 2.5
   },
-  "duration_minutes": 1.83,
+  "duration_minutes": 2.4,
   "pack": {
     "hash": "c7b630db402ff75cafe3bd2c0f7857e527acb68190637fde03b45c1ba0270f5f",
-    "tokens": 8705,
+    "tokens": 8997,
     "cap_tokens": 12000
   },
   "doc_versions": {
-    "strategy": "0.1.0",
+    "strategy": "0.2.0",
     "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
@@ -49,84 +49,42 @@
       }
     },
     {
-      "id": "2026-09-07:LIN",
+      "id": "2026-09-07:RKLB",
       "ref_date": "2026-09-07",
-      "ref_price": 1003.54,
+      "ref_price": 76.12,
       "pick": {
-        "ticker": "LIN",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Linde keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
-        "risks": [
-          "Sector-wide de-rating",
-          "Macro data surprise"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.lin.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-09-07:AMZN",
-      "ref_date": "2026-09-07",
-      "ref_price": 492.31,
-      "pick": {
-        "ticker": "AMZN",
-        "stance": "bullish",
-        "conviction": "medium",
-        "thesis": "Amazon keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
-        "risks": [
-          "Momentum reversal after an extended run",
-          "Sector-wide de-rating"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.amzn.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-09-07:PEP",
-      "ref_date": "2026-09-07",
-      "ref_price": 2732.1,
-      "pick": {
-        "ticker": "PEP",
+        "ticker": "RKLB",
         "stance": "bearish",
         "conviction": "high",
-        "thesis": "PepsiCo broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
+        "thesis": "Rocket Lab broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
         "risks": [
-          "Benchmark weakness narrows the gap",
+          "Short-covering rally",
           "Positive company news flow"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.pep.rel_20d",
+          "prices.rklb.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-09-07:XEL",
+      "id": "2026-09-07:MNST",
       "ref_date": "2026-09-07",
-      "ref_price": 231.77,
+      "ref_price": 286.68,
       "pick": {
-        "ticker": "XEL",
+        "ticker": "MNST",
         "stance": "neutral",
         "conviction": "low",
-        "thesis": "Xcel Energy is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "thesis": "Monster Beverage is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
         "risks": [
-          "Volatility expansion",
-          "Breakout in either direction"
+          "Breakout in either direction",
+          "Volatility expansion"
         ],
         "invalidation": "A sustained move away from the benchmark in either direction.",
         "evidence": [
-          "prices.xel.rel_20d",
+          "prices.mnst.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

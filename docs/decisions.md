@@ -1,7 +1,7 @@
 ---
-version: 0.6.0
+version: 0.7.0
 updated_at: 2026-10-04
-change_note: Household goal (diverse 4-5 stocks, +20% a year), home page review, portfolio rule v1 and the paper portfolio; first brain dry run; watchlist widened beyond big tech.
+change_note: Diverse universe (27 US-listed names) and the S&P 500 (SPY) as the benchmark.
 ---
 # Decision log
 
@@ -13,14 +13,29 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **LLM step (M3)**: run the daily brain as a scheduled Claude Code routine on the owner's subscription (preferred) or through a paid API key.
 - **Paid connectors** (news, X, options data for implied moves): parked until the owner wants to spend.
 - **Satellite size**: `docs/household.md` proposes 10% of savings (2% per slot). The owner sets it.
-- **Market file size**: `derived.json` is written one line per symbol (compact) and is about 330 KB with 21 names.
-  Past roughly 35 names it would hit lint's 512 KB cap and the daily run would fail closed; before that, move the
-  per-point dates into one shared array.
+- **Market file size**: `derived.json` is written one line per symbol (compact) and is about 410 KB with 27 names
+  (measured on sample data). Past roughly 33 names it would hit lint's 512 KB cap and the daily run would fail closed;
+  before that, move the per-point dates into one shared array.
 - **Second price source**: Tiingo's daily returns show unusually low correlations between these names (for example
   AAPL to QQQ about 0.24 over a year). The diagnostic showed our pipeline reproduces the provider's data exactly, so
   the numbers are faithful to the source; a cross-check against a second source is still pending.
 
 ## 2026-10-04
+- **Diverse universe, and the S&P 500 as the benchmark.** The household wants a diverse portfolio (emerging
+  industries, energy, power, health), not only tech. Changes:
+  - Six US-listed names, no longer only Nasdaq: Exxon Mobil and Cameco (energy, oil and uranium), Vistra and Eaton
+    (power generation and electrical gear), Eli Lilly (health) and Rocket Lab (space). 27 names across 10 sectors.
+  - Chosen for long price histories: the portfolio rule needs `min_history_years` of data, and its test window is the
+    span every eligible name shares (about seven years today). Rocket Lab shows as too little history until about
+    2027. Constellation Energy and GE Vernova are too young for the rule; Palantir sits right at the threshold and
+    would cut the test window to about five years. Revisit them as their history grows.
+  - Benchmark QQQ → SPY, the same index as the core proxy. A pick should beat the index the core sits in; against a
+    tech index, energy or health picks read as misses whenever tech rallies. No live pick has been scored yet, so no
+    past record changes meaning.
+  - Strategy 0.2.0: US-listed stocks across sectors; picks on the same theme count as one bet. The header badge
+    says "US stocks".
+  - One fetch is 33 Tiingo requests and the free plan allows 50 an hour, so a dry run and a real run (or the
+    diagnostic) should not share an hour.
 - **Household goal: a diverse portfolio of 4-5 stocks, +20% a year.** Recorded in settings (`goal`) and house rules.
   The site shows the goal next to what history says (compounding, rolling 12-month hit rate, deepest drops) and never
   uses it to pick stocks. +20% a year is about twice the market's long-run return, so the page says so plainly.

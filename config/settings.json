@@ -1,7 +1,7 @@
 {
-  "version": "0.6.1",
+  "version": "0.7.0",
   "updated_at": "2026-10-04",
-  "change_note": "Portfolio rule: names need 5 years of history; the test window is the longest span they all cover.",
+  "change_note": "Benchmark is the S&P 500 (SPY), the core proxy: picks across sectors are judged against the index the core sits in, not a tech index.",
   "pack": {
     "token_cap": 12000,
     "recent_runs": 5,
@@ -22,8 +22,8 @@
     "horizon_days": 20,
     "flat_band_pct": 1.0,
     "benchmark": {
-      "symbol": "QQQ",
-      "label": "Nasdaq-100 (QQQ proxy)"
+      "symbol": "SPY",
+      "label": "S&P 500 (SPY proxy)"
     },
     "calibration_min_n": 10
   },

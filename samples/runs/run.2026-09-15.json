@@ -2,30 +2,30 @@
   "schema_version": 1,
   "run_id": "run.2026-09-15",
   "date": "2026-09-15",
-  "generated_at": "2026-09-15T21:38:00Z",
+  "generated_at": "2026-09-15T21:11:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.4,
-    "input_tokens": 7561,
-    "output_tokens": 715,
+    "usd": 0.643,
+    "input_tokens": 8103,
+    "output_tokens": 1485,
     "cap_usd": 2.5
   },
-  "duration_minutes": 4.17,
+  "duration_minutes": 1.85,
   "pack": {
     "hash": "086c4da8a4114ef0722c02a5a79cd44378f0bc28ff1bb030ce85740b334dd0a2",
-    "tokens": 6811,
+    "tokens": 7361,
     "cap_tokens": 12000
   },
   "doc_versions": {
-    "strategy": "0.1.0",
+    "strategy": "0.2.0",
     "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
   "repair_retries": 1,
-  "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
+  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
   "picks": [
     {
       "id": "2026-09-15:LIN",
@@ -34,7 +34,7 @@
       "pick": {
         "ticker": "LIN",
         "stance": "bullish",
-        "conviction": "medium",
+        "conviction": "high",
         "thesis": "Linde keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
           "Momentum reversal after an extended run",
@@ -55,15 +55,36 @@
       "pick": {
         "ticker": "FANG",
         "stance": "bullish",
-        "conviction": "medium",
+        "conviction": "high",
         "thesis": "Diamondback Energy has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Momentum reversal after an extended run",
-          "Sector-wide de-rating"
+          "Sector-wide de-rating",
+          "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
           "prices.fang.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-09-15:PEP",
+      "ref_date": "2026-09-15",
+      "ref_price": 2522.22,
+      "pick": {
+        "ticker": "PEP",
+        "stance": "bearish",
+        "conviction": "high",
+        "thesis": "PepsiCo has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "risks": [
+          "Benchmark weakness narrows the gap",
+          "Positive company news flow"
+        ],
+        "invalidation": "A close back above the recent range high on rising volume.",
+        "evidence": [
+          "prices.pep.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

@@ -151,7 +151,7 @@ export function Header({ tabs, active, onNav, sample, livePrices, theme, onTheme
         <a href="#today" className="flex shrink-0 items-center gap-3" onClick={(e) => { e.preventDefault(); onNav("today"); }}>
           <Logo />
           <span className="text-[20px] font-semibold tracking-[-0.03em]">stocks·brain</span>
-          <span className="pill hidden border-accent/40 bg-accent/10 font-sans text-[13px] font-medium tracking-normal text-accent normal-case sm:inline-flex">Nasdaq</span>
+          <span className="pill hidden border-accent/40 bg-accent/10 font-sans text-[13px] font-medium tracking-normal text-accent normal-case sm:inline-flex">US stocks</span>
         </a>
 
         <div className="order-3 hidden w-full min-w-0 justify-center sm:flex">

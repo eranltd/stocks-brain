@@ -2,31 +2,52 @@
   "schema_version": 1,
   "run_id": "run.2026-10-01",
   "date": "2026-10-01",
-  "generated_at": "2026-10-01T21:18:00Z",
+  "generated_at": "2026-10-01T21:39:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
     "usd": 0.479,
-    "input_tokens": 9971,
-    "output_tokens": 1395,
+    "input_tokens": 9218,
+    "output_tokens": 1231,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.55,
+  "duration_minutes": 1.79,
   "pack": {
     "hash": "2b67291df6bf7e248d59695696b30c12aafb80836f9c920209a5c1ce8c83947e",
-    "tokens": 9645,
+    "tokens": 8854,
     "cap_tokens": 12000
   },
   "doc_versions": {
-    "strategy": "0.1.0",
+    "strategy": "0.2.0",
     "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
+  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
   "picks": [
+    {
+      "id": "2026-10-01:RKLB",
+      "ref_date": "2026-10-01",
+      "ref_price": 88.36,
+      "pick": {
+        "ticker": "RKLB",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Rocket Lab keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "risks": [
+          "Momentum reversal after an extended run",
+          "Macro data surprise"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.rklb.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
     {
       "id": "2026-10-01:LIN",
       "ref_date": "2026-10-01",
@@ -34,11 +55,11 @@
       "pick": {
         "ticker": "LIN",
         "stance": "bullish",
-        "conviction": "medium",
+        "conviction": "high",
         "thesis": "Linde keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Momentum reversal after an extended run",
-          "Macro data surprise"
+          "Macro data surprise",
+          "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -49,42 +70,21 @@
       }
     },
     {
-      "id": "2026-10-01:AVGO",
+      "id": "2026-10-01:ETN",
       "ref_date": "2026-10-01",
-      "ref_price": 196.38,
+      "ref_price": 439.38,
       "pick": {
-        "ticker": "AVGO",
-        "stance": "bullish",
-        "conviction": "medium",
-        "thesis": "Broadcom has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
-        "risks": [
-          "Momentum reversal after an extended run",
-          "Sector-wide de-rating"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.avgo.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-10-01:AMZN",
-      "ref_date": "2026-10-01",
-      "ref_price": 464.77,
-      "pick": {
-        "ticker": "AMZN",
+        "ticker": "ETN",
         "stance": "bearish",
         "conviction": "high",
-        "thesis": "Amazon broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
+        "thesis": "Eaton broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
         "risks": [
           "Positive company news flow",
           "Benchmark weakness narrows the gap"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.amzn.rel_20d",
+          "prices.etn.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

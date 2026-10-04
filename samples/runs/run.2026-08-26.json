@@ -2,24 +2,24 @@
   "schema_version": 1,
   "run_id": "run.2026-08-26",
   "date": "2026-08-26",
-  "generated_at": "2026-08-26T21:11:00Z",
+  "generated_at": "2026-08-26T21:30:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.379,
-    "input_tokens": 8165,
-    "output_tokens": 865,
+    "usd": 0.324,
+    "input_tokens": 8497,
+    "output_tokens": 1248,
     "cap_usd": 2.5
   },
-  "duration_minutes": 1.89,
+  "duration_minutes": 1.91,
   "pack": {
     "hash": "703d7324bb19307e7581090b9d03f48d5f8479201f83e2bbddcf57b2fe863364",
-    "tokens": 7794,
+    "tokens": 8158,
     "cap_tokens": 12000
   },
   "doc_versions": {
-    "strategy": "0.1.0",
+    "strategy": "0.2.0",
     "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
@@ -35,9 +35,9 @@
         "ticker": "LIN",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Linde has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Linde keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Macro data surprise",
+          "Sector-wide de-rating",
           "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
@@ -49,21 +49,42 @@
       }
     },
     {
-      "id": "2026-08-26:XEL",
+      "id": "2026-08-26:CCJ",
       "ref_date": "2026-08-26",
-      "ref_price": 219.39,
+      "ref_price": 112.31,
       "pick": {
-        "ticker": "XEL",
-        "stance": "bearish",
+        "ticker": "CCJ",
+        "stance": "bullish",
         "conviction": "high",
-        "thesis": "Xcel Energy has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "thesis": "Cameco has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Positive company news flow",
-          "Benchmark weakness narrows the gap"
+          "Macro data surprise",
+          "Sector-wide de-rating"
         ],
-        "invalidation": "A close back above the recent range high on rising volume.",
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.xel.rel_20d",
+          "prices.ccj.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-26:VST",
+      "ref_date": "2026-08-26",
+      "ref_price": 144.61,
+      "pick": {
+        "ticker": "VST",
+        "stance": "bullish",
+        "conviction": "medium",
+        "thesis": "Vistra keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "risks": [
+          "Macro data surprise",
+          "Sector-wide de-rating"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.vst.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

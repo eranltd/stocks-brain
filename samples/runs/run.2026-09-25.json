@@ -2,24 +2,24 @@
   "schema_version": 1,
   "run_id": "run.2026-09-25",
   "date": "2026-09-25",
-  "generated_at": "2026-09-25T21:31:00Z",
+  "generated_at": "2026-09-25T21:24:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.797,
-    "input_tokens": 7822,
-    "output_tokens": 836,
+    "usd": 0.524,
+    "input_tokens": 7437,
+    "output_tokens": 1718,
     "cap_usd": 2.5
   },
-  "duration_minutes": 2.61,
+  "duration_minutes": 2.11,
   "pack": {
     "hash": "095870bc27e7af59121e531b208a4f6eaa8efaeadc8be428553efe8d5c86aa34",
-    "tokens": 7404,
+    "tokens": 7078,
     "cap_tokens": 12000
   },
   "doc_versions": {
-    "strategy": "0.1.0",
+    "strategy": "0.2.0",
     "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
@@ -56,10 +56,10 @@
         "ticker": "MNST",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Monster Beverage keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "Monster Beverage has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Sector-wide de-rating",
-          "Momentum reversal after an extended run"
+          "Momentum reversal after an extended run",
+          "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -70,42 +70,21 @@
       }
     },
     {
-      "id": "2026-09-25:COST",
+      "id": "2026-09-25:CCJ",
       "ref_date": "2026-09-25",
-      "ref_price": 646.08,
+      "ref_price": 98.77,
       "pick": {
-        "ticker": "COST",
+        "ticker": "CCJ",
         "stance": "bearish",
         "conviction": "high",
-        "thesis": "Costco has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "thesis": "Cameco broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
         "risks": [
-          "Positive company news flow",
-          "Short-covering rally"
+          "Short-covering rally",
+          "Positive company news flow"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.cost.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-09-25:NVDA",
-      "ref_date": "2026-09-25",
-      "ref_price": 1525.65,
-      "pick": {
-        "ticker": "NVDA",
-        "stance": "neutral",
-        "conviction": "low",
-        "thesis": "NVIDIA is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
-        "risks": [
-          "Volatility expansion",
-          "Breakout in either direction"
-        ],
-        "invalidation": "A sustained move away from the benchmark in either direction.",
-        "evidence": [
-          "prices.nvda.rel_20d",
+          "prices.ccj.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

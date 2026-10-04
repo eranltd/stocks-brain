@@ -2,30 +2,30 @@
   "schema_version": 1,
   "run_id": "run.2026-08-12",
   "date": "2026-08-12",
-  "generated_at": "2026-08-12T21:40:00Z",
+  "generated_at": "2026-08-12T21:34:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.642,
-    "input_tokens": 11312,
-    "output_tokens": 1764,
+    "usd": 0.377,
+    "input_tokens": 7886,
+    "output_tokens": 1733,
     "cap_usd": 2.5
   },
-  "duration_minutes": 1.36,
+  "duration_minutes": 4.02,
   "pack": {
     "hash": "74bfa660a3626af7ebc4d85e128bd7d7a97ca8a91239c5a3949b2fc3f999a2a0",
-    "tokens": 10681,
+    "tokens": 7319,
     "cap_tokens": 12000
   },
   "doc_versions": {
-    "strategy": "0.1.0",
+    "strategy": "0.2.0",
     "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
+  "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
   "picks": [
     {
       "id": "2026-08-12:LIN",
@@ -35,10 +35,10 @@
         "ticker": "LIN",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Linde has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Linde keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Sector-wide de-rating",
-          "Momentum reversal after an extended run"
+          "Momentum reversal after an extended run",
+          "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -59,7 +59,7 @@
         "thesis": "NVIDIA has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
           "Momentum reversal after an extended run",
-          "Macro data surprise"
+          "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -70,21 +70,21 @@
       }
     },
     {
-      "id": "2026-08-12:GILD",
+      "id": "2026-08-12:LLY",
       "ref_date": "2026-08-12",
-      "ref_price": 25.86,
+      "ref_price": 368.26,
       "pick": {
-        "ticker": "GILD",
-        "stance": "neutral",
-        "conviction": "low",
-        "thesis": "Gilead Sciences is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "ticker": "LLY",
+        "stance": "bearish",
+        "conviction": "high",
+        "thesis": "Eli Lilly has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
         "risks": [
-          "Volatility expansion",
-          "Breakout in either direction"
+          "Positive company news flow",
+          "Short-covering rally"
         ],
-        "invalidation": "A sustained move away from the benchmark in either direction.",
+        "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.gild.rel_20d",
+          "prices.lly.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

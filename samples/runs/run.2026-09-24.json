@@ -2,30 +2,30 @@
   "schema_version": 1,
   "run_id": "run.2026-09-24",
   "date": "2026-09-24",
-  "generated_at": "2026-09-24T21:20:00Z",
+  "generated_at": "2026-09-24T21:35:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.431,
-    "input_tokens": 10883,
-    "output_tokens": 1791,
+    "usd": 0.859,
+    "input_tokens": 11313,
+    "output_tokens": 1845,
     "cap_usd": 2.5
   },
-  "duration_minutes": 2.47,
+  "duration_minutes": 3.94,
   "pack": {
     "hash": "927990b1295cfaa8a79f74e69e69bae6336127459556815cd7cbb0e5c2d25fc2",
-    "tokens": 10241,
+    "tokens": 10650,
     "cap_tokens": 12000
   },
   "doc_versions": {
-    "strategy": "0.1.0",
+    "strategy": "0.2.0",
     "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
+  "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
   "picks": [
     {
       "id": "2026-09-24:LIN",
@@ -37,8 +37,8 @@
         "conviction": "high",
         "thesis": "Linde has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Momentum reversal after an extended run",
-          "Macro data surprise"
+          "Macro data surprise",
+          "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -58,8 +58,8 @@
         "conviction": "high",
         "thesis": "Microsoft keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Momentum reversal after an extended run",
-          "Macro data surprise"
+          "Sector-wide de-rating",
+          "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -70,63 +70,21 @@
       }
     },
     {
-      "id": "2026-09-24:MNST",
+      "id": "2026-09-24:XOM",
       "ref_date": "2026-09-24",
-      "ref_price": 314.18,
+      "ref_price": 485.52,
       "pick": {
-        "ticker": "MNST",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Monster Beverage keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
-        "risks": [
-          "Sector-wide de-rating",
-          "Momentum reversal after an extended run"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.mnst.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-09-24:COST",
-      "ref_date": "2026-09-24",
-      "ref_price": 633.14,
-      "pick": {
-        "ticker": "COST",
-        "stance": "bearish",
-        "conviction": "high",
-        "thesis": "Costco broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
-        "risks": [
-          "Short-covering rally",
-          "Positive company news flow"
-        ],
-        "invalidation": "A close back above the recent range high on rising volume.",
-        "evidence": [
-          "prices.cost.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-09-24:CTAS",
-      "ref_date": "2026-09-24",
-      "ref_price": 880.52,
-      "pick": {
-        "ticker": "CTAS",
+        "ticker": "XOM",
         "stance": "neutral",
         "conviction": "low",
-        "thesis": "Cintas is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "thesis": "Exxon Mobil is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
         "risks": [
           "Volatility expansion",
           "Breakout in either direction"
         ],
         "invalidation": "A sustained move away from the benchmark in either direction.",
         "evidence": [
-          "prices.ctas.rel_20d",
+          "prices.xom.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

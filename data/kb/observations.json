@@ -1,7 +1,7 @@
 {
-  "version": "0.6.0",
+  "version": "0.8.0",
   "updated_at": "2026-10-04",
-  "change_note": "Batch 7: index-fund tracking and fees, two-front selloffs and AI free cash flow, synchronized chip setups.",
+  "change_note": "Batch 9: technical analysis tested and untested, risk arithmetic and trading psychology from the same library, plus the Micha course notes on index investing and the long-average trend method.",
   "sample": false,
   "items": [
     {

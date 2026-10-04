@@ -1,7 +1,7 @@
 ---
-version: 0.3.0
+version: 0.4.0
 updated_at: 2026-10-04
-change_note: Product pass for household trust; stock pages; phone navigation.
+change_note: Library batches 8 and 9 from a 119-book review; shelf doc added.
 ---
 # Decision log
 
@@ -14,6 +14,11 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Paid connectors** (news, X, options data for implied moves): parked until the owner wants to spend.
 
 ## 2026-10-04
+- **Library batches 8 and 9: the books.** A separate project read and summarised 119 investing and trading books
+  (public at https://github.com/ungaroni/the-whole-shelf) and cross-examined them in groups. The durable, cited
+  principles from 31 of those books, plus the Micha course notes on index investing and the long-average trend method,
+  were ingested as sources S-020 to S-050 through `scripts/kb_ingest.py`. Each `ref` points at the public summary.
+  No source text was committed. A short human version lives in `docs/shelf.md`, listed on the Admin tab.
 - **Product goal: household trust and good decisions.** Added in response:
   - a trust ladder (Observe, Paper, Small money, Trusted) computed from real scored picks, with thresholds under `trust` in settings
   - house rules in `docs/household.md`: core index first, size limits, and the conditions before acting

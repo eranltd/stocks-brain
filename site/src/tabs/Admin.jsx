@@ -3,7 +3,7 @@ import { Markdown, stripFrontMatter } from "../lib/markdown.jsx";
 import { cap, fmtK, fmtUsd, pad2, relDays } from "../lib/format.js";
 import { Accent, ArrowRight, Chip, Container, Reveal, SectionHead } from "../components/ui.jsx";
 
-const ORDER = ["household", "strategy", "guardrails", "methodology", "learnings", "watchlist", "settings", "sources", "routines", "library", "decisions"];
+const ORDER = ["household", "shelf", "strategy", "guardrails", "methodology", "learnings", "watchlist", "settings", "sources", "routines", "library", "decisions"];
 const ABOUT = {
   strategy: "What a pick is, and what the brain looks for.",
   guardrails: "The lines a pick never crosses.",
@@ -16,6 +16,7 @@ const ABOUT = {
   library: "Principles from books and lectures.",
   decisions: "Every decision and why, plus what is still open.",
   household: "When and how much the household acts on anything here.",
+  shelf: "What a 119-book library supports, disputes and rejects.",
 };
 
 function stats(doc, data) {

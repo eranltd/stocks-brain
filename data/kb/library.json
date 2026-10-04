@@ -1,7 +1,281 @@
 {
-  "version": "0.1.0",
+  "version": "0.3.0",
   "updated_at": "2026-10-04",
-  "change_note": "Empty seed. Principles from books and lectures go here, paraphrased and cited.",
+  "change_note": "Batch 2: earnings-season videos (synchronized charts, implied moves, mega-cap AI capex).",
   "sample": false,
-  "sources": []
+  "sources": [
+    {
+      "id": "S-001",
+      "kind": "video",
+      "ref": "youtube:y-_gLDdXWkI",
+      "title": "הגרף הזה סימן תחתית 7 פעמים מאז 2020. ועכשיו? (Did this graph signal a bottom?)",
+      "author": "YouTube channel (name not given in batch)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-001.P01",
+          "text": "When only about a fifth of S&P 500 members trade above their 50-day average, breadth is washed out. Since 2020 such readings often sat near bottoms, but real crises pushed it far lower, so treat it as a setup to confirm, not a buy signal.",
+          "tags": [
+            "breadth",
+            "bottoms",
+            "regime",
+            "sentiment"
+          ]
+        },
+        {
+          "id": "S-001.P02",
+          "text": "An index near its high while most of its members sit below their averages means leadership is narrow. Narrow leadership is fragile and deserves lower conviction on broad bullish calls.",
+          "tags": [
+            "breadth",
+            "benchmark",
+            "regime",
+            "conviction"
+          ]
+        },
+        {
+          "id": "S-001.P03",
+          "text": "Earnings reactions follow guidance more than the beat. A profit beat paired with weak forward guidance can still sell off hard, so judge a report by what management expects next.",
+          "tags": [
+            "earnings",
+            "guidance",
+            "events"
+          ]
+        },
+        {
+          "id": "S-001.P04",
+          "text": "A fear reading on a sentiment gauge is context, not a trigger. Lean contrarian only when breadth, trend and sentiment line up, and say which one would prove the call wrong.",
+          "tags": [
+            "sentiment",
+            "contrarian",
+            "regime",
+            "invalidation"
+          ]
+        },
+        {
+          "id": "S-001.P05",
+          "text": "A sector jump on a geopolitical shock, such as energy on shipping-lane tension, says little about the wider market and tends to fade when the headline does.",
+          "tags": [
+            "sectors",
+            "macro",
+            "energy",
+            "events"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-002",
+      "kind": "video",
+      "ref": "youtube:KB6w_dca8jU",
+      "title": "אפוקליפסת הריטל? הסוכן של מטא שמאיים על אמזון (Retail apocalypse: Meta's agent threatening Amazon)",
+      "author": "YouTube channel (name not given in batch)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-002.P01",
+          "text": "When software agents do the shopping, sponsored placements lose their audience. Revenue that depends on a human browsing a page is exposed to any shift toward agent-made purchases.",
+          "tags": [
+            "ai_agents",
+            "disruption",
+            "advertising"
+          ]
+        },
+        {
+          "id": "S-002.P02",
+          "text": "Agent-era screen, part one: does revenue rely on customers forgetting to cancel, or on friction that stops them switching? An agent that audits subscriptions and compares offers removes both.",
+          "tags": [
+            "ai_agents",
+            "disruption",
+            "subscriptions",
+            "screening"
+          ]
+        },
+        {
+          "id": "S-002.P03",
+          "text": "Agent-era screen, part two: does profit hinge on paid placement, or is the business only a middleman between buyer and seller? Agents route around both and go straight to the supplier.",
+          "tags": [
+            "ai_agents",
+            "disruption",
+            "aggregators",
+            "screening"
+          ]
+        },
+        {
+          "id": "S-002.P04",
+          "text": "In a platform shift, the rails tend to win: whoever settles the payment or runs the compute gets paid whichever agent wins. Prefer picks-and-shovels exposure while the winner is unclear.",
+          "tags": [
+            "ai_agents",
+            "payments",
+            "infrastructure",
+            "winners"
+          ]
+        },
+        {
+          "id": "S-002.P05",
+          "text": "Early in a shift, people using AI to help them shop far outnumber agents actually completing purchases. Size a disruption thesis to measured adoption, not to the narrative.",
+          "tags": [
+            "ai_agents",
+            "adoption",
+            "discipline",
+            "conviction"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-003",
+      "kind": "video",
+      "ref": "youtube:KwiGA2_SX2Q",
+      "title": "איך לעשות פי 12 תשואה בבורסה בצורה פשוטה - האם זה אפשרי? (A 12x market-return strategy?)",
+      "author": "YouTube channel (name not given in batch)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-003.P01",
+          "text": "Buying last year's single best performer looks spectacular in a backtest, but the edge comes from a handful of outlier years. Most years are average or worse, so the result is closer to luck than to a repeatable rule.",
+          "tags": [
+            "momentum",
+            "backtest",
+            "outliers"
+          ]
+        },
+        {
+          "id": "S-003.P02",
+          "text": "A strategy that beats the index in only about three years of five carries heavy psychological cost. Most people abandon it in the losing stretch, which is when it matters.",
+          "tags": [
+            "momentum",
+            "behavior",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-003.P03",
+          "text": "Turnover and taxes can erase a backtested edge. Yearly rotation that wins before tax can lose to the index after tax, while buying and holding lets compounding do the work.",
+          "tags": [
+            "taxes",
+            "turnover",
+            "compounding"
+          ]
+        },
+        {
+          "id": "S-003.P04",
+          "text": "A concentrated bet on one name is a lottery ticket, not a core holding. Judge any momentum rule by its median year, not its best one.",
+          "tags": [
+            "concentration",
+            "risk",
+            "momentum",
+            "backtest"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-004",
+      "kind": "video",
+      "ref": "youtube:_UHt0EU-NZM",
+      "title": "7 מניות, אותו גרף בדיוק: סוד מטריד לפני שבוע הדיווחים (7 stocks, the same chart before earnings)",
+      "author": "YouTube channel (name not given in batch)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-004.P01",
+          "text": "When unrelated stocks trace the same chart, a shared factor such as rates, risk appetite or retail flows is driving them, not company news. Treat them as one bet and expect them to break together.",
+          "tags": [
+            "correlation",
+            "factors",
+            "risk",
+            "technicals"
+          ]
+        },
+        {
+          "id": "S-004.P02",
+          "text": "The options-implied move is the bar for an earnings reaction. A result is only news if the stock moves beyond what was already priced in.",
+          "tags": [
+            "earnings",
+            "options",
+            "expectations"
+          ]
+        },
+        {
+          "id": "S-004.P03",
+          "text": "A stock that ran hard into its report has front-run the good news. It needs a beat plus better guidance just to hold, and a plain beat can still trigger selling.",
+          "tags": [
+            "earnings",
+            "momentum",
+            "expectations"
+          ]
+        },
+        {
+          "id": "S-004.P04",
+          "text": "For each name, know the one segment metric the market is watching, such as a customer mix or a payments volume line. That line moves the stock more than the headline beat.",
+          "tags": [
+            "earnings",
+            "kpis",
+            "guidance"
+          ]
+        },
+        {
+          "id": "S-004.P05",
+          "text": "A breakout from a long range sets a technical target, but the story has to keep up. Without fundamental confirmation, breakouts tend to fail back into the range.",
+          "tags": [
+            "technicals",
+            "breakouts",
+            "invalidation"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-005",
+      "kind": "video",
+      "ref": "youtube:Q-yvlzjPij8",
+      "title": "רעידת אדמה: 180 דוחות יזיזו את התיק שלכם (180 earnings reports will move your portfolio)",
+      "author": "YouTube channel (name not given in batch)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-005.P01",
+          "text": "A peak earnings week that also holds a central-bank decision piles up event risk. Avoid new high-conviction calls whose horizon spans that week unless the event is the thesis.",
+          "tags": [
+            "events",
+            "earnings",
+            "macro",
+            "conviction"
+          ]
+        },
+        {
+          "id": "S-005.P02",
+          "text": "For companies that beat every quarter, a beat is already priced. Only the size of the beat or a change in guidance moves the stock.",
+          "tags": [
+            "earnings",
+            "expectations"
+          ]
+        },
+        {
+          "id": "S-005.P03",
+          "text": "For mega-cap tech in the AI build-out, capex guidance and cloud growth now move the stock more than EPS. Higher capex can dent near-term EPS without hurting the stock if cloud revenue confirms the spend.",
+          "tags": [
+            "ai_capex",
+            "cloud",
+            "earnings",
+            "megacap"
+          ]
+        },
+        {
+          "id": "S-005.P04",
+          "text": "A sleepy chart into earnings usually comes with a small implied move. Such names need a new narrative, not a routine beat, to re-rate.",
+          "tags": [
+            "earnings",
+            "expectations",
+            "technicals"
+          ]
+        }
+      ]
+    }
+  ]
 }

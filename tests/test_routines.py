@@ -8,7 +8,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 import fetch_prices  # noqa: E402
 import routines_code  # noqa: E402
 from _common import SAMPLES, Validator, dump_json, load_json, settings  # noqa: E402
-from providers import stooq  # noqa: E402
+from providers import stooq, tiingo  # noqa: E402
 
 CSV = "Date,Open,High,Low,Close,Volume\n2026-10-01,10,11,9.5,10.5,1000\n2026-10-02,10.5,12,10,11.75,1500.0\n"
 
@@ -25,6 +25,31 @@ class StooqTest(unittest.TestCase):
 
     def test_code(self):
         self.assertEqual(stooq.code_for("BRK.B"), "brk-b.us")
+
+
+class TiingoTest(unittest.TestCase):
+    ROW = {"date": "2026-10-02T00:00:00.000Z", "close": 12, "open": 11, "high": 13, "low": 10, "volume": 900,
+           "adjClose": 6, "adjOpen": 5.5, "adjHigh": 6.5, "adjLow": 5, "adjVolume": 1800}
+
+    def test_parse_uses_adjusted(self):
+        bars = tiingo.parse([self.ROW], "TEST")
+        self.assertEqual(bars, [{"date": "2026-10-02", "open": 5.5, "high": 6.5, "low": 5.0, "close": 6.0, "volume": 1800}])
+
+    def test_error_object_and_empty(self):
+        with self.assertRaises(tiingo.ProviderError):
+            tiingo.parse('{"detail": "Not found."}', "TEST")
+        with self.assertRaises(tiingo.ProviderError):
+            tiingo.parse("[]", "TEST")
+
+    def test_missing_key_fails_closed(self):
+        import os
+        old = os.environ.pop(tiingo.SECRET_ENV, None)
+        try:
+            with self.assertRaises(tiingo.ProviderError):
+                tiingo.fetch_daily("TEST")
+        finally:
+            if old is not None:
+                os.environ[tiingo.SECRET_ENV] = old
 
 
 class FetchTest(unittest.TestCase):

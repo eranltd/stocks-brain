@@ -1,21 +1,21 @@
 {
   "version": "0.2.0",
   "updated_at": "2026-10-04",
-  "change_note": "Prices connected: Stooq (free end-of-day CSV, no key).",
+  "change_note": "Prices connected: Tiingo (official EOD API, free key in a GitHub secret).",
   "sources": [
     {
       "id": "prices",
       "kind": "prices",
       "label": "Daily prices",
       "status": "active",
-      "provider": "stooq",
+      "provider": "tiingo",
       "cadence": "Mon–Fri 23:40 UTC",
       "feeds": [
         "data/prices"
       ],
-      "secret_env": null,
+      "secret_env": "TIINGO_API_KEY",
       "follow": [],
-      "note": "Free end-of-day bars, no key. Behind scripts/providers/ so it can be swapped. All-or-nothing writes."
+      "note": "Split/dividend-adjusted end-of-day bars. Key lives only in the TIINGO_API_KEY Actions secret. Behind scripts/providers/; all-or-nothing writes."
     },
     {
       "id": "x_accounts",

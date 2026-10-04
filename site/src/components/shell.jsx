@@ -225,7 +225,7 @@ export function Footer({ data }) {
       <Container className="flex flex-wrap items-center justify-between gap-x-10 gap-y-3 py-8 pb-[calc(2rem+env(safe-area-inset-bottom))]">
         <p className="m-0 font-semibold tracking-[-0.01em]">Analysis only, not financial advice. Data may be delayed.</p>
         <p className="meta m-0 normal-case tracking-[0.04em]">
-          Prices {manifest.price_source === "live" ? "live · Stooq" : "sample"} · picks {manifest.source} · built {manifest.built_at.replace("T", " ").replace("Z", " UTC")}
+          Prices {manifest.price_source === "live" ? `live · ${manifest.price_provider}` : "sample"} · picks {manifest.source} · built {manifest.built_at.replace("T", " ").replace("Z", " UTC")}
         </p>
       </Container>
     </footer>

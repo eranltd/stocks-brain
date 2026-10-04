@@ -17,7 +17,8 @@
         "required": ["id", "kind", "title", "author", "year", "added", "principles"],
         "properties": {
           "id": {"type": "string", "pattern": "^S-\\d{3}$"},
-          "kind": {"enum": ["book", "lecture", "article", "course"]},
+          "kind": {"enum": ["book", "lecture", "article", "course", "video"]},
+          "ref": {"type": "string", "pattern": "^(youtube|isbn|url|doi):[^\\s]{1,200}$", "description": "Where to find the source, e.g. youtube:<id>"},
           "title": {"type": "string", "minLength": 1, "maxLength": 160},
           "author": {"type": "string", "minLength": 1, "maxLength": 120},
           "year": {"type": ["integer", "null"], "minimum": 1800, "maximum": 2100},

@@ -34,6 +34,8 @@ jobs:
 
       - name: Fetch prices (all-or-nothing)
         if: env.MONTHLY != 'true'
+        env:
+          TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
         run: python3 scripts/fetch_prices.py ${{ env.DRY == 'true' && '--dry-run' || '' }}
 
       - name: Score matured picks + regime

@@ -1,12 +1,13 @@
 ---
 version: 0.2.0
 updated_at: 2026-10-04
-change_note: Prices from Stooq; scoring, regime and calibration now run as code-only routines.
+change_note: Prices from Tiingo (adjusted); scoring, regime and calibration now run as code-only routines.
 ---
 # Methodology
 
 ## Daily pipeline
-1. **fetch_prices**: the provider adapter (Stooq, free end-of-day CSV) writes `data/prices/<SYMBOL>.json`.
+1. **fetch_prices**: the provider adapter (Tiingo, split/dividend-adjusted end-of-day bars) writes `data/prices/<SYMBOL>.json`.
+   Each fetch re-pulls the whole kept window, so stored history is adjusted consistently.
    All symbols must fetch and validate, or nothing is written.
 2. **build_pack**: docs, prices and recent runs go into one JSON pack. The run stops if the pack exceeds `pack.token_cap`.
 3. **run_brain**: one LLM call with JSON-schema output and at most one repair retry. The run stops if
@@ -15,7 +16,8 @@ change_note: Prices from Stooq; scoring, regime and calibration now run as code-
 5. **lint**: schemas, hygiene and size caps. Publish only when lint passes.
 
 ## Scoring (code only)
-- `return_pct = (exit_close / ref_close - 1) * 100`, using closes `horizon_days` trading days apart.
+- `return_pct = (exit_close / ref_close - 1) * 100`, using adjusted closes `horizon_days` trading days apart,
+  both read from the current price series (the run's recorded `ref_price` is kept for reference).
 - `benchmark_return_pct` uses the same formula on the benchmark over the same dates.
 - `excess_pct = return_pct - benchmark_return_pct`.
 - Verdict with flat band `b = scoring.flat_band_pct`:

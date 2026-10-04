@@ -1,0 +1,500 @@
+{
+  "version": "0.2.0",
+  "updated_at": "2026-10-04",
+  "change_note": "Batch 2: earnings-preview claims from April and May (historical, unverified).",
+  "sample": false,
+  "items": [
+    {
+      "id": "O-0001",
+      "source_id": "S-001",
+      "as_of": "2026-10-02",
+      "expires": "2026-10-16",
+      "kind": "market",
+      "tickers": [],
+      "text": "About 20% of S&P 500 members were above their 50-day average, the zone that preceded several rebounds since 2020.",
+      "tags": [
+        "breadth",
+        "regime"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0002",
+      "source_id": "S-001",
+      "as_of": "2026-10-02",
+      "expires": "2026-10-16",
+      "kind": "market",
+      "tickers": [],
+      "text": "Fear and Greed index read 28 (fear). The S&P 500 printed a doji on 1 Oct and sat about 2% below its all-time high.",
+      "tags": [
+        "sentiment",
+        "regime"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0003",
+      "source_id": "S-001",
+      "as_of": "2026-10-02",
+      "expires": "2026-11-02",
+      "kind": "company",
+      "tickers": [
+        "NKE"
+      ],
+      "text": "Nike fell about 5.7% after earnings: profit beat, but weak forward guidance.",
+      "tags": [
+        "earnings",
+        "guidance"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0004",
+      "source_id": "S-001",
+      "as_of": "2026-10-02",
+      "expires": "2026-11-02",
+      "kind": "company",
+      "tickers": [
+        "ACN",
+        "MU"
+      ],
+      "text": "Accenture rose about 15% and Micron about 3% after profit beats.",
+      "tags": [
+        "earnings"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0005",
+      "source_id": "S-001",
+      "as_of": "2026-10-02",
+      "expires": "2026-10-23",
+      "kind": "company",
+      "tickers": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "text": "Alphabet slipped about 1.7% and was described as still inside a technical triangle.",
+      "tags": [
+        "technicals"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0006",
+      "source_id": "S-001",
+      "as_of": "2026-10-02",
+      "expires": "2026-12-02",
+      "kind": "company",
+      "tickers": [
+        "SNPS"
+      ],
+      "text": "Synopsys reportedly signed a chip development agreement with OpenAI.",
+      "tags": [
+        "ai",
+        "news"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0007",
+      "source_id": "S-001",
+      "as_of": "2026-10-02",
+      "expires": "2026-11-02",
+      "kind": "company",
+      "tickers": [
+        "RKLB"
+      ],
+      "text": "Rocket Lab reportedly won a 20-launch contract but was meeting resistance at its 150-day average.",
+      "tags": [
+        "news",
+        "technicals"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0008",
+      "source_id": "S-001",
+      "as_of": "2026-10-02",
+      "expires": "2026-10-23",
+      "kind": "company",
+      "tickers": [
+        "NU"
+      ],
+      "text": "Nu Holdings denied rumours that it would acquire a UK digital bank.",
+      "tags": [
+        "news"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0009",
+      "source_id": "S-001",
+      "as_of": "2026-10-02",
+      "expires": "2026-10-16",
+      "kind": "sector",
+      "tickers": [],
+      "text": "Energy rose about 2% on geopolitical tension around the Strait of Hormuz.",
+      "tags": [
+        "sectors",
+        "energy",
+        "macro"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0010",
+      "source_id": "S-002",
+      "as_of": "2026-09-26",
+      "expires": "2026-12-26",
+      "kind": "theme",
+      "tickers": [
+        "META",
+        "AMZN"
+      ],
+      "text": "Meta's shopping agent was reported at the top of the App Store, with Amazon said to be blocking it. Amazon ad revenue cited at about 68.6B dollars a year.",
+      "tags": [
+        "ai_agents",
+        "advertising"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0011",
+      "source_id": "S-002",
+      "as_of": "2026-09-26",
+      "expires": "2027-03-26",
+      "kind": "theme",
+      "tickers": [],
+      "text": "Cited Morgan Stanley figures: about 5% of purchases made by AI agents, 42% of users using AI to help them shop, and a 20% chance agents dominate online retail by 2030.",
+      "tags": [
+        "ai_agents",
+        "adoption"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0012",
+      "source_id": "S-002",
+      "as_of": "2026-09-26",
+      "expires": "2027-03-26",
+      "kind": "theme",
+      "tickers": [
+        "META",
+        "V",
+        "MA",
+        "SHOP",
+        "WMT",
+        "PYPL",
+        "INTC",
+        "AMD",
+        "ARM"
+      ],
+      "text": "Named as likely winners of the agent era: Meta, card networks, Shopify, Walmart, PayPal and compute or chip suppliers.",
+      "tags": [
+        "ai_agents",
+        "winners"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0013",
+      "source_id": "S-002",
+      "as_of": "2026-09-26",
+      "expires": "2027-03-26",
+      "kind": "theme",
+      "tickers": [
+        "EXPE",
+        "BKNG",
+        "PLNT",
+        "NYT"
+      ],
+      "text": "Named as at risk in the agent era: travel aggregators, subscription gyms, news subscriptions and telecoms.",
+      "tags": [
+        "ai_agents",
+        "disruption"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0014",
+      "source_id": "S-004",
+      "as_of": "2026-05-04",
+      "expires": "2026-05-18",
+      "kind": "market",
+      "tickers": [
+        "SHOP",
+        "FVRR",
+        "PLTR",
+        "OPEN",
+        "APP",
+        "IONQ"
+      ],
+      "text": "Six unrelated growth names were described as tracing the same chart pattern into earnings.",
+      "tags": [
+        "correlation",
+        "technicals"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0015",
+      "source_id": "S-004",
+      "as_of": "2026-05-04",
+      "expires": "2026-05-18",
+      "kind": "company",
+      "tickers": [
+        "AMD",
+        "ARM"
+      ],
+      "text": "AMD and Arm shared a pattern: consolidation, breakout around 1 Apr, then a steep climb. AMD was cited up about 83% since then.",
+      "tags": [
+        "technicals",
+        "momentum"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0016",
+      "source_id": "S-004",
+      "as_of": "2026-05-04",
+      "expires": "2026-05-18",
+      "kind": "company",
+      "tickers": [
+        "PLTR"
+      ],
+      "text": "Palantir: implied move about 11%, revenue estimate about 1B dollars (+73% YoY), EPS estimate 0.29. The commercial vs government mix was the key line. A large short by a well-known investor was reported.",
+      "tags": [
+        "earnings",
+        "options"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0017",
+      "source_id": "S-004",
+      "as_of": "2026-05-04",
+      "expires": "2026-05-18",
+      "kind": "company",
+      "tickers": [
+        "PYPL"
+      ],
+      "text": "PayPal: implied move about 9.5% after a 31% bounce from February lows. Transaction revenue was cited up about 4% and Venmo about 20%. A turnaround under the new CEO was the test.",
+      "tags": [
+        "earnings",
+        "options"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0018",
+      "source_id": "S-004",
+      "as_of": "2026-05-04",
+      "expires": "2026-05-18",
+      "kind": "company",
+      "tickers": [
+        "AMD"
+      ],
+      "text": "AMD: revenue growth estimate about 30%. It had to show AI inference demand in data center and client to justify the premium.",
+      "tags": [
+        "earnings",
+        "ai_capex"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0019",
+      "source_id": "S-004",
+      "as_of": "2026-05-04",
+      "expires": "2026-05-18",
+      "kind": "company",
+      "tickers": [
+        "UBER"
+      ],
+      "text": "Uber had broken its downtrend line and retested support. A strong EPS beat and guidance were needed to confirm the reversal.",
+      "tags": [
+        "earnings",
+        "technicals"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0020",
+      "source_id": "S-004",
+      "as_of": "2026-05-04",
+      "expires": "2026-05-18",
+      "kind": "company",
+      "tickers": [
+        "ARM"
+      ],
+      "text": "Arm: implied move about 14%, revenue estimate +18%. It had broken out of a long 80 to 190 dollar range, with a technical target near 280.",
+      "tags": [
+        "earnings",
+        "technicals",
+        "options"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0021",
+      "source_id": "S-004",
+      "as_of": "2026-05-04",
+      "expires": "2026-05-18",
+      "kind": "company",
+      "tickers": [
+        "APP"
+      ],
+      "text": "AppLovin had dropped about 19% the prior quarter, was forming a possible head-and-shoulders, and needed to clear resistance near 525.",
+      "tags": [
+        "earnings",
+        "technicals"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0022",
+      "source_id": "S-004",
+      "as_of": "2026-05-04",
+      "expires": "2026-05-18",
+      "kind": "company",
+      "tickers": [
+        "IONQ"
+      ],
+      "text": "IonQ: loss-making. The market wanted deployment numbers and updates on a reported 9.7B dollar data-center partnership with Microsoft.",
+      "tags": [
+        "earnings",
+        "news"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0023",
+      "source_id": "S-005",
+      "as_of": "2026-04-27",
+      "expires": "2026-05-11",
+      "kind": "market",
+      "tickers": [],
+      "text": "About 180 S&P 500 companies (36% of the index) were reporting in one week alongside a Fed rate decision.",
+      "tags": [
+        "events",
+        "earnings",
+        "macro"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0024",
+      "source_id": "S-005",
+      "as_of": "2026-04-27",
+      "expires": "2026-05-11",
+      "kind": "company",
+      "tickers": [
+        "HOOD"
+      ],
+      "text": "Robinhood: implied move about 10.6%, revenue above 1B dollars. Crypto vs fiat volumes, net interest revenue and prediction markets were the lines to watch.",
+      "tags": [
+        "earnings",
+        "options"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0025",
+      "source_id": "S-005",
+      "as_of": "2026-04-27",
+      "expires": "2026-05-11",
+      "kind": "company",
+      "tickers": [
+        "SOFI"
+      ],
+      "text": "SoFi: implied move about 11.8%, revenue estimate 1.04 to 1.05B dollars, down about 30% YTD with resistance near 19. Galileo platform growth was the doubted segment.",
+      "tags": [
+        "earnings",
+        "options"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0026",
+      "source_id": "S-005",
+      "as_of": "2026-04-27",
+      "expires": "2026-05-11",
+      "kind": "company",
+      "tickers": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "text": "Alphabet: implied move about 5.9%, revenue estimate about 91B dollars (+20% YoY), EPS 2.63. Cloud growth, YouTube ads and capex mix (own chips vs Nvidia) were key.",
+      "tags": [
+        "earnings",
+        "ai_capex",
+        "cloud"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0027",
+      "source_id": "S-005",
+      "as_of": "2026-04-27",
+      "expires": "2026-05-11",
+      "kind": "company",
+      "tickers": [
+        "MSFT"
+      ],
+      "text": "Microsoft: implied move about 7%, revenue estimate about 81B dollars, chart weak vs peers. Azure growth, paid Copilot adoption and OpenAI terms were the swing factors.",
+      "tags": [
+        "earnings",
+        "cloud"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0028",
+      "source_id": "S-005",
+      "as_of": "2026-04-27",
+      "expires": "2026-05-11",
+      "kind": "company",
+      "tickers": [
+        "META"
+      ],
+      "text": "Meta: implied move about 8%, revenue estimate about 55B dollars, EPS 6.71. A workforce cut was rumoured; capex guidance, Llama traction and Reality Labs burn were key.",
+      "tags": [
+        "earnings",
+        "ai_capex"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0029",
+      "source_id": "S-005",
+      "as_of": "2026-04-27",
+      "expires": "2026-05-11",
+      "kind": "company",
+      "tickers": [
+        "AMZN"
+      ],
+      "text": "Amazon: implied move about 6%, revenue estimate about 177B dollars, near all-time highs. AWS growth was the driver; retail margins were secondary.",
+      "tags": [
+        "earnings",
+        "cloud"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0030",
+      "source_id": "S-005",
+      "as_of": "2026-04-27",
+      "expires": "2026-05-11",
+      "kind": "company",
+      "tickers": [
+        "AAPL"
+      ],
+      "text": "Apple: implied move about 3%, revenue estimate about 109B dollars. Only an on-device AI timeline or news on a reported CEO transition was expected to move it.",
+      "tags": [
+        "earnings",
+        "options"
+      ],
+      "status": "unverified"
+    }
+  ]
+}

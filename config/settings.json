@@ -1,7 +1,7 @@
 {
   "version": "0.2.0",
   "updated_at": "2026-10-04",
-  "change_note": "Stooq as price provider; regime and calibration parameters.",
+  "change_note": "Tiingo as price provider; regime and calibration parameters.",
   "pack": {
     "token_cap": 12000,
     "recent_runs": 5,
@@ -28,7 +28,7 @@
     "calibration_min_n": 10
   },
   "prices": {
-    "provider": "stooq",
+    "provider": "tiingo",
     "keep_days": 260
   },
   "lint": {

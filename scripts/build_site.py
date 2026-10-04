@@ -58,7 +58,13 @@ def main() -> int:
     for p in prices:
         _copy(p, OUT / "prices" / p.name)
     kb = {}
-    for name, base in (("outcomes", kb_dir), ("library", kb_dir), ("calibration", kb_dir), ("regime", regime_dir)):
+    # Curated knowledge (library, observations) is always the real file once it has content.
+    def curated(name: str, key: str) -> Path:
+        live_path = KB / f"{name}.json"
+        return KB if live_path.exists() and load_json(live_path)[key] else SAMPLES / "kb"
+    for name, base in (("outcomes", kb_dir), ("library", curated("library", "sources")),
+                       ("observations", curated("observations", "items")),
+                       ("calibration", kb_dir), ("regime", regime_dir)):
         if (base / f"{name}.json").exists():
             _copy(base / f"{name}.json", OUT / "kb" / f"{name}.json")
             kb[name] = f"kb/{name}.json"
@@ -84,6 +90,7 @@ def main() -> int:
     dump_json(OUT / "manifest.json", {
         "source": source,
         "price_source": price_source,
+        "price_provider": st["prices"]["provider"],
         "built_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
         "repo": st["site"]["repo"],
         "runs": [f"runs/{p.name}" for p in runs],

@@ -1,4 +1,7 @@
-"""Stooq daily bars (free end-of-day CSV, no key). US listings use the `<symbol>.us` code."""
+"""Stooq daily bars (free end-of-day CSV, no key). US listings use the `<symbol>.us` code.
+
+Note: Stooq serves a JavaScript bot check to cloud runners (GitHub Actions), so it only works
+from a normal network. Kept as a local fallback; the Action uses Tiingo."""
 from __future__ import annotations
 
 import csv
@@ -56,7 +59,7 @@ def _describe(text: str) -> str:
     return f"html page: title={title.group(1).strip() if title else ''!r} text={body[:240]!r}"
 
 
-def fetch_daily(symbol: str, retries: int = 3, timeout: int = 30) -> list[dict]:
+def fetch_daily(symbol: str, keep_days: int = 260, retries: int = 3, timeout: int = 30) -> list[dict]:
     req = urllib.request.Request(URL.format(code=code_for(symbol)), headers=HEADERS)
     last: Exception | None = None
     for attempt in range(retries):

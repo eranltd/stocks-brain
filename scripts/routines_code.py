@@ -60,7 +60,8 @@ def score_outcomes(runs: list[dict], prices_dir: Path, existing: list[dict], st:
                 waiting += 1
                 continue
             j = i + horizon
-            sc = scoring.score(pick["stance"], item["ref_price"], bars[j]["close"],
+            # Returns use the current (adjusted) series at ref_date, so splits/dividends cancel out.
+            sc = scoring.score(pick["stance"], bars[i]["close"], bars[j]["close"],
                                bench_bars[bi]["close"], bench_bars[bi + horizon]["close"], band)
             out.append({
                 "pick_id": item["id"], "run_date": run["date"], "ticker": pick["ticker"],

@@ -168,6 +168,10 @@ class Lint:
             for p in _json_files(kb_dir):
                 if p.name == "outcomes.json":
                     obj = self.schema(p, "outcome.schema.json")
+                elif p.name == "observations.json":
+                    obj = self.schema(p, "observations.schema.json")
+                    if obj:
+                        self.check_observations(p, obj)
                 elif p.name in ("regime.json", "calibration.json"):
                     obj = self.schema(p, p.name.replace(".json", ".schema.json"))
                 elif p.name == "library.json":
@@ -175,7 +179,7 @@ class Lint:
                     if obj:
                         self.check_library(p, obj)
                 else:
-                    self.err(p, "unexpected file in kb/ (outcomes, library, regime or calibration)")
+                    self.err(p, "unexpected file in kb/ (outcomes, library, observations, regime or calibration)")
                     continue
                 if obj and obj["sample"] != (base is SAMPLES):
                     self.err(p, "sample flag must be true exactly for files under samples/")
@@ -200,6 +204,20 @@ class Lint:
                     self.err(path, f"principle {pr['id']} must start with {src['id']}.P")
                 if pr["text"].count('"') >= 2:
                     self.err(path, f"{pr['id']}: looks like a quotation; paraphrase in our own words")
+
+    def check_observations(self, path: Path, obs: dict) -> None:
+        ids = [o["id"] for o in obs["items"]]
+        if len(ids) != len(set(ids)):
+            self.err(path, "duplicate observation ids")
+        lib_path = path.parent / "library.json"
+        sources = {s["id"] for s in load_json(lib_path)["sources"]} if lib_path.exists() else set()
+        for o in obs["items"]:
+            if o["source_id"] not in sources:
+                self.err(path, f"{o['id']}: source {o['source_id']} is not in {lib_path.name}")
+            if o["expires"] <= o["as_of"]:
+                self.err(path, f"{o['id']}: expires must be after as_of")
+            if o["text"].count('"') >= 2:
+                self.err(path, f"{o['id']}: looks like a quotation; paraphrase in our own words")
 
     def check_run(self, path: Path, run: dict, guard: dict | None, on_list: set) -> None:
         if path.name != f"{run['run_id']}.json" or run["run_id"] != f"run.{run['date']}":

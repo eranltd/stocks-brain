@@ -23,7 +23,7 @@ export default function Watchlist({ data }) {
   return (
     <Container className="pt-20">
       <SectionHead
-        eyebrow={`Watchlist · ${asOf ? fmtDate(asOf) : "no prices yet"} · ${livePrices ? "live · Stooq" : "sample prices"}`}
+        eyebrow={`Watchlist · ${asOf ? fmtDate(asOf) : "no prices yet"} · ${livePrices ? `live · ${data.manifest.price_provider}` : "sample prices"}`}
         title={<>{numWord(rows.length)} names, <Accent>one benchmark.</Accent></>}
         lede={`${up} of ${rows.length} closed higher on the day. The list lives in config/watchlist.json; scripts never hard-code a ticker.`}
         right={

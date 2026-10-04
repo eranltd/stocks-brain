@@ -63,7 +63,7 @@ It has no third-party runtime scripts or fonts: everything is bundled and served
 
 | Routine | When (UTC) | Writes |
 |---|---|---|
-| fetch_prices (Stooq, all-or-nothing) | Mon–Fri 23:40 | `data/prices/` |
+| fetch_prices (Tiingo, all-or-nothing) | Mon–Fri 23:40 | `data/prices/` |
 | score_picks | Mon–Fri 23:40 | `data/kb/outcomes.json` |
 | regime_monitor | Mon–Fri 23:40 | `data/kb/regime.json` |
 | calibration | 1st of month 13:00 | `data/kb/calibration.json` |
@@ -96,7 +96,7 @@ tags match the day, up to `pack.library_principles_max`.
 | Milestone | Scope | Status |
 |---|---|---|
 | M1 | Folders, schemas, seed docs, lint, dashboard on sample data | done |
-| M2 | `fetch_prices.py` behind a provider adapter (Stooq) + `daily.yml` with code-only routines | done |
+| M2 | `fetch_prices.py` behind a provider adapter (Tiingo) + `daily.yml` with code-only routines | done |
 | M3 | `build_pack.py` + `run_brain.py` (target < $1/run, warn > $2, hard cap $2.50) | needs an LLM SDK decision |
 | M4 | Scoring (code only, pick vs benchmark after N days) | done (`routines_code.py score`), waits for live picks |
 | M5 | Daily Claude Code routine | |

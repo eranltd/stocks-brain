@@ -6,7 +6,7 @@ prices.keep_days, sanity-checked and schema-validated in memory. Only if all pas
 anything written (fail closed).
 
 Usage: python3 scripts/fetch_prices.py [--dry-run] [--fixtures DIR]
-  --fixtures DIR  read <DIR>/<SYMBOL>.csv instead of the network (tests / offline)
+  --fixtures DIR  read <DIR>/<SYMBOL>.json|.csv (the provider's raw format) instead of the network
 """
 from __future__ import annotations
 
@@ -71,9 +71,10 @@ def main() -> int:
     for sym in symbols():
         try:
             if args.fixtures:
-                new = provider.parse((Path(args.fixtures) / f"{sym}.csv").read_text(), sym)
+                fx = next(p for p in (Path(args.fixtures) / f"{sym}.json", Path(args.fixtures) / f"{sym}.csv") if p.exists())
+                new = provider.parse(fx.read_text(), sym)
             else:
-                new = provider.fetch_daily(sym)
+                new = provider.fetch_daily(sym, keep_days=keep)
         except Exception as exc:  # noqa: BLE001  (any provider failure fails the run)
             errors.append(str(exc))
             continue

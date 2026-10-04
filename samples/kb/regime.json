@@ -6,10 +6,10 @@
   "trend": "down",
   "label": "calm · downtrend",
   "metrics": {
-    "vol_ann_pct": 13.06,
-    "drawdown_pct": -13.26,
-    "dist_sma_pct": -4.336,
-    "sma_slope_pct": -2.487
+    "vol_ann_pct": 12.08,
+    "drawdown_pct": -8.2,
+    "dist_sma_pct": -2.513,
+    "sma_slope_pct": -0.097
   },
   "params": {
     "vol_days": 20,

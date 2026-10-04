@@ -2,30 +2,30 @@
   "schema_version": 1,
   "run_id": "run.2026-08-25",
   "date": "2026-08-25",
-  "generated_at": "2026-08-25T21:10:00Z",
+  "generated_at": "2026-08-25T21:33:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.465,
-    "input_tokens": 6769,
-    "output_tokens": 1024,
+    "usd": 0.555,
+    "input_tokens": 9743,
+    "output_tokens": 1714,
     "cap_usd": 2.5
   },
-  "duration_minutes": 1.59,
+  "duration_minutes": 1.61,
   "pack": {
     "hash": "f67459407d6f0d32516ba9380ceb58c2f59352c12bf36244a4e6cbf9c8f71c1b",
-    "tokens": 6058,
+    "tokens": 8934,
     "cap_tokens": 12000
   },
   "doc_versions": {
     "strategy": "0.1.0",
-    "methodology": "0.3.0",
+    "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
+  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
   "picks": [
     {
       "id": "2026-08-25:NVDA",
@@ -49,42 +49,21 @@
       }
     },
     {
-      "id": "2026-08-25:GOOGL",
+      "id": "2026-08-25:ISRG",
       "ref_date": "2026-08-25",
-      "ref_price": 1258.87,
+      "ref_price": 177.2,
       "pick": {
-        "ticker": "GOOGL",
+        "ticker": "ISRG",
         "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Alphabet keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "conviction": "medium",
+        "thesis": "Intuitive Surgical has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Sector-wide de-rating",
+          "Momentum reversal after an extended run",
           "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.googl.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-08-25:COST",
-      "ref_date": "2026-08-25",
-      "ref_price": 1468.71,
-      "pick": {
-        "ticker": "COST",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Costco has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
-        "risks": [
-          "Momentum reversal after an extended run",
-          "Sector-wide de-rating"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.cost.rel_20d",
+          "prices.isrg.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
@@ -97,11 +76,11 @@
       "pick": {
         "ticker": "AAPL",
         "stance": "bearish",
-        "conviction": "medium",
+        "conviction": "high",
         "thesis": "Apple has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
         "risks": [
-          "Positive company news flow",
-          "Benchmark weakness narrows the gap"
+          "Short-covering rally",
+          "Positive company news flow"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [

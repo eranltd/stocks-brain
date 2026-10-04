@@ -37,9 +37,17 @@ def load_json(path: Path) -> Any:
         return json.load(fh)
 
 
-def dump_json(path: Path, obj: Any) -> None:
+def dump_json(path: Path, obj: Any, compact: bool = False) -> None:
+    """Indented JSON for human-edited files. `compact` (machine-written market data): one line per
+    top-level key and per item of a top-level list, so diffs stay per symbol while files stay small."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    text = json.dumps(obj, indent=2, ensure_ascii=False) + "\n"
+    if compact and isinstance(obj, dict):
+        c = lambda v: json.dumps(v, separators=(",", ":"), ensure_ascii=False)  # noqa: E731
+        parts = [f"{c(k)}:" + ("[\n" + ",\n".join(c(x) for x in v) + "\n]" if isinstance(v, list) and v else c(v))
+                 for k, v in obj.items()]
+        text = "{\n" + ",\n".join(parts) + "\n}\n"
+    else:
+        text = json.dumps(obj, indent=2, ensure_ascii=False) + "\n"
     path.write_text(text, encoding="utf-8")
 
 

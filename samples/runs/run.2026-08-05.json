@@ -2,25 +2,25 @@
   "schema_version": 1,
   "run_id": "run.2026-08-05",
   "date": "2026-08-05",
-  "generated_at": "2026-08-05T21:12:00Z",
+  "generated_at": "2026-08-05T21:22:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.497,
-    "input_tokens": 9062,
-    "output_tokens": 1410,
+    "usd": 0.576,
+    "input_tokens": 9810,
+    "output_tokens": 893,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.47,
+  "duration_minutes": 2.43,
   "pack": {
     "hash": "1a7e3c7cb661594e9ba30b57146a8b2a3f310b173fbf3c617a69e460fec2d377",
-    "tokens": 8530,
+    "tokens": 9113,
     "cap_tokens": 12000
   },
   "doc_versions": {
     "strategy": "0.1.0",
-    "methodology": "0.3.0",
+    "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
@@ -37,8 +37,8 @@
         "conviction": "high",
         "thesis": "Costco keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Macro data surprise",
-          "Sector-wide de-rating"
+          "Sector-wide de-rating",
+          "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -49,42 +49,42 @@
       }
     },
     {
-      "id": "2026-08-05:GOOGL",
+      "id": "2026-08-05:CTAS",
       "ref_date": "2026-08-05",
-      "ref_price": 1180.14,
+      "ref_price": 1405.01,
       "pick": {
-        "ticker": "GOOGL",
+        "ticker": "CTAS",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Alphabet keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "Cintas has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Momentum reversal after an extended run",
+          "Macro data surprise",
           "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.googl.rel_20d",
+          "prices.ctas.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-08-05:META",
+      "id": "2026-08-05:AVGO",
       "ref_date": "2026-08-05",
-      "ref_price": 154.65,
+      "ref_price": 116.99,
       "pick": {
-        "ticker": "META",
-        "stance": "bullish",
-        "conviction": "medium",
-        "thesis": "Meta Platforms has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "ticker": "AVGO",
+        "stance": "bearish",
+        "conviction": "high",
+        "thesis": "Broadcom has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
         "risks": [
-          "Sector-wide de-rating",
-          "Momentum reversal after an extended run"
+          "Benchmark weakness narrows the gap",
+          "Positive company news flow"
         ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.meta.rel_20d",
+          "prices.avgo.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
@@ -97,7 +97,7 @@
       "pick": {
         "ticker": "AAPL",
         "stance": "neutral",
-        "conviction": "medium",
+        "conviction": "low",
         "thesis": "Apple is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
         "risks": [
           "Volatility expansion",

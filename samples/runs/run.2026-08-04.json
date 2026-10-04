@@ -2,30 +2,30 @@
   "schema_version": 1,
   "run_id": "run.2026-08-04",
   "date": "2026-08-04",
-  "generated_at": "2026-08-04T21:20:00Z",
+  "generated_at": "2026-08-04T21:37:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.863,
-    "input_tokens": 6526,
-    "output_tokens": 1588,
+    "usd": 0.67,
+    "input_tokens": 7309,
+    "output_tokens": 1667,
     "cap_usd": 2.5
   },
-  "duration_minutes": 2.11,
+  "duration_minutes": 1.89,
   "pack": {
     "hash": "99225288bad4f342be707116867f17c1cc894cfe01388bf9d962f7f7b4067faf",
-    "tokens": 5708,
+    "tokens": 6609,
     "cap_tokens": 12000
   },
   "doc_versions": {
     "strategy": "0.1.0",
-    "methodology": "0.3.0",
+    "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
+  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
   "picks": [
     {
       "id": "2026-08-04:COST",
@@ -35,56 +35,14 @@
         "ticker": "COST",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Costco has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Costco keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Macro data surprise",
-          "Sector-wide de-rating"
+          "Sector-wide de-rating",
+          "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
           "prices.cost.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-08-04:GOOGL",
-      "ref_date": "2026-08-04",
-      "ref_price": 1162.63,
-      "pick": {
-        "ticker": "GOOGL",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Alphabet has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
-        "risks": [
-          "Macro data surprise",
-          "Sector-wide de-rating"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.googl.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-08-04:AMZN",
-      "ref_date": "2026-08-04",
-      "ref_price": 732.48,
-      "pick": {
-        "ticker": "AMZN",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Amazon keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
-        "risks": [
-          "Momentum reversal after an extended run",
-          "Sector-wide de-rating"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.amzn.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

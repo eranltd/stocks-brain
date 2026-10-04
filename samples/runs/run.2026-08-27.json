@@ -2,25 +2,25 @@
   "schema_version": 1,
   "run_id": "run.2026-08-27",
   "date": "2026-08-27",
-  "generated_at": "2026-08-27T21:16:00Z",
+  "generated_at": "2026-08-27T21:10:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.581,
-    "input_tokens": 11038,
-    "output_tokens": 739,
+    "usd": 0.447,
+    "input_tokens": 9110,
+    "output_tokens": 1422,
     "cap_usd": 2.5
   },
-  "duration_minutes": 1.22,
+  "duration_minutes": 3.32,
   "pack": {
     "hash": "7ba159f3242c721f401eadef87e10fc2fd083717730a21d8d56812d71dafd1e6",
-    "tokens": 10476,
+    "tokens": 8267,
     "cap_tokens": 12000
   },
   "doc_versions": {
     "strategy": "0.1.0",
-    "methodology": "0.3.0",
+    "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
@@ -49,42 +49,21 @@
       }
     },
     {
-      "id": "2026-08-27:META",
+      "id": "2026-08-27:AEP",
       "ref_date": "2026-08-27",
-      "ref_price": 135.37,
+      "ref_price": 190.56,
       "pick": {
-        "ticker": "META",
+        "ticker": "AEP",
         "stance": "bearish",
-        "conviction": "medium",
-        "thesis": "Meta Platforms has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "conviction": "high",
+        "thesis": "American Electric Power has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
         "risks": [
-          "Benchmark weakness narrows the gap",
-          "Short-covering rally"
+          "Short-covering rally",
+          "Positive company news flow"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.meta.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-08-27:AVGO",
-      "ref_date": "2026-08-27",
-      "ref_price": 107.32,
-      "pick": {
-        "ticker": "AVGO",
-        "stance": "neutral",
-        "conviction": "low",
-        "thesis": "Broadcom is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
-        "risks": [
-          "Breakout in either direction",
-          "Volatility expansion"
-        ],
-        "invalidation": "A sustained move away from the benchmark in either direction.",
-        "evidence": [
-          "prices.avgo.rel_20d",
+          "prices.aep.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

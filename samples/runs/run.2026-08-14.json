@@ -2,30 +2,30 @@
   "schema_version": 1,
   "run_id": "run.2026-08-14",
   "date": "2026-08-14",
-  "generated_at": "2026-08-14T21:37:00Z",
+  "generated_at": "2026-08-14T21:27:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.571,
-    "input_tokens": 9852,
-    "output_tokens": 1065,
+    "usd": 0.52,
+    "input_tokens": 8197,
+    "output_tokens": 1208,
     "cap_usd": 2.5
   },
-  "duration_minutes": 2.07,
+  "duration_minutes": 2.41,
   "pack": {
     "hash": "466239e71c91fa43a160e7fd6b40af56d84e4b9c67a292e1daefe0496b142fd7",
-    "tokens": 9341,
+    "tokens": 7806,
     "cap_tokens": 12000
   },
   "doc_versions": {
     "strategy": "0.1.0",
-    "methodology": "0.3.0",
+    "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
+  "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
   "picks": [
     {
       "id": "2026-08-14:COST",
@@ -38,7 +38,7 @@
         "thesis": "Costco keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
           "Macro data surprise",
-          "Momentum reversal after an extended run"
+          "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -49,42 +49,42 @@
       }
     },
     {
-      "id": "2026-08-14:AVGO",
+      "id": "2026-08-14:ISRG",
       "ref_date": "2026-08-14",
-      "ref_price": 109.87,
+      "ref_price": 181.27,
       "pick": {
-        "ticker": "AVGO",
-        "stance": "bearish",
+        "ticker": "ISRG",
+        "stance": "bullish",
         "conviction": "high",
-        "thesis": "Broadcom has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "thesis": "Intuitive Surgical keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Short-covering rally",
-          "Benchmark weakness narrows the gap"
+          "Macro data surprise",
+          "Sector-wide de-rating"
         ],
-        "invalidation": "A close back above the recent range high on rising volume.",
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.avgo.rel_20d",
+          "prices.isrg.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-08-14:AAPL",
+      "id": "2026-08-14:AEP",
       "ref_date": "2026-08-14",
-      "ref_price": 267.95,
+      "ref_price": 193.96,
       "pick": {
-        "ticker": "AAPL",
-        "stance": "neutral",
-        "conviction": "low",
-        "thesis": "Apple is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "ticker": "AEP",
+        "stance": "bearish",
+        "conviction": "high",
+        "thesis": "American Electric Power has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
         "risks": [
-          "Volatility expansion",
-          "Breakout in either direction"
+          "Short-covering rally",
+          "Positive company news flow"
         ],
-        "invalidation": "A sustained move away from the benchmark in either direction.",
+        "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.aapl.rel_20d",
+          "prices.aep.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

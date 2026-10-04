@@ -2,25 +2,25 @@
   "schema_version": 1,
   "run_id": "run.2026-09-11",
   "date": "2026-09-11",
-  "generated_at": "2026-09-11T21:13:00Z",
+  "generated_at": "2026-09-11T21:23:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.364,
-    "input_tokens": 8534,
-    "output_tokens": 1852,
+    "usd": 0.505,
+    "input_tokens": 6464,
+    "output_tokens": 772,
     "cap_usd": 2.5
   },
-  "duration_minutes": 1.31,
+  "duration_minutes": 2.89,
   "pack": {
     "hash": "c5f2321a701023c559be99516b3d71ea2cdc468828709b552b5d061dc371cce3",
-    "tokens": 7689,
+    "tokens": 5710,
     "cap_tokens": 12000
   },
   "doc_versions": {
     "strategy": "0.1.0",
-    "methodology": "0.3.0",
+    "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
@@ -35,10 +35,10 @@
         "ticker": "GOOGL",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Alphabet keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "Alphabet has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Momentum reversal after an extended run",
-          "Sector-wide de-rating"
+          "Macro data surprise",
+          "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -49,21 +49,63 @@
       }
     },
     {
-      "id": "2026-09-11:MSFT",
+      "id": "2026-09-11:GILD",
       "ref_date": "2026-09-11",
-      "ref_price": 303.49,
+      "ref_price": 343.56,
       "pick": {
-        "ticker": "MSFT",
+        "ticker": "GILD",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Microsoft has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Gilead Sciences has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
           "Macro data surprise",
-          "Momentum reversal after an extended run"
+          "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.msft.rel_20d",
+          "prices.gild.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-09-11:AMGN",
+      "ref_date": "2026-09-11",
+      "ref_price": 207.77,
+      "pick": {
+        "ticker": "AMGN",
+        "stance": "bearish",
+        "conviction": "medium",
+        "thesis": "Amgen broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
+        "risks": [
+          "Positive company news flow",
+          "Benchmark weakness narrows the gap"
+        ],
+        "invalidation": "A close back above the recent range high on rising volume.",
+        "evidence": [
+          "prices.amgn.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-09-11:ISRG",
+      "ref_date": "2026-09-11",
+      "ref_price": 173.6,
+      "pick": {
+        "ticker": "ISRG",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Intuitive Surgical is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "risks": [
+          "Breakout in either direction",
+          "Volatility expansion"
+        ],
+        "invalidation": "A sustained move away from the benchmark in either direction.",
+        "evidence": [
+          "prices.isrg.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

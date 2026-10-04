@@ -2,25 +2,25 @@
   "schema_version": 1,
   "run_id": "run.2026-08-13",
   "date": "2026-08-13",
-  "generated_at": "2026-08-13T21:40:00Z",
+  "generated_at": "2026-08-13T21:15:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.528,
-    "input_tokens": 9492,
-    "output_tokens": 958,
+    "usd": 0.652,
+    "input_tokens": 6869,
+    "output_tokens": 1279,
     "cap_usd": 2.5
   },
-  "duration_minutes": 1.85,
+  "duration_minutes": 2.67,
   "pack": {
     "hash": "3ac7e5e607c7092e1d237c506b3b88e9f23718704c592effcc78b972626d220e",
-    "tokens": 9044,
+    "tokens": 6184,
     "cap_tokens": 12000
   },
   "doc_versions": {
     "strategy": "0.1.0",
-    "methodology": "0.3.0",
+    "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
@@ -28,105 +28,21 @@
   "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
   "picks": [
     {
-      "id": "2026-08-13:COST",
+      "id": "2026-08-13:CTAS",
       "ref_date": "2026-08-13",
-      "ref_price": 1618.03,
+      "ref_price": 1482.16,
       "pick": {
-        "ticker": "COST",
+        "ticker": "CTAS",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Costco has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Cintas has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
           "Sector-wide de-rating",
-          "Macro data surprise"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.cost.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-08-13:NVDA",
-      "ref_date": "2026-08-13",
-      "ref_price": 140.06,
-      "pick": {
-        "ticker": "NVDA",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "NVIDIA keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
-        "risks": [
-          "Macro data surprise",
           "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.nvda.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-08-13:GOOGL",
-      "ref_date": "2026-08-13",
-      "ref_price": 1123.0,
-      "pick": {
-        "ticker": "GOOGL",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Alphabet keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
-        "risks": [
-          "Sector-wide de-rating",
-          "Macro data surprise"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.googl.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-08-13:AVGO",
-      "ref_date": "2026-08-13",
-      "ref_price": 111.76,
-      "pick": {
-        "ticker": "AVGO",
-        "stance": "bearish",
-        "conviction": "medium",
-        "thesis": "Broadcom has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
-        "risks": [
-          "Benchmark weakness narrows the gap",
-          "Short-covering rally"
-        ],
-        "invalidation": "A close back above the recent range high on rising volume.",
-        "evidence": [
-          "prices.avgo.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-08-13:META",
-      "ref_date": "2026-08-13",
-      "ref_price": 136.34,
-      "pick": {
-        "ticker": "META",
-        "stance": "neutral",
-        "conviction": "low",
-        "thesis": "Meta Platforms is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
-        "risks": [
-          "Volatility expansion",
-          "Breakout in either direction"
-        ],
-        "invalidation": "A sustained move away from the benchmark in either direction.",
-        "evidence": [
-          "prices.meta.rel_20d",
+          "prices.ctas.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

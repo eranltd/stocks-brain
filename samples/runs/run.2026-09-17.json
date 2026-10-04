@@ -2,25 +2,25 @@
   "schema_version": 1,
   "run_id": "run.2026-09-17",
   "date": "2026-09-17",
-  "generated_at": "2026-09-17T21:40:00Z",
+  "generated_at": "2026-09-17T21:29:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.687,
-    "input_tokens": 8344,
-    "output_tokens": 1016,
+    "usd": 0.824,
+    "input_tokens": 9917,
+    "output_tokens": 1420,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.03,
+  "duration_minutes": 1.17,
   "pack": {
     "hash": "113e8fe27eed9e2064fd294bc326833f0e2e5c88c98aea3b894d645e1124880e",
-    "tokens": 7775,
+    "tokens": 9414,
     "cap_tokens": 12000
   },
   "doc_versions": {
     "strategy": "0.1.0",
-    "methodology": "0.3.0",
+    "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
@@ -35,10 +35,10 @@
         "ticker": "GOOGL",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Alphabet has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Alphabet keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Macro data surprise",
-          "Momentum reversal after an extended run"
+          "Sector-wide de-rating",
+          "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -49,63 +49,42 @@
       }
     },
     {
-      "id": "2026-09-17:AVGO",
+      "id": "2026-09-17:GILD",
       "ref_date": "2026-09-17",
-      "ref_price": 111.05,
+      "ref_price": 351.39,
       "pick": {
-        "ticker": "AVGO",
+        "ticker": "GILD",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Broadcom has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Gilead Sciences keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
           "Momentum reversal after an extended run",
           "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.avgo.rel_20d",
+          "prices.gild.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-09-17:META",
+      "id": "2026-09-17:ISRG",
       "ref_date": "2026-09-17",
-      "ref_price": 125.0,
+      "ref_price": 160.46,
       "pick": {
-        "ticker": "META",
+        "ticker": "ISRG",
         "stance": "bearish",
-        "conviction": "low",
-        "thesis": "Meta Platforms has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "conviction": "high",
+        "thesis": "Intuitive Surgical has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
         "risks": [
           "Benchmark weakness narrows the gap",
-          "Short-covering rally"
+          "Positive company news flow"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.meta.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-09-17:AAPL",
-      "ref_date": "2026-09-17",
-      "ref_price": 255.86,
-      "pick": {
-        "ticker": "AAPL",
-        "stance": "neutral",
-        "conviction": "low",
-        "thesis": "Apple is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
-        "risks": [
-          "Breakout in either direction",
-          "Volatility expansion"
-        ],
-        "invalidation": "A sustained move away from the benchmark in either direction.",
-        "evidence": [
-          "prices.aapl.rel_20d",
+          "prices.isrg.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

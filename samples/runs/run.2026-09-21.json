@@ -2,25 +2,25 @@
   "schema_version": 1,
   "run_id": "run.2026-09-21",
   "date": "2026-09-21",
-  "generated_at": "2026-09-21T21:35:00Z",
+  "generated_at": "2026-09-21T21:28:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.648,
-    "input_tokens": 8637,
-    "output_tokens": 1803,
+    "usd": 0.756,
+    "input_tokens": 6379,
+    "output_tokens": 1097,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.7,
+  "duration_minutes": 3.1,
   "pack": {
     "hash": "72574ca1053dc47a6c68568fb38c587e062fafee419e43246c9160a03f41905f",
-    "tokens": 8085,
+    "tokens": 5936,
     "cap_tokens": 12000
   },
   "doc_versions": {
     "strategy": "0.1.0",
-    "methodology": "0.3.0",
+    "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
@@ -37,8 +37,8 @@
         "conviction": "high",
         "thesis": "Alphabet has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Momentum reversal after an extended run",
-          "Sector-wide de-rating"
+          "Sector-wide de-rating",
+          "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -49,21 +49,63 @@
       }
     },
     {
-      "id": "2026-09-21:AMZN",
+      "id": "2026-09-21:GILD",
       "ref_date": "2026-09-21",
-      "ref_price": 752.07,
+      "ref_price": 353.41,
       "pick": {
-        "ticker": "AMZN",
+        "ticker": "GILD",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Amazon has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Gilead Sciences keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Macro data surprise",
+          "Momentum reversal after an extended run",
           "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.amzn.rel_20d",
+          "prices.gild.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-09-21:AEP",
+      "ref_date": "2026-09-21",
+      "ref_price": 164.68,
+      "pick": {
+        "ticker": "AEP",
+        "stance": "bearish",
+        "conviction": "high",
+        "thesis": "American Electric Power broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
+        "risks": [
+          "Short-covering rally",
+          "Benchmark weakness narrows the gap"
+        ],
+        "invalidation": "A close back above the recent range high on rising volume.",
+        "evidence": [
+          "prices.aep.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-09-21:AMGN",
+      "ref_date": "2026-09-21",
+      "ref_price": 224.04,
+      "pick": {
+        "ticker": "AMGN",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Amgen is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "risks": [
+          "Breakout in either direction",
+          "Volatility expansion"
+        ],
+        "invalidation": "A sustained move away from the benchmark in either direction.",
+        "evidence": [
+          "prices.amgn.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

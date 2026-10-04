@@ -2,30 +2,30 @@
   "schema_version": 1,
   "run_id": "run.2026-09-09",
   "date": "2026-09-09",
-  "generated_at": "2026-09-09T21:22:00Z",
+  "generated_at": "2026-09-09T21:20:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.652,
-    "input_tokens": 9831,
-    "output_tokens": 708,
+    "usd": 0.502,
+    "input_tokens": 10009,
+    "output_tokens": 1735,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.18,
+  "duration_minutes": 1.28,
   "pack": {
     "hash": "734a1f4f12a65de5cdf1e5425cbae05981f642953f4eec178a151e6557a312b5",
-    "tokens": 9091,
+    "tokens": 9154,
     "cap_tokens": 12000
   },
   "doc_versions": {
     "strategy": "0.1.0",
-    "methodology": "0.3.0",
+    "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
+  "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
   "picks": [
     {
       "id": "2026-09-09:GOOGL",
@@ -35,7 +35,7 @@
         "ticker": "GOOGL",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Alphabet keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "Alphabet has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
           "Sector-wide de-rating",
           "Macro data surprise"
@@ -49,42 +49,42 @@
       }
     },
     {
-      "id": "2026-09-09:MSFT",
+      "id": "2026-09-09:GILD",
       "ref_date": "2026-09-09",
-      "ref_price": 302.64,
+      "ref_price": 338.7,
       "pick": {
-        "ticker": "MSFT",
+        "ticker": "GILD",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Microsoft has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Gilead Sciences keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
           "Momentum reversal after an extended run",
           "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.msft.rel_20d",
+          "prices.gild.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-09-09:NVDA",
+      "id": "2026-09-09:AMGN",
       "ref_date": "2026-09-09",
-      "ref_price": 144.85,
+      "ref_price": 213.16,
       "pick": {
-        "ticker": "NVDA",
-        "stance": "bullish",
+        "ticker": "AMGN",
+        "stance": "bearish",
         "conviction": "high",
-        "thesis": "NVIDIA keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "Amgen has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
         "risks": [
-          "Sector-wide de-rating",
-          "Macro data surprise"
+          "Positive company news flow",
+          "Benchmark weakness narrows the gap"
         ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.nvda.rel_20d",
+          "prices.amgn.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

@@ -2,30 +2,30 @@
   "schema_version": 1,
   "run_id": "run.2026-08-10",
   "date": "2026-08-10",
-  "generated_at": "2026-08-10T21:36:00Z",
+  "generated_at": "2026-08-10T21:34:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.723,
-    "input_tokens": 7263,
-    "output_tokens": 1665,
+    "usd": 0.398,
+    "input_tokens": 9411,
+    "output_tokens": 1083,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.12,
+  "duration_minutes": 2.5,
   "pack": {
     "hash": "9d2ffdec54f2b4d3a3374c388282ca9f25c9bbba1bef91b6dfeaf3a0178e930a",
-    "tokens": 6800,
+    "tokens": 8888,
     "cap_tokens": 12000
   },
   "doc_versions": {
     "strategy": "0.1.0",
-    "methodology": "0.3.0",
+    "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
   "repair_retries": 1,
-  "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
+  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
   "picks": [
     {
       "id": "2026-08-10:COST",
@@ -35,14 +35,35 @@
         "ticker": "COST",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Costco keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "Costco has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Macro data surprise",
+          "Sector-wide de-rating",
           "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
           "prices.cost.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-10:CTAS",
+      "ref_date": "2026-08-10",
+      "ref_price": 1384.73,
+      "pick": {
+        "ticker": "CTAS",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Cintas keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "risks": [
+          "Sector-wide de-rating",
+          "Momentum reversal after an extended run"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.ctas.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
@@ -55,7 +76,7 @@
       "pick": {
         "ticker": "GOOGL",
         "stance": "bullish",
-        "conviction": "high",
+        "conviction": "medium",
         "thesis": "Alphabet has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
           "Macro data surprise",
@@ -70,21 +91,21 @@
       }
     },
     {
-      "id": "2026-08-10:AAPL",
+      "id": "2026-08-10:AEP",
       "ref_date": "2026-08-10",
-      "ref_price": 282.07,
+      "ref_price": 192.19,
       "pick": {
-        "ticker": "AAPL",
-        "stance": "neutral",
-        "conviction": "low",
-        "thesis": "Apple is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "ticker": "AEP",
+        "stance": "bearish",
+        "conviction": "high",
+        "thesis": "American Electric Power has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
         "risks": [
-          "Volatility expansion",
-          "Breakout in either direction"
+          "Positive company news flow",
+          "Short-covering rally"
         ],
-        "invalidation": "A sustained move away from the benchmark in either direction.",
+        "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.aapl.rel_20d",
+          "prices.aep.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

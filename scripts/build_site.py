@@ -60,7 +60,7 @@ def main() -> int:
         import routines_code
         from _common import watchlist
         dump_json(OUT / "market" / "derived.json",
-                  routines_code.compute_derived(SAMPLES / "prices", st, watchlist(), sample=True, provider="sample"))
+                  routines_code.compute_derived(SAMPLES / "prices", st, watchlist(), sample=True, provider="sample"), compact=True)
     # Goal and portfolio rule: same source as prices (never sample numbers next to live prices).
     longrun = None
     if price_source == "live" and (MARKET / "longrun.json").exists():
@@ -71,7 +71,7 @@ def main() -> int:
         from _common import watchlist
         doc = routines_code.compute_longrun(SAMPLES / "prices", st, watchlist(), sample=True, provider="sample")
         if doc:
-            dump_json(OUT / "market" / "longrun.json", doc)
+            dump_json(OUT / "market" / "longrun.json", doc, compact=True)
             longrun = "market/longrun.json"
     paper = DATA / "portfolio" / "paper.json"
     if price_source == "live" and paper.exists():

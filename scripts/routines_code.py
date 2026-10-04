@@ -30,11 +30,11 @@ def _method_version() -> str:
     return meta["version"]
 
 
-def _write(path: Path, doc: dict, schema: str) -> None:
+def _write(path: Path, doc: dict, schema: str, compact: bool = False) -> None:
     errs = Validator().validate(doc, schema)
     if errs:
         raise SystemExit(f"{path.name}: schema check failed (nothing written): {errs[:5]}")
-    dump_json(path, doc)
+    dump_json(path, doc, compact=compact)
 
 
 # ------------------------------------------------------------------- scoring
@@ -291,7 +291,7 @@ def run_derive() -> None:
     doc = compute_derived(PRICES, st, watchlist(), sample=False, provider=st["prices"]["provider"])
     if not doc["symbols"]:
         raise SystemExit("derive: no price data in .cache/prices (run fetch_prices first)")
-    _write(MARKET / "derived.json", doc, "derived.schema.json")
+    _write(MARKET / "derived.json", doc, "derived.schema.json", compact=True)
     print(f"derive: {len(doc['symbols'])} symbols as of {doc['as_of']}, breadth {doc['breadth_above_sma50_pct']}% above 50-day")
 
 
@@ -333,7 +333,7 @@ def run_longrun() -> None:
     doc = compute_longrun(PRICES, st, watchlist(), sample=False, provider=st["prices"]["provider"])
     if not doc:
         raise SystemExit("longrun: not enough aligned history for the core, benchmark and watchlist")
-    _write(MARKET / "longrun.json", doc, "longrun.schema.json")
+    _write(MARKET / "longrun.json", doc, "longrun.schema.json", compact=True)
     r = doc["stats"]["rule"]
     print(f"longrun: {doc['years']}y from {doc['from']}; rule CAGR {r['cagr_pct']}% maxDD {r['max_dd_pct']}%; "
           f"holds {doc['now']['holdings']}")
@@ -391,7 +391,7 @@ def run_paper() -> None:
     old = load_json(path) if path.exists() else None
     doc = update_paper(old, members, core_c, bench_c, dates, sectors, st, sample=False)
     path.parent.mkdir(parents=True, exist_ok=True)
-    _write(path, doc, "paper.schema.json")
+    _write(path, doc, "paper.schema.json", compact=True)
     t = doc["track"][-1]
     print(f"paper: since {doc['started']}, {len(doc['rebalances'])} rebalance(s); now {doc['rebalances'][-1]['holdings']}; "
           f"value {t['v']} vs core {t['core_v']}")

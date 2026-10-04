@@ -218,7 +218,7 @@ function CorrMap({ corr, picked }) {
   const n = corr.symbols.length;
   const color = (v) => (v == null ? "transparent" : `color-mix(in oklab, var(--people) ${Math.round(Math.max(0, Math.min(1, v)) * 70)}%, var(--surface-2))`);
   return (
-    <div className="grid min-w-[520px] gap-1" style={{ gridTemplateColumns: `56px repeat(${n}, minmax(0,1fr))` }}>
+    <div className="grid gap-[3px]" style={{ gridTemplateColumns: `52px repeat(${n}, minmax(0,1fr))`, minWidth: 52 + n * 40 }}>
       <span />
       {corr.symbols.map((s) => <span key={s} className={`meta text-center ${picked.includes(s) ? "text-accent" : ""}`}>{s}</span>)}
       {corr.m.map((row, i) => (
@@ -228,9 +228,9 @@ function CorrMap({ corr, picked }) {
             const both = picked.includes(corr.symbols[i]) && picked.includes(corr.symbols[j]) && i !== j;
             return (
               <span key={j} title={`${corr.symbols[i]} · ${corr.symbols[j]}: ${v ?? "–"}`}
-                className={`num grid aspect-[1.6] place-items-center rounded-md font-mono text-[11.5px] ${i === j ? "text-ink-3" : "text-ink"} ${both ? "ring-2 ring-accent" : ""}`}
+                className={`num grid aspect-[1.3] place-items-center rounded-md font-mono text-[10.5px] ${i === j ? "text-ink-3" : "text-ink"} ${both ? "ring-2 ring-accent" : ""}`}
                 style={{ background: i === j ? "transparent" : color(v) }}>
-                {i === j ? "·" : v != null ? v.toFixed(2) : "–"}
+                {i === j ? "·" : v != null ? v.toFixed(2).replace(/^(-?)0\./, "$1.") : "–"}
               </span>
             );
           })}

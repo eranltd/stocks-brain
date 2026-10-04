@@ -2,30 +2,30 @@
   "schema_version": 1,
   "run_id": "run.2026-09-03",
   "date": "2026-09-03",
-  "generated_at": "2026-09-03T21:40:00Z",
+  "generated_at": "2026-09-03T21:37:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.505,
-    "input_tokens": 11045,
-    "output_tokens": 1275,
+    "usd": 0.89,
+    "input_tokens": 6452,
+    "output_tokens": 1404,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.19,
+  "duration_minutes": 1.3,
   "pack": {
     "hash": "f350ad7106b2dcff533657c51a0040a7c4f2f7ed71a18ed4aac0f2b86e8a5c64",
-    "tokens": 10516,
+    "tokens": 5677,
     "cap_tokens": 12000
   },
   "doc_versions": {
     "strategy": "0.1.0",
-    "methodology": "0.3.0",
+    "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
+  "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
   "picks": [
     {
       "id": "2026-09-03:GOOGL",
@@ -37,54 +37,12 @@
         "conviction": "high",
         "thesis": "Alphabet keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Sector-wide de-rating",
-          "Macro data surprise"
+          "Macro data surprise",
+          "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
           "prices.googl.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-09-03:NVDA",
-      "ref_date": "2026-09-03",
-      "ref_price": 150.97,
-      "pick": {
-        "ticker": "NVDA",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "NVIDIA keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
-        "risks": [
-          "Macro data surprise",
-          "Sector-wide de-rating"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.nvda.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-09-03:AMZN",
-      "ref_date": "2026-09-03",
-      "ref_price": 756.64,
-      "pick": {
-        "ticker": "AMZN",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Amazon keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
-        "risks": [
-          "Macro data surprise",
-          "Sector-wide de-rating"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.amzn.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
@@ -97,8 +55,8 @@
       "pick": {
         "ticker": "META",
         "stance": "bearish",
-        "conviction": "medium",
-        "thesis": "Meta Platforms has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "conviction": "high",
+        "thesis": "Meta Platforms broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
         "risks": [
           "Benchmark weakness narrows the gap",
           "Positive company news flow"

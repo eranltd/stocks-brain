@@ -2,30 +2,30 @@
   "schema_version": 1,
   "run_id": "run.2026-08-17",
   "date": "2026-08-17",
-  "generated_at": "2026-08-17T21:12:00Z",
+  "generated_at": "2026-08-17T21:16:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.563,
-    "input_tokens": 6235,
-    "output_tokens": 813,
+    "usd": 0.609,
+    "input_tokens": 10891,
+    "output_tokens": 1827,
     "cap_usd": 2.5
   },
-  "duration_minutes": 4.12,
+  "duration_minutes": 1.75,
   "pack": {
     "hash": "e658c91d548b76833ecf0abe029686aba01f3a6605eaa4aed98868b6feaf42ce",
-    "tokens": 5848,
+    "tokens": 10045,
     "cap_tokens": 12000
   },
   "doc_versions": {
     "strategy": "0.1.0",
-    "methodology": "0.3.0",
+    "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
+  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
   "picks": [
     {
       "id": "2026-08-17:COST",
@@ -35,7 +35,7 @@
         "ticker": "COST",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Costco has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Costco keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
           "Momentum reversal after an extended run",
           "Sector-wide de-rating"
@@ -43,27 +43,6 @@
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
           "prices.cost.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-08-17:META",
-      "ref_date": "2026-08-17",
-      "ref_price": 135.63,
-      "pick": {
-        "ticker": "META",
-        "stance": "bearish",
-        "conviction": "medium",
-        "thesis": "Meta Platforms broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
-        "risks": [
-          "Positive company news flow",
-          "Short-covering rally"
-        ],
-        "invalidation": "A close back above the recent range high on rising volume.",
-        "evidence": [
-          "prices.meta.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

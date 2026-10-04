@@ -2,30 +2,30 @@
   "schema_version": 1,
   "run_id": "run.2026-09-07",
   "date": "2026-09-07",
-  "generated_at": "2026-09-07T21:17:00Z",
+  "generated_at": "2026-09-07T21:28:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 1.353,
-    "input_tokens": 6639,
-    "output_tokens": 1570,
+    "usd": 1.918,
+    "input_tokens": 10377,
+    "output_tokens": 1600,
     "cap_usd": 2.5
   },
-  "duration_minutes": 1.52,
+  "duration_minutes": 2.65,
   "pack": {
     "hash": "c7b630db402ff75cafe3bd2c0f7857e527acb68190637fde03b45c1ba0270f5f",
-    "tokens": 6150,
+    "tokens": 9730,
     "cap_tokens": 12000
   },
   "doc_versions": {
     "strategy": "0.1.0",
-    "methodology": "0.3.0",
+    "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
+  "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
   "picks": [
     {
       "id": "2026-09-07:GOOGL",
@@ -37,8 +37,8 @@
         "conviction": "high",
         "thesis": "Alphabet has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Sector-wide de-rating",
-          "Momentum reversal after an extended run"
+          "Macro data surprise",
+          "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -58,12 +58,54 @@
         "conviction": "high",
         "thesis": "NVIDIA keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Macro data surprise",
-          "Momentum reversal after an extended run"
+          "Sector-wide de-rating",
+          "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
           "prices.nvda.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-09-07:META",
+      "ref_date": "2026-09-07",
+      "ref_price": 126.31,
+      "pick": {
+        "ticker": "META",
+        "stance": "bearish",
+        "conviction": "high",
+        "thesis": "Meta Platforms broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
+        "risks": [
+          "Benchmark weakness narrows the gap",
+          "Short-covering rally"
+        ],
+        "invalidation": "A close back above the recent range high on rising volume.",
+        "evidence": [
+          "prices.meta.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-09-07:COST",
+      "ref_date": "2026-09-07",
+      "ref_price": 1560.94,
+      "pick": {
+        "ticker": "COST",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Costco is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "risks": [
+          "Volatility expansion",
+          "Breakout in either direction"
+        ],
+        "invalidation": "A sustained move away from the benchmark in either direction.",
+        "evidence": [
+          "prices.cost.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

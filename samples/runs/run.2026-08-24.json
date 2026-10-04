@@ -2,30 +2,30 @@
   "schema_version": 1,
   "run_id": "run.2026-08-24",
   "date": "2026-08-24",
-  "generated_at": "2026-08-24T21:37:00Z",
+  "generated_at": "2026-08-24T21:23:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.656,
-    "input_tokens": 6201,
-    "output_tokens": 1813,
+    "usd": 0.494,
+    "input_tokens": 6900,
+    "output_tokens": 1803,
     "cap_usd": 2.5
   },
-  "duration_minutes": 4.15,
+  "duration_minutes": 1.67,
   "pack": {
     "hash": "a3a36183d6e2f72f60ab56ac51deb0876b2d56b489f251af6f71fe4b1ba99cbd",
-    "tokens": 5377,
+    "tokens": 6125,
     "cap_tokens": 12000
   },
   "doc_versions": {
     "strategy": "0.1.0",
-    "methodology": "0.3.0",
+    "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
+  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
   "picks": [
     {
       "id": "2026-08-24:NVDA",
@@ -37,12 +37,54 @@
         "conviction": "high",
         "thesis": "NVIDIA has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Macro data surprise",
-          "Sector-wide de-rating"
+          "Sector-wide de-rating",
+          "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
           "prices.nvda.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-24:ISRG",
+      "ref_date": "2026-08-24",
+      "ref_price": 179.48,
+      "pick": {
+        "ticker": "ISRG",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Intuitive Surgical keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "risks": [
+          "Sector-wide de-rating",
+          "Macro data surprise"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.isrg.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-24:MNST",
+      "ref_date": "2026-08-24",
+      "ref_price": 384.79,
+      "pick": {
+        "ticker": "MNST",
+        "stance": "bullish",
+        "conviction": "medium",
+        "thesis": "Monster Beverage has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "risks": [
+          "Sector-wide de-rating",
+          "Macro data surprise"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.mnst.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
@@ -56,10 +98,10 @@
         "ticker": "META",
         "stance": "bearish",
         "conviction": "high",
-        "thesis": "Meta Platforms broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
+        "thesis": "Meta Platforms has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
         "risks": [
-          "Benchmark weakness narrows the gap",
-          "Short-covering rally"
+          "Positive company news flow",
+          "Benchmark weakness narrows the gap"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [

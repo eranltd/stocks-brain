@@ -189,14 +189,18 @@ export function PortfolioNow({ data, go }) {
         </Reveal>
         <Reveal delay={80} className="card p-6 sm:p-8">
           <div className="eyebrow mb-4">Why the others are out</div>
-          <ul className="grid gap-2">
-            {out.map((x) => (
-              <li key={x.symbol}>
-                <button type="button" onClick={() => go(`stock/${x.symbol}`)} className="flex w-full items-center gap-3 rounded-lg py-1.5 text-left text-[14px] hover:bg-ink/[0.04]">
-                  <span className="w-14 font-mono font-semibold">{x.symbol}</span>
-                  <span className={`min-w-0 flex-1 ${STATUS[x.status].tone}`}>{STATUS[x.status].label}</span>
-                  <span className="num font-mono text-[12.5px] text-ink-3">{x.passed != null ? `${x.passed}/4` : ""}</span>
-                </button>
+          <ul className="grid gap-4">
+            {Object.entries(out.reduce((g, x) => ((g[x.status] ??= []).push(x), g), {})).map(([k, xs]) => (
+              <li key={k}>
+                <div className={`text-[14px] font-medium ${STATUS[k].tone}`}>{STATUS[k].label} <span className="text-ink-3">· {xs.length}</span></div>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {xs.map((x) => (
+                    <button key={x.symbol} type="button" onClick={() => go(`stock/${x.symbol}`)} title={x.passed != null ? `${x.passed} of 4 checks` : ""}
+                      className="min-h-[34px] rounded-full border border-line-2 px-3 font-mono text-[12.5px] hover:border-ink-3 hover:text-ink">
+                      {x.symbol}{x.passed != null && <span className="ml-1.5 text-ink-3">{x.passed}/4</span>}
+                    </button>
+                  ))}
+                </div>
               </li>
             ))}
             {!out.length && <li className="text-ink-3">Every watchlist name is held.</li>}

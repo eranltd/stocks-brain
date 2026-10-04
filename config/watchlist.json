@@ -1,7 +1,7 @@
 {
-  "version": "0.4.0",
+  "version": "0.5.0",
   "updated_at": "2026-10-04",
-  "change_note": "GICS sector per name (diversification checks for the 4-5 stock portfolio).",
+  "change_note": "Thirteen Nasdaq names from other sectors (Roni), with GICS sectors for the portfolio rule's sector cap.",
   "symbols": [
     {
       "symbol": "AAPL",
@@ -45,6 +45,71 @@
       "symbol": "COST",
       "name": "Costco",
       "sector": "Consumer Staples"
+    },
+    {
+      "symbol": "AMGN",
+      "name": "Amgen",
+      "sector": "Health Care"
+    },
+    {
+      "symbol": "ISRG",
+      "name": "Intuitive Surgical",
+      "sector": "Health Care"
+    },
+    {
+      "symbol": "GILD",
+      "name": "Gilead Sciences",
+      "sector": "Health Care"
+    },
+    {
+      "symbol": "PEP",
+      "name": "PepsiCo",
+      "sector": "Consumer Staples"
+    },
+    {
+      "symbol": "MNST",
+      "name": "Monster Beverage",
+      "sector": "Consumer Staples"
+    },
+    {
+      "symbol": "AEP",
+      "name": "American Electric Power",
+      "sector": "Utilities"
+    },
+    {
+      "symbol": "XEL",
+      "name": "Xcel Energy",
+      "sector": "Utilities"
+    },
+    {
+      "symbol": "CTAS",
+      "name": "Cintas",
+      "sector": "Industrials"
+    },
+    {
+      "symbol": "PCAR",
+      "name": "PACCAR",
+      "sector": "Industrials"
+    },
+    {
+      "symbol": "CME",
+      "name": "CME Group",
+      "sector": "Financials"
+    },
+    {
+      "symbol": "TMUS",
+      "name": "T-Mobile US",
+      "sector": "Communication Services"
+    },
+    {
+      "symbol": "FANG",
+      "name": "Diamondback Energy",
+      "sector": "Energy"
+    },
+    {
+      "symbol": "LIN",
+      "name": "Linde",
+      "sector": "Materials"
     }
   ],
   "core": {

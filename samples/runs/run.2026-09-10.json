@@ -2,30 +2,30 @@
   "schema_version": 1,
   "run_id": "run.2026-09-10",
   "date": "2026-09-10",
-  "generated_at": "2026-09-10T21:22:00Z",
+  "generated_at": "2026-09-10T21:38:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.877,
-    "input_tokens": 10449,
-    "output_tokens": 900,
+    "usd": 0.84,
+    "input_tokens": 11390,
+    "output_tokens": 1222,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.0,
+  "duration_minutes": 3.47,
   "pack": {
     "hash": "bee073083d37aebc34b05b38955d625bc3a6cbd1a94b7539ce77eab92befa419",
-    "tokens": 9564,
+    "tokens": 10578,
     "cap_tokens": 12000
   },
   "doc_versions": {
     "strategy": "0.1.0",
-    "methodology": "0.3.0",
+    "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
+  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
   "picks": [
     {
       "id": "2026-09-10:GOOGL",
@@ -35,10 +35,10 @@
         "ticker": "GOOGL",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Alphabet has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Alphabet keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Macro data surprise",
-          "Momentum reversal after an extended run"
+          "Momentum reversal after an extended run",
+          "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -49,21 +49,21 @@
       }
     },
     {
-      "id": "2026-09-10:MSFT",
+      "id": "2026-09-10:AMGN",
       "ref_date": "2026-09-10",
-      "ref_price": 299.62,
+      "ref_price": 208.2,
       "pick": {
-        "ticker": "MSFT",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Microsoft keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "ticker": "AMGN",
+        "stance": "bearish",
+        "conviction": "medium",
+        "thesis": "Amgen broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
         "risks": [
-          "Macro data surprise",
-          "Sector-wide de-rating"
+          "Short-covering rally",
+          "Positive company news flow"
         ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.msft.rel_20d",
+          "prices.amgn.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

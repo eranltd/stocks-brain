@@ -2,25 +2,25 @@
   "schema_version": 1,
   "run_id": "run.2026-08-26",
   "date": "2026-08-26",
-  "generated_at": "2026-08-26T21:38:00Z",
+  "generated_at": "2026-08-26T21:12:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.519,
-    "input_tokens": 6416,
-    "output_tokens": 1386,
+    "usd": 0.392,
+    "input_tokens": 7224,
+    "output_tokens": 1699,
     "cap_usd": 2.5
   },
-  "duration_minutes": 1.28,
+  "duration_minutes": 2.95,
   "pack": {
     "hash": "703d7324bb19307e7581090b9d03f48d5f8479201f83e2bbddcf57b2fe863364",
-    "tokens": 5756,
+    "tokens": 6502,
     "cap_tokens": 12000
   },
   "doc_versions": {
     "strategy": "0.1.0",
-    "methodology": "0.3.0",
+    "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
@@ -37,7 +37,7 @@
         "conviction": "high",
         "thesis": "NVIDIA has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Macro data surprise",
+          "Momentum reversal after an extended run",
           "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
@@ -49,21 +49,63 @@
       }
     },
     {
-      "id": "2026-08-26:GOOGL",
+      "id": "2026-08-26:ISRG",
       "ref_date": "2026-08-26",
-      "ref_price": 1263.97,
+      "ref_price": 178.38,
       "pick": {
-        "ticker": "GOOGL",
+        "ticker": "ISRG",
         "stance": "bullish",
-        "conviction": "medium",
-        "thesis": "Alphabet has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "conviction": "high",
+        "thesis": "Intuitive Surgical has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
           "Macro data surprise",
-          "Sector-wide de-rating"
+          "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.googl.rel_20d",
+          "prices.isrg.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-26:MNST",
+      "ref_date": "2026-08-26",
+      "ref_price": 381.18,
+      "pick": {
+        "ticker": "MNST",
+        "stance": "bullish",
+        "conviction": "medium",
+        "thesis": "Monster Beverage has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "risks": [
+          "Sector-wide de-rating",
+          "Momentum reversal after an extended run"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.mnst.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-26:META",
+      "ref_date": "2026-08-26",
+      "ref_price": 131.6,
+      "pick": {
+        "ticker": "META",
+        "stance": "bearish",
+        "conviction": "high",
+        "thesis": "Meta Platforms broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
+        "risks": [
+          "Benchmark weakness narrows the gap",
+          "Positive company news flow"
+        ],
+        "invalidation": "A close back above the recent range high on rising volume.",
+        "evidence": [
+          "prices.meta.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

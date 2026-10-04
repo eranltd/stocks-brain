@@ -7,20 +7,20 @@
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 1.145,
-    "input_tokens": 9471,
-    "output_tokens": 1511,
+    "usd": 1.704,
+    "input_tokens": 11251,
+    "output_tokens": 993,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.65,
+  "duration_minutes": 1.38,
   "pack": {
     "hash": "fc13087480441c3855600f841755a2f5d45a2fe0fd15b28ae7129421fbe96675",
-    "tokens": 8739,
+    "tokens": 10900,
     "cap_tokens": 12000
   },
   "doc_versions": {
     "strategy": "0.1.0",
-    "methodology": "0.3.0",
+    "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
@@ -35,10 +35,10 @@
         "ticker": "NVDA",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "NVIDIA has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "NVIDIA keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
           "Sector-wide de-rating",
-          "Macro data surprise"
+          "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -49,21 +49,21 @@
       }
     },
     {
-      "id": "2026-08-21:COST",
+      "id": "2026-08-21:ISRG",
       "ref_date": "2026-08-21",
-      "ref_price": 1518.82,
+      "ref_price": 182.8,
       "pick": {
-        "ticker": "COST",
+        "ticker": "ISRG",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Costco keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "Intuitive Surgical has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Sector-wide de-rating",
+          "Momentum reversal after an extended run",
           "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.cost.rel_20d",
+          "prices.isrg.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
@@ -79,8 +79,8 @@
         "conviction": "high",
         "thesis": "Broadcom has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
         "risks": [
-          "Positive company news flow",
-          "Short-covering rally"
+          "Benchmark weakness narrows the gap",
+          "Positive company news flow"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [

@@ -2,30 +2,30 @@
   "schema_version": 1,
   "run_id": "run.2026-09-15",
   "date": "2026-09-15",
-  "generated_at": "2026-09-15T21:36:00Z",
+  "generated_at": "2026-09-15T21:40:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.702,
-    "input_tokens": 7167,
-    "output_tokens": 1511,
+    "usd": 0.767,
+    "input_tokens": 10400,
+    "output_tokens": 1489,
     "cap_usd": 2.5
   },
-  "duration_minutes": 1.14,
+  "duration_minutes": 3.54,
   "pack": {
     "hash": "086c4da8a4114ef0722c02a5a79cd44378f0bc28ff1bb030ce85740b334dd0a2",
-    "tokens": 6288,
+    "tokens": 9599,
     "cap_tokens": 12000
   },
   "doc_versions": {
     "strategy": "0.1.0",
-    "methodology": "0.3.0",
+    "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
   "repair_retries": 1,
-  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
+  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
   "picks": [
     {
       "id": "2026-09-15:GOOGL",
@@ -37,12 +37,54 @@
         "conviction": "high",
         "thesis": "Alphabet keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Sector-wide de-rating",
+          "Macro data surprise",
           "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
           "prices.googl.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-09-15:XEL",
+      "ref_date": "2026-09-15",
+      "ref_price": 776.25,
+      "pick": {
+        "ticker": "XEL",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Xcel Energy keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "risks": [
+          "Momentum reversal after an extended run",
+          "Macro data surprise"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.xel.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-09-15:ISRG",
+      "ref_date": "2026-09-15",
+      "ref_price": 160.76,
+      "pick": {
+        "ticker": "ISRG",
+        "stance": "bearish",
+        "conviction": "medium",
+        "thesis": "Intuitive Surgical broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
+        "risks": [
+          "Short-covering rally",
+          "Positive company news flow"
+        ],
+        "invalidation": "A close back above the recent range high on rising volume.",
+        "evidence": [
+          "prices.isrg.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

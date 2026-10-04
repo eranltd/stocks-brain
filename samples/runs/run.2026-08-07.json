@@ -2,30 +2,30 @@
   "schema_version": 1,
   "run_id": "run.2026-08-07",
   "date": "2026-08-07",
-  "generated_at": "2026-08-07T21:29:00Z",
+  "generated_at": "2026-08-07T21:10:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.373,
-    "input_tokens": 10831,
-    "output_tokens": 1586,
+    "usd": 0.639,
+    "input_tokens": 8936,
+    "output_tokens": 1428,
     "cap_usd": 2.5
   },
-  "duration_minutes": 2.02,
+  "duration_minutes": 1.33,
   "pack": {
     "hash": "3f604ede63674a482c27eded46470c065fef12e27429aff5965aa2ecbd54ef5f",
-    "tokens": 10385,
+    "tokens": 8403,
     "cap_tokens": 12000
   },
   "doc_versions": {
     "strategy": "0.1.0",
-    "methodology": "0.3.0",
+    "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
+  "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
   "picks": [
     {
       "id": "2026-08-07:COST",
@@ -35,9 +35,9 @@
         "ticker": "COST",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Costco has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Costco keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Momentum reversal after an extended run",
+          "Sector-wide de-rating",
           "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
@@ -49,63 +49,21 @@
       }
     },
     {
-      "id": "2026-08-07:GOOGL",
+      "id": "2026-08-07:AEP",
       "ref_date": "2026-08-07",
-      "ref_price": 1182.42,
+      "ref_price": 198.44,
       "pick": {
-        "ticker": "GOOGL",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Alphabet has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
-        "risks": [
-          "Sector-wide de-rating",
-          "Momentum reversal after an extended run"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.googl.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-08-07:MSFT",
-      "ref_date": "2026-08-07",
-      "ref_price": 289.0,
-      "pick": {
-        "ticker": "MSFT",
+        "ticker": "AEP",
         "stance": "bearish",
         "conviction": "high",
-        "thesis": "Microsoft broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
+        "thesis": "American Electric Power has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
         "risks": [
-          "Positive company news flow",
+          "Short-covering rally",
           "Benchmark weakness narrows the gap"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.msft.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-08-07:AAPL",
-      "ref_date": "2026-08-07",
-      "ref_price": 282.71,
-      "pick": {
-        "ticker": "AAPL",
-        "stance": "neutral",
-        "conviction": "low",
-        "thesis": "Apple is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
-        "risks": [
-          "Breakout in either direction",
-          "Volatility expansion"
-        ],
-        "invalidation": "A sustained move away from the benchmark in either direction.",
-        "evidence": [
-          "prices.aapl.rel_20d",
+          "prices.aep.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

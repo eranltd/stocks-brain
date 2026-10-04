@@ -2,30 +2,30 @@
   "schema_version": 1,
   "run_id": "run.2026-08-12",
   "date": "2026-08-12",
-  "generated_at": "2026-08-12T21:30:00Z",
+  "generated_at": "2026-08-12T21:10:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.332,
-    "input_tokens": 9500,
-    "output_tokens": 1142,
+    "usd": 0.542,
+    "input_tokens": 10484,
+    "output_tokens": 1261,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.23,
+  "duration_minutes": 2.0,
   "pack": {
     "hash": "74bfa660a3626af7ebc4d85e128bd7d7a97ca8a91239c5a3949b2fc3f999a2a0",
-    "tokens": 8615,
+    "tokens": 9660,
     "cap_tokens": 12000
   },
   "doc_versions": {
     "strategy": "0.1.0",
-    "methodology": "0.3.0",
+    "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
+  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
   "picks": [
     {
       "id": "2026-08-12:COST",
@@ -37,8 +37,8 @@
         "conviction": "high",
         "thesis": "Costco keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Momentum reversal after an extended run",
-          "Macro data surprise"
+          "Macro data surprise",
+          "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -49,21 +49,63 @@
       }
     },
     {
-      "id": "2026-08-12:AAPL",
+      "id": "2026-08-12:NVDA",
       "ref_date": "2026-08-12",
-      "ref_price": 270.96,
+      "ref_price": 140.55,
       "pick": {
-        "ticker": "AAPL",
+        "ticker": "NVDA",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "NVIDIA has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "risks": [
+          "Sector-wide de-rating",
+          "Macro data surprise"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.nvda.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-12:AEP",
+      "ref_date": "2026-08-12",
+      "ref_price": 192.0,
+      "pick": {
+        "ticker": "AEP",
+        "stance": "bearish",
+        "conviction": "high",
+        "thesis": "American Electric Power has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "risks": [
+          "Positive company news flow",
+          "Benchmark weakness narrows the gap"
+        ],
+        "invalidation": "A close back above the recent range high on rising volume.",
+        "evidence": [
+          "prices.aep.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-12:XEL",
+      "ref_date": "2026-08-12",
+      "ref_price": 694.73,
+      "pick": {
+        "ticker": "XEL",
         "stance": "neutral",
         "conviction": "low",
-        "thesis": "Apple is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "thesis": "Xcel Energy is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
         "risks": [
-          "Breakout in either direction",
-          "Volatility expansion"
+          "Volatility expansion",
+          "Breakout in either direction"
         ],
         "invalidation": "A sustained move away from the benchmark in either direction.",
         "evidence": [
-          "prices.aapl.rel_20d",
+          "prices.xel.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

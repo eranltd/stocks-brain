@@ -1,7 +1,7 @@
 ---
-version: 0.5.0
+version: 0.6.0
 updated_at: 2026-10-04
-change_note: Household goal (diverse 4-5 stocks, +20% a year); investor review of the home page; portfolio rule v1 and the forward paper portfolio.
+change_note: Household goal (diverse 4-5 stocks, +20% a year), home page review, portfolio rule v1 and the paper portfolio; first brain dry run; watchlist widened beyond big tech.
 ---
 # Decision log
 
@@ -12,9 +12,10 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Reference prices in pick records**: runs and outcomes store single reference and exit closes. This is minor, but revisit at M3: drop them, or keep them as computed returns only.
 - **LLM step (M3)**: run the daily brain as a scheduled Claude Code routine on the owner's subscription (preferred) or through a paid API key.
 - **Paid connectors** (news, X, options data for implied moves): parked until the owner wants to spend.
-- **Diversify the watchlist**: all 8 names are US large caps in 4 sectors (4 in technology). A diverse 4-5 stock
-  portfolio needs candidates from other sectors. Adding names is a one-line config change each; the owner picks them.
 - **Satellite size**: `docs/household.md` proposes 10% of savings (2% per slot). The owner sets it.
+- **Market file size**: `derived.json` is written one line per symbol (compact) and is about 330 KB with 21 names.
+  Past roughly 35 names it would hit lint's 512 KB cap and the daily run would fail closed; before that, move the
+  per-point dates into one shared array.
 - **Second price source**: Tiingo's daily returns show unusually low correlations between these names (for example
   AAPL to QQQ about 0.24 over a year). The diagnostic showed our pipeline reproduces the provider's data exactly, so
   the numbers are faithful to the source; a cross-check against a second source is still pending.
@@ -33,12 +34,24 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   - Market context: cash hurdle, equal- vs cap-weight participation, credit, the core's slow trend filter
     (Roni's shelf: slow trend filters on broad indexes; relative strength over 3-12 months; volatility sizing).
   - Trust statistics: signed excess, effective (non-overlapping) picks, Wilson lower bound, calendar span.
-- **Portfolio rule v1 and a forward paper portfolio.** The rule picks up to 5 names monthly with a sector cap and a
+- **Portfolio rule v1 and a forward paper portfolio.** The rule picks up to 5 names monthly from the (now 21-name,
+  10-sector) watchlist with a sector cap and a
   correlation cap; empty slots stay in the core. It is tested over ~9 years against holding every name, the core and
   the benchmark. Because that test has hindsight (today's watchlist), the trust ladder now rests on a forward paper
   record whose monthly holdings are written once and never edited.
 - **Portfolio builder** on its own tab: the household can try any 4-5 names; the selection stays in the browser
   (localStorage), never in the public repo.
+- **Watchlist widened beyond big tech.** All eight names were mega-cap growth, so the brain could only ever return one
+  kind of bet, and the household's core index already holds it. Added thirteen Nasdaq-listed names from other sectors:
+  health care (AMGN, ISRG, GILD), staples (PEP, MNST), utilities (AEP, XEL), industrials (CTAS, PCAR), financials (CME),
+  telecom (TMUS), energy (FANG) and materials (LIN). Same Tiingo fetch, same derived-only publication. Asked for in the
+  first dry-run session, to pick a diverse four-stock basket from data.
+- **Brain dry run 1 (by hand in Claude Code, not scored).** The model read the inputs a pack would hold, as of 2 Oct
+  (derived prices, regime, strategy, guardrails, library), and returned four calls that pass the pick schema and
+  guardrails: NVDA bullish (medium), MSFT bullish (low), AVGO bearish (low), COST bearish (low). No call on META
+  (stretched far above its 50-day average), GOOGL or AMZN (below it, with reports inside the horizon). Conviction stayed
+  modest because the Microsoft, Alphabet and Amazon reports and the Fed decision fall in the horizon's last week.
+  Not written to `runs/`: a run record needs reference prices and a cost that come from code, which is M3.
 - **Library batches 8 and 9: the books.** A separate project read and summarised 119 investing and trading books
   (public at https://github.com/ungaroni/the-whole-shelf) and cross-examined them in groups. The durable, cited
   principles from 31 of those books, plus the Micha course notes on index investing and the long-average trend method,

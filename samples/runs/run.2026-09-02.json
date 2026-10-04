@@ -2,25 +2,25 @@
   "schema_version": 1,
   "run_id": "run.2026-09-02",
   "date": "2026-09-02",
-  "generated_at": "2026-09-02T21:18:00Z",
+  "generated_at": "2026-09-02T21:23:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.456,
-    "input_tokens": 7623,
-    "output_tokens": 974,
+    "usd": 0.648,
+    "input_tokens": 7887,
+    "output_tokens": 1223,
     "cap_usd": 2.5
   },
-  "duration_minutes": 4.03,
+  "duration_minutes": 4.12,
   "pack": {
     "hash": "87c1f55d67a22faf6f10730446cddfe1ed8dff6ede37c0a83bc6f076f675a634",
-    "tokens": 6831,
+    "tokens": 7351,
     "cap_tokens": 12000
   },
   "doc_versions": {
     "strategy": "0.1.0",
-    "methodology": "0.3.0",
+    "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
@@ -35,10 +35,10 @@
         "ticker": "GOOGL",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Alphabet has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Alphabet keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
           "Macro data surprise",
-          "Momentum reversal after an extended run"
+          "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -56,7 +56,7 @@
         "ticker": "NVDA",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "NVIDIA has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "NVIDIA keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
           "Momentum reversal after an extended run",
           "Macro data surprise"
@@ -70,17 +70,38 @@
       }
     },
     {
+      "id": "2026-09-02:FANG",
+      "ref_date": "2026-09-02",
+      "ref_price": 186.69,
+      "pick": {
+        "ticker": "FANG",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Diamondback Energy has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "risks": [
+          "Sector-wide de-rating",
+          "Momentum reversal after an extended run"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.fang.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
       "id": "2026-09-02:META",
       "ref_date": "2026-09-02",
       "ref_price": 127.97,
       "pick": {
         "ticker": "META",
         "stance": "bearish",
-        "conviction": "medium",
+        "conviction": "high",
         "thesis": "Meta Platforms broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
         "risks": [
-          "Positive company news flow",
-          "Short-covering rally"
+          "Short-covering rally",
+          "Positive company news flow"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [

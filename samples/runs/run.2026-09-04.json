@@ -2,30 +2,30 @@
   "schema_version": 1,
   "run_id": "run.2026-09-04",
   "date": "2026-09-04",
-  "generated_at": "2026-09-04T21:13:00Z",
+  "generated_at": "2026-09-04T21:37:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.801,
-    "input_tokens": 7619,
-    "output_tokens": 1400,
+    "usd": 0.509,
+    "input_tokens": 9996,
+    "output_tokens": 1774,
     "cap_usd": 2.5
   },
-  "duration_minutes": 1.63,
+  "duration_minutes": 3.36,
   "pack": {
     "hash": "a7721ffe6bffa27331d6ddf386864f3c69afd7f1814a4ed051f7de2aa15f58dd",
-    "tokens": 7284,
+    "tokens": 9145,
     "cap_tokens": 12000
   },
   "doc_versions": {
-    "strategy": "0.1.0",
+    "strategy": "0.2.0",
     "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
+  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
   "picks": [
     {
       "id": "2026-09-04:TMUS",
@@ -35,10 +35,10 @@
         "ticker": "TMUS",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "T-Mobile US keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "T-Mobile US has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
           "Macro data surprise",
-          "Momentum reversal after an extended run"
+          "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -58,7 +58,7 @@
         "conviction": "high",
         "thesis": "Linde keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Macro data surprise",
+          "Momentum reversal after an extended run",
           "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
@@ -70,21 +70,42 @@
       }
     },
     {
-      "id": "2026-09-04:PEP",
+      "id": "2026-09-04:LLY",
       "ref_date": "2026-09-04",
-      "ref_price": 2757.43,
+      "ref_price": 414.41,
       "pick": {
-        "ticker": "PEP",
+        "ticker": "LLY",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Eli Lilly has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "risks": [
+          "Macro data surprise",
+          "Sector-wide de-rating"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.lly.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-09-04:RKLB",
+      "ref_date": "2026-09-04",
+      "ref_price": 77.79,
+      "pick": {
+        "ticker": "RKLB",
         "stance": "bearish",
         "conviction": "high",
-        "thesis": "PepsiCo has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "thesis": "Rocket Lab broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
         "risks": [
-          "Positive company news flow",
-          "Short-covering rally"
+          "Benchmark weakness narrows the gap",
+          "Positive company news flow"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.pep.rel_20d",
+          "prices.rklb.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

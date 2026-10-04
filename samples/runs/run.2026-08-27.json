@@ -2,24 +2,24 @@
   "schema_version": 1,
   "run_id": "run.2026-08-27",
   "date": "2026-08-27",
-  "generated_at": "2026-08-27T21:20:00Z",
+  "generated_at": "2026-08-27T21:37:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.414,
-    "input_tokens": 6519,
-    "output_tokens": 1063,
+    "usd": 0.65,
+    "input_tokens": 7778,
+    "output_tokens": 1434,
     "cap_usd": 2.5
   },
-  "duration_minutes": 4.17,
+  "duration_minutes": 1.17,
   "pack": {
     "hash": "7ba159f3242c721f401eadef87e10fc2fd083717730a21d8d56812d71dafd1e6",
-    "tokens": 5631,
+    "tokens": 7245,
     "cap_tokens": 12000
   },
   "doc_versions": {
-    "strategy": "0.1.0",
+    "strategy": "0.2.0",
     "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
@@ -28,42 +28,42 @@
   "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
   "picks": [
     {
-      "id": "2026-08-27:TMUS",
+      "id": "2026-08-27:CCJ",
       "ref_date": "2026-08-27",
-      "ref_price": 3246.58,
+      "ref_price": 111.81,
       "pick": {
-        "ticker": "TMUS",
+        "ticker": "CCJ",
         "stance": "bullish",
-        "conviction": "medium",
-        "thesis": "T-Mobile US has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "conviction": "high",
+        "thesis": "Cameco keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Sector-wide de-rating",
+          "Momentum reversal after an extended run",
           "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.tmus.rel_20d",
+          "prices.ccj.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-08-27:LIN",
+      "id": "2026-08-27:TMUS",
       "ref_date": "2026-08-27",
-      "ref_price": 914.26,
+      "ref_price": 3246.58,
       "pick": {
-        "ticker": "LIN",
+        "ticker": "TMUS",
         "stance": "bullish",
-        "conviction": "medium",
-        "thesis": "Linde keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "conviction": "high",
+        "thesis": "T-Mobile US has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Sector-wide de-rating",
-          "Macro data surprise"
+          "Macro data surprise",
+          "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.lin.rel_20d",
+          "prices.tmus.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
@@ -77,7 +77,7 @@
         "ticker": "PEP",
         "stance": "bearish",
         "conviction": "high",
-        "thesis": "PepsiCo has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "thesis": "PepsiCo broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
         "risks": [
           "Short-covering rally",
           "Benchmark weakness narrows the gap"
@@ -85,6 +85,27 @@
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
           "prices.pep.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-27:AVGO",
+      "ref_date": "2026-08-27",
+      "ref_price": 171.76,
+      "pick": {
+        "ticker": "AVGO",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Broadcom is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "risks": [
+          "Breakout in either direction",
+          "Volatility expansion"
+        ],
+        "invalidation": "A sustained move away from the benchmark in either direction.",
+        "evidence": [
+          "prices.avgo.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

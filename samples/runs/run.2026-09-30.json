@@ -2,30 +2,30 @@
   "schema_version": 1,
   "run_id": "run.2026-09-30",
   "date": "2026-09-30",
-  "generated_at": "2026-09-30T21:35:00Z",
+  "generated_at": "2026-09-30T21:34:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.6,
-    "input_tokens": 11235,
-    "output_tokens": 785,
+    "usd": 0.855,
+    "input_tokens": 7891,
+    "output_tokens": 1335,
     "cap_usd": 2.5
   },
-  "duration_minutes": 2.63,
+  "duration_minutes": 1.44,
   "pack": {
     "hash": "7e22236aa6d3a8459bf206db6266b58386b22b536a46b1362509ebf4e49c2b99",
-    "tokens": 10666,
+    "tokens": 7426,
     "cap_tokens": 12000
   },
   "doc_versions": {
-    "strategy": "0.1.0",
+    "strategy": "0.2.0",
     "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
+  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
   "picks": [
     {
       "id": "2026-09-30:LIN",
@@ -37,7 +37,7 @@
         "conviction": "high",
         "thesis": "Linde has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Momentum reversal after an extended run",
+          "Sector-wide de-rating",
           "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
@@ -55,11 +55,11 @@
       "pick": {
         "ticker": "AVGO",
         "stance": "bullish",
-        "conviction": "medium",
+        "conviction": "high",
         "thesis": "Broadcom has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Sector-wide de-rating",
-          "Momentum reversal after an extended run"
+          "Momentum reversal after an extended run",
+          "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -70,42 +70,63 @@
       }
     },
     {
-      "id": "2026-09-30:MNST",
+      "id": "2026-09-30:RKLB",
       "ref_date": "2026-09-30",
-      "ref_price": 310.8,
+      "ref_price": 88.46,
       "pick": {
-        "ticker": "MNST",
+        "ticker": "RKLB",
         "stance": "bullish",
-        "conviction": "medium",
-        "thesis": "Monster Beverage has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "conviction": "high",
+        "thesis": "Rocket Lab has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Momentum reversal after an extended run",
-          "Macro data surprise"
+          "Macro data surprise",
+          "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.mnst.rel_20d",
+          "prices.rklb.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-09-30:COST",
+      "id": "2026-09-30:ETN",
       "ref_date": "2026-09-30",
-      "ref_price": 617.49,
+      "ref_price": 431.52,
       "pick": {
-        "ticker": "COST",
+        "ticker": "ETN",
         "stance": "bearish",
         "conviction": "high",
-        "thesis": "Costco broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
+        "thesis": "Eaton has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
         "risks": [
-          "Short-covering rally",
-          "Positive company news flow"
+          "Benchmark weakness narrows the gap",
+          "Short-covering rally"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.cost.rel_20d",
+          "prices.etn.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-09-30:PCAR",
+      "ref_date": "2026-09-30",
+      "ref_price": 1292.13,
+      "pick": {
+        "ticker": "PCAR",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "PACCAR is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "risks": [
+          "Volatility expansion",
+          "Breakout in either direction"
+        ],
+        "invalidation": "A sustained move away from the benchmark in either direction.",
+        "evidence": [
+          "prices.pcar.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

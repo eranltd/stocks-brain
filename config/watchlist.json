@@ -1,7 +1,7 @@
 {
-  "version": "0.5.0",
+  "version": "0.6.0",
   "updated_at": "2026-10-04",
-  "change_note": "Thirteen Nasdaq names from other sectors (Roni), with GICS sectors for the portfolio rule's sector cap.",
+  "change_note": "Six US-listed names in energy, power, health and space, so the portfolio rule has more than tech to choose from.",
   "symbols": [
     {
       "symbol": "AAPL",
@@ -110,6 +110,36 @@
       "symbol": "LIN",
       "name": "Linde",
       "sector": "Materials"
+    },
+    {
+      "symbol": "XOM",
+      "name": "Exxon Mobil",
+      "sector": "Energy"
+    },
+    {
+      "symbol": "CCJ",
+      "name": "Cameco",
+      "sector": "Energy"
+    },
+    {
+      "symbol": "VST",
+      "name": "Vistra",
+      "sector": "Utilities"
+    },
+    {
+      "symbol": "ETN",
+      "name": "Eaton",
+      "sector": "Industrials"
+    },
+    {
+      "symbol": "LLY",
+      "name": "Eli Lilly",
+      "sector": "Health Care"
+    },
+    {
+      "symbol": "RKLB",
+      "name": "Rocket Lab",
+      "sector": "Industrials"
     }
   ],
   "core": {

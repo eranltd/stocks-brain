@@ -2,30 +2,30 @@
   "schema_version": 1,
   "run_id": "run.2026-09-10",
   "date": "2026-09-10",
-  "generated_at": "2026-09-10T21:18:00Z",
+  "generated_at": "2026-09-10T21:40:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.597,
-    "input_tokens": 9678,
-    "output_tokens": 855,
+    "usd": 0.89,
+    "input_tokens": 9454,
+    "output_tokens": 788,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.45,
+  "duration_minutes": 2.11,
   "pack": {
     "hash": "bee073083d37aebc34b05b38955d625bc3a6cbd1a94b7539ce77eab92befa419",
-    "tokens": 9136,
+    "tokens": 8610,
     "cap_tokens": 12000
   },
   "doc_versions": {
-    "strategy": "0.1.0",
+    "strategy": "0.2.0",
     "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
+  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
   "picks": [
     {
       "id": "2026-09-10:TMUS",
@@ -37,12 +37,54 @@
         "conviction": "high",
         "thesis": "T-Mobile US keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
+          "Sector-wide de-rating",
+          "Momentum reversal after an extended run"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.tmus.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-09-10:MSFT",
+      "ref_date": "2026-09-10",
+      "ref_price": 178.1,
+      "pick": {
+        "ticker": "MSFT",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Microsoft keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "risks": [
           "Macro data surprise",
           "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.tmus.rel_20d",
+          "prices.msft.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-09-10:LIN",
+      "ref_date": "2026-09-10",
+      "ref_price": 1024.42,
+      "pick": {
+        "ticker": "LIN",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Linde has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "risks": [
+          "Momentum reversal after an extended run",
+          "Sector-wide de-rating"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.lin.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
@@ -58,7 +100,7 @@
         "conviction": "high",
         "thesis": "PepsiCo has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
         "risks": [
-          "Benchmark weakness narrows the gap",
+          "Positive company news flow",
           "Short-covering rally"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",

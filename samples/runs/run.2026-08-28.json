@@ -2,30 +2,30 @@
   "schema_version": 1,
   "run_id": "run.2026-08-28",
   "date": "2026-08-28",
-  "generated_at": "2026-08-28T21:12:00Z",
+  "generated_at": "2026-08-28T21:29:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.745,
-    "input_tokens": 10353,
-    "output_tokens": 1140,
+    "usd": 0.428,
+    "input_tokens": 7382,
+    "output_tokens": 1779,
     "cap_usd": 2.5
   },
-  "duration_minutes": 2.04,
+  "duration_minutes": 3.89,
   "pack": {
     "hash": "ded7392e39d51b09bff8b83dadd290046cde8239f9c1d58e4d7cb2ca2272ce54",
-    "tokens": 10052,
+    "tokens": 7022,
     "cap_tokens": 12000
   },
   "doc_versions": {
-    "strategy": "0.1.0",
+    "strategy": "0.2.0",
     "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
+  "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
   "picks": [
     {
       "id": "2026-08-28:TMUS",
@@ -34,11 +34,11 @@
       "pick": {
         "ticker": "TMUS",
         "stance": "bullish",
-        "conviction": "medium",
-        "thesis": "T-Mobile US has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "conviction": "high",
+        "thesis": "T-Mobile US keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
           "Momentum reversal after an extended run",
-          "Macro data surprise"
+          "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -49,21 +49,21 @@
       }
     },
     {
-      "id": "2026-08-28:LIN",
+      "id": "2026-08-28:VST",
       "ref_date": "2026-08-28",
-      "ref_price": 915.54,
+      "ref_price": 148.54,
       "pick": {
-        "ticker": "LIN",
+        "ticker": "VST",
         "stance": "bullish",
-        "conviction": "medium",
-        "thesis": "Linde keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "conviction": "high",
+        "thesis": "Vistra has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Sector-wide de-rating",
-          "Macro data surprise"
+          "Macro data surprise",
+          "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.lin.rel_20d",
+          "prices.vst.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
@@ -77,10 +77,10 @@
         "ticker": "GILD",
         "stance": "bearish",
         "conviction": "high",
-        "thesis": "Gilead Sciences has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "thesis": "Gilead Sciences broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
         "risks": [
           "Short-covering rally",
-          "Benchmark weakness narrows the gap"
+          "Positive company news flow"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [

@@ -1,8 +1,8 @@
 # stocks·brain
 
-A personal, public stock-analysis agent. Every day it fetches Nasdaq data for a watchlist, builds a capped context pack,
-makes **one** LLM call that returns schema-checked picks, scores past picks with code, and publishes a static dashboard
-on GitHub Pages.
+A personal, public stock-analysis agent. Every day it fetches US market data for a watchlist across sectors, builds a
+capped context pack, makes **one** LLM call that returns schema-checked picks, scores past picks with code, and
+publishes a static dashboard on GitHub Pages.
 
 **The household goal:** a diverse portfolio of 4-5 stocks around an index-fund core, aiming for +20% a year. The home page
 leads with a computed verdict, checks the goal against history, shows what portfolio rule v1 holds and why, and keeps a

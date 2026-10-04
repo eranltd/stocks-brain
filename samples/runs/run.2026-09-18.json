@@ -2,30 +2,30 @@
   "schema_version": 1,
   "run_id": "run.2026-09-18",
   "date": "2026-09-18",
-  "generated_at": "2026-09-18T21:31:00Z",
+  "generated_at": "2026-09-18T21:33:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.818,
-    "input_tokens": 9804,
-    "output_tokens": 871,
+    "usd": 0.38,
+    "input_tokens": 7999,
+    "output_tokens": 1082,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.22,
+  "duration_minutes": 2.59,
   "pack": {
     "hash": "9006c591037f056f0dfeb51d13c6712e12d7d428305aa8850305eef6c5eaddaa",
-    "tokens": 9294,
+    "tokens": 7655,
     "cap_tokens": 12000
   },
   "doc_versions": {
-    "strategy": "0.1.0",
+    "strategy": "0.2.0",
     "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
+  "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
   "picks": [
     {
       "id": "2026-09-18:MSFT",
@@ -35,10 +35,10 @@
         "ticker": "MSFT",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Microsoft keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "Microsoft has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
           "Macro data surprise",
-          "Sector-wide de-rating"
+          "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -49,21 +49,21 @@
       }
     },
     {
-      "id": "2026-09-18:AAPL",
+      "id": "2026-09-18:FANG",
       "ref_date": "2026-09-18",
-      "ref_price": 451.76,
+      "ref_price": 480.87,
       "pick": {
-        "ticker": "AAPL",
-        "stance": "neutral",
-        "conviction": "low",
-        "thesis": "Apple is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "ticker": "FANG",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Diamondback Energy has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Volatility expansion",
-          "Breakout in either direction"
+          "Macro data surprise",
+          "Sector-wide de-rating"
         ],
-        "invalidation": "A sustained move away from the benchmark in either direction.",
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.aapl.rel_20d",
+          "prices.fang.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

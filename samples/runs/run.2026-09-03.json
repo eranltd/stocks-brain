@@ -2,30 +2,30 @@
   "schema_version": 1,
   "run_id": "run.2026-09-03",
   "date": "2026-09-03",
-  "generated_at": "2026-09-03T21:23:00Z",
+  "generated_at": "2026-09-03T21:38:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.656,
-    "input_tokens": 9195,
-    "output_tokens": 1267,
+    "usd": 0.497,
+    "input_tokens": 9065,
+    "output_tokens": 1866,
     "cap_usd": 2.5
   },
-  "duration_minutes": 1.24,
+  "duration_minutes": 2.25,
   "pack": {
     "hash": "f350ad7106b2dcff533657c51a0040a7c4f2f7ed71a18ed4aac0f2b86e8a5c64",
-    "tokens": 8652,
+    "tokens": 8236,
     "cap_tokens": 12000
   },
   "doc_versions": {
-    "strategy": "0.1.0",
+    "strategy": "0.2.0",
     "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
+  "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
   "picks": [
     {
       "id": "2026-09-03:TMUS",
@@ -35,9 +35,9 @@
         "ticker": "TMUS",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "T-Mobile US has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "T-Mobile US keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Momentum reversal after an extended run",
+          "Macro data surprise",
           "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
@@ -49,21 +49,21 @@
       }
     },
     {
-      "id": "2026-09-03:GILD",
+      "id": "2026-09-03:ETN",
       "ref_date": "2026-09-03",
-      "ref_price": 23.25,
+      "ref_price": 495.13,
       "pick": {
-        "ticker": "GILD",
-        "stance": "bearish",
+        "ticker": "ETN",
+        "stance": "bullish",
         "conviction": "high",
-        "thesis": "Gilead Sciences has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "thesis": "Eaton keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Benchmark weakness narrows the gap",
-          "Short-covering rally"
+          "Macro data surprise",
+          "Sector-wide de-rating"
         ],
-        "invalidation": "A close back above the recent range high on rising volume.",
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.gild.rel_20d",
+          "prices.etn.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

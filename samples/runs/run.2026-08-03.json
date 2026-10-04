@@ -2,30 +2,30 @@
   "schema_version": 1,
   "run_id": "run.2026-08-03",
   "date": "2026-08-03",
-  "generated_at": "2026-08-03T21:15:00Z",
+  "generated_at": "2026-08-03T21:18:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.631,
-    "input_tokens": 10239,
-    "output_tokens": 753,
+    "usd": 0.681,
+    "input_tokens": 7516,
+    "output_tokens": 1293,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.38,
+  "duration_minutes": 2.47,
   "pack": {
     "hash": "478cf3d71226cf494907ec4dc9c8e11d943e633fd8a83dce74e2da65e2ce408b",
-    "tokens": 9852,
+    "tokens": 6719,
     "cap_tokens": 12000
   },
   "doc_versions": {
-    "strategy": "0.1.0",
+    "strategy": "0.2.0",
     "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
+  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
   "picks": [
     {
       "id": "2026-08-03:FANG",
@@ -37,8 +37,8 @@
         "conviction": "high",
         "thesis": "Diamondback Energy has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Sector-wide de-rating",
-          "Macro data surprise"
+          "Momentum reversal after an extended run",
+          "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -56,35 +56,14 @@
         "ticker": "LIN",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Linde has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Linde keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
           "Macro data surprise",
-          "Momentum reversal after an extended run"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.lin.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-08-03:META",
-      "ref_date": "2026-08-03",
-      "ref_price": 840.27,
-      "pick": {
-        "ticker": "META",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Meta Platforms keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
-        "risks": [
-          "Momentum reversal after an extended run",
           "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.meta.rel_20d",
+          "prices.lin.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
@@ -101,32 +80,11 @@
         "thesis": "Alphabet broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
         "risks": [
           "Short-covering rally",
-          "Benchmark weakness narrows the gap"
+          "Positive company news flow"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
           "prices.googl.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-08-03:AEP",
-      "ref_date": "2026-08-03",
-      "ref_price": 166.14,
-      "pick": {
-        "ticker": "AEP",
-        "stance": "neutral",
-        "conviction": "low",
-        "thesis": "American Electric Power is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
-        "risks": [
-          "Volatility expansion",
-          "Breakout in either direction"
-        ],
-        "invalidation": "A sustained move away from the benchmark in either direction.",
-        "evidence": [
-          "prices.aep.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

@@ -2,30 +2,30 @@
   "schema_version": 1,
   "run_id": "run.2026-08-14",
   "date": "2026-08-14",
-  "generated_at": "2026-08-14T21:21:00Z",
+  "generated_at": "2026-08-14T21:32:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.36,
-    "input_tokens": 6685,
-    "output_tokens": 1486,
+    "usd": 0.602,
+    "input_tokens": 9186,
+    "output_tokens": 1894,
     "cap_usd": 2.5
   },
-  "duration_minutes": 2.38,
+  "duration_minutes": 2.28,
   "pack": {
     "hash": "466239e71c91fa43a160e7fd6b40af56d84e4b9c67a292e1daefe0496b142fd7",
-    "tokens": 6223,
+    "tokens": 8512,
     "cap_tokens": 12000
   },
   "doc_versions": {
-    "strategy": "0.1.0",
+    "strategy": "0.2.0",
     "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
+  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
   "picks": [
     {
       "id": "2026-08-14:LIN",
@@ -35,10 +35,10 @@
         "ticker": "LIN",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Linde keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "Linde has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Momentum reversal after an extended run",
-          "Macro data surprise"
+          "Macro data surprise",
+          "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -56,7 +56,7 @@
         "ticker": "CTAS",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Cintas keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "Cintas has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
           "Momentum reversal after an extended run",
           "Sector-wide de-rating"
@@ -70,42 +70,21 @@
       }
     },
     {
-      "id": "2026-08-14:PEP",
+      "id": "2026-08-14:LLY",
       "ref_date": "2026-08-14",
-      "ref_price": 2999.9,
+      "ref_price": 362.14,
       "pick": {
-        "ticker": "PEP",
+        "ticker": "LLY",
         "stance": "bearish",
         "conviction": "high",
-        "thesis": "PepsiCo broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
+        "thesis": "Eli Lilly broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
         "risks": [
           "Benchmark weakness narrows the gap",
-          "Positive company news flow"
+          "Short-covering rally"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.pep.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-08-14:PCAR",
-      "ref_date": "2026-08-14",
-      "ref_price": 1348.09,
-      "pick": {
-        "ticker": "PCAR",
-        "stance": "neutral",
-        "conviction": "low",
-        "thesis": "PACCAR is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
-        "risks": [
-          "Breakout in either direction",
-          "Volatility expansion"
-        ],
-        "invalidation": "A sustained move away from the benchmark in either direction.",
-        "evidence": [
-          "prices.pcar.rel_20d",
+          "prices.lly.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

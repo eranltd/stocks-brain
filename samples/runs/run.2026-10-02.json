@@ -2,89 +2,89 @@
   "schema_version": 1,
   "run_id": "run.2026-10-02",
   "date": "2026-10-02",
-  "generated_at": "2026-10-02T21:12:00Z",
+  "generated_at": "2026-10-02T21:36:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.841,
-    "input_tokens": 7985,
-    "output_tokens": 1450,
+    "usd": 0.78,
+    "input_tokens": 9687,
+    "output_tokens": 928,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.55,
+  "duration_minutes": 2.06,
   "pack": {
     "hash": "fe9ec1ce50db5941ca5ecaa85dd39179997e21f95d2ee3a29f236fdded067283",
-    "tokens": 7105,
+    "tokens": 9137,
     "cap_tokens": 12000
   },
   "doc_versions": {
-    "strategy": "0.1.0",
+    "strategy": "0.2.0",
     "methodology": "0.4.0",
     "guardrails": "0.1.0",
     "learnings": "0.1.0"
   },
   "repair_retries": 1,
-  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
+  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
   "picks": [
     {
-      "id": "2026-10-02:LIN",
+      "id": "2026-10-02:RKLB",
       "ref_date": "2026-10-02",
-      "ref_price": 1098.11,
+      "ref_price": 91.78,
       "pick": {
-        "ticker": "LIN",
+        "ticker": "RKLB",
         "stance": "bullish",
-        "conviction": "medium",
-        "thesis": "Linde keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "conviction": "high",
+        "thesis": "Rocket Lab keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Macro data surprise",
-          "Momentum reversal after an extended run"
+          "Momentum reversal after an extended run",
+          "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.lin.rel_20d",
+          "prices.rklb.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-10-02:CME",
+      "id": "2026-10-02:ETN",
       "ref_date": "2026-10-02",
-      "ref_price": 6686.24,
+      "ref_price": 446.87,
       "pick": {
-        "ticker": "CME",
+        "ticker": "ETN",
         "stance": "bearish",
         "conviction": "high",
-        "thesis": "CME Group has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "thesis": "Eaton broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
         "risks": [
-          "Short-covering rally",
-          "Benchmark weakness narrows the gap"
+          "Benchmark weakness narrows the gap",
+          "Short-covering rally"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.cme.rel_20d",
+          "prices.etn.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-10-02:TMUS",
+      "id": "2026-10-02:AEP",
       "ref_date": "2026-10-02",
-      "ref_price": 3672.93,
+      "ref_price": 151.97,
       "pick": {
-        "ticker": "TMUS",
+        "ticker": "AEP",
         "stance": "neutral",
         "conviction": "low",
-        "thesis": "T-Mobile US is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "thesis": "American Electric Power is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
         "risks": [
           "Volatility expansion",
           "Breakout in either direction"
         ],
         "invalidation": "A sustained move away from the benchmark in either direction.",
         "evidence": [
-          "prices.tmus.rel_20d",
+          "prices.aep.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

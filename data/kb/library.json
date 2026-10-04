@@ -1,7 +1,7 @@
 {
-  "version": "0.4.0",
+  "version": "0.5.0",
   "updated_at": "2026-10-04",
-  "change_note": "Batches 3-4: bond yields and breakouts, buying at highs, valuation vs euphoria, Mag 7 structure, overextension.",
+  "change_note": "Batch 5: covenant-bound sellers, 13F rotation in Micron, earnings-season reading guide.",
   "sample": false,
   "sources": [
     {
@@ -544,6 +544,106 @@
             "rotation",
             "short_covering",
             "sectors"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-011",
+      "kind": "video",
+      "ref": "youtube:2RsUWHv37Po",
+      "title": "לפני שאתם קונים דירה — חובה לראות את זה (Before you buy an apartment)",
+      "author": "Micha (YouTube channel)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-011.P01",
+          "text": "Sellers bound by loan covenants keep list prices sticky even when demand stalls, because an official cut would devalue the collateral. The real discount then shows up in terms and side deals, not in the headline price.",
+          "tags": [
+            "real_estate",
+            "covenants",
+            "pricing",
+            "credit"
+          ]
+        },
+        {
+          "id": "S-011.P02",
+          "text": "When lenders are carrying unsold inventory for leveraged sellers, bargaining power shifts to the buyer with cash. Official price indices lag that shift.",
+          "tags": [
+            "real_estate",
+            "credit",
+            "negotiation"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-012",
+      "kind": "video",
+      "ref": "youtube:KeqVI4sAiU0",
+      "title": "הכסף הגדול חתך 92% ממייקרון — ומה הוא קנה במקום (Big money cut 92% of Micron, and what it bought instead)",
+      "author": "Micha (YouTube channel)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-012.P01",
+          "text": "13F filings show what large funds held at quarter end, published weeks later, with no reasons and no shorts or hedges. Treat them as delayed context on positioning, never as a live signal.",
+          "tags": [
+            "institutional",
+            "form_13f",
+            "positioning",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-012.P02",
+          "text": "Heavy institutional selling of a cyclical leader after a strong run often signals profit taking ahead of a cycle turn. Check where the money went inside the same sector before reading it as bearish for the whole group.",
+          "tags": [
+            "institutional",
+            "rotation",
+            "semis",
+            "cyclicals"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-013",
+      "kind": "video",
+      "ref": "youtube:jTeuotOQhSE",
+      "title": "המדריך המעודכן לעונת הדיווחים - חלק 1 (The updated guide to earnings season, part 1)",
+      "author": "Micha (YouTube channel)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-013.P01",
+          "text": "Read a report in order: guidance first, then revenue growth and its quality, then EPS. A beat built on cost cuts or a lower share count is weaker than one built on revenue.",
+          "tags": [
+            "earnings",
+            "guidance",
+            "quality"
+          ]
+        },
+        {
+          "id": "S-013.P02",
+          "text": "Before a report, note the options-implied move. After it, ask whether the stock moved more or less than priced, and why. That gap is the market's real verdict.",
+          "tags": [
+            "earnings",
+            "options",
+            "expectations"
+          ]
+        },
+        {
+          "id": "S-013.P03",
+          "text": "Do not open a new short-horizon stance a day or two before a report unless the report is the thesis. The outcome becomes a coin flip on the event, not on the analysis.",
+          "tags": [
+            "earnings",
+            "events",
+            "conviction",
+            "discipline"
           ]
         }
       ]

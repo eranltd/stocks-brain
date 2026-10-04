@@ -88,6 +88,8 @@ export default function Today({ data, go }) {
           )}
         </section>
 
+        <LatestInsights library={data.library} go={go} />
+
         {recent.length > 0 && (
           <section className="pt-28">
             <SectionHead
@@ -215,5 +217,33 @@ export function ScoredCard({ o, i, name, onOpen }) {
         </button>
       </div>
     </Reveal>
+  );
+}
+
+function LatestInsights({ library, go }) {
+  const sources = [...(library?.sources ?? [])].sort((a, b) => (b.published ?? b.added).localeCompare(a.published ?? a.added));
+  if (!sources.length) return null;
+  const picks = sources.slice(0, 3).map((s) => ({ s, p: s.principles[0] }));
+  const total = sources.reduce((a, s) => a + s.principles.length, 0);
+  return (
+    <section className="pt-28">
+      <SectionHead
+        eyebrow="From the library"
+        title={<>Latest <Accent>insights.</Accent></>}
+        lede={`${sources.length} sources and ${total} principles so far. These are from the newest videos.`}
+        right={<button type="button" onClick={() => go("insights")} className="btn">All insights <ArrowRight /></button>}
+      />
+      <div className="grid gap-5 md:grid-cols-3">
+        {picks.map(({ s, p }, i) => (
+          <Reveal key={s.id} delay={i * 90} as="article" className="card card-hover brackets flex flex-col p-7">
+            <span className="meta">{s.published ?? s.year} · {p.id}</span>
+            <p className="mt-4 text-[17px] leading-relaxed tracking-[-0.01em]">{p.text}</p>
+            <div className="meta mt-auto truncate border-t border-line pt-4 normal-case tracking-[0.04em] [margin-top:max(1.5rem,auto)]" title={s.title}>
+              {(s.title.match(/\(([^()]*)\)\s*$/) || [, s.title])[1]}
+            </div>
+          </Reveal>
+        ))}
+      </div>
+    </section>
   );
 }

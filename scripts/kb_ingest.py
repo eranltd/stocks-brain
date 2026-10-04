@@ -8,7 +8,7 @@ Batch file (JSON):
 {
   "change_note": "Batch 3: ...",
   "sources": [{
-    "kind": "video", "ref": "youtube:<id>", "title": "...", "author": "...", "year": 2026,
+    "kind": "video", "ref": "youtube:<id>", "title": "...", "author": "...", "year": 2026, "published": "YYYY-MM-DD",
     "principles": [["Our own words, <= 280 chars.", ["tag", "tag"]], ...],
     "observations": [{"as_of": "YYYY-MM-DD", "expires": "YYYY-MM-DD", "kind": "market|company|sector|theme",
                       "tickers": ["XYZ"], "text": "...", "tags": ["tag"]}, ...]
@@ -68,6 +68,7 @@ def main() -> int:
         lib["sources"].append({
             "id": sid, "kind": src["kind"], "ref": src["ref"], "title": src["title"], "author": src["author"],
             "year": src.get("year"), "added": today,
+            **({"published": src["published"]} if src.get("published") else {}),
             "principles": [{"id": f"{sid}.P{i:02d}", "text": t, "tags": tags}
                            for i, (t, tags) in enumerate(src["principles"], 1)],
         })

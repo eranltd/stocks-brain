@@ -7,6 +7,7 @@ import Today from "./tabs/Today.jsx";
 import Watchlist from "./tabs/Watchlist.jsx";
 import TrackRecord from "./tabs/TrackRecord.jsx";
 import KB from "./tabs/KB.jsx";
+import Insights from "./tabs/Insights.jsx";
 import Learnings from "./tabs/Learnings.jsx";
 import Runs from "./tabs/Runs.jsx";
 import HowItWorks from "./tabs/HowItWorks.jsx";
@@ -17,6 +18,7 @@ const TABS = [
   { id: "watchlist", label: "Watchlist", C: Watchlist },
   { id: "track", label: "Track record", C: TrackRecord },
   { id: "kb", label: "KB", C: KB },
+  { id: "insights", label: "Insights", C: Insights },
   { id: "learnings", label: "Learnings", C: Learnings },
   { id: "runs", label: "Runs", C: Runs },
   { id: "how", label: "How it works", C: HowItWorks },

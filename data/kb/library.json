@@ -1,7 +1,7 @@
 {
-  "version": "0.6.0",
+  "version": "0.7.0",
   "updated_at": "2026-10-04",
-  "change_note": "Batch 6: valuation vs estimates, consensus outlooks for 2026, live-session discipline.",
+  "change_note": "Batch 7: index-fund tracking and fees, two-front selloffs and AI free cash flow, synchronized chip setups.",
   "sample": false,
   "sources": [
     {
@@ -12,6 +12,7 @@
       "author": "YouTube channel (name not given in batch)",
       "year": 2026,
       "added": "2026-10-04",
+      "published": "2026-10-02",
       "principles": [
         {
           "id": "S-001.P01",
@@ -72,6 +73,7 @@
       "author": "YouTube channel (name not given in batch)",
       "year": 2026,
       "added": "2026-10-04",
+      "published": "2026-09-26",
       "principles": [
         {
           "id": "S-002.P01",
@@ -132,6 +134,7 @@
       "author": "YouTube channel (name not given in batch)",
       "year": 2026,
       "added": "2026-10-04",
+      "published": "2026-09-12",
       "principles": [
         {
           "id": "S-003.P01",
@@ -180,6 +183,7 @@
       "author": "YouTube channel (name not given in batch)",
       "year": 2026,
       "added": "2026-10-04",
+      "published": "2026-05-04",
       "principles": [
         {
           "id": "S-004.P01",
@@ -237,6 +241,7 @@
       "author": "YouTube channel (name not given in batch)",
       "year": 2026,
       "added": "2026-10-04",
+      "published": "2026-04-27",
       "principles": [
         {
           "id": "S-005.P01",
@@ -285,6 +290,7 @@
       "author": "Micha (YouTube channel)",
       "year": 2026,
       "added": "2026-10-04",
+      "published": "2026-09-24",
       "principles": [
         {
           "id": "S-006.P01",
@@ -351,6 +357,7 @@
       "author": "Micha (YouTube channel)",
       "year": 2026,
       "added": "2026-10-04",
+      "published": "2026-08-15",
       "principles": [
         {
           "id": "S-007.P01",
@@ -398,6 +405,7 @@
       "author": "Micha (YouTube channel)",
       "year": 2026,
       "added": "2026-10-04",
+      "published": "2026-07-09",
       "principles": [
         {
           "id": "S-008.P01",
@@ -454,6 +462,7 @@
       "author": "Micha (YouTube channel)",
       "year": 2026,
       "added": "2026-10-04",
+      "published": "2026-07-06",
       "principles": [
         {
           "id": "S-009.P01",
@@ -501,6 +510,7 @@
       "author": "Micha (YouTube channel)",
       "year": 2026,
       "added": "2026-10-04",
+      "published": "2026-04-19",
       "principles": [
         {
           "id": "S-010.P01",
@@ -556,6 +566,7 @@
       "author": "Micha (YouTube channel)",
       "year": 2026,
       "added": "2026-10-04",
+      "published": "2026-05-30",
       "principles": [
         {
           "id": "S-011.P01",
@@ -586,6 +597,7 @@
       "author": "Micha (YouTube channel)",
       "year": 2026,
       "added": "2026-10-04",
+      "published": "2026-08-18",
       "principles": [
         {
           "id": "S-012.P01",
@@ -617,6 +629,7 @@
       "author": "Micha (YouTube channel)",
       "year": 2026,
       "added": "2026-10-04",
+      "published": "2026-07-18",
       "principles": [
         {
           "id": "S-013.P01",
@@ -656,6 +669,7 @@
       "author": "Micha (YouTube channel)",
       "year": 2026,
       "added": "2026-10-04",
+      "published": "2026-06-13",
       "principles": [
         {
           "id": "S-014.P01",
@@ -694,6 +708,7 @@
       "author": "Micha (YouTube channel)",
       "year": 2025,
       "added": "2026-10-04",
+      "published": "2025-12-29",
       "principles": [
         {
           "id": "S-015.P01",
@@ -741,6 +756,7 @@
       "author": "Micha (YouTube channel)",
       "year": 2026,
       "added": "2026-10-04",
+      "published": "2026-10-02",
       "principles": [
         {
           "id": "S-016.P01",
@@ -758,6 +774,153 @@
             "process",
             "discipline",
             "technicals"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-017",
+      "kind": "video",
+      "ref": "youtube:ZDrHRV0e8bg",
+      "title": "עוקב או מחקה? איך דופקים אתכם בפנסיה על הסנפ 500 (Tracker or imitator? How pensions short-change you on the S&P 500)",
+      "author": "Micha (YouTube channel)",
+      "year": 2025,
+      "added": "2026-10-04",
+      "published": "2025-08-30",
+      "principles": [
+        {
+          "id": "S-017.P01",
+          "text": "Same index label, different results. A passive track that copies the index with derivatives, futures or forced bond sleeves can trail it badly, so compare your track with the raw index over the same period.",
+          "tags": [
+            "fees",
+            "tracking_error",
+            "passive",
+            "pension"
+          ]
+        },
+        {
+          "id": "S-017.P02",
+          "text": "Fees compound against you. A fraction of a percent a year over decades takes a large share of the final balance, so push fees toward the lowest available.",
+          "tags": [
+            "fees",
+            "compounding",
+            "pension"
+          ]
+        },
+        {
+          "id": "S-017.P03",
+          "text": "Currency conversion inside a foreign-index fund is a hidden cost. Ask how it is done and at what rate.",
+          "tags": [
+            "fx",
+            "fees",
+            "pension"
+          ]
+        },
+        {
+          "id": "S-017.P04",
+          "text": "A cheap index inside an expensive wrapper is not cheap. Distribution commissions are often buried in the management fee of a passive product.",
+          "tags": [
+            "fees",
+            "incentives",
+            "passive"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-018",
+      "kind": "video",
+      "ref": "youtube:G9SFAkOi_yc",
+      "title": "הכל קורס - זה הסימן דווקא לקנות? (Everything is crashing: is this actually the signal to buy?)",
+      "author": "Micha (YouTube channel)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "published": "2026-07-24",
+      "principles": [
+        {
+          "id": "S-018.P01",
+          "text": "When stocks fall on two fronts at once, geopolitics and rising yields, the yield pressure usually outlasts the headlines. Watch the 10-year more than the news flow.",
+          "tags": [
+            "rates",
+            "geopolitics",
+            "macro"
+          ]
+        },
+        {
+          "id": "S-018.P02",
+          "text": "A volatility spike that is sold straight away signals confusion, not panic. Capitulation lows usually need fear that persists.",
+          "tags": [
+            "volatility",
+            "vix",
+            "sentiment",
+            "bottoms"
+          ]
+        },
+        {
+          "id": "S-018.P03",
+          "text": "Heavy AI capex can turn free cash flow negative even when revenue is strong, and the market punishes that when the payback is unclear. For the big spenders, track free cash flow, not only revenue and EPS.",
+          "tags": [
+            "ai_capex",
+            "free_cash_flow",
+            "earnings"
+          ]
+        },
+        {
+          "id": "S-018.P04",
+          "text": "A market dominated by one industry can lead that industry. A breakout in the chip-heavy Korean index can foreshadow a move in global semiconductors.",
+          "tags": [
+            "leading_indicators",
+            "semis",
+            "intermarket"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-019",
+      "kind": "video",
+      "ref": "youtube:ETZx24b1vVY",
+      "title": "התבנית שחוזרת בהרבה מניות — עלייה או קריסה? (The pattern repeating in many stocks: surge or crash?)",
+      "author": "Micha (YouTube channel)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "published": "2026-08-07",
+      "principles": [
+        {
+          "id": "S-019.P01",
+          "text": "When a whole group shows the same setup (a rally, a sharp drop, then a push at the falling trendline), treat it as one decision. The breakout tends to succeed or fail across the group together.",
+          "tags": [
+            "correlation",
+            "technicals",
+            "breakouts",
+            "semis"
+          ]
+        },
+        {
+          "id": "S-019.P02",
+          "text": "A breakout that starts far above its long averages has less fuel. Being stretched above the 150- and 200-day averages raises the odds of a retest first.",
+          "tags": [
+            "overextension",
+            "moving_averages",
+            "breakouts"
+          ]
+        },
+        {
+          "id": "S-019.P03",
+          "text": "A famous short call often lands on stocks that were already technically stretched. The price was the warning before the headline.",
+          "tags": [
+            "short_sellers",
+            "overextension",
+            "risk"
+          ]
+        },
+        {
+          "id": "S-019.P04",
+          "text": "Ahead of scheduled macro events such as jobs data or a central-bank symposium, a stretched index tends to stall. Avoid new short-horizon calls that hinge on the event.",
+          "tags": [
+            "events",
+            "macro",
+            "overextension"
           ]
         }
       ]

@@ -147,14 +147,14 @@ export function Header({ tabs, active, onNav, sample, livePrices, theme, onTheme
 
   return (
     <header className={`sticky top-0 z-40 border-b border-line pt-[env(safe-area-inset-top)] backdrop-blur-xl transition-colors duration-500 ${scrolled ? "bg-bg/80" : "bg-bg/60"}`}>
-      <Container className="flex flex-wrap items-center gap-x-4 gap-y-3 py-4 lg:flex-nowrap lg:gap-x-6">
+      <Container className="flex flex-wrap items-center gap-x-4 gap-y-3 py-4 xl:flex-nowrap">
         <a href="#today" className="flex shrink-0 items-center gap-3" onClick={(e) => { e.preventDefault(); onNav("today"); }}>
           <Logo />
           <span className="text-[20px] font-semibold tracking-[-0.03em]">stocks·brain</span>
-          <span className="pill hidden border-accent/40 bg-accent/10 font-sans text-[13px] font-medium tracking-normal text-accent normal-case sm:inline-flex">Nasdaq</span>
+          <span className="pill hidden border-accent/40 bg-accent/10 font-sans text-[13px] font-medium tracking-normal text-accent normal-case sm:inline-flex xl:hidden">Nasdaq</span>
         </a>
 
-        <div className="order-3 w-full lg:order-none lg:w-auto lg:flex-1 lg:flex lg:justify-center">
+        <div className="order-3 flex w-full min-w-0 justify-center xl:order-none xl:w-auto xl:flex-1">
           <nav aria-label="Sections" className="no-scrollbar max-w-full overflow-x-auto rounded-full border border-line bg-surface/70 p-1 backdrop-blur-xl">
             <div ref={track} role="tablist" onKeyDown={onKey} className="relative flex w-max">
               <span
@@ -170,7 +170,7 @@ export function Header({ tabs, active, onNav, sample, livePrices, theme, onTheme
                   aria-selected={active === t.id}
                   tabIndex={active === t.id ? 0 : -1}
                   onClick={() => onNav(t.id)}
-                  className={`relative z-10 shrink-0 rounded-full px-4 py-2.5 text-[15.5px] font-medium whitespace-nowrap transition-colors duration-500 sm:px-5 ${active === t.id ? "text-bg" : "text-ink-2 hover:text-ink"}`}
+                  className={`relative z-10 shrink-0 rounded-full px-3.5 py-2.5 text-[14.5px] font-medium whitespace-nowrap transition-colors duration-500 ${active === t.id ? "text-bg" : "text-ink-2 hover:text-ink"}`}
                 >
                   {t.label}
                 </button>
@@ -179,7 +179,7 @@ export function Header({ tabs, active, onNav, sample, livePrices, theme, onTheme
           </nav>
         </div>
 
-        <div className="ml-auto flex shrink-0 items-center gap-2 lg:ml-0">
+        <div className="ml-auto flex shrink-0 items-center gap-2 xl:ml-0">
           {sample && (
             <span className="pill border-dashed border-people/60 text-people" title={livePrices ? "Prices are live; picks stay synthetic until the brain runs" : "Synthetic data until the live pipeline runs"}>
               <span className="size-1.5 animate-pulse rounded-full bg-current" /> {livePrices ? "Sample picks" : "Sample data"}

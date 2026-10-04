@@ -1,7 +1,7 @@
 {
-  "version": "0.5.0",
+  "version": "0.6.0",
   "updated_at": "2026-10-04",
-  "change_note": "Batch 6: valuation vs estimates, consensus outlooks for 2026, live-session discipline.",
+  "change_note": "Batch 7: index-fund tracking and fees, two-front selloffs and AI free cash flow, synchronized chip setups.",
   "sample": false,
   "items": [
     {
@@ -922,6 +922,184 @@
         "analysts",
         "consensus",
         "outlook"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0058",
+      "source_id": "S-017",
+      "as_of": "2025-08-30",
+      "expires": "2026-08-30",
+      "kind": "theme",
+      "tickers": [],
+      "text": "Israeli pension and provident S&P 500 tracks were cited returning anywhere from 4.2% to 8.5% over the same period, because loose rules let funds imitate rather than hold the index.",
+      "tags": [
+        "pension",
+        "tracking_error"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0059",
+      "source_id": "S-017",
+      "as_of": "2025-08-30",
+      "expires": "2026-08-30",
+      "kind": "theme",
+      "tickers": [],
+      "text": "Suggested targets: management fees of 0.1% to 0.2% of accumulated savings, plus transparency on USD/ILS conversion. The Selis case, with losses in unregulated alternative assets, was cited against Israel's IRA model.",
+      "tags": [
+        "pension",
+        "fees",
+        "fx"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0060",
+      "source_id": "S-018",
+      "as_of": "2026-07-24",
+      "expires": "2026-08-07",
+      "kind": "market",
+      "tickers": [],
+      "text": "Broad selloff: Russell -0.6%, S&P 500 -1.2%, Nasdaq -1.8%. Oil up 36% to 91 dollars on Hormuz tension; 10-year yield 4.69%, highest since Jan 2025. VIX briefly topped 20 and was sold.",
+      "tags": [
+        "macro",
+        "rates",
+        "volatility"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0061",
+      "source_id": "S-018",
+      "as_of": "2026-07-24",
+      "expires": "2026-10-24",
+      "kind": "company",
+      "tickers": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "text": "Alphabet fell about 7% after earnings: strong revenue, but its first negative free cash flow since 2015 because of AI capex.",
+      "tags": [
+        "earnings",
+        "ai_capex",
+        "free_cash_flow"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0062",
+      "source_id": "S-018",
+      "as_of": "2026-07-24",
+      "expires": "2026-08-24",
+      "kind": "company",
+      "tickers": [
+        "INTC"
+      ],
+      "text": "Intel beat on revenue and EPS and rose more than 4% after hours.",
+      "tags": [
+        "earnings"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0063",
+      "source_id": "S-018",
+      "as_of": "2026-07-24",
+      "expires": "2026-08-24",
+      "kind": "market",
+      "tickers": [
+        "SOXX"
+      ],
+      "text": "The KOSPI broke out of a bull flag. Being chip-heavy (Samsung, SK Hynix), it was read as a lead for semiconductors once geopolitical fear eases.",
+      "tags": [
+        "intermarket",
+        "semis",
+        "breakouts"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0064",
+      "source_id": "S-019",
+      "as_of": "2026-08-07",
+      "expires": "2026-08-28",
+      "kind": "sector",
+      "tickers": [
+        "SOXX",
+        "SMH",
+        "TSM",
+        "SNDK"
+      ],
+      "text": "Semiconductors shared one setup: a steep rally, a sharp drop, and an attempt to break the falling resistance line.",
+      "tags": [
+        "semis",
+        "technicals",
+        "breakouts"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0065",
+      "source_id": "S-019",
+      "as_of": "2026-08-07",
+      "expires": "2026-08-28",
+      "kind": "sector",
+      "tickers": [
+        "IGV"
+      ],
+      "text": "The software ETF was coiling in a symmetrical triangle (possible cup and handle) and needed a confirmed break above 104.",
+      "tags": [
+        "technicals",
+        "software"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0066",
+      "source_id": "S-019",
+      "as_of": "2026-08-07",
+      "expires": "2026-08-28",
+      "kind": "company",
+      "tickers": [
+        "NVDA"
+      ],
+      "text": "Nvidia was breaking its falling resistance line but was stretched above its 150- and 200-day averages.",
+      "tags": [
+        "technicals",
+        "overextension"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0067",
+      "source_id": "S-019",
+      "as_of": "2026-08-07",
+      "expires": "2026-09-07",
+      "kind": "company",
+      "tickers": [
+        "ORCL",
+        "NBIS"
+      ],
+      "text": "A well-known investor disclosed new shorts in Oracle and Nebius; Nebius fell 13%, though it was already far above its 150-day average.",
+      "tags": [
+        "short_sellers",
+        "overextension"
+      ],
+      "status": "unverified"
+    },
+    {
+      "id": "O-0068",
+      "source_id": "S-019",
+      "as_of": "2026-08-07",
+      "expires": "2026-08-28",
+      "kind": "market",
+      "tickers": [],
+      "text": "The S&P 500 was stretched near its upper bounds, waiting on the jobs report and the Jackson Hole symposium.",
+      "tags": [
+        "events",
+        "macro",
+        "overextension"
       ],
       "status": "unverified"
     }

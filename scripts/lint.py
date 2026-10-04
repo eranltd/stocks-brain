@@ -33,7 +33,7 @@ SECRET_PATTERNS = [
 FORBIDDEN_FILES = re.compile(r"(^\.env(\..*)?$|\.pem$|\.key$|^id_(rsa|ed25519)|\.p12$|\.pfx$)")
 EXTERNAL_URL = re.compile(r"(?:https?:)?//[a-z0-9.-]+\.[a-z]{2,}", re.I)
 # Plain links are fine (e.g. "edit on GitHub"); scripts, styles and fonts must be bundled.
-SITE_URL_ALLOW = {"http://www.w3.org/2000/svg", "https://github.com"}
+SITE_URL_ALLOW = {"http://www.w3.org/2000/svg", "https://github.com", "https://www.youtube.com"}
 SITE_SOURCES = ("site/src/", "site/public/", "site/index.html", "site/vite.config.js")
 
 

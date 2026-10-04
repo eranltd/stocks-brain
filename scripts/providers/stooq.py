@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import csv
 import io
+import re
 import time
 import urllib.error
 import urllib.request
@@ -25,7 +26,7 @@ def parse(text: str, symbol: str) -> list[dict]:
     head = text.lstrip()[:200].lower()
     if not head.startswith("date,open,high,low,close"):
         reason = "no data" if "no data" in head else "daily hits limit" if "limit" in head else "unexpected response"
-        raise ProviderError(f"{symbol}: {reason}: {text[:80]!r}")
+        raise ProviderError(f"{symbol}: {reason}: {_describe(text)!r}")
     bars = []
     for row in csv.DictReader(io.StringIO(text)):
         try:
@@ -42,6 +43,17 @@ def parse(text: str, symbol: str) -> list[dict]:
     if not bars:
         raise ProviderError(f"{symbol}: empty CSV")
     return sorted(bars, key=lambda b: b["date"])
+
+
+def _describe(text: str) -> str:
+    """Short human-readable summary of a non-CSV answer (HTML pages: title + visible text)."""
+    if "<html" not in text[:500].lower():
+        return text[:160]
+    title = re.search(r"<title[^>]*>(.*?)</title>", text, re.S | re.I)
+    body = re.sub(r"<(script|style)[^>]*>.*?</\1>", " ", text, flags=re.S | re.I)
+    body = re.sub(r"<[^>]+>", " ", body)
+    body = re.sub(r"\s+", " ", body).strip()
+    return f"html page: title={title.group(1).strip() if title else ''!r} text={body[:240]!r}"
 
 
 def fetch_daily(symbol: str, retries: int = 3, timeout: int = 30) -> list[dict]:

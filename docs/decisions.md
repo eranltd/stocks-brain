@@ -77,7 +77,9 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Batch files are committed** under `data/kb/batches/`. Lint fails if a batch is on record but not ingested.
 - **Insights tab** for the library and dated claims, with search, themes and YouTube links. The owner considers these the most valuable content.
 - **Knowledge has two kinds.** *Principles* are durable lessons, paraphrased, at most 280 characters, cited, with no quotations. *Observations* are dated third-party claims with an expiry and an `unverified` status, kept after expiry so sources can be scored. Ingest goes through `scripts/kb_ingest.py`: ids assigned, invisible characters stripped, idempotent, fails closed.
-- **Direct commits to `main`** at the owner's request; no PRs for now.
+- **Direct commits to `main`** at the owner's request; no PRs for now. *Superseded the same day: two people now work
+  on the repo, so every change goes through a pull request the other can review. The daily Action's data commits to
+  `main` are unchanged.*
 - **Prices: Tiingo**, an official end-of-day API with a free key held in a GitHub secret and sent in a header. Bars are split- and dividend-adjusted; each fetch re-pulls the window. Scoring reads both closes from the current series.
 - **Stooq rejected for the Action**: it serves a JavaScript bot check to GitHub runners (seen in a workflow run). It is kept as a local fallback, and the check is not bypassed.
 - **Code-only routines on**: fetch prices, score matured picks, regime monitor (Mon–Fri 23:40 UTC), calibration (monthly). All cost $0. Lint fails if an active routine has no matching cron in a workflow.
@@ -92,3 +94,4 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - No ticker literals in scripts or site code; they live in `config/`.
 - Fail closed: token cap, cost cap, schema checks and lint all stop a run rather than publish bad data.
 - Public repo: public market data only, no secrets, no personal holdings.
+- Changes reach `main` through a reviewed pull request; only the daily Action commits data there directly.

@@ -1,0 +1,125 @@
+{
+ "change_note": "Batch 5: covenant-bound sellers, 13F rotation in Micron, earnings-season reading guide.",
+ "sources": [
+  {
+   "kind": "video",
+   "ref": "youtube:2RsUWHv37Po",
+   "author": "Micha (YouTube channel)",
+   "year": 2026,
+   "title": "לפני שאתם קונים דירה — חובה לראות את זה (Before you buy an apartment)",
+   "principles": [
+    [
+     "Sellers bound by loan covenants keep list prices sticky even when demand stalls, because an official cut would devalue the collateral. The real discount then shows up in terms and side deals, not in the headline price.",
+     [
+      "real_estate",
+      "covenants",
+      "pricing",
+      "credit"
+     ]
+    ],
+    [
+     "When lenders are carrying unsold inventory for leveraged sellers, bargaining power shifts to the buyer with cash. Official price indices lag that shift.",
+     [
+      "real_estate",
+      "credit",
+      "negotiation"
+     ]
+    ]
+   ],
+   "observations": [
+    {
+     "as_of": "2026-05-30",
+     "expires": "2026-11-30",
+     "kind": "theme",
+     "tickers": [],
+     "text": "Israeli housing: banks were described as heavily funding developers with unsold inventory, who avoid official price cuts. Ministry of Finance data was cited to show buyers hold unusual negotiating power.",
+     "tags": [
+      "real_estate",
+      "credit"
+     ]
+    }
+   ],
+   "published": "2026-05-30"
+  },
+  {
+   "kind": "video",
+   "ref": "youtube:KeqVI4sAiU0",
+   "author": "Micha (YouTube channel)",
+   "year": 2026,
+   "title": "הכסף הגדול חתך 92% ממייקרון — ומה הוא קנה במקום (Big money cut 92% of Micron, and what it bought instead)",
+   "principles": [
+    [
+     "13F filings show what large funds held at quarter end, published weeks later, with no reasons and no shorts or hedges. Treat them as delayed context on positioning, never as a live signal.",
+     [
+      "institutional",
+      "form_13f",
+      "positioning",
+      "discipline"
+     ]
+    ],
+    [
+     "Heavy institutional selling of a cyclical leader after a strong run often signals profit taking ahead of a cycle turn. Check where the money went inside the same sector before reading it as bearish for the whole group.",
+     [
+      "institutional",
+      "rotation",
+      "semis",
+      "cyclicals"
+     ]
+    ]
+   ],
+   "observations": [
+    {
+     "as_of": "2026-08-18",
+     "expires": "2026-11-18",
+     "kind": "company",
+     "tickers": [
+      "MU"
+     ],
+     "text": "13F data was cited showing large institutions cut their Micron holdings by about 92%, rotating into other tech and semiconductor names (destinations not given in the batch).",
+     "tags": [
+      "institutional",
+      "form_13f",
+      "rotation"
+     ]
+    }
+   ],
+   "published": "2026-08-18"
+  },
+  {
+   "kind": "video",
+   "ref": "youtube:jTeuotOQhSE",
+   "author": "Micha (YouTube channel)",
+   "year": 2026,
+   "title": "המדריך המעודכן לעונת הדיווחים - חלק 1 (The updated guide to earnings season, part 1)",
+   "principles": [
+    [
+     "Read a report in order: guidance first, then revenue growth and its quality, then EPS. A beat built on cost cuts or a lower share count is weaker than one built on revenue.",
+     [
+      "earnings",
+      "guidance",
+      "quality"
+     ]
+    ],
+    [
+     "Before a report, note the options-implied move. After it, ask whether the stock moved more or less than priced, and why. That gap is the market's real verdict.",
+     [
+      "earnings",
+      "options",
+      "expectations"
+     ]
+    ],
+    [
+     "Do not open a new short-horizon stance a day or two before a report unless the report is the thesis. The outcome becomes a coin flip on the event, not on the analysis.",
+     [
+      "earnings",
+      "events",
+      "conviction",
+      "discipline"
+     ]
+    ]
+   ],
+   "observations": [],
+   "published": "2026-07-18"
+  }
+ ]
+}

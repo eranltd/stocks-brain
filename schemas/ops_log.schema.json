@@ -1,0 +1,41 @@
+{
+  "$id": "ops_log.schema.json",
+  "title": "Routine run log (data/ops/routine_runs.json)",
+  "description": "One entry per scheduled or manual workflow run, success or failure. Written by scripts/ops_log.py from the workflow itself.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "updated_at", "change_note", "items"],
+  "properties": {
+    "version": {"$ref": "common.schema.json#/$defs/semver"},
+    "updated_at": {"$ref": "common.schema.json#/$defs/date"},
+    "change_note": {"$ref": "common.schema.json#/$defs/change_note"},
+    "items": {
+      "type": "array", "maxItems": 500,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["run_id", "workflow", "trigger", "started_at", "finished_at", "status", "steps", "url"],
+        "properties": {
+          "run_id": {"type": "string", "pattern": "^\\d+$"},
+          "workflow": {"type": "string", "maxLength": 40},
+          "trigger": {"enum": ["schedule", "workflow_dispatch", "push", "manual"]},
+          "started_at": {"$ref": "common.schema.json#/$defs/datetime"},
+          "finished_at": {"$ref": "common.schema.json#/$defs/datetime"},
+          "status": {"enum": ["success", "failure", "partial", "skipped"]},
+          "steps": {
+            "type": "array",
+            "items": {
+              "type": "object", "additionalProperties": false,
+              "required": ["routine", "outcome"],
+              "properties": {
+                "routine": {"type": "string", "pattern": "^[a-z][a-z0-9_]{1,40}$"},
+                "outcome": {"enum": ["success", "failure", "skipped", "cancelled"]}
+              }
+            }
+          },
+          "note": {"type": "string", "maxLength": 300},
+          "url": {"type": "string", "pattern": "^https://github\\.com/[^\\s]+/actions/runs/\\d+$"}
+        }
+      }
+    }
+  }
+}

@@ -52,9 +52,6 @@ export default function HowItWorks({ data }) {
         <MapShowcase />
       </Container>
       <Container className="pt-32">
-        <Routines routines={data.routines} />
-      </Container>
-      <Container className="pt-32">
         <RunIt data={data} />
       </Container>
     </>
@@ -320,76 +317,5 @@ function Ring({ done }) {
         );
       })}
     </svg>
-  );
-}
-
-const CADENCE = [
-  { id: "daily", label: "Every trading day" },
-  { id: "weekly", label: "Every week" },
-  { id: "monthly", label: "Every month" },
-  { id: "on_demand", label: "On demand" },
-];
-const DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-function when(r) {
-  if (!r.cron) return "when you ask";
-  const [m, h, dom, , dow] = r.cron.split(" ");
-  const t = `${pad2(+h)}:${pad2(+m)} UTC`;
-  if (r.cadence === "daily") return `${dow === "1-5" ? "Mon–Fri" : "daily"} · ${t}`;
-  if (r.cadence === "weekly") return `${DOW[+dow] ?? dow} · ${t}`;
-  return `day ${dom} · ${t}`;
-}
-
-function Routines({ routines }) {
-  const [cad, setCad] = useState("daily");
-  const list = routines.routines.filter((r) => r.cadence === cad);
-  const llm = routines.routines.filter((r) => r.uses_llm);
-  return (
-    <div>
-      <SectionHead
-        eyebrow="Routines"
-        title={<>The operating <Accent>rhythm.</Accent></>}
-        lede="Daily, the loop runs and scores. Weekly, it looks for new opportunities and checks old theses. Monthly, it asks whether confidence meant anything. Most of it is plain code; every model step is capped, and anything that changes the rules waits for you."
-      />
-      <Strip
-        cells={[
-          { value: routines.routines.length, label: "routines", desc: "Declared in config/routines.json, all scheduled in UTC." },
-          { value: llm.length, label: "use the model", tone: "ai", desc: `Each capped; at most $${Math.max(...llm.map((r) => r.max_cost_usd)).toFixed(2)} per run.` },
-          { value: routines.routines.filter((r) => r.human_gate).length, label: "wait for you", tone: "people", dashed: true, desc: "They open a pull request instead of changing anything." },
-        ]}
-      />
-      <Reveal className="mt-10 flex flex-wrap gap-2">
-        {CADENCE.map((c) => {
-          const n = routines.routines.filter((r) => r.cadence === c.id).length;
-          return (
-            <button key={c.id} type="button" onClick={() => setCad(c.id)} aria-pressed={cad === c.id}
-              className={`flex items-center gap-2 rounded-full border px-5 py-2.5 text-[14px] font-medium transition ${cad === c.id ? "border-transparent bg-ink text-bg" : "border-line-2 text-ink-2 hover:text-ink"}`}>
-              {c.label} <span className={`num font-mono text-[12px] ${cad === c.id ? "text-bg/60" : "text-ink-3"}`}>{n}</span>
-            </button>
-          );
-        })}
-      </Reveal>
-      <div key={cad} className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-        {list.map((r, i) => (
-          <article key={r.id} className={`card card-hover flex animate-rise flex-col p-7 ${r.human_gate ? "border-dashed border-people/50" : ""}`} style={{ animationDelay: `${i * 70}ms` }}>
-            <div className="flex items-center justify-between gap-3">
-              <span className="meta num">{when(r)}</span>
-              <span className="pill py-1 text-[10px] text-ink-3">{r.milestone} · {r.status}</span>
-            </div>
-            <h4 className="mt-5 text-[21px] font-semibold tracking-[-0.02em]">{r.name}</h4>
-            <p className="mt-3 text-[14.5px] leading-relaxed text-ink-2">{r.why}</p>
-            <div className="mt-auto flex flex-wrap items-center gap-2 border-t border-line pt-5 [margin-top:max(1.5rem,auto)]">
-              {r.uses_llm ? (
-                <span className="pill border-ai/40 bg-ai/10 py-1 text-[10px] text-ai">✦ AI · cap ${r.max_cost_usd.toFixed(2)}</span>
-              ) : (
-                <span className="pill py-1 text-[10px] text-ink-2">plain code · $0</span>
-              )}
-              {r.human_gate && <span className="pill border-dashed border-people/60 py-1 text-[10px] text-people">you approve</span>}
-              <span className="ml-auto truncate font-mono text-[11.5px] text-ink-3" title={r.outputs.join(", ")}>→ {r.outputs[0]}</span>
-            </div>
-          </article>
-        ))}
-      </div>
-    </div>
   );
 }

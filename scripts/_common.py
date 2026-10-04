@@ -23,7 +23,8 @@ RUNS = ROOT / "runs"
 SAMPLES = ROOT / "samples"
 SITE = ROOT / "site"
 
-MD_DOCS = ("strategy", "methodology")
+MD_DOCS = ("strategy", "methodology")  # versions recorded on every run
+EXTRA_MD_DOCS = ("decisions",)  # versioned and published, but not read by the brain
 JSON_DOCS = ("guardrails", "learnings")
 DOC_META_KEYS = ("version", "updated_at", "change_note")
 

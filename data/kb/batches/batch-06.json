@@ -1,0 +1,137 @@
+{
+ "change_note": "Batch 6: valuation vs estimates, consensus outlooks for 2026, live-session discipline.",
+ "sources": [
+  {
+   "kind": "video",
+   "ref": "youtube:7tWWyEs-3dw",
+   "author": "Micha (YouTube channel)",
+   "year": 2026,
+   "title": "אנבידיה זולה יותר מ-S&P 500? השוק יודע משהו? וברודקום? (Is Nvidia cheaper than the S&P 500? And Broadcom?)",
+   "principles": [
+    [
+     "A rising stock can get cheaper on forward P/E when earnings estimates climb faster than the price. Ask whether the discount reflects real growth or doubt that the estimates will hold.",
+     [
+      "valuation",
+      "pe",
+      "estimates"
+     ]
+    ],
+    [
+     "A low forward multiple on a business with cyclical demand often means the market expects peak earnings. Watch the direction of estimate revisions, not just the multiple.",
+     [
+      "valuation",
+      "cyclicals",
+      "estimates"
+     ]
+    ],
+    [
+     "A second play in the same theme spreads company risk but not theme risk. Two chip names riding one AI build-out are largely the same bet.",
+     [
+      "themes",
+      "correlation",
+      "semis"
+     ]
+    ]
+   ],
+   "observations": [
+    {
+     "as_of": "2026-06-13",
+     "expires": "2026-07-13",
+     "kind": "company",
+     "tickers": [
+      "NVDA"
+     ],
+     "text": "Nvidia was described as trading at a lower forward P/E than the S&P 500, because earnings growth had outrun the share price.",
+     "tags": [
+      "valuation",
+      "pe"
+     ]
+    }
+   ],
+   "published": "2026-06-13"
+  },
+  {
+   "kind": "video",
+   "ref": "youtube:N4v9B9YTXRk",
+   "author": "Micha (YouTube channel)",
+   "year": 2025,
+   "title": "האנליסטים בטוחים ב-2026 – וזה בדיוק למה הם עלולים לטעות (Analysts are confident about 2026, which is why they may be wrong)",
+   "principles": [
+    [
+     "Year-ahead bank outlooks describe consensus. When everyone shares one story, surprises tend to come from the other side, so use outlooks as a map of expectations, not as a forecast.",
+     [
+      "analysts",
+      "consensus",
+      "contrarian"
+     ]
+    ],
+    [
+     "Let price confirm a thesis, through a breakout or a hold of support, instead of committing to a rigid twelve-month macro call.",
+     [
+      "technicals",
+      "process",
+      "discipline"
+     ]
+    ],
+    [
+     "In a two-speed, K-shaped economy, winners and losers split inside the same sector. Pick names, not just sectors.",
+     [
+      "macro",
+      "k_shape",
+      "stock_picking"
+     ]
+    ],
+    [
+     "AI's power demand ties tech to energy. Data-centre growth is also a utilities and power-supply story.",
+     [
+      "ai_capex",
+      "energy",
+      "themes"
+     ]
+    ]
+   ],
+   "observations": [
+    {
+     "as_of": "2025-12-29",
+     "expires": "2026-12-31",
+     "kind": "theme",
+     "tickers": [],
+     "text": "2026 outlooks reviewed: Evercore expected a K-shaped recovery led by four sectors. Jefferies highlighted internet, software, biotech and quantum computing.",
+     "tags": [
+      "analysts",
+      "consensus",
+      "outlook"
+     ]
+    }
+   ],
+   "published": "2025-12-29"
+  },
+  {
+   "kind": "video",
+   "ref": "youtube:ZfChchMuM8I",
+   "author": "Micha (YouTube channel)",
+   "year": 2026,
+   "title": "לייב פתיחה יום שישי 2.10.26 (Live Friday open, 2 Oct 2026)",
+   "principles": [
+    [
+     "Friday sessions with weekly options expiring are noisy. Do not read much into a Friday-open move without follow-through the next week.",
+     [
+      "options",
+      "expiration",
+      "noise"
+     ]
+    ],
+    [
+     "A rapid-fire chart review produces setups, not theses. Each setup needs its own evidence and invalidation before it becomes a pick.",
+     [
+      "process",
+      "discipline",
+      "technicals"
+     ]
+    ]
+   ],
+   "observations": [],
+   "published": "2026-10-02"
+  }
+ ]
+}

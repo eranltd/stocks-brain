@@ -3,7 +3,7 @@ import { Markdown, stripFrontMatter } from "../lib/markdown.jsx";
 import { cap, fmtK, fmtUsd, pad2, relDays } from "../lib/format.js";
 import { Accent, ArrowRight, Chip, Container, Reveal, SectionHead } from "../components/ui.jsx";
 
-const ORDER = ["strategy", "guardrails", "methodology", "learnings", "watchlist", "settings", "sources", "routines", "library"];
+const ORDER = ["strategy", "guardrails", "methodology", "learnings", "watchlist", "settings", "sources", "routines", "library", "decisions"];
 const ABOUT = {
   strategy: "What a pick is, and what the brain looks for.",
   guardrails: "The lines a pick never crosses.",
@@ -14,11 +14,17 @@ const ABOUT = {
   sources: "Where data comes from: the connectors.",
   routines: "The schedule: what runs when, and what it may spend.",
   library: "Principles from books and lectures.",
+  decisions: "Every decision and why, plus what is still open.",
 };
 
 function stats(doc, data) {
   const c = doc.content;
   switch (doc.name) {
+    case "decisions": {
+      const body = stripFrontMatter(c);
+      const open = body.split("## Open items")[1]?.split("\n## ")[0] ?? "";
+      return `${(open.match(/^- /gm) || []).length} open items · ${(body.match(/^- \*\*/gm) || []).length} entries`;
+    }
     case "strategy":
     case "methodology": {
       const body = stripFrontMatter(c);

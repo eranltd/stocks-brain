@@ -16,6 +16,7 @@ export async function loadAll(onProgress = () => {}) {
     ...manifest.prices,
     ...Object.values(manifest.kb),
     ...manifest.docs.map((d) => d.file),
+    ...(manifest.ops ? [manifest.ops] : []),
   ];
   let done = 0;
   const entries = await Promise.all(
@@ -42,6 +43,7 @@ export function derive(manifest, files) {
   const library = manifest.kb.library ? files[manifest.kb.library] : null;
   const regime = manifest.kb.regime ? files[manifest.kb.regime] : null;
   const observations = manifest.kb.observations ? files[manifest.kb.observations] : null;
+  const opsLog = manifest.ops ? files[manifest.ops] : null;
   const calibration = manifest.kb.calibration ? files[manifest.kb.calibration] : null;
   const names = Object.fromEntries(watchlist.symbols.map((s) => [s.symbol, s.name]));
   const bench = settings.scoring.benchmark;
@@ -77,7 +79,7 @@ export function derive(manifest, files) {
 
   return {
     manifest, runs, shownRuns, latest, lastOk, prices, watchlist, settings, learnings, guardrails,
-    outcomes, library, sources, routines, names, bench, kb, docs, regime, calibration, observations,
+    outcomes, library, sources, routines, names, bench, kb, docs, regime, calibration, observations, opsLog,
     sample: manifest.source === "sample", livePrices: manifest.price_source === "live",
   };
 }

@@ -10,6 +10,7 @@ import KB from "./tabs/KB.jsx";
 import Insights from "./tabs/Insights.jsx";
 import Learnings from "./tabs/Learnings.jsx";
 import Runs from "./tabs/Runs.jsx";
+import Routines from "./tabs/Routines.jsx";
 import HowItWorks from "./tabs/HowItWorks.jsx";
 import Admin from "./tabs/Admin.jsx";
 
@@ -21,6 +22,7 @@ const TABS = [
   { id: "insights", label: "Insights", C: Insights },
   { id: "learnings", label: "Learnings", C: Learnings },
   { id: "runs", label: "Runs", C: Runs },
+  { id: "routines", label: "Routines", C: Routines },
   { id: "how", label: "How it works", C: HowItWorks },
   { id: "admin", label: "Admin", C: Admin },
 ];

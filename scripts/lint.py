@@ -12,7 +12,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _common import (  # noqa: E402
-    CONFIG, DOC_META_KEYS, DOCS, JSON_DOCS, KB, MD_DOCS, PRICES, ROOT, RUNS, SAMPLES, SCHEMAS, SITE,
+    CONFIG, DATA, DOC_META_KEYS, DOCS, EXTRA_MD_DOCS, JSON_DOCS, KB, MD_DOCS, PRICES, ROOT, RUNS, SAMPLES, SCHEMAS, SITE,
     SchemaError, Validator, load_json, parse_front_matter,
 )
 
@@ -114,7 +114,7 @@ class Lint:
     # --------------------------------------------------------------------- docs
     def check_docs(self) -> tuple[dict | None, dict]:
         versions: dict = {}
-        for name in MD_DOCS:
+        for name in (*MD_DOCS, *EXTRA_MD_DOCS):
             path = DOCS / f"{name}.md"
             if not path.exists():
                 self.err(path, "missing")
@@ -147,7 +147,7 @@ class Lint:
             ids = [i["id"] for i in learn["items"]]
             if len(ids) != len(set(ids)):
                 self.err(DOCS / "learnings.json", "duplicate lesson ids")
-        assert set(versions) == set(MD_DOCS) | set(JSON_DOCS)
+        assert set(versions) == set(MD_DOCS) | set(EXTRA_MD_DOCS) | set(JSON_DOCS)
         return guard, versions
 
     # --------------------------------------------------------------------- data
@@ -255,6 +255,22 @@ class Lint:
         if any(b in run["summary"].lower() for b in banned):
             self.err(path, "banned phrase in summary")
 
+    def check_ops_and_batches(self) -> None:
+        log = DATA / "ops" / "routine_runs.json"
+        if log.exists():
+            self.schema(log, "ops_log.schema.json")
+        lib_path = KB / "library.json"
+        refs = {s.get("ref") for s in load_json(lib_path)["sources"]} if lib_path.exists() else set()
+        for p in sorted((KB / "batches").glob("*.json")) if (KB / "batches").exists() else []:
+            try:
+                batch = load_json(p)
+            except Exception as exc:  # noqa: BLE001
+                self.err(p, f"invalid JSON: {exc}")
+                continue
+            missing = [s["ref"] for s in batch.get("sources", []) if s.get("ref") not in refs]
+            if missing:
+                self.err(p, f"not ingested yet: {missing[:3]} (run scripts/kb_ingest.py)")
+
     # ------------------------------------------------------------------ hygiene
     def check_hygiene(self, guard: dict | None, wl: dict | None, st: dict | None) -> None:
         max_kb = st["lint"]["max_file_kb"] if st else 512
@@ -308,6 +324,7 @@ class Lint:
         st, wl = self.check_config()
         guard, _ = self.check_docs()
         self.check_data(guard, wl, st)
+        self.check_ops_and_batches()
         self.check_hygiene(guard, wl, st)
         for w in self.warnings:
             print(f"warn  {w}")

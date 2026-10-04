@@ -52,8 +52,13 @@ It runs full-screen and works offline with the last data it saw.
 
 ## Dashboard
 
-Today · Watchlist · Track record · KB (every pick, plus the library) · Learnings · Runs · How it works (pipeline map,
-routines, roadmap) · Admin (the rule book with versions and GitHub edit links, plus connectors).
+Today · Watchlist · Track record · KB (every pick) · Insights (library principles + dated claims) · Learnings ·
+Runs (brain cost/time) · Routines (schedule, caps, run history) · How it works (pipeline map, roadmap) ·
+Admin (the rule book with versions and GitHub edit links, connectors, decision log).
+
+**Nothing lives only in a chat session.** Decisions and open items are in `docs/decisions.md`. Every KB batch is in
+`data/kb/batches/` (lint fails if one is not ingested). Every routine run, failures included, is appended to
+`data/ops/routine_runs.json`.
 It has no third-party runtime scripts or fonts: everything is bundled and served from the Pages origin. It honours
 `prefers-reduced-motion` and works at 393px.
 

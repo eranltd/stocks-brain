@@ -18,7 +18,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _common import (  # noqa: E402
-    CONFIG, DOCS, JSON_DOCS, KB, MD_DOCS, PRICES, RUNS, SAMPLES, SITE, dump_json, load_json,
+    CONFIG, DATA, DOCS, EXTRA_MD_DOCS, JSON_DOCS, KB, MD_DOCS, PRICES, RUNS, SAMPLES, SITE, dump_json, load_json,
     parse_front_matter, settings,
 )
 
@@ -72,7 +72,7 @@ def main() -> int:
         _copy(CONFIG / f"{name}.json", OUT / "config" / f"{name}.json")
 
     docs = []
-    for name in MD_DOCS:
+    for name in (*MD_DOCS, *EXTRA_MD_DOCS):
         meta, _ = parse_front_matter((DOCS / f"{name}.md").read_text(encoding="utf-8"))
         _copy(DOCS / f"{name}.md", OUT / "docs" / f"{name}.md")
         docs.append({"name": name, "file": f"docs/{name}.md", "path": f"docs/{name}.md", **meta})
@@ -87,7 +87,12 @@ def main() -> int:
         docs.append({"name": name, "file": f"config/{name}.json", "path": f"config/{name}.json",
                      **{k: obj[k] for k in ("version", "updated_at", "change_note")}})
 
+    ops = DATA / "ops" / "routine_runs.json"
+    if ops.exists():
+        _copy(ops, OUT / "ops" / "routine_runs.json")
+
     dump_json(OUT / "manifest.json", {
+        "ops": "ops/routine_runs.json" if ops.exists() else None,
         "source": source,
         "price_source": price_source,
         "price_provider": st["prices"]["provider"],

@@ -36,7 +36,7 @@ export default function TrackRecord({ data }) {
         cells={[
           { value: s.n, label: "scored", desc: `${pending} more waiting for their horizon.` },
           { value: `${fmtNum(s.hitRate, 0)}%`, label: "hit rate", desc: `${s.hits} hits · ${s.flats} flat · ${s.misses} misses.` },
-          { value: fmtPct(s.avgExcess, 1), label: "avg excess", tone: s.avgExcess >= 0 ? "accent" : "down", desc: `Mean pick return minus ${bench.symbol}.` },
+          { value: fmtPct(s.avgExcess, 1), label: "avg signed excess", tone: s.avgExcess >= 0 ? "accent" : "down", desc: `Excess vs ${bench.symbol} in the direction of the call (bearish right = positive).` },
           { value: s.best ? fmtPct(s.best.excess_pct, 1) : "—", label: `best · ${s.best?.ticker ?? ""}`, tone: "flat", desc: s.worst ? `Worst: ${s.worst.ticker} ${fmtPct(s.worst.excess_pct, 1)}.` : "" },
         ]}
       />

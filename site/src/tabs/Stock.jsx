@@ -3,9 +3,10 @@ import { fmtDate, fmtNum, fmtPct, fmtShort, cap } from "../lib/format.js";
 import { useInView } from "../lib/motion.js";
 import { Accent, ArrowRight, Chip, Container, Conviction, Empty, Headline, Reveal, Segmented, Strip } from "../components/ui.jsx";
 import { STAGES, trustStage } from "../components/trust.jsx";
+import { STATUS } from "../components/goal.jsx";
 
 /** Plain-language summary, assembled by code from the computed numbers (no model). */
-function plainWords(row, checks, benchSymbol, benchLabel, liveClaims, settings) {
+function plainWords(row, checks, benchSymbol, benchLabel, liveClaims, settings, baseRate) {
   const out = [];
   const pct = (v) => `${Math.abs(v).toFixed(1)}%`;
   if (row.vs_bench_20d_pct != null) {
@@ -20,21 +21,24 @@ function plainWords(row, checks, benchSymbol, benchLabel, liveClaims, settings) 
   if (row.symbol !== benchSymbol) {
     const n = checks.filter((c) => c.pass).length;
     out.push(n === 4 ? "All four setup checks pass: a healthy setup, but not a buy signal on its own." : n === 3 ? "Three of four setup checks pass." : n === 2 ? "Only two of four setup checks pass: mixed." : "Most setup checks fail: a name to watch, not to add to.");
+    const rate = baseRate?.by_score.find((r) => r.passed === n);
+    if (rate?.n) out.push(`In ${baseRate.from.slice(0, 4)}–${baseRate.to.slice(0, 4)}, names with ${n} of 4 went on to ${rate.mean >= 0 ? "beat" : "trail"} the benchmark by ${Math.abs(rate.mean).toFixed(1)} points over the next ${baseRate.horizon_days} days on average (${rate.n} cases).`);
   }
   if (liveClaims) out.push(`${liveClaims} live ${liveClaims === 1 ? "claim" : "claims"} from your sources mention it (unverified, see below).`);
   return out;
 }
 
 /** House rules applied to one stock: can the household act on it today? */
-function actGate(data, row, checks, picks) {
+function actGate(data, row, checks) {
   const { stage } = trustStage(data);
   const passed = checks.filter((c) => c.pass).length;
-  const latest = !data.sample ? picks[0] : null;
-  const fresh = latest && (Date.now() - new Date(latest.date + "T00:00:00Z")) / 864e5 <= 7;
+  const st = data.longrun?.now.status.find((x) => x.symbol === row.symbol);
+  const held = st && (st.status === "kept" || st.status === "added");
+  const stretched = row.setup?.stretched ?? !checks.find((c) => c.id === "calm").pass;
   const reasons = [
     { ok: stage >= 2, text: stage >= 2 ? `Trust stage ${stage} (${STAGES[stage].name}) allows small positions` : `Trust stage ${stage} (${STAGES[stage].name}): no money moves yet` },
-    { ok: Boolean(fresh && latest.stance === "bullish"), text: fresh ? `The brain's latest call is ${latest.stance}` : "No fresh bullish call from the brain" },
-    { ok: passed >= 3, text: `${passed} of 4 setup checks pass (need 3)` },
+    { ok: Boolean(held), text: st ? (held ? "The portfolio rule holds it" : `The portfolio rule leaves it out: ${STATUS[st.status].label.toLowerCase()}`) : "The portfolio rule has not run yet" },
+    { ok: passed >= 3 && !stretched, text: stretched ? "Stretched above its trend: no new buys" : `${passed} of 4 setup checks pass (need 3)` },
   ];
   return { ok: reasons.every((r) => r.ok), reasons };
 }
@@ -46,24 +50,28 @@ const RANGES = [
   { value: 252, label: "1Y" },
 ];
 
-/** Code-only setup checks (docs/methodology.md, "Setup checks"). Not a recommendation. */
+/** Setup checks v2, computed in Python (derived.json `setup`; docs/methodology.md). Not a recommendation. */
 export function setupChecks(row, bench, settings) {
   const s = settings.setup;
+  const st = row.setup;
+  const c = st?.checks ?? {
+    trend: row.dist_sma50_pct > 0, rs_3m: (row.vs_bench_60d_pct ?? 0) > 0, rs_6m: (row.vs_bench_120d_pct ?? 0) > 0, calm: row.dist_sma50_pct < s.stretch_pct,
+  };
   return [
-    { id: "trend", label: "Trend", pass: row.dist_sma50_pct > 0, detail: `${fmtPct(row.dist_sma50_pct, 1)} vs its 50-day average` },
-    { id: "rs", label: `Beats ${bench}`, pass: (row.vs_bench_20d_pct ?? 0) > 0, detail: `${fmtPct(row.vs_bench_20d_pct ?? 0, 1)} over ${s.rel_days} days` },
-    { id: "mom", label: "Momentum", pass: row.ret_60d_pct > 0, detail: `${fmtPct(row.ret_60d_pct, 1)} over 60 days` },
-    { id: "ext", label: "Not stretched", pass: row.dist_sma50_pct < s.stretch_pct, detail: `limit +${s.stretch_pct}% above the 50-day` },
+    { id: "trend", label: "Trend", pass: c.trend, detail: st ? `${fmtPct(st.dist_sma50_pct, 1)} vs its 50-day, ${fmtPct(st.dist_long_pct, 1)} vs its ${s.trend_long_days}-day average` : `${fmtPct(row.dist_sma50_pct, 1)} vs its 50-day average` },
+    { id: "rs_3m", label: `Beats ${bench} · 3 months`, pass: c.rs_3m, detail: `${fmtPct(st?.vs_bench_short_pct ?? row.vs_bench_60d_pct ?? 0, 1)} over ${s.rs_short_days} days` },
+    { id: "rs_6m", label: `Beats ${bench} · 6 months`, pass: c.rs_6m, detail: `${fmtPct(st?.vs_bench_long_pct ?? row.vs_bench_120d_pct ?? 0, 1)} over ${s.rs_long_days} days` },
+    { id: "calm", label: "Not stretched", pass: c.calm, detail: `${fmtPct(row.dist_sma50_pct, 1)} above the 50-day (limit +${s.stretch_pct}%)${s.veto_stretched ? ". Failing this blocks new buys" : ""}` },
   ];
 }
 
 /** Library principles matched to this stock's condition (same tag mechanism as the market brief). */
 function stockLessons(row, checks, library) {
   const conds = [
-    !checks.find((c) => c.id === "ext").pass && { why: "Stretched above its trend", tags: ["overextension", "mean_reversion"] },
+    !checks.find((c) => c.id === "calm").pass && { why: "Stretched above its trend", tags: ["overextension", "mean_reversion"] },
     !checks.find((c) => c.id === "trend").pass && { why: "Below its 50-day average", tags: ["invalidation", "reversal", "breakouts"] },
-    checks.find((c) => c.id === "rs").pass && { why: "Leading the benchmark", tags: ["momentum", "leadership", "relative_strength"] },
-    !checks.find((c) => c.id === "rs").pass && { why: "Lagging the benchmark", tags: ["breadth", "leadership", "stance"] },
+    checks.find((c) => c.id === "rs_6m").pass && { why: "Leading the benchmark over 6 months", tags: ["momentum", "relative_strength"] },
+    !checks.find((c) => c.id === "rs_6m").pass && { why: "Lagging the benchmark over 6 months", tags: ["relative_strength", "stance", "breadth"] },
     row.from_high_pct != null && row.from_high_pct > -2 && { why: "At a 1-year high", tags: ["all_time_highs"] },
     row.from_high_pct != null && row.from_high_pct < -20 && { why: "Far below its high", tags: ["bottoms", "valuation"] },
   ].filter(Boolean);
@@ -99,8 +107,10 @@ export default function Stock({ data, symbol, go }) {
   const picks = kb.filter((k) => k.ticker === symbol);
   const lessons = stockLessons(row, checks, library);
   const others = market.symbols.filter((s) => s.symbol !== bench.symbol);
-  const words = plainWords(row, checks, bench.symbol, bench.label, liveClaims.length, settings);
-  const gate = isBench ? null : actGate(data, row, checks, picks);
+  const words = plainWords(row, checks, bench.symbol, bench.label, liveClaims.length, settings, market.base_rates);
+  const gate = isBench ? null : actGate(data, row, checks);
+  const long = data.longrun?.members.find((m) => m.symbol === symbol);
+  const goal = settings.goal.annual_return_pct;
   const idx = others.findIndex((s) => s.symbol === symbol);
 
   return (
@@ -161,6 +171,7 @@ export default function Stock({ data, symbol, go }) {
             { value: fmtPct(row.ret_20d_pct, 1), label: "20 days", tone: row.ret_20d_pct >= 0 ? "accent" : "down" },
             ...(isBench ? [] : [{ value: fmtPct(row.vs_bench_20d_pct ?? 0, 1), label: `vs ${bench.symbol}`, tone: (row.vs_bench_20d_pct ?? 0) >= 0 ? "accent" : "down" }]),
             { value: fmtPct(row.ret_60d_pct, 1), label: "60 days", tone: row.ret_60d_pct >= 0 ? "accent" : "down" },
+            ...(row.risk ? [{ value: fmtPct(row.risk.max_dd_1y_pct, 0), label: "deepest drop, 1y", tone: "down" }] : []),
             { value: row.from_high_pct != null ? fmtPct(row.from_high_pct, 1) : "—", label: "from 1y high", tone: "flat" },
             ...(row.vol20_pct != null ? [{ value: `${fmtNum(row.vol20_pct, 0)}%`, label: "volatility (ann.)", tone: "flat" }] : []),
           ]}
@@ -170,6 +181,31 @@ export default function Stock({ data, symbol, go }) {
       <Reveal className="card mt-6 p-5 sm:p-8">
         <StockChart row={row} bench={isBench ? null : benchRow} benchSymbol={bench.symbol} picks={sample ? [] : picks} />
       </Reveal>
+
+      {long && (
+        <Reveal className="card mt-6 p-6 sm:p-8">
+          <div className="flex flex-wrap items-baseline justify-between gap-3">
+            <h3 className="text-[22px] font-semibold tracking-[-0.02em]">Against the +{goal}% goal</h3>
+            <span className="meta">{fmtDate(data.longrun.from)} to {fmtDate(data.longrun.to)} · hindsight applies</span>
+          </div>
+          <div className="mt-5 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-6">
+            {[
+              [fmtPct(long.cagr_pct, 1), "a year", long.cagr_pct >= goal ? "text-accent" : ""],
+              [`${fmtNum(long.hit_goal_12m_pct, 0)}%`, `of 12-month windows at +${goal}% or more`, ""],
+              [`${fmtNum(long.loss_12m_pct, 0)}%`, "of 12-month windows lost money", ""],
+              [fmtPct(long.worst_12m_pct, 0), "worst 12 months", "text-down"],
+              [fmtPct(long.max_dd_pct, 0), "deepest drop from a peak", "text-down"],
+              [`${fmtNum(long.held_pct, 0)}%`, "of months held by the rule", ""],
+            ].map(([v, l, tone]) => (
+              <div key={l}>
+                <div className={`display num text-[clamp(26px,3vw,36px)] leading-none ${tone}`}>{v}</div>
+                <div className="mt-2 text-[12.5px] leading-snug text-ink-3">{l}</div>
+              </div>
+            ))}
+          </div>
+          {row.risk && <p className="mt-5 text-[14px] leading-relaxed text-ink-2">Over the last year it swung {fmtNum(row.risk.vol_1y_pct, 0)}% a year (beta {row.risk.beta_1y ?? "–"} to {bench.symbol}). In a bad month, 1 in 20, a position could lose about <span className="text-down">{fmtPct(row.risk.loss_95_20d_pct, 0)}</span>. Size it so that loss is acceptable.</p>}
+        </Reveal>
+      )}
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         {!isBench && (

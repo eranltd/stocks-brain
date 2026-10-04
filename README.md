@@ -4,6 +4,10 @@ A personal, public stock-analysis agent. Every day it fetches Nasdaq data for a 
 makes **one** LLM call that returns schema-checked picks, scores past picks with code, and publishes a static dashboard
 on GitHub Pages.
 
+**The household goal:** a diverse portfolio of 4-5 stocks around an index-fund core, aiming for +20% a year. The home page
+leads with a computed verdict, checks the goal against history, shows what portfolio rule v1 holds and why, and keeps a
+forward paper record that cannot be re-fitted. Money moves only when the trust ladder allows it (`docs/household.md`).
+
 > Analysis only, not financial advice. Data may be delayed.
 > The repo and the site are **public**: public market data only, no secrets, no personal holdings.
 
@@ -21,10 +25,12 @@ docs/        strategy.md, methodology.md (front matter: version, updated_at, cha
              guardrails.json, learnings.json (same three keys)
 config/      watchlist.json, settings.json, sources.json (connectors), routines.json (schedule)
 schemas/     JSON Schemas for every file above, plus pick, run, outcome, prices, library
-data/        prices/ (written by the fetch Action), kb/outcomes.json, kb/library.json
+data/        market/derived.json + longrun.json (returns only, no prices), portfolio/paper.json (forward record),
+             kb/outcomes.json, kb/library.json, ops/routine_runs.json  (raw bars stay in git-ignored .cache/)
 runs/        run.<date>.json, one per run
 samples/     deterministic synthetic data so the dashboard renders before live data exists
-scripts/     _common.py (strict stdlib JSON-Schema subset), lint.py, scoring.py,
+scripts/     _common.py (strict stdlib JSON-Schema subset), lint.py, scoring.py, market.py (setup checks, base
+             rates, context), portfolio.py (rule v1, goal check), routines_code.py (daily code-only steps),
              make_sample_data.py, build_site.py
 prompts/     brain.md
 site/        React + Tailwind + Vite dashboard (builds to _site/)
@@ -52,7 +58,8 @@ It runs full-screen and works offline with the last data it saw.
 
 ## Dashboard
 
-Today · Watchlist · Track record · KB (every pick) · Insights (library principles + dated claims) · Learnings ·
+Today (verdict, goal check, portfolio, market context, do the rules work, trust ladder) · Portfolio (4-5 stock builder,
+correlation map, rule history, paper record) · Watchlist · Track record · KB (every pick) · Insights (library principles + dated claims) · Learnings ·
 Runs (brain cost/time) · Routines (schedule, caps, run history) · How it works (pipeline map, roadmap) ·
 Admin (the rule book with versions and GitHub edit links, connectors, decision log).
 

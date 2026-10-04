@@ -1,33 +1,44 @@
-import { summarize } from "../lib/data.js";
+import { daysBetween } from "../lib/stats.js";
 import { fmtNum, fmtPct } from "../lib/format.js";
 import { Accent, ArrowRight, Reveal } from "./ui.jsx";
 
 export const STAGES = [
-  { id: 0, name: "Observe", money: "No money moves", blurb: "The brain is not making real calls yet. Read and learn." },
-  { id: 1, name: "Paper", money: "No money moves", blurb: "Real calls are made and scored by code, as if invested." },
-  { id: 2, name: "Small money", money: "Small satellite positions", blurb: "The record has cleared the bar. Act within the house limits." },
-  { id: 3, name: "Trusted", money: "Satellite within limits", blurb: "A longer record, and conviction has proven meaningful." },
+  { id: 0, name: "Observe", money: "No money moves", blurb: "The rule is not on record yet. Read and learn." },
+  { id: 1, name: "Paper", money: "No money moves", blurb: "The rule holds a paper portfolio, recorded forward and never edited." },
+  { id: 2, name: "Small money", money: "Small satellite positions", blurb: "The paper record and the history both cleared the bar. Act within the house limits." },
+  { id: 3, name: "Trusted", money: "Satellite within limits", blurb: "A full year of forward record, still ahead of the core." },
 ];
 
-/** Current trust stage from REAL outcomes only (samples never count). Thresholds: settings.trust. */
+/**
+ * Trust stage for the thing that would move money: portfolio rule v1. Evidence (all computed by code):
+ * the forward paper record (data/portfolio/paper.json), the ~9-year rule test (longrun.json) and the
+ * base rates of the setup gate (derived.json). Samples never count. Thresholds: settings.trust.
+ */
 export function trustStage(data) {
   const t = data.settings.trust;
-  const live = !data.sample;
-  const realPicks = live ? data.kb.length : 0;
-  const s = summarize(live ? data.outcomes : []);
-  const calib = live ? data.calibration?.conviction_verdict : null;
-  const metricsOk = s.n > 0 && s.hitRate >= t.min_hit_rate_pct && s.avgExcess >= t.min_avg_excess_pct;
-  let stage = 0;
-  if (realPicks > 0) stage = 1;
-  if (stage === 1 && s.n >= t.paper_min_scored && metricsOk) stage = 2;
-  if (stage === 2 && s.n >= t.small_min_scored && calib === "informative") stage = 3;
-  const need = [
-    ["The brain makes real, scored calls (milestone M3)"],
-    [`${s.n}/${t.paper_min_scored} scored picks`, `hit rate ${fmtNum(s.hitRate, 0)}% (need ${t.min_hit_rate_pct}%)`, `average excess ${fmtPct(s.avgExcess, 1)} (need ${fmtPct(t.min_avg_excess_pct, 1)})`],
-    [`${s.n}/${t.small_min_scored} scored picks`, `conviction ${calib ? calib.replaceAll("_", " ") : "not measured"} (need informative)`],
-    [],
-  ][stage];
-  return { stage, s, need, realPicks };
+  const paper = data.paper && !data.paper.sample ? data.paper : null;
+  const lr = data.longrun && !data.longrun.sample ? data.longrun : null;
+  const gate = data.livePrices ? data.market.base_rates?.gate : null;
+  const days = paper ? daysBetween(paper.started, paper.as_of) : 0;
+  const last = paper?.track.at(-1);
+  const vsCore = last ? last.v - last.core_v : null;
+  const ruleVsAll = lr ? lr.stats.rule.cagr_pct - lr.stats.equal_weight.cagr_pct : null;
+
+  const small = [
+    { ok: days >= t.paper_min_days_small, text: `Paper record: ${days} of ${t.paper_min_days_small} days` },
+    { ok: vsCore != null && vsCore > 0, text: vsCore == null ? "Paper portfolio ahead of the core (not measured yet)" : `Paper portfolio vs the core since ${paper.started}: ${fmtPct(vsCore, 1)} (need above 0)` },
+    { ok: ruleVsAll != null && ruleVsAll > 0, text: ruleVsAll == null ? "Rule beats holding every name (history not computed yet)" : `Over ${fmtNum(lr.years, 1)} years the rule ${ruleVsAll > 0 ? "beat" : "trailed"} holding every name by ${fmtNum(Math.abs(ruleVsAll), 1)} pts a year` },
+    { ok: Boolean(gate && gate.pass.ci_low > 0), text: gate ? `Names passing the gate beat ${data.bench.symbol}: ${fmtPct(gate.pass.mean ?? 0, 2)} per 20 days, 90% range from ${fmtPct(gate.pass.ci_low ?? 0, 2)} (need above 0)` : "Setup-gate base rates (not computed yet)" },
+  ];
+  const trusted = [
+    { ok: days >= t.paper_min_days_trusted, text: `Paper record: ${days} of ${t.paper_min_days_trusted} days` },
+    { ok: vsCore != null && vsCore > 0, text: "Still ahead of the core" },
+  ];
+  let stage = paper ? 1 : 0;
+  if (stage === 1 && small.every((c) => c.ok)) stage = 2;
+  if (stage === 2 && trusted.every((c) => c.ok)) stage = 3;
+  const need = [[{ ok: false, text: "The paper portfolio starts with the next daily run" }], small, trusted, []][stage];
+  return { stage, need, days, vsCore, small };
 }
 
 export function TrustLadder({ data, go, compact = false }) {
@@ -40,13 +51,18 @@ export function TrustLadder({ data, go, compact = false }) {
           <div className="eyebrow mb-4">Can we trust it yet?</div>
           <h3 className="display text-[clamp(30px,4vw,48px)]">Stage {stage}: <Accent>{cur.name}.</Accent></h3>
           <p className="mt-4 text-[16px] leading-relaxed text-ink-2">
-            {cur.blurb} <span className="text-ink">{cur.money}.</span> Trust is earned by the scored record, never by the story, and the site steps back down if the numbers slip.
+            {cur.blurb} <span className="text-ink">{cur.money}.</span> Trust is earned by the record, never by the story, and the site steps back down if the numbers slip.
           </p>
           {need.length > 0 && (
             <div className="mt-5">
               <div className="meta mb-2">To reach {STAGES[stage + 1].name}</div>
-              <ul className="grid gap-1.5 text-[14.5px]">
-                {need.map((n) => <li key={n} className="flex gap-2"><span className="text-people">○</span>{n}</li>)}
+              <ul className="grid gap-2 text-[14.5px]">
+                {need.map((n) => (
+                  <li key={n.text} className="flex gap-2.5">
+                    <span className={`mt-0.5 grid size-5 shrink-0 place-items-center rounded-full text-[11px] ${n.ok ? "bg-accent/15 text-accent" : "bg-people/15 text-people"}`}>{n.ok ? "✓" : "–"}</span>
+                    <span className={n.ok ? "" : "text-ink-2"}>{n.text}</span>
+                  </li>
+                ))}
               </ul>
             </div>
           )}

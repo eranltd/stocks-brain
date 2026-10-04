@@ -1,6 +1,8 @@
 // Loads the exported JSON (see scripts/build_site.py) and derives view models.
 // All numbers shown on the dashboard are computed here or in Python, never by the LLM.
 
+import { signedExcess } from "./stats.js";
+
 const BASE = "./data/";
 
 async function get(path) {
@@ -14,6 +16,8 @@ export async function loadAll(onProgress = () => {}) {
   const paths = [
     ...manifest.runs,
     manifest.market,
+    ...(manifest.longrun ? [manifest.longrun] : []),
+    ...(manifest.paper ? [manifest.paper] : []),
     ...Object.values(manifest.kb),
     ...manifest.docs.map((d) => d.file),
     ...(manifest.ops ? [manifest.ops] : []),
@@ -32,6 +36,9 @@ export async function loadAll(onProgress = () => {}) {
 export function derive(manifest, files) {
   const runs = manifest.runs.map((p) => files[p]).sort((a, b) => a.date.localeCompare(b.date));
   const market = files[manifest.market];
+  // Goal check and portfolio rule (data/market/longrun.json) and the forward-only paper record.
+  const longrun = manifest.longrun ? files[manifest.longrun] : null;
+  const paper = manifest.paper ? files[manifest.paper] : null;
   // Indexed sparklines (100 = start of window). No absolute prices are published.
   const prices = Object.fromEntries(market.symbols.map((s) => [s.symbol, { ...s, bars: s.spark.map((p) => ({ date: p.date, close: p.v })) }]));
   const doc = (name) => manifest.docs.find((d) => d.name === name);
@@ -50,6 +57,9 @@ export function derive(manifest, files) {
   const names = Object.fromEntries(watchlist.symbols.map((s) => [s.symbol, s.name]));
   const bench = settings.scoring.benchmark;
   names[bench.symbol] = bench.label;
+  for (const c of watchlist.context ?? []) names[c.symbol] ??= c.name;
+  const sectors = Object.fromEntries(watchlist.symbols.map((s) => [s.symbol, s.sector]));
+  const core = watchlist.core ?? null;
 
   const outcomeById = Object.fromEntries(outcomes.map((o) => [o.pick_id, o]));
   const kb = runs
@@ -81,19 +91,21 @@ export function derive(manifest, files) {
 
   return {
     market, manifest, runs, shownRuns, latest, lastOk, prices, watchlist, settings, learnings, guardrails,
-    outcomes, library, sources, routines, names, bench, kb, docs, regime, calibration, observations, opsLog,
+    outcomes, library, sources, routines, names, bench, kb, docs, regime, calibration, observations, opsLog, longrun, paper, sectors, core,
     sample: manifest.source === "sample", livePrices: manifest.price_source === "live",
   };
 }
 
 // ---------------------------------------------------------------- stats helpers
 
+// Averages use signed excess (in the direction of the call); raw excess would credit a wrong bearish
+// call on a rallying stock. See lib/stats.js for effective N and the Wilson bound.
 export function summarize(outcomes) {
   const n = outcomes.length;
   const count = (v) => outcomes.filter((o) => o.verdict === v).length;
   const hits = count("hit");
-  const excess = outcomes.map((o) => o.excess_pct);
-  const avg = n ? excess.reduce((a, b) => a + b, 0) / n : 0;
+  const signed = outcomes.map(signedExcess);
+  const avg = n ? signed.reduce((a, b) => a + b, 0) / n : 0;
   return {
     n, hits, misses: count("miss"), flats: count("flat"),
     hitRate: n ? (hits / n) * 100 : 0,

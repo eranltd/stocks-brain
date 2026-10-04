@@ -1,16 +1,18 @@
 import { useMemo, useState } from "react";
 import { fmtDate, fmtNum, fmtPct, numWord } from "../lib/format.js";
 import { Sparkline } from "../components/charts.jsx";
+import { STATUS } from "../components/goal.jsx";
 import { Accent, Container, Reveal, SectionHead, Segmented, Strip } from "../components/ui.jsx";
 
 export default function Watchlist({ data, go }) {
-  const { watchlist, prices, bench, settings, regime, livePrices, market } = data;
+  const { watchlist, prices, bench, settings, regime, livePrices, market, longrun } = data;
+  const ruleOf = Object.fromEntries((longrun?.now.status ?? []).map((x) => [x.symbol, x.status]));
   const [sort, setSort] = useState("list");
   const days = settings.site.sparkline_days;
 
   const rows = useMemo(() => {
     const list = watchlist.symbols.map((s, i) => ({ ...s, i, m: prices[s.symbol] }));
-    const key = { gainers: (r) => -(r.m?.change_1d_pct ?? -1e9), losers: (r) => r.m?.change_1d_pct ?? 1e9, rel: (r) => -(r.m?.vs_bench_20d_pct ?? -1e9) }[sort];
+    const key = { gainers: (r) => -(r.m?.change_1d_pct ?? -1e9), losers: (r) => r.m?.change_1d_pct ?? 1e9, checks: (r) => -((r.m?.setup?.passed ?? -1) * 1000 + (r.m?.setup?.vs_bench_long_pct ?? 0)) }[sort];
     if (key) list.sort((a, b) => key(a) - key(b));
     if (sort === "symbol") list.sort((a, b) => a.symbol.localeCompare(b.symbol));
     return list;
@@ -29,23 +31,23 @@ export default function Watchlist({ data, go }) {
             label="Sort"
             value={sort}
             onChange={setSort}
-            options={[{ value: "list", label: "List order" }, { value: "gainers", label: "Gainers" }, { value: "losers", label: "Losers" }, { value: "rel", label: `vs ${bench.symbol}` }, { value: "symbol", label: "A–Z" }]}
+            options={[{ value: "list", label: "List order" }, { value: "gainers", label: "Gainers" }, { value: "losers", label: "Losers" }, { value: "checks", label: "Checks" }, { value: "symbol", label: "A–Z" }]}
           />
         }
       />
-      {regime && <Regime regime={regime} breadth={market.breadth_above_sma50_pct} />}
+      {regime && <Regime regime={regime} above={rows.filter((r) => r.m?.above_sma50).length} total={rows.length} />}
       <div className="meta mb-3 hidden grid-cols-[minmax(150px,1.1fr)_minmax(140px,2fr)_minmax(100px,.8fr)_minmax(130px,.9fr)] gap-6 px-7 sm:grid">
-        <span>Name</span><span>{days} days, indexed</span><span className="text-right">20d vs {bench.symbol}</span><span className="text-right">Today</span>
+        <span>Name</span><span>{days} days, indexed</span><span className="text-right">Checks · rule</span><span className="text-right">Today</span>
       </div>
       <div className="grid gap-3">
         <Row r={bm} i={0} bench go={go} />
-        {rows.map((r, i) => <Row key={r.symbol} r={r} i={i + 1} go={go} />)}
+        {rows.map((r, i) => <Row key={r.symbol} r={r} i={i + 1} go={go} rule={ruleOf[r.symbol]} />)}
       </div>
     </Container>
   );
 }
 
-function Row({ r, i, bench = false, go }) {
+function Row({ r, i, bench = false, go, rule }) {
   const m = r.m;
   const tone = (m?.ret_20d_pct ?? 0) < 0 ? "down" : "accent";
   return (
@@ -68,11 +70,14 @@ function Row({ r, i, bench = false, go }) {
       <div className="row-span-2 sm:row-span-1">
         {m?.bars?.length > 1 ? <Sparkline bars={m.bars} tone={tone} delay={i * 60} indexed /> : <span className="meta">no data</span>}
       </div>
-      <div className="order-last text-right font-mono text-[13px] sm:order-none sm:text-[16px]" title={m ? `20-day return ${fmtPct(m.ret_20d_pct)}` : ""}>
-        {m ? (bench
-          ? <span className="num text-ink-2">{fmtPct(m.ret_20d_pct, 1)}</span>
-          : <span className={`num ${m.vs_bench_20d_pct >= 0 ? "text-accent" : "text-down"}`}>{fmtPct(m.vs_bench_20d_pct, 1)}</span>) : "—"}
-        <span className="ml-1 hidden text-[11px] text-ink-3 sm:inline">{bench ? "20d" : "rel"}</span>
+      <div className="order-last text-right text-[13px] sm:order-none" title={m?.setup ? `${m.setup.passed} of 4 setup checks` : ""}>
+        {bench ? <span className="num font-mono text-ink-2 sm:text-[16px]">{m ? fmtPct(m.ret_20d_pct, 1) : "—"}<span className="ml-1 text-[11px] text-ink-3">20d</span></span> : (
+          <>
+            <span className="num font-mono sm:text-[16px]">{m?.setup ? `${m.setup.passed}/4` : "—"}</span>
+            {m?.setup?.stretched && <span className="ml-1.5 text-[11px] text-people">stretched</span>}
+            {rule && <div className={`hidden truncate text-[11.5px] sm:block ${STATUS[rule].tone}`}>{STATUS[rule].label}</div>}
+          </>
+        )}
       </div>
       <div className="flex justify-end">
         {m && (
@@ -89,7 +94,7 @@ function Row({ r, i, bench = false, go }) {
 const STATE_TONE = { calm: "accent", normal: "flat", stressed: "down" };
 const TREND_TONE = { up: "accent", sideways: "flat", down: "down" };
 
-function Regime({ regime, breadth }) {
+function Regime({ regime, above, total }) {
   const m = regime.metrics;
   return (
     <div className="mb-10">
@@ -100,7 +105,7 @@ function Regime({ regime, breadth }) {
           { value: regime.trend, label: `${regime.params.trend_sma_days}-day trend`, tone: TREND_TONE[regime.trend], desc: `${fmtPct(m.dist_sma_pct, 1)} vs its ${regime.params.trend_sma_days}-day average, which is ${m.sma_slope_pct >= 0 ? "rising" : "falling"} ${fmtPct(m.sma_slope_pct)} over ${regime.params.slope_days} days.` },
           { value: `${fmtNum(m.vol_ann_pct, 1)}%`, label: "annualised vol", tone: "flat", desc: `${regime.params.vol_days}-day realised volatility of daily returns.` },
           { value: fmtPct(m.drawdown_pct, 1), label: "from 1y high", tone: m.drawdown_pct < -10 ? "down" : "flat", desc: `Distance from the highest close in ${regime.params.drawdown_days} trading days.` },
-          ...(breadth != null ? [{ value: `${fmtNum(breadth, 0)}%`, label: "above 50-day", tone: breadth < 30 ? "down" : breadth > 70 ? "accent" : "flat", desc: "Share of the watchlist above its 50-day average: a small-scale breadth gauge (Insights S-001)." }] : []),
+          ...(total ? [{ value: `${above} of ${total}`, label: "above 50-day", tone: "flat", desc: "Watchlist names above their 50-day average. Only our names: real market breadth is on Today (equal-weight vs cap-weight funds)." }] : []),
         ]}
       />
     </div>

@@ -1,7 +1,7 @@
 ---
-version: 0.4.0
+version: 0.5.0
 updated_at: 2026-10-04
-change_note: Library batches 8 and 9 from a 119-book review; shelf doc added.
+change_note: Household goal (diverse 4-5 stocks, +20% a year); investor review of the home page; portfolio rule v1 and the forward paper portfolio.
 ---
 # Decision log
 
@@ -12,8 +12,33 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Reference prices in pick records**: runs and outcomes store single reference and exit closes. This is minor, but revisit at M3: drop them, or keep them as computed returns only.
 - **LLM step (M3)**: run the daily brain as a scheduled Claude Code routine on the owner's subscription (preferred) or through a paid API key.
 - **Paid connectors** (news, X, options data for implied moves): parked until the owner wants to spend.
+- **Diversify the watchlist**: all 8 names are US large caps in 4 sectors (4 in technology). A diverse 4-5 stock
+  portfolio needs candidates from other sectors. Adding names is a one-line config change each; the owner picks them.
+- **Satellite size**: `docs/household.md` proposes 10% of savings (2% per slot). The owner sets it.
+- **Second price source**: Tiingo's daily returns show unusually low correlations between these names (for example
+  AAPL to QQQ about 0.24 over a year). The diagnostic showed our pipeline reproduces the provider's data exactly, so
+  the numbers are faithful to the source; a cross-check against a second source is still pending.
 
 ## 2026-10-04
+- **Household goal: a diverse portfolio of 4-5 stocks, +20% a year.** Recorded in settings (`goal`) and house rules.
+  The site shows the goal next to what history says (compounding, rolling 12-month hit rate, deepest drops) and never
+  uses it to pick stocks. +20% a year is about twice the market's long-run return, so the page says so plainly.
+- **Investor review of the home page** (five lenses: allocator, risk, quant, behaviour, product). Verdict: the old
+  home page could not support a decision. It led with sample picks and a 20-day leaderboard, had no cash hurdle, no
+  downside, no core, a trust gate with a sign bug (raw instead of signed excess) that luck could pass, and a "live"
+  pulse that created urgency. Changes:
+  - Home leads with a computed verdict ("Nothing to do today. The core plan stands."), stale-data fail-closed.
+  - Setup checks v2 (long trend, 3- and 6-month strength, stretch veto) computed once in Python.
+  - Base rates over ~10 years show whether the checks have ever worked.
+  - Market context: cash hurdle, equal- vs cap-weight participation, credit, the core's slow trend filter
+    (Roni's shelf: slow trend filters on broad indexes; relative strength over 3-12 months; volatility sizing).
+  - Trust statistics: signed excess, effective (non-overlapping) picks, Wilson lower bound, calendar span.
+- **Portfolio rule v1 and a forward paper portfolio.** The rule picks up to 5 names monthly with a sector cap and a
+  correlation cap; empty slots stay in the core. It is tested over ~9 years against holding every name, the core and
+  the benchmark. Because that test has hindsight (today's watchlist), the trust ladder now rests on a forward paper
+  record whose monthly holdings are written once and never edited.
+- **Portfolio builder** on its own tab: the household can try any 4-5 names; the selection stays in the browser
+  (localStorage), never in the public repo.
 - **Library batches 8 and 9: the books.** A separate project read and summarised 119 investing and trading books
   (public at https://github.com/ungaroni/the-whole-shelf) and cross-examined them in groups. The durable, cited
   principles from 31 of those books, plus the Micha course notes on index investing and the long-average trend method,

@@ -7,7 +7,7 @@ export const fmtDate = (iso) => dateFmt.format(parse(iso));
 export const fmtShort = (iso) => shortFmt.format(parse(iso));
 export const fmtUsd = (v) => usd.format(v);
 export const fmtNum = (v, d = 2) => v.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
-export const fmtPct = (v, d = 2) => `${v > 0 ? "+" : v < 0 ? "−" : ""}${Math.abs(v).toFixed(d)}%`;
+export const fmtPct = (v, d = 2) => { const r = Math.abs(v).toFixed(d); const z = Number(r) === 0; return `${z ? "" : v > 0 ? "+" : "−"}${r}%`; };
 export const fmtK = (v) => (v >= 1000 ? `${(v / 1000).toFixed(1)}k` : String(v));
 
 export function relDays(iso, ref = new Date()) {

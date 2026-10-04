@@ -241,6 +241,8 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
+        "paper_min_days_small",
+        "paper_min_days_trusted",
         "min_effective_picks",
         "trusted_min_effective_picks",
         "min_hit_ci_lower_pct",
@@ -250,6 +252,16 @@
       ],
       "description": "Trust ladder gates. Picks count once per ticker per horizon window (effective n); hit rate must clear a Wilson lower bound; excess is signed by stance.",
       "properties": {
+        "paper_min_days_small": {
+          "type": "integer",
+          "minimum": 30,
+          "description": "Forward paper record needed before small money (stage 2)."
+        },
+        "paper_min_days_trusted": {
+          "type": "integer",
+          "minimum": 60,
+          "description": "Forward paper record needed for stage 3."
+        },
         "min_effective_picks": {
           "type": "integer",
           "minimum": 1

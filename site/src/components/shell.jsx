@@ -239,9 +239,10 @@ const ICONS = {
   watchlist: <path d="M4 17l5-5 4 3 7-8M15 7h5v5" />,
   insights: <><path d="M9 18h6M10 21h4" /><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3Z" /></>,
   routines: <><circle cx="12" cy="12" r="8" /><path d="M12 8v4l3 2" /></>,
+  portfolio: <><circle cx="12" cy="12" r="8.5" /><path d="M12 3.5V12l6 6" /><path d="M12 12H3.5" /></>,
   more: <><circle cx="6" cy="12" r="1.3" /><circle cx="12" cy="12" r="1.3" /><circle cx="18" cy="12" r="1.3" /></>,
 };
-const PRIMARY = ["today", "watchlist", "insights", "routines"];
+const PRIMARY = ["today", "portfolio", "watchlist", "insights"];
 
 export function MobileNav({ tabs, active, onNav, sampleTabs }) {
   const [open, setOpen] = useState(false);

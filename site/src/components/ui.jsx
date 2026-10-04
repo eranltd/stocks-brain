@@ -29,7 +29,7 @@ export function Headline({ children, className = "", as: Tag = "h1", size = "lg"
   };
   let i = 0;
   const words = (node, accent = false) =>
-    String(node)
+    (Array.isArray(node) ? node.join("") : String(node))
       .split(/(\s+)/)
       .map((w, k) =>
         /^\s+$/.test(w) ? (
@@ -46,7 +46,7 @@ export function Headline({ children, className = "", as: Tag = "h1", size = "lg"
         ),
       );
   const content = Children.toArray(children).flatMap((c) =>
-    typeof c === "string" ? words(c) : c?.type === Accent ? words(c.props.children, true) : c?.type === "br" ? [c] : [c],
+    typeof c === "string" || typeof c === "number" ? words(c) : c?.type === Accent ? words(c.props.children, true) : c?.type === "br" ? [c] : [c],
   );
   return (
     <Tag ref={ref} className={`display ${sizes[size]} ${className}`}>

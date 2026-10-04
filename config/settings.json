@@ -52,6 +52,8 @@
     "veto_stretched": true
   },
   "trust": {
+    "paper_min_days_small": 182,
+    "paper_min_days_trusted": 365,
     "min_effective_picks": 30,
     "trusted_min_effective_picks": 60,
     "min_hit_ci_lower_pct": 50,

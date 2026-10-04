@@ -64,6 +64,38 @@ class FetchTest(unittest.TestCase):
         self.assertTrue(any("OHLC" in e for e in fetch_prices.sanity("TEST", bad)))
 
 
+class FetchLogTest(unittest.TestCase):
+    def test_full_window_passes_and_logs_no_prices(self):
+        """A full keep_days window fits the schema, and the public log carries counts and dates only."""
+        import contextlib
+        import io
+        import json
+        from datetime import date, timedelta
+        keep = settings()["prices"]["keep_days"]
+        days, d = [], date(2026, 10, 2)
+        while len(days) < keep:
+            if d.weekday() < 5:
+                days.append(d)
+            d -= timedelta(days=1)
+        days.reverse()
+        with tempfile.TemporaryDirectory() as tmp:
+            for sym in fetch_prices.symbols():
+                rows = [{"date": f"{x.isoformat()}T00:00:00.000Z", "adjOpen": 123.4567, "adjHigh": 124.4567,
+                         "adjLow": 122.4567, "adjClose": 123.9876, "adjVolume": 1000} for x in days]
+                Path(tmp, f"{sym}.json").write_text(json.dumps(rows))
+            out, err = io.StringIO(), io.StringIO()
+            argv = sys.argv
+            sys.argv = ["fetch_prices.py", "--dry-run", "--fixtures", tmp]
+            try:
+                with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                    rc = fetch_prices.main()
+            finally:
+                sys.argv = argv
+        self.assertEqual(rc, 0, err.getvalue())
+        self.assertNotIn("123.98", out.getvalue() + err.getvalue())
+        self.assertNotIn("close", out.getvalue())
+
+
 class RoutinesTest(unittest.TestCase):
     def setUp(self):
         self.st = settings()
@@ -108,10 +140,12 @@ class DerivedTest(unittest.TestCase):
         doc = routines_code.compute_derived(SAMPLES / "prices", st, watchlist(), sample=True, provider="sample")
         self.assertEqual(Validator().validate(doc, "derived.schema.json"), [])
         bench = st["scoring"]["benchmark"]["symbol"]
-        closes = {b["close"] for b in load_json(SAMPLES / "prices" / f"{bench}.json")["bars"]}
+        close_on = {b["date"]: round(b["close"], 2) for b in load_json(SAMPLES / "prices" / f"{bench}.json")["bars"]}
         row = next(r for r in doc["symbols"] if r["symbol"] == bench)
         self.assertEqual(row["spark"][0]["v"], 100.0)
-        self.assertFalse({p["v"] for p in row["spark"][1:]} & closes - {100.0})
+        # Point by point, published values are indexed, not the close of that day.
+        same = sum(p["v"] == close_on[p["date"]] for p in [*row["spark"], *row["series"]])
+        self.assertLessEqual(same, 1)
 
 
 class IngestTest(unittest.TestCase):

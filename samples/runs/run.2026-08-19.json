@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-08-19",
   "date": "2026-08-19",
-  "generated_at": "2026-08-19T21:40:00Z",
+  "generated_at": "2026-08-19T21:16:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.346,
-    "input_tokens": 8580,
-    "output_tokens": 1580,
+    "usd": 0.634,
+    "input_tokens": 11373,
+    "output_tokens": 1844,
     "cap_usd": 2.5
   },
-  "duration_minutes": 4.14,
+  "duration_minutes": 2.26,
   "pack": {
     "hash": "00c6dead753f6d2e802fc8aea196c7d8b2730c3d5d8a4a10c23545c9d3927f51",
-    "tokens": 8217,
+    "tokens": 10928,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,45 +25,45 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
+  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
   "picks": [
     {
-      "id": "2026-08-19:NVDA",
+      "id": "2026-08-19:LIN",
       "ref_date": "2026-08-19",
-      "ref_price": 145.92,
+      "ref_price": 901.77,
       "pick": {
-        "ticker": "NVDA",
+        "ticker": "LIN",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "NVIDIA has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Linde has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Macro data surprise",
-          "Momentum reversal after an extended run"
+          "Sector-wide de-rating",
+          "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.nvda.rel_20d",
+          "prices.lin.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-08-19:AVGO",
+      "id": "2026-08-19:PCAR",
       "ref_date": "2026-08-19",
-      "ref_price": 104.65,
+      "ref_price": 1326.41,
       "pick": {
-        "ticker": "AVGO",
-        "stance": "bearish",
-        "conviction": "high",
-        "thesis": "Broadcom has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "ticker": "PCAR",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "PACCAR is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
         "risks": [
-          "Benchmark weakness narrows the gap",
-          "Positive company news flow"
+          "Breakout in either direction",
+          "Volatility expansion"
         ],
-        "invalidation": "A close back above the recent range high on rising volume.",
+        "invalidation": "A sustained move away from the benchmark in either direction.",
         "evidence": [
-          "prices.avgo.rel_20d",
+          "prices.pcar.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

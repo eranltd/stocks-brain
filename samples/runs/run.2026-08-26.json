@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-08-26",
   "date": "2026-08-26",
-  "generated_at": "2026-08-26T21:12:00Z",
+  "generated_at": "2026-08-26T21:11:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.392,
-    "input_tokens": 7224,
-    "output_tokens": 1699,
+    "usd": 0.379,
+    "input_tokens": 8165,
+    "output_tokens": 865,
     "cap_usd": 2.5
   },
-  "duration_minutes": 2.95,
+  "duration_minutes": 1.89,
   "pack": {
     "hash": "703d7324bb19307e7581090b9d03f48d5f8479201f83e2bbddcf57b2fe863364",
-    "tokens": 6502,
+    "tokens": 7794,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,87 +25,45 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
+  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
   "picks": [
     {
-      "id": "2026-08-26:NVDA",
+      "id": "2026-08-26:LIN",
       "ref_date": "2026-08-26",
-      "ref_price": 156.06,
+      "ref_price": 921.62,
       "pick": {
-        "ticker": "NVDA",
+        "ticker": "LIN",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "NVIDIA has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
-        "risks": [
-          "Momentum reversal after an extended run",
-          "Sector-wide de-rating"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.nvda.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-08-26:ISRG",
-      "ref_date": "2026-08-26",
-      "ref_price": 178.38,
-      "pick": {
-        "ticker": "ISRG",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Intuitive Surgical has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Linde has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
           "Macro data surprise",
           "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.isrg.rel_20d",
+          "prices.lin.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-08-26:MNST",
+      "id": "2026-08-26:XEL",
       "ref_date": "2026-08-26",
-      "ref_price": 381.18,
+      "ref_price": 219.39,
       "pick": {
-        "ticker": "MNST",
-        "stance": "bullish",
-        "conviction": "medium",
-        "thesis": "Monster Beverage has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
-        "risks": [
-          "Sector-wide de-rating",
-          "Momentum reversal after an extended run"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.mnst.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-08-26:META",
-      "ref_date": "2026-08-26",
-      "ref_price": 131.6,
-      "pick": {
-        "ticker": "META",
+        "ticker": "XEL",
         "stance": "bearish",
         "conviction": "high",
-        "thesis": "Meta Platforms broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
+        "thesis": "Xcel Energy has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
         "risks": [
-          "Benchmark weakness narrows the gap",
-          "Positive company news flow"
+          "Positive company news flow",
+          "Benchmark weakness narrows the gap"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.meta.rel_20d",
+          "prices.xel.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-09-21",
   "date": "2026-09-21",
-  "generated_at": "2026-09-21T21:28:00Z",
+  "generated_at": "2026-09-21T21:31:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.756,
-    "input_tokens": 6379,
-    "output_tokens": 1097,
+    "usd": 0.392,
+    "input_tokens": 6692,
+    "output_tokens": 1364,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.1,
+  "duration_minutes": 3.21,
   "pack": {
     "hash": "72574ca1053dc47a6c68568fb38c587e062fafee419e43246c9160a03f41905f",
-    "tokens": 5936,
+    "tokens": 6366,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,87 +25,66 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
+  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
   "picks": [
     {
-      "id": "2026-09-21:GOOGL",
+      "id": "2026-09-21:MSFT",
       "ref_date": "2026-09-21",
-      "ref_price": 1552.63,
+      "ref_price": 189.93,
       "pick": {
-        "ticker": "GOOGL",
+        "ticker": "MSFT",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Alphabet has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Microsoft keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Sector-wide de-rating",
+          "Momentum reversal after an extended run",
           "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.googl.rel_20d",
+          "prices.msft.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-09-21:GILD",
+      "id": "2026-09-21:FANG",
       "ref_date": "2026-09-21",
-      "ref_price": 353.41,
+      "ref_price": 473.28,
       "pick": {
-        "ticker": "GILD",
+        "ticker": "FANG",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Gilead Sciences keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "Diamondback Energy keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Momentum reversal after an extended run",
-          "Sector-wide de-rating"
+          "Sector-wide de-rating",
+          "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.gild.rel_20d",
+          "prices.fang.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-09-21:AEP",
+      "id": "2026-09-21:LIN",
       "ref_date": "2026-09-21",
-      "ref_price": 164.68,
+      "ref_price": 1035.98,
       "pick": {
-        "ticker": "AEP",
-        "stance": "bearish",
+        "ticker": "LIN",
+        "stance": "bullish",
         "conviction": "high",
-        "thesis": "American Electric Power broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
+        "thesis": "Linde has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Short-covering rally",
-          "Benchmark weakness narrows the gap"
+          "Sector-wide de-rating",
+          "Momentum reversal after an extended run"
         ],
-        "invalidation": "A close back above the recent range high on rising volume.",
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.aep.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-09-21:AMGN",
-      "ref_date": "2026-09-21",
-      "ref_price": 224.04,
-      "pick": {
-        "ticker": "AMGN",
-        "stance": "neutral",
-        "conviction": "low",
-        "thesis": "Amgen is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
-        "risks": [
-          "Breakout in either direction",
-          "Volatility expansion"
-        ],
-        "invalidation": "A sustained move away from the benchmark in either direction.",
-        "evidence": [
-          "prices.amgn.rel_20d",
+          "prices.lin.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-08-11",
   "date": "2026-08-11",
-  "generated_at": "2026-08-11T21:17:00Z",
+  "generated_at": "2026-08-11T21:12:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.802,
-    "input_tokens": 8393,
-    "output_tokens": 1669,
+    "usd": 0.735,
+    "input_tokens": 10184,
+    "output_tokens": 1146,
     "cap_usd": 2.5
   },
-  "duration_minutes": 2.3,
+  "duration_minutes": 2.85,
   "pack": {
     "hash": "a9a61b8d0369490e465cbdeb2531f2387c8a3247104f7f942132bccf8a511190",
-    "tokens": 8034,
+    "tokens": 9829,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -28,63 +28,84 @@
   "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
   "picks": [
     {
-      "id": "2026-08-11:COST",
+      "id": "2026-08-11:LIN",
       "ref_date": "2026-08-11",
-      "ref_price": 1673.61,
+      "ref_price": 915.43,
       "pick": {
-        "ticker": "COST",
+        "ticker": "LIN",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Costco has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Linde keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
           "Momentum reversal after an extended run",
           "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.cost.rel_20d",
+          "prices.lin.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-08-11:ISRG",
+      "id": "2026-08-11:NVDA",
       "ref_date": "2026-08-11",
-      "ref_price": 176.35,
+      "ref_price": 1522.09,
       "pick": {
-        "ticker": "ISRG",
+        "ticker": "NVDA",
         "stance": "bullish",
-        "conviction": "medium",
-        "thesis": "Intuitive Surgical has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "conviction": "high",
+        "thesis": "NVIDIA has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Sector-wide de-rating",
+          "Macro data surprise",
           "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.isrg.rel_20d",
+          "prices.nvda.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-08-11:AVGO",
+      "id": "2026-08-11:GOOGL",
       "ref_date": "2026-08-11",
-      "ref_price": 111.31,
+      "ref_price": 305.06,
       "pick": {
-        "ticker": "AVGO",
+        "ticker": "GOOGL",
         "stance": "bearish",
         "conviction": "high",
-        "thesis": "Broadcom has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "thesis": "Alphabet has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
         "risks": [
-          "Short-covering rally",
-          "Benchmark weakness narrows the gap"
+          "Benchmark weakness narrows the gap",
+          "Positive company news flow"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.avgo.rel_20d",
+          "prices.googl.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-11:AMGN",
+      "ref_date": "2026-08-11",
+      "ref_price": 1771.19,
+      "pick": {
+        "ticker": "AMGN",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Amgen is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "risks": [
+          "Breakout in either direction",
+          "Volatility expansion"
+        ],
+        "invalidation": "A sustained move away from the benchmark in either direction.",
+        "evidence": [
+          "prices.amgn.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

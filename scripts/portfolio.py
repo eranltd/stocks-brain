@@ -133,6 +133,10 @@ def simulate(members: dict[str, list[float]], core: list[float], dates: list[str
     return vals, rebs
 
 
+def _r2(x: float | None) -> float | None:
+    return round(x, 2) if x is not None else None
+
+
 def weekly_idx(n: int, start: int, step: int) -> list[int]:
     return list(range(n - 1, start - 1, -step))[::-1]
 
@@ -211,7 +215,7 @@ def compute_longrun(members: dict[str, list[float]], core: list[float], bench: l
                            for s in members],
                 "diversification": diversification(members, core, rebs[-1]["holdings"], rule["slots"], sectors, Y)},
         "corr_1y": {"symbols": list(members),
-                    "m": [[round(corr(members[a], members[b], len(dates) - 1, Y), 2) if a != b else 1.0 for b in members]
+                    "m": [[1.0 if a == b else _r2(corr(members[a], members[b], len(dates) - 1, Y)) for b in members]
                           for a in members]},
         "weekly": {"dates": [dates[k] for k in idx],
                    "rule": [round(rule_v[k] / rule_v[rel[0]] * 100, 2) for k in rel],

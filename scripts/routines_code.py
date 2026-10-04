@@ -308,8 +308,11 @@ def _portfolio_inputs(prices_dir: Path, st: dict, wl: dict) -> tuple | None:
     closes = mk.align_tail(raw, dates)
     if not core or core not in closes or bench not in closes:
         return None
-    n = min(len(closes[core]), len(closes[bench]))
-    members = {s: closes[s][-n:] for s in syms if s in closes and len(closes[s]) >= n}
+    warm = max(st["setup"]["trend_long_days"], st["setup"]["rs_long_days"], st["portfolio"]["corr_days"]) + 1
+    min_len = warm + st["portfolio"]["min_history_years"] * mk.TRADING_DAYS
+    eligible = [s for s in syms if s in closes and len(closes[s]) >= min_len]
+    n = min(len(closes[core]), len(closes[bench]), *(len(closes[s]) for s in eligible))
+    members = {s: closes[s][-n:] for s in eligible}
     excluded = [s for s in syms if s not in members]
     sectors = {s["symbol"]: s["sector"] for s in wl["symbols"]}
     return members, closes[core][-n:], closes[bench][-n:], dates[-n:], sectors, core, bench, excluded
@@ -324,6 +327,8 @@ def compute_longrun(prices_dir: Path, st: dict, wl: dict, sample: bool, provider
     body = pf.compute_longrun(members, core_c, bench_c, dates, sectors, st)
     if not body:
         return None
+    # Names with too little history stay visible, marked, instead of silently disappearing.
+    body["now"]["status"] += [{"symbol": s, "status": "no_history", "sector": sectors.get(s, "Unknown")} for s in excluded]
     return {"as_of": dates[-1], "sample": sample, "provider": provider, "core": core, "benchmark": bench,
             "excluded": excluded, **body}
 

@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-09-10",
   "date": "2026-09-10",
-  "generated_at": "2026-09-10T21:38:00Z",
+  "generated_at": "2026-09-10T21:18:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.84,
-    "input_tokens": 11390,
-    "output_tokens": 1222,
+    "usd": 0.597,
+    "input_tokens": 9678,
+    "output_tokens": 855,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.47,
+  "duration_minutes": 3.45,
   "pack": {
     "hash": "bee073083d37aebc34b05b38955d625bc3a6cbd1a94b7539ce77eab92befa419",
-    "tokens": 10578,
+    "tokens": 9136,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -28,42 +28,42 @@
   "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
   "picks": [
     {
-      "id": "2026-09-10:GOOGL",
+      "id": "2026-09-10:TMUS",
       "ref_date": "2026-09-10",
-      "ref_price": 1457.95,
+      "ref_price": 3506.84,
       "pick": {
-        "ticker": "GOOGL",
+        "ticker": "TMUS",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Alphabet keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "T-Mobile US keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Momentum reversal after an extended run",
+          "Macro data surprise",
           "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.googl.rel_20d",
+          "prices.tmus.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-09-10:AMGN",
+      "id": "2026-09-10:PEP",
       "ref_date": "2026-09-10",
-      "ref_price": 208.2,
+      "ref_price": 2514.2,
       "pick": {
-        "ticker": "AMGN",
+        "ticker": "PEP",
         "stance": "bearish",
-        "conviction": "medium",
-        "thesis": "Amgen broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
+        "conviction": "high",
+        "thesis": "PepsiCo has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
         "risks": [
-          "Short-covering rally",
-          "Positive company news flow"
+          "Benchmark weakness narrows the gap",
+          "Short-covering rally"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.amgn.rel_20d",
+          "prices.pep.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

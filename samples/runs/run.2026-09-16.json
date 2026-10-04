@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-09-16",
   "date": "2026-09-16",
-  "generated_at": "2026-09-16T21:39:00Z",
+  "generated_at": "2026-09-16T21:20:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.404,
-    "input_tokens": 9458,
-    "output_tokens": 1722,
+    "usd": 0.58,
+    "input_tokens": 10978,
+    "output_tokens": 888,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.82,
+  "duration_minutes": 2.89,
   "pack": {
     "hash": "9b10a282f99d49cd7876c3965af4270da0d60398d3e993938032bf1ebc9eb20c",
-    "tokens": 9091,
+    "tokens": 10105,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,66 +25,45 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
+  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
   "picks": [
     {
-      "id": "2026-09-16:GOOGL",
+      "id": "2026-09-16:FANG",
       "ref_date": "2026-09-16",
-      "ref_price": 1516.78,
+      "ref_price": 480.7,
       "pick": {
-        "ticker": "GOOGL",
+        "ticker": "FANG",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Alphabet keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
-        "risks": [
-          "Momentum reversal after an extended run",
-          "Macro data surprise"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.googl.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-09-16:XEL",
-      "ref_date": "2026-09-16",
-      "ref_price": 780.18,
-      "pick": {
-        "ticker": "XEL",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Xcel Energy keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "Diamondback Energy has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
           "Macro data surprise",
           "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.xel.rel_20d",
+          "prices.fang.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-09-16:MSFT",
+      "id": "2026-09-16:PEP",
       "ref_date": "2026-09-16",
-      "ref_price": 305.79,
+      "ref_price": 2505.68,
       "pick": {
-        "ticker": "MSFT",
-        "stance": "bullish",
+        "ticker": "PEP",
+        "stance": "bearish",
         "conviction": "high",
-        "thesis": "Microsoft has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "PepsiCo broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
         "risks": [
-          "Macro data surprise",
-          "Momentum reversal after an extended run"
+          "Positive company news flow",
+          "Short-covering rally"
         ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.msft.rel_20d",
+          "prices.pep.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

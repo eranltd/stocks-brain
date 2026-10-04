@@ -85,7 +85,7 @@ def walk(rng: random.Random, days: list[date], start: float, drift: float, vol: 
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--end", default=DEFAULT_END)
-    ap.add_argument("--days", type=int, default=600)
+    ap.add_argument("--days", type=int, default=1600)
     ap.add_argument("--runs", type=int, default=45)
     args = ap.parse_args()
 
@@ -107,11 +107,11 @@ def main() -> int:
     for sym in [*names, bench]:
         is_bench = sym == bench
         series[sym] = walk(rng, days, rng.uniform(80, 600),
-                           drift=0.0004 if is_bench else rng.uniform(-0.0015, 0.002),
+                           drift=0.0004 if is_bench else rng.uniform(-0.0004, 0.0011),
                            vol=0.009 if is_bench else rng.uniform(0.012, 0.024))
         dump_json(SAMPLES / "prices" / f"{sym}.json", {
             "symbol": sym, "provider": "sample", "currency": "USD",
-            "fetched_at": fetched_at, "sample": True, "bars": series[sym]})
+            "fetched_at": fetched_at, "sample": True, "bars": series[sym]}, compact=True)
     # Context instruments (cash, breadth, bonds, credit, core proxy) from config, with role-typical drift/vol.
     ctx_rng = random.Random(SEED + 1)
     ROLE = {"cash": (0.00017, 0.0003), "bonds": (0.0001, 0.004), "credit": (0.0002, 0.003),
@@ -123,7 +123,7 @@ def main() -> int:
         series[c["symbol"]] = walk(ctx_rng, days, ctx_rng.uniform(40, 500), drift=drift, vol=vol)
         dump_json(SAMPLES / "prices" / f"{c['symbol']}.json", {
             "symbol": c["symbol"], "provider": "sample", "currency": "USD",
-            "fetched_at": fetched_at, "sample": True, "bars": series[c["symbol"]]})
+            "fetched_at": fetched_at, "sample": True, "bars": series[c["symbol"]]}, compact=True)
 
     versions = doc_versions()
     method_meta, _ = parse_front_matter((DOCS / "methodology.md").read_text(encoding="utf-8"))

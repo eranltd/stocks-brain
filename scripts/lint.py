@@ -105,6 +105,9 @@ class Lint:
             c = st["cost"]
             if not c["target_usd"] <= c["warn_usd"] <= c["hard_cap_usd"]:
                 self.err(CONFIG / "settings.json", "cost must satisfy target_usd <= warn_usd <= hard_cap_usd")
+            bars_cap = load_json(SCHEMAS / "prices.schema.json")["properties"]["bars"]["maxItems"]
+            if st["prices"]["keep_days"] > bars_cap:
+                self.err(CONFIG / "settings.json", f"prices.keep_days {st['prices']['keep_days']} > prices schema maxItems {bars_cap}: every fetch would fail")
         if wl:
             if wl.get("core") and wl["core"]["symbol"] not in {c["symbol"] for c in wl.get("context", [])}:
                 self.err(CONFIG / "watchlist.json", "core.symbol must also be listed in context (so it is fetched)")

@@ -414,7 +414,8 @@
         "max_pair_corr",
         "corr_days",
         "cost_bps",
-        "weekly_step_days"
+        "weekly_step_days",
+        "min_history_years"
       ],
       "properties": {
         "slots": {
@@ -460,6 +461,12 @@
           "type": "integer",
           "minimum": 1,
           "maximum": 21
+        },
+        "min_history_years": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 20,
+          "description": "A name joins the rule only with this much price history; the test window is the span all such names, the core and the benchmark cover."
         }
       }
     }

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "run_id": "run.2026-09-22",
   "date": "2026-09-22",
-  "generated_at": "2026-09-22T21:24:00Z",
+  "generated_at": "2026-09-22T21:38:00Z",
   "status": "failed",
   "sample": true,
   "model": "sample-model",
@@ -12,10 +12,10 @@
     "output_tokens": 0,
     "cap_usd": 2.5
   },
-  "duration_minutes": 0.5,
+  "duration_minutes": 0.22,
   "pack": {
     "hash": "7bbbb7d30b6f9407c77dda840a5d9dc4681cd1bbfc2b3fbb3302f426a3a89b5e",
-    "tokens": 12780,
+    "tokens": 12646,
     "cap_tokens": 12000
   },
   "doc_versions": {

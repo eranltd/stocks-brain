@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-09-02",
   "date": "2026-09-02",
-  "generated_at": "2026-09-02T21:23:00Z",
+  "generated_at": "2026-09-02T21:25:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.648,
-    "input_tokens": 7887,
-    "output_tokens": 1223,
+    "usd": 0.764,
+    "input_tokens": 6392,
+    "output_tokens": 1880,
     "cap_usd": 2.5
   },
-  "duration_minutes": 4.12,
+  "duration_minutes": 3.74,
   "pack": {
     "hash": "87c1f55d67a22faf6f10730446cddfe1ed8dff6ede37c0a83bc6f076f675a634",
-    "tokens": 7351,
+    "tokens": 5595,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,20 +25,41 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
+  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
   "picks": [
+    {
+      "id": "2026-09-02:TMUS",
+      "ref_date": "2026-09-02",
+      "ref_price": 3515.36,
+      "pick": {
+        "ticker": "TMUS",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "T-Mobile US keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "risks": [
+          "Macro data surprise",
+          "Momentum reversal after an extended run"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.tmus.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
     {
       "id": "2026-09-02:GOOGL",
       "ref_date": "2026-09-02",
-      "ref_price": 1380.21,
+      "ref_price": 346.74,
       "pick": {
         "ticker": "GOOGL",
         "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Alphabet keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "conviction": "medium",
+        "thesis": "Alphabet has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
           "Macro data surprise",
-          "Sector-wide de-rating"
+          "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
@@ -49,63 +70,42 @@
       }
     },
     {
-      "id": "2026-09-02:NVDA",
+      "id": "2026-09-02:LIN",
       "ref_date": "2026-09-02",
-      "ref_price": 148.48,
+      "ref_price": 928.22,
       "pick": {
-        "ticker": "NVDA",
+        "ticker": "LIN",
         "stance": "bullish",
-        "conviction": "high",
-        "thesis": "NVIDIA keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "conviction": "low",
+        "thesis": "Linde has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Momentum reversal after an extended run",
+          "Sector-wide de-rating",
           "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.nvda.rel_20d",
+          "prices.lin.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-09-02:FANG",
+      "id": "2026-09-02:MSFT",
       "ref_date": "2026-09-02",
-      "ref_price": 186.69,
+      "ref_price": 169.27,
       "pick": {
-        "ticker": "FANG",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Diamondback Energy has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "ticker": "MSFT",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Microsoft is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
         "risks": [
-          "Sector-wide de-rating",
-          "Momentum reversal after an extended run"
+          "Breakout in either direction",
+          "Volatility expansion"
         ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "invalidation": "A sustained move away from the benchmark in either direction.",
         "evidence": [
-          "prices.fang.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-09-02:META",
-      "ref_date": "2026-09-02",
-      "ref_price": 127.97,
-      "pick": {
-        "ticker": "META",
-        "stance": "bearish",
-        "conviction": "high",
-        "thesis": "Meta Platforms broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
-        "risks": [
-          "Short-covering rally",
-          "Positive company news flow"
-        ],
-        "invalidation": "A close back above the recent range high on rising volume.",
-        "evidence": [
-          "prices.meta.rel_20d",
+          "prices.msft.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

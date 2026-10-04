@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-08-27",
   "date": "2026-08-27",
-  "generated_at": "2026-08-27T21:10:00Z",
+  "generated_at": "2026-08-27T21:20:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.447,
-    "input_tokens": 9110,
-    "output_tokens": 1422,
+    "usd": 0.414,
+    "input_tokens": 6519,
+    "output_tokens": 1063,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.32,
+  "duration_minutes": 4.17,
   "pack": {
     "hash": "7ba159f3242c721f401eadef87e10fc2fd083717730a21d8d56812d71dafd1e6",
-    "tokens": 8267,
+    "tokens": 5631,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,45 +25,66 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 1,
-  "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
+  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
   "picks": [
     {
-      "id": "2026-08-27:NVDA",
+      "id": "2026-08-27:TMUS",
       "ref_date": "2026-08-27",
-      "ref_price": 150.61,
+      "ref_price": 3246.58,
       "pick": {
-        "ticker": "NVDA",
+        "ticker": "TMUS",
         "stance": "bullish",
-        "conviction": "high",
-        "thesis": "NVIDIA keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "conviction": "medium",
+        "thesis": "T-Mobile US has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Macro data surprise",
-          "Sector-wide de-rating"
+          "Sector-wide de-rating",
+          "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.nvda.rel_20d",
+          "prices.tmus.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-08-27:AEP",
+      "id": "2026-08-27:LIN",
       "ref_date": "2026-08-27",
-      "ref_price": 190.56,
+      "ref_price": 914.26,
       "pick": {
-        "ticker": "AEP",
+        "ticker": "LIN",
+        "stance": "bullish",
+        "conviction": "medium",
+        "thesis": "Linde keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "risks": [
+          "Sector-wide de-rating",
+          "Macro data surprise"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.lin.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-27:PEP",
+      "ref_date": "2026-08-27",
+      "ref_price": 2992.49,
+      "pick": {
+        "ticker": "PEP",
         "stance": "bearish",
         "conviction": "high",
-        "thesis": "American Electric Power has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "thesis": "PepsiCo has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
         "risks": [
           "Short-covering rally",
-          "Positive company news flow"
+          "Benchmark weakness narrows the gap"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.aep.rel_20d",
+          "prices.pep.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

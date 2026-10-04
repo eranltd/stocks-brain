@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-08-05",
   "date": "2026-08-05",
-  "generated_at": "2026-08-05T21:22:00Z",
+  "generated_at": "2026-08-05T21:30:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.576,
-    "input_tokens": 9810,
-    "output_tokens": 893,
+    "usd": 0.723,
+    "input_tokens": 10436,
+    "output_tokens": 1886,
     "cap_usd": 2.5
   },
-  "duration_minutes": 2.43,
+  "duration_minutes": 3.58,
   "pack": {
     "hash": "1a7e3c7cb661594e9ba30b57146a8b2a3f310b173fbf3c617a69e460fec2d377",
-    "tokens": 9113,
+    "tokens": 9686,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,87 +25,87 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
+  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
   "picks": [
     {
-      "id": "2026-08-05:COST",
+      "id": "2026-08-05:AMZN",
       "ref_date": "2026-08-05",
-      "ref_price": 1558.36,
+      "ref_price": 488.45,
       "pick": {
-        "ticker": "COST",
+        "ticker": "AMZN",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Costco keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
-        "risks": [
-          "Sector-wide de-rating",
-          "Macro data surprise"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.cost.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-08-05:CTAS",
-      "ref_date": "2026-08-05",
-      "ref_price": 1405.01,
-      "pick": {
-        "ticker": "CTAS",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Cintas has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Amazon has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
           "Macro data surprise",
           "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.ctas.rel_20d",
+          "prices.amzn.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-08-05:AVGO",
+      "id": "2026-08-05:LIN",
       "ref_date": "2026-08-05",
-      "ref_price": 116.99,
+      "ref_price": 906.47,
       "pick": {
-        "ticker": "AVGO",
+        "ticker": "LIN",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Linde has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "risks": [
+          "Momentum reversal after an extended run",
+          "Macro data surprise"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.lin.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-05:META",
+      "ref_date": "2026-08-05",
+      "ref_price": 858.99,
+      "pick": {
+        "ticker": "META",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Meta Platforms keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "risks": [
+          "Sector-wide de-rating",
+          "Momentum reversal after an extended run"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.meta.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-05:GOOGL",
+      "ref_date": "2026-08-05",
+      "ref_price": 316.56,
+      "pick": {
+        "ticker": "GOOGL",
         "stance": "bearish",
         "conviction": "high",
-        "thesis": "Broadcom has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "thesis": "Alphabet has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
         "risks": [
-          "Benchmark weakness narrows the gap",
+          "Short-covering rally",
           "Positive company news flow"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.avgo.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-08-05:AAPL",
-      "ref_date": "2026-08-05",
-      "ref_price": 290.7,
-      "pick": {
-        "ticker": "AAPL",
-        "stance": "neutral",
-        "conviction": "low",
-        "thesis": "Apple is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
-        "risks": [
-          "Volatility expansion",
-          "Breakout in either direction"
-        ],
-        "invalidation": "A sustained move away from the benchmark in either direction.",
-        "evidence": [
-          "prices.aapl.rel_20d",
+          "prices.googl.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

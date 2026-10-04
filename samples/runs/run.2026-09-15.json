@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-09-15",
   "date": "2026-09-15",
-  "generated_at": "2026-09-15T21:40:00Z",
+  "generated_at": "2026-09-15T21:38:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.767,
-    "input_tokens": 10400,
-    "output_tokens": 1489,
+    "usd": 0.4,
+    "input_tokens": 7561,
+    "output_tokens": 715,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.54,
+  "duration_minutes": 4.17,
   "pack": {
     "hash": "086c4da8a4114ef0722c02a5a79cd44378f0bc28ff1bb030ce85740b334dd0a2",
-    "tokens": 9599,
+    "tokens": 6811,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,66 +25,45 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 1,
-  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
+  "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
   "picks": [
     {
-      "id": "2026-09-15:GOOGL",
+      "id": "2026-09-15:LIN",
       "ref_date": "2026-09-15",
-      "ref_price": 1511.28,
+      "ref_price": 1015.86,
       "pick": {
-        "ticker": "GOOGL",
+        "ticker": "LIN",
         "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Alphabet keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
-        "risks": [
-          "Macro data surprise",
-          "Momentum reversal after an extended run"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.googl.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-09-15:XEL",
-      "ref_date": "2026-09-15",
-      "ref_price": 776.25,
-      "pick": {
-        "ticker": "XEL",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Xcel Energy keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "conviction": "medium",
+        "thesis": "Linde keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
           "Momentum reversal after an extended run",
           "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.xel.rel_20d",
+          "prices.lin.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-09-15:ISRG",
+      "id": "2026-09-15:FANG",
       "ref_date": "2026-09-15",
-      "ref_price": 160.76,
+      "ref_price": 475.5,
       "pick": {
-        "ticker": "ISRG",
-        "stance": "bearish",
+        "ticker": "FANG",
+        "stance": "bullish",
         "conviction": "medium",
-        "thesis": "Intuitive Surgical broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
+        "thesis": "Diamondback Energy has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Short-covering rally",
-          "Positive company news flow"
+          "Momentum reversal after an extended run",
+          "Sector-wide de-rating"
         ],
-        "invalidation": "A close back above the recent range high on rising volume.",
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.isrg.rel_20d",
+          "prices.fang.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

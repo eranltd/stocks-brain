@@ -1,7 +1,7 @@
 {
-  "version": "0.6.0",
+  "version": "0.6.1",
   "updated_at": "2026-10-04",
-  "change_note": "Household goal (+20%/yr) and portfolio rule v1: a diversified 4-5 stock satellite, monthly, empty slots stay in the core.",
+  "change_note": "Portfolio rule: names need 5 years of history; the test window is the longest span they all cover.",
   "pack": {
     "token_cap": 12000,
     "recent_runs": 5,
@@ -78,7 +78,8 @@
     "max_pair_corr": 0.85,
     "corr_days": 252,
     "cost_bps": 10,
-    "weekly_step_days": 5
+    "weekly_step_days": 5,
+    "min_history_years": 5
   },
   "site": {
     "title": "stocks·brain",

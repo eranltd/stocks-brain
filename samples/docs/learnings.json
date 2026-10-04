@@ -9,7 +9,8 @@
       "status": "active",
       "lesson": "Bullish picks with low conviction rarely beat the benchmark by more than the flat band. Prefer zero picks over a weak bullish one.",
       "evidence": [
-        "2026-08-03:CTAS"
+        "2026-09-01:AVGO",
+        "2026-09-02:LIN"
       ]
     },
     {
@@ -18,9 +19,9 @@
       "status": "active",
       "lesson": "Bearish calls on names that already lagged badly tend to mean-revert inside the horizon. Require fresh weakness, not just a long slide.",
       "evidence": [
-        "2026-08-05:AVGO",
-        "2026-08-06:AVGO",
-        "2026-08-07:AEP"
+        "2026-08-03:GOOGL",
+        "2026-08-04:GOOGL",
+        "2026-08-05:GOOGL"
       ]
     },
     {
@@ -29,9 +30,9 @@
       "status": "retired",
       "lesson": "Neutral stances score well when the benchmark is calm, but miss in rotation weeks. Check benchmark volatility before choosing neutral.",
       "evidence": [
-        "2026-08-03:AMZN",
-        "2026-08-05:AAPL",
-        "2026-08-12:XEL"
+        "2026-08-03:AEP",
+        "2026-08-07:COST",
+        "2026-08-10:MSFT"
       ]
     }
   ]

@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-09-30",
   "date": "2026-09-30",
-  "generated_at": "2026-09-30T21:17:00Z",
+  "generated_at": "2026-09-30T21:35:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.627,
-    "input_tokens": 7099,
-    "output_tokens": 1785,
+    "usd": 0.6,
+    "input_tokens": 11235,
+    "output_tokens": 785,
     "cap_usd": 2.5
   },
-  "duration_minutes": 1.3,
+  "duration_minutes": 2.63,
   "pack": {
     "hash": "7e22236aa6d3a8459bf206db6266b58386b22b536a46b1362509ebf4e49c2b99",
-    "tokens": 6651,
+    "tokens": 10666,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,66 +25,87 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
+  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
   "picks": [
     {
-      "id": "2026-09-30:CTAS",
+      "id": "2026-09-30:LIN",
       "ref_date": "2026-09-30",
-      "ref_price": 1756.46,
+      "ref_price": 1072.92,
       "pick": {
-        "ticker": "CTAS",
+        "ticker": "LIN",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Cintas has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Linde has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Macro data surprise",
+          "Momentum reversal after an extended run",
+          "Macro data surprise"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.lin.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-09-30:AVGO",
+      "ref_date": "2026-09-30",
+      "ref_price": 197.6,
+      "pick": {
+        "ticker": "AVGO",
+        "stance": "bullish",
+        "conviction": "medium",
+        "thesis": "Broadcom has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "risks": [
+          "Sector-wide de-rating",
           "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.ctas.rel_20d",
+          "prices.avgo.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-09-30:XEL",
+      "id": "2026-09-30:MNST",
       "ref_date": "2026-09-30",
-      "ref_price": 861.39,
+      "ref_price": 310.8,
       "pick": {
-        "ticker": "XEL",
+        "ticker": "MNST",
         "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Xcel Energy keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "conviction": "medium",
+        "thesis": "Monster Beverage has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Macro data surprise",
-          "Sector-wide de-rating"
+          "Momentum reversal after an extended run",
+          "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.xel.rel_20d",
+          "prices.mnst.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-09-30:FANG",
+      "id": "2026-09-30:COST",
       "ref_date": "2026-09-30",
-      "ref_price": 158.77,
+      "ref_price": 617.49,
       "pick": {
-        "ticker": "FANG",
+        "ticker": "COST",
         "stance": "bearish",
         "conviction": "high",
-        "thesis": "Diamondback Energy broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
+        "thesis": "Costco broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
         "risks": [
-          "Benchmark weakness narrows the gap",
+          "Short-covering rally",
           "Positive company news flow"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.fang.rel_20d",
+          "prices.cost.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

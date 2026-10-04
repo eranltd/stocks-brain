@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-08-13",
   "date": "2026-08-13",
-  "generated_at": "2026-08-13T21:15:00Z",
+  "generated_at": "2026-08-13T21:25:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.652,
-    "input_tokens": 6869,
-    "output_tokens": 1279,
+    "usd": 0.391,
+    "input_tokens": 9771,
+    "output_tokens": 1516,
     "cap_usd": 2.5
   },
-  "duration_minutes": 2.67,
+  "duration_minutes": 1.98,
   "pack": {
     "hash": "3ac7e5e607c7092e1d237c506b3b88e9f23718704c592effcc78b972626d220e",
-    "tokens": 6184,
+    "tokens": 9025,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -28,21 +28,63 @@
   "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
   "picks": [
     {
-      "id": "2026-08-13:CTAS",
+      "id": "2026-08-13:LIN",
       "ref_date": "2026-08-13",
-      "ref_price": 1482.16,
+      "ref_price": 919.6,
       "pick": {
-        "ticker": "CTAS",
+        "ticker": "LIN",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Cintas has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Linde has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
           "Sector-wide de-rating",
           "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
+          "prices.lin.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-13:CTAS",
+      "ref_date": "2026-08-13",
+      "ref_price": 881.07,
+      "pick": {
+        "ticker": "CTAS",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Cintas keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "risks": [
+          "Sector-wide de-rating",
+          "Macro data surprise"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
           "prices.ctas.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-13:PEP",
+      "ref_date": "2026-08-13",
+      "ref_price": 3080.82,
+      "pick": {
+        "ticker": "PEP",
+        "stance": "bearish",
+        "conviction": "high",
+        "thesis": "PepsiCo has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "risks": [
+          "Short-covering rally",
+          "Benchmark weakness narrows the gap"
+        ],
+        "invalidation": "A close back above the recent range high on rising volume.",
+        "evidence": [
+          "prices.pep.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

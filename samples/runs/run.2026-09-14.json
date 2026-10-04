@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-09-14",
   "date": "2026-09-14",
-  "generated_at": "2026-09-14T21:32:00Z",
+  "generated_at": "2026-09-14T21:29:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.866,
-    "input_tokens": 10274,
-    "output_tokens": 741,
+    "usd": 0.767,
+    "input_tokens": 8935,
+    "output_tokens": 1690,
     "cap_usd": 2.5
   },
-  "duration_minutes": 2.22,
+  "duration_minutes": 1.28,
   "pack": {
     "hash": "c639a36a144d1d0e20f04be79aaf9323e6a8c5f783de5583e9485173f106b48f",
-    "tokens": 9948,
+    "tokens": 8172,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,66 +25,66 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
+  "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
   "picks": [
     {
-      "id": "2026-09-14:GOOGL",
+      "id": "2026-09-14:LIN",
       "ref_date": "2026-09-14",
-      "ref_price": 1425.98,
+      "ref_price": 1016.45,
       "pick": {
-        "ticker": "GOOGL",
+        "ticker": "LIN",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Alphabet keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "Linde keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Momentum reversal after an extended run",
-          "Macro data surprise"
+          "Macro data surprise",
+          "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.googl.rel_20d",
+          "prices.lin.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-09-14:XEL",
+      "id": "2026-09-14:PEP",
       "ref_date": "2026-09-14",
-      "ref_price": 745.34,
+      "ref_price": 2533.02,
       "pick": {
-        "ticker": "XEL",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Xcel Energy keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
-        "risks": [
-          "Sector-wide de-rating",
-          "Macro data surprise"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.xel.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-09-14:AMGN",
-      "ref_date": "2026-09-14",
-      "ref_price": 212.53,
-      "pick": {
-        "ticker": "AMGN",
+        "ticker": "PEP",
         "stance": "bearish",
-        "conviction": "medium",
-        "thesis": "Amgen has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "conviction": "high",
+        "thesis": "PepsiCo broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
         "risks": [
-          "Benchmark weakness narrows the gap",
+          "Short-covering rally",
           "Positive company news flow"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.amgn.rel_20d",
+          "prices.pep.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-09-14:COST",
+      "ref_date": "2026-09-14",
+      "ref_price": 696.8,
+      "pick": {
+        "ticker": "COST",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Costco is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "risks": [
+          "Breakout in either direction",
+          "Volatility expansion"
+        ],
+        "invalidation": "A sustained move away from the benchmark in either direction.",
+        "evidence": [
+          "prices.cost.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

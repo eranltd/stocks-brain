@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-09-29",
   "date": "2026-09-29",
-  "generated_at": "2026-09-29T21:17:00Z",
+  "generated_at": "2026-09-29T21:34:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.723,
-    "input_tokens": 8412,
-    "output_tokens": 1472,
+    "usd": 0.825,
+    "input_tokens": 8754,
+    "output_tokens": 1404,
     "cap_usd": 2.5
   },
-  "duration_minutes": 2.27,
+  "duration_minutes": 4.07,
   "pack": {
     "hash": "62a0e28cb4be49c999eb8177951d9df34ee03316f395fd78e1c25cf2f44a0ecb",
-    "tokens": 7752,
+    "tokens": 8294,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,66 +25,24 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
+  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
   "picks": [
     {
-      "id": "2026-09-29:XEL",
+      "id": "2026-09-29:FANG",
       "ref_date": "2026-09-29",
-      "ref_price": 854.67,
+      "ref_price": 453.47,
       "pick": {
-        "ticker": "XEL",
+        "ticker": "FANG",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Xcel Energy has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Diamondback Energy has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Sector-wide de-rating",
+          "Macro data surprise",
           "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.xel.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-09-29:CTAS",
-      "ref_date": "2026-09-29",
-      "ref_price": 1690.1,
-      "pick": {
-        "ticker": "CTAS",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Cintas has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
-        "risks": [
-          "Momentum reversal after an extended run",
-          "Sector-wide de-rating"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.ctas.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-09-29:AAPL",
-      "ref_date": "2026-09-29",
-      "ref_price": 257.65,
-      "pick": {
-        "ticker": "AAPL",
-        "stance": "neutral",
-        "conviction": "low",
-        "thesis": "Apple is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
-        "risks": [
-          "Volatility expansion",
-          "Breakout in either direction"
-        ],
-        "invalidation": "A sustained move away from the benchmark in either direction.",
-        "evidence": [
-          "prices.aapl.rel_20d",
+          "prices.fang.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

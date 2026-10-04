@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-09-23",
   "date": "2026-09-23",
-  "generated_at": "2026-09-23T21:21:00Z",
+  "generated_at": "2026-09-23T21:12:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.741,
-    "input_tokens": 6700,
-    "output_tokens": 1103,
+    "usd": 0.339,
+    "input_tokens": 10178,
+    "output_tokens": 1219,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.61,
+  "duration_minutes": 2.79,
   "pack": {
     "hash": "86f1d50f2312034c93d28eb7d093fc86363e8aa44aff3fb6b9438bc346fcaca1",
-    "tokens": 6232,
+    "tokens": 9398,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,66 +25,87 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
+  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
   "picks": [
     {
-      "id": "2026-09-23:GOOGL",
+      "id": "2026-09-23:FANG",
       "ref_date": "2026-09-23",
-      "ref_price": 1572.44,
+      "ref_price": 466.0,
       "pick": {
-        "ticker": "GOOGL",
+        "ticker": "FANG",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Alphabet has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Diamondback Energy has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
           "Momentum reversal after an extended run",
           "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.googl.rel_20d",
+          "prices.fang.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-09-23:CTAS",
+      "id": "2026-09-23:MSFT",
       "ref_date": "2026-09-23",
-      "ref_price": 1589.01,
+      "ref_price": 186.49,
       "pick": {
-        "ticker": "CTAS",
+        "ticker": "MSFT",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Cintas has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Microsoft has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Sector-wide de-rating",
-          "Macro data surprise"
+          "Macro data surprise",
+          "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.ctas.rel_20d",
+          "prices.msft.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-09-23:AEP",
+      "id": "2026-09-23:PEP",
       "ref_date": "2026-09-23",
-      "ref_price": 168.83,
+      "ref_price": 2707.81,
       "pick": {
-        "ticker": "AEP",
+        "ticker": "PEP",
         "stance": "bearish",
         "conviction": "high",
-        "thesis": "American Electric Power has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "thesis": "PepsiCo broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
         "risks": [
           "Benchmark weakness narrows the gap",
-          "Short-covering rally"
+          "Positive company news flow"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.aep.rel_20d",
+          "prices.pep.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-09-23:AVGO",
+      "ref_date": "2026-09-23",
+      "ref_price": 182.71,
+      "pick": {
+        "ticker": "AVGO",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Broadcom is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "risks": [
+          "Breakout in either direction",
+          "Volatility expansion"
+        ],
+        "invalidation": "A sustained move away from the benchmark in either direction.",
+        "evidence": [
+          "prices.avgo.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

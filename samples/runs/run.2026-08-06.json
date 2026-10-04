@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-08-06",
   "date": "2026-08-06",
-  "generated_at": "2026-08-06T21:24:00Z",
+  "generated_at": "2026-08-06T21:19:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 2.231,
-    "input_tokens": 11321,
-    "output_tokens": 738,
+    "usd": 2.267,
+    "input_tokens": 11162,
+    "output_tokens": 1109,
     "cap_usd": 2.5
   },
-  "duration_minutes": 2.66,
+  "duration_minutes": 3.09,
   "pack": {
     "hash": "bd38051448d4f64030d5db1ba616e59a150a3b7d70a03728f5fc127b22514171",
-    "tokens": 10860,
+    "tokens": 10354,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -28,84 +28,42 @@
   "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
   "picks": [
     {
-      "id": "2026-08-06:COST",
+      "id": "2026-08-06:META",
       "ref_date": "2026-08-06",
-      "ref_price": 1595.95,
+      "ref_price": 870.96,
       "pick": {
-        "ticker": "COST",
+        "ticker": "META",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Costco keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "Meta Platforms keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Sector-wide de-rating",
-          "Momentum reversal after an extended run"
+          "Macro data surprise",
+          "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.cost.rel_20d",
+          "prices.meta.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-08-06:GOOGL",
+      "id": "2026-08-06:LIN",
       "ref_date": "2026-08-06",
-      "ref_price": 1206.51,
+      "ref_price": 896.65,
       "pick": {
-        "ticker": "GOOGL",
+        "ticker": "LIN",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Alphabet keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "Linde keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
           "Sector-wide de-rating",
           "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.googl.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-08-06:CTAS",
-      "ref_date": "2026-08-06",
-      "ref_price": 1392.5,
-      "pick": {
-        "ticker": "CTAS",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Cintas has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
-        "risks": [
-          "Sector-wide de-rating",
-          "Momentum reversal after an extended run"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.ctas.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-08-06:AVGO",
-      "ref_date": "2026-08-06",
-      "ref_price": 115.31,
-      "pick": {
-        "ticker": "AVGO",
-        "stance": "bearish",
-        "conviction": "high",
-        "thesis": "Broadcom broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
-        "risks": [
-          "Short-covering rally",
-          "Positive company news flow"
-        ],
-        "invalidation": "A close back above the recent range high on rising volume.",
-        "evidence": [
-          "prices.avgo.rel_20d",
+          "prices.lin.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

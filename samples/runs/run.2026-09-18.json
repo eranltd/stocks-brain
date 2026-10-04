@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-09-18",
   "date": "2026-09-18",
-  "generated_at": "2026-09-18T21:16:00Z",
+  "generated_at": "2026-09-18T21:31:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.46,
-    "input_tokens": 11361,
-    "output_tokens": 1530,
+    "usd": 0.818,
+    "input_tokens": 9804,
+    "output_tokens": 871,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.92,
+  "duration_minutes": 3.22,
   "pack": {
     "hash": "9006c591037f056f0dfeb51d13c6712e12d7d428305aa8850305eef6c5eaddaa",
-    "tokens": 10921,
+    "tokens": 9294,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -28,63 +28,42 @@
   "summary": "Quiet tape. Few names separated from the benchmark, so the pick list stays short.",
   "picks": [
     {
-      "id": "2026-09-18:GOOGL",
+      "id": "2026-09-18:MSFT",
       "ref_date": "2026-09-18",
-      "ref_price": 1553.16,
+      "ref_price": 185.01,
       "pick": {
-        "ticker": "GOOGL",
+        "ticker": "MSFT",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Alphabet has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
-        "risks": [
-          "Momentum reversal after an extended run",
-          "Sector-wide de-rating"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.googl.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-09-18:GILD",
-      "ref_date": "2026-09-18",
-      "ref_price": 352.1,
-      "pick": {
-        "ticker": "GILD",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Gilead Sciences has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Microsoft keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
           "Macro data surprise",
           "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.gild.rel_20d",
+          "prices.msft.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-09-18:ISRG",
+      "id": "2026-09-18:AAPL",
       "ref_date": "2026-09-18",
-      "ref_price": 161.59,
+      "ref_price": 451.76,
       "pick": {
-        "ticker": "ISRG",
-        "stance": "bearish",
-        "conviction": "high",
-        "thesis": "Intuitive Surgical has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "ticker": "AAPL",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Apple is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
         "risks": [
-          "Short-covering rally",
-          "Benchmark weakness narrows the gap"
+          "Volatility expansion",
+          "Breakout in either direction"
         ],
-        "invalidation": "A close back above the recent range high on rising volume.",
+        "invalidation": "A sustained move away from the benchmark in either direction.",
         "evidence": [
-          "prices.isrg.rel_20d",
+          "prices.aapl.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

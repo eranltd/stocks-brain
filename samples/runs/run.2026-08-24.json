@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-08-24",
   "date": "2026-08-24",
-  "generated_at": "2026-08-24T21:23:00Z",
+  "generated_at": "2026-08-24T21:22:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.494,
-    "input_tokens": 6900,
-    "output_tokens": 1803,
+    "usd": 0.907,
+    "input_tokens": 9729,
+    "output_tokens": 868,
     "cap_usd": 2.5
   },
-  "duration_minutes": 1.67,
+  "duration_minutes": 2.17,
   "pack": {
     "hash": "a3a36183d6e2f72f60ab56ac51deb0876b2d56b489f251af6f71fe4b1ba99cbd",
-    "tokens": 6125,
+    "tokens": 9020,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -28,84 +28,84 @@
   "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
   "picks": [
     {
-      "id": "2026-08-24:NVDA",
+      "id": "2026-08-24:LIN",
       "ref_date": "2026-08-24",
-      "ref_price": 151.24,
+      "ref_price": 925.01,
       "pick": {
-        "ticker": "NVDA",
+        "ticker": "LIN",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "NVIDIA has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "Linde has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "risks": [
+          "Momentum reversal after an extended run",
+          "Macro data surprise"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.lin.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-24:COST",
+      "ref_date": "2026-08-24",
+      "ref_price": 693.25,
+      "pick": {
+        "ticker": "COST",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Costco has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
           "Sector-wide de-rating",
           "Momentum reversal after an extended run"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.nvda.rel_20d",
+          "prices.cost.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-08-24:ISRG",
+      "id": "2026-08-24:PEP",
       "ref_date": "2026-08-24",
-      "ref_price": 179.48,
+      "ref_price": 3040.83,
       "pick": {
-        "ticker": "ISRG",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Intuitive Surgical keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
-        "risks": [
-          "Sector-wide de-rating",
-          "Macro data surprise"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.isrg.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-08-24:MNST",
-      "ref_date": "2026-08-24",
-      "ref_price": 384.79,
-      "pick": {
-        "ticker": "MNST",
-        "stance": "bullish",
-        "conviction": "medium",
-        "thesis": "Monster Beverage has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
-        "risks": [
-          "Sector-wide de-rating",
-          "Macro data surprise"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.mnst.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-08-24:META",
-      "ref_date": "2026-08-24",
-      "ref_price": 130.77,
-      "pick": {
-        "ticker": "META",
+        "ticker": "PEP",
         "stance": "bearish",
         "conviction": "high",
-        "thesis": "Meta Platforms has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "thesis": "PepsiCo has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
         "risks": [
           "Positive company news flow",
-          "Benchmark weakness narrows the gap"
+          "Short-covering rally"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.meta.rel_20d",
+          "prices.pep.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-24:GOOGL",
+      "ref_date": "2026-08-24",
+      "ref_price": 332.85,
+      "pick": {
+        "ticker": "GOOGL",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Alphabet is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "risks": [
+          "Volatility expansion",
+          "Breakout in either direction"
+        ],
+        "invalidation": "A sustained move away from the benchmark in either direction.",
+        "evidence": [
+          "prices.googl.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

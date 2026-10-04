@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-10-01",
   "date": "2026-10-01",
-  "generated_at": "2026-10-01T21:21:00Z",
+  "generated_at": "2026-10-01T21:18:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.484,
-    "input_tokens": 6679,
-    "output_tokens": 775,
+    "usd": 0.479,
+    "input_tokens": 9971,
+    "output_tokens": 1395,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.14,
+  "duration_minutes": 3.55,
   "pack": {
     "hash": "2b67291df6bf7e248d59695696b30c12aafb80836f9c920209a5c1ce8c83947e",
-    "tokens": 6191,
+    "tokens": 9645,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -28,63 +28,63 @@
   "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
   "picks": [
     {
-      "id": "2026-10-01:XEL",
+      "id": "2026-10-01:LIN",
       "ref_date": "2026-10-01",
-      "ref_price": 883.87,
+      "ref_price": 1071.25,
       "pick": {
-        "ticker": "XEL",
+        "ticker": "LIN",
         "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Xcel Energy has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "conviction": "medium",
+        "thesis": "Linde keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Sector-wide de-rating",
-          "Momentum reversal after an extended run"
+          "Momentum reversal after an extended run",
+          "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.xel.rel_20d",
+          "prices.lin.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-10-01:AEP",
+      "id": "2026-10-01:AVGO",
       "ref_date": "2026-10-01",
-      "ref_price": 164.56,
+      "ref_price": 196.38,
       "pick": {
-        "ticker": "AEP",
+        "ticker": "AVGO",
+        "stance": "bullish",
+        "conviction": "medium",
+        "thesis": "Broadcom has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "risks": [
+          "Momentum reversal after an extended run",
+          "Sector-wide de-rating"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.avgo.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-10-01:AMZN",
+      "ref_date": "2026-10-01",
+      "ref_price": 464.77,
+      "pick": {
+        "ticker": "AMZN",
         "stance": "bearish",
         "conviction": "high",
-        "thesis": "American Electric Power has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "thesis": "Amazon broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
         "risks": [
-          "Short-covering rally",
-          "Positive company news flow"
+          "Positive company news flow",
+          "Benchmark weakness narrows the gap"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.aep.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-10-01:LIN",
-      "ref_date": "2026-10-01",
-      "ref_price": 1005.86,
-      "pick": {
-        "ticker": "LIN",
-        "stance": "neutral",
-        "conviction": "low",
-        "thesis": "Linde is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
-        "risks": [
-          "Breakout in either direction",
-          "Volatility expansion"
-        ],
-        "invalidation": "A sustained move away from the benchmark in either direction.",
-        "evidence": [
-          "prices.lin.rel_20d",
+          "prices.amzn.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

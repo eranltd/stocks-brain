@@ -14,6 +14,7 @@ Usage: python3 scripts/fetch_prices.py [--dry-run] [--fixtures DIR]
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
@@ -37,6 +38,11 @@ def check_provider(name: str | None) -> None:
     src = {s["id"]: s for s in load_json(CONFIG / "sources.json")["sources"]}.get("prices")
     if not src or src["status"] != "active" or src["provider"] != name:
         raise SystemExit(f"sources.json 'prices' must be active with provider {name!r} (fail closed)")
+
+
+def redact(msg: str) -> str:
+    """Drop numeric values from a validation message so no price reaches a public log."""
+    return re.sub(r"-?\d+(\.\d+)?(e-?\d+)?(?= (<|>|<=|>=) )", "<value>", msg)
 
 
 def merge(old: list[dict], new: list[dict], keep: int) -> list[dict]:
@@ -89,9 +95,10 @@ def main() -> int:
         doc = {"symbol": sym, "provider": name, "currency": "USD", "fetched_at": fetched_at,
                "sample": False, "bars": merge(old, new, keep)}
         errors += sanity(sym, doc["bars"]) if not args.fixtures else []
-        errors += [f"{sym}: {e}" for e in v.validate(doc, "prices.schema.json")]
+        errors += [f"{sym}: {redact(e)}" for e in v.validate(doc, "prices.schema.json")]
         staged[sym] = doc
-        print(f"  {sym:6} {len(new):5} bars from {name}, last {doc['bars'][-1]['date']} close {doc['bars'][-1]['close']}")
+        # Workflow logs are public: counts and dates only, never a price (provider licence, docs/decisions.md).
+        print(f"  {sym:6} {len(new):5} bars from {name}, {doc['bars'][0]['date']} to {doc['bars'][-1]['date']}")
 
     if errors:
         print("fetch_prices: FAILED, nothing written:", *errors, sep="\n  ", file=sys.stderr)

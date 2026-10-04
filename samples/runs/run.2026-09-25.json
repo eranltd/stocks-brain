@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-09-25",
   "date": "2026-09-25",
-  "generated_at": "2026-09-25T21:32:00Z",
+  "generated_at": "2026-09-25T21:31:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.466,
-    "input_tokens": 9598,
-    "output_tokens": 1804,
+    "usd": 0.797,
+    "input_tokens": 7822,
+    "output_tokens": 836,
     "cap_usd": 2.5
   },
-  "duration_minutes": 1.56,
+  "duration_minutes": 2.61,
   "pack": {
     "hash": "095870bc27e7af59121e531b208a4f6eaa8efaeadc8be428553efe8d5c86aa34",
-    "tokens": 8741,
+    "tokens": 7404,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,66 +25,87 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Breadth was mixed. The brain favoured relative-strength leaders and flagged one persistent laggard.",
+  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
   "picks": [
     {
-      "id": "2026-09-25:XEL",
+      "id": "2026-09-25:LIN",
       "ref_date": "2026-09-25",
-      "ref_price": 824.2,
+      "ref_price": 1045.43,
       "pick": {
-        "ticker": "XEL",
+        "ticker": "LIN",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Xcel Energy keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "thesis": "Linde has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Momentum reversal after an extended run",
+          "Sector-wide de-rating",
           "Macro data surprise"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.xel.rel_20d",
+          "prices.lin.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-09-25:AEP",
+      "id": "2026-09-25:MNST",
       "ref_date": "2026-09-25",
-      "ref_price": 167.38,
+      "ref_price": 318.72,
       "pick": {
-        "ticker": "AEP",
+        "ticker": "MNST",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Monster Beverage keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
+        "risks": [
+          "Sector-wide de-rating",
+          "Momentum reversal after an extended run"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.mnst.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-09-25:COST",
+      "ref_date": "2026-09-25",
+      "ref_price": 646.08,
+      "pick": {
+        "ticker": "COST",
         "stance": "bearish",
         "conviction": "high",
-        "thesis": "American Electric Power has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
+        "thesis": "Costco has lagged the benchmark across the lookback window and recent rebounds faded fast. The weakness looks persistent rather than a single event.",
         "risks": [
-          "Benchmark weakness narrows the gap",
-          "Positive company news flow"
+          "Positive company news flow",
+          "Short-covering rally"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.aep.rel_20d",
+          "prices.cost.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-09-25:AAPL",
+      "id": "2026-09-25:NVDA",
       "ref_date": "2026-09-25",
-      "ref_price": 256.01,
+      "ref_price": 1525.65,
       "pick": {
-        "ticker": "AAPL",
+        "ticker": "NVDA",
         "stance": "neutral",
         "conviction": "low",
-        "thesis": "Apple is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "thesis": "NVIDIA is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
         "risks": [
           "Volatility expansion",
           "Breakout in either direction"
         ],
         "invalidation": "A sustained move away from the benchmark in either direction.",
         "evidence": [
-          "prices.aapl.rel_20d",
+          "prices.nvda.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

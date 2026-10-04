@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-09-11",
   "date": "2026-09-11",
-  "generated_at": "2026-09-11T21:23:00Z",
+  "generated_at": "2026-09-11T21:29:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.505,
-    "input_tokens": 6464,
-    "output_tokens": 772,
+    "usd": 0.507,
+    "input_tokens": 10245,
+    "output_tokens": 990,
     "cap_usd": 2.5
   },
-  "duration_minutes": 2.89,
+  "duration_minutes": 1.33,
   "pack": {
     "hash": "c5f2321a701023c559be99516b3d71ea2cdc468828709b552b5d061dc371cce3",
-    "tokens": 5710,
+    "tokens": 9741,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -25,87 +25,87 @@
     "learnings": "0.1.0"
   },
   "repair_retries": 0,
-  "summary": "Rotation day. Picks lean on names whose relative trend held through the rotation.",
+  "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
   "picks": [
     {
-      "id": "2026-09-11:GOOGL",
+      "id": "2026-09-11:TMUS",
       "ref_date": "2026-09-11",
-      "ref_price": 1413.77,
+      "ref_price": 3613.91,
       "pick": {
-        "ticker": "GOOGL",
+        "ticker": "TMUS",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "Alphabet has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "T-Mobile US keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
-          "Macro data surprise",
-          "Momentum reversal after an extended run"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.googl.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-09-11:GILD",
-      "ref_date": "2026-09-11",
-      "ref_price": 343.56,
-      "pick": {
-        "ticker": "GILD",
-        "stance": "bullish",
-        "conviction": "high",
-        "thesis": "Gilead Sciences has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
-        "risks": [
-          "Macro data surprise",
+          "Momentum reversal after an extended run",
           "Sector-wide de-rating"
         ],
         "invalidation": "A close back below the recent range low while the benchmark holds firm.",
         "evidence": [
-          "prices.gild.rel_20d",
+          "prices.tmus.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-09-11:AMGN",
+      "id": "2026-09-11:LIN",
       "ref_date": "2026-09-11",
-      "ref_price": 207.77,
+      "ref_price": 1013.6,
       "pick": {
-        "ticker": "AMGN",
-        "stance": "bearish",
+        "ticker": "LIN",
+        "stance": "bullish",
         "conviction": "medium",
-        "thesis": "Amgen broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
+        "thesis": "Linde has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
         "risks": [
-          "Positive company news flow",
-          "Benchmark weakness narrows the gap"
+          "Momentum reversal after an extended run",
+          "Macro data surprise"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.lin.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-09-11:PEP",
+      "ref_date": "2026-09-11",
+      "ref_price": 2514.82,
+      "pick": {
+        "ticker": "PEP",
+        "stance": "bearish",
+        "conviction": "high",
+        "thesis": "PepsiCo broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
+        "risks": [
+          "Short-covering rally",
+          "Positive company news flow"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.amgn.rel_20d",
+          "prices.pep.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]
       }
     },
     {
-      "id": "2026-09-11:ISRG",
+      "id": "2026-09-11:AMZN",
       "ref_date": "2026-09-11",
-      "ref_price": 173.6,
+      "ref_price": 482.02,
       "pick": {
-        "ticker": "ISRG",
+        "ticker": "AMZN",
         "stance": "neutral",
         "conviction": "low",
-        "thesis": "Intuitive Surgical is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
+        "thesis": "Amazon is moving broadly in line with the benchmark. Signals conflict, so the stance is to watch for a decisive break rather than lean either way.",
         "risks": [
-          "Breakout in either direction",
-          "Volatility expansion"
+          "Volatility expansion",
+          "Breakout in either direction"
         ],
         "invalidation": "A sustained move away from the benchmark in either direction.",
         "evidence": [
-          "prices.isrg.rel_20d",
+          "prices.amzn.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

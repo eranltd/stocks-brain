@@ -2,20 +2,20 @@
   "schema_version": 1,
   "run_id": "run.2026-08-20",
   "date": "2026-08-20",
-  "generated_at": "2026-08-20T21:12:00Z",
+  "generated_at": "2026-08-20T21:27:00Z",
   "status": "ok",
   "sample": true,
   "model": "sample-model",
   "cost": {
-    "usd": 0.437,
-    "input_tokens": 10552,
-    "output_tokens": 1160,
+    "usd": 0.813,
+    "input_tokens": 7326,
+    "output_tokens": 1717,
     "cap_usd": 2.5
   },
-  "duration_minutes": 3.4,
+  "duration_minutes": 1.81,
   "pack": {
     "hash": "edbd0b8aedf6d9e69f3d299ecfc8f01e546efebd1e657a9962aaebc291761d35",
-    "tokens": 10005,
+    "tokens": 6605,
     "cap_tokens": 12000
   },
   "doc_versions": {
@@ -28,14 +28,56 @@
   "summary": "Leadership narrowed to a handful of names. Conviction is kept moderate until breadth improves.",
   "picks": [
     {
+      "id": "2026-08-20:LIN",
+      "ref_date": "2026-08-20",
+      "ref_price": 924.01,
+      "pick": {
+        "ticker": "LIN",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Linde has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "risks": [
+          "Sector-wide de-rating",
+          "Macro data surprise"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.lin.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
+      "id": "2026-08-20:COST",
+      "ref_date": "2026-08-20",
+      "ref_price": 670.5,
+      "pick": {
+        "ticker": "COST",
+        "stance": "bullish",
+        "conviction": "high",
+        "thesis": "Costco has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "risks": [
+          "Momentum reversal after an extended run",
+          "Sector-wide de-rating"
+        ],
+        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
+        "evidence": [
+          "prices.cost.rel_20d",
+          "benchmark.trend",
+          "learnings.active"
+        ]
+      }
+    },
+    {
       "id": "2026-08-20:NVDA",
       "ref_date": "2026-08-20",
-      "ref_price": 150.58,
+      "ref_price": 1538.57,
       "pick": {
         "ticker": "NVDA",
         "stance": "bullish",
         "conviction": "high",
-        "thesis": "NVIDIA has outpaced the benchmark across the lookback window with a steady, orderly advance. Trend and relative strength agree, and no active lesson argues against this setup.",
+        "thesis": "NVIDIA keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
         "risks": [
           "Sector-wide de-rating",
           "Momentum reversal after an extended run"
@@ -49,42 +91,21 @@
       }
     },
     {
-      "id": "2026-08-20:ISRG",
+      "id": "2026-08-20:PEP",
       "ref_date": "2026-08-20",
-      "ref_price": 179.62,
+      "ref_price": 2979.38,
       "pick": {
-        "ticker": "ISRG",
-        "stance": "bullish",
-        "conviction": "medium",
-        "thesis": "Intuitive Surgical keeps making higher lows while the benchmark chops sideways. Pullbacks have been bought quickly, which suggests persistent demand rather than a one-off gap.",
-        "risks": [
-          "Macro data surprise",
-          "Momentum reversal after an extended run"
-        ],
-        "invalidation": "A close back below the recent range low while the benchmark holds firm.",
-        "evidence": [
-          "prices.isrg.rel_20d",
-          "benchmark.trend",
-          "learnings.active"
-        ]
-      }
-    },
-    {
-      "id": "2026-08-20:AVGO",
-      "ref_date": "2026-08-20",
-      "ref_price": 104.22,
-      "pick": {
-        "ticker": "AVGO",
+        "ticker": "PEP",
         "stance": "bearish",
         "conviction": "high",
-        "thesis": "Broadcom broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
+        "thesis": "PepsiCo broke below its recent range while the benchmark held up. Relative weakness with rising volatility is a poor combination over the scoring horizon.",
         "risks": [
-          "Short-covering rally",
-          "Benchmark weakness narrows the gap"
+          "Benchmark weakness narrows the gap",
+          "Positive company news flow"
         ],
         "invalidation": "A close back above the recent range high on rising volume.",
         "evidence": [
-          "prices.avgo.rel_20d",
+          "prices.pep.rel_20d",
           "benchmark.trend",
           "learnings.active"
         ]

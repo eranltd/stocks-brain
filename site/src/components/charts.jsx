@@ -5,7 +5,7 @@ import { Tip } from "./ui.jsx";
 
 /* ---------------------------------------------------------------- sparkline */
 
-export function Sparkline({ bars, tone = "accent", height = 48, delay = 0 }) {
+export function Sparkline({ bars, tone = "accent", height = 48, delay = 0, indexed = false }) {
   const [ref, inView] = useInView();
   const id = useId();
   const [hover, setHover] = useState(null);
@@ -35,7 +35,7 @@ export function Sparkline({ bars, tone = "accent", height = 48, delay = 0 }) {
         onPointerMove={onMove}
         onPointerLeave={() => setHover(null)}
         role="img"
-        aria-label={`${bars.length}-day closing prices, from ${fmtNum(bars[0].close)} to ${fmtNum(bars.at(-1).close)}`}
+        aria-label={indexed ? `${bars.length}-day performance indexed to 100, ending at ${fmtNum(bars.at(-1).close)}` : `${bars.length}-day closing prices, from ${fmtNum(bars[0].close)} to ${fmtNum(bars.at(-1).close)}`}
       >
         <defs>
           <linearGradient id={id} x1="0" x2="0" y1="0" y2="1">
@@ -61,7 +61,7 @@ export function Sparkline({ bars, tone = "accent", height = 48, delay = 0 }) {
       {hp && (
         <>
           <span className="pointer-events-none absolute size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-surface" style={{ left: `${(hp[0] / W) * 100}%`, top: `${(hp[1] / H) * 100}%`, background: color }} />
-          <Tip tip={{ x: `${(hp[0] / W) * 100}%`, y: (hp[1] / H) * 48, content: <><div className="meta mb-1">{fmtShort(bars[hover].date)}</div><b className="num font-mono">{fmtNum(bars[hover].close)}</b></> }} />
+          <Tip tip={{ x: `${(hp[0] / W) * 100}%`, y: (hp[1] / H) * 48, content: <><div className="meta mb-1">{fmtShort(bars[hover].date)}</div>{indexed ? <><span className="text-ink-3">index </span><b className="num font-mono">{fmtNum(bars[hover].close, 1)}</b> <span className="num font-mono text-ink-3">{fmtPct(bars[hover].close - 100, 1)}</span></> : <b className="num font-mono">{fmtNum(bars[hover].close)}</b>}</> }} />
         </>
       )}
     </div>

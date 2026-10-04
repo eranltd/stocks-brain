@@ -1,7 +1,7 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "updated_at": "2026-10-04",
-  "change_note": "Prices connected: Tiingo (official EOD API, free key in a GitHub secret).",
+  "change_note": "Prices: derived-only publication.",
   "sources": [
     {
       "id": "prices",
@@ -11,11 +11,12 @@
       "provider": "tiingo",
       "cadence": "Mon–Fri 23:40 UTC",
       "feeds": [
-        "data/prices"
+        ".cache/prices (raw, in-run only)",
+        "data/market/derived.json"
       ],
       "secret_env": "TIINGO_API_KEY",
       "follow": [],
-      "note": "Split/dividend-adjusted end-of-day bars. Key lives only in the TIINGO_API_KEY Actions secret. Behind scripts/providers/; all-or-nothing writes."
+      "note": "Split/dividend-adjusted EOD bars. Key only in the TIINGO_API_KEY Actions secret. Raw bars are never committed or published (licence); the site shows derived returns and indexed lines."
     },
     {
       "id": "x_accounts",

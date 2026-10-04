@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _common import DOCS, KB, PRICES, RUNS, Validator, dump_json, load_json, parse_front_matter, settings  # noqa: E402
+from _common import DOCS, KB, MARKET, PRICES, RUNS, Validator, dump_json, load_json, parse_front_matter, settings, watchlist  # noqa: E402
 import scoring  # noqa: E402
 
 TODAY = datetime.now(timezone.utc).date().isoformat()
@@ -120,7 +120,7 @@ def compute_regime(bars: list[dict], st: dict, sample: bool) -> dict:
         "as_of": bars[-1]["date"], "sample": sample, "benchmark": st["scoring"]["benchmark"]["symbol"],
         "state": state, "trend": trend, "label": f"{state} · {trend}trend" if trend != "sideways" else f"{state} · sideways",
         "metrics": {"vol_ann_pct": round(vol, 2), "drawdown_pct": round(drawdown, 2),
-                    "close": closes[-1], "sma": round(sma_now, 4), "sma_slope_pct": round(slope, 3)},
+                    "dist_sma_pct": round((closes[-1] / sma_now - 1) * 100, 3), "sma_slope_pct": round(slope, 3)},
         "params": {k: cfg[k] for k in ("vol_days", "trend_sma_days", "slope_days", "drawdown_days")},
     }
 
@@ -165,7 +165,53 @@ def run_calibration() -> None:
     print(f"calibration: {doc['n']} outcomes, conviction {doc['conviction_verdict']}")
 
 
-STEPS = {"score": run_score, "regime": run_regime, "calibration": run_calibration}
+# ------------------------------------------------------------ derived market
+
+def _pct(a: float, b: float) -> float:
+    return round((b / a - 1) * 100, 3)
+
+
+def compute_derived(prices_dir: Path, st: dict, wl: dict, sample: bool, provider: str) -> dict:
+    """Public, non-redistributive view of the market: returns, distances and indexed sparklines.
+    No absolute prices leave this function."""
+    bench = st["scoring"]["benchmark"]["symbol"]
+    spark_n = st["site"]["sparkline_days"]
+    bb = _bars(prices_dir, bench)
+    out, as_of = [], None
+    for sym in [*(s["symbol"] for s in wl["symbols"]), bench]:
+        bars = _bars(prices_dir, sym)
+        if len(bars) < 61:
+            continue
+        c = [b["close"] for b in bars]
+        sma50 = sum(c[-50:]) / 50
+        tail = bars[-spark_n:]
+        base = tail[0]["close"]
+        row = {
+            "symbol": sym, "last_date": bars[-1]["date"],
+            "change_1d_pct": _pct(c[-2], c[-1]), "ret_20d_pct": _pct(c[-21], c[-1]), "ret_60d_pct": _pct(c[-61], c[-1]),
+            "dist_sma50_pct": round((c[-1] / sma50 - 1) * 100, 3), "above_sma50": c[-1] > sma50,
+            "spark": [{"date": b["date"], "v": round(b["close"] / base * 100, 2)} for b in tail],
+        }
+        if sym != bench and len(bb) >= 21:
+            row["vs_bench_20d_pct"] = round(row["ret_20d_pct"] - _pct(bb[-21]["close"], bb[-1]["close"]), 3)
+        out.append(row)
+        as_of = max(as_of or "", row["last_date"])
+    members = [r for r in out if r["symbol"] != bench]
+    breadth = round(sum(r["above_sma50"] for r in members) / len(members) * 100, 1) if members else None
+    return {"as_of": as_of or "1970-01-01", "sample": sample, "provider": provider, "benchmark": bench,
+            "breadth_above_sma50_pct": breadth, "symbols": out}
+
+
+def run_derive() -> None:
+    st = settings()
+    doc = compute_derived(PRICES, st, watchlist(), sample=False, provider=st["prices"]["provider"])
+    if not doc["symbols"]:
+        raise SystemExit("derive: no price data in .cache/prices (run fetch_prices first)")
+    _write(MARKET / "derived.json", doc, "derived.schema.json")
+    print(f"derive: {len(doc['symbols'])} symbols as of {doc['as_of']}, breadth {doc['breadth_above_sma50_pct']}% above 50-day")
+
+
+STEPS = {"derive": run_derive, "score": run_score, "regime": run_regime, "calibration": run_calibration}
 
 if __name__ == "__main__":
     which = sys.argv[1] if len(sys.argv) > 1 else "all"

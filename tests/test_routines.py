@@ -101,6 +101,19 @@ class RoutinesTest(unittest.TestCase):
         self.assertEqual(doc["n"], len(outcomes))
 
 
+class DerivedTest(unittest.TestCase):
+    def test_derived_has_no_absolute_prices(self):
+        from _common import watchlist
+        st = settings()
+        doc = routines_code.compute_derived(SAMPLES / "prices", st, watchlist(), sample=True, provider="sample")
+        self.assertEqual(Validator().validate(doc, "derived.schema.json"), [])
+        bench = st["scoring"]["benchmark"]["symbol"]
+        closes = {b["close"] for b in load_json(SAMPLES / "prices" / f"{bench}.json")["bars"]}
+        row = next(r for r in doc["symbols"] if r["symbol"] == bench)
+        self.assertEqual(row["spark"][0]["v"], 100.0)
+        self.assertFalse({p["v"] for p in row["spark"][1:]} & closes - {100.0})
+
+
 class IngestTest(unittest.TestCase):
     def test_clean_strips_invisible_chars(self):
         import kb_ingest

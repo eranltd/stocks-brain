@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Fetch daily bars for the watchlist + benchmark into data/prices/<SYMBOL>.json.
+"""Fetch daily bars for the watchlist + benchmark into .cache/prices/<SYMBOL>.json (git-ignored).
+
+Raw bars are never committed: the provider's terms forbid redistribution. Public output is
+data/market/derived.json, written by `routines_code.py derive`.
 
 All-or-nothing: every symbol is fetched, merged with what is on disk, trimmed to
 prices.keep_days, sanity-checked and schema-validated in memory. Only if all pass is

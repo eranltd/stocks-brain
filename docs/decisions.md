@@ -1,21 +1,22 @@
 ---
-version: 0.1.0
+version: 0.2.0
 updated_at: 2026-10-04
-change_note: Decision log started. Everything decided while building M1 and M2, plus open items.
+change_note: Prices published as derived numbers only; Tiingo key connected.
 ---
 # Decision log
 
 Every decision that shapes the system, with the reason. Newest first. Nothing lives only in a chat session.
 
 ## Open items (waiting on the owner)
-- **Tiingo key**: add repo secret `TIINGO_API_KEY`. Until then prices and picks are sample data.
 - **Default branch**: set to `main` (Settings → General). Scheduled runs only fire from the default branch.
 - **Author of sources S-001 to S-005**: confirm they are the same channel (Micha) as the later batches.
-- **Data licence**: Tiingo's free plan restricts redistributing raw data. This repo and site are public. Options: keep raw prices out of git and publish only derived numbers, make the repo private, or accept the risk for a personal notebook.
+- **Reference prices in pick records**: runs and outcomes store single reference and exit closes. This is minor, but revisit at M3: drop them, or keep them as computed returns only.
 - **LLM step (M3)**: run the daily brain as a scheduled Claude Code routine on the owner's subscription (preferred) or through a paid API key.
 - **Paid connectors** (news, X, options data for implied moves): parked until the owner wants to spend.
 
 ## 2026-10-04
+- **Prices are derived-only (owner's choice).** Tiingo's free plan forbids redistribution and the repo is public. Raw bars live only in a git-ignored `.cache/` inside each Action run (each fetch returns the full window, so nothing raw needs to persist). The public repo gets `data/market/derived.json`: 1-, 20- and 60-day returns, return vs the benchmark, distance from the 50-day average, breadth, and sparklines indexed to 100. The regime file now uses percentages instead of absolute closes. Lint fails if raw bars are ever committed.
+- **Tiingo key connected.** The dry run on main fetched 260 bars per symbol.
 - **Routines get their own tab**, with a run log in `data/ops/routine_runs.json`. Each workflow run appends its outcome, failures included, so the site shows what actually ran.
 - **Batch files are committed** under `data/kb/batches/`. Lint fails if a batch is on record but not ingested.
 - **Insights tab** for the library and dated claims, with search, themes and YouTube links. The owner considers these the most valuable content.

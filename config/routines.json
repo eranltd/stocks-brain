@@ -1,7 +1,7 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "updated_at": "2026-10-04",
-  "change_note": "Code-only routines on: fetch prices, scoring, regime, calibration.",
+  "change_note": "Prices published as derived numbers only; raw bars never committed.",
   "timezone": "UTC",
   "routines": [
     {
@@ -37,10 +37,11 @@
         "prices"
       ],
       "outputs": [
-        "data/prices/<SYMBOL>.json"
+        ".cache/prices (raw, never committed)",
+        "data/market/derived.json"
       ],
       "human_gate": false,
-      "why": "End-of-day bars for the watchlist and the benchmark, fetched after the close so they are settled. Every later routine starts from them, so a failed symbol fails the whole run."
+      "why": "End-of-day bars for the watchlist and benchmark, fetched after the close. Raw bars stay inside the run (provider licence); only derived returns, distances and indexed lines are published. One failed symbol fails the run."
     },
     {
       "id": "close_run",

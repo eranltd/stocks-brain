@@ -157,7 +157,7 @@ class Lint:
         for base in (ROOT, SAMPLES):
             runs_dir = RUNS if base is ROOT else SAMPLES / "runs"
             kb_dir = KB if base is ROOT else SAMPLES / "kb"
-            prices_dir = PRICES if base is ROOT else SAMPLES / "prices"
+            prices_dir = PRICES if base is ROOT else SAMPLES / "prices"  # PRICES is the git-ignored cache
             for p in _json_files(runs_dir):
                 if not re.fullmatch(r"run\.\d{4}-\d{2}-\d{2}\.json", p.name):
                     self.err(p, "unexpected file in runs/ (want run.YYYY-MM-DD.json)")
@@ -255,6 +255,20 @@ class Lint:
         if any(b in run["summary"].lower() for b in banned):
             self.err(path, "banned phrase in summary")
 
+    def check_market(self) -> None:
+        derived = DATA / "market" / "derived.json"
+        if derived.exists():
+            self.schema(derived, "derived.schema.json")
+        for p in _walk(ROOT):
+            rel = p.relative_to(ROOT).as_posix()
+            if rel.startswith("data/") and p.suffix == ".json":
+                try:
+                    obj = load_json(p)
+                except Exception:  # noqa: BLE001
+                    continue
+                if isinstance(obj, dict) and "bars" in obj and not obj.get("sample"):
+                    self.err(p, "raw provider bars must not be committed (licence); publish derived numbers only")
+
     def check_ops_and_batches(self) -> None:
         log = DATA / "ops" / "routine_runs.json"
         if log.exists():
@@ -325,6 +339,7 @@ class Lint:
         guard, _ = self.check_docs()
         self.check_data(guard, wl, st)
         self.check_ops_and_batches()
+        self.check_market()
         self.check_hygiene(guard, wl, st)
         for w in self.warnings:
             print(f"warn  {w}")

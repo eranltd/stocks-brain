@@ -14,12 +14,11 @@
     "label": {"type": "string", "maxLength": 40},
     "metrics": {
       "type": "object", "additionalProperties": false,
-      "required": ["vol_ann_pct", "drawdown_pct", "close", "sma", "sma_slope_pct"],
+      "required": ["vol_ann_pct", "drawdown_pct", "dist_sma_pct", "sma_slope_pct"],
       "properties": {
         "vol_ann_pct": {"type": "number", "minimum": 0},
         "drawdown_pct": {"type": "number", "maximum": 0},
-        "close": {"type": "number", "exclusiveMinimum": 0},
-        "sma": {"type": "number", "exclusiveMinimum": 0},
+        "dist_sma_pct": {"type": "number", "description": "Last close vs its trend average, in percent. No absolute prices are published."},
         "sma_slope_pct": {"type": "number"}
       }
     },

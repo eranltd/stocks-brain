@@ -42,6 +42,11 @@ jobs:
           TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
         run: python3 scripts/fetch_prices.py ${{ env.DRY == 'true' && '--dry-run' || '' }}
 
+      - name: Derive public market numbers (no raw prices)
+        id: derive_market
+        if: env.MONTHLY != 'true' && env.DRY != 'true'
+        run: python3 scripts/routines_code.py derive
+
       - name: Score matured picks
         id: score_picks
         if: env.MONTHLY != 'true' && env.DRY != 'true'
@@ -67,6 +72,7 @@ jobs:
         if: always() && env.DRY != 'true' && github.ref == 'refs/heads/main'
         env:
           ROUTINE_FETCH_PRICES: ${{ steps.fetch_prices.outcome }}
+          ROUTINE_DERIVE_MARKET: ${{ steps.derive_market.outcome }}
           ROUTINE_SCORE_PICKS: ${{ steps.score_picks.outcome }}
           ROUTINE_REGIME_MONITOR: ${{ steps.regime_monitor.outcome }}
           ROUTINE_CALIBRATION: ${{ steps.calibration.outcome }}

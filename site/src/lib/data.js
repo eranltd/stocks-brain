@@ -13,7 +13,7 @@ export async function loadAll(onProgress = () => {}) {
   const manifest = await get("manifest.json");
   const paths = [
     ...manifest.runs,
-    ...manifest.prices,
+    manifest.market,
     ...Object.values(manifest.kb),
     ...manifest.docs.map((d) => d.file),
     ...(manifest.ops ? [manifest.ops] : []),
@@ -31,7 +31,9 @@ export async function loadAll(onProgress = () => {}) {
 
 export function derive(manifest, files) {
   const runs = manifest.runs.map((p) => files[p]).sort((a, b) => a.date.localeCompare(b.date));
-  const prices = Object.fromEntries(manifest.prices.map((p) => [files[p].symbol, files[p]]));
+  const market = files[manifest.market];
+  // Indexed sparklines (100 = start of window). No absolute prices are published.
+  const prices = Object.fromEntries(market.symbols.map((s) => [s.symbol, { ...s, bars: s.spark.map((p) => ({ date: p.date, close: p.v })) }]));
   const doc = (name) => manifest.docs.find((d) => d.name === name);
   const watchlist = files[doc("watchlist").file];
   const settings = files[doc("settings").file];
@@ -78,7 +80,7 @@ export function derive(manifest, files) {
   }
 
   return {
-    manifest, runs, shownRuns, latest, lastOk, prices, watchlist, settings, learnings, guardrails,
+    market, manifest, runs, shownRuns, latest, lastOk, prices, watchlist, settings, learnings, guardrails,
     outcomes, library, sources, routines, names, bench, kb, docs, regime, calibration, observations, opsLog,
     sample: manifest.source === "sample", livePrices: manifest.price_source === "live",
   };

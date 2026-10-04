@@ -8,8 +8,7 @@
   "metrics": {
     "vol_ann_pct": 15.81,
     "drawdown_pct": -11.93,
-    "close": 460.86,
-    "sma": 454.2252,
+    "dist_sma_pct": 1.461,
     "sma_slope_pct": -1.166
   },
   "params": {

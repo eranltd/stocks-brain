@@ -17,7 +17,10 @@ DOCS = ROOT / "docs"
 CONFIG = ROOT / "config"
 SCHEMAS = ROOT / "schemas"
 DATA = ROOT / "data"
-PRICES = DATA / "prices"
+# Raw provider bars live only in a git-ignored cache inside the Action run. The provider's terms
+# do not allow redistribution, so the public repo gets derived numbers only (data/market/derived.json).
+PRICES = ROOT / ".cache" / "prices"
+MARKET = DATA / "market"
 KB = DATA / "kb"
 RUNS = ROOT / "runs"
 SAMPLES = ROOT / "samples"

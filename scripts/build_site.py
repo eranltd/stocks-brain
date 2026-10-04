@@ -18,7 +18,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _common import (  # noqa: E402
-    CONFIG, DATA, DOCS, EXTRA_MD_DOCS, JSON_DOCS, KB, MD_DOCS, PRICES, RUNS, SAMPLES, SITE, dump_json, load_json,
+    CONFIG, DATA, DOCS, EXTRA_MD_DOCS, JSON_DOCS, KB, MARKET, MD_DOCS, RUNS, SAMPLES, SITE, dump_json, load_json,
     parse_front_matter, settings,
 )
 
@@ -41,11 +41,10 @@ def main() -> int:
     def pick(has_live: bool) -> str:
         return args.source if args.source != "auto" else ("live" if has_live else "sample")
     source = pick(any(RUNS.glob("run.*.json")))
-    price_source = pick(any(PRICES.glob("*.json")))
+    price_source = pick((MARKET / "derived.json").exists())
     live = source == "live"
     runs_dir = RUNS if live else SAMPLES / "runs"
     kb_dir = KB if live else SAMPLES / "kb"
-    prices_dir = PRICES if price_source == "live" else SAMPLES / "prices"
     regime_dir = KB if price_source == "live" else SAMPLES / "kb"
     learnings = DOCS / "learnings.json" if live else SAMPLES / "docs" / "learnings.json"
 
@@ -54,9 +53,14 @@ def main() -> int:
     runs = sorted(runs_dir.glob("run.*.json"))
     for p in runs:
         _copy(p, OUT / "runs" / p.name)
-    prices = sorted(prices_dir.glob("*.json"))
-    for p in prices:
-        _copy(p, OUT / "prices" / p.name)
+    # Prices: derived numbers only (no raw bars). Samples are derived on the fly from synthetic bars.
+    if price_source == "live":
+        _copy(MARKET / "derived.json", OUT / "market" / "derived.json")
+    else:
+        import routines_code
+        from _common import watchlist
+        dump_json(OUT / "market" / "derived.json",
+                  routines_code.compute_derived(SAMPLES / "prices", st, watchlist(), sample=True, provider="sample"))
     kb = {}
     # Curated knowledge (library, observations) is always the real file once it has content.
     def curated(name: str, key: str) -> Path:
@@ -100,11 +104,11 @@ def main() -> int:
         "repo": st["site"]["repo"],
         "runs": [f"runs/{p.name}" for p in runs],
         "runs_shown": st["site"]["runs_shown"],
-        "prices": [f"prices/{p.name}" for p in prices],
+        "market": "market/derived.json",
         "kb": kb,
         "docs": docs,
     })
-    print(f"build_site: picks {source}, prices {price_source}, {len(runs)} runs, {len(prices)} price files -> {OUT}")
+    print(f"build_site: picks {source}, prices {price_source} (derived), {len(runs)} runs -> {OUT}")
     return 0
 
 

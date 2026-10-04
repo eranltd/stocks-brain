@@ -1,7 +1,7 @@
 ---
-version: 0.4.0
+version: 0.5.0
 updated_at: 2026-10-04
-change_note: Library batches 8 and 9 from a 119-book review; shelf doc added.
+change_note: First brain dry run recorded; watchlist widened beyond big tech.
 ---
 # Decision log
 
@@ -14,6 +14,17 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Paid connectors** (news, X, options data for implied moves): parked until the owner wants to spend.
 
 ## 2026-10-04
+- **Watchlist widened beyond big tech.** All eight names were mega-cap growth, so the brain could only ever return one
+  kind of bet, and the household's core index already holds it. Added thirteen Nasdaq-listed names from other sectors:
+  health care (AMGN, ISRG, GILD), staples (PEP, MNST), utilities (AEP, XEL), industrials (CTAS, PCAR), financials (CME),
+  telecom (TMUS), energy (FANG) and materials (LIN). Same Tiingo fetch, same derived-only publication. Asked for in the
+  first dry-run session, to pick a diverse four-stock basket from data.
+- **Brain dry run 1 (by hand in Claude Code, not scored).** The model read the inputs a pack would hold, as of 2 Oct
+  (derived prices, regime, strategy, guardrails, library), and returned four calls that pass the pick schema and
+  guardrails: NVDA bullish (medium), MSFT bullish (low), AVGO bearish (low), COST bearish (low). No call on META
+  (stretched far above its 50-day average), GOOGL or AMZN (below it, with reports inside the horizon). Conviction stayed
+  modest because the Microsoft, Alphabet and Amazon reports and the Fed decision fall in the horizon's last week.
+  Not written to `runs/`: a run record needs reference prices and a cost that come from code, which is M3.
 - **Library batches 8 and 9: the books.** A separate project read and summarised 119 investing and trading books
   (public at https://github.com/ungaroni/the-whole-shelf) and cross-examined them in groups. The durable, cited
   principles from 31 of those books, plus the Micha course notes on index investing and the long-average trend method,

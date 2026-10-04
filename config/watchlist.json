@@ -1,7 +1,7 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "updated_at": "2026-10-04",
-  "change_note": "Aliases for share classes (claims about GOOG match GOOGL).",
+  "change_note": "Thirteen Nasdaq names from other sectors, so the brain can return a diverse set instead of only big tech.",
   "symbols": [
     {
       "symbol": "AAPL",
@@ -37,6 +37,58 @@
     {
       "symbol": "COST",
       "name": "Costco"
+    },
+    {
+      "symbol": "AMGN",
+      "name": "Amgen"
+    },
+    {
+      "symbol": "ISRG",
+      "name": "Intuitive Surgical"
+    },
+    {
+      "symbol": "GILD",
+      "name": "Gilead Sciences"
+    },
+    {
+      "symbol": "PEP",
+      "name": "PepsiCo"
+    },
+    {
+      "symbol": "MNST",
+      "name": "Monster Beverage"
+    },
+    {
+      "symbol": "AEP",
+      "name": "American Electric Power"
+    },
+    {
+      "symbol": "XEL",
+      "name": "Xcel Energy"
+    },
+    {
+      "symbol": "CTAS",
+      "name": "Cintas"
+    },
+    {
+      "symbol": "PCAR",
+      "name": "PACCAR"
+    },
+    {
+      "symbol": "CME",
+      "name": "CME Group"
+    },
+    {
+      "symbol": "TMUS",
+      "name": "T-Mobile US"
+    },
+    {
+      "symbol": "FANG",
+      "name": "Diamondback Energy"
+    },
+    {
+      "symbol": "LIN",
+      "name": "Linde"
     }
   ]
 }

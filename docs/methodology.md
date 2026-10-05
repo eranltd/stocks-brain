@@ -1,7 +1,7 @@
 ---
-version: 0.7.0
+version: 0.8.0
 updated_at: 2026-10-05
-change_note: The paper record carries the risk of what it holds and what the rule would hold today; the site shows the record, not the history test's path.
+change_note: The pre-registered rule set 1.0.0 (config/rules.json); long-average filters; history verdicts are read once; the reference baseline is capped at candidate; forward comparison after 6 decisions.
 ---
 # Methodology
 
@@ -110,7 +110,8 @@ The site's portfolio views show this record. The history test's own path can hol
 name it already held while that name passes the keep checks; the record started fresh, so a name needs the entry checks.
 
 ## Rule engine (code only)
-`config/rules.json` is the pre-registered rule set (`docs/playbook.md` is the human version). `scripts/rules.py` runs every
+`config/rules.json` is the pre-registered rule set (the Playbook tab is its human version): 23 rules, 6 plans, 14 experiments, the
+acceptance numbers and the count of tries (17), written before any rule ran on real prices. `scripts/rules.py` runs every
 testable rule; `data/market/rules.json` holds the results (percentages and values indexed to 100, no prices).
 Common conventions: a decision at the close of day d uses data up to d only and fills at the close of d + `fill_lag_days`
 (1: the next close); costs are `portfolio.cost_bps` per unit of weight traded; a name joins only after one year of history;
@@ -124,26 +125,40 @@ cash earns the T-bill fund's return, and zero before that fund existed (pessimis
   dates where it was better, and the fixed fee per trade (as a share of one weekly contribution) at which less frequent
   buying catches up. Start dates overlap, so **independent windows** (span divided by horizon) is the honest sample size;
   below `acceptance.savings.min_independent_windows` no verdict is given.
-- **Satellite rules.** A sleeve of up to `slots` names: filters (trend, 3/6/12-1-month relative strength, stretch, breakout,
-  pullback, low volatility), a rank, sector and correlation caps, equal or inverse-volatility sizing, optional exits (ATR
+- **Satellite rules.** A sleeve of up to `slots` names: filters (trend, a close above a rising n-day average, 3/6/12-1-month relative strength, stretch, breakout,
+  pullback, low volatility), a rank, a keep rule for names already held (same filters, or stay while in the top n and above a long average), sector and correlation caps, equal or inverse-volatility sizing, optional exits (ATR
   trailing stop on true range, trend break) and an optional gate that sends the sleeve to the core while the core's trend is
   off. Rebalanced on the first trading day of each month (or quarter). Controls: the core, and every eligible name equally.
 - **Matched null (skill versus luck).** For each rule, random names are drawn with the **same number of names at every
   decision** (same exposure to stocks versus the core), the **same replacement rate** (same trading), the same caps, fills and
   costs, `acceptance.null_runs` times. Only *which* names differs, so the rule's percentile among the draws measures selection.
-  The null is drawn from the same hand-picked names on purpose: it removes the hindsight shared by rule and null.
+  The null is drawn from the same hand-picked names on purpose: it reduces, but does not remove, the hindsight shared by rule and null (experiment E07 plans the check).
 - **Verdict (history only).** `rejected`: below `reject_below_percentile`. `passes_history`: percentile above the bar adjusted
   for the number of variants tried (Bonferroni on 1 - `null_percentile_min`), at least `halves_percentile_min` in each half of
   the history, deepest drop not more than `max_dd_worse_than_core_pts` worse than the core, turnover within `max_turnover_pct_year`.
-  `candidate`: percentile above `null_percentile_min` and both halves ok. Otherwise `inconclusive`. A pass moves a rule to the
-  forward record; **history never moves money**.
+  `candidate`: percentile above `null_percentile_min` and both halves ok. Otherwise `inconclusive`. Every testable rule gets a forward record from its first run; a pass only makes a rule worth a closer read.
+  **History never moves money.** `null_percentile_min` is the significance level (100 minus it, 0.05), applied to the Bonferroni-adjusted
+  p-value: with 17 tries and 2000 draws a rule must be at or above all but 4 of them (about the 99.8th percentile). The reference baseline (rule v1, whose history was seen before the registry was
+  written) is capped at `candidate`. Turnover is the percent of the sleeve replaced per year (a sale and a purchase count once).
+  **The verdict is read once**: `data/market/rules.json` carries a `frozen` block (as-of date, a hash of everything that decides a
+  verdict, the verdict of each rule) written on the first real-data run; later days update the displayed numbers, not the
+  verdict, so a lucky day cannot flip a rule. A change to the rules' engine settings, the acceptance numbers, the tries, the cost, the settings rule v1 reads
+  (`config/settings.json` setup and portfolio) or the watchlist and its sector labels starts a new freeze (a new pre-registration); the
+  program accepts it only if `tries_counted` was raised, and keeps the earlier freeze in the file. Prose changes do not start one.
 - **Forward ledger.** `data/portfolio/paper_rules.json`: on the first daily run of each month (quarter for quarterly rules) every
   testable satellite rule's names are chosen with that day's data and appended, never edited. Each track is recomputed from the
-  record by the same engine (stops are mechanical). With at least 3 decisions the rule is compared with the matched null over the
-  forward window alone.
+  record by the same engine (stops are mechanical). After 6 decisions and about six months the rule is compared with the matched null over the
+  forward window alone (the forward percentile; before that it is marked provisional). Every testable satellite rule is tracked
+  from its first run, whatever its history verdict.
 - **Tests that keep this honest.** The engine reproduces rule v1 exactly; replacing all data after any decision day with a
   different future leaves every decision unchanged (a mutation check proves the test can fail); the fast period simulator used by the
-  null equals the daily engine to nine decimals; a random picker is not called skilled more often than chance.
+  null equals the daily engine to nine decimals; a small repo test (12 random pickers against 80-draw nulls) guards only against gross miscalibration of the null; it does not test the
+  17-try bar. A price gap that would silently shrink the universe stops the run instead of shortening a name's history.
+
+## Evidence labels (the Playbook's rules)
+`replicated`: independent replication named in the cited library material. `mixed`: backed by principles from more than one source, with
+caveats or gaps. `weak`: one source's assertion, an inference, or a house convention. `untested`: the library is silent. `contradicted`:
+the library argues against it. A library id beside a rule is a source consulted, not proof; each rule says which numbers are conventions.
 
 ## Trust statistics
 - **Portfolio (trust ladder)**: stage 1 when the paper record exists; stage 2 needs `trust.paper_min_days_small` days

@@ -42,11 +42,17 @@ def build_market(raw: dict[str, list[dict]], members: list[str], core: str, benc
     al = mk.align_tail({s: raw[s] for s in names if raw.get(s)}, dates)
     if len(al.get(core, [])) != n or len(al.get(bench, [])) != n:
         return None
-    closes, first = {}, {}
+    closes, first, gaps = {}, {}, {}
     for s in members:
+        if s not in al:  # no price on the last common date (or no price file): the name would silently leave the universe
+            gaps[s] = {"bars_discarded": len(raw.get(s) or []), "from": None, "to": None, "restarts_on": None}
         if s in al:
             closes[s] = [None] * (n - len(al[s])) + al[s]
             first[s] = n - len(al[s])
+            have = {b["date"] for b in raw[s]}
+            lost = [d for d in dates[: first[s]] if d in have]  # real bars thrown away because of one missing day after them
+            if lost:
+                gaps[s] = {"bars_discarded": len(lost), "from": lost[0], "to": lost[-1], "restarts_on": dates[first[s]]}
     cash_ret = [0.0] * n
     if cash and raw.get(cash):
         m = {b["date"]: b["close"] for b in raw[cash]}
@@ -69,7 +75,21 @@ def build_market(raw: dict[str, list[dict]], members: list[str], core: str, benc
                 row[k] = max(b["high"] - b["low"], abs(b["high"] - c[k - 1]), abs(b["low"] - c[k - 1]))
         tr[s] = row
     return {"n": n, "dates": dates, "c": closes, "first": first, "core": core_c, "bench": al[bench],
-            "sector": sectors, "cash": cash_ret, "core_on": trend_flags(core_c), "tr": tr, "core_symbol": core, "bench_symbol": bench}
+            "sector": sectors, "cash": cash_ret, "core_on": trend_flags(core_c), "tr": tr, "core_symbol": core, "bench_symbol": bench,
+            "gaps": gaps}
+
+
+def gap_report(M: dict) -> list[str]:
+    """One missing bar inside a name's history makes the market builder keep only the unbroken stretch that ends on the last
+    date, which silently restarts that name's 253-day clock and removes it from the universe (and from the random-basket
+    pool) for a year. A pre-registered test must not run on a universe that shrank by accident, so callers fail closed."""
+    out = []
+    for s, g in sorted(M.get("gaps", {}).items()):
+        if g["restarts_on"] is None:
+            out.append(f"{s}: no price on the last common date" + (f" ({g['bars_discarded']} bars unused)" if g["bars_discarded"] else " (no price file)"))
+        else:
+            out.append(f"{s}: {g['bars_discarded']} earlier bars ({g['from']} to {g['to']}) dropped, history restarts on {g['restarts_on']}")
+    return out
 
 
 def trend_flags(c: list[float]) -> list[bool]:
@@ -108,6 +128,10 @@ FILTERS = {
     "rs_3m": lambda c, b, i, p: _rs(c, b, i, 60) > 0,
     "rs_6m": lambda c, b, i, p: _rs(c, b, i, 120) > 0,
     "rs_12_1": lambda c, b, i, p: _rs_12_1(c, b, i) > 0,
+    "above_sma": lambda c, b, i, p: c[i] > mk.sma(c, p.get("n", 200), i),
+    # Above its n-day average AND that average is higher than it was `rising_days` ago (a rising long line).
+    "trend_long": lambda c, b, i, p: (c[i] > mk.sma(c, p.get("n", 200), i)
+                                      and mk.sma(c, p.get("n", 200), i) > mk.sma(c, p.get("n", 200), i - p.get("rising_days", 21))),
     "not_stretched": lambda c, b, i, p: _dist50(c, i) < p.get("pct", 8),
     "breakout": lambda c, b, i, p: c[i] >= max(c[i - p.get("n", 126):i]),
     "pullback": lambda c, b, i, p: mk.sma(c, 50, i) > mk.sma(c, 200, i) and -p.get("max_pct", 5) <= _dist50(c, i) <= 2,
@@ -188,8 +212,10 @@ def pick_names(cfg: dict, M: dict, st: dict, i: int, held: list[str], rng: rando
     if keep_cfg["mode"] == "same_filters":
         keep = [s for s in held if s in key and _passes(spec, M["c"][s], bench, i)]
     elif keep_cfg["mode"] == "rank_top":
+        # A held name stays while it ranks in the top n AND still passes the keep-side filters (if any), e.g. close
+        # above its long average. The entry filters in `spec` apply to new names only.
         top = set(sorted(key, key=key.get, reverse=True)[: keep_cfg["n"]])
-        keep = [s for s in held if s in top]
+        keep = [s for s in held if s in top and _passes(keep_cfg.get("filters", []), M["c"][s], bench, i)]
     new = [s for s in elig if s not in keep and _passes(spec, M["c"][s], bench, i)]
     order = sorted(keep, key=key.get, reverse=True) + sorted(new, key=key.get, reverse=True)
     return _fill(order, set(held), cfg, M, i)

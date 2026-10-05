@@ -245,6 +245,49 @@
           }
         }
       }
+    },
+    "frozen": {
+      "type": "object",
+      "description": "The history verdicts as read on the first real-data run of this registry (as_of). The daily numbers keep updating for display; decisions use these. Replaced only when something that decides a verdict changes (registry_hash).",
+      "additionalProperties": false,
+      "required": [
+        "as_of",
+        "registry_version",
+        "registry_hash",
+        "tries_counted",
+        "satellite",
+        "savings"
+      ],
+      "properties": {
+        "as_of": {
+          "$ref": "common.schema.json#/$defs/date"
+        },
+        "registry_version": {
+          "type": "string"
+        },
+        "registry_hash": {
+          "type": "string"
+        },
+        "satellite": {
+          "type": "object",
+          "description": "rule id -> {verdict, percentile, p_adjusted, reasons}"
+        },
+        "savings": {
+          "type": "object",
+          "description": "'<weeks>:<rule id>' -> {verdict}"
+        },
+        "tries_counted": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "superseded": {
+          "type": "array",
+          "description": "Earlier freezes, kept when a change to the pre-registration started a new one (which needs a higher tries_counted).",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
     }
   }
 }

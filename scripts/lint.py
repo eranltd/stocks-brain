@@ -165,7 +165,7 @@ class Lint:
                 if not 1 <= eng.get("slots", 0) <= 10:
                     self.err(path, f"{where}: slots must be 1..10 (published holdings lists hold at most 10)")
                 if sel.get("method") == "filters":
-                    for f in sel.get("filters", []):
+                    for f in [*sel.get("filters", []), *sel.get("keep", {}).get("filters", [])]:
                         if f.get("f") not in rl.FILTERS:
                             self.err(path, f"{where}: unknown filter {f.get('f')!r}")
                     if sel.get("rank") not in (*rl.RANKS, "checks_then_rs6"):
@@ -179,8 +179,9 @@ class Lint:
             elif kind != "control":
                 self.err(path, f"{where}: unknown engine kind {kind!r}")
         savings = [r for r in rc["rules"] if r.get("engine") and r["engine"].get("kind") == "savings_contribute"]
-        if savings and sum(1 for r in savings if r["engine"].get("baseline")) != 1:
-            self.err(path, "exactly one savings rule must have engine.baseline = true")
+        for mode in sorted({r["engine"].get("mode", "stream") for r in savings}):
+            if sum(1 for r in savings if r["engine"].get("mode", "stream") == mode and r["engine"].get("baseline")) != 1:
+                self.err(path, f"exactly one {mode} savings rule must have engine.baseline = true")
         if rc["tries_counted"] < testable:
             self.err(path, f"tries_counted {rc['tries_counted']} < {testable} testable rules (count every variant tried)")
         rid = set(ids)

@@ -14,7 +14,9 @@ export default function Portfolio({ data, go }) {
   const goal = data.settings.goal.annual_return_pct;
   const slots = data.settings.portfolio.slots;
   const minNames = data.settings.portfolio.target_min_names;
-  const [picked, setPicked] = useState(() => load()?.picked?.filter((s) => data.sectors[s]) ?? lr?.now.holdings ?? []);
+  // The rule's picks are what its forward paper record holds (the history test's path can keep older names).
+  const rulePicks = (data.paper && !data.paper.sample ? data.paper.rebalances.at(-1)?.holdings : null) ?? lr?.now.holdings ?? [];
+  const [picked, setPicked] = useState(() => load()?.picked?.filter((s) => data.sectors[s]) ?? rulePicks);
   const [mode, setMode] = useState(() => load()?.mode ?? "equal");
   const volOf = (s) => data.market.symbols.find((x) => x.symbol === s)?.risk?.vol_1y_pct ?? null;
 
@@ -69,7 +71,7 @@ export default function Portfolio({ data, go }) {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="meta">{picked.length} of {slots} chosen</div>
           <div className="flex flex-wrap items-center gap-2">
-            <button type="button" className="pill text-ink-2 hover:text-ink" onClick={() => { setPicked(lr.now.holdings); save({ picked: lr.now.holdings, mode }); }}>Use the rule's picks</button>
+            <button type="button" className="pill text-ink-2 hover:text-ink" onClick={() => { setPicked(rulePicks); save({ picked: rulePicks, mode }); }}>Use the rule's picks</button>
             <Segmented label="Weights" value={mode} onChange={setM} options={[{ value: "equal", label: "Equal" }, { value: "vol", label: "By risk" }]} />
           </div>
         </div>

@@ -91,6 +91,18 @@
           }
         }
       }
+    },
+    "diversification": {
+      "type": "object",
+      "description": "Risk of the latest recorded holdings over the last year: names, core share, sectors, average pair correlation, volatility, 95% 20-day loss range (same as longrun's now.diversification)."
+    },
+    "if_rebalanced_today": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "$ref": "common.schema.json#/$defs/ticker"
+      },
+      "description": "What the rule would hold if it rebalanced the recorded holdings today (it waits for the monthly date)."
     }
   }
 }

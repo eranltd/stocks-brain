@@ -1,7 +1,7 @@
 ---
-version: 0.6.0
+version: 0.7.0
 updated_at: 2026-10-05
-change_note: Live runs and outcomes carry dates and returns, never prices; the brain's pack and run recorder; data on its own branch.
+change_note: The paper record carries the risk of what it holds and what the rule would hold today; the site shows the record, not the history test's path.
 ---
 # Methodology
 
@@ -105,6 +105,9 @@ have a year of data.
 `data/portfolio/paper.json`. On the first daily run of each calendar month the rule's holdings are chosen with that
 day's data and appended. Recorded holdings are never edited; the track is recomputed from them each day (values
 indexed to 100, same costs). This is the only evidence free of hindsight, so the trust ladder rests on it.
+It also carries the risk of what it holds now (`diversification`, as in longrun's `now`) and `if_rebalanced_today`.
+The site's portfolio views show this record. The history test's own path can hold a different set, because it keeps a
+name it already held while that name passes the keep checks; the record started fresh, so a name needs the entry checks.
 
 ## Rule engine (code only)
 `config/rules.json` is the pre-registered rule set (`docs/playbook.md` is the human version). `scripts/rules.py` runs every

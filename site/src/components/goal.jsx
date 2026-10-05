@@ -141,18 +141,28 @@ export function PortfolioNow({ data, go }) {
     );
   }
   const now = lr.now;
-  const div = now.diversification;
-  const st = Object.fromEntries(now.status.map((x) => [x.symbol, x]));
-  const cells = [...now.holdings.map((s) => ({ s })), ...Array.from({ length: slots - now.holdings.length }, () => ({ s: null }))];
-  const out = now.status.filter((x) => !now.holdings.includes(x.symbol));
-  const changes = now.if_rebalanced_today.filter((s) => !now.holdings.includes(s)).length + now.holdings.filter((s) => !now.if_rebalanced_today.includes(s)).length;
   const paper = data.paper && !data.paper.sample ? data.paper : null;
   const last = paper?.track.at(-1);
+  // Show what the forward paper record holds (what the household follows). The history test's own path can differ:
+  // it keeps names it already held, while the record started fresh and needs the entry checks.
+  const rec = paper?.rebalances.at(-1) ?? null;
+  const holdings = rec ? rec.holdings : now.holdings;
+  const same = holdings.length === now.holdings.length && holdings.every((s) => now.holdings.includes(s));
+  const div = rec ? (paper.diversification ?? (same ? now.diversification : null)) : now.diversification;
+  const corePct = rec ? rec.core_pct : now.diversification.core_pct;
+  const next = rec ? (paper.if_rebalanced_today ?? null) : now.if_rebalanced_today;
+  const pathOnly = now.holdings.filter((s) => !holdings.includes(s));
+  const st = Object.fromEntries(now.status.map((x) => [x.symbol, x]));
+  const cells = [...holdings.map((s) => ({ s })), ...Array.from({ length: slots - holdings.length }, () => ({ s: null }))];
+  // A name the history path keeps on two checks is not held by the paper record; for the record it fails the entry checks.
+  const out = now.status.filter((x) => !holdings.includes(x.symbol))
+    .map((x) => (x.status === "kept" && x.passed < lr.rule.entry_min_checks ? { ...x, status: "fails_checks" } : x));
+  const changes = next ? next.filter((s) => !holdings.includes(s)).length + holdings.filter((s) => !next.includes(s)).length : 0;
   return (
     <section id="portfolio" className="scroll-mt-28 pt-24">
       <SectionHead
-        eyebrow={`Portfolio rule ${lr.rule.version} · since ${fmtDate(now.last_rebalance)} · next ${fmtDate(nextRebalance(lr.as_of))}`}
-        title={<>{now.holdings.length ? `${now.holdings.length} names` : "No names"}{now.holdings.length < slots ? <>, <Accent>{fmtNum(div.core_pct, 0)}% core.</Accent></> : <Accent>, fully invested.</Accent>}</>}
+        eyebrow={`Portfolio rule ${lr.rule.version}${rec ? " · paper record" : ""} · since ${fmtDate(rec ? rec.date : now.last_rebalance)} · next ${fmtDate(nextRebalance(lr.as_of))}`}
+        title={<>{holdings.length ? `${holdings.length} names` : "No names"}{holdings.length < slots ? <>, <Accent>{fmtNum(corePct, 0)}% core.</Accent></> : <Accent>, fully invested.</Accent>}</>}
         lede={<>Up to {slots} names, at most {lr.rule.max_per_sector} per sector. A new name needs {lr.rule.entry_min_checks} of 4 setup checks and must not be stretched; a held name stays while it passes {lr.rule.keep_min_checks}. Empty slots stay in the index fund. Rebalanced once a month. This is a paper portfolio until the trust ladder says otherwise.</>}
         right={<button type="button" onClick={() => go("portfolio")} className="btn">Build your own <ArrowRight /></button>}
       />
@@ -179,12 +189,12 @@ export function PortfolioNow({ data, go }) {
       <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <Reveal className="card p-6 sm:p-8">
           <div className="eyebrow mb-4">Risk of this mix · last 12 months</div>
-          <div className="grid grid-cols-2 gap-5">
+          {div ? <div className="grid grid-cols-2 gap-5">
             <Big v={`${fmtNum(div.vol_1y_pct, 0)}%`} l="yearly swing (volatility)" />
             <Big v={fmtPct(div.loss_95_20d_pct, 0)} l="a bad month (1 in 20)" tone="text-down" />
             <Big v={div.avg_pair_corr != null ? fmtNum(div.avg_pair_corr, 2) : "–"} l="avg correlation between names" />
             <Big v={`${div.sectors}`} l={`sector${div.sectors === 1 ? "" : "s"} among ${div.names} name${div.names === 1 ? "" : "s"}`} />
-          </div>
+          </div> : <p className="text-[15px] text-ink-2">Computed by the next daily run.</p>}
           <p className="mt-5 text-[14px] leading-relaxed text-ink-3">Correlation near 1 means the names move together, so they protect each other less. Below 0.5 is real diversification.</p>
         </Reveal>
         <Reveal delay={80} className="card p-6 sm:p-8">
@@ -205,6 +215,7 @@ export function PortfolioNow({ data, go }) {
             ))}
             {!out.length && <li className="text-ink-3">Every watchlist name is held.</li>}
           </ul>
+          {pathOnly.length > 0 && <p className="mt-4 text-[14px] text-ink-3">The history test's own path also holds {pathOnly.join(", ")}: it keeps a name it already held while it passes {lr.rule.keep_min_checks} checks. The paper record started fresh on {fmtDate(paper.started)}, so a name needs {lr.rule.entry_min_checks} checks to enter.</p>}
           {changes > 0 && <p className="mt-4 text-[14px] text-people">If the rule rebalanced today it would make {changes} change{changes === 1 ? "" : "s"}. It waits for the monthly date on purpose (fewer trades, less noise).</p>}
         </Reveal>
       </div>

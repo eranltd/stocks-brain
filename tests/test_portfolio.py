@@ -124,6 +124,10 @@ class PortfolioTest(unittest.TestCase):
         later = routines_code.update_paper(p, m, cc, bc, ds, sec, st, True)
         self.assertEqual(later["rebalances"][0], first)
         self.assertEqual(Validator().validate(later, "paper.schema.json"), [])
+        div = later["diversification"]  # risk of what the record holds now, not of the history test's path
+        self.assertEqual(div["names"], len(later["rebalances"][-1]["holdings"]))
+        self.assertEqual(div["core_pct"], later["rebalances"][-1]["core_pct"])
+        self.assertLessEqual(len(later["if_rebalanced_today"]), st["portfolio"]["slots"])
         self.assertEqual(later["track"][0]["v"], round(100 * (1 - st["portfolio"]["cost_bps"] / 1e4), 3))
 
 

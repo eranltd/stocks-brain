@@ -52,11 +52,13 @@ function Verdict({ data, go }) {
   const age = daysBetween(asOf, new Date().toISOString().slice(0, 10));
   const stale = age > 4;
   const lr = data.longrun;
-  const held = lr?.now.holdings ?? [];
-  const corePct = lr?.now.diversification.core_pct ?? 100;
-  const met = small.filter((c) => c.ok).length;
   const paper = data.paper && !data.paper.sample ? data.paper : null;
-  const rebalanceToday = stage >= 2 && paper?.rebalances.at(-1)?.date === asOf;
+  // The forward paper record is what the household follows; the history test's path can differ (it keeps names it already held).
+  const rec = paper?.rebalances.at(-1) ?? null;
+  const held = rec ? rec.holdings : (lr?.now.holdings ?? []);
+  const corePct = rec ? rec.core_pct : (lr?.now.diversification.core_pct ?? 100);
+  const met = small.filter((c) => c.ok).length;
+  const rebalanceToday = stage >= 2 && rec?.date === asOf;
 
   let head, accent;
   if (stale) [head, accent] = ["Data is stale.", "Don't act on it."];
@@ -77,7 +79,7 @@ function Verdict({ data, go }) {
           <>The newest market close in the data is {fmtDate(asOf)}. The daily routine may have failed; check Routines before reading anything else.</>
         ) : (
           <>
-            {lr ? <>The rule's paper portfolio holds <span className="text-ink">{held.length ? held.join(", ") : "no stocks"}</span>{corePct > 0 ? <> and {fmtNum(corePct, 0)}% index fund</> : null}; it next looks on {fmtDate(nextRebalance(asOf))}. </> : null}
+            {lr || rec ? <>{rec ? "The rule's paper portfolio holds" : "The rule would hold"} <span className="text-ink">{held.length ? held.join(", ") : "no stocks"}</span>{corePct > 0 ? <> and {fmtNum(corePct, 0)}% index fund</> : null}; it next looks on {fmtDate(nextRebalance(asOf))}. </> : null}
             {stage >= 2 ? <>Trust stage {stage}: {STAGES[stage].money.toLowerCase()}, within the house limits.</> : <>No money moves until trust stage 2: <span className="text-ink">{met} of {small.length}</span> conditions met.</>}
           </>
         )}

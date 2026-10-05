@@ -388,7 +388,10 @@ def update_paper(paper: dict | None, members: dict, core_c: list[float], bench_c
                       "bench_v": round(bench_c[k] / bench_c[start] * 100, 3)})
     return {"as_of": last, "sample": sample, "started": rebs[0]["date"],
             "note": "Paper only: no money. Holdings are recorded on the first run of each month and never edited.",
-            "rebalances": rebs, "track": track}
+            "rebalances": rebs, "track": track,
+            # Risk of what the record holds now (the history test's own path can differ: it keeps names it already held).
+            "diversification": pf.diversification(members, core_c, rebs[-1]["holdings"], rule["slots"], sectors, pf.Y),
+            "if_rebalanced_today": pf.select(members, bench_c, sectors, len(dates) - 1, st["setup"], rule, rebs[-1]["holdings"])[0]}
 
 
 def run_paper() -> None:

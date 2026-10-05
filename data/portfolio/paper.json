@@ -8,5 +8,11 @@
 ],
 "track":[
 {"date":"2026-10-02","v":99.9,"core_v":100.0,"bench_v":100.0}
+],
+"diversification":{"names":3,"core_pct":40.0,"sectors":2,"avg_pair_corr":0.14,"vol_1y_pct":14.13,"loss_95_20d_pct":-6.55,"diversification_ratio":1.55},
+"if_rebalanced_today":[
+"MSFT",
+"AAPL",
+"GILD"
 ]
 }

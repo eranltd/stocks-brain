@@ -1,0 +1,16 @@
+{
+"as_of":"2026-10-02",
+"sample":false,
+"note":"Forward only: each rule's holdings are written on the first run of the month with that day's data and never edited. Values indexed to 100 at each rule's start; core and benchmark from the earliest start.",
+"dates":[
+"2026-10-02"
+],
+"core":[
+100.0
+],
+"bench":[
+100.0
+],
+"rules":{"five_leaders":{"started":"2026-10-02","rebalances":[{"date":"2026-10-02","holdings":["AMGN","FANG","GOOGL","MNST","AAPL"]}],"values":[100.0],"decisions":1,"engine_hash":"5e8536cf438bfae1"},"five_leaders_m1":{"started":"2026-10-02","rebalances":[{"date":"2026-10-02","holdings":["AMGN","FANG","GOOGL","MNST","PCAR"]}],"values":[100.0],"decisions":1,"engine_hash":"0a3131128820fb6f"},"five_leaders_quarterly":{"started":"2026-10-02","rebalances":[{"date":"2026-10-02","holdings":["AMGN","FANG","GOOGL","MNST","AAPL"]}],"values":[100.0],"decisions":1,"engine_hash":"cf2668536ddeded4"},"baseline_portfolio_v1":{"started":"2026-10-02","rebalances":[{"date":"2026-10-02","holdings":["MSFT","AAPL","GILD"]}],"values":[100.0],"decisions":1,"engine_hash":"0b6963018e2f8469"}},
+"retired":{}
+}

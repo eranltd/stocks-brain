@@ -1,7 +1,7 @@
 ---
-version: 0.9.0
+version: 0.10.0
 updated_at: 2026-10-05
-change_note: The pre-registered rule registry 1.0.0, how it was built and reviewed, and what it fixes in place.
+change_note: The first real-data run of registry 1.0.0 and the verdicts it froze.
 ---
 # Decision log
 
@@ -20,6 +20,18 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   the numbers are faithful to the source; a cross-check against a second source is still pending.
 
 ## 2026-10-05
+- **First real-data run of registry 1.0.0, verdicts frozen (2026-10-05, prices to 2026-10-02, 9.0 years, 2000 random baskets).**
+  Every stock rule was **rejected**: Five Leaders (main) beat 15% of the random baskets, the basic version 29%, the quarterly
+  version 10%, rule v1 8% (adjusted p of 1.0 for all; second half of history at the 3rd to 13th percentile). Yearly growth was
+  15.8%, 17.3%, 15.1% and 15.2% against 14.9% for the core, 21.6% for holding all 21 names equally and a median of 19.5% to 20.4% for
+  the random baskets: the list itself did well, picking from it by past strength did not add to it. Turnover on the engine's basis:
+  237%, 179%, 150% and 209% (v1). Savings: buying weekly or every two weeks showed no clear difference from monthly at 52 weeks
+  (+66 and +41 bps, ahead in about 70% of starts, short of the 80% bar); quarterly was about 270 bps a year behind and not clearly
+  different; spreading a windfall over 52 weeks was clearly worse than a lump sum (-575 bps), over 26 weeks not clearly different
+  (-372 bps). Only the 52-week row has 8 independent windows, so the 104 and 156 week rows show the sign only.
+  What it means: the stock-pot default stays the index fund. Nothing here moves money; the owner's questions stand. The Today page
+  now says that rule v1's own history test reads rejected. A rule that did not beat luck on this list may still be worth following
+  on the forward record (every rule is tracked from today), but nothing in the history supports it.
 - **Pre-registered rule registry 1.0.0 (`config/rules.json`).** Written on 2026-10-05, before any rule ran on real prices. It
   holds 23 rules, six plans, 14 experiments, the acceptance numbers and the tries. Fixed numbers: decisions on the first trading
   day of the month, fills at the next close, 10 bps per unit of weight traded (satellite and controls; the savings test charges no

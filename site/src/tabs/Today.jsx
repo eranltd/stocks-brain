@@ -46,6 +46,8 @@ export default function Today({ data, go }) {
   );
 }
 
+const VERDICT_WORD = { passes_history: "passes history", candidate: "candidate", inconclusive: "inconclusive", rejected: "rejected" };
+
 function Verdict({ data, go }) {
   const { stage, small } = trustStage(data);
   const asOf = data.market.as_of;
@@ -59,6 +61,7 @@ function Verdict({ data, go }) {
   const corePct = rec ? rec.core_pct : (lr?.now.diversification.core_pct ?? 100);
   const met = small.filter((c) => c.ok).length;
   const rebalanceToday = stage >= 2 && rec?.date === asOf;
+  const v1res = data.rulesResult?.satellite?.rules?.find((r) => r.id === "baseline_portfolio_v1"); // the frozen history verdict
 
   let head, accent;
   if (stale) [head, accent] = ["Data is stale.", "Don't act on it."];
@@ -79,7 +82,7 @@ function Verdict({ data, go }) {
           <>The newest market close in the data is {fmtDate(asOf)}. The daily routine may have failed; check Routines before reading anything else.</>
         ) : (
           <>
-            {lr || rec ? <>{rec ? "The rule's paper portfolio holds" : "The rule would hold"} <span className="text-ink">{held.length ? held.join(", ") : "no stocks"}</span>{corePct > 0 ? <> and {fmtNum(corePct, 0)}% index fund</> : null}; it next looks on {fmtDate(nextRebalance(asOf))}. </> : null}
+            {lr || rec ? <>{rec ? "The rule's paper portfolio holds" : "The rule would hold"} <span className="text-ink">{held.length ? held.join(", ") : "no stocks"}</span>{corePct > 0 ? <> and {fmtNum(corePct, 0)}% index fund</> : null}; it next looks on {fmtDate(nextRebalance(asOf))}. {v1res ? <>On past prices its Playbook test reads <span className="text-ink">{VERDICT_WORD[v1res.verdict] ?? v1res.verdict}</span>: it beat {fmtNum(v1res.percentile, 0)}% of random picks from the same list. </> : null}</> : null}
             {stage >= 2 ? <>Trust stage {stage}: {STAGES[stage].money.toLowerCase()}, within the house limits.</> : <>No money moves until trust stage 2: <span className="text-ink">{met} of {small.length}</span> conditions met.</>}
           </>
         )}

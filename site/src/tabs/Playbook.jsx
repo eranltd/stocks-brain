@@ -169,7 +169,9 @@ function Savings({ rb, res, name }) {
       </section>
     );
   }
-  const h = sv.horizons.find((x) => x.weeks === (hw ?? sv.horizons.at(-1).weeks)) ?? sv.horizons[0];
+  // Open on the longest horizon that has enough independent windows to give a verdict (the longer ones show the sign only).
+  const usable = sv.horizons.filter((x) => x.independent >= rb.acceptance.savings.min_independent_windows);
+  const h = sv.horizons.find((x) => x.weeks === (hw ?? (usable.at(-1) ?? sv.horizons[0]).weeks)) ?? sv.horizons[0];
   const stream = h.rows.filter((r) => r.mode === "stream");
   const windfall = h.rows.filter((r) => r.mode === "windfall");
   const others = stream.filter((r) => r.verdict !== "baseline");

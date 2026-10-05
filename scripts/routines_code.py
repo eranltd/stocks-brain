@@ -437,6 +437,36 @@ def judge_satellite(r: dict, acc: dict, tries: int, runs: int) -> tuple[str, lis
     return "inconclusive", why
 
 
+def cap_verdict(status: str, verdict: str, why: list[str]) -> tuple[str, list[str]]:
+    """The reference baseline's history was viewed before the registry was written, so it cannot pass on history:
+    its best verdict is 'candidate' (it still gets a forward record like every other rule)."""
+    if status == "reference_baseline" and verdict == "passes_history":
+        return "candidate", [*why, "capped at candidate: this rule's history was seen before pre-registration"]
+    return verdict, why
+
+
+def registry_hash(rc: dict, cost: float) -> str:
+    """Everything that decides a history verdict: the rules' engine settings, the acceptance numbers, the tries count
+    and the cost. A change here is a new pre-registration, so a new freeze."""
+    core = {"rules": [[r["id"], r["status"], r.get("engine")] for r in rc["rules"]], "acceptance": {k: v for k, v in rc["acceptance"].items() if k != "text"},
+            "tries": rc["tries_counted"], "cost_bps": cost}
+    return hashlib.sha256(json.dumps(core, sort_keys=True).encode()).hexdigest()[:16]
+
+
+def freeze_verdicts(prev: dict | None, doc: dict, rc: dict, cost: float) -> dict:
+    """The history verdict is read ONCE, on the first real-data run of a registry. The daily recompute keeps updating the
+    numbers (display), but a verdict that flips on a lucky day is optional stopping, so the decision uses the frozen one.
+    Later data counts only through the forward ledger. A change to anything that decides a verdict starts a new freeze."""
+    h = registry_hash(rc, cost)
+    old = (prev or {}).get("frozen")
+    if old and old.get("registry_hash") == h:
+        return old
+    sat = {r["id"]: {"verdict": r["verdict"], "percentile": r["percentile"], "p_adjusted": r["p_adjusted"], "reasons": r["reasons"]}
+           for r in (doc.get("satellite") or {}).get("rules", [])}
+    sav = {f"{hz['weeks']}:{r['id']}": {"verdict": r["verdict"]} for hz in (doc.get("savings") or {}).get("horizons", []) for r in hz["rows"]}
+    return {"as_of": doc["as_of"], "registry_version": rc["version"], "registry_hash": h, "satellite": sat, "savings": sav}
+
+
 def judge_savings(row: dict, independent: int, acc: dict) -> str:
     if "vs_baseline_irr_bps_median" not in row:
         return "baseline"
@@ -509,7 +539,7 @@ def compute_rules(prices_dir: Path, st: dict, wl: dict, rc: dict, sample: bool, 
                    "avg_names": round(nul["avg_names"], 2),
                    "decisions": len(res["rebalances"]), "stops": len(res["stops"]),
                    "holdings_now": res["rebalances"][-1]["holdings"] if res["rebalances"] else [], "_values": vals}
-            row["verdict"], row["reasons"] = judge_satellite(row, acc["satellite"], tries, nruns)
+            row["verdict"], row["reasons"] = cap_verdict(r["status"], *judge_satellite(row, acc["satellite"], tries, nruns))
             results.append(row)
         weekly_idx = pf.weekly_idx(M["n"], start, 5)
         rel = [k - start for k in weekly_idx]
@@ -563,7 +593,9 @@ def run_rules() -> None:
     doc = compute_rules(PRICES, st, wl, rc, sample=False, provider=st["prices"]["provider"])
     if not doc:
         raise SystemExit("rules: not enough aligned history for the core, benchmark and watchlist")
-    _write(MARKET / "rules.json", doc, "rules_result.schema.json", compact=True)
+    path = MARKET / "rules.json"
+    doc["frozen"] = freeze_verdicts(load_json(path) if path.exists() else None, doc, rc, st["portfolio"]["cost_bps"])
+    _write(path, doc, "rules_result.schema.json", compact=True)
     print("rules:", f"registry {rc['version']}, as of {doc['as_of']}")
     print(*summarize_rules(doc), sep="\n")
 

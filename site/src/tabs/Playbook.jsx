@@ -65,6 +65,7 @@ export default function Playbook({ data, go }) {
         a rule that passes history goes on to the forward paper record, which cannot be re-fitted.
       </Reveal>
 
+      {res?.frozen && <FrozenNote res={res} name={name} />}
       <Sets rb={rb} name={name} satVerdict={satVerdict} />
       <Savings rb={rb} res={res} name={name} />
       <Satellite rb={rb} res={res} name={name} data={data} />
@@ -75,6 +76,25 @@ export default function Playbook({ data, go }) {
       <Decisions rb={rb} go={go} />
       <p className="meta mt-16 normal-case tracking-[0.04em]">Analysis only, not financial advice. The registry is fixed in advance; it changes only at a scheduled review, with a change note, never right after a drawdown.</p>
     </Container>
+  );
+}
+
+function FrozenNote({ res, name }) {
+  const differs = [
+    ...(res.satellite?.rules ?? []).filter((r) => r.verdict_today && r.verdict_today !== r.verdict).map((r) => ({ id: r.id, now: r.verdict_today, frozen: r.verdict })),
+    ...(res.savings?.horizons ?? []).flatMap((h) => h.rows.filter((r) => r.verdict_today && r.verdict_today !== r.verdict).map((r) => ({ id: r.id, now: r.verdict_today, frozen: r.verdict, weeks: h.weeks }))),
+  ];
+  return (
+    <Reveal className="card mt-5 p-5 text-[14.5px] leading-relaxed text-ink-2 sm:p-6">
+      <span className="text-accent">Read once.</span> The history verdicts were fixed on {fmtDate(res.frozen.as_of)}, the first real-data run of these rules.
+      The numbers below keep updating each day, but the verdict does not, because a verdict that flips on a lucky day is cherry-picking.
+      Later data counts only through the forward record.
+      {differs.length > 0 && (
+        <span className="mt-3 block text-ink-3">
+          Today's numbers would read differently for {differs.map((d, i) => `${i ? ", " : ""}${name(d.id)}${d.weeks ? ` (${HORIZON(d.weeks)})` : ""}: ${LABEL[d.now] ?? d.now} instead of ${LABEL[d.frozen] ?? d.frozen}`).join("")}. That is display only.
+        </span>
+      )}
+    </Reveal>
   );
 }
 

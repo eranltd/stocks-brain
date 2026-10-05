@@ -165,7 +165,7 @@ class Lint:
                 if not 1 <= eng.get("slots", 0) <= 10:
                     self.err(path, f"{where}: slots must be 1..10 (published holdings lists hold at most 10)")
                 if sel.get("method") == "filters":
-                    for f in sel.get("filters", []):
+                    for f in [*sel.get("filters", []), *sel.get("keep", {}).get("filters", [])]:
                         if f.get("f") not in rl.FILTERS:
                             self.err(path, f"{where}: unknown filter {f.get('f')!r}")
                     if sel.get("rank") not in (*rl.RANKS, "checks_then_rs6"):

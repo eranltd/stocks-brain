@@ -70,6 +70,10 @@ CONFIGS = {
     "breakout_atr": {"slots": 4, "sizing": "inverse_vol", "exit": {"kind": "atr_trail", "k": 3, "n": 14},
                      "selection": {"method": "filters", "rank": "rs_12_1", "keep": {"mode": "rank_top", "n": 8},
                                    "filters": [{"f": "breakout", "n": 126}, {"f": "rs_12_1"}]}},
+    "five_leaders": {"slots": 5, "max_per_sector": 1,
+                     "selection": {"method": "filters", "rank": "rs_12_1",
+                                   "keep": {"mode": "rank_top", "n": 10, "filters": [{"f": "above_sma", "n": 200}]},
+                                   "filters": [{"f": "trend_long", "n": 200, "rising_days": 21}, {"f": "not_stretched", "pct": 8}]}},
     "pullback_trend_break": {"slots": 5, "rebalance": "quarterly", "regime": "core_trend", "exit": {"kind": "trend_break", "n": 100},
                              "selection": {"method": "filters", "rank": "low_vol",
                                            "filters": [{"f": "pullback", "max_pct": 5}, {"f": "low_vol_cap", "pct": 60}]}},
@@ -224,6 +228,88 @@ class SavingsMathTest(unittest.TestCase):
         self.assertNotIn("vs_baseline_irr_bps_median", next(r for r in h["rows"] if r["id"] == "w1"))
         self.assertNotIn("breakeven_fee_pct_of_weekly", next(r for r in h["rows"] if r["id"] == "gate"))
         self.assertLessEqual(h["independent"], h["windows"])
+
+
+class TrendFilterTest(unittest.TestCase):
+    """The long-average filters and the keep-side filter used by the 'Five Leaders' registry rules."""
+
+    @staticmethod
+    def sma(c, n, i):
+        return sum(c[i - n + 1:i + 1]) / n
+
+    def test_trend_long_needs_price_above_a_rising_average(self):
+        f, above = rules.FILTERS["trend_long"], rules.FILTERS["above_sma"]
+        p = {"n": 200, "rising_days": 21}
+        up = [100 + k for k in range(400)]
+        self.assertTrue(f(up, None, 399, p))
+        # A long decline, a flat spell, then a late bounce: price is above its average but the average is still falling.
+        down = [300 - 0.67 * k for k in range(300)] + [100.0] * 60 + [150.0] * 5
+        i = len(down) - 1
+        self.assertGreater(down[i], self.sma(down, 200, i))                   # premise: above the average ...
+        self.assertLess(self.sma(down, 200, i), self.sma(down, 200, i - 21))  # ... which is falling
+        self.assertFalse(f(down, None, i, p))   # entry needs a rising line
+        self.assertTrue(above(down, None, i, p))  # the keep-side test is only 'above'
+        broke = up[:350] + [up[349] * 0.5] * 50
+        self.assertFalse(above(broke, None, 399, p))
+        self.assertFalse(f(broke, None, 399, p))
+
+    def test_keep_side_filter_drops_a_held_leader_that_broke_its_average(self):
+        import random
+        M, names = synthetic_market(1500)
+        s, i = names[0], 1450
+        c = M["c"][s]
+        for k in range(i - 260, i - 20):  # a strong year, so it still ranks first on 12-1 strength
+            c[k] = c[i - 261] * (1.004 ** (k - (i - 261)))
+        for k in range(i - 20, i + 1):    # then a collapse inside the month that 12-1 strength skips
+            c[k] = c[i - 21] * 0.5
+        self.assertLess(c[i], self.sma(c, 200, i))  # premise
+        entry = [{"f": "trend_long", "n": 200, "rising_days": 21}]
+        mk_cfg = lambda keep: {"slots": 5, "max_per_sector": 5, "selection": {"method": "filters", "rank": "rs_12_1", "filters": entry, "keep": keep}}  # noqa: E731
+        plain = rules.pick_names(mk_cfg({"mode": "rank_top", "n": 10}), M, SETUP, i, [s], random.Random(0))
+        guard = rules.pick_names(mk_cfg({"mode": "rank_top", "n": 10, "filters": [{"f": "above_sma", "n": 200}]}), M, SETUP, i, [s], random.Random(0))
+        self.assertIn(s, plain)      # rank alone cannot see the collapse, and held names skip the entry filters
+        self.assertNotIn(s, guard)   # the keep-side filter sells it at the review; the entry filter keeps it out
+
+
+class VerdictCapTest(unittest.TestCase):
+    def test_reference_baseline_cannot_pass_on_a_history_it_was_built_on(self):
+        why = ["beat 100% of random draws"]
+        self.assertEqual(routines_code.cap_verdict("reference_baseline", "passes_history", why)[0], "candidate")
+        self.assertIn("capped", routines_code.cap_verdict("reference_baseline", "passes_history", why)[1][-1])
+        self.assertEqual(routines_code.cap_verdict("testable_now", "passes_history", why), ("passes_history", why))
+        self.assertEqual(routines_code.cap_verdict("reference_baseline", "inconclusive", why), ("inconclusive", why))
+
+
+class FrozenVerdictTest(unittest.TestCase):
+    RC = {"version": "1.0.0", "tries_counted": 17,
+          "rules": [{"id": "r1", "status": "testable_now", "engine": {"kind": "satellite_select", "slots": 3}}],
+          "acceptance": {"fill_lag_days": 1, "null_runs": 2000, "text": {"adopt": []}}}
+
+    def doc(self, as_of, verdict):
+        return {"as_of": as_of, "sample": False,
+                "satellite": {"rules": [{"id": "r1", "verdict": verdict, "percentile": 99.0, "p_adjusted": 0.01, "reasons": ["x"]}]},
+                "savings": {"horizons": [{"weeks": 52, "rows": [{"id": "s1", "verdict": "better"}]}]}}
+
+    def test_the_first_verdict_is_kept_when_later_data_flips_it(self):
+        first = self.doc("2026-10-05", "inconclusive")
+        first["frozen"] = routines_code.freeze_verdicts(None, first, self.RC, 10)
+        later = self.doc("2026-11-03", "passes_history")  # a lucky day
+        later["frozen"] = routines_code.freeze_verdicts(first, later, self.RC, 10)
+        self.assertEqual(later["frozen"]["as_of"], "2026-10-05")
+        self.assertEqual(later["frozen"]["satellite"]["r1"]["verdict"], "inconclusive")
+        self.assertEqual(later["satellite"]["rules"][0]["verdict"], "passes_history")  # the display number still updates
+        self.assertEqual(later["frozen"]["savings"]["52:s1"]["verdict"], "better")
+
+    def test_a_change_to_anything_that_decides_a_verdict_starts_a_new_freeze(self):
+        first = self.doc("2026-10-05", "inconclusive")
+        first["frozen"] = routines_code.freeze_verdicts(None, first, self.RC, 10)
+        for changed in ({**self.RC, "tries_counted": 18},
+                        {**self.RC, "acceptance": {**self.RC["acceptance"], "null_runs": 5000}},
+                        {**self.RC, "rules": [{**self.RC["rules"][0], "engine": {"kind": "satellite_select", "slots": 4}}]}):
+            nxt = self.doc("2026-11-03", "passes_history")
+            self.assertEqual(routines_code.freeze_verdicts(first, nxt, changed, 10)["satellite"]["r1"]["verdict"], "passes_history")
+        text_only = {**self.RC, "acceptance": {**self.RC["acceptance"], "text": {"adopt": ["reworded"]}}}  # prose changes are not a new pre-registration
+        self.assertEqual(routines_code.freeze_verdicts(first, self.doc("2026-11-03", "passes_history"), text_only, 10)["as_of"], "2026-10-05")
 
 
 class SleeveTest(unittest.TestCase):

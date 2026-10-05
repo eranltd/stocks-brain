@@ -108,6 +108,10 @@ FILTERS = {
     "rs_3m": lambda c, b, i, p: _rs(c, b, i, 60) > 0,
     "rs_6m": lambda c, b, i, p: _rs(c, b, i, 120) > 0,
     "rs_12_1": lambda c, b, i, p: _rs_12_1(c, b, i) > 0,
+    "above_sma": lambda c, b, i, p: c[i] > mk.sma(c, p.get("n", 200), i),
+    # Above its n-day average AND that average is higher than it was `rising_days` ago (a rising long line).
+    "trend_long": lambda c, b, i, p: (c[i] > mk.sma(c, p.get("n", 200), i)
+                                      and mk.sma(c, p.get("n", 200), i) > mk.sma(c, p.get("n", 200), i - p.get("rising_days", 21))),
     "not_stretched": lambda c, b, i, p: _dist50(c, i) < p.get("pct", 8),
     "breakout": lambda c, b, i, p: c[i] >= max(c[i - p.get("n", 126):i]),
     "pullback": lambda c, b, i, p: mk.sma(c, 50, i) > mk.sma(c, 200, i) and -p.get("max_pct", 5) <= _dist50(c, i) <= 2,
@@ -188,8 +192,10 @@ def pick_names(cfg: dict, M: dict, st: dict, i: int, held: list[str], rng: rando
     if keep_cfg["mode"] == "same_filters":
         keep = [s for s in held if s in key and _passes(spec, M["c"][s], bench, i)]
     elif keep_cfg["mode"] == "rank_top":
+        # A held name stays while it ranks in the top n AND still passes the keep-side filters (if any), e.g. close
+        # above its long average. The entry filters in `spec` apply to new names only.
         top = set(sorted(key, key=key.get, reverse=True)[: keep_cfg["n"]])
-        keep = [s for s in held if s in top]
+        keep = [s for s in held if s in top and _passes(keep_cfg.get("filters", []), M["c"][s], bench, i)]
     new = [s for s in elig if s not in keep and _passes(spec, M["c"][s], bench, i)]
     order = sorted(keep, key=key.get, reverse=True) + sorted(new, key=key.get, reverse=True)
     return _fill(order, set(held), cfg, M, i)

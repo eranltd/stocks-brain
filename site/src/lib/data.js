@@ -35,6 +35,19 @@ export async function loadAll(onProgress = () => {}) {
   return derive(manifest, Object.fromEntries(entries));
 }
 
+// The history verdict is read once (first real-data run of a registry); the daily recompute only updates the numbers.
+// Every verdict the site shows is the frozen one; `verdict_today` keeps what today's recompute would say.
+function withFrozenVerdicts(res) {
+  const fz = res?.frozen;
+  if (!fz) return res;
+  const sat = res.satellite && { ...res.satellite, rules: res.satellite.rules.map((r) => ({ ...r, verdict_today: r.verdict, verdict: fz.satellite[r.id]?.verdict ?? r.verdict })) };
+  const sav = res.savings && {
+    ...res.savings,
+    horizons: res.savings.horizons.map((h) => ({ ...h, rows: h.rows.map((r) => ({ ...r, verdict_today: r.verdict, verdict: fz.savings[`${h.weeks}:${r.id}`]?.verdict ?? r.verdict })) })),
+  };
+  return { ...res, satellite: sat, savings: sav };
+}
+
 export function derive(manifest, files) {
   const runs = manifest.runs.map((p) => files[p]).sort((a, b) => a.date.localeCompare(b.date));
   const market = files[manifest.market];
@@ -42,7 +55,7 @@ export function derive(manifest, files) {
   const longrun = manifest.longrun ? files[manifest.longrun] : null;
   const paper = manifest.paper ? files[manifest.paper] : null;
   // Rule registry (config/rules.json) and its backtests (data/market/rules.json).
-  const rulesResult = manifest.rules_result ? files[manifest.rules_result] : null;
+  const rulesResult = withFrozenVerdicts(manifest.rules_result ? files[manifest.rules_result] : null);
   const ledger = manifest.paper_rules ? files[manifest.paper_rules] : null;
   // Indexed sparklines (100 = start of window). No absolute prices are published.
   const prices = Object.fromEntries(market.symbols.map((s) => [s.symbol, { ...s, bars: s.spark.map((p) => ({ date: p.date, close: p.v })) }]));

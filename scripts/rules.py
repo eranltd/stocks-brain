@@ -22,6 +22,7 @@ Y = mk.TRADING_DAYS
 WEEK = 5
 CORE = pf.CORE
 WARM = Y + 1  # a name is usable once it has a year of history (12-1 momentum looks back 252 days)
+WEEKS_PER_YEAR = Y / WEEK  # 50.4 five-day weeks: annualise weekly figures on the same 252-day year as everything else
 GATE_DAYS = 210  # about ten months: the slow trend filter on the core
 
 
@@ -34,7 +35,8 @@ def build_market(raw: dict[str, list[dict]], members: list[str], core: str, benc
     daily cash return (a T-bill fund; zero before the fund existed, which is pessimistic for cash)."""
     if not raw.get(bench) or not raw.get(core):
         return None
-    dates = [b["date"] for b in raw[bench]]
+    core_dates = {b["date"] for b in raw[core]}
+    dates = [b["date"] for b in raw[bench] if b["date"] in core_dates]  # days both the benchmark and the core traded
     n = len(dates)
     names = {*members, core, bench}
     al = mk.align_tail({s: raw[s] for s in names if raw.get(s)}, dates)
@@ -197,6 +199,8 @@ def target_weights(cfg: dict, M: dict, picked: list[str], i: int) -> dict[str, f
     slots, m = cfg["slots"], len(picked)
     if not m:
         return {CORE: 1.0}
+    if cfg["selection"]["method"] == "all":  # the 'every name equally' control: never levered, no core remainder
+        return {s: 1.0 / m for s in picked}
     if cfg.get("sizing") == "inverse_vol":
         iv = {s: 1.0 / max(5.0, mk.vol_ann(M["c"][s], 60, i)) for s in picked}
         t = sum(iv.values())
@@ -229,6 +233,7 @@ def run_sleeve(cfg: dict, M: dict, st: dict, start: int, lag: int = 1, cost_bps:
     dates, core = M["dates"], M["core"]
     quarterly = cfg.get("rebalance", "monthly") == "quarterly"
     ex = cfg.get("exit", {"kind": "none"})
+    scripted = cfg["selection"]["picks"] if cfg["selection"]["method"] == "scripted" else None
     rng = random.Random(seed)
     pos: dict[str, float] = {}
     v = 100.0
@@ -260,11 +265,12 @@ def run_sleeve(cfg: dict, M: dict, st: dict, start: int, lag: int = 1, cost_bps:
         nonlocal v
         if s not in pos:
             return
+        w = pos[s] / v
         cost = pos[s] * 2 * cost_bps / 1e4  # sell the name and buy the core: traded weight is twice its weight
         pos[CORE] = pos.get(CORE, 0.0) + pos.pop(s) - cost
         v = sum(pos.values())
         exiting.discard(s)
-        stops.append({"date": dates[k], "symbol": s})
+        stops.append({"date": dates[k], "symbol": s, "traded_pct": round(2 * w * 100, 2)})
 
     for k in range(start, n):
         if pos:
@@ -278,8 +284,11 @@ def run_sleeve(cfg: dict, M: dict, st: dict, start: int, lag: int = 1, cost_bps:
                 fill_rebalance(k, payload, True)
             else:
                 fill_exit(k, payload)
-        month_start = k == start or dates[k][:7] != dates[k - 1][:7]
-        if month_start and (k == start or not quarterly or int(dates[k][5:7]) in (1, 4, 7, 10)):
+        if scripted is not None:  # replay of recorded decisions: decide exactly on the recorded days
+            decide = k in scripted
+        else:
+            decide = (k == start or dates[k][:7] != dates[k - 1][:7]) and (k == start or not quarterly or int(dates[k][5:7]) in (1, 4, 7, 10))
+        if decide:
             held = [s for s in pos if s != CORE]
             picked = pick_names(cfg, M, st, k, held, rng)
             w = target_weights(cfg, M, picked, k)
@@ -317,9 +326,11 @@ def thirds(vals: list[float]) -> tuple[float, float, float]:
     return cagr(vals), cagr(vals[: mid + 1]), cagr(vals[mid:])
 
 
-def turnover_per_year(rebs: list[dict], years: float) -> float:
-    """Percent of the sleeve replaced per year (traded weight counts a buy and a sell, so halve it)."""
-    return sum(r["traded_pct"] for r in rebs[1:]) / 2 / max(years, 1e-9)
+def turnover_per_year(rebs: list[dict], years: float, stops: list[dict] | None = None) -> float:
+    """Percent of the sleeve replaced per year, rebalances and stop exits together (traded weight counts a buy and
+    a sell, so halve it). The first entry is not turnover."""
+    traded = sum(r["traded_pct"] for r in rebs[1:]) + sum(x["traded_pct"] for x in stops or [])
+    return traded / 2 / max(years, 1e-9)
 
 
 def decision_days(M: dict, start: int, lag: int, quarterly: bool = False) -> tuple[list[int], list[int]]:
@@ -360,18 +371,27 @@ def sim_periods(M: dict, fills: list[int], picks: list[list[str]], slots: int, c
     return v, v_mid if v_mid is not None else v
 
 
-def matched_null(M: dict, start: int, rebs: list[dict], slots: int, caps: dict, quarterly: bool, runs: int, seed: int,
-                 lag: int, cost_bps: float) -> dict:
+def matched_null(M: dict, st: dict, start: int, rebs: list[dict], cfg: dict, runs: int, seed: int,
+                 lag: int, cost_bps: float, days: list[int] | None = None) -> dict:
     """Skill versus luck for ONE rule. Random names, but at every decision the same NUMBER of names the rule held
     (so the same exposure to stocks versus the core) and the same replacement rate (so the same trading costs),
-    with the same sector and correlation caps and fills. Only WHICH names differs. Returns per-run
-    (cagr, cagr_first_half, cagr_second_half) plus the matched replacement rate q."""
+    with the rule's own caps, sizing, exits, gate and fills. Only WHICH names differs. Equal-weight rules without
+    exits use the closed-form period simulator (tested equal to the daily engine); others replay each random draw
+    through the daily engine. Returns per-run (cagr, cagr_first_half, cagr_second_half) plus q."""
     n = M["n"]
-    dec, fills = decision_days(M, start, lag, quarterly)
+    quarterly = cfg.get("rebalance", "monthly") == "quarterly"
+    if days is None:
+        dec, fills = decision_days(M, start, lag, quarterly)
+    else:  # recorded decision days (the forward ledger records on the first run of a month, not always day one)
+        dec = [d for d in days if d + lag < n]
+        fills = [d + lag for d in dec]
     m = [len(r["holdings"]) for r in rebs][: len(dec)]
-    kept = [len(set(a["holdings"]) & set(b["holdings"])) / len(a["holdings"]) for a, b in zip(rebs, rebs[1:]) if a["holdings"]]
+    # Replacement only where names were held on both sides (going to or from the core is matched through m).
+    kept = [len(set(a["holdings"]) & set(b["holdings"])) / len(a["holdings"]) for a, b in zip(rebs, rebs[1:]) if a["holdings"] and b["holdings"]]
     q = 1.0 - sum(kept) / len(kept) if kept else 1.0
     elig = [eligible(M, d) for d in dec]
+    caps = {k: cfg[k] for k in ("max_per_sector", "max_pair_corr") if k in cfg}
+    fast = cfg.get("sizing", "equal") == "equal" and cfg.get("exit", {"kind": "none"})["kind"] == "none"
     mid = start + (n - start) // 2
     span = n - 1 - start
     out = []
@@ -387,9 +407,13 @@ def matched_null(M: dict, start: int, rebs: list[dict], slots: int, caps: dict, 
             picked = _fill(keep + rest, set(held), {"slots": m[t], **caps}, M, d) if m[t] else []
             picks.append(picked)
             held = picked
-        v_end, v_mid = sim_periods(M, fills, picks, slots, cost_bps, mid)
-        out.append((((v_end / 100) ** (Y / span) - 1) * 100, ((v_mid / 100) ** (Y / (mid - start)) - 1) * 100,
-                    ((v_end / v_mid) ** (Y / (n - 1 - mid)) - 1) * 100))
+        if fast:
+            v_end, v_mid = sim_periods(M, fills, picks, cfg["slots"], cost_bps, mid)
+            out.append((((v_end / 100) ** (Y / span) - 1) * 100, ((v_mid / 100) ** (Y / (mid - start)) - 1) * 100,
+                        ((v_end / v_mid) ** (Y / (n - 1 - mid)) - 1) * 100))
+        else:
+            replay = {**cfg, "regime": "none", "selection": {"method": "scripted", "picks": dict(zip(dec, picks))}}
+            out.append(thirds(run_sleeve(replay, M, st, start, lag, cost_bps)["values"]))
     return {"runs": out, "q": q, "avg_names": sum(m) / len(m) if m else 0.0}
 
 
@@ -406,7 +430,7 @@ def quantile(xs: list[float], q: float) -> float:
 # --------------------------------------------------------------- savings
 
 def run_savings(M: dict, start: int, horizon_weeks: int, every_weeks: int = 1, gate: bool = False, lag: int = 1,
-                mode: str = "stream", spread_weeks: int = 1) -> dict | None:
+                mode: str = "stream", spread_weeks: int = 1, trace: list | None = None) -> dict | None:
     """The core fund bought on a cadence. stream: one unit of cash arrives every week (a salary) and is invested
     every `every_weeks` weeks (all the cash on hand), only while the gate allows if gated; cash earns the T-bill
     return while it waits. windfall: 100 units arrive on day one and are invested all at once (spread_weeks=1) or
@@ -419,6 +443,7 @@ def run_savings(M: dict, start: int, horizon_weeks: int, every_weeks: int = 1, g
     flows: list[tuple[int, float]] = []
     buys: dict[int, float] = {}
     trades = 0
+    fee_growth = 0.0  # what one unit of fee paid at each trade would have grown to by the end
     worst = 0.0
     cash_share = 0.0
     if mode == "windfall":
@@ -439,6 +464,7 @@ def run_savings(M: dict, start: int, horizon_weeks: int, every_weeks: int = 1, g
                 units += amt / core[k]
                 cash -= amt
                 trades += 1
+                fee_growth += core[end] / core[k]
         if dow == 0:
             if mode == "stream" and wk % every_weeks == 0 and wk < horizon_weeks and (not gate or on[k]):
                 buys[k + lag] = 0.0
@@ -446,6 +472,7 @@ def run_savings(M: dict, start: int, horizon_weeks: int, every_weeks: int = 1, g
                     units += cash / core[k]
                     cash = 0.0
                     trades += 1
+                    fee_growth += core[end] / core[k]
                     buys.pop(k)
             if mode == "windfall" and wk < spread_weeks:
                 if lag == 0:
@@ -453,24 +480,27 @@ def run_savings(M: dict, start: int, horizon_weeks: int, every_weeks: int = 1, g
                     units += amt / core[k]
                     cash -= amt
                     trades += 1
+                    fee_growth += core[end] / core[k]
                 else:
                     buys[k + lag] = 100.0 / spread_weeks
         wealth = units * core[k] + cash
+        if trace is not None:  # tests: the day-by-day state, to prove no decision uses later data
+            trace.append((k, round(units, 12), round(cash, 12)))
         if paid >= 8:
             worst = min(worst, wealth / paid - 1)
         cash_share += cash / wealth if wealth else 0.0
     terminal = units * core[end] + cash
     if mode == "windfall":
-        irr = (terminal / 100.0) ** (52 / horizon_weeks) - 1
+        irr = (terminal / 100.0) ** (WEEKS_PER_YEAR / horizon_weeks) - 1
     else:
         lo, hi = -0.5, 1.0  # weekly rate by bisection: sum f*(1+r)^(T-w) = terminal
         for _ in range(60):
             r = (lo + hi) / 2
             fv = sum(a * (1 + r) ** (horizon_weeks - w) for w, a in flows)
             lo, hi = (r, hi) if fv < terminal else (lo, r)
-        irr = (1 + (lo + hi) / 2) ** 52 - 1
+        irr = (1 + (lo + hi) / 2) ** WEEKS_PER_YEAR - 1
     return {"terminal_units": terminal, "multiple": terminal / paid, "irr_pct": irr * 100, "worst_vs_paid_pct": worst * 100,
-            "cash_share_pct": cash_share / (end - start + 1) * 100, "trades": trades, "paid": paid}
+            "cash_share_pct": cash_share / (end - start + 1) * 100, "trades": trades, "fee_growth": fee_growth, "paid": paid}
 
 
 def savings_windows(M: dict, horizon_weeks: int, step_weeks: int = 4, lag: int = 1) -> list[int]:
@@ -515,7 +545,7 @@ def savings_study(M: dict, specs: list[dict], horizons: list[int], step_weeks: i
                    "worst_vs_paid_median_pct": round(_med([r["worst_vs_paid_pct"] for r in rs]), 2),
                    "worst_vs_paid_p10_pct": round(quantile([r["worst_vs_paid_pct"] for r in rs], 0.1), 2),
                    "cash_share_median_pct": round(_med([r["cash_share_pct"] for r in rs]), 1),
-                   "trades_per_year": round(_med([r["trades"] for r in rs]) / (h / 52), 1)}
+                   "trades_per_year": round(_med([r["trades"] for r in rs]) / (h / WEEKS_PER_YEAR), 1)}
             if sp["id"] != base_of[mode]:
                 pairs = list(zip(rs, base))
                 d_irr = [a["irr_pct"] - b["irr_pct"] for a, b in pairs]
@@ -523,10 +553,11 @@ def savings_study(M: dict, specs: list[dict], horizons: list[int], step_weeks: i
                 row |= {"baseline": base_of[mode], "vs_baseline_irr_bps_median": round(_med(d_irr) * 100, 1),
                         "vs_baseline_multiple_pts_median": round(_med(d_mult), 2),
                         "vs_baseline_better_pct": round(sum(x > 0 for x in d_irr) / len(d_irr) * 100, 1)}
-                dt = [(a["trades"] - b["trades"]) for a, b in pairs]
-                fees = [(a["terminal_units"] - b["terminal_units"]) / d for (a, b), d in zip(pairs, dt) if d]
+                # Fixed fee per trade, as % of one weekly contribution, at which the two cadences tie. A fee paid at a
+                # trade loses its growth until the end, so each trade weighs what one unit would have grown to.
+                dg = [(a["fee_growth"] - b["fee_growth"]) for a, b in pairs]
+                fees = [(a["terminal_units"] - b["terminal_units"]) / d for (a, b), d in zip(pairs, dg) if abs(d) > 1e-9]
                 if fees and mode == "stream" and sp.get("gate", "none") == "none":
-                    # fixed fee per trade, as % of one weekly contribution, at which the two cadences tie
                     row["breakeven_fee_pct_of_weekly"] = round(_med(fees) * 100, 2)
             rows.append(row)
         out["horizons"].append({"weeks": h, "windows": len(starts), "independent": max(1, span // (h * WEEK)),

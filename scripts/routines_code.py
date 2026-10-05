@@ -8,6 +8,8 @@ and writes under data/kb/. Rules are documented in docs/methodology.md.
 """
 from __future__ import annotations
 
+import hashlib
+import json
 import math
 import random
 import sys
@@ -408,22 +410,26 @@ def run_paper() -> None:
 
 # ------------------------------------------------------------ rule registry
 
-def judge_satellite(r: dict, acc: dict, tries: int) -> tuple[str, list[str]]:
+def judge_satellite(r: dict, acc: dict, tries: int, runs: int) -> tuple[str, list[str]]:
     """Verdict on history alone (never money: the forward paper record decides that). Pre-registered numbers
-    from config/rules.json `acceptance`; the percentile bar is Bonferroni-adjusted for the tries counted."""
-    adj = 100 * (1 - (100 - acc["null_percentile_min"]) / 100 / max(1, tries))
-    why = [f"percentile {r['percentile']:.1f} vs random baskets (bar {adj:.1f} after counting {tries} tries)"]
+    from config/rules.json `acceptance`. 'Not luck' uses the one-sided p-value against the matched null,
+    Bonferroni-adjusted for the tries counted; it needs enough null runs for that p to be reachable."""
+    alpha = (100 - acc["null_percentile_min"]) / 100
+    reachable = 1 / (runs + 1) * tries <= alpha
+    why = [f"beat {r['percentile']:.1f}% of random draws; p {r['p_value']:.4f}, adjusted for {tries} tries {r['p_adjusted']:.3f} (need {alpha:.2f} or less)"]
+    if not reachable:
+        why.append(f"{runs} null runs cannot reach that bar with {tries} tries")
     halves_ok = min(r["percentile_halves"]) >= acc["halves_percentile_min"]
     why.append(f"halves {r['percentile_halves'][0]:.0f} / {r['percentile_halves'][1]:.0f} (need {acc['halves_percentile_min']}+ in both)")
     dd_ok = r["max_dd_vs_core_pts"] >= -acc["max_dd_worse_than_core_pts"]
     why.append(f"deepest drop {r['max_dd_vs_core_pts']:+.1f} pts vs the core (limit -{acc['max_dd_worse_than_core_pts']})")
     turn_ok = r["turnover_pct_year"] <= acc["max_turnover_pct_year"]
-    why.append(f"turnover {r['turnover_pct_year']:.0f}% a year (limit {acc['max_turnover_pct_year']})")
+    why.append(f"turnover {r['turnover_pct_year']:.0f}% a year including stops (limit {acc['max_turnover_pct_year']})")
     if r["percentile"] < acc["reject_below_percentile"]:
         return "rejected", why
-    if r["percentile"] >= adj and halves_ok and dd_ok and turn_ok:
+    if reachable and r["p_adjusted"] <= alpha and halves_ok and dd_ok and turn_ok:
         return "passes_history", why
-    if r["percentile"] >= acc["null_percentile_min"] and halves_ok:
+    if r["p_value"] <= alpha and halves_ok:
         return "candidate", why
     return "inconclusive", why
 
@@ -473,7 +479,8 @@ def compute_rules(prices_dir: Path, st: dict, wl: dict, rc: dict, sample: bool, 
     satellite = None
     if sat:
         years = (M["n"] - 1 - start) / rl.Y
-        core_v = [100 * M["core"][k] / M["core"][start] for k in range(start, M["n"])]
+        # Controls pay the same entry cost and next-close fill as every rule.
+        core_v = rl.run_sleeve({"slots": 1, "selection": {"method": "core"}}, M, st, start, lag, cost)["values"]
         ew = rl.run_sleeve({"slots": len(M["c"]), "selection": {"method": "all"}}, M, st, start, lag, cost)["values"]
         controls = {"core": pf.long_stats(core_v, goal), "equal_weight": pf.long_stats(ew, goal)}
         c_core, c_ew = rl.thirds(core_v), rl.thirds(ew)
@@ -482,9 +489,7 @@ def compute_rules(prices_dir: Path, st: dict, wl: dict, rc: dict, sample: bool, 
             eng = {k: v for k, v in r["engine"].items() if k != "kind"}
             res = rl.run_sleeve(eng, M, st, start, lag, cost)
             vals = res["values"]
-            caps = {k: eng[k] for k in ("max_per_sector", "max_pair_corr") if k in eng}
-            nul = rl.matched_null(M, start, res["rebalances"], eng["slots"], caps, eng.get("rebalance") == "quarterly",
-                                  nruns, acc["null_seed"], lag, cost)
+            nul = rl.matched_null(M, st, start, res["rebalances"], eng, nruns, acc["null_seed"], lag, cost)
             c3 = rl.thirds(vals)
             stats = pf.long_stats(vals, goal)
             runs_ = nul["runs"]
@@ -497,23 +502,24 @@ def compute_rules(prices_dir: Path, st: dict, wl: dict, rc: dict, sample: bool, 
                    "null_replacement_rate": round(nul["q"], 3),
                    "vs_core_cagr_pts": round(c3[0] - c_core[0], 2), "vs_equal_weight_cagr_pts": round(c3[0] - c_ew[0], 2),
                    "max_dd_vs_core_pts": round(stats["max_dd_pct"] - controls["core"]["max_dd_pct"], 1),
-                   "turnover_pct_year": round(rl.turnover_per_year(res["rebalances"], years), 1),
+                   "turnover_pct_year": round(rl.turnover_per_year(res["rebalances"], years, res["stops"]), 1),
                    "avg_names": round(nul["avg_names"], 2),
                    "decisions": len(res["rebalances"]), "stops": len(res["stops"]),
                    "holdings_now": res["rebalances"][-1]["holdings"] if res["rebalances"] else [], "_values": vals}
-            row["verdict"], row["reasons"] = judge_satellite(row, acc["satellite"], tries)
+            row["verdict"], row["reasons"] = judge_satellite(row, acc["satellite"], tries, nruns)
             results.append(row)
         weekly_idx = pf.weekly_idx(M["n"], start, 5)
         rel = [k - start for k in weekly_idx]
-        weekly = {"dates": [M["dates"][k] for k in weekly_idx], "core": [round(core_v[k], 2) for k in rel],
-                  "equal_weight": [round(ew[k], 2) for k in rel]}
+        weekly = {"dates": [M["dates"][k] for k in weekly_idx],
+                  "core": [round(core_v[k] / core_v[rel[0]] * 100, 2) for k in rel],
+                  "equal_weight": [round(ew[k] / ew[rel[0]] * 100, 2) for k in rel]}
         weekly["rules"] = {x["id"]: [round(x["_values"][k] / x["_values"][rel[0]] * 100, 2) for k in rel] for x in results}
         for x in results:
             del x["_values"]
         satellite = {"from": M["dates"][start], "to": M["dates"][-1], "years": round(years, 1), "controls": controls,
                      "controls_halves": {"core": [round(c_core[1], 2), round(c_core[2], 2)], "equal_weight": [round(c_ew[1], 2), round(c_ew[2], 2)]},
                      "null": {"runs": nruns, "seed": acc["null_seed"],
-                              "kind": "random names; same number of names held at each decision, same replacement rate, same caps, fills and costs"},
+                              "kind": "random names; same number of names held at each decision, same replacement rate, same caps, sizing, exits, fills and costs"},
                      "rules": results, "weekly": weekly}
     return {"as_of": M["dates"][-1], "sample": sample, "provider": provider, "registry_version": rc["version"],
             "tries_counted": tries, "fill_lag_days": lag, "cost_bps": cost, "goal_pct": goal,
@@ -570,52 +576,75 @@ def _rule_market(prices_dir: Path, st: dict, wl: dict):
     return rl.build_market(raw, members, core, bench, cash, sectors)
 
 
+def _engine_hash(cfg: dict, cost: float, lag: int) -> str:
+    return hashlib.sha256(json.dumps({"cfg": cfg, "cost_bps": cost, "lag": lag}, sort_keys=True).encode()).hexdigest()[:16]
+
+
 def update_ledger(prev: dict | None, M: dict, st: dict, rc: dict, sample: bool) -> dict:
     """Forward ledger of every testable satellite rule. On the first run of each calendar month (each quarter for
     quarterly rules) a rule's holdings are chosen with only that day's data and appended; recorded holdings are never
-    edited. Each rule's track is recomputed from its record by the same engine (stops are mechanical), and, once
-    there are enough decisions, compared with the matched random-names null over the forward window only."""
+    edited. Each rule's track is replayed from its record by the same engine, on the recorded days (stops are
+    mechanical). Append-only across registry changes: a rule whose settings change starts a new record and the old one
+    is frozen under `retired`, as is a rule removed from the registry. If a recorded name or date is missing from the
+    prices, the rule keeps its last good track instead of crashing the day. The forward comparison with the matched
+    null waits for 6 decisions and about six months."""
     import rules as rl
     acc = rc["acceptance"]
     lag, cost = acc["fill_lag_days"], st["portfolio"]["cost_bps"]
     last = M["n"] - 1
     today = M["dates"][last]
     idx = {d: k for k, d in enumerate(M["dates"])}
-    out = {}
+    prev_rules = (prev or {}).get("rules", {})
+    retired = dict((prev or {}).get("retired", {}))
+    out, live_ids = {}, set()
     for r in rc["rules"]:
         eng = r.get("engine")
         if not eng or eng["kind"] != "satellite_select" or r["status"] not in ("testable_now", "reference_baseline"):
             continue
+        live_ids.add(r["id"])
         cfg = {k: v for k, v in eng.items() if k != "kind"}
+        h = _engine_hash(cfg, cost, lag)
+        old = prev_rules.get(r["id"])
+        if old and old.get("engine_hash") != h:  # the rule changed: freeze its record, start a new one
+            retired[f"{r['id']}@{old.get('engine_hash', 'legacy')[:8]}"] = {**old, "retired_on": today}
+            old = None
         quarterly = cfg.get("rebalance") == "quarterly"
-        rebs = [dict(x) for x in ((prev or {}).get("rules", {}).get(r["id"], {}).get("rebalances", []))]
+        rebs = [dict(x) for x in (old or {}).get("rebalances", [])]
         due = not rebs or (today > rebs[-1]["date"] and today[:7] != rebs[-1]["date"][:7] and (not quarterly or int(today[5:7]) in (1, 4, 7, 10)))
         if due and last - rl.WARM >= 0:
             picked = rl.pick_names(cfg, M, st, last, rebs[-1]["holdings"] if rebs else [], random.Random(0))
             rebs.append({"date": today, "holdings": picked})
         if not rebs:
             continue
-        if any(x["date"] not in idx for x in rebs):
-            raise SystemExit(f"ledger: a recorded decision for {r['id']} is outside the price history (fail closed)")
+        names = {s for x in rebs for s in x["holdings"]}
+        missing = [x["date"] for x in rebs if x["date"] not in idx] + sorted(s for s in names if s not in M["c"])
+        if missing:
+            print(f"ledger: {r['id']} keeps its last good track; missing from prices: {missing[:5]}")
+            kept = old or {"started": rebs[0]["date"], "values": [100.0]}
+            out[r["id"]] = {**kept, "rebalances": rebs, "decisions": len(rebs), "engine_hash": h, "stale": True}
+            continue
         start = idx[rebs[0]["date"]]
-        scripted = {**cfg, "selection": {"method": "scripted", "picks": {idx[x["date"]]: x["holdings"] for x in rebs}}}
+        days = [idx[x["date"]] for x in rebs]
+        scripted = {**cfg, "selection": {"method": "scripted", "picks": {d: x["holdings"] for d, x in zip(days, rebs)}}}
         res = rl.run_sleeve(scripted, M, st, start, lag, cost)
         vals = res["values"]
-        row = {"started": rebs[0]["date"], "rebalances": rebs, "values": [round(v, 3) for v in vals], "decisions": len(rebs)}
-        if len(rebs) >= 3 and len(vals) > 30:
-            caps = {k: cfg[k] for k in ("max_per_sector", "max_pair_corr") if k in cfg}
-            nul = rl.matched_null(M, start, res["rebalances"], cfg["slots"], caps, quarterly, acc["null_runs"], acc["null_seed"], lag, cost)
-            span = len(vals) - 1
-            mine = ((vals[-1] / vals[0]) ** (rl.Y / span) - 1) * 100
+        row = {"started": rebs[0]["date"], "rebalances": rebs, "values": [round(v, 3) for v in vals], "decisions": len(rebs),
+               "engine_hash": h}
+        if len(rebs) >= 6 and len(vals) > 126:
+            nul = rl.matched_null(M, st, start, res["rebalances"], cfg, acc["null_runs"], acc["null_seed"], lag, cost, days=days)
+            mine = ((vals[-1] / vals[0]) ** (rl.Y / (len(vals) - 1)) - 1) * 100
             row["forward_percentile"] = round(rl.percentile_of(mine, [x[0] for x in nul["runs"]]), 1)
         out[r["id"]] = row
-    starts = [idx[v["started"]] for v in out.values()]
+    for rid, old in prev_rules.items():
+        if rid not in live_ids:  # removed from the registry: keep its record, frozen
+            retired.setdefault(f"{rid}@{old.get('engine_hash', 'legacy')[:8]}", {**old, "retired_on": today})
+    starts = [idx[v["started"]] for v in out.values() if v["started"] in idx]
     base = min(starts) if starts else last
     core_c, bench_c = M["core"], M["bench"]
     return {"as_of": today, "sample": sample,
             "note": "Forward only: each rule's holdings are written on the first run of the month with that day's data and never edited. Values indexed to 100 at each rule's start; core and benchmark from the earliest start.",
             "dates": M["dates"][base:], "core": [round(100 * c / core_c[base], 3) for c in core_c[base:]],
-            "bench": [round(100 * c / bench_c[base], 3) for c in bench_c[base:]], "rules": out}
+            "bench": [round(100 * c / bench_c[base], 3) for c in bench_c[base:]], "rules": out, "retired": retired}
 
 
 def run_ledger() -> None:

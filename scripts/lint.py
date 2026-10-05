@@ -162,8 +162,8 @@ class Lint:
                 sel = eng.get("selection", {})
                 if sel.get("method") not in sat_methods:
                     self.err(path, f"{where}: unknown selection method {sel.get('method')!r}")
-                if not 1 <= eng.get("slots", 0) <= 30:
-                    self.err(path, f"{where}: slots must be 1..30")
+                if not 1 <= eng.get("slots", 0) <= 10:
+                    self.err(path, f"{where}: slots must be 1..10 (published holdings lists hold at most 10)")
                 if sel.get("method") == "filters":
                     for f in sel.get("filters", []):
                         if f.get("f") not in rl.FILTERS:

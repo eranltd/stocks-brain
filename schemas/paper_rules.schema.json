@@ -11,7 +11,8 @@
     "dates",
     "core",
     "bench",
-    "rules"
+    "rules",
+    "retired"
   ],
   "properties": {
     "as_of": {
@@ -96,12 +97,94 @@
             "items": {
               "type": "number",
               "minimum": 0
-            }
+            },
+            "minItems": 1
           },
           "forward_percentile": {
             "type": "number",
             "minimum": 0,
             "maximum": 100
+          },
+          "engine_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{16}$"
+          },
+          "retired_on": {
+            "$ref": "common.schema.json#/$defs/date"
+          },
+          "stale": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "retired": {
+      "type": "object",
+      "description": "Frozen records of rules whose settings changed or that left the registry.",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "started",
+          "rebalances",
+          "values",
+          "decisions"
+        ],
+        "properties": {
+          "started": {
+            "$ref": "common.schema.json#/$defs/date"
+          },
+          "decisions": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "rebalances": {
+            "type": "array",
+            "maxItems": 600,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "date",
+                "holdings"
+              ],
+              "properties": {
+                "date": {
+                  "$ref": "common.schema.json#/$defs/date"
+                },
+                "holdings": {
+                  "type": "array",
+                  "maxItems": 30,
+                  "items": {
+                    "$ref": "common.schema.json#/$defs/ticker"
+                  }
+                }
+              }
+            }
+          },
+          "values": {
+            "type": "array",
+            "maxItems": 6000,
+            "items": {
+              "type": "number",
+              "minimum": 0
+            },
+            "minItems": 1
+          },
+          "forward_percentile": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "engine_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{16}$"
+          },
+          "retired_on": {
+            "$ref": "common.schema.json#/$defs/date"
+          },
+          "stale": {
+            "type": "boolean"
           }
         }
       }

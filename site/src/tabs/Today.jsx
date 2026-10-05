@@ -191,7 +191,7 @@ export function PickCard({ item, i, name, horizon }) {
           {pick.evidence.map((e) => <span key={e} className="rounded-full border border-line-2 px-2.5 py-1 font-mono text-[11.5px] text-ink-2">{e}</span>)}
         </div>
         <div className="meta mt-6 flex items-center justify-between border-t border-line pt-5">
-          <span className="text-ink">ref <span className="num">{fmtNum(item.ref_price)}</span></span>
+          <span className="text-ink">{item.ref_price != null ? <>ref <span className="num">{fmtNum(item.ref_price)}</span></> : "from the close of"}</span>
           <span className="num">{item.ref_date} → {addTradingDays(item.ref_date, horizon)}</span>
         </div>
       </div>

@@ -2,6 +2,7 @@ name: daily
 
 # Code-only routines (config/routines.json). Lint fails if an active routine's cron is missing here.
 # Every run, success or failure, is appended to data/ops/routine_runs.json and shown on the Ops tab.
+# Data is published to the `data` branch (data/ and runs/ only; scripts/data_branch.sh), so main can require PRs.
 on:
   schedule:
     - cron: "40 23 * * 1-5"   # fetch_prices, score_picks, regime_monitor (after the US close)
@@ -34,6 +35,10 @@ jobs:
           python-version: "3.11"
       - id: start
         run: echo "at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore published data (data branch)
+        id: restore
+        run: echo "base=$(bash scripts/data_branch.sh restore)" >> "$GITHUB_OUTPUT"
 
       - name: Fetch prices (all-or-nothing)
         id: fetch_prices
@@ -87,7 +92,7 @@ jobs:
         run: python3 scripts/lint.py
 
       # Always record the run (even on failure). Only data that passed lint is committed.
-      - name: Record run and commit to main
+      - name: Record run and publish to the data branch
         id: commit
         if: always() && env.DRY != 'true' && github.ref == 'refs/heads/main'
         env:
@@ -102,17 +107,15 @@ jobs:
           ROUTINE_CALIBRATION: ${{ steps.calibration.outcome }}
           ROUTINE_LINT: ${{ steps.lint.outcome }}
         run: |
-          if [ "${{ steps.lint.outcome }}" != "success" ]; then git checkout -- data; fi
+          if [ "${{ steps.lint.outcome }}" != "success" ]; then bash scripts/data_branch.sh reset "${{ steps.restore.outputs.base }}"; fi
           python3 scripts/ops_log.py --workflow daily --trigger "${{ github.event_name }}" \
             --started "${{ steps.start.outputs.at }}" --run-id "${{ github.run_id }}" \
             --url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           git config user.name "stocks-brain-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data
-          if git diff --cached --quiet; then echo "changed=false" >> "$GITHUB_OUTPUT"; exit 0; fi
-          git commit -m "data: daily routines $(date -u +%F)"
-          git push origin HEAD:main
-          echo "changed=true" >> "$GITHUB_OUTPUT"
+          out=$(bash scripts/data_branch.sh publish "${{ steps.restore.outputs.base }}" "data: daily routines $(date -u +%F)" | tail -1)
+          echo "data branch: $out"
+          if [ "$out" = "published" ]; then echo "changed=true" >> "$GITHUB_OUTPUT"; else echo "changed=false" >> "$GITHUB_OUTPUT"; fi
 
       - name: Redeploy Pages
         if: always() && steps.commit.outputs.changed == 'true'

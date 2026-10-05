@@ -1,7 +1,7 @@
 ---
-version: 0.5.0
+version: 0.6.0
 updated_at: 2026-10-05
-change_note: Rule engine (savings cadence, satellite rules, matched random-names null, forward ledger); the history window of rule v1 stated as it is.
+change_note: Live runs and outcomes carry dates and returns, never prices; the brain's pack and run recorder; data on its own branch.
 ---
 # Methodology
 
@@ -17,7 +17,8 @@ change_note: Rule engine (savings cadence, satellite rules, matched random-names
 
 ## Scoring (code only)
 - `return_pct = (exit_close / ref_close - 1) * 100`, using adjusted closes `horizon_days` trading days apart,
-  both read from the current price series (the run's recorded `ref_price` is kept for reference).
+  both read from the current price series. Live runs record only the reference date and outcomes publish returns,
+  never prices (provider licence); synthetic samples keep their made-up prices.
 - `benchmark_return_pct` uses the same formula on the benchmark over the same dates.
 - `excess_pct = return_pct - benchmark_return_pct`.
 - Verdict with flat band `b = scoring.flat_band_pct`:
@@ -27,7 +28,17 @@ change_note: Rule engine (savings cadence, satellite rules, matched random-names
 
 ## Run record
 Every run writes `runs/run.<date>.json` with cost, minutes, pack hash and token count, the doc
-versions used, and the picks. The git history is the audit log.
+versions used, and the picks. The git history of the `data` branch is the audit log.
+- `scripts/build_pack.py` builds the pack from live derived data only (it refuses samples), selects up to
+  `pack.library_principles_max` library principles by tag, and fails closed above `pack.token_cap`. Every citable key
+  is a lowercase dot path (`market.nvda.setup`, `library.s-028:p02`).
+- `scripts/record_run.py` checks the brain's output (pick schema, guardrails, evidence keys that exist in the pack, one
+  run per market day), attaches the reference date and writes the run; nothing is written if any check fails.
+
+## Where data lives
+Code is on `main`, which requires pull requests. Everything the routines write (`data/` and `runs/`) is published to the
+`data` branch by `scripts/data_branch.sh`, with full history and no force pushes. Each run restores the published data,
+works on it, and publishes it back only if lint passes; the Pages build overlays it on `main` before exporting the site.
 
 ## Regime (code only)
 Computed daily from benchmark closes; parameters live in `config/settings.json` under `regime`.

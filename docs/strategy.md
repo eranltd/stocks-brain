@@ -1,7 +1,7 @@
 ---
-version: 0.1.0
-updated_at: 2026-10-04
-change_note: Seed strategy for the scaffold. No live picks yet.
+version: 0.2.0
+updated_at: 2026-10-05
+change_note: Code attaches the reference date, not a price; outcomes are published as returns.
 ---
 # Strategy
 
@@ -17,7 +17,7 @@ practice, not advice.
 - **Evidence** keys pointing to items in the context pack.
 
 The model never states prices, targets, percentages or dates. Code attaches the reference
-price, and later the outcome.
+date, and later the outcome as returns (no prices are published).
 
 ## What the brain should look for
 1. Relative strength against the benchmark over the pack's lookback window.

@@ -320,8 +320,12 @@ class FrozenVerdictTest(unittest.TestCase):
         wl2["symbols"][0]["sector"] = "Somewhere else"
         wl3 = copy.deepcopy(self.WL)
         wl3["symbols"] = wl3["symbols"][:-1]
+        wl4 = copy.deepcopy(self.WL)  # the cash fund feeds every savings verdict
+        for c in wl4.get("context", []):
+            if c["role"] == "cash":
+                c["symbol"] = "BIL"
         for label, kw in {"engine": {"rc": engine}, "acceptance": {"rc": accept}, "v1 setup": {"st": st2}, "v1 portfolio": {"st": st3},
-                          "sector label": {"wl": wl2}, "watchlist": {"wl": wl3}}.items():
+                          "sector label": {"wl": wl2}, "watchlist": {"wl": wl3}, "cash fund": {"wl": wl4}}.items():
             with self.assertRaises(SystemExit, msg=label):  # same tries: not allowed
                 self.freeze(first, nxt, **kw)
         bumped = {**engine, "tries_counted": 18}
@@ -359,6 +363,13 @@ class GapGuardTest(unittest.TestCase):
         self.assertIn("T1", report[0])
         self.assertEqual(M2["first"]["T1"], 701)  # the clock restarted on the day after the gap
         self.assertEqual(M2["first"]["T0"], 0)
+        # A name with no price on the last day, or no price file at all, would silently leave the universe: also reported.
+        raw["T2"] = raw["T2"][:-1]
+        del raw["T0"]
+        M3 = rules.build_market(raw, ["T0", "T1", "T2"], "SPY", "QQQ", "SGOV", sectors)
+        rep3 = " | ".join(rules.gap_report(M3))
+        self.assertIn("T0: no price on the last common date (no price file)", rep3)
+        self.assertIn("T2: no price on the last common date (1499 bars unused)", rep3)
 
 
 class V1LedgerIdentityTest(unittest.TestCase):

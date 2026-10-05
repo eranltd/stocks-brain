@@ -86,7 +86,7 @@ export default function Playbook({ data, go }) {
       <Reveal className="card mt-8 border-people/40 p-5 text-[14.5px] leading-relaxed text-ink-2 sm:p-6">
         <span className="text-people">How to read the evidence.</span> History tests use today's watchlist, so every name is a survivor and every result is flattered.
         A rule is judged only against <span className="text-ink">random names under the same conditions</span>, never against the +{goal}% goal, and nothing here moves money:
-        a rule that passes history goes on to the forward paper record, which cannot be re-fitted.
+        every testable rule gets a forward paper record from its first run, which cannot be re-fitted; passing history only makes a rule worth reading closely, and nothing here moves money.
         <span className="mt-3 block text-ink-3">
           Evidence ratings: <b className="font-medium text-ink-2">replicated</b> = independent replication named in the sources we keep; <b className="font-medium text-ink-2">mixed</b> = backed by more than one source, with caveats or gaps;
           <b className="font-medium text-ink-2"> weak</b> = one source's claim, an inference, or our own convention; <b className="font-medium text-ink-2">untested</b> = our sources are silent; <b className="font-medium text-ink-2">contradicted</b> = they argue against it.
@@ -114,7 +114,7 @@ function FrozenNote({ res, name }) {
   ];
   return (
     <Reveal className="card mt-5 p-5 text-[14.5px] leading-relaxed text-ink-2 sm:p-6">
-      <span className="text-accent">Read once.</span> The history verdicts were fixed on {fmtDate(res.frozen.as_of)}, the first real-data run of these rules.
+      <span className="text-accent">Read once.</span> The history verdicts were fixed on {fmtDate(res.frozen.as_of)}, {res.frozen.superseded?.length ? `the latest re-freeze of these rules (${res.frozen.superseded.length} earlier verdict set${res.frozen.superseded.length === 1 ? " is" : "s are"} kept in the file)` : "the first real-data run of these rules"}.
       The numbers below keep updating each day, but the verdict does not, because a verdict that flips on a lucky day is cherry-picking.
       Later data counts only through the forward record.
       {differs.length > 0 && (
@@ -197,7 +197,7 @@ function Savings({ rb, res, name }) {
         {stream.map((r) => <SavingsCard key={r.id} r={r} name={name} />)}
       </div>
       <p className="meta mt-3 normal-case tracking-[0.04em]">
-        "Fee tie": the fixed fee per trade, as a share of one weekly contribution, at which buying less often catches up with weekly buying. Maximum difference between cadences here: {fmtNum(maxBps, 0)} basis points a year (100 basis points, written bp, = 1 percentage point).
+        "Fee tie": the fixed fee per trade, as a share of one weekly contribution, at which that row and the monthly baseline come out equal. Weekly and every-2-weeks buying win only below it, quarterly buying only above it. Maximum difference between cadences here: {fmtNum(maxBps, 0)} basis points a year (100 basis points, written bp, = 1 percentage point).
         "Worst gap" is the 1-in-10 worst moment between what you had put in and what the account was worth.
       </p>
       {windfall.length > 0 && (
@@ -390,7 +390,7 @@ function Forward({ rb, data, name }) {
   return (
     <section className="pt-24">
       <SectionHead eyebrow="Forward record · written once a month, never edited" title={<>The test <Accent>nobody can fit.</Accent></>} size="md"
-        lede={`Every testable rule writes its holdings on the first run of each month, using only that day's data. After ${min} days this, not the history, decides which rules deserve money.`} />
+        lede={`Every testable rule writes its holdings on the first run of each review month (each quarter for the quarterly rule), using only that day's data. After ${min} days the forward record is one of the money conditions listed under How we test; it opens no money on its own.`} />
       {rows.length === 0 ? (
         <Empty title="Starts with the next daily run">The first decisions are written by the daily routine. Each rule's track appears from the second day.</Empty>
       ) : (
@@ -400,7 +400,7 @@ function Forward({ rb, data, name }) {
             <tbody>
               {rows.map(([id, r]) => {
                 const k = led.dates.indexOf(r.started);
-                const last = r.values.length - 1;
+                const last = Math.round((new Date(led.as_of) - new Date(r.started)) / 864e5); // calendar days of record
                 const coreRet = led.core.at(-1) / led.core[k] * 100 - 100;
                 const ret = r.values.at(-1) - 100;
                 return (
@@ -413,7 +413,7 @@ function Forward({ rb, data, name }) {
                     <td className="num px-4 py-3 font-mono text-ink-2">{fmtPct(coreRet, 1)}</td>
                     <td className="num px-4 py-3 font-mono">{r.forward_percentile != null
                       ? <>{fmtNum(r.forward_percentile, 0)}%{last < min ? <span className="text-ink-3"> provisional</span> : null}</>
-                      : <span className="text-ink-3">after 6 decisions</span>}{r.stale ? <span className="block text-[11.5px] text-people">prices missing: last good track</span> : null}</td>
+                      : <span className="text-ink-3">{r.decisions < 6 ? "after 6 decisions" : "after 126 days of record"}</span>}{r.stale ? <span className="block text-[11.5px] text-people">prices missing: last good track</span> : null}</td>
                     <td className="px-4 py-3 font-mono text-[13px]">{r.rebalances.at(-1).holdings.join(" · ") || <span className="text-ink-3">core only</span>}</td>
                   </tr>
                 );
@@ -578,7 +578,7 @@ function Testing({ rb }) {
       </div>
       {rb.not_supported.length > 0 && (
         <>
-          <h3 className="mt-14 text-[22px] font-semibold tracking-[-0.02em]">What we will not do</h3>
+          <h3 className="mt-14 text-[22px] font-semibold tracking-[-0.02em]">Left out, and what is not built yet</h3>
           <ul className="mt-4 grid gap-3 md:grid-cols-2">
             {rb.not_supported.map((x) => <li key={x.name} className="card p-5"><div className="font-medium">{x.name}</div><p className="mt-1 text-[14px] leading-relaxed text-ink-2">{x.why}</p></li>)}
           </ul>

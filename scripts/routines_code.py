@@ -453,7 +453,8 @@ def registry_hash(rc: dict, cost: float, st: dict, wl: dict) -> str:
     core = {"rules": [[r["id"], r["status"], r.get("engine")] for r in rc["rules"]], "acceptance": {k: v for k, v in rc["acceptance"].items() if k != "text"},
             "tries": rc["tries_counted"], "cost_bps": cost, "setup": st["setup"], "portfolio": st["portfolio"],
             "universe": sorted((s["symbol"], s["sector"]) for s in wl["symbols"]),
-            "core": (wl.get("core") or {}).get("symbol"), "benchmark": st["scoring"]["benchmark"]["symbol"]}
+            "core": (wl.get("core") or {}).get("symbol"), "benchmark": st["scoring"]["benchmark"]["symbol"],
+            "cash": next((c["symbol"] for c in wl.get("context", []) if c["role"] == "cash"), None)}
     return hashlib.sha256(json.dumps(core, sort_keys=True).encode()).hexdigest()[:16]
 
 

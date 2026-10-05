@@ -44,6 +44,8 @@ def build_market(raw: dict[str, list[dict]], members: list[str], core: str, benc
         return None
     closes, first, gaps = {}, {}, {}
     for s in members:
+        if s not in al:  # no price on the last common date (or no price file): the name would silently leave the universe
+            gaps[s] = {"bars_discarded": len(raw.get(s) or []), "from": None, "to": None, "restarts_on": None}
         if s in al:
             closes[s] = [None] * (n - len(al[s])) + al[s]
             first[s] = n - len(al[s])
@@ -81,8 +83,13 @@ def gap_report(M: dict) -> list[str]:
     """One missing bar inside a name's history makes the market builder keep only the unbroken stretch that ends on the last
     date, which silently restarts that name's 253-day clock and removes it from the universe (and from the random-basket
     pool) for a year. A pre-registered test must not run on a universe that shrank by accident, so callers fail closed."""
-    return [f"{s}: {g['bars_discarded']} earlier bars ({g['from']} to {g['to']}) dropped, history restarts on {g['restarts_on']}"
-            for s, g in sorted(M.get("gaps", {}).items())]
+    out = []
+    for s, g in sorted(M.get("gaps", {}).items()):
+        if g["restarts_on"] is None:
+            out.append(f"{s}: no price on the last common date" + (f" ({g['bars_discarded']} bars unused)" if g["bars_discarded"] else " (no price file)"))
+        else:
+            out.append(f"{s}: {g['bars_discarded']} earlier bars ({g['from']} to {g['to']}) dropped, history restarts on {g['restarts_on']}")
+    return out
 
 
 def trend_flags(c: list[float]) -> list[bool]:

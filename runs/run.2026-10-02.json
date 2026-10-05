@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "run_id": "run.2026-10-02",
+  "date": "2026-10-02",
+  "generated_at": "2026-10-05T10:16:07Z",
+  "status": "ok",
+  "sample": false,
+  "model": "Claude Code session",
+  "cost": {
+    "usd": 0.0,
+    "input_tokens": 7822,
+    "output_tokens": 485,
+    "cap_usd": 2.5
+  },
+  "duration_minutes": 19.0,
+  "pack": {
+    "hash": "25cbc38b67c0d1ce40efc39ccd79572d9533f3190d80d810e517489d97e62157",
+    "tokens": 7822,
+    "cap_tokens": 12000
+  },
+  "doc_versions": {
+    "strategy": "0.2.0",
+    "methodology": "0.7.0",
+    "guardrails": "0.1.0",
+    "learnings": "0.1.0"
+  },
+  "repair_retries": 0,
+  "summary": "A normal uptrend with the benchmark at its one-year high, but breadth is thin: fewer than a third of the names sit above their fifty-day average and participation is narrow. The base rates do not back the setup checks: gate passers did no better than the rest over the scoring horizon, and names passing all four checks were the weakest group. Over its history the portfolio rule trailed holding every name equally and only edged the core. One pick: Apple, bullish at low conviction. The household is at the Paper stage, so no money moves.",
+  "picks": [
+    {
+      "id": "2026-10-02:AAPL",
+      "ref_date": "2026-10-02",
+      "pick": {
+        "ticker": "AAPL",
+        "stance": "bullish",
+        "conviction": "low",
+        "thesis": "Apple passes all four setup checks, is not stretched above its fifty-day average, and leads the benchmark over the three-month, six-month and one-year windows, including the six-month window the library calls the replicated signal. The one-year lead was built mostly in the last half year and the last month already lags, so this is a modest lean, kept at low conviction because names passing every check have lagged the benchmark on average over the scoring horizon.",
+        "risks": [
+          "Names passing all four checks were the weakest score bucket over the scoring horizon, so the setup itself shows no edge.",
+          "It sits at the low end of the library's extended zone above its long average, which raises the odds of a retest first.",
+          "Its volatility is above the benchmark's, and a quarterly report may fall inside the horizon; the pack has no event calendar.",
+          "Leadership in the benchmark is narrow, so a rotation out of mega caps would hit it as well."
+        ],
+        "invalidation": "A close below its fifty-day average that fails the trend check, or its six-month lead over the benchmark turning into a lag.",
+        "evidence": [
+          "market.aapl.setup",
+          "market.aapl.vs_bench_120d",
+          "market.aapl.vs_bench_250d",
+          "market.aapl.vs_bench_20d",
+          "market.aapl.risk",
+          "base_rates.by_score",
+          "library.s-040:p01",
+          "library.s-050:p08"
+        ]
+      }
+    }
+  ]
+}

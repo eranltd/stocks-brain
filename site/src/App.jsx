@@ -5,6 +5,7 @@ import { Field, Footer, Header, Loader, MobileNav } from "./components/shell.jsx
 import { Container } from "./components/ui.jsx";
 import Today from "./tabs/Today.jsx";
 import Portfolio from "./tabs/Portfolio.jsx";
+import Playbook from "./tabs/Playbook.jsx";
 import Watchlist from "./tabs/Watchlist.jsx";
 import TrackRecord from "./tabs/TrackRecord.jsx";
 import KB from "./tabs/KB.jsx";
@@ -19,6 +20,7 @@ import Stock from "./tabs/Stock.jsx";
 const TABS = [
   { id: "today", label: "Today", C: Today },
   { id: "portfolio", label: "Portfolio", C: Portfolio },
+  { id: "playbook", label: "Playbook", C: Playbook },
   { id: "watchlist", label: "Watchlist", C: Watchlist },
   { id: "track", label: "Track record", C: TrackRecord },
   { id: "kb", label: "KB", C: KB },

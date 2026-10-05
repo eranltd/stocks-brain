@@ -1,20 +1,21 @@
 #!/usr/bin/env python3
 """Code-only routines (no LLM): derive, score matured picks, regime monitor, calibration,
-long-run portfolio statistics and the forward-only paper portfolio.
+long-run portfolio statistics, the forward-only paper portfolio and the forward ledger of every rule.
 
-Usage: python3 scripts/routines_code.py derive|score|regime|calibration|longrun|paper|all
+Usage: python3 scripts/routines_code.py derive|score|regime|calibration|longrun|paper|rules|ledger|all
 Each step reads public data, computes with plain arithmetic, validates against its schema,
 and writes under data/kb/. Rules are documented in docs/methodology.md.
 """
 from __future__ import annotations
 
 import math
+import random
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _common import DATA, DOCS, KB, MARKET, PRICES, RUNS, Validator, dump_json, load_json, parse_front_matter, settings, watchlist  # noqa: E402
+from _common import CONFIG, DATA, DOCS, KB, MARKET, PRICES, RUNS, Validator, dump_json, load_json, parse_front_matter, settings, watchlist  # noqa: E402
 import scoring  # noqa: E402
 
 TODAY = datetime.now(timezone.utc).date().isoformat()
@@ -402,8 +403,237 @@ def run_paper() -> None:
           f"value {t['v']} vs core {t['core_v']}")
 
 
+
+# ------------------------------------------------------------ rule registry
+
+def judge_satellite(r: dict, acc: dict, tries: int) -> tuple[str, list[str]]:
+    """Verdict on history alone (never money: the forward paper record decides that). Pre-registered numbers
+    from config/rules.json `acceptance`; the percentile bar is Bonferroni-adjusted for the tries counted."""
+    adj = 100 * (1 - (100 - acc["null_percentile_min"]) / 100 / max(1, tries))
+    why = [f"percentile {r['percentile']:.1f} vs random baskets (bar {adj:.1f} after counting {tries} tries)"]
+    halves_ok = min(r["percentile_halves"]) >= acc["halves_percentile_min"]
+    why.append(f"halves {r['percentile_halves'][0]:.0f} / {r['percentile_halves'][1]:.0f} (need {acc['halves_percentile_min']}+ in both)")
+    dd_ok = r["max_dd_vs_core_pts"] >= -acc["max_dd_worse_than_core_pts"]
+    why.append(f"deepest drop {r['max_dd_vs_core_pts']:+.1f} pts vs the core (limit -{acc['max_dd_worse_than_core_pts']})")
+    turn_ok = r["turnover_pct_year"] <= acc["max_turnover_pct_year"]
+    why.append(f"turnover {r['turnover_pct_year']:.0f}% a year (limit {acc['max_turnover_pct_year']})")
+    if r["percentile"] < acc["reject_below_percentile"]:
+        return "rejected", why
+    if r["percentile"] >= adj and halves_ok and dd_ok and turn_ok:
+        return "passes_history", why
+    if r["percentile"] >= acc["null_percentile_min"] and halves_ok:
+        return "candidate", why
+    return "inconclusive", why
+
+
+def judge_savings(row: dict, independent: int, acc: dict) -> str:
+    if "vs_baseline_irr_bps_median" not in row:
+        return "baseline"
+    if independent < acc["min_independent_windows"]:
+        return "too_few_independent_windows"
+    d, share = row["vs_baseline_irr_bps_median"], row["vs_baseline_better_pct"]
+    if abs(d) < acc["material_irr_bps"] or 100 - acc["consistency_pct"] < share < acc["consistency_pct"]:
+        return "no_clear_difference"
+    return "better" if d > 0 else "worse"
+
+
+def compute_rules(prices_dir: Path, st: dict, wl: dict, rc: dict, sample: bool, provider: str, runs: int | None = None) -> dict | None:
+    """Backtest every testable rule in config/rules.json (derived numbers only)."""
+    import portfolio as pf
+    import rules as rl
+    members = [s["symbol"] for s in wl["symbols"]]
+    sectors = {s["symbol"]: s["sector"] for s in wl["symbols"]}
+    core = wl["core"]["symbol"]
+    bench = st["scoring"]["benchmark"]["symbol"]
+    cash = next((c["symbol"] for c in wl.get("context", []) if c["role"] == "cash"), None)
+    raw = {s: _bars(prices_dir, s) for s in {*members, core, bench, *([cash] if cash else [])}}
+    M = rl.build_market(raw, members, core, bench, cash, sectors)
+    if not M or M["n"] < rl.WARM + 2 * rl.Y:
+        return None
+    acc, tries = rc["acceptance"], rc["tries_counted"]
+    goal = st["goal"]["annual_return_pct"]
+    lag, cost = acc["fill_lag_days"], st["portfolio"]["cost_bps"]
+    nruns = runs if runs is not None else acc["null_runs"]
+    live = [r for r in rc["rules"] if r.get("engine") and r["status"] in ("testable_now", "reference_baseline", "control")]
+
+    # Savings cadence (core only)
+    sv = [{"id": r["id"], **{k: v for k, v in r["engine"].items() if k != "kind"}} for r in live if r["engine"]["kind"] == "savings_contribute"]
+    savings = None
+    if sv:
+        savings = rl.savings_study(M, sv, acc["savings_horizons_weeks"], acc["savings_step_weeks"], lag)
+        for h in savings["horizons"]:
+            for row in h["rows"]:
+                row["verdict"] = judge_savings(row, h["independent"], acc["savings"])
+
+    # Satellite sleeve
+    start = rl.WARM
+    sat = [r for r in live if r["engine"]["kind"] == "satellite_select"]
+    satellite = None
+    if sat:
+        years = (M["n"] - 1 - start) / rl.Y
+        core_v = [100 * M["core"][k] / M["core"][start] for k in range(start, M["n"])]
+        ew = rl.run_sleeve({"slots": len(M["c"]), "selection": {"method": "all"}}, M, st, start, lag, cost)["values"]
+        controls = {"core": pf.long_stats(core_v, goal), "equal_weight": pf.long_stats(ew, goal)}
+        c_core, c_ew = rl.thirds(core_v), rl.thirds(ew)
+        results = []
+        for r in sat:
+            eng = {k: v for k, v in r["engine"].items() if k != "kind"}
+            res = rl.run_sleeve(eng, M, st, start, lag, cost)
+            vals = res["values"]
+            caps = {k: eng[k] for k in ("max_per_sector", "max_pair_corr") if k in eng}
+            nul = rl.matched_null(M, start, res["rebalances"], eng["slots"], caps, eng.get("rebalance") == "quarterly",
+                                  nruns, acc["null_seed"], lag, cost)
+            c3 = rl.thirds(vals)
+            stats = pf.long_stats(vals, goal)
+            runs_ = nul["runs"]
+            pcts = [rl.percentile_of(c3[k], [x[k] for x in runs_]) for k in range(3)]
+            p = (sum(x[0] >= c3[0] for x in runs_) + 1) / (len(runs_) + 1)
+            row = {"id": r["id"], "stats": stats, "cagr_halves_pct": [round(c3[1], 2), round(c3[2], 2)],
+                   "percentile": round(pcts[0], 1), "percentile_halves": [round(pcts[1], 1), round(pcts[2], 1)],
+                   "p_value": round(p, 4), "p_adjusted": round(min(1.0, p * tries), 4),
+                   "null_cagr_pct": {q: round(rl.quantile([x[0] for x in runs_], v), 2) for q, v in (("p05", .05), ("p50", .5), ("p95", .95))},
+                   "null_replacement_rate": round(nul["q"], 3),
+                   "vs_core_cagr_pts": round(c3[0] - c_core[0], 2), "vs_equal_weight_cagr_pts": round(c3[0] - c_ew[0], 2),
+                   "max_dd_vs_core_pts": round(stats["max_dd_pct"] - controls["core"]["max_dd_pct"], 1),
+                   "turnover_pct_year": round(rl.turnover_per_year(res["rebalances"], years), 1),
+                   "avg_names": round(nul["avg_names"], 2),
+                   "decisions": len(res["rebalances"]), "stops": len(res["stops"]),
+                   "holdings_now": res["rebalances"][-1]["holdings"] if res["rebalances"] else [], "_values": vals}
+            row["verdict"], row["reasons"] = judge_satellite(row, acc["satellite"], tries)
+            results.append(row)
+        weekly_idx = pf.weekly_idx(M["n"], start, 5)
+        rel = [k - start for k in weekly_idx]
+        weekly = {"dates": [M["dates"][k] for k in weekly_idx], "core": [round(core_v[k], 2) for k in rel],
+                  "equal_weight": [round(ew[k], 2) for k in rel]}
+        weekly["rules"] = {x["id"]: [round(x["_values"][k] / x["_values"][rel[0]] * 100, 2) for k in rel] for x in results}
+        for x in results:
+            del x["_values"]
+        satellite = {"from": M["dates"][start], "to": M["dates"][-1], "years": round(years, 1), "controls": controls,
+                     "controls_halves": {"core": [round(c_core[1], 2), round(c_core[2], 2)], "equal_weight": [round(c_ew[1], 2), round(c_ew[2], 2)]},
+                     "null": {"runs": nruns, "seed": acc["null_seed"],
+                              "kind": "random names; same number of names held at each decision, same replacement rate, same caps, fills and costs"},
+                     "rules": results, "weekly": weekly}
+    return {"as_of": M["dates"][-1], "sample": sample, "provider": provider, "registry_version": rc["version"],
+            "tries_counted": tries, "fill_lag_days": lag, "cost_bps": cost, "goal_pct": goal,
+            "excluded_history": [s for s in members if s not in M["c"]],
+            "savings": savings, "satellite": satellite}
+
+
+def summarize_rules(doc: dict) -> list[str]:
+    """Derived numbers only (percentages): safe for a public Actions log."""
+    out = []
+    sv = doc.get("savings")
+    for h in (sv or {}).get("horizons", []):
+        out.append(f"savings {h['weeks']}w windows={h['windows']} independent={h['independent']} {h['from']}..{h['to']}")
+        for r in h["rows"]:
+            out.append(f"  {r['id']:22} irr {r['irr_median_pct']:6.2f}% mult {r['multiple_median']:.3f} underwater p10 {r['worst_vs_paid_p10_pct']:6.1f}% "
+                       f"cash {r['cash_share_median_pct']:4.0f}% trades/yr {r['trades_per_year']:5.1f} "
+                       f"dIRR {r.get('vs_baseline_irr_bps_median', 0):+7.1f}bp better {r.get('vs_baseline_better_pct', 0):5.1f}% "
+                       f"fee* {r.get('breakeven_fee_pct_of_weekly', float('nan')):6.2f}% {r['verdict']}")
+    sat = doc.get("satellite")
+    if sat:
+        n, c, e = sat["null"], sat["controls"]["core"], sat["controls"]["equal_weight"]
+        out.append(f"satellite {sat['from']}..{sat['to']} ({sat['years']}y) matched null runs={n['runs']}")
+        out.append(f"  core cagr {c['cagr_pct']} dd {c['max_dd_pct']}   equal-weight cagr {e['cagr_pct']} dd {e['max_dd_pct']}")
+        for r in sat["rules"]:
+            s = r["stats"]
+            out.append(f"  {r['id']:24} cagr {s['cagr_pct']:6.2f} dd {s['max_dd_pct']:6.1f} vsCore {r['vs_core_cagr_pts']:+6.2f} null p05/p50/p95 {r['null_cagr_pct']['p05']:.1f}/{r['null_cagr_pct']['p50']:.1f}/{r['null_cagr_pct']['p95']:.1f} pct {r['percentile']:5.1f} "
+                       f"halves {r['percentile_halves'][0]:4.0f}/{r['percentile_halves'][1]:4.0f} p_adj {r['p_adjusted']:.3f} turn {r['turnover_pct_year']:5.0f}% "
+                       f"names {r['avg_names']:.1f} stops {r['stops']} -> {r['verdict']}")
+    return out
+
+
+def run_rules() -> None:
+    if not (CONFIG / "rules.json").exists():
+        print("rules: no config/rules.json yet, nothing to test")
+        return
+    st, wl = settings(), watchlist()
+    rc = load_json(CONFIG / "rules.json")
+    doc = compute_rules(PRICES, st, wl, rc, sample=False, provider=st["prices"]["provider"])
+    if not doc:
+        raise SystemExit("rules: not enough aligned history for the core, benchmark and watchlist")
+    _write(MARKET / "rules.json", doc, "rules_result.schema.json", compact=True)
+    print("rules:", f"registry {rc['version']}, as of {doc['as_of']}")
+    print(*summarize_rules(doc), sep="\n")
+
+
+def _rule_market(prices_dir: Path, st: dict, wl: dict):
+    import rules as rl
+    members = [s["symbol"] for s in wl["symbols"]]
+    sectors = {s["symbol"]: s["sector"] for s in wl["symbols"]}
+    core = wl["core"]["symbol"]
+    bench = st["scoring"]["benchmark"]["symbol"]
+    cash = next((c["symbol"] for c in wl.get("context", []) if c["role"] == "cash"), None)
+    raw = {s: _bars(prices_dir, s) for s in {*members, core, bench, *([cash] if cash else [])}}
+    return rl.build_market(raw, members, core, bench, cash, sectors)
+
+
+def update_ledger(prev: dict | None, M: dict, st: dict, rc: dict, sample: bool) -> dict:
+    """Forward ledger of every testable satellite rule. On the first run of each calendar month (each quarter for
+    quarterly rules) a rule's holdings are chosen with only that day's data and appended; recorded holdings are never
+    edited. Each rule's track is recomputed from its record by the same engine (stops are mechanical), and, once
+    there are enough decisions, compared with the matched random-names null over the forward window only."""
+    import rules as rl
+    acc = rc["acceptance"]
+    lag, cost = acc["fill_lag_days"], st["portfolio"]["cost_bps"]
+    last = M["n"] - 1
+    today = M["dates"][last]
+    idx = {d: k for k, d in enumerate(M["dates"])}
+    out = {}
+    for r in rc["rules"]:
+        eng = r.get("engine")
+        if not eng or eng["kind"] != "satellite_select" or r["status"] not in ("testable_now", "reference_baseline"):
+            continue
+        cfg = {k: v for k, v in eng.items() if k != "kind"}
+        quarterly = cfg.get("rebalance") == "quarterly"
+        rebs = [dict(x) for x in ((prev or {}).get("rules", {}).get(r["id"], {}).get("rebalances", []))]
+        due = not rebs or (today > rebs[-1]["date"] and today[:7] != rebs[-1]["date"][:7] and (not quarterly or int(today[5:7]) in (1, 4, 7, 10)))
+        if due and last - rl.WARM >= 0:
+            picked = rl.pick_names(cfg, M, st, last, rebs[-1]["holdings"] if rebs else [], random.Random(0))
+            rebs.append({"date": today, "holdings": picked})
+        if not rebs:
+            continue
+        if any(x["date"] not in idx for x in rebs):
+            raise SystemExit(f"ledger: a recorded decision for {r['id']} is outside the price history (fail closed)")
+        start = idx[rebs[0]["date"]]
+        scripted = {**cfg, "selection": {"method": "scripted", "picks": {idx[x["date"]]: x["holdings"] for x in rebs}}}
+        res = rl.run_sleeve(scripted, M, st, start, lag, cost)
+        vals = res["values"]
+        row = {"started": rebs[0]["date"], "rebalances": rebs, "values": [round(v, 3) for v in vals], "decisions": len(rebs)}
+        if len(rebs) >= 3 and len(vals) > 30:
+            caps = {k: cfg[k] for k in ("max_per_sector", "max_pair_corr") if k in cfg}
+            nul = rl.matched_null(M, start, res["rebalances"], cfg["slots"], caps, quarterly, acc["null_runs"], acc["null_seed"], lag, cost)
+            span = len(vals) - 1
+            mine = ((vals[-1] / vals[0]) ** (rl.Y / span) - 1) * 100
+            row["forward_percentile"] = round(rl.percentile_of(mine, [x[0] for x in nul["runs"]]), 1)
+        out[r["id"]] = row
+    starts = [idx[v["started"]] for v in out.values()]
+    base = min(starts) if starts else last
+    core_c, bench_c = M["core"], M["bench"]
+    return {"as_of": today, "sample": sample,
+            "note": "Forward only: each rule's holdings are written on the first run of the month with that day's data and never edited. Values indexed to 100 at each rule's start; core and benchmark from the earliest start.",
+            "dates": M["dates"][base:], "core": [round(100 * c / core_c[base], 3) for c in core_c[base:]],
+            "bench": [round(100 * c / bench_c[base], 3) for c in bench_c[base:]], "rules": out}
+
+
+def run_ledger() -> None:
+    if not (CONFIG / "rules.json").exists():
+        print("ledger: no config/rules.json yet, nothing to record")
+        return
+    st, wl = settings(), watchlist()
+    rc = load_json(CONFIG / "rules.json")
+    M = _rule_market(PRICES, st, wl)
+    if not M:
+        raise SystemExit("ledger: missing core or benchmark prices")
+    path = DATA / "portfolio" / "paper_rules.json"
+    doc = update_ledger(load_json(path) if path.exists() else None, M, st, rc, sample=False)
+    _write(path, doc, "paper_rules.schema.json", compact=True)
+    n = {k: v["decisions"] for k, v in doc["rules"].items()}
+    print(f"ledger: {len(n)} rules, decisions {n}, as of {doc['as_of']}")
+
+
 STEPS = {"derive": run_derive, "score": run_score, "regime": run_regime, "calibration": run_calibration,
-         "longrun": run_longrun, "paper": run_paper}
+         "longrun": run_longrun, "paper": run_paper, "rules": run_rules, "ledger": run_ledger}
 
 if __name__ == "__main__":
     which = sys.argv[1] if len(sys.argv) > 1 else "all"

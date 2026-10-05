@@ -240,9 +240,10 @@ const ICONS = {
   insights: <><path d="M9 18h6M10 21h4" /><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3Z" /></>,
   routines: <><circle cx="12" cy="12" r="8" /><path d="M12 8v4l3 2" /></>,
   portfolio: <><circle cx="12" cy="12" r="8.5" /><path d="M12 3.5V12l6 6" /><path d="M12 12H3.5" /></>,
+  playbook: <><path d="M5 4.5h11a3 3 0 0 1 3 3V20H8a3 3 0 0 1-3-3V4.5Z" /><path d="M8.5 9h7M8.5 12.5h7M8.5 16h4" /></>,
   more: <><circle cx="6" cy="12" r="1.3" /><circle cx="12" cy="12" r="1.3" /><circle cx="18" cy="12" r="1.3" /></>,
 };
-const PRIMARY = ["today", "portfolio", "watchlist", "insights"];
+const PRIMARY = ["today", "portfolio", "playbook", "insights"];
 
 export function MobileNav({ tabs, active, onNav, sampleTabs }) {
   const [open, setOpen] = useState(false);

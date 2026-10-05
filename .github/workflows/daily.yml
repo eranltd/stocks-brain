@@ -67,6 +67,16 @@ jobs:
         if: env.MONTHLY != 'true' && env.DRY != 'true'
         run: python3 scripts/routines_code.py paper
 
+      - name: Rule backtests (derived numbers only)
+        id: rule_backtests
+        if: env.MONTHLY != 'true' && env.DRY != 'true'
+        run: python3 scripts/routines_code.py rules
+
+      - name: Forward ledger of every rule
+        id: rule_ledger
+        if: env.MONTHLY != 'true' && env.DRY != 'true'
+        run: python3 scripts/routines_code.py ledger
+
       - name: Calibration
         id: calibration
         if: env.DRY != 'true' && (env.MONTHLY == 'true' || github.event_name == 'workflow_dispatch')
@@ -87,6 +97,8 @@ jobs:
           ROUTINE_REGIME_MONITOR: ${{ steps.regime_monitor.outcome }}
           ROUTINE_PORTFOLIO_RULE: ${{ steps.portfolio_rule.outcome }}
           ROUTINE_PAPER_PORTFOLIO: ${{ steps.paper_portfolio.outcome }}
+          ROUTINE_RULE_BACKTESTS: ${{ steps.rule_backtests.outcome }}
+          ROUTINE_RULE_LEDGER: ${{ steps.rule_ledger.outcome }}
           ROUTINE_CALIBRATION: ${{ steps.calibration.outcome }}
           ROUTINE_LINT: ${{ steps.lint.outcome }}
         run: |

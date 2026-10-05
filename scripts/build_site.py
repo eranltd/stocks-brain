@@ -73,6 +73,23 @@ def main() -> int:
         if doc:
             dump_json(OUT / "market" / "longrun.json", doc, compact=True)
             longrun = "market/longrun.json"
+    # Rule backtests: same source rule as prices.
+    rules_result = None
+    rules_cfg = CONFIG / "rules.json"
+    if rules_cfg.exists():
+        if price_source == "live" and (MARKET / "rules.json").exists():
+            _copy(MARKET / "rules.json", OUT / "market" / "rules.json")
+            rules_result = "market/rules.json"
+        elif price_source == "sample":
+            import routines_code
+            from _common import watchlist
+            doc = routines_code.compute_rules(SAMPLES / "prices", st, watchlist(), load_json(rules_cfg), sample=True, provider="sample", runs=60)
+            if doc:
+                dump_json(OUT / "market" / "rules.json", doc, compact=True)
+                rules_result = "market/rules.json"
+    ledger = DATA / "portfolio" / "paper_rules.json"
+    if price_source == "live" and ledger.exists():
+        _copy(ledger, OUT / "portfolio" / "paper_rules.json")
     paper = DATA / "portfolio" / "paper.json"
     if price_source == "live" and paper.exists():
         _copy(paper, OUT / "portfolio" / "paper.json")
@@ -87,7 +104,8 @@ def main() -> int:
         if (base / f"{name}.json").exists():
             _copy(base / f"{name}.json", OUT / "kb" / f"{name}.json")
             kb[name] = f"kb/{name}.json"
-    for name in ("watchlist", "settings", "sources", "routines"):
+    cfg_docs = ("watchlist", "settings", "sources", "routines", *(("rules",) if (CONFIG / "rules.json").exists() else ()))
+    for name in cfg_docs:
         _copy(CONFIG / f"{name}.json", OUT / "config" / f"{name}.json")
 
     docs = []
@@ -101,7 +119,7 @@ def main() -> int:
         _copy(src, OUT / "docs" / f"{name}.json")
         docs.append({"name": name, "file": f"docs/{name}.json", "path": f"docs/{name}.json",
                      **{k: obj[k] for k in ("version", "updated_at", "change_note")}})
-    for name in ("watchlist", "settings", "sources", "routines"):
+    for name in cfg_docs:
         obj = load_json(CONFIG / f"{name}.json")
         docs.append({"name": name, "file": f"config/{name}.json", "path": f"config/{name}.json",
                      **{k: obj[k] for k in ("version", "updated_at", "change_note")}})
@@ -121,6 +139,8 @@ def main() -> int:
         "runs_shown": st["site"]["runs_shown"],
         "market": "market/derived.json",
         "longrun": longrun,
+        "rules_result": rules_result,
+        "paper_rules": "portfolio/paper_rules.json" if price_source == "live" and ledger.exists() else None,
         "paper": "portfolio/paper.json" if price_source == "live" and paper.exists() else None,
         "kb": kb,
         "docs": docs,

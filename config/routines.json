@@ -1,7 +1,7 @@
 {
-  "version": "0.4.0",
+  "version": "0.5.0",
   "updated_at": "2026-10-04",
-  "change_note": "Goal check and portfolio rule; forward-only paper portfolio.",
+  "change_note": "Rule backtests and the forward ledger.",
   "timezone": "UTC",
   "routines": [
     {
@@ -136,6 +136,45 @@
       ],
       "human_gate": false,
       "why": "Backtests can be re-fitted; a forward record cannot. Holdings are written once a month with that day's data and never edited, so the track is an honest test before any money moves."
+    },
+    {
+      "id": "rule_backtests",
+      "name": "Rule backtests",
+      "cadence": "daily",
+      "cron": "40 23 * * 1-5",
+      "status": "active",
+      "milestone": "M4",
+      "uses_llm": false,
+      "max_cost_usd": 0,
+      "inputs": [
+        "prices",
+        "config/rules.json"
+      ],
+      "outputs": [
+        "data/market/rules.json"
+      ],
+      "human_gate": false,
+      "why": "Tests each pre-registered rule (savings cadence, satellite selection) on the full history against random baskets from the same names, with costs and a next-close fill. Evidence only: history never moves money; the forward paper record does."
+    },
+    {
+      "id": "rule_ledger",
+      "name": "Forward ledger of every rule",
+      "cadence": "daily",
+      "cron": "40 23 * * 1-5",
+      "status": "active",
+      "milestone": "M4",
+      "uses_llm": false,
+      "max_cost_usd": 0,
+      "inputs": [
+        "prices",
+        "config/rules.json",
+        "data/portfolio/paper_rules.json"
+      ],
+      "outputs": [
+        "data/portfolio/paper_rules.json"
+      ],
+      "human_gate": false,
+      "why": "History can be re-fitted; a forward record cannot. On the first run of each month every testable rule's holdings are written down with only that day's data and never edited. Months later this is the evidence that decides which rules deserve money."
     },
     {
       "id": "news_social_digest",

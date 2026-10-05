@@ -1,0 +1,450 @@
+{
+  "$id": "rules.schema.json",
+  "title": "Rule registry (config/rules.json)",
+  "description": "The household's pre-registered rule set: what each rule says, why it is on the list, how it is tested and what would make us adopt or reject it. Fixed in advance; changes only with a change note at a scheduled review.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "updated_at",
+    "change_note",
+    "trader",
+    "rules",
+    "sets",
+    "experiments",
+    "acceptance",
+    "tries_counted",
+    "not_supported",
+    "open_questions"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "updated_at": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "change_note": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 400
+    },
+    "trader": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 1600
+    },
+    "rules": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 40,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "family",
+          "name",
+          "plain",
+          "definition",
+          "params",
+          "status",
+          "evidence",
+          "library_refs",
+          "why_included",
+          "adopt_if",
+          "reject_if"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{1,40}$"
+          },
+          "family": {
+            "enum": [
+              "savings",
+              "entry",
+              "exit",
+              "sizing",
+              "risk",
+              "fundamental",
+              "process"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 80
+          },
+          "plain": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 320
+          },
+          "definition": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 900
+          },
+          "params": {
+            "type": "array",
+            "maxItems": 16,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "value",
+                "why"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "maxLength": 60
+                },
+                "value": {
+                  "type": "string",
+                  "maxLength": 120
+                },
+                "why": {
+                  "type": "string",
+                  "maxLength": 300
+                }
+              }
+            }
+          },
+          "status": {
+            "enum": [
+              "testable_now",
+              "needs_data",
+              "process_only",
+              "reference_baseline",
+              "control"
+            ]
+          },
+          "evidence": {
+            "enum": [
+              "replicated",
+              "mixed",
+              "weak",
+              "untested",
+              "contradicted"
+            ]
+          },
+          "library_refs": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "type": "string",
+              "pattern": "^S-[0-9]{3}(\\.P[0-9]{2})?$"
+            }
+          },
+          "data_needed": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "engine": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "What the backtest engine runs (scripts/rules.py). null for needs_data and process_only rules."
+          },
+          "why_included": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "adopt_if": {
+            "type": "string",
+            "maxLength": 400
+          },
+          "reject_if": {
+            "type": "string",
+            "maxLength": 400
+          }
+        }
+      }
+    },
+    "sets": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "plain",
+          "rule_ids",
+          "role"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{1,40}$"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "plain": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "rule_ids": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "type": "string",
+              "maxLength": 41
+            }
+          },
+          "role": {
+            "enum": [
+              "core_plan",
+              "satellite_plan",
+              "full_plan",
+              "control"
+            ]
+          }
+        }
+      }
+    },
+    "experiments": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "question",
+          "method",
+          "null_model",
+          "pass_criteria",
+          "rule_ids"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 40
+          },
+          "question": {
+            "type": "string",
+            "maxLength": 400
+          },
+          "method": {
+            "type": "string",
+            "maxLength": 700
+          },
+          "metrics": {
+            "type": "array",
+            "maxItems": 12,
+            "items": {
+              "type": "string",
+              "maxLength": 400
+            }
+          },
+          "null_model": {
+            "type": "string",
+            "maxLength": 400
+          },
+          "pass_criteria": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "rule_ids": {
+            "type": "array",
+            "maxItems": 40,
+            "items": {
+              "type": "string",
+              "maxLength": 41
+            }
+          }
+        }
+      }
+    },
+    "acceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fill_lag_days",
+        "null_runs",
+        "null_seed",
+        "savings_horizons_weeks",
+        "savings_step_weeks",
+        "satellite",
+        "savings",
+        "min_paper_days",
+        "text"
+      ],
+      "properties": {
+        "fill_lag_days": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "null_runs": {
+          "type": "integer",
+          "minimum": 50,
+          "maximum": 5000
+        },
+        "null_seed": {
+          "type": "integer"
+        },
+        "savings_horizons_weeks": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "items": {
+            "type": "integer",
+            "minimum": 26,
+            "maximum": 520
+          }
+        },
+        "savings_step_weeks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 26
+        },
+        "satellite": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "null_percentile_min",
+            "halves_percentile_min",
+            "reject_below_percentile",
+            "max_dd_worse_than_core_pts",
+            "max_turnover_pct_year"
+          ],
+          "properties": {
+            "null_percentile_min": {
+              "type": "number"
+            },
+            "halves_percentile_min": {
+              "type": "number"
+            },
+            "reject_below_percentile": {
+              "type": "number"
+            },
+            "max_dd_worse_than_core_pts": {
+              "type": "number"
+            },
+            "max_turnover_pct_year": {
+              "type": "number"
+            }
+          }
+        },
+        "savings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "min_independent_windows",
+            "material_irr_bps",
+            "consistency_pct"
+          ],
+          "properties": {
+            "min_independent_windows": {
+              "type": "integer"
+            },
+            "material_irr_bps": {
+              "type": "number"
+            },
+            "consistency_pct": {
+              "type": "number"
+            }
+          }
+        },
+        "min_paper_days": {
+          "type": "integer",
+          "minimum": 30
+        },
+        "text": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "adopt",
+            "candidate",
+            "reject"
+          ],
+          "properties": {
+            "adopt": {
+              "type": "array",
+              "maxItems": 40,
+              "items": {
+                "type": "string",
+                "maxLength": 400
+              }
+            },
+            "candidate": {
+              "type": "array",
+              "maxItems": 40,
+              "items": {
+                "type": "string",
+                "maxLength": 400
+              }
+            },
+            "reject": {
+              "type": "array",
+              "maxItems": 40,
+              "items": {
+                "type": "string",
+                "maxLength": 400
+              }
+            }
+          }
+        }
+      }
+    },
+    "tries_counted": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 500
+    },
+    "not_supported": {
+      "type": "array",
+      "maxItems": 40,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "why"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "why": {
+            "type": "string",
+            "maxLength": 500
+          }
+        }
+      }
+    },
+    "open_questions": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question",
+          "owner_decision"
+        ],
+        "properties": {
+          "question": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "owner_decision": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

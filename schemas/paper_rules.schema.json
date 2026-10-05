@@ -1,0 +1,110 @@
+{
+  "$id": "paper_rules.schema.json",
+  "title": "Forward ledger of every rule (data/portfolio/paper_rules.json)",
+  "description": "Each testable rule's holdings written once per month with that day's data and never edited; tracks are recomputed from the record. Values indexed to 100. No money, no household holdings.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "as_of",
+    "sample",
+    "note",
+    "dates",
+    "core",
+    "bench",
+    "rules"
+  ],
+  "properties": {
+    "as_of": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "sample": {
+      "type": "boolean"
+    },
+    "note": {
+      "type": "string",
+      "maxLength": 400
+    },
+    "dates": {
+      "type": "array",
+      "maxItems": 6000,
+      "items": {
+        "$ref": "common.schema.json#/$defs/date"
+      }
+    },
+    "core": {
+      "type": "array",
+      "maxItems": 6000,
+      "items": {
+        "type": "number",
+        "minimum": 0
+      }
+    },
+    "bench": {
+      "type": "array",
+      "maxItems": 6000,
+      "items": {
+        "type": "number",
+        "minimum": 0
+      }
+    },
+    "rules": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "started",
+          "rebalances",
+          "values",
+          "decisions"
+        ],
+        "properties": {
+          "started": {
+            "$ref": "common.schema.json#/$defs/date"
+          },
+          "decisions": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "rebalances": {
+            "type": "array",
+            "maxItems": 600,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "date",
+                "holdings"
+              ],
+              "properties": {
+                "date": {
+                  "$ref": "common.schema.json#/$defs/date"
+                },
+                "holdings": {
+                  "type": "array",
+                  "maxItems": 30,
+                  "items": {
+                    "$ref": "common.schema.json#/$defs/ticker"
+                  }
+                }
+              }
+            }
+          },
+          "values": {
+            "type": "array",
+            "maxItems": 6000,
+            "items": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "forward_percentile": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          }
+        }
+      }
+    }
+  }
+}

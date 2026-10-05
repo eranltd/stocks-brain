@@ -1,0 +1,250 @@
+{
+  "$id": "rules_result.schema.json",
+  "title": "Rule backtests (data/market/rules.json)",
+  "description": "Derived numbers only (percentages, values indexed to 100): the savings-cadence study and the satellite rules against random baskets from the same names. History is judged with hindsight and never decides money by itself.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "as_of",
+    "sample",
+    "provider",
+    "registry_version",
+    "tries_counted",
+    "fill_lag_days",
+    "cost_bps",
+    "goal_pct",
+    "excluded_history",
+    "savings",
+    "satellite"
+  ],
+  "properties": {
+    "as_of": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "sample": {
+      "type": "boolean"
+    },
+    "provider": {
+      "type": "string",
+      "maxLength": 40
+    },
+    "registry_version": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "tries_counted": {
+      "type": "integer"
+    },
+    "fill_lag_days": {
+      "type": "integer"
+    },
+    "cost_bps": {
+      "type": "number"
+    },
+    "goal_pct": {
+      "type": "number"
+    },
+    "excluded_history": {
+      "type": "array",
+      "maxItems": 60,
+      "items": {
+        "$ref": "common.schema.json#/$defs/ticker"
+      }
+    },
+    "savings": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "rules.savings_study output plus a verdict per row."
+    },
+    "satellite": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "required": [
+        "from",
+        "to",
+        "years",
+        "controls",
+        "controls_halves",
+        "null",
+        "rules",
+        "weekly"
+      ],
+      "properties": {
+        "from": {
+          "$ref": "common.schema.json#/$defs/date"
+        },
+        "to": {
+          "$ref": "common.schema.json#/$defs/date"
+        },
+        "years": {
+          "type": "number"
+        },
+        "controls": {
+          "type": "object"
+        },
+        "controls_halves": {
+          "type": "object"
+        },
+        "null": {
+          "type": "object",
+          "required": [
+            "runs",
+            "seed",
+            "kind"
+          ]
+        },
+        "rules": {
+          "type": "array",
+          "maxItems": 40,
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "stats",
+              "cagr_halves_pct",
+              "percentile",
+              "percentile_halves",
+              "p_value",
+              "p_adjusted",
+              "vs_core_cagr_pts",
+              "vs_equal_weight_cagr_pts",
+              "max_dd_vs_core_pts",
+              "turnover_pct_year",
+              "avg_names",
+              "decisions",
+              "stops",
+              "holdings_now",
+              "verdict",
+              "reasons"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "maxLength": 41
+              },
+              "stats": {
+                "type": "object",
+                "description": "portfolio.long_stats output: cagr, drawdown, rolling 12-month outcomes."
+              },
+              "cagr_halves_pct": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": {
+                  "type": "number"
+                }
+              },
+              "percentile": {
+                "type": "number"
+              },
+              "percentile_halves": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": {
+                  "type": "number"
+                }
+              },
+              "p_value": {
+                "type": "number"
+              },
+              "p_adjusted": {
+                "type": "number"
+              },
+              "vs_core_cagr_pts": {
+                "type": "number"
+              },
+              "vs_equal_weight_cagr_pts": {
+                "type": "number"
+              },
+              "max_dd_vs_core_pts": {
+                "type": "number"
+              },
+              "turnover_pct_year": {
+                "type": "number"
+              },
+              "avg_names": {
+                "type": "number"
+              },
+              "decisions": {
+                "type": "integer"
+              },
+              "stops": {
+                "type": "integer"
+              },
+              "holdings_now": {
+                "type": "array",
+                "maxItems": 10,
+                "items": {
+                  "$ref": "common.schema.json#/$defs/ticker"
+                }
+              },
+              "verdict": {
+                "enum": [
+                  "rejected",
+                  "inconclusive",
+                  "candidate",
+                  "passes_history"
+                ]
+              },
+              "reasons": {
+                "type": "array",
+                "maxItems": 8,
+                "items": {
+                  "type": "string",
+                  "maxLength": 400
+                }
+              }
+            }
+          }
+        },
+        "weekly": {
+          "type": "object",
+          "required": [
+            "dates",
+            "core",
+            "equal_weight",
+            "rules"
+          ],
+          "properties": {
+            "dates": {
+              "type": "array",
+              "maxItems": 800,
+              "items": {
+                "$ref": "common.schema.json#/$defs/date"
+              }
+            },
+            "core": {
+              "type": "array",
+              "maxItems": 800,
+              "items": {
+                "type": "number"
+              }
+            },
+            "equal_weight": {
+              "type": "array",
+              "maxItems": 800,
+              "items": {
+                "type": "number"
+              }
+            },
+            "rules": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "maxItems": 800,
+                "items": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

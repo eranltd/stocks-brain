@@ -1,8 +1,16 @@
 name: diagnose
 
-# Manual data-integrity check of the price provider. Prints statistics only, never raw prices.
+# Manual runs against the price provider. They print statistics only, never raw prices, and commit nothing.
+#   rules: fetch prices into the runner and backtest the rule registry (config/rules.json); derived numbers only
+#   diag:  provider data-integrity check
 on:
   workflow_dispatch:
+    inputs:
+      task:
+        description: "rules = backtest the rule registry on real prices; diag = provider integrity check"
+        type: choice
+        options: [rules, diag]
+        default: rules
 
 permissions:
   contents: read
@@ -16,6 +24,15 @@ jobs:
         with:
           python-version: "3.11"
       - name: Provider diagnostic (stats only)
+        if: inputs.task == 'diag'
         env:
           TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
         run: python3 scripts/diag_prices.py
+      - name: Fetch prices into the runner (nothing is committed)
+        if: inputs.task == 'rules'
+        env:
+          TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
+        run: python3 scripts/fetch_prices.py
+      - name: Backtest the rule registry (derived numbers only)
+        if: inputs.task == 'rules'
+        run: python3 scripts/routines_code.py rules

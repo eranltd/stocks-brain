@@ -1,0 +1,555 @@
+{
+ "change_note": "Batches 3-4: bond yields and breakouts, buying at highs, valuation vs euphoria, Mag 7 structure, overextension.",
+ "sources": [
+  {
+   "kind": "video",
+   "ref": "youtube:BIgGw9THhLQ",
+   "author": "Micha (YouTube channel)",
+   "year": 2026,
+   "title": "גוגל נשברת, פלנטיר פורצת — ומה קורה עם האג״ח 10? (Google breaks down, Palantir breaks out, and the 10-year)",
+   "principles": [
+    [
+     "When the 10-year yield climbs toward what stocks are expected to earn, money rotates into risk-free paper. Rising long yields are a headwind, hardest on long-duration growth names.",
+     [
+      "rates",
+      "bonds",
+      "macro",
+      "valuation"
+     ]
+    ],
+    [
+     "Read why yields rise. Weak growth data plus hawkish signals and a poor auction is worse for stocks than yields rising on strong growth.",
+     [
+      "rates",
+      "macro",
+      "regime"
+     ]
+    ],
+    [
+     "Know where inflation comes from. When it sits in business inputs such as memory and chips, the suppliers with pricing power gain and their customers' margins get squeezed.",
+     [
+      "inflation",
+      "pricing_power",
+      "semis"
+     ]
+    ],
+    [
+     "A thin-volume zone below a broken level is an air pocket. If the level is not reclaimed, price can drop quickly to the next heavy-volume area, which makes that level a clean invalidation.",
+     [
+      "technicals",
+      "volume",
+      "invalidation"
+     ]
+    ],
+    [
+     "A breakout is confirmed by rising volume and by old resistance holding as support on the retest. Losing that level again invalidates it.",
+     [
+      "technicals",
+      "breakouts",
+      "invalidation"
+     ]
+    ],
+    [
+     "Fear readings while the index sits near its high signal anxiety beneath the surface. Check breadth and rates before trusting the index level.",
+     [
+      "sentiment",
+      "breadth",
+      "regime"
+     ]
+    ]
+   ],
+   "observations": [
+    {
+     "as_of": "2026-09-24",
+     "expires": "2026-10-08",
+     "kind": "market",
+     "tickers": [],
+     "text": "Fear and Greed read 35 (fear) while the S&P 500 was two days from its all-time high.",
+     "tags": [
+      "sentiment",
+      "regime"
+     ]
+    },
+    {
+     "as_of": "2026-09-24",
+     "expires": "2026-10-08",
+     "kind": "market",
+     "tickers": [],
+     "text": "The 10-year Treasury yield was cited at 5.11%, driven by weak PMI data, hawkish Fed signals, a poor 5-year auction and crude near 92 dollars.",
+     "tags": [
+      "rates",
+      "macro"
+     ]
+    },
+    {
+     "as_of": "2026-09-24",
+     "expires": "2026-12-24",
+     "kind": "theme",
+     "tickers": [
+      "TSM"
+     ],
+     "text": "Inflation was described as driven by business inputs, chiefly memory and semiconductor pricing (for example TSMC price increases), rather than housing or retail.",
+     "tags": [
+      "inflation",
+      "semis"
+     ]
+    },
+    {
+     "as_of": "2026-09-24",
+     "expires": "2026-10-24",
+     "kind": "company",
+     "tickers": [
+      "GOOG",
+      "GOOGL"
+     ],
+     "text": "Alphabet broke below its 150-day average. A thin-volume zone below 345 put 319 to 321 in play unless 345 was reclaimed.",
+     "tags": [
+      "technicals",
+      "volume"
+     ]
+    },
+    {
+     "as_of": "2026-09-24",
+     "expires": "2026-10-24",
+     "kind": "company",
+     "tickers": [
+      "PLTR"
+     ],
+     "text": "Palantir broke above 188 on rising volume after a base that followed a fall from 207 to 106. Next target cited near 271; 187 had to hold as support.",
+     "tags": [
+      "technicals",
+      "breakouts"
+     ]
+    },
+    {
+     "as_of": "2026-09-24",
+     "expires": "2026-12-24",
+     "kind": "theme",
+     "tickers": [
+      "AMZN",
+      "META"
+     ],
+     "text": "Amazon launched an AI seller-assistance plugin, read as a push back against Meta's shopping agent.",
+     "tags": [
+      "ai_agents",
+      "news"
+     ]
+    }
+   ],
+   "published": "2026-09-24"
+  },
+  {
+   "kind": "video",
+   "ref": "youtube:azWCH1BswAQ",
+   "author": "Micha (YouTube channel)",
+   "year": 2026,
+   "title": "הטעות שכולם עושים כשהשוק בשיא — ואיך להימנע ממנה (The mistake everyone makes at market highs)",
+   "principles": [
+    [
+     "All-time highs cluster. Strong years print many of them, so a new high is more often followed by more highs than by a crash.",
+     [
+      "all_time_highs",
+      "base_rates",
+      "behavior"
+     ]
+    ],
+    [
+     "Reluctance to buy at a high is psychology, not math. People waiting for a dip tend to hold out for a bigger one and end up buying back higher.",
+     [
+      "behavior",
+      "timing",
+      "discipline"
+     ]
+    ],
+    [
+     "Historically, investing a lump sum at once beat holding cash for a better entry, partly because highs cluster. Long dry spells do happen, so horizon and diversification still matter.",
+     [
+      "lump_sum",
+      "timing",
+      "base_rates"
+     ]
+    ],
+    [
+     "Being near an all-time high is not, on its own, a reason for a bearish stance. A bearish call needs its own evidence.",
+     [
+      "all_time_highs",
+      "stance",
+      "discipline"
+     ]
+    ]
+   ],
+   "observations": [
+    {
+     "as_of": "2026-08-15",
+     "expires": "2026-12-31",
+     "kind": "market",
+     "tickers": [],
+     "text": "Cited via Charlie Bilello: 57 all-time highs in 2024, 27 in 2026 to mid-August, and more than 1,400 since 1929, about one trading day in ten.",
+     "tags": [
+      "all_time_highs",
+      "base_rates"
+     ]
+    }
+   ],
+   "published": "2026-08-15"
+  },
+  {
+   "kind": "video",
+   "ref": "youtube:taGOri7CI-0",
+   "author": "Micha (YouTube channel)",
+   "year": 2026,
+   "title": "בנק אוף אמריקה קובע: המניה הזו עומדת להתחיל לעלות (Bank of America: this stock is about to rise)",
+   "principles": [
+    [
+     "Compare a leader's forward P/E with the index's. When a fast grower trades at or below the market multiple, the price implies little growth, and the question becomes what would break.",
+     [
+      "valuation",
+      "pe",
+      "expectations"
+     ]
+    ],
+    [
+     "Parabolic runs in cyclical sectors such as semiconductors often end in deep corrections. Size bullish conviction to how stretched the run is.",
+     [
+      "semis",
+      "cyclicals",
+      "euphoria",
+      "risk"
+     ]
+    ],
+    [
+     "Several successful tests of a long moving average followed by a break of the downtrend line is a classic base. Resistance above still caps the first move.",
+     [
+      "technicals",
+      "moving_averages",
+      "breakouts"
+     ]
+    ],
+    [
+     "When an industry repurposes its infrastructure for a new wave of demand, such as crypto miners hosting AI compute, new buyers and volume tend to show up before earnings do.",
+     [
+      "ai_capex",
+      "rotation",
+      "themes"
+     ]
+    ],
+    [
+     "An analyst upgrade is an input, not a verdict. Record it as a dated claim and let scoring judge it.",
+     [
+      "analysts",
+      "discipline"
+     ]
+    ]
+   ],
+   "observations": [
+    {
+     "as_of": "2026-07-09",
+     "expires": "2026-07-23",
+     "kind": "sector",
+     "tickers": [
+      "SOXX"
+     ],
+     "text": "The semiconductor index was cited about 18% below its peak, with a warning that euphoric chip runs often end in 30 to 50% corrections.",
+     "tags": [
+      "semis",
+      "euphoria"
+     ]
+    },
+    {
+     "as_of": "2026-07-09",
+     "expires": "2026-08-09",
+     "kind": "company",
+     "tickers": [
+      "NVDA"
+     ],
+     "text": "Bank of America defended Nvidia: forward P/E about 20 vs 21.3 for the S&P 500, trailing 31 vs 28. About 1T dollars of value was off the peak.",
+     "tags": [
+      "valuation",
+      "analysts"
+     ]
+    },
+    {
+     "as_of": "2026-07-09",
+     "expires": "2026-08-09",
+     "kind": "company",
+     "tickers": [
+      "NVDA"
+     ],
+     "text": "Nvidia tested its 150-day average three times and broke its descending line from the 232 and 213 peaks, with near-term resistance at 212.",
+     "tags": [
+      "technicals",
+      "breakouts"
+     ]
+    },
+    {
+     "as_of": "2026-07-09",
+     "expires": "2026-10-09",
+     "kind": "theme",
+     "tickers": [
+      "WGMI"
+     ],
+     "text": "Bitcoin miners pivoting to host AI compute (neo-cloud) were drawing new volume and buyers.",
+     "tags": [
+      "ai_capex",
+      "themes"
+     ]
+    }
+   ],
+   "published": "2026-07-09"
+  },
+  {
+   "kind": "video",
+   "ref": "youtube:H9N_QMtpG4E",
+   "author": "Micha (YouTube channel)",
+   "year": 2026,
+   "title": "מאגניפיסנט 7 יוציאו את הבורסה מהתקיעות שלה? (Will the Magnificent 7 break the market out of its rut?)",
+   "principles": [
+    [
+     "When the index goes sideways for weeks, check its largest members one by one. The next leg usually follows whichever group breaks first: leaders breaking down or laggards bouncing.",
+     [
+      "megacap",
+      "breadth",
+      "leadership"
+     ]
+    ],
+    [
+     "Classify each name by structure: higher highs and lows (healthy), a range (waiting for a breakout), or a broken uptrend in a falling channel (repair needed). Stance should follow structure.",
+     [
+      "technicals",
+      "trend",
+      "stance"
+     ]
+    ],
+    [
+     "A stock that has gone nowhere for years while swinging hard offers volatility, not trend. Keep conviction low until it leaves the range.",
+     [
+      "technicals",
+      "volatility",
+      "conviction"
+     ]
+    ],
+    [
+     "A broken name needs a higher high above a named level to reverse. Until then, rallies inside the channel are bounces, and that level is the natural invalidation for a bullish call.",
+     [
+      "technicals",
+      "reversal",
+      "invalidation"
+     ]
+    ]
+   ],
+   "observations": [
+    {
+     "as_of": "2026-07-06",
+     "expires": "2026-07-20",
+     "kind": "market",
+     "tickers": [],
+     "text": "The S&P 500 and Nasdaq 100 had moved sideways at the same levels since mid-May, waiting on mega-cap earnings.",
+     "tags": [
+      "regime",
+      "megacap"
+     ]
+    },
+    {
+     "as_of": "2026-07-06",
+     "expires": "2026-07-31",
+     "kind": "company",
+     "tickers": [
+      "AAPL"
+     ],
+     "text": "Apple broke above 288.62 on rising volume, under 10 dollars from its high, making higher highs and lows.",
+     "tags": [
+      "technicals",
+      "breakouts"
+     ]
+    },
+    {
+     "as_of": "2026-07-06",
+     "expires": "2026-07-31",
+     "kind": "company",
+     "tickers": [
+      "AMZN"
+     ],
+     "text": "Amazon had traded sideways since December 2024. A breakout needed a move above 250, and the 150-day average near 234 had to hold.",
+     "tags": [
+      "technicals"
+     ]
+    },
+    {
+     "as_of": "2026-07-06",
+     "expires": "2026-07-31",
+     "kind": "company",
+     "tickers": [
+      "GOOG",
+      "GOOGL"
+     ],
+     "text": "Alphabet was 12% off its highs but held support at 349 on its 150-day average, keeping the uptrend.",
+     "tags": [
+      "technicals"
+     ]
+    },
+    {
+     "as_of": "2026-07-06",
+     "expires": "2026-07-31",
+     "kind": "company",
+     "tickers": [
+      "META"
+     ],
+     "text": "Meta broke its uptrend on 1 Aug 2025 and sat in a falling channel on its 150-week average. It needed to clear 740 to reverse.",
+     "tags": [
+      "technicals",
+      "reversal"
+     ]
+    },
+    {
+     "as_of": "2026-07-06",
+     "expires": "2026-07-31",
+     "kind": "company",
+     "tickers": [
+      "MSFT"
+     ],
+     "text": "Microsoft was about 30% off its highs. Support was cited at 344.70, and it needed to clear 466 for a higher high.",
+     "tags": [
+      "technicals",
+      "reversal"
+     ]
+    },
+    {
+     "as_of": "2026-07-06",
+     "expires": "2026-07-31",
+     "kind": "company",
+     "tickers": [
+      "NVDA"
+     ],
+     "text": "Nvidia corrected from 236 to 194 and sat on long-term rising support and its 150-day average near 192. Holding 185 to 192 kept the bullish structure.",
+     "tags": [
+      "technicals"
+     ]
+    },
+    {
+     "as_of": "2026-07-06",
+     "expires": "2026-07-31",
+     "kind": "company",
+     "tickers": [
+      "TSLA"
+     ],
+     "text": "Tesla was described as flat since October 2021 despite wild swings, resting on long-term rising support near 372.",
+     "tags": [
+      "technicals",
+      "volatility"
+     ]
+    }
+   ],
+   "published": "2026-07-06"
+  },
+  {
+   "kind": "video",
+   "ref": "youtube:RtUl_TUqSsw",
+   "author": "Micha (YouTube channel)",
+   "year": 2026,
+   "title": "13 ימים של ירוק ברצף — השוק חצה את הגבול? (13 green days in a row: did the market cross the line?)",
+   "principles": [
+    [
+     "A long streak of up days that lifts the index far above its 20- and 50-day averages is stretched. Expect digestion, often a pullback, before the next leg.",
+     [
+      "overextension",
+      "moving_averages",
+      "mean_reversion"
+     ]
+    ],
+    [
+     "Unfilled gaps below the price are often revisited. Treat them as likely pullback targets, not certainties.",
+     [
+      "technicals",
+      "gaps"
+     ]
+    ],
+    [
+     "Relief rallies on easing geopolitical risk can be fast and broad. Once that risk premium is gone, the next move needs earnings or data.",
+     [
+      "macro",
+      "geopolitics",
+      "relief_rally"
+     ]
+    ],
+    [
+     "When retail chatter crowds into squeezes and speculative themes and sentiment reads greed, tighten risk instead of adding aggressive bullish calls.",
+     [
+      "sentiment",
+      "speculation",
+      "risk"
+     ]
+    ],
+    [
+     "The sector that bounces hardest after a selloff is often short covering first. Confirm follow-through before calling it new leadership.",
+     [
+      "rotation",
+      "short_covering",
+      "sectors"
+     ]
+    ]
+   ],
+   "observations": [
+    {
+     "as_of": "2026-04-19",
+     "expires": "2026-05-03",
+     "kind": "market",
+     "tickers": [
+      "IGV",
+      "ORCL"
+     ],
+     "text": "Weekly: Nasdaq +6.5%, S&P 500 +4.5% to 7,126 (about +12% in 11 days). Software ETF +13.9%, led by Oracle +26%.",
+     "tags": [
+      "relief_rally",
+      "rotation"
+     ]
+    },
+    {
+     "as_of": "2026-04-19",
+     "expires": "2026-05-03",
+     "kind": "market",
+     "tickers": [],
+     "text": "Rally drivers cited: ceasefire hopes, calmer Strait of Hormuz with oil down 7% to 92 dollars, strong bank earnings and a tame PPI print.",
+     "tags": [
+      "macro",
+      "geopolitics"
+     ]
+    },
+    {
+     "as_of": "2026-04-19",
+     "expires": "2026-05-03",
+     "kind": "theme",
+     "tickers": [
+      "NVDA",
+      "TSLA",
+      "MSFT",
+      "NFLX",
+      "BIRD",
+      "RKLB",
+      "ASTS",
+      "IONQ",
+      "OPEN",
+      "GME"
+     ],
+     "text": "Retail chatter focused on Nvidia, Tesla robotaxi, Microsoft, Netflix, an Allbirds pivot, space and quantum names, and squeeze talk in Opendoor and GameStop.",
+     "tags": [
+      "sentiment",
+      "speculation"
+     ]
+    },
+    {
+     "as_of": "2026-04-19",
+     "expires": "2026-05-03",
+     "kind": "market",
+     "tickers": [],
+     "text": "S&P 500 stretched above its 20- and 50-day averages with two or three unfilled gaps below. A pullback toward 7,000 was expected; Fear and Greed read greed.",
+     "tags": [
+      "overextension",
+      "gaps",
+      "sentiment"
+     ]
+    }
+   ],
+   "published": "2026-04-19"
+  }
+ ]
+}

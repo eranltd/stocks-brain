@@ -1,0 +1,285 @@
+{
+ "change_note": "Batch 7: index-fund tracking and fees, two-front selloffs and AI free cash flow, synchronized chip setups.",
+ "sources": [
+  {
+   "kind": "video",
+   "ref": "youtube:ZDrHRV0e8bg",
+   "author": "Micha (YouTube channel)",
+   "year": 2025,
+   "published": "2025-08-30",
+   "title": "עוקב או מחקה? איך דופקים אתכם בפנסיה על הסנפ 500 (Tracker or imitator? How pensions short-change you on the S&P 500)",
+   "principles": [
+    [
+     "Same index label, different results. A passive track that copies the index with derivatives, futures or forced bond sleeves can trail it badly, so compare your track with the raw index over the same period.",
+     [
+      "fees",
+      "tracking_error",
+      "passive",
+      "pension"
+     ]
+    ],
+    [
+     "Fees compound against you. A fraction of a percent a year over decades takes a large share of the final balance, so push fees toward the lowest available.",
+     [
+      "fees",
+      "compounding",
+      "pension"
+     ]
+    ],
+    [
+     "Currency conversion inside a foreign-index fund is a hidden cost. Ask how it is done and at what rate.",
+     [
+      "fx",
+      "fees",
+      "pension"
+     ]
+    ],
+    [
+     "A cheap index inside an expensive wrapper is not cheap. Distribution commissions are often buried in the management fee of a passive product.",
+     [
+      "fees",
+      "incentives",
+      "passive"
+     ]
+    ]
+   ],
+   "observations": [
+    {
+     "as_of": "2025-08-30",
+     "expires": "2026-08-30",
+     "kind": "theme",
+     "tickers": [],
+     "text": "Israeli pension and provident S&P 500 tracks were cited returning anywhere from 4.2% to 8.5% over the same period, because loose rules let funds imitate rather than hold the index.",
+     "tags": [
+      "pension",
+      "tracking_error"
+     ]
+    },
+    {
+     "as_of": "2025-08-30",
+     "expires": "2026-08-30",
+     "kind": "theme",
+     "tickers": [],
+     "text": "Suggested targets: management fees of 0.1% to 0.2% of accumulated savings, plus transparency on USD/ILS conversion. The Selis case, with losses in unregulated alternative assets, was cited against Israel's IRA model.",
+     "tags": [
+      "pension",
+      "fees",
+      "fx"
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "video",
+   "ref": "youtube:G9SFAkOi_yc",
+   "author": "Micha (YouTube channel)",
+   "year": 2026,
+   "published": "2026-07-24",
+   "title": "הכל קורס - זה הסימן דווקא לקנות? (Everything is crashing: is this actually the signal to buy?)",
+   "principles": [
+    [
+     "When stocks fall on two fronts at once, geopolitics and rising yields, the yield pressure usually outlasts the headlines. Watch the 10-year more than the news flow.",
+     [
+      "rates",
+      "geopolitics",
+      "macro"
+     ]
+    ],
+    [
+     "A volatility spike that is sold straight away signals confusion, not panic. Capitulation lows usually need fear that persists.",
+     [
+      "volatility",
+      "vix",
+      "sentiment",
+      "bottoms"
+     ]
+    ],
+    [
+     "Heavy AI capex can turn free cash flow negative even when revenue is strong, and the market punishes that when the payback is unclear. For the big spenders, track free cash flow, not only revenue and EPS.",
+     [
+      "ai_capex",
+      "free_cash_flow",
+      "earnings"
+     ]
+    ],
+    [
+     "A market dominated by one industry can lead that industry. A breakout in the chip-heavy Korean index can foreshadow a move in global semiconductors.",
+     [
+      "leading_indicators",
+      "semis",
+      "intermarket"
+     ]
+    ]
+   ],
+   "observations": [
+    {
+     "as_of": "2026-07-24",
+     "expires": "2026-08-07",
+     "kind": "market",
+     "tickers": [],
+     "text": "Broad selloff: Russell -0.6%, S&P 500 -1.2%, Nasdaq -1.8%. Oil up 36% to 91 dollars on Hormuz tension; 10-year yield 4.69%, highest since Jan 2025. VIX briefly topped 20 and was sold.",
+     "tags": [
+      "macro",
+      "rates",
+      "volatility"
+     ]
+    },
+    {
+     "as_of": "2026-07-24",
+     "expires": "2026-10-24",
+     "kind": "company",
+     "tickers": [
+      "GOOG",
+      "GOOGL"
+     ],
+     "text": "Alphabet fell about 7% after earnings: strong revenue, but its first negative free cash flow since 2015 because of AI capex.",
+     "tags": [
+      "earnings",
+      "ai_capex",
+      "free_cash_flow"
+     ]
+    },
+    {
+     "as_of": "2026-07-24",
+     "expires": "2026-08-24",
+     "kind": "company",
+     "tickers": [
+      "INTC"
+     ],
+     "text": "Intel beat on revenue and EPS and rose more than 4% after hours.",
+     "tags": [
+      "earnings"
+     ]
+    },
+    {
+     "as_of": "2026-07-24",
+     "expires": "2026-08-24",
+     "kind": "market",
+     "tickers": [
+      "SOXX"
+     ],
+     "text": "The KOSPI broke out of a bull flag. Being chip-heavy (Samsung, SK Hynix), it was read as a lead for semiconductors once geopolitical fear eases.",
+     "tags": [
+      "intermarket",
+      "semis",
+      "breakouts"
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "video",
+   "ref": "youtube:ETZx24b1vVY",
+   "author": "Micha (YouTube channel)",
+   "year": 2026,
+   "published": "2026-08-07",
+   "title": "התבנית שחוזרת בהרבה מניות — עלייה או קריסה? (The pattern repeating in many stocks: surge or crash?)",
+   "principles": [
+    [
+     "When a whole group shows the same setup (a rally, a sharp drop, then a push at the falling trendline), treat it as one decision. The breakout tends to succeed or fail across the group together.",
+     [
+      "correlation",
+      "technicals",
+      "breakouts",
+      "semis"
+     ]
+    ],
+    [
+     "A breakout that starts far above its long averages has less fuel. Being stretched above the 150- and 200-day averages raises the odds of a retest first.",
+     [
+      "overextension",
+      "moving_averages",
+      "breakouts"
+     ]
+    ],
+    [
+     "A famous short call often lands on stocks that were already technically stretched. The price was the warning before the headline.",
+     [
+      "short_sellers",
+      "overextension",
+      "risk"
+     ]
+    ],
+    [
+     "Ahead of scheduled macro events such as jobs data or a central-bank symposium, a stretched index tends to stall. Avoid new short-horizon calls that hinge on the event.",
+     [
+      "events",
+      "macro",
+      "overextension"
+     ]
+    ]
+   ],
+   "observations": [
+    {
+     "as_of": "2026-08-07",
+     "expires": "2026-08-28",
+     "kind": "sector",
+     "tickers": [
+      "SOXX",
+      "SMH",
+      "TSM",
+      "SNDK"
+     ],
+     "text": "Semiconductors shared one setup: a steep rally, a sharp drop, and an attempt to break the falling resistance line.",
+     "tags": [
+      "semis",
+      "technicals",
+      "breakouts"
+     ]
+    },
+    {
+     "as_of": "2026-08-07",
+     "expires": "2026-08-28",
+     "kind": "sector",
+     "tickers": [
+      "IGV"
+     ],
+     "text": "The software ETF was coiling in a symmetrical triangle (possible cup and handle) and needed a confirmed break above 104.",
+     "tags": [
+      "technicals",
+      "software"
+     ]
+    },
+    {
+     "as_of": "2026-08-07",
+     "expires": "2026-08-28",
+     "kind": "company",
+     "tickers": [
+      "NVDA"
+     ],
+     "text": "Nvidia was breaking its falling resistance line but was stretched above its 150- and 200-day averages.",
+     "tags": [
+      "technicals",
+      "overextension"
+     ]
+    },
+    {
+     "as_of": "2026-08-07",
+     "expires": "2026-09-07",
+     "kind": "company",
+     "tickers": [
+      "ORCL",
+      "NBIS"
+     ],
+     "text": "A well-known investor disclosed new shorts in Oracle and Nebius; Nebius fell 13%, though it was already far above its 150-day average.",
+     "tags": [
+      "short_sellers",
+      "overextension"
+     ]
+    },
+    {
+     "as_of": "2026-08-07",
+     "expires": "2026-08-28",
+     "kind": "market",
+     "tickers": [],
+     "text": "The S&P 500 was stretched near its upper bounds, waiting on the jobs report and the Jackson Hole symposium.",
+     "tags": [
+      "events",
+      "macro",
+      "overextension"
+     ]
+    }
+   ]
+  }
+ ]
+}

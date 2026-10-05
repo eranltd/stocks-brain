@@ -1,0 +1,671 @@
+{
+ "change_note": "Batch 9: technical analysis tested and untested, risk arithmetic and trading psychology from the same library, plus the Micha course notes on index investing and the long-average trend method.",
+ "sources": [
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/evidence-based-ta.md",
+   "title": "Evidence-Based Technical Analysis",
+   "author": "David R. Aronson",
+   "year": 2007,
+   "principles": [
+    [
+     "Thousands of objective chart rules were tested on the S&P 500 over a quarter century. The best looked excellent on its own but was indistinguishable from luck once the number of rules tried was accounted for.",
+     [
+      "technicals",
+      "backtest",
+      "survivorship"
+     ]
+    ],
+    [
+     "The data-miner's mistake is using the best rule's past performance to estimate its future. Correct any search result for how many candidates were examined, on detrended data.",
+     [
+      "backtest",
+      "discipline",
+      "technicals"
+     ]
+    ],
+    [
+     "A rule that cannot be written as a program cannot be tested, so it cannot be right or wrong. Subjective chart reading belongs in that category.",
+     [
+      "technicals",
+      "backtest"
+     ]
+    ],
+    [
+     "Confirmation bias, the illusion of control and small-sample intuition make hand-picked chart examples feel like proof. They are not evidence of anything.",
+     [
+      "behavior",
+      "technicals",
+      "backtest"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/art-science-ta.md",
+   "title": "The Art and Science of Technical Analysis",
+   "author": "Adam Grimes",
+   "year": 2012,
+   "principles": [
+    [
+     "Draw random lines on a hidden chart, then reveal it: the random levels hold as convincingly as real support and resistance. Treat levels as zones and demand sharp price rejection before trusting one.",
+     [
+      "technicals",
+      "backtest",
+      "discipline"
+     ]
+    ],
+    [
+     "Volume confirmation and divergence failed as stand-alone signals in testing; strong trends roll over divergences repeatedly. Use them as context, never as the trigger.",
+     [
+      "technicals",
+      "backtest",
+      "invalidation"
+     ]
+    ],
+    [
+     "Most breakouts fail. Trade only those preceded by buildup, a tight range at the edge of a bigger range with higher lows into resistance, and never fade the first one.",
+     [
+      "breakouts",
+      "technicals",
+      "discipline"
+     ]
+    ],
+    [
+     "Keep risk per trade near one percent of equity. With fixed small risk a fifty percent win rate and modest payoff ratio has near-zero chance of ruin; with a quarter of capital per trade ruin is likely.",
+     [
+      "position_sizing",
+      "risk",
+      "expectancy"
+     ]
+    ],
+    [
+     "Stops go no closer than about one average bar, typically two to four average true ranges, with a little random variation so they do not sit where everyone else's do.",
+     [
+      "stops",
+      "risk",
+      "technicals"
+     ]
+    ],
+    [
+     "Take a quarter to a third of the position off at one unit of risk, down to a third to a half by two units, and trail the rest behind structure.",
+     [
+      "exits",
+      "position_sizing",
+      "discipline"
+     ]
+    ],
+    [
+     "Expect three to five years of apprenticeship with trivial risk per trade before consistency. If you do not know what your edge is, you do not have one.",
+     [
+      "discipline",
+      "expectancy",
+      "behavior"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/ta-financial-markets-murphy.md",
+   "title": "Technical Analysis of the Financial Markets",
+   "author": "John J. Murphy",
+   "year": 1999,
+   "principles": [
+    [
+     "Work from the top down: monthly and weekly charts set direction, the daily chart times the entry. Oscillators are subordinate to the trend and should be read as overbought only against it.",
+     [
+      "technicals",
+      "trend",
+      "discipline"
+     ]
+    ],
+    [
+     "Price above a rising fifty-day and two-hundred-day average is the baseline bullish condition; a close below the two-hundred-day is a major warning.",
+     [
+      "moving_averages",
+      "trend",
+      "technicals"
+     ]
+    ],
+    [
+     "Breadth deteriorates before the index does. Watch the advance-decline line and the share of stocks above their two-hundred-day average for late-cycle warnings.",
+     [
+      "breadth",
+      "regime",
+      "technicals"
+     ]
+    ],
+    [
+     "Relative strength, the ratio of a stock or sector to the index, is the most useful single tool for deciding what to own. Buy what is rising against the market, avoid what is falling.",
+     [
+      "relative_strength",
+      "screening",
+      "technicals"
+     ]
+    ],
+    [
+     "Retracements cluster between a third and two thirds of the prior move, with half typical. Measured-move targets are minimums, adjusted to nearby resistance.",
+     [
+      "technicals",
+      "trend"
+     ]
+    ],
+    [
+     "Of the system families cited, channel breakouts and moving averages tested best; most of the rest of the catalogue is hand-picked charts. Read the book as a dictionary, not as evidence.",
+     [
+      "technicals",
+      "backtest",
+      "breakouts"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/ta-complete-resource.md",
+   "title": "Technical Analysis: The Complete Resource for Financial Market Technicians",
+   "author": "Charles Kirkpatrick and Julie Dahlquist",
+   "year": 2011,
+   "principles": [
+    [
+     "Relative strength and momentum are the technical ideas with independent academic replication across decades and markets, with a six-month lookback as the sweet spot and the top decile favoured.",
+     [
+      "relative_strength",
+      "momentum",
+      "backtest"
+     ]
+    ],
+    [
+     "A backtest with a profit factor above ten or a win rate above seventy percent is suspect. Demand thirty to fifty signals across bull, bear and sideways markets and expect half the profit and twice the drawdown live.",
+     [
+      "backtest",
+      "expectancy",
+      "discipline"
+     ]
+    ],
+    [
+     "Risk a fixed fraction near two percent per trade, take the smallest of risk-of-ruin, theory-of-runs and optimal-f sizing, and stop trading near a twenty percent account drawdown.",
+     [
+      "position_sizing",
+      "risk",
+      "drawdown"
+     ]
+    ],
+    [
+     "Named breadth and sentiment thresholds from before the year two thousand degraded after exchange-traded funds, decimalisation and new instruments. Every published level is a hypothesis to re-verify.",
+     [
+      "breadth",
+      "sentiment",
+      "backtest"
+     ]
+    ],
+    [
+     "Diversification across uncorrelated names scales with the square root of their number, but correlations converge on one exactly when they are needed not to.",
+     [
+      "diversification",
+      "correlation",
+      "risk"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/encyclopedia-chart-patterns.md",
+   "title": "Encyclopedia of Chart Patterns",
+   "author": "Thomas N. Bulkowski",
+   "year": 2005,
+   "principles": [
+    [
+     "Pattern height predicts performance better than pattern name: tall formations beat short ones almost universally, and tall plus wide compounds it.",
+     [
+      "patterns",
+      "technicals",
+      "backtest"
+     ]
+    ],
+    [
+     "Patterns early in a trend, within a few months of its start, perform far better than late-trend ones, and bullish patterns work mainly in bull markets.",
+     [
+      "patterns",
+      "trend",
+      "regime"
+     ]
+    ],
+    [
+     "Enter only on a confirmed close beyond the pattern boundary. If price has run more than about five percent past the ideal entry, skip the trade.",
+     [
+      "patterns",
+      "breakouts",
+      "discipline"
+     ]
+    ],
+    [
+     "A pullback to the breakout point happens in roughly half to two thirds of cases and reduces subsequent performance; patterns that do not pull back do better.",
+     [
+      "patterns",
+      "breakouts",
+      "technicals"
+     ]
+    ],
+    [
+     "Every published average rise is a perfect, cost-free trade from exact breakout to ultimate high. Real results will be lower, and the data stop before the algorithmic era.",
+     [
+      "backtest",
+      "patterns",
+      "fees"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/candlestick-charting-explained.md",
+   "title": "Candlestick Charting Explained",
+   "author": "Gregory L. Morris",
+   "year": 2006,
+   "principles": [
+    [
+     "Across hundreds of thousands of occurrences, most candlestick patterns won between forty and sixty-four percent of the time, clustered near a coin flip, with any edge decaying within about a week.",
+     [
+      "candlesticks",
+      "backtest",
+      "technicals"
+     ]
+    ],
+    [
+     "A success rate near fifty percent has no value. Filtering candle signals with a confirming indicator beat trading them alone in testing.",
+     [
+      "candlesticks",
+      "technicals",
+      "discipline"
+     ]
+    ],
+    [
+     "Headline best patterns with perfect records came from tiny samples. Ignore any statistic from fewer than about a hundred occurrences.",
+     [
+      "backtest",
+      "candlesticks",
+      "survivorship"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/trade-your-way.md",
+   "title": "Trade Your Way to Financial Freedom",
+   "author": "Van K. Tharp",
+   "year": 2006,
+   "principles": [
+    [
+     "Expectancy is win rate times average win minus loss rate times average loss, per unit risked. A ninety percent win rate can have negative expectancy; being right has nothing to do with making money.",
+     [
+      "expectancy",
+      "discipline",
+      "risk"
+     ]
+    ],
+    [
+     "Express every outcome as a multiple of the initial risk. One ten-unit winner pays for seven one-unit losers, so a system can be profitable with a win rate well under half.",
+     [
+      "expectancy",
+      "exits",
+      "discipline"
+     ]
+    ],
+    [
+     "Identical entry signals with only the sizing changed produced results differing by sixty times. Size by a fixed percent of equity against the stop distance or against volatility, never by share count.",
+     [
+      "position_sizing",
+      "risk",
+      "backtest"
+     ]
+    ],
+    [
+     "Winners rarely move more than about one average true range against you. Volatility-scaled stops of roughly three times a ten-day true range beat flat percentages.",
+     [
+      "stops",
+      "risk",
+      "technicals"
+     ]
+    ],
+    [
+     "Scaling out of winners is reverse position sizing: full size on the worst trades and minimum size on the best. It is defensible only if it is the one way you can hold at all.",
+     [
+      "exits",
+      "position_sizing",
+      "behavior"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/trading-in-the-zone.md",
+   "title": "Trading in the Zone",
+   "author": "Mark Douglas",
+   "year": 2000,
+   "principles": [
+    [
+     "Anything can happen; you do not need to know what happens next; wins and losses are randomly distributed within an edge; an edge is only a probability; every moment is unique.",
+     [
+      "behavior",
+      "discipline",
+      "expectancy"
+     ]
+    ],
+    [
+     "Judge an edge on a sample of at least twenty consecutive signals taken without deviation, with size small enough to survive losing all of them. Judge the process, not any single outcome.",
+     [
+      "discipline",
+      "expectancy",
+      "backtest"
+     ]
+    ],
+    [
+     "Be rigid in the rules and flexible in expectations. Hope, fear and the need to be right are what turn a competent analyst into a losing trader.",
+     [
+      "behavior",
+      "discipline"
+     ]
+    ],
+    [
+     "The book assumes you already have an edge and supplies none. Discipline applied to a losing method only loses more consistently.",
+     [
+      "expectancy",
+      "discipline",
+      "behavior"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/new-trading-for-a-living.md",
+   "title": "The New Trading for a Living",
+   "author": "Alexander Elder",
+   "year": 2014,
+   "principles": [
+    [
+     "Never risk more than two percent of equity on one trade; professionals stay well under one. Shares equal dollars at risk divided by risk per share, rounded down.",
+     [
+      "position_sizing",
+      "risk",
+      "discipline"
+     ]
+    ],
+    [
+     "When closed losses plus open risk reach six percent of the month's starting equity, stop opening trades until next month. Advance slowly, retreat fast.",
+     [
+      "drawdown",
+      "risk",
+      "discipline"
+     ]
+    ],
+    [
+     "Decide direction on the weekly chart, time the entry on the daily, with about a factor of five between timeframes. Do not take a daily signal against the weekly trend.",
+     [
+      "trend",
+      "technicals",
+      "discipline"
+     ]
+    ],
+    [
+     "Records predict survival better than any indicator: a trade spreadsheet, an equity curve, and an annotated chart diary re-read two to three months after each exit.",
+     [
+      "journaling",
+      "discipline",
+      "behavior"
+     ]
+    ],
+    [
+     "Several once-standard indicators the author relied on stopped working as market structure changed. Treat the survivors with the same suspicion.",
+     [
+      "technicals",
+      "backtest"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/way-of-the-turtle.md",
+   "title": "Way of the Turtle",
+   "author": "Curtis Faith",
+   "year": 2007,
+   "principles": [
+    [
+     "Size positions in volatility units: one unit moves one percent of equity per average true range, the stop sits two ranges away, and caps limit units per market and per correlated group.",
+     [
+      "position_sizing",
+      "risk",
+      "correlation"
+     ]
+    ],
+    [
+     "Cut risk mechanically in drawdowns, about a fifth of notional size per ten percent of equity lost. Expect to hand back a fifth to two fifths of open profit on every winner.",
+     [
+      "drawdown",
+      "exits",
+      "discipline"
+     ]
+    ],
+    [
+     "Fewer than twenty instances of a setup is noise; a hundred is usable. Shift parameters by a fifth to a quarter and see whether the edge survives; if it does not, it was fitted.",
+     [
+      "backtest",
+      "discipline",
+      "expectancy"
+     ]
+    ],
+    [
+     "Simple time-based exits beat breakout exits, and adding stops made every metric worse for slow moving-average systems. Test the exit, do not assume it.",
+     [
+      "exits",
+      "backtest",
+      "stops"
+     ]
+    ],
+    [
+     "A third to a half of traders given identical written rules failed. Execution and temperament, not the rules, separated the outcomes.",
+     [
+      "behavior",
+      "discipline",
+      "survivorship"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/trend-following.md",
+   "title": "Trend Following",
+   "author": "Michael W. Covel",
+   "year": 2009,
+   "principles": [
+    [
+     "Across a large stock universe over two decades, about two fifths of stocks had negative lifetime returns and roughly a quarter produced all the gains. That is the case for indexing and against averaging down on a single name.",
+     [
+      "survivorship",
+      "concentration",
+      "passive"
+     ]
+    ],
+    [
+     "Losers average losers. Never add to a position because its price fell; the entry price is not information.",
+     [
+      "discipline",
+      "stops",
+      "behavior"
+     ]
+    ],
+    [
+     "Trend systems win a third to a half of their trades and make the year on a few outliers. Judge them on expectation and drawdown, never on win rate.",
+     [
+      "expectancy",
+      "trend",
+      "drawdown"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/encyclopedia-trading-strategies.md",
+   "title": "The Encyclopedia of Trading Strategies",
+   "author": "Jeffrey Katz and Donna McCormick",
+   "year": 2000,
+   "principles": [
+    [
+     "Tested against random entries, oscillator and cycle rules were no better than chance out of sample, moving-average crossovers were marginally better, and breakouts decayed from profitable to roughly chance as markets grew more efficient.",
+     [
+      "backtest",
+      "technicals",
+      "breakouts"
+     ]
+    ],
+    [
+     "A better exit cut the loss on random entries by nearly half with no change to entries. Entries are cheap to get roughly right; exits and risk control decide survival.",
+     [
+      "exits",
+      "backtest",
+      "expectancy"
+     ]
+    ],
+    [
+     "Seasonal and weekday calendar effects lost money out of sample. Calendar edges tied to a mechanism such as corporate actions survived better than those tied to a date.",
+     [
+      "backtest",
+      "events",
+      "technicals"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/alchemy-of-finance.md",
+   "title": "The Alchemy of Finance",
+   "author": "George Soros",
+   "year": 1994,
+   "principles": [
+    [
+     "Prices change the fundamentals that supposedly justify them: a rising stock lets a company raise cheap capital and grow into its valuation, until the loop reverses. Watch for the flaw that breaks the loop; that is the exit.",
+     [
+      "bubbles",
+      "sentiment",
+      "invalidation"
+     ]
+    ],
+    [
+     "Markets are always biased in one direction. State the hypothesis in writing, say what would falsify it, and do nothing when no reflexive process is visible.",
+     [
+      "discipline",
+      "journaling",
+      "contrarian"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/micha-stocks.md",
+   "title": "Micha from America (Micha.Stocks) video series, reader's notes",
+   "author": "Micha (YouTube channel)",
+   "year": 2026,
+   "principles": [
+    [
+     "Starting a monthly index purchase at the worst possible moment, an all-time high, still produced positive double-digit cumulative returns over the following years. Timing the first purchase matters less than never stopping.",
+     [
+      "dca",
+      "passive",
+      "behavior"
+     ]
+    ],
+    [
+     "Buying a fixed number of whole shares each month performed within a fraction of a point of fractional-share averaging. A platform without fractional shares is no reason to wait.",
+     [
+      "dca",
+      "passive",
+      "fees"
+     ]
+    ],
+    [
+     "Reinvest every dividend. Letting payouts sit as cash or spending them opens a large compounding gap over decades.",
+     [
+      "compounding",
+      "passive",
+      "dca"
+     ]
+    ],
+    [
+     "For individual growth stocks use a one-hundred-fifty-day simple average on the daily chart, two hundred for mega-caps and indexes. Twenty- and fifty-day averages whipsaw and run up fees.",
+     [
+      "moving_averages",
+      "trend",
+      "fees"
+     ]
+    ],
+    [
+     "The average must be flat or rising. A falling long average is a structural downtrend: do not buy however cheap the stock looks.",
+     [
+      "moving_averages",
+      "trend",
+      "discipline"
+     ]
+    ],
+    [
+     "In an established uptrend, a pullback to within a percent or two of the rising long average is the preferred entry, framed as the lowest-risk point of the trend.",
+     [
+      "moving_averages",
+      "technicals",
+      "trend"
+     ]
+    ],
+    [
+     "A daily close below the long average is an immediate exit. Do not become a believer who holds through a break hoping for a rebound.",
+     [
+      "stops",
+      "exits",
+      "discipline"
+     ]
+    ],
+    [
+     "When price stretches fifteen to twenty percent or more above the long average it is extended: scale out partial profits or trail a stop against mean reversion.",
+     [
+      "overextension",
+      "exits",
+      "discipline"
+     ]
+    ],
+    [
+     "Accept small controlled losses of a percent or two when a breakout above the average fails and price closes back below it. No system wins every time.",
+     [
+      "stops",
+      "expectancy",
+      "discipline"
+     ]
+    ],
+    [
+     "Use limit orders rather than market orders except on the most liquid large caps, and keep tactical trading on a low-commission platform while the index purchase stays automated.",
+     [
+      "fees",
+      "discipline",
+      "liquidity"
+     ]
+    ],
+    [
+     "The method replaces valuation with trend and is offered without a backtest, win rate or cost figure. Pair it with a price check and run it only as a capped satellite with a written record.",
+     [
+      "backtest",
+      "valuation",
+      "discipline"
+     ]
+    ]
+   ]
+  }
+ ]
+}

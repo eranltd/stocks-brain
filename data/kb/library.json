@@ -1,0 +1,2624 @@
+{
+  "version": "0.9.0",
+  "updated_at": "2026-10-04",
+  "change_note": "Batch 9: technical analysis tested and untested, risk arithmetic and trading psychology from the same library, plus the Micha course notes on index investing and the long-average trend method.",
+  "sample": false,
+  "sources": [
+    {
+      "id": "S-001",
+      "kind": "video",
+      "ref": "youtube:y-_gLDdXWkI",
+      "title": "הגרף הזה סימן תחתית 7 פעמים מאז 2020. ועכשיו? (Did this graph signal a bottom?)",
+      "author": "YouTube channel (name not given in batch)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "published": "2026-10-02",
+      "principles": [
+        {
+          "id": "S-001.P01",
+          "text": "When only about a fifth of S&P 500 members trade above their 50-day average, breadth is washed out. Since 2020 such readings often sat near bottoms, but real crises pushed it far lower, so treat it as a setup to confirm, not a buy signal.",
+          "tags": [
+            "breadth",
+            "bottoms",
+            "regime",
+            "sentiment"
+          ]
+        },
+        {
+          "id": "S-001.P02",
+          "text": "An index near its high while most of its members sit below their averages means leadership is narrow. Narrow leadership is fragile and deserves lower conviction on broad bullish calls.",
+          "tags": [
+            "breadth",
+            "benchmark",
+            "regime",
+            "conviction"
+          ]
+        },
+        {
+          "id": "S-001.P03",
+          "text": "Earnings reactions follow guidance more than the beat. A profit beat paired with weak forward guidance can still sell off hard, so judge a report by what management expects next.",
+          "tags": [
+            "earnings",
+            "guidance",
+            "events"
+          ]
+        },
+        {
+          "id": "S-001.P04",
+          "text": "A fear reading on a sentiment gauge is context, not a trigger. Lean contrarian only when breadth, trend and sentiment line up, and say which one would prove the call wrong.",
+          "tags": [
+            "sentiment",
+            "contrarian",
+            "regime",
+            "invalidation"
+          ]
+        },
+        {
+          "id": "S-001.P05",
+          "text": "A sector jump on a geopolitical shock, such as energy on shipping-lane tension, says little about the wider market and tends to fade when the headline does.",
+          "tags": [
+            "sectors",
+            "macro",
+            "energy",
+            "events"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-002",
+      "kind": "video",
+      "ref": "youtube:KB6w_dca8jU",
+      "title": "אפוקליפסת הריטל? הסוכן של מטא שמאיים על אמזון (Retail apocalypse: Meta's agent threatening Amazon)",
+      "author": "YouTube channel (name not given in batch)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "published": "2026-09-26",
+      "principles": [
+        {
+          "id": "S-002.P01",
+          "text": "When software agents do the shopping, sponsored placements lose their audience. Revenue that depends on a human browsing a page is exposed to any shift toward agent-made purchases.",
+          "tags": [
+            "ai_agents",
+            "disruption",
+            "advertising"
+          ]
+        },
+        {
+          "id": "S-002.P02",
+          "text": "Agent-era screen, part one: does revenue rely on customers forgetting to cancel, or on friction that stops them switching? An agent that audits subscriptions and compares offers removes both.",
+          "tags": [
+            "ai_agents",
+            "disruption",
+            "subscriptions",
+            "screening"
+          ]
+        },
+        {
+          "id": "S-002.P03",
+          "text": "Agent-era screen, part two: does profit hinge on paid placement, or is the business only a middleman between buyer and seller? Agents route around both and go straight to the supplier.",
+          "tags": [
+            "ai_agents",
+            "disruption",
+            "aggregators",
+            "screening"
+          ]
+        },
+        {
+          "id": "S-002.P04",
+          "text": "In a platform shift, the rails tend to win: whoever settles the payment or runs the compute gets paid whichever agent wins. Prefer picks-and-shovels exposure while the winner is unclear.",
+          "tags": [
+            "ai_agents",
+            "payments",
+            "infrastructure",
+            "winners"
+          ]
+        },
+        {
+          "id": "S-002.P05",
+          "text": "Early in a shift, people using AI to help them shop far outnumber agents actually completing purchases. Size a disruption thesis to measured adoption, not to the narrative.",
+          "tags": [
+            "ai_agents",
+            "adoption",
+            "discipline",
+            "conviction"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-003",
+      "kind": "video",
+      "ref": "youtube:KwiGA2_SX2Q",
+      "title": "איך לעשות פי 12 תשואה בבורסה בצורה פשוטה - האם זה אפשרי? (A 12x market-return strategy?)",
+      "author": "YouTube channel (name not given in batch)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "published": "2026-09-12",
+      "principles": [
+        {
+          "id": "S-003.P01",
+          "text": "Buying last year's single best performer looks spectacular in a backtest, but the edge comes from a handful of outlier years. Most years are average or worse, so the result is closer to luck than to a repeatable rule.",
+          "tags": [
+            "momentum",
+            "backtest",
+            "outliers"
+          ]
+        },
+        {
+          "id": "S-003.P02",
+          "text": "A strategy that beats the index in only about three years of five carries heavy psychological cost. Most people abandon it in the losing stretch, which is when it matters.",
+          "tags": [
+            "momentum",
+            "behavior",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-003.P03",
+          "text": "Turnover and taxes can erase a backtested edge. Yearly rotation that wins before tax can lose to the index after tax, while buying and holding lets compounding do the work.",
+          "tags": [
+            "taxes",
+            "turnover",
+            "compounding"
+          ]
+        },
+        {
+          "id": "S-003.P04",
+          "text": "A concentrated bet on one name is a lottery ticket, not a core holding. Judge any momentum rule by its median year, not its best one.",
+          "tags": [
+            "concentration",
+            "risk",
+            "momentum",
+            "backtest"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-004",
+      "kind": "video",
+      "ref": "youtube:_UHt0EU-NZM",
+      "title": "7 מניות, אותו גרף בדיוק: סוד מטריד לפני שבוע הדיווחים (7 stocks, the same chart before earnings)",
+      "author": "YouTube channel (name not given in batch)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "published": "2026-05-04",
+      "principles": [
+        {
+          "id": "S-004.P01",
+          "text": "When unrelated stocks trace the same chart, a shared factor such as rates, risk appetite or retail flows is driving them, not company news. Treat them as one bet and expect them to break together.",
+          "tags": [
+            "correlation",
+            "factors",
+            "risk",
+            "technicals"
+          ]
+        },
+        {
+          "id": "S-004.P02",
+          "text": "The options-implied move is the bar for an earnings reaction. A result is only news if the stock moves beyond what was already priced in.",
+          "tags": [
+            "earnings",
+            "options",
+            "expectations"
+          ]
+        },
+        {
+          "id": "S-004.P03",
+          "text": "A stock that ran hard into its report has front-run the good news. It needs a beat plus better guidance just to hold, and a plain beat can still trigger selling.",
+          "tags": [
+            "earnings",
+            "momentum",
+            "expectations"
+          ]
+        },
+        {
+          "id": "S-004.P04",
+          "text": "For each name, know the one segment metric the market is watching, such as a customer mix or a payments volume line. That line moves the stock more than the headline beat.",
+          "tags": [
+            "earnings",
+            "kpis",
+            "guidance"
+          ]
+        },
+        {
+          "id": "S-004.P05",
+          "text": "A breakout from a long range sets a technical target, but the story has to keep up. Without fundamental confirmation, breakouts tend to fail back into the range.",
+          "tags": [
+            "technicals",
+            "breakouts",
+            "invalidation"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-005",
+      "kind": "video",
+      "ref": "youtube:Q-yvlzjPij8",
+      "title": "רעידת אדמה: 180 דוחות יזיזו את התיק שלכם (180 earnings reports will move your portfolio)",
+      "author": "YouTube channel (name not given in batch)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "published": "2026-04-27",
+      "principles": [
+        {
+          "id": "S-005.P01",
+          "text": "A peak earnings week that also holds a central-bank decision piles up event risk. Avoid new high-conviction calls whose horizon spans that week unless the event is the thesis.",
+          "tags": [
+            "events",
+            "earnings",
+            "macro",
+            "conviction"
+          ]
+        },
+        {
+          "id": "S-005.P02",
+          "text": "For companies that beat every quarter, a beat is already priced. Only the size of the beat or a change in guidance moves the stock.",
+          "tags": [
+            "earnings",
+            "expectations"
+          ]
+        },
+        {
+          "id": "S-005.P03",
+          "text": "For mega-cap tech in the AI build-out, capex guidance and cloud growth now move the stock more than EPS. Higher capex can dent near-term EPS without hurting the stock if cloud revenue confirms the spend.",
+          "tags": [
+            "ai_capex",
+            "cloud",
+            "earnings",
+            "megacap"
+          ]
+        },
+        {
+          "id": "S-005.P04",
+          "text": "A sleepy chart into earnings usually comes with a small implied move. Such names need a new narrative, not a routine beat, to re-rate.",
+          "tags": [
+            "earnings",
+            "expectations",
+            "technicals"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-006",
+      "kind": "video",
+      "ref": "youtube:BIgGw9THhLQ",
+      "title": "גוגל נשברת, פלנטיר פורצת — ומה קורה עם האג״ח 10? (Google breaks down, Palantir breaks out, and the 10-year)",
+      "author": "Micha (YouTube channel)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "published": "2026-09-24",
+      "principles": [
+        {
+          "id": "S-006.P01",
+          "text": "When the 10-year yield climbs toward what stocks are expected to earn, money rotates into risk-free paper. Rising long yields are a headwind, hardest on long-duration growth names.",
+          "tags": [
+            "rates",
+            "bonds",
+            "macro",
+            "valuation"
+          ]
+        },
+        {
+          "id": "S-006.P02",
+          "text": "Read why yields rise. Weak growth data plus hawkish signals and a poor auction is worse for stocks than yields rising on strong growth.",
+          "tags": [
+            "rates",
+            "macro",
+            "regime"
+          ]
+        },
+        {
+          "id": "S-006.P03",
+          "text": "Know where inflation comes from. When it sits in business inputs such as memory and chips, the suppliers with pricing power gain and their customers' margins get squeezed.",
+          "tags": [
+            "inflation",
+            "pricing_power",
+            "semis"
+          ]
+        },
+        {
+          "id": "S-006.P04",
+          "text": "A thin-volume zone below a broken level is an air pocket. If the level is not reclaimed, price can drop quickly to the next heavy-volume area, which makes that level a clean invalidation.",
+          "tags": [
+            "technicals",
+            "volume",
+            "invalidation"
+          ]
+        },
+        {
+          "id": "S-006.P05",
+          "text": "A breakout is confirmed by rising volume and by old resistance holding as support on the retest. Losing that level again invalidates it.",
+          "tags": [
+            "technicals",
+            "breakouts",
+            "invalidation"
+          ]
+        },
+        {
+          "id": "S-006.P06",
+          "text": "Fear readings while the index sits near its high signal anxiety beneath the surface. Check breadth and rates before trusting the index level.",
+          "tags": [
+            "sentiment",
+            "breadth",
+            "regime"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-007",
+      "kind": "video",
+      "ref": "youtube:azWCH1BswAQ",
+      "title": "הטעות שכולם עושים כשהשוק בשיא — ואיך להימנע ממנה (The mistake everyone makes at market highs)",
+      "author": "Micha (YouTube channel)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "published": "2026-08-15",
+      "principles": [
+        {
+          "id": "S-007.P01",
+          "text": "All-time highs cluster. Strong years print many of them, so a new high is more often followed by more highs than by a crash.",
+          "tags": [
+            "all_time_highs",
+            "base_rates",
+            "behavior"
+          ]
+        },
+        {
+          "id": "S-007.P02",
+          "text": "Reluctance to buy at a high is psychology, not math. People waiting for a dip tend to hold out for a bigger one and end up buying back higher.",
+          "tags": [
+            "behavior",
+            "timing",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-007.P03",
+          "text": "Historically, investing a lump sum at once beat holding cash for a better entry, partly because highs cluster. Long dry spells do happen, so horizon and diversification still matter.",
+          "tags": [
+            "lump_sum",
+            "timing",
+            "base_rates"
+          ]
+        },
+        {
+          "id": "S-007.P04",
+          "text": "Being near an all-time high is not, on its own, a reason for a bearish stance. A bearish call needs its own evidence.",
+          "tags": [
+            "all_time_highs",
+            "stance",
+            "discipline"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-008",
+      "kind": "video",
+      "ref": "youtube:taGOri7CI-0",
+      "title": "בנק אוף אמריקה קובע: המניה הזו עומדת להתחיל לעלות (Bank of America: this stock is about to rise)",
+      "author": "Micha (YouTube channel)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "published": "2026-07-09",
+      "principles": [
+        {
+          "id": "S-008.P01",
+          "text": "Compare a leader's forward P/E with the index's. When a fast grower trades at or below the market multiple, the price implies little growth, and the question becomes what would break.",
+          "tags": [
+            "valuation",
+            "pe",
+            "expectations"
+          ]
+        },
+        {
+          "id": "S-008.P02",
+          "text": "Parabolic runs in cyclical sectors such as semiconductors often end in deep corrections. Size bullish conviction to how stretched the run is.",
+          "tags": [
+            "semis",
+            "cyclicals",
+            "euphoria",
+            "risk"
+          ]
+        },
+        {
+          "id": "S-008.P03",
+          "text": "Several successful tests of a long moving average followed by a break of the downtrend line is a classic base. Resistance above still caps the first move.",
+          "tags": [
+            "technicals",
+            "moving_averages",
+            "breakouts"
+          ]
+        },
+        {
+          "id": "S-008.P04",
+          "text": "When an industry repurposes its infrastructure for a new wave of demand, such as crypto miners hosting AI compute, new buyers and volume tend to show up before earnings do.",
+          "tags": [
+            "ai_capex",
+            "rotation",
+            "themes"
+          ]
+        },
+        {
+          "id": "S-008.P05",
+          "text": "An analyst upgrade is an input, not a verdict. Record it as a dated claim and let scoring judge it.",
+          "tags": [
+            "analysts",
+            "discipline"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-009",
+      "kind": "video",
+      "ref": "youtube:H9N_QMtpG4E",
+      "title": "מאגניפיסנט 7 יוציאו את הבורסה מהתקיעות שלה? (Will the Magnificent 7 break the market out of its rut?)",
+      "author": "Micha (YouTube channel)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "published": "2026-07-06",
+      "principles": [
+        {
+          "id": "S-009.P01",
+          "text": "When the index goes sideways for weeks, check its largest members one by one. The next leg usually follows whichever group breaks first: leaders breaking down or laggards bouncing.",
+          "tags": [
+            "megacap",
+            "breadth",
+            "leadership"
+          ]
+        },
+        {
+          "id": "S-009.P02",
+          "text": "Classify each name by structure: higher highs and lows (healthy), a range (waiting for a breakout), or a broken uptrend in a falling channel (repair needed). Stance should follow structure.",
+          "tags": [
+            "technicals",
+            "trend",
+            "stance"
+          ]
+        },
+        {
+          "id": "S-009.P03",
+          "text": "A stock that has gone nowhere for years while swinging hard offers volatility, not trend. Keep conviction low until it leaves the range.",
+          "tags": [
+            "technicals",
+            "volatility",
+            "conviction"
+          ]
+        },
+        {
+          "id": "S-009.P04",
+          "text": "A broken name needs a higher high above a named level to reverse. Until then, rallies inside the channel are bounces, and that level is the natural invalidation for a bullish call.",
+          "tags": [
+            "technicals",
+            "reversal",
+            "invalidation"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-010",
+      "kind": "video",
+      "ref": "youtube:RtUl_TUqSsw",
+      "title": "13 ימים של ירוק ברצף — השוק חצה את הגבול? (13 green days in a row: did the market cross the line?)",
+      "author": "Micha (YouTube channel)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "published": "2026-04-19",
+      "principles": [
+        {
+          "id": "S-010.P01",
+          "text": "A long streak of up days that lifts the index far above its 20- and 50-day averages is stretched. Expect digestion, often a pullback, before the next leg.",
+          "tags": [
+            "overextension",
+            "moving_averages",
+            "mean_reversion"
+          ]
+        },
+        {
+          "id": "S-010.P02",
+          "text": "Unfilled gaps below the price are often revisited. Treat them as likely pullback targets, not certainties.",
+          "tags": [
+            "technicals",
+            "gaps"
+          ]
+        },
+        {
+          "id": "S-010.P03",
+          "text": "Relief rallies on easing geopolitical risk can be fast and broad. Once that risk premium is gone, the next move needs earnings or data.",
+          "tags": [
+            "macro",
+            "geopolitics",
+            "relief_rally"
+          ]
+        },
+        {
+          "id": "S-010.P04",
+          "text": "When retail chatter crowds into squeezes and speculative themes and sentiment reads greed, tighten risk instead of adding aggressive bullish calls.",
+          "tags": [
+            "sentiment",
+            "speculation",
+            "risk"
+          ]
+        },
+        {
+          "id": "S-010.P05",
+          "text": "The sector that bounces hardest after a selloff is often short covering first. Confirm follow-through before calling it new leadership.",
+          "tags": [
+            "rotation",
+            "short_covering",
+            "sectors"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-011",
+      "kind": "video",
+      "ref": "youtube:2RsUWHv37Po",
+      "title": "לפני שאתם קונים דירה — חובה לראות את זה (Before you buy an apartment)",
+      "author": "Micha (YouTube channel)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "published": "2026-05-30",
+      "principles": [
+        {
+          "id": "S-011.P01",
+          "text": "Sellers bound by loan covenants keep list prices sticky even when demand stalls, because an official cut would devalue the collateral. The real discount then shows up in terms and side deals, not in the headline price.",
+          "tags": [
+            "real_estate",
+            "covenants",
+            "pricing",
+            "credit"
+          ]
+        },
+        {
+          "id": "S-011.P02",
+          "text": "When lenders are carrying unsold inventory for leveraged sellers, bargaining power shifts to the buyer with cash. Official price indices lag that shift.",
+          "tags": [
+            "real_estate",
+            "credit",
+            "negotiation"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-012",
+      "kind": "video",
+      "ref": "youtube:KeqVI4sAiU0",
+      "title": "הכסף הגדול חתך 92% ממייקרון — ומה הוא קנה במקום (Big money cut 92% of Micron, and what it bought instead)",
+      "author": "Micha (YouTube channel)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "published": "2026-08-18",
+      "principles": [
+        {
+          "id": "S-012.P01",
+          "text": "13F filings show what large funds held at quarter end, published weeks later, with no reasons and no shorts or hedges. Treat them as delayed context on positioning, never as a live signal.",
+          "tags": [
+            "institutional",
+            "form_13f",
+            "positioning",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-012.P02",
+          "text": "Heavy institutional selling of a cyclical leader after a strong run often signals profit taking ahead of a cycle turn. Check where the money went inside the same sector before reading it as bearish for the whole group.",
+          "tags": [
+            "institutional",
+            "rotation",
+            "semis",
+            "cyclicals"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-013",
+      "kind": "video",
+      "ref": "youtube:jTeuotOQhSE",
+      "title": "המדריך המעודכן לעונת הדיווחים - חלק 1 (The updated guide to earnings season, part 1)",
+      "author": "Micha (YouTube channel)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "published": "2026-07-18",
+      "principles": [
+        {
+          "id": "S-013.P01",
+          "text": "Read a report in order: guidance first, then revenue growth and its quality, then EPS. A beat built on cost cuts or a lower share count is weaker than one built on revenue.",
+          "tags": [
+            "earnings",
+            "guidance",
+            "quality"
+          ]
+        },
+        {
+          "id": "S-013.P02",
+          "text": "Before a report, note the options-implied move. After it, ask whether the stock moved more or less than priced, and why. That gap is the market's real verdict.",
+          "tags": [
+            "earnings",
+            "options",
+            "expectations"
+          ]
+        },
+        {
+          "id": "S-013.P03",
+          "text": "Do not open a new short-horizon stance a day or two before a report unless the report is the thesis. The outcome becomes a coin flip on the event, not on the analysis.",
+          "tags": [
+            "earnings",
+            "events",
+            "conviction",
+            "discipline"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-014",
+      "kind": "video",
+      "ref": "youtube:7tWWyEs-3dw",
+      "title": "אנבידיה זולה יותר מ-S&P 500? השוק יודע משהו? וברודקום? (Is Nvidia cheaper than the S&P 500? And Broadcom?)",
+      "author": "Micha (YouTube channel)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "published": "2026-06-13",
+      "principles": [
+        {
+          "id": "S-014.P01",
+          "text": "A rising stock can get cheaper on forward P/E when earnings estimates climb faster than the price. Ask whether the discount reflects real growth or doubt that the estimates will hold.",
+          "tags": [
+            "valuation",
+            "pe",
+            "estimates"
+          ]
+        },
+        {
+          "id": "S-014.P02",
+          "text": "A low forward multiple on a business with cyclical demand often means the market expects peak earnings. Watch the direction of estimate revisions, not just the multiple.",
+          "tags": [
+            "valuation",
+            "cyclicals",
+            "estimates"
+          ]
+        },
+        {
+          "id": "S-014.P03",
+          "text": "A second play in the same theme spreads company risk but not theme risk. Two chip names riding one AI build-out are largely the same bet.",
+          "tags": [
+            "themes",
+            "correlation",
+            "semis"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-015",
+      "kind": "video",
+      "ref": "youtube:N4v9B9YTXRk",
+      "title": "האנליסטים בטוחים ב-2026 – וזה בדיוק למה הם עלולים לטעות (Analysts are confident about 2026, which is why they may be wrong)",
+      "author": "Micha (YouTube channel)",
+      "year": 2025,
+      "added": "2026-10-04",
+      "published": "2025-12-29",
+      "principles": [
+        {
+          "id": "S-015.P01",
+          "text": "Year-ahead bank outlooks describe consensus. When everyone shares one story, surprises tend to come from the other side, so use outlooks as a map of expectations, not as a forecast.",
+          "tags": [
+            "analysts",
+            "consensus",
+            "contrarian"
+          ]
+        },
+        {
+          "id": "S-015.P02",
+          "text": "Let price confirm a thesis, through a breakout or a hold of support, instead of committing to a rigid twelve-month macro call.",
+          "tags": [
+            "technicals",
+            "process",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-015.P03",
+          "text": "In a two-speed, K-shaped economy, winners and losers split inside the same sector. Pick names, not just sectors.",
+          "tags": [
+            "macro",
+            "k_shape",
+            "stock_picking"
+          ]
+        },
+        {
+          "id": "S-015.P04",
+          "text": "AI's power demand ties tech to energy. Data-centre growth is also a utilities and power-supply story.",
+          "tags": [
+            "ai_capex",
+            "energy",
+            "themes"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-016",
+      "kind": "video",
+      "ref": "youtube:ZfChchMuM8I",
+      "title": "לייב פתיחה יום שישי 2.10.26 (Live Friday open, 2 Oct 2026)",
+      "author": "Micha (YouTube channel)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "published": "2026-10-02",
+      "principles": [
+        {
+          "id": "S-016.P01",
+          "text": "Friday sessions with weekly options expiring are noisy. Do not read much into a Friday-open move without follow-through the next week.",
+          "tags": [
+            "options",
+            "expiration",
+            "noise"
+          ]
+        },
+        {
+          "id": "S-016.P02",
+          "text": "A rapid-fire chart review produces setups, not theses. Each setup needs its own evidence and invalidation before it becomes a pick.",
+          "tags": [
+            "process",
+            "discipline",
+            "technicals"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-017",
+      "kind": "video",
+      "ref": "youtube:ZDrHRV0e8bg",
+      "title": "עוקב או מחקה? איך דופקים אתכם בפנסיה על הסנפ 500 (Tracker or imitator? How pensions short-change you on the S&P 500)",
+      "author": "Micha (YouTube channel)",
+      "year": 2025,
+      "added": "2026-10-04",
+      "published": "2025-08-30",
+      "principles": [
+        {
+          "id": "S-017.P01",
+          "text": "Same index label, different results. A passive track that copies the index with derivatives, futures or forced bond sleeves can trail it badly, so compare your track with the raw index over the same period.",
+          "tags": [
+            "fees",
+            "tracking_error",
+            "passive",
+            "pension"
+          ]
+        },
+        {
+          "id": "S-017.P02",
+          "text": "Fees compound against you. A fraction of a percent a year over decades takes a large share of the final balance, so push fees toward the lowest available.",
+          "tags": [
+            "fees",
+            "compounding",
+            "pension"
+          ]
+        },
+        {
+          "id": "S-017.P03",
+          "text": "Currency conversion inside a foreign-index fund is a hidden cost. Ask how it is done and at what rate.",
+          "tags": [
+            "fx",
+            "fees",
+            "pension"
+          ]
+        },
+        {
+          "id": "S-017.P04",
+          "text": "A cheap index inside an expensive wrapper is not cheap. Distribution commissions are often buried in the management fee of a passive product.",
+          "tags": [
+            "fees",
+            "incentives",
+            "passive"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-018",
+      "kind": "video",
+      "ref": "youtube:G9SFAkOi_yc",
+      "title": "הכל קורס - זה הסימן דווקא לקנות? (Everything is crashing: is this actually the signal to buy?)",
+      "author": "Micha (YouTube channel)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "published": "2026-07-24",
+      "principles": [
+        {
+          "id": "S-018.P01",
+          "text": "When stocks fall on two fronts at once, geopolitics and rising yields, the yield pressure usually outlasts the headlines. Watch the 10-year more than the news flow.",
+          "tags": [
+            "rates",
+            "geopolitics",
+            "macro"
+          ]
+        },
+        {
+          "id": "S-018.P02",
+          "text": "A volatility spike that is sold straight away signals confusion, not panic. Capitulation lows usually need fear that persists.",
+          "tags": [
+            "volatility",
+            "vix",
+            "sentiment",
+            "bottoms"
+          ]
+        },
+        {
+          "id": "S-018.P03",
+          "text": "Heavy AI capex can turn free cash flow negative even when revenue is strong, and the market punishes that when the payback is unclear. For the big spenders, track free cash flow, not only revenue and EPS.",
+          "tags": [
+            "ai_capex",
+            "free_cash_flow",
+            "earnings"
+          ]
+        },
+        {
+          "id": "S-018.P04",
+          "text": "A market dominated by one industry can lead that industry. A breakout in the chip-heavy Korean index can foreshadow a move in global semiconductors.",
+          "tags": [
+            "leading_indicators",
+            "semis",
+            "intermarket"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-019",
+      "kind": "video",
+      "ref": "youtube:ETZx24b1vVY",
+      "title": "התבנית שחוזרת בהרבה מניות — עלייה או קריסה? (The pattern repeating in many stocks: surge or crash?)",
+      "author": "Micha (YouTube channel)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "published": "2026-08-07",
+      "principles": [
+        {
+          "id": "S-019.P01",
+          "text": "When a whole group shows the same setup (a rally, a sharp drop, then a push at the falling trendline), treat it as one decision. The breakout tends to succeed or fail across the group together.",
+          "tags": [
+            "correlation",
+            "technicals",
+            "breakouts",
+            "semis"
+          ]
+        },
+        {
+          "id": "S-019.P02",
+          "text": "A breakout that starts far above its long averages has less fuel. Being stretched above the 150- and 200-day averages raises the odds of a retest first.",
+          "tags": [
+            "overextension",
+            "moving_averages",
+            "breakouts"
+          ]
+        },
+        {
+          "id": "S-019.P03",
+          "text": "A famous short call often lands on stocks that were already technically stretched. The price was the warning before the headline.",
+          "tags": [
+            "short_sellers",
+            "overextension",
+            "risk"
+          ]
+        },
+        {
+          "id": "S-019.P04",
+          "text": "Ahead of scheduled macro events such as jobs data or a central-bank symposium, a stretched index tends to stall. Avoid new short-horizon calls that hinge on the event.",
+          "tags": [
+            "events",
+            "macro",
+            "overextension"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-020",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/little-book-common-sense.md",
+      "title": "The Little Book of Common Sense Investing",
+      "author": "John C. Bogle",
+      "year": 2007,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-020.P01",
+          "text": "Investors as a group earn the gross market return minus what they pay. Cost is the only lever that works every year, so choose funds on expense ratio, never on past performance.",
+          "tags": [
+            "fees",
+            "passive",
+            "indexing"
+          ]
+        },
+        {
+          "id": "S-020.P02",
+          "text": "Long-run stock return is roughly the starting dividend yield plus earnings growth. Changes in the multiple dominate short windows but net to almost nothing over a century.",
+          "tags": [
+            "valuation",
+            "expectations",
+            "compounding"
+          ]
+        },
+        {
+          "id": "S-020.P03",
+          "text": "The gap between fund returns and investor returns comes from timing: buying after gains and selling after losses. A fixed monthly purchase removes the decision.",
+          "tags": [
+            "behavior",
+            "dca",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-020.P04",
+          "text": "Keep bonds near your age as a share of the portfolio, cap foreign stocks at a fifth of equities, and keep any speculative money to a few percent in a separate account.",
+          "tags": [
+            "allocation",
+            "passive",
+            "risk"
+          ]
+        },
+        {
+          "id": "S-020.P05",
+          "text": "Most active funds that existed decades ago are gone. Survivorship hides the losers, so the odds of beating an index over a lifetime are far lower than the live fund tables suggest.",
+          "tags": [
+            "survivorship",
+            "passive",
+            "backtest"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-021",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/random-walk.md",
+      "title": "A Random Walk Down Wall Street",
+      "author": "Burton G. Malkiel",
+      "year": 2015,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-021.P01",
+          "text": "Filter rules, moving-average crossovers and classic chart patterns did not beat buy-and-hold after costs in the academic tests the book reviews. Treat chart rules as discipline, not as a demonstrated edge.",
+          "tags": [
+            "technicals",
+            "backtest",
+            "passive"
+          ]
+        },
+        {
+          "id": "S-021.P02",
+          "text": "New issues underperform the market by several points a year over their first years because the seller chooses the timing. Avoid buying at the offering.",
+          "tags": [
+            "ipo",
+            "valuation",
+            "incentives"
+          ]
+        },
+        {
+          "id": "S-021.P03",
+          "text": "Rebalance to a fixed stock-bond split once a year and keep a cash reserve to add after sharp falls. Lethargy is a strategy.",
+          "tags": [
+            "allocation",
+            "discipline",
+            "rebalancing"
+          ]
+        },
+        {
+          "id": "S-021.P04",
+          "text": "Factor products that tilt to value, size or momentum are active management in cheaper clothing; their edge is valuation-dependent and often eaten by cost and tax.",
+          "tags": [
+            "passive",
+            "fees",
+            "momentum"
+          ]
+        },
+        {
+          "id": "S-021.P05",
+          "text": "The best-documented behavioural error is overtrading: the households that traded most earned several points a year less than the market.",
+          "tags": [
+            "behavior",
+            "turnover",
+            "discipline"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-022",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/intelligent-investor.md",
+      "title": "The Intelligent Investor",
+      "author": "Benjamin Graham (with Jason Zweig)",
+      "year": 2003,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-022.P01",
+          "text": "An investment promises safety of principal and an adequate return on thorough analysis; everything else is speculation. Keep speculation in a separate, capped account that is never topped up.",
+          "tags": [
+            "discipline",
+            "risk",
+            "allocation"
+          ]
+        },
+        {
+          "id": "S-022.P02",
+          "text": "Price is what the market offers each day; value is what the business is worth. Buy only with a margin of safety, a price well below a conservative estimate of value.",
+          "tags": [
+            "valuation",
+            "margin_of_safety",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-022.P03",
+          "text": "The market is a manic partner who quotes prices daily. Use his moods to buy cheap or sell dear; never let them tell you what the business is worth.",
+          "tags": [
+            "behavior",
+            "sentiment",
+            "contrarian"
+          ]
+        },
+        {
+          "id": "S-022.P04",
+          "text": "Hold between a quarter and three quarters in stocks, half as the default, and rebalance when the split drifts by about five points.",
+          "tags": [
+            "allocation",
+            "rebalancing",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-022.P05",
+          "text": "A combined test for a defensive stock: the price-to-earnings ratio times the price-to-book ratio should not exceed about twenty-two and a half, with earnings and dividends steady for years.",
+          "tags": [
+            "valuation",
+            "screening",
+            "quality"
+          ]
+        },
+        {
+          "id": "S-022.P06",
+          "text": "Never sell a sound business only because its price fell, and never buy one only because its price rose. Sell for business reasons.",
+          "tags": [
+            "selling",
+            "discipline",
+            "valuation"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-023",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/one-up-on-wall-street.md",
+      "title": "One Up On Wall Street",
+      "author": "Peter Lynch",
+      "year": 2000,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-023.P01",
+          "text": "Sort every stock into a category first: slow grower, stalwart, fast grower, cyclical, turnaround or asset play. Expected return, holding period and sell rules differ by category.",
+          "tags": [
+            "screening",
+            "quality",
+            "growth"
+          ]
+        },
+        {
+          "id": "S-023.P02",
+          "text": "A price-to-earnings ratio near the growth rate is fair; half of it is attractive; twice it is a warning. Add the dividend yield to growth and divide by the multiple: below one is poor, two is excellent.",
+          "tags": [
+            "valuation",
+            "growth",
+            "screening"
+          ]
+        },
+        {
+          "id": "S-023.P03",
+          "text": "Liking a product only earns a company a place on the research list. The two-minute drill comes next: say why it will work, what must happen, and what could go wrong.",
+          "tags": [
+            "discipline",
+            "screening",
+            "invalidation"
+          ]
+        },
+        {
+          "id": "S-023.P04",
+          "text": "Sell by the story, not the price. A company whose fundamentals worsened while its price rose is a sale; one whose price fell while the story held is not.",
+          "tags": [
+            "selling",
+            "discipline",
+            "valuation"
+          ]
+        },
+        {
+          "id": "S-023.P05",
+          "text": "Stop-losses guarantee you sell a good company ten percent down before it triples. In a long-horizon business-ownership portfolio, the exit is a change in the business.",
+          "tags": [
+            "selling",
+            "stops",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-023.P06",
+          "text": "Market leaders bought at fifty or sixty times earnings lost most of their value even though the businesses kept growing. Price paid still matters for the best companies.",
+          "tags": [
+            "valuation",
+            "overextension",
+            "megacap"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-024",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/five-rules-morningstar.md",
+      "title": "The Five Rules for Successful Stock Investing",
+      "author": "Pat Dorsey (Morningstar)",
+      "year": 2004,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-024.P01",
+          "text": "A ten-minute screen removes most of the universe: no micro-caps or recent listings, a history of operating profit, consistent operating cash flow, return on equity above ten percent in most years, a clean balance sheet, positive free cash flow, a stable share count.",
+          "tags": [
+            "screening",
+            "quality",
+            "cash_flow"
+          ]
+        },
+        {
+          "id": "S-024.P02",
+          "text": "Evidence of a moat in the numbers: free cash flow of at least five percent of sales, net margin above fifteen percent, and return on equity above fifteen percent sustained for five to ten years. Very high returns on equity usually signal leverage, not a moat.",
+          "tags": [
+            "moats",
+            "quality",
+            "screening"
+          ]
+        },
+        {
+          "id": "S-024.P03",
+          "text": "Operating cash flow drifting away from reported earnings is the best early warning of trouble. Never value a business on EBITDA.",
+          "tags": [
+            "cash_flow",
+            "earnings",
+            "invalidation"
+          ]
+        },
+        {
+          "id": "S-024.P04",
+          "text": "Discount free cash flows at nine percent for very stable businesses, about ten and a half for average ones, and thirteen to fifteen for risky ones, with three percent terminal growth. Then demand a discount to that value of twenty to sixty percent depending on the moat.",
+          "tags": [
+            "valuation",
+            "margin_of_safety",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-024.P05",
+          "text": "Write the bear case before buying; it becomes the monitoring checklist. Sell for one of five reasons: an analytical mistake, deteriorating fundamentals, a price far above value, a better use for the money, or a position grown too large.",
+          "tags": [
+            "selling",
+            "invalidation",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-024.P06",
+          "text": "Share-count growth above about two percent a year without acquisitions dilutes owners quietly. Serial one-time charges, serial acquisitions and departing finance chiefs or auditors are red flags.",
+          "tags": [
+            "screening",
+            "earnings",
+            "risk"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-025",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/little-book-beats-market.md",
+      "title": "The Little Book That Beats the Market",
+      "author": "Joel Greenblatt",
+      "year": 2006,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-025.P01",
+          "text": "Rank stocks on return on capital, operating profit over net working capital plus net fixed assets, and on earnings yield, operating profit over enterprise value. Add the ranks and buy the best. Both together beat either alone.",
+          "tags": [
+            "screening",
+            "valuation",
+            "quality"
+          ]
+        },
+        {
+          "id": "S-025.P02",
+          "text": "Exclude financials, utilities and foreign listings from the ranking; their capital structures make the two ratios misleading.",
+          "tags": [
+            "screening",
+            "valuation"
+          ]
+        },
+        {
+          "id": "S-025.P03",
+          "text": "The formula underperforms the market roughly one year in four and several months in most years. It works because most people cannot sit through that, so commit for years, not quarters.",
+          "tags": [
+            "discipline",
+            "behavior",
+            "backtest"
+          ]
+        },
+        {
+          "id": "S-025.P04",
+          "text": "Headline backtest returns came from the smallest universe where real fills are hardest. Shade any published result down several points for cost and crowding; the edge narrowed after it was published.",
+          "tags": [
+            "backtest",
+            "fees",
+            "survivorship"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-026",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/essays-of-warren-buffett.md",
+      "title": "The Essays of Warren Buffett",
+      "author": "Warren Buffett, ed. Lawrence Cunningham",
+      "year": 1998,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-026.P01",
+          "text": "Owner earnings are reported earnings plus non-cash charges minus the capital spending needed to maintain the business. For most companies maintenance capital exceeds depreciation, so reported earnings overstate what owners can take out.",
+          "tags": [
+            "cash_flow",
+            "valuation",
+            "earnings"
+          ]
+        },
+        {
+          "id": "S-026.P02",
+          "text": "Risk is the chance of permanent loss, not price volatility. A stock that moved a lot but was bought far below value is less risky than a stable one bought dear.",
+          "tags": [
+            "risk",
+            "valuation",
+            "behavior"
+          ]
+        },
+        {
+          "id": "S-026.P03",
+          "text": "Four filters before anything else: a business you understand, favourable long-term economics, honest and able management, and an attractive price.",
+          "tags": [
+            "screening",
+            "quality",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-026.P04",
+          "text": "Diversification is protection against ignorance. If you can genuinely verify a business, a few large positions held for years beat many small ones; if you cannot, buy the index.",
+          "tags": [
+            "concentration",
+            "passive",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-026.P05",
+          "text": "Turnover is a tax on owners: trading a whole portfolio each year at normal costs can consume a large share of what the businesses earn.",
+          "tags": [
+            "turnover",
+            "fees",
+            "compounding"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-027",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/common-stocks-uncommon-profits.md",
+      "title": "Common Stocks and Uncommon Profits",
+      "author": "Philip A. Fisher",
+      "year": 2003,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-027.P01",
+          "text": "Judge a business on fifteen points about its products, research, sales organisation, margins, labour relations and management integrity, learned by talking to customers, suppliers and competitors. Integrity is the disqualifier.",
+          "tags": [
+            "screening",
+            "quality",
+            "moats"
+          ]
+        },
+        {
+          "id": "S-027.P02",
+          "text": "There are only three reasons to sell: the original analysis was wrong, the company has deteriorated against those standards, or a clearly better opportunity justifies the switch and the tax. A price rise is not one of them.",
+          "tags": [
+            "selling",
+            "discipline",
+            "quality"
+          ]
+        },
+        {
+          "id": "S-027.P03",
+          "text": "Hold ten to twelve businesses you know well; more than twenty is a sign of not having done the work. Size the largest positions near a fifth of the portfolio only in large, proven growers.",
+          "tags": [
+            "concentration",
+            "position_sizing",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-027.P04",
+          "text": "Economic forecasting is at the alchemy stage. Time purchases around company events such as a new plant or a write-off, not around predictions for the market.",
+          "tags": [
+            "macro",
+            "discipline",
+            "events"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-028",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/warren-buffett-way.md",
+      "title": "The Warren Buffett Way",
+      "author": "Robert G. Hagstrom",
+      "year": 2005,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-028.P01",
+          "text": "Value a business as the discounted stream of owner earnings across several growth scenarios to get a range, then buy only well below the low end. A single point estimate invites false precision.",
+          "tags": [
+            "valuation",
+            "margin_of_safety",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-028.P02",
+          "text": "About fifteen holdings capture most of the statistical benefit of diversification; beyond twenty, each addition adds little but dilutes attention.",
+          "tags": [
+            "concentration",
+            "diversification",
+            "position_sizing"
+          ]
+        },
+        {
+          "id": "S-028.P03",
+          "text": "If you cannot watch a holding fall by half without selling, you should not own stocks in that size. Decide this before the drawdown, not during it.",
+          "tags": [
+            "behavior",
+            "drawdown",
+            "allocation"
+          ]
+        },
+        {
+          "id": "S-028.P04",
+          "text": "Cloning a great investor's holdings without his process underperforms; the author's own fund did exactly that. Copy the method, not the list.",
+          "tags": [
+            "behavior",
+            "discipline",
+            "survivorship"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-029",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/how-to-make-money-in-stocks.md",
+      "title": "How to Make Money in Stocks (CAN SLIM)",
+      "author": "William J. O'Neil",
+      "year": 2009,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-029.P01",
+          "text": "Growth screen: latest-quarter earnings up at least eighteen to twenty-five percent and accelerating, annual earnings up twenty-five percent for three years, return on equity of seventeen percent or more, and relative strength in the top fifth of the market.",
+          "tags": [
+            "screening",
+            "growth",
+            "relative_strength"
+          ]
+        },
+        {
+          "id": "S-029.P02",
+          "text": "Buy the breakout from a sound base, after a prior rise, at least seven weeks of consolidation, on volume forty to fifty percent above average, and never more than a few percent above the pivot.",
+          "tags": [
+            "breakouts",
+            "technicals",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-029.P03",
+          "text": "Three stocks in four follow the general market. Raise cash when the index logs four to six heavy-volume down days in a few weeks, and buy only after a follow-through day confirms a new rally.",
+          "tags": [
+            "regime",
+            "breadth",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-029.P04",
+          "text": "Cut every loss at seven to eight percent below cost without exception; take most profits at twenty to twenty-five percent. These rules are coherent only inside a short-horizon, concentrated system.",
+          "tags": [
+            "stops",
+            "exits",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-029.P05",
+          "text": "The rules come from a winners-only study of past leaders with no control group and no published hit rate. Treat the thresholds as a discipline, not as a tested signal.",
+          "tags": [
+            "backtest",
+            "survivorship",
+            "technicals"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-030",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/dual-momentum.md",
+      "title": "Dual Momentum Investing",
+      "author": "Gary Antonacci",
+      "year": 2015,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-030.P01",
+          "text": "Once a month compare the trailing twelve-month return of domestic stocks, foreign stocks and bills. Hold the stronger stock index if it beat bills, otherwise bonds. One decision a month, about one and a third switches a year.",
+          "tags": [
+            "momentum",
+            "regime",
+            "trend"
+          ]
+        },
+        {
+          "id": "S-030.P02",
+          "text": "Relative momentum raises return; absolute momentum against bills is what cuts drawdowns. In simulation the filter cut the worst loss from more than half to under thirty percent, at the cost of lagging sharp bottoms.",
+          "tags": [
+            "momentum",
+            "drawdown",
+            "backtest"
+          ]
+        },
+        {
+          "id": "S-030.P03",
+          "text": "Apply momentum to broad indexes, not single names: lower cost, less noise, no need to skip the most recent month for short-term reversal.",
+          "tags": [
+            "momentum",
+            "passive",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-030.P04",
+          "text": "The headline record is a simulation over a window with a historic bond bull market and only a few real bear markets. Expect whipsaws in choppy years and pedestrian stretches live.",
+          "tags": [
+            "backtest",
+            "survivorship",
+            "momentum"
+          ]
+        },
+        {
+          "id": "S-030.P05",
+          "text": "Adjust risk by the bond or cash weight around the signal, never by changing the signal.",
+          "tags": [
+            "allocation",
+            "discipline",
+            "momentum"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-031",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/irrational-exuberance.md",
+      "title": "Irrational Exuberance",
+      "author": "Robert J. Shiller",
+      "year": 2016,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-031.P01",
+          "text": "The cyclically adjusted price-to-earnings ratio, real price over ten-year average real earnings, predicts the next decade of real returns: the higher the reading, the weaker the decade. It says nothing about the next quarter.",
+          "tags": [
+            "cape",
+            "valuation",
+            "regime"
+          ]
+        },
+        {
+          "id": "S-031.P02",
+          "text": "Compare the valuation reading with the real bond yield. A high multiple alongside a high real yield is the dangerous pair; a high multiple with near-zero real yields is a weaker warning.",
+          "tags": [
+            "cape",
+            "rates",
+            "regime"
+          ]
+        },
+        {
+          "id": "S-031.P03",
+          "text": "Big headlines rarely cause big moves; the largest crashes came on no news. Late-stage moves are price feedback, with each rise recruiting the next buyer.",
+          "tags": [
+            "sentiment",
+            "bubbles",
+            "behavior"
+          ]
+        },
+        {
+          "id": "S-031.P04",
+          "text": "New-era stories recur with every technology and are the tell of a bubble, not the exception. Audit the story as well as the number.",
+          "tags": [
+            "bubbles",
+            "sentiment",
+            "contrarian"
+          ]
+        },
+        {
+          "id": "S-031.P05",
+          "text": "When valuations are high, respond gradually: lower equity exposure somewhat, raise the saving rate, hedge the exposures you cannot sell. Never exit wholesale.",
+          "tags": [
+            "cape",
+            "allocation",
+            "discipline"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-032",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/fooled-by-randomness.md",
+      "title": "Fooled by Randomness",
+      "author": "Nassim Nicholas Taleb",
+      "year": 2005,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-032.P01",
+          "text": "Among ten thousand managers flipping coins, a few hundred show five straight winning years by chance. Discount any track record by the size of the cohort it came from.",
+          "tags": [
+            "survivorship",
+            "backtest",
+            "behavior"
+          ]
+        },
+        {
+          "id": "S-032.P02",
+          "text": "Checking a good strategy daily shows a loss almost half the time and the pain of losses outweighs gains. Look less often; the signal only appears over years.",
+          "tags": [
+            "behavior",
+            "discipline",
+            "expectations"
+          ]
+        },
+        {
+          "id": "S-032.P03",
+          "text": "Define the point that proves the trade wrong before entering, and honour it. Reclassifying a losing trade as a long-term investment is denial, not patience.",
+          "tags": [
+            "invalidation",
+            "stops",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-032.P04",
+          "text": "Cap the loss in absolute terms, whatever the probability. Never carry a position where one rare event ends you; prefer capped losses and open upside.",
+          "tags": [
+            "risk",
+            "position_sizing",
+            "leverage"
+          ]
+        },
+        {
+          "id": "S-032.P05",
+          "text": "A past that contains no catastrophe does not bound the future. History is a survivorship-biased sample, and things that never happened before do happen.",
+          "tags": [
+            "risk",
+            "survivorship",
+            "macro"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-033",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/popular-delusions.md",
+      "title": "Extraordinary Popular Delusions and the Madness of Crowds",
+      "author": "Charles Mackay",
+      "year": 1841,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-033.P01",
+          "text": "A bubble has a repeatable anatomy: cheap credit, a big unverifiable story, a powerful sponsor, publicised early gains, a boom in speculation infrastructure, copycats and frauds at the top, insiders quietly leaving, a failed rescue rally, then collapse into the lenders.",
+          "tags": [
+            "bubbles",
+            "sentiment",
+            "regime"
+          ]
+        },
+        {
+          "id": "S-033.P02",
+          "text": "When speculation spreads from professionals to everyone, with new ventures launched daily to catch the flow, the mania is near its end.",
+          "tags": [
+            "bubbles",
+            "sentiment",
+            "contrarian"
+          ]
+        },
+        {
+          "id": "S-033.P03",
+          "text": "The official rescue after the first break produces one last rally. Do not mistake it for a new leg up.",
+          "tags": [
+            "bubbles",
+            "bottoms",
+            "discipline"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-034",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/when-genius-failed.md",
+      "title": "When Genius Failed",
+      "author": "Roger Lowenstein",
+      "year": 2001,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-034.P01",
+          "text": "A fund at twenty-five to thirty times leverage lost in a day more than ten times what its model said was possible. Size for a far-worse-than-modelled outcome, not for the model.",
+          "tags": [
+            "leverage",
+            "risk",
+            "position_sizing"
+          ]
+        },
+        {
+          "id": "S-034.P02",
+          "text": "Dozens of supposedly uncorrelated trades were one bet on spreads and liquidity. In a panic correlations go to one; ask what single shock hurts every position at once.",
+          "tags": [
+            "correlation",
+            "diversification",
+            "risk"
+          ]
+        },
+        {
+          "id": "S-034.P03",
+          "text": "Being right eventually does not help if you can be forced out first. Liquidity and the ability to hold are part of the thesis.",
+          "tags": [
+            "risk",
+            "leverage",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-034.P04",
+          "text": "Returning capital to investors right before it was needed turned a bad quarter into ruin. Keep the cushion when the edge is shrinking, not just when it is large.",
+          "tags": [
+            "leverage",
+            "risk",
+            "drawdown"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-035",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/market-wizards.md",
+      "title": "Market Wizards",
+      "author": "Jack D. Schwager",
+      "year": 1989,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-035.P01",
+          "text": "Sixteen traders with incompatible methods converge on the same first rule: risk control. Most cap the risk on any one trade at one percent of equity and tell novices to trade far smaller than they want to.",
+          "tags": [
+            "position_sizing",
+            "risk",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-035.P02",
+          "text": "Place the stop where the trade is proven wrong, then size the position to fit that distance. Never do it the other way round, and never widen a stop.",
+          "tags": [
+            "stops",
+            "position_sizing",
+            "invalidation"
+          ]
+        },
+        {
+          "id": "S-035.P03",
+          "text": "A handful of trades make the year; most are small losses. Cap the left tail and leave the right tail open rather than taking profits early.",
+          "tags": [
+            "exits",
+            "expectancy",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-035.P04",
+          "text": "Correlated positions are one position. Several similar trades at once is one trade several times as large, which caused one wizard's only losing year.",
+          "tags": [
+            "correlation",
+            "risk",
+            "position_sizing"
+          ]
+        },
+        {
+          "id": "S-035.P05",
+          "text": "Cut size after losses and often after big wins, because complacency follows victory. Trade only your own analysis; tips and other people's opinions destroyed several careers.",
+          "tags": [
+            "discipline",
+            "behavior",
+            "risk"
+          ]
+        },
+        {
+          "id": "S-035.P06",
+          "text": "A market that fails to rally on good news is weak; one that shrugs off bad news is strong. Read the reaction, not the news.",
+          "tags": [
+            "sentiment",
+            "expectations",
+            "technicals"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-036",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/stock-market-wizards.md",
+      "title": "Stock Market Wizards",
+      "author": "Jack D. Schwager",
+      "year": 2001,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-036.P01",
+          "text": "Value-plus-catalyst screen: a large market-adjusted decline, a low multiple, price near book, manageable debt, positive cash flow, insider buying, and an identifiable, timeable catalyst. No catalyst, no trade.",
+          "tags": [
+            "screening",
+            "valuation",
+            "events"
+          ]
+        },
+        {
+          "id": "S-036.P02",
+          "text": "Risk control lives either in the stop or in the selection screen. Averaging down is survivable only unlevered, capped as a share of the portfolio, and on a balance-sheet thesis rather than a price thesis.",
+          "tags": [
+            "stops",
+            "risk",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-036.P03",
+          "text": "Short-side red flags double as long-side avoid rules: rising receivables, changed auditors, finance-chief churn, management blaming short sellers, a company abandoning its core business for the hot trend.",
+          "tags": [
+            "screening",
+            "risk",
+            "earnings"
+          ]
+        },
+        {
+          "id": "S-036.P04",
+          "text": "If the catalyst should have moved the stock and did not, get out flat. Time stops are as valid as price stops.",
+          "tags": [
+            "exits",
+            "events",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-036.P05",
+          "text": "Several interviewees were taken at the peak of a bubble and two later faced fraud or insider-trading charges. Treat every published record as a survivor's.",
+          "tags": [
+            "survivorship",
+            "behavior",
+            "risk"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-037",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/evidence-based-ta.md",
+      "title": "Evidence-Based Technical Analysis",
+      "author": "David R. Aronson",
+      "year": 2007,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-037.P01",
+          "text": "Thousands of objective chart rules were tested on the S&P 500 over a quarter century. The best looked excellent on its own but was indistinguishable from luck once the number of rules tried was accounted for.",
+          "tags": [
+            "technicals",
+            "backtest",
+            "survivorship"
+          ]
+        },
+        {
+          "id": "S-037.P02",
+          "text": "The data-miner's mistake is using the best rule's past performance to estimate its future. Correct any search result for how many candidates were examined, on detrended data.",
+          "tags": [
+            "backtest",
+            "discipline",
+            "technicals"
+          ]
+        },
+        {
+          "id": "S-037.P03",
+          "text": "A rule that cannot be written as a program cannot be tested, so it cannot be right or wrong. Subjective chart reading belongs in that category.",
+          "tags": [
+            "technicals",
+            "backtest"
+          ]
+        },
+        {
+          "id": "S-037.P04",
+          "text": "Confirmation bias, the illusion of control and small-sample intuition make hand-picked chart examples feel like proof. They are not evidence of anything.",
+          "tags": [
+            "behavior",
+            "technicals",
+            "backtest"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-038",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/art-science-ta.md",
+      "title": "The Art and Science of Technical Analysis",
+      "author": "Adam Grimes",
+      "year": 2012,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-038.P01",
+          "text": "Draw random lines on a hidden chart, then reveal it: the random levels hold as convincingly as real support and resistance. Treat levels as zones and demand sharp price rejection before trusting one.",
+          "tags": [
+            "technicals",
+            "backtest",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-038.P02",
+          "text": "Volume confirmation and divergence failed as stand-alone signals in testing; strong trends roll over divergences repeatedly. Use them as context, never as the trigger.",
+          "tags": [
+            "technicals",
+            "backtest",
+            "invalidation"
+          ]
+        },
+        {
+          "id": "S-038.P03",
+          "text": "Most breakouts fail. Trade only those preceded by buildup, a tight range at the edge of a bigger range with higher lows into resistance, and never fade the first one.",
+          "tags": [
+            "breakouts",
+            "technicals",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-038.P04",
+          "text": "Keep risk per trade near one percent of equity. With fixed small risk a fifty percent win rate and modest payoff ratio has near-zero chance of ruin; with a quarter of capital per trade ruin is likely.",
+          "tags": [
+            "position_sizing",
+            "risk",
+            "expectancy"
+          ]
+        },
+        {
+          "id": "S-038.P05",
+          "text": "Stops go no closer than about one average bar, typically two to four average true ranges, with a little random variation so they do not sit where everyone else's do.",
+          "tags": [
+            "stops",
+            "risk",
+            "technicals"
+          ]
+        },
+        {
+          "id": "S-038.P06",
+          "text": "Take a quarter to a third of the position off at one unit of risk, down to a third to a half by two units, and trail the rest behind structure.",
+          "tags": [
+            "exits",
+            "position_sizing",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-038.P07",
+          "text": "Expect three to five years of apprenticeship with trivial risk per trade before consistency. If you do not know what your edge is, you do not have one.",
+          "tags": [
+            "discipline",
+            "expectancy",
+            "behavior"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-039",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/ta-financial-markets-murphy.md",
+      "title": "Technical Analysis of the Financial Markets",
+      "author": "John J. Murphy",
+      "year": 1999,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-039.P01",
+          "text": "Work from the top down: monthly and weekly charts set direction, the daily chart times the entry. Oscillators are subordinate to the trend and should be read as overbought only against it.",
+          "tags": [
+            "technicals",
+            "trend",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-039.P02",
+          "text": "Price above a rising fifty-day and two-hundred-day average is the baseline bullish condition; a close below the two-hundred-day is a major warning.",
+          "tags": [
+            "moving_averages",
+            "trend",
+            "technicals"
+          ]
+        },
+        {
+          "id": "S-039.P03",
+          "text": "Breadth deteriorates before the index does. Watch the advance-decline line and the share of stocks above their two-hundred-day average for late-cycle warnings.",
+          "tags": [
+            "breadth",
+            "regime",
+            "technicals"
+          ]
+        },
+        {
+          "id": "S-039.P04",
+          "text": "Relative strength, the ratio of a stock or sector to the index, is the most useful single tool for deciding what to own. Buy what is rising against the market, avoid what is falling.",
+          "tags": [
+            "relative_strength",
+            "screening",
+            "technicals"
+          ]
+        },
+        {
+          "id": "S-039.P05",
+          "text": "Retracements cluster between a third and two thirds of the prior move, with half typical. Measured-move targets are minimums, adjusted to nearby resistance.",
+          "tags": [
+            "technicals",
+            "trend"
+          ]
+        },
+        {
+          "id": "S-039.P06",
+          "text": "Of the system families cited, channel breakouts and moving averages tested best; most of the rest of the catalogue is hand-picked charts. Read the book as a dictionary, not as evidence.",
+          "tags": [
+            "technicals",
+            "backtest",
+            "breakouts"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-040",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/ta-complete-resource.md",
+      "title": "Technical Analysis: The Complete Resource for Financial Market Technicians",
+      "author": "Charles Kirkpatrick and Julie Dahlquist",
+      "year": 2011,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-040.P01",
+          "text": "Relative strength and momentum are the technical ideas with independent academic replication across decades and markets, with a six-month lookback as the sweet spot and the top decile favoured.",
+          "tags": [
+            "relative_strength",
+            "momentum",
+            "backtest"
+          ]
+        },
+        {
+          "id": "S-040.P02",
+          "text": "A backtest with a profit factor above ten or a win rate above seventy percent is suspect. Demand thirty to fifty signals across bull, bear and sideways markets and expect half the profit and twice the drawdown live.",
+          "tags": [
+            "backtest",
+            "expectancy",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-040.P03",
+          "text": "Risk a fixed fraction near two percent per trade, take the smallest of risk-of-ruin, theory-of-runs and optimal-f sizing, and stop trading near a twenty percent account drawdown.",
+          "tags": [
+            "position_sizing",
+            "risk",
+            "drawdown"
+          ]
+        },
+        {
+          "id": "S-040.P04",
+          "text": "Named breadth and sentiment thresholds from before the year two thousand degraded after exchange-traded funds, decimalisation and new instruments. Every published level is a hypothesis to re-verify.",
+          "tags": [
+            "breadth",
+            "sentiment",
+            "backtest"
+          ]
+        },
+        {
+          "id": "S-040.P05",
+          "text": "Diversification across uncorrelated names scales with the square root of their number, but correlations converge on one exactly when they are needed not to.",
+          "tags": [
+            "diversification",
+            "correlation",
+            "risk"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-041",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/encyclopedia-chart-patterns.md",
+      "title": "Encyclopedia of Chart Patterns",
+      "author": "Thomas N. Bulkowski",
+      "year": 2005,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-041.P01",
+          "text": "Pattern height predicts performance better than pattern name: tall formations beat short ones almost universally, and tall plus wide compounds it.",
+          "tags": [
+            "patterns",
+            "technicals",
+            "backtest"
+          ]
+        },
+        {
+          "id": "S-041.P02",
+          "text": "Patterns early in a trend, within a few months of its start, perform far better than late-trend ones, and bullish patterns work mainly in bull markets.",
+          "tags": [
+            "patterns",
+            "trend",
+            "regime"
+          ]
+        },
+        {
+          "id": "S-041.P03",
+          "text": "Enter only on a confirmed close beyond the pattern boundary. If price has run more than about five percent past the ideal entry, skip the trade.",
+          "tags": [
+            "patterns",
+            "breakouts",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-041.P04",
+          "text": "A pullback to the breakout point happens in roughly half to two thirds of cases and reduces subsequent performance; patterns that do not pull back do better.",
+          "tags": [
+            "patterns",
+            "breakouts",
+            "technicals"
+          ]
+        },
+        {
+          "id": "S-041.P05",
+          "text": "Every published average rise is a perfect, cost-free trade from exact breakout to ultimate high. Real results will be lower, and the data stop before the algorithmic era.",
+          "tags": [
+            "backtest",
+            "patterns",
+            "fees"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-042",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/candlestick-charting-explained.md",
+      "title": "Candlestick Charting Explained",
+      "author": "Gregory L. Morris",
+      "year": 2006,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-042.P01",
+          "text": "Across hundreds of thousands of occurrences, most candlestick patterns won between forty and sixty-four percent of the time, clustered near a coin flip, with any edge decaying within about a week.",
+          "tags": [
+            "candlesticks",
+            "backtest",
+            "technicals"
+          ]
+        },
+        {
+          "id": "S-042.P02",
+          "text": "A success rate near fifty percent has no value. Filtering candle signals with a confirming indicator beat trading them alone in testing.",
+          "tags": [
+            "candlesticks",
+            "technicals",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-042.P03",
+          "text": "Headline best patterns with perfect records came from tiny samples. Ignore any statistic from fewer than about a hundred occurrences.",
+          "tags": [
+            "backtest",
+            "candlesticks",
+            "survivorship"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-043",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/trade-your-way.md",
+      "title": "Trade Your Way to Financial Freedom",
+      "author": "Van K. Tharp",
+      "year": 2006,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-043.P01",
+          "text": "Expectancy is win rate times average win minus loss rate times average loss, per unit risked. A ninety percent win rate can have negative expectancy; being right has nothing to do with making money.",
+          "tags": [
+            "expectancy",
+            "discipline",
+            "risk"
+          ]
+        },
+        {
+          "id": "S-043.P02",
+          "text": "Express every outcome as a multiple of the initial risk. One ten-unit winner pays for seven one-unit losers, so a system can be profitable with a win rate well under half.",
+          "tags": [
+            "expectancy",
+            "exits",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-043.P03",
+          "text": "Identical entry signals with only the sizing changed produced results differing by sixty times. Size by a fixed percent of equity against the stop distance or against volatility, never by share count.",
+          "tags": [
+            "position_sizing",
+            "risk",
+            "backtest"
+          ]
+        },
+        {
+          "id": "S-043.P04",
+          "text": "Winners rarely move more than about one average true range against you. Volatility-scaled stops of roughly three times a ten-day true range beat flat percentages.",
+          "tags": [
+            "stops",
+            "risk",
+            "technicals"
+          ]
+        },
+        {
+          "id": "S-043.P05",
+          "text": "Scaling out of winners is reverse position sizing: full size on the worst trades and minimum size on the best. It is defensible only if it is the one way you can hold at all.",
+          "tags": [
+            "exits",
+            "position_sizing",
+            "behavior"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-044",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/trading-in-the-zone.md",
+      "title": "Trading in the Zone",
+      "author": "Mark Douglas",
+      "year": 2000,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-044.P01",
+          "text": "Anything can happen; you do not need to know what happens next; wins and losses are randomly distributed within an edge; an edge is only a probability; every moment is unique.",
+          "tags": [
+            "behavior",
+            "discipline",
+            "expectancy"
+          ]
+        },
+        {
+          "id": "S-044.P02",
+          "text": "Judge an edge on a sample of at least twenty consecutive signals taken without deviation, with size small enough to survive losing all of them. Judge the process, not any single outcome.",
+          "tags": [
+            "discipline",
+            "expectancy",
+            "backtest"
+          ]
+        },
+        {
+          "id": "S-044.P03",
+          "text": "Be rigid in the rules and flexible in expectations. Hope, fear and the need to be right are what turn a competent analyst into a losing trader.",
+          "tags": [
+            "behavior",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-044.P04",
+          "text": "The book assumes you already have an edge and supplies none. Discipline applied to a losing method only loses more consistently.",
+          "tags": [
+            "expectancy",
+            "discipline",
+            "behavior"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-045",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/new-trading-for-a-living.md",
+      "title": "The New Trading for a Living",
+      "author": "Alexander Elder",
+      "year": 2014,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-045.P01",
+          "text": "Never risk more than two percent of equity on one trade; professionals stay well under one. Shares equal dollars at risk divided by risk per share, rounded down.",
+          "tags": [
+            "position_sizing",
+            "risk",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-045.P02",
+          "text": "When closed losses plus open risk reach six percent of the month's starting equity, stop opening trades until next month. Advance slowly, retreat fast.",
+          "tags": [
+            "drawdown",
+            "risk",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-045.P03",
+          "text": "Decide direction on the weekly chart, time the entry on the daily, with about a factor of five between timeframes. Do not take a daily signal against the weekly trend.",
+          "tags": [
+            "trend",
+            "technicals",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-045.P04",
+          "text": "Records predict survival better than any indicator: a trade spreadsheet, an equity curve, and an annotated chart diary re-read two to three months after each exit.",
+          "tags": [
+            "journaling",
+            "discipline",
+            "behavior"
+          ]
+        },
+        {
+          "id": "S-045.P05",
+          "text": "Several once-standard indicators the author relied on stopped working as market structure changed. Treat the survivors with the same suspicion.",
+          "tags": [
+            "technicals",
+            "backtest"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-046",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/way-of-the-turtle.md",
+      "title": "Way of the Turtle",
+      "author": "Curtis Faith",
+      "year": 2007,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-046.P01",
+          "text": "Size positions in volatility units: one unit moves one percent of equity per average true range, the stop sits two ranges away, and caps limit units per market and per correlated group.",
+          "tags": [
+            "position_sizing",
+            "risk",
+            "correlation"
+          ]
+        },
+        {
+          "id": "S-046.P02",
+          "text": "Cut risk mechanically in drawdowns, about a fifth of notional size per ten percent of equity lost. Expect to hand back a fifth to two fifths of open profit on every winner.",
+          "tags": [
+            "drawdown",
+            "exits",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-046.P03",
+          "text": "Fewer than twenty instances of a setup is noise; a hundred is usable. Shift parameters by a fifth to a quarter and see whether the edge survives; if it does not, it was fitted.",
+          "tags": [
+            "backtest",
+            "discipline",
+            "expectancy"
+          ]
+        },
+        {
+          "id": "S-046.P04",
+          "text": "Simple time-based exits beat breakout exits, and adding stops made every metric worse for slow moving-average systems. Test the exit, do not assume it.",
+          "tags": [
+            "exits",
+            "backtest",
+            "stops"
+          ]
+        },
+        {
+          "id": "S-046.P05",
+          "text": "A third to a half of traders given identical written rules failed. Execution and temperament, not the rules, separated the outcomes.",
+          "tags": [
+            "behavior",
+            "discipline",
+            "survivorship"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-047",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/trend-following.md",
+      "title": "Trend Following",
+      "author": "Michael W. Covel",
+      "year": 2009,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-047.P01",
+          "text": "Across a large stock universe over two decades, about two fifths of stocks had negative lifetime returns and roughly a quarter produced all the gains. That is the case for indexing and against averaging down on a single name.",
+          "tags": [
+            "survivorship",
+            "concentration",
+            "passive"
+          ]
+        },
+        {
+          "id": "S-047.P02",
+          "text": "Losers average losers. Never add to a position because its price fell; the entry price is not information.",
+          "tags": [
+            "discipline",
+            "stops",
+            "behavior"
+          ]
+        },
+        {
+          "id": "S-047.P03",
+          "text": "Trend systems win a third to a half of their trades and make the year on a few outliers. Judge them on expectation and drawdown, never on win rate.",
+          "tags": [
+            "expectancy",
+            "trend",
+            "drawdown"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-048",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/encyclopedia-trading-strategies.md",
+      "title": "The Encyclopedia of Trading Strategies",
+      "author": "Jeffrey Katz and Donna McCormick",
+      "year": 2000,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-048.P01",
+          "text": "Tested against random entries, oscillator and cycle rules were no better than chance out of sample, moving-average crossovers were marginally better, and breakouts decayed from profitable to roughly chance as markets grew more efficient.",
+          "tags": [
+            "backtest",
+            "technicals",
+            "breakouts"
+          ]
+        },
+        {
+          "id": "S-048.P02",
+          "text": "A better exit cut the loss on random entries by nearly half with no change to entries. Entries are cheap to get roughly right; exits and risk control decide survival.",
+          "tags": [
+            "exits",
+            "backtest",
+            "expectancy"
+          ]
+        },
+        {
+          "id": "S-048.P03",
+          "text": "Seasonal and weekday calendar effects lost money out of sample. Calendar edges tied to a mechanism such as corporate actions survived better than those tied to a date.",
+          "tags": [
+            "backtest",
+            "events",
+            "technicals"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-049",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/alchemy-of-finance.md",
+      "title": "The Alchemy of Finance",
+      "author": "George Soros",
+      "year": 1994,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-049.P01",
+          "text": "Prices change the fundamentals that supposedly justify them: a rising stock lets a company raise cheap capital and grow into its valuation, until the loop reverses. Watch for the flaw that breaks the loop; that is the exit.",
+          "tags": [
+            "bubbles",
+            "sentiment",
+            "invalidation"
+          ]
+        },
+        {
+          "id": "S-049.P02",
+          "text": "Markets are always biased in one direction. State the hypothesis in writing, say what would falsify it, and do nothing when no reflexive process is visible.",
+          "tags": [
+            "discipline",
+            "journaling",
+            "contrarian"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "S-050",
+      "kind": "book",
+      "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/micha-stocks.md",
+      "title": "Micha from America (Micha.Stocks) video series, reader's notes",
+      "author": "Micha (YouTube channel)",
+      "year": 2026,
+      "added": "2026-10-04",
+      "principles": [
+        {
+          "id": "S-050.P01",
+          "text": "Starting a monthly index purchase at the worst possible moment, an all-time high, still produced positive double-digit cumulative returns over the following years. Timing the first purchase matters less than never stopping.",
+          "tags": [
+            "dca",
+            "passive",
+            "behavior"
+          ]
+        },
+        {
+          "id": "S-050.P02",
+          "text": "Buying a fixed number of whole shares each month performed within a fraction of a point of fractional-share averaging. A platform without fractional shares is no reason to wait.",
+          "tags": [
+            "dca",
+            "passive",
+            "fees"
+          ]
+        },
+        {
+          "id": "S-050.P03",
+          "text": "Reinvest every dividend. Letting payouts sit as cash or spending them opens a large compounding gap over decades.",
+          "tags": [
+            "compounding",
+            "passive",
+            "dca"
+          ]
+        },
+        {
+          "id": "S-050.P04",
+          "text": "For individual growth stocks use a one-hundred-fifty-day simple average on the daily chart, two hundred for mega-caps and indexes. Twenty- and fifty-day averages whipsaw and run up fees.",
+          "tags": [
+            "moving_averages",
+            "trend",
+            "fees"
+          ]
+        },
+        {
+          "id": "S-050.P05",
+          "text": "The average must be flat or rising. A falling long average is a structural downtrend: do not buy however cheap the stock looks.",
+          "tags": [
+            "moving_averages",
+            "trend",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-050.P06",
+          "text": "In an established uptrend, a pullback to within a percent or two of the rising long average is the preferred entry, framed as the lowest-risk point of the trend.",
+          "tags": [
+            "moving_averages",
+            "technicals",
+            "trend"
+          ]
+        },
+        {
+          "id": "S-050.P07",
+          "text": "A daily close below the long average is an immediate exit. Do not become a believer who holds through a break hoping for a rebound.",
+          "tags": [
+            "stops",
+            "exits",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-050.P08",
+          "text": "When price stretches fifteen to twenty percent or more above the long average it is extended: scale out partial profits or trail a stop against mean reversion.",
+          "tags": [
+            "overextension",
+            "exits",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-050.P09",
+          "text": "Accept small controlled losses of a percent or two when a breakout above the average fails and price closes back below it. No system wins every time.",
+          "tags": [
+            "stops",
+            "expectancy",
+            "discipline"
+          ]
+        },
+        {
+          "id": "S-050.P10",
+          "text": "Use limit orders rather than market orders except on the most liquid large caps, and keep tactical trading on a low-commission platform while the index purchase stays automated.",
+          "tags": [
+            "fees",
+            "discipline",
+            "liquidity"
+          ]
+        },
+        {
+          "id": "S-050.P11",
+          "text": "The method replaces valuation with trend and is offered without a backtest, win rate or cost figure. Pair it with a price check and run it only as a capped satellite with a written record.",
+          "tags": [
+            "backtest",
+            "valuation",
+            "discipline"
+          ]
+        }
+      ]
+    }
+  ]
+}

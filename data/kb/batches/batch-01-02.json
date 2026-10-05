@@ -1,0 +1,661 @@
+{
+ "change_note": "Batches 1-2 (reconstructed from the KB for the record).",
+ "sources": [
+  {
+   "kind": "video",
+   "ref": "youtube:y-_gLDdXWkI",
+   "title": "הגרף הזה סימן תחתית 7 פעמים מאז 2020. ועכשיו? (Did this graph signal a bottom?)",
+   "author": "YouTube channel (name not given in batch)",
+   "year": 2026,
+   "published": "2026-10-02",
+   "principles": [
+    [
+     "When only about a fifth of S&P 500 members trade above their 50-day average, breadth is washed out. Since 2020 such readings often sat near bottoms, but real crises pushed it far lower, so treat it as a setup to confirm, not a buy signal.",
+     [
+      "breadth",
+      "bottoms",
+      "regime",
+      "sentiment"
+     ]
+    ],
+    [
+     "An index near its high while most of its members sit below their averages means leadership is narrow. Narrow leadership is fragile and deserves lower conviction on broad bullish calls.",
+     [
+      "breadth",
+      "benchmark",
+      "regime",
+      "conviction"
+     ]
+    ],
+    [
+     "Earnings reactions follow guidance more than the beat. A profit beat paired with weak forward guidance can still sell off hard, so judge a report by what management expects next.",
+     [
+      "earnings",
+      "guidance",
+      "events"
+     ]
+    ],
+    [
+     "A fear reading on a sentiment gauge is context, not a trigger. Lean contrarian only when breadth, trend and sentiment line up, and say which one would prove the call wrong.",
+     [
+      "sentiment",
+      "contrarian",
+      "regime",
+      "invalidation"
+     ]
+    ],
+    [
+     "A sector jump on a geopolitical shock, such as energy on shipping-lane tension, says little about the wider market and tends to fade when the headline does.",
+     [
+      "sectors",
+      "macro",
+      "energy",
+      "events"
+     ]
+    ]
+   ],
+   "observations": [
+    {
+     "as_of": "2026-10-02",
+     "expires": "2026-10-16",
+     "kind": "market",
+     "tickers": [],
+     "text": "About 20% of S&P 500 members were above their 50-day average, the zone that preceded several rebounds since 2020.",
+     "tags": [
+      "breadth",
+      "regime"
+     ]
+    },
+    {
+     "as_of": "2026-10-02",
+     "expires": "2026-10-16",
+     "kind": "market",
+     "tickers": [],
+     "text": "Fear and Greed index read 28 (fear). The S&P 500 printed a doji on 1 Oct and sat about 2% below its all-time high.",
+     "tags": [
+      "sentiment",
+      "regime"
+     ]
+    },
+    {
+     "as_of": "2026-10-02",
+     "expires": "2026-11-02",
+     "kind": "company",
+     "tickers": [
+      "NKE"
+     ],
+     "text": "Nike fell about 5.7% after earnings: profit beat, but weak forward guidance.",
+     "tags": [
+      "earnings",
+      "guidance"
+     ]
+    },
+    {
+     "as_of": "2026-10-02",
+     "expires": "2026-11-02",
+     "kind": "company",
+     "tickers": [
+      "ACN",
+      "MU"
+     ],
+     "text": "Accenture rose about 15% and Micron about 3% after profit beats.",
+     "tags": [
+      "earnings"
+     ]
+    },
+    {
+     "as_of": "2026-10-02",
+     "expires": "2026-10-23",
+     "kind": "company",
+     "tickers": [
+      "GOOG",
+      "GOOGL"
+     ],
+     "text": "Alphabet slipped about 1.7% and was described as still inside a technical triangle.",
+     "tags": [
+      "technicals"
+     ]
+    },
+    {
+     "as_of": "2026-10-02",
+     "expires": "2026-12-02",
+     "kind": "company",
+     "tickers": [
+      "SNPS"
+     ],
+     "text": "Synopsys reportedly signed a chip development agreement with OpenAI.",
+     "tags": [
+      "ai",
+      "news"
+     ]
+    },
+    {
+     "as_of": "2026-10-02",
+     "expires": "2026-11-02",
+     "kind": "company",
+     "tickers": [
+      "RKLB"
+     ],
+     "text": "Rocket Lab reportedly won a 20-launch contract but was meeting resistance at its 150-day average.",
+     "tags": [
+      "news",
+      "technicals"
+     ]
+    },
+    {
+     "as_of": "2026-10-02",
+     "expires": "2026-10-23",
+     "kind": "company",
+     "tickers": [
+      "NU"
+     ],
+     "text": "Nu Holdings denied rumours that it would acquire a UK digital bank.",
+     "tags": [
+      "news"
+     ]
+    },
+    {
+     "as_of": "2026-10-02",
+     "expires": "2026-10-16",
+     "kind": "sector",
+     "tickers": [],
+     "text": "Energy rose about 2% on geopolitical tension around the Strait of Hormuz.",
+     "tags": [
+      "sectors",
+      "energy",
+      "macro"
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "video",
+   "ref": "youtube:KB6w_dca8jU",
+   "title": "אפוקליפסת הריטל? הסוכן של מטא שמאיים על אמזון (Retail apocalypse: Meta's agent threatening Amazon)",
+   "author": "YouTube channel (name not given in batch)",
+   "year": 2026,
+   "published": "2026-09-26",
+   "principles": [
+    [
+     "When software agents do the shopping, sponsored placements lose their audience. Revenue that depends on a human browsing a page is exposed to any shift toward agent-made purchases.",
+     [
+      "ai_agents",
+      "disruption",
+      "advertising"
+     ]
+    ],
+    [
+     "Agent-era screen, part one: does revenue rely on customers forgetting to cancel, or on friction that stops them switching? An agent that audits subscriptions and compares offers removes both.",
+     [
+      "ai_agents",
+      "disruption",
+      "subscriptions",
+      "screening"
+     ]
+    ],
+    [
+     "Agent-era screen, part two: does profit hinge on paid placement, or is the business only a middleman between buyer and seller? Agents route around both and go straight to the supplier.",
+     [
+      "ai_agents",
+      "disruption",
+      "aggregators",
+      "screening"
+     ]
+    ],
+    [
+     "In a platform shift, the rails tend to win: whoever settles the payment or runs the compute gets paid whichever agent wins. Prefer picks-and-shovels exposure while the winner is unclear.",
+     [
+      "ai_agents",
+      "payments",
+      "infrastructure",
+      "winners"
+     ]
+    ],
+    [
+     "Early in a shift, people using AI to help them shop far outnumber agents actually completing purchases. Size a disruption thesis to measured adoption, not to the narrative.",
+     [
+      "ai_agents",
+      "adoption",
+      "discipline",
+      "conviction"
+     ]
+    ]
+   ],
+   "observations": [
+    {
+     "as_of": "2026-09-26",
+     "expires": "2026-12-26",
+     "kind": "theme",
+     "tickers": [
+      "META",
+      "AMZN"
+     ],
+     "text": "Meta's shopping agent was reported at the top of the App Store, with Amazon said to be blocking it. Amazon ad revenue cited at about 68.6B dollars a year.",
+     "tags": [
+      "ai_agents",
+      "advertising"
+     ]
+    },
+    {
+     "as_of": "2026-09-26",
+     "expires": "2027-03-26",
+     "kind": "theme",
+     "tickers": [],
+     "text": "Cited Morgan Stanley figures: about 5% of purchases made by AI agents, 42% of users using AI to help them shop, and a 20% chance agents dominate online retail by 2030.",
+     "tags": [
+      "ai_agents",
+      "adoption"
+     ]
+    },
+    {
+     "as_of": "2026-09-26",
+     "expires": "2027-03-26",
+     "kind": "theme",
+     "tickers": [
+      "META",
+      "V",
+      "MA",
+      "SHOP",
+      "WMT",
+      "PYPL",
+      "INTC",
+      "AMD",
+      "ARM"
+     ],
+     "text": "Named as likely winners of the agent era: Meta, card networks, Shopify, Walmart, PayPal and compute or chip suppliers.",
+     "tags": [
+      "ai_agents",
+      "winners"
+     ]
+    },
+    {
+     "as_of": "2026-09-26",
+     "expires": "2027-03-26",
+     "kind": "theme",
+     "tickers": [
+      "EXPE",
+      "BKNG",
+      "PLNT",
+      "NYT"
+     ],
+     "text": "Named as at risk in the agent era: travel aggregators, subscription gyms, news subscriptions and telecoms.",
+     "tags": [
+      "ai_agents",
+      "disruption"
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "video",
+   "ref": "youtube:KwiGA2_SX2Q",
+   "title": "איך לעשות פי 12 תשואה בבורסה בצורה פשוטה - האם זה אפשרי? (A 12x market-return strategy?)",
+   "author": "YouTube channel (name not given in batch)",
+   "year": 2026,
+   "published": "2026-09-12",
+   "principles": [
+    [
+     "Buying last year's single best performer looks spectacular in a backtest, but the edge comes from a handful of outlier years. Most years are average or worse, so the result is closer to luck than to a repeatable rule.",
+     [
+      "momentum",
+      "backtest",
+      "outliers"
+     ]
+    ],
+    [
+     "A strategy that beats the index in only about three years of five carries heavy psychological cost. Most people abandon it in the losing stretch, which is when it matters.",
+     [
+      "momentum",
+      "behavior",
+      "discipline"
+     ]
+    ],
+    [
+     "Turnover and taxes can erase a backtested edge. Yearly rotation that wins before tax can lose to the index after tax, while buying and holding lets compounding do the work.",
+     [
+      "taxes",
+      "turnover",
+      "compounding"
+     ]
+    ],
+    [
+     "A concentrated bet on one name is a lottery ticket, not a core holding. Judge any momentum rule by its median year, not its best one.",
+     [
+      "concentration",
+      "risk",
+      "momentum",
+      "backtest"
+     ]
+    ]
+   ],
+   "observations": []
+  },
+  {
+   "kind": "video",
+   "ref": "youtube:_UHt0EU-NZM",
+   "title": "7 מניות, אותו גרף בדיוק: סוד מטריד לפני שבוע הדיווחים (7 stocks, the same chart before earnings)",
+   "author": "YouTube channel (name not given in batch)",
+   "year": 2026,
+   "published": "2026-05-04",
+   "principles": [
+    [
+     "When unrelated stocks trace the same chart, a shared factor such as rates, risk appetite or retail flows is driving them, not company news. Treat them as one bet and expect them to break together.",
+     [
+      "correlation",
+      "factors",
+      "risk",
+      "technicals"
+     ]
+    ],
+    [
+     "The options-implied move is the bar for an earnings reaction. A result is only news if the stock moves beyond what was already priced in.",
+     [
+      "earnings",
+      "options",
+      "expectations"
+     ]
+    ],
+    [
+     "A stock that ran hard into its report has front-run the good news. It needs a beat plus better guidance just to hold, and a plain beat can still trigger selling.",
+     [
+      "earnings",
+      "momentum",
+      "expectations"
+     ]
+    ],
+    [
+     "For each name, know the one segment metric the market is watching, such as a customer mix or a payments volume line. That line moves the stock more than the headline beat.",
+     [
+      "earnings",
+      "kpis",
+      "guidance"
+     ]
+    ],
+    [
+     "A breakout from a long range sets a technical target, but the story has to keep up. Without fundamental confirmation, breakouts tend to fail back into the range.",
+     [
+      "technicals",
+      "breakouts",
+      "invalidation"
+     ]
+    ]
+   ],
+   "observations": [
+    {
+     "as_of": "2026-05-04",
+     "expires": "2026-05-18",
+     "kind": "market",
+     "tickers": [
+      "SHOP",
+      "FVRR",
+      "PLTR",
+      "OPEN",
+      "APP",
+      "IONQ"
+     ],
+     "text": "Six unrelated growth names were described as tracing the same chart pattern into earnings.",
+     "tags": [
+      "correlation",
+      "technicals"
+     ]
+    },
+    {
+     "as_of": "2026-05-04",
+     "expires": "2026-05-18",
+     "kind": "company",
+     "tickers": [
+      "AMD",
+      "ARM"
+     ],
+     "text": "AMD and Arm shared a pattern: consolidation, breakout around 1 Apr, then a steep climb. AMD was cited up about 83% since then.",
+     "tags": [
+      "technicals",
+      "momentum"
+     ]
+    },
+    {
+     "as_of": "2026-05-04",
+     "expires": "2026-05-18",
+     "kind": "company",
+     "tickers": [
+      "PLTR"
+     ],
+     "text": "Palantir: implied move about 11%, revenue estimate about 1B dollars (+73% YoY), EPS estimate 0.29. The commercial vs government mix was the key line. A large short by a well-known investor was reported.",
+     "tags": [
+      "earnings",
+      "options"
+     ]
+    },
+    {
+     "as_of": "2026-05-04",
+     "expires": "2026-05-18",
+     "kind": "company",
+     "tickers": [
+      "PYPL"
+     ],
+     "text": "PayPal: implied move about 9.5% after a 31% bounce from February lows. Transaction revenue was cited up about 4% and Venmo about 20%. A turnaround under the new CEO was the test.",
+     "tags": [
+      "earnings",
+      "options"
+     ]
+    },
+    {
+     "as_of": "2026-05-04",
+     "expires": "2026-05-18",
+     "kind": "company",
+     "tickers": [
+      "AMD"
+     ],
+     "text": "AMD: revenue growth estimate about 30%. It had to show AI inference demand in data center and client to justify the premium.",
+     "tags": [
+      "earnings",
+      "ai_capex"
+     ]
+    },
+    {
+     "as_of": "2026-05-04",
+     "expires": "2026-05-18",
+     "kind": "company",
+     "tickers": [
+      "UBER"
+     ],
+     "text": "Uber had broken its downtrend line and retested support. A strong EPS beat and guidance were needed to confirm the reversal.",
+     "tags": [
+      "earnings",
+      "technicals"
+     ]
+    },
+    {
+     "as_of": "2026-05-04",
+     "expires": "2026-05-18",
+     "kind": "company",
+     "tickers": [
+      "ARM"
+     ],
+     "text": "Arm: implied move about 14%, revenue estimate +18%. It had broken out of a long 80 to 190 dollar range, with a technical target near 280.",
+     "tags": [
+      "earnings",
+      "technicals",
+      "options"
+     ]
+    },
+    {
+     "as_of": "2026-05-04",
+     "expires": "2026-05-18",
+     "kind": "company",
+     "tickers": [
+      "APP"
+     ],
+     "text": "AppLovin had dropped about 19% the prior quarter, was forming a possible head-and-shoulders, and needed to clear resistance near 525.",
+     "tags": [
+      "earnings",
+      "technicals"
+     ]
+    },
+    {
+     "as_of": "2026-05-04",
+     "expires": "2026-05-18",
+     "kind": "company",
+     "tickers": [
+      "IONQ"
+     ],
+     "text": "IonQ: loss-making. The market wanted deployment numbers and updates on a reported 9.7B dollar data-center partnership with Microsoft.",
+     "tags": [
+      "earnings",
+      "news"
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "video",
+   "ref": "youtube:Q-yvlzjPij8",
+   "title": "רעידת אדמה: 180 דוחות יזיזו את התיק שלכם (180 earnings reports will move your portfolio)",
+   "author": "YouTube channel (name not given in batch)",
+   "year": 2026,
+   "published": "2026-04-27",
+   "principles": [
+    [
+     "A peak earnings week that also holds a central-bank decision piles up event risk. Avoid new high-conviction calls whose horizon spans that week unless the event is the thesis.",
+     [
+      "events",
+      "earnings",
+      "macro",
+      "conviction"
+     ]
+    ],
+    [
+     "For companies that beat every quarter, a beat is already priced. Only the size of the beat or a change in guidance moves the stock.",
+     [
+      "earnings",
+      "expectations"
+     ]
+    ],
+    [
+     "For mega-cap tech in the AI build-out, capex guidance and cloud growth now move the stock more than EPS. Higher capex can dent near-term EPS without hurting the stock if cloud revenue confirms the spend.",
+     [
+      "ai_capex",
+      "cloud",
+      "earnings",
+      "megacap"
+     ]
+    ],
+    [
+     "A sleepy chart into earnings usually comes with a small implied move. Such names need a new narrative, not a routine beat, to re-rate.",
+     [
+      "earnings",
+      "expectations",
+      "technicals"
+     ]
+    ]
+   ],
+   "observations": [
+    {
+     "as_of": "2026-04-27",
+     "expires": "2026-05-11",
+     "kind": "market",
+     "tickers": [],
+     "text": "About 180 S&P 500 companies (36% of the index) were reporting in one week alongside a Fed rate decision.",
+     "tags": [
+      "events",
+      "earnings",
+      "macro"
+     ]
+    },
+    {
+     "as_of": "2026-04-27",
+     "expires": "2026-05-11",
+     "kind": "company",
+     "tickers": [
+      "HOOD"
+     ],
+     "text": "Robinhood: implied move about 10.6%, revenue above 1B dollars. Crypto vs fiat volumes, net interest revenue and prediction markets were the lines to watch.",
+     "tags": [
+      "earnings",
+      "options"
+     ]
+    },
+    {
+     "as_of": "2026-04-27",
+     "expires": "2026-05-11",
+     "kind": "company",
+     "tickers": [
+      "SOFI"
+     ],
+     "text": "SoFi: implied move about 11.8%, revenue estimate 1.04 to 1.05B dollars, down about 30% YTD with resistance near 19. Galileo platform growth was the doubted segment.",
+     "tags": [
+      "earnings",
+      "options"
+     ]
+    },
+    {
+     "as_of": "2026-04-27",
+     "expires": "2026-05-11",
+     "kind": "company",
+     "tickers": [
+      "GOOG",
+      "GOOGL"
+     ],
+     "text": "Alphabet: implied move about 5.9%, revenue estimate about 91B dollars (+20% YoY), EPS 2.63. Cloud growth, YouTube ads and capex mix (own chips vs Nvidia) were key.",
+     "tags": [
+      "earnings",
+      "ai_capex",
+      "cloud"
+     ]
+    },
+    {
+     "as_of": "2026-04-27",
+     "expires": "2026-05-11",
+     "kind": "company",
+     "tickers": [
+      "MSFT"
+     ],
+     "text": "Microsoft: implied move about 7%, revenue estimate about 81B dollars, chart weak vs peers. Azure growth, paid Copilot adoption and OpenAI terms were the swing factors.",
+     "tags": [
+      "earnings",
+      "cloud"
+     ]
+    },
+    {
+     "as_of": "2026-04-27",
+     "expires": "2026-05-11",
+     "kind": "company",
+     "tickers": [
+      "META"
+     ],
+     "text": "Meta: implied move about 8%, revenue estimate about 55B dollars, EPS 6.71. A workforce cut was rumoured; capex guidance, Llama traction and Reality Labs burn were key.",
+     "tags": [
+      "earnings",
+      "ai_capex"
+     ]
+    },
+    {
+     "as_of": "2026-04-27",
+     "expires": "2026-05-11",
+     "kind": "company",
+     "tickers": [
+      "AMZN"
+     ],
+     "text": "Amazon: implied move about 6%, revenue estimate about 177B dollars, near all-time highs. AWS growth was the driver; retail margins were secondary.",
+     "tags": [
+      "earnings",
+      "cloud"
+     ]
+    },
+    {
+     "as_of": "2026-04-27",
+     "expires": "2026-05-11",
+     "kind": "company",
+     "tickers": [
+      "AAPL"
+     ],
+     "text": "Apple: implied move about 3%, revenue estimate about 109B dollars. Only an on-device AI timeline or news on a reported CEO transition was expected to move it.",
+     "tags": [
+      "earnings",
+      "options"
+     ]
+    }
+   ]
+  }
+ ]
+}

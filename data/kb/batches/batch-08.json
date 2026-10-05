@@ -1,0 +1,821 @@
+{
+ "change_note": "Batch 8: the investing core of a 119-book library (index, value, quality, growth, momentum, bubbles, risk) with citations to its public summaries.",
+ "sources": [
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/little-book-common-sense.md",
+   "title": "The Little Book of Common Sense Investing",
+   "author": "John C. Bogle",
+   "year": 2007,
+   "principles": [
+    [
+     "Investors as a group earn the gross market return minus what they pay. Cost is the only lever that works every year, so choose funds on expense ratio, never on past performance.",
+     [
+      "fees",
+      "passive",
+      "indexing"
+     ]
+    ],
+    [
+     "Long-run stock return is roughly the starting dividend yield plus earnings growth. Changes in the multiple dominate short windows but net to almost nothing over a century.",
+     [
+      "valuation",
+      "expectations",
+      "compounding"
+     ]
+    ],
+    [
+     "The gap between fund returns and investor returns comes from timing: buying after gains and selling after losses. A fixed monthly purchase removes the decision.",
+     [
+      "behavior",
+      "dca",
+      "discipline"
+     ]
+    ],
+    [
+     "Keep bonds near your age as a share of the portfolio, cap foreign stocks at a fifth of equities, and keep any speculative money to a few percent in a separate account.",
+     [
+      "allocation",
+      "passive",
+      "risk"
+     ]
+    ],
+    [
+     "Most active funds that existed decades ago are gone. Survivorship hides the losers, so the odds of beating an index over a lifetime are far lower than the live fund tables suggest.",
+     [
+      "survivorship",
+      "passive",
+      "backtest"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/random-walk.md",
+   "title": "A Random Walk Down Wall Street",
+   "author": "Burton G. Malkiel",
+   "year": 2015,
+   "principles": [
+    [
+     "Filter rules, moving-average crossovers and classic chart patterns did not beat buy-and-hold after costs in the academic tests the book reviews. Treat chart rules as discipline, not as a demonstrated edge.",
+     [
+      "technicals",
+      "backtest",
+      "passive"
+     ]
+    ],
+    [
+     "New issues underperform the market by several points a year over their first years because the seller chooses the timing. Avoid buying at the offering.",
+     [
+      "ipo",
+      "valuation",
+      "incentives"
+     ]
+    ],
+    [
+     "Rebalance to a fixed stock-bond split once a year and keep a cash reserve to add after sharp falls. Lethargy is a strategy.",
+     [
+      "allocation",
+      "discipline",
+      "rebalancing"
+     ]
+    ],
+    [
+     "Factor products that tilt to value, size or momentum are active management in cheaper clothing; their edge is valuation-dependent and often eaten by cost and tax.",
+     [
+      "passive",
+      "fees",
+      "momentum"
+     ]
+    ],
+    [
+     "The best-documented behavioural error is overtrading: the households that traded most earned several points a year less than the market.",
+     [
+      "behavior",
+      "turnover",
+      "discipline"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/intelligent-investor.md",
+   "title": "The Intelligent Investor",
+   "author": "Benjamin Graham (with Jason Zweig)",
+   "year": 2003,
+   "principles": [
+    [
+     "An investment promises safety of principal and an adequate return on thorough analysis; everything else is speculation. Keep speculation in a separate, capped account that is never topped up.",
+     [
+      "discipline",
+      "risk",
+      "allocation"
+     ]
+    ],
+    [
+     "Price is what the market offers each day; value is what the business is worth. Buy only with a margin of safety, a price well below a conservative estimate of value.",
+     [
+      "valuation",
+      "margin_of_safety",
+      "discipline"
+     ]
+    ],
+    [
+     "The market is a manic partner who quotes prices daily. Use his moods to buy cheap or sell dear; never let them tell you what the business is worth.",
+     [
+      "behavior",
+      "sentiment",
+      "contrarian"
+     ]
+    ],
+    [
+     "Hold between a quarter and three quarters in stocks, half as the default, and rebalance when the split drifts by about five points.",
+     [
+      "allocation",
+      "rebalancing",
+      "discipline"
+     ]
+    ],
+    [
+     "A combined test for a defensive stock: the price-to-earnings ratio times the price-to-book ratio should not exceed about twenty-two and a half, with earnings and dividends steady for years.",
+     [
+      "valuation",
+      "screening",
+      "quality"
+     ]
+    ],
+    [
+     "Never sell a sound business only because its price fell, and never buy one only because its price rose. Sell for business reasons.",
+     [
+      "selling",
+      "discipline",
+      "valuation"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/one-up-on-wall-street.md",
+   "title": "One Up On Wall Street",
+   "author": "Peter Lynch",
+   "year": 2000,
+   "principles": [
+    [
+     "Sort every stock into a category first: slow grower, stalwart, fast grower, cyclical, turnaround or asset play. Expected return, holding period and sell rules differ by category.",
+     [
+      "screening",
+      "quality",
+      "growth"
+     ]
+    ],
+    [
+     "A price-to-earnings ratio near the growth rate is fair; half of it is attractive; twice it is a warning. Add the dividend yield to growth and divide by the multiple: below one is poor, two is excellent.",
+     [
+      "valuation",
+      "growth",
+      "screening"
+     ]
+    ],
+    [
+     "Liking a product only earns a company a place on the research list. The two-minute drill comes next: say why it will work, what must happen, and what could go wrong.",
+     [
+      "discipline",
+      "screening",
+      "invalidation"
+     ]
+    ],
+    [
+     "Sell by the story, not the price. A company whose fundamentals worsened while its price rose is a sale; one whose price fell while the story held is not.",
+     [
+      "selling",
+      "discipline",
+      "valuation"
+     ]
+    ],
+    [
+     "Stop-losses guarantee you sell a good company ten percent down before it triples. In a long-horizon business-ownership portfolio, the exit is a change in the business.",
+     [
+      "selling",
+      "stops",
+      "discipline"
+     ]
+    ],
+    [
+     "Market leaders bought at fifty or sixty times earnings lost most of their value even though the businesses kept growing. Price paid still matters for the best companies.",
+     [
+      "valuation",
+      "overextension",
+      "megacap"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/five-rules-morningstar.md",
+   "title": "The Five Rules for Successful Stock Investing",
+   "author": "Pat Dorsey (Morningstar)",
+   "year": 2004,
+   "principles": [
+    [
+     "A ten-minute screen removes most of the universe: no micro-caps or recent listings, a history of operating profit, consistent operating cash flow, return on equity above ten percent in most years, a clean balance sheet, positive free cash flow, a stable share count.",
+     [
+      "screening",
+      "quality",
+      "cash_flow"
+     ]
+    ],
+    [
+     "Evidence of a moat in the numbers: free cash flow of at least five percent of sales, net margin above fifteen percent, and return on equity above fifteen percent sustained for five to ten years. Very high returns on equity usually signal leverage, not a moat.",
+     [
+      "moats",
+      "quality",
+      "screening"
+     ]
+    ],
+    [
+     "Operating cash flow drifting away from reported earnings is the best early warning of trouble. Never value a business on EBITDA.",
+     [
+      "cash_flow",
+      "earnings",
+      "invalidation"
+     ]
+    ],
+    [
+     "Discount free cash flows at nine percent for very stable businesses, about ten and a half for average ones, and thirteen to fifteen for risky ones, with three percent terminal growth. Then demand a discount to that value of twenty to sixty percent depending on the moat.",
+     [
+      "valuation",
+      "margin_of_safety",
+      "discipline"
+     ]
+    ],
+    [
+     "Write the bear case before buying; it becomes the monitoring checklist. Sell for one of five reasons: an analytical mistake, deteriorating fundamentals, a price far above value, a better use for the money, or a position grown too large.",
+     [
+      "selling",
+      "invalidation",
+      "discipline"
+     ]
+    ],
+    [
+     "Share-count growth above about two percent a year without acquisitions dilutes owners quietly. Serial one-time charges, serial acquisitions and departing finance chiefs or auditors are red flags.",
+     [
+      "screening",
+      "earnings",
+      "risk"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/little-book-beats-market.md",
+   "title": "The Little Book That Beats the Market",
+   "author": "Joel Greenblatt",
+   "year": 2006,
+   "principles": [
+    [
+     "Rank stocks on return on capital, operating profit over net working capital plus net fixed assets, and on earnings yield, operating profit over enterprise value. Add the ranks and buy the best. Both together beat either alone.",
+     [
+      "screening",
+      "valuation",
+      "quality"
+     ]
+    ],
+    [
+     "Exclude financials, utilities and foreign listings from the ranking; their capital structures make the two ratios misleading.",
+     [
+      "screening",
+      "valuation"
+     ]
+    ],
+    [
+     "The formula underperforms the market roughly one year in four and several months in most years. It works because most people cannot sit through that, so commit for years, not quarters.",
+     [
+      "discipline",
+      "behavior",
+      "backtest"
+     ]
+    ],
+    [
+     "Headline backtest returns came from the smallest universe where real fills are hardest. Shade any published result down several points for cost and crowding; the edge narrowed after it was published.",
+     [
+      "backtest",
+      "fees",
+      "survivorship"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/essays-of-warren-buffett.md",
+   "title": "The Essays of Warren Buffett",
+   "author": "Warren Buffett, ed. Lawrence Cunningham",
+   "year": 1998,
+   "principles": [
+    [
+     "Owner earnings are reported earnings plus non-cash charges minus the capital spending needed to maintain the business. For most companies maintenance capital exceeds depreciation, so reported earnings overstate what owners can take out.",
+     [
+      "cash_flow",
+      "valuation",
+      "earnings"
+     ]
+    ],
+    [
+     "Risk is the chance of permanent loss, not price volatility. A stock that moved a lot but was bought far below value is less risky than a stable one bought dear.",
+     [
+      "risk",
+      "valuation",
+      "behavior"
+     ]
+    ],
+    [
+     "Four filters before anything else: a business you understand, favourable long-term economics, honest and able management, and an attractive price.",
+     [
+      "screening",
+      "quality",
+      "discipline"
+     ]
+    ],
+    [
+     "Diversification is protection against ignorance. If you can genuinely verify a business, a few large positions held for years beat many small ones; if you cannot, buy the index.",
+     [
+      "concentration",
+      "passive",
+      "discipline"
+     ]
+    ],
+    [
+     "Turnover is a tax on owners: trading a whole portfolio each year at normal costs can consume a large share of what the businesses earn.",
+     [
+      "turnover",
+      "fees",
+      "compounding"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/common-stocks-uncommon-profits.md",
+   "title": "Common Stocks and Uncommon Profits",
+   "author": "Philip A. Fisher",
+   "year": 2003,
+   "principles": [
+    [
+     "Judge a business on fifteen points about its products, research, sales organisation, margins, labour relations and management integrity, learned by talking to customers, suppliers and competitors. Integrity is the disqualifier.",
+     [
+      "screening",
+      "quality",
+      "moats"
+     ]
+    ],
+    [
+     "There are only three reasons to sell: the original analysis was wrong, the company has deteriorated against those standards, or a clearly better opportunity justifies the switch and the tax. A price rise is not one of them.",
+     [
+      "selling",
+      "discipline",
+      "quality"
+     ]
+    ],
+    [
+     "Hold ten to twelve businesses you know well; more than twenty is a sign of not having done the work. Size the largest positions near a fifth of the portfolio only in large, proven growers.",
+     [
+      "concentration",
+      "position_sizing",
+      "discipline"
+     ]
+    ],
+    [
+     "Economic forecasting is at the alchemy stage. Time purchases around company events such as a new plant or a write-off, not around predictions for the market.",
+     [
+      "macro",
+      "discipline",
+      "events"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/warren-buffett-way.md",
+   "title": "The Warren Buffett Way",
+   "author": "Robert G. Hagstrom",
+   "year": 2005,
+   "principles": [
+    [
+     "Value a business as the discounted stream of owner earnings across several growth scenarios to get a range, then buy only well below the low end. A single point estimate invites false precision.",
+     [
+      "valuation",
+      "margin_of_safety",
+      "discipline"
+     ]
+    ],
+    [
+     "About fifteen holdings capture most of the statistical benefit of diversification; beyond twenty, each addition adds little but dilutes attention.",
+     [
+      "concentration",
+      "diversification",
+      "position_sizing"
+     ]
+    ],
+    [
+     "If you cannot watch a holding fall by half without selling, you should not own stocks in that size. Decide this before the drawdown, not during it.",
+     [
+      "behavior",
+      "drawdown",
+      "allocation"
+     ]
+    ],
+    [
+     "Cloning a great investor's holdings without his process underperforms; the author's own fund did exactly that. Copy the method, not the list.",
+     [
+      "behavior",
+      "discipline",
+      "survivorship"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/how-to-make-money-in-stocks.md",
+   "title": "How to Make Money in Stocks (CAN SLIM)",
+   "author": "William J. O'Neil",
+   "year": 2009,
+   "principles": [
+    [
+     "Growth screen: latest-quarter earnings up at least eighteen to twenty-five percent and accelerating, annual earnings up twenty-five percent for three years, return on equity of seventeen percent or more, and relative strength in the top fifth of the market.",
+     [
+      "screening",
+      "growth",
+      "relative_strength"
+     ]
+    ],
+    [
+     "Buy the breakout from a sound base, after a prior rise, at least seven weeks of consolidation, on volume forty to fifty percent above average, and never more than a few percent above the pivot.",
+     [
+      "breakouts",
+      "technicals",
+      "discipline"
+     ]
+    ],
+    [
+     "Three stocks in four follow the general market. Raise cash when the index logs four to six heavy-volume down days in a few weeks, and buy only after a follow-through day confirms a new rally.",
+     [
+      "regime",
+      "breadth",
+      "discipline"
+     ]
+    ],
+    [
+     "Cut every loss at seven to eight percent below cost without exception; take most profits at twenty to twenty-five percent. These rules are coherent only inside a short-horizon, concentrated system.",
+     [
+      "stops",
+      "exits",
+      "discipline"
+     ]
+    ],
+    [
+     "The rules come from a winners-only study of past leaders with no control group and no published hit rate. Treat the thresholds as a discipline, not as a tested signal.",
+     [
+      "backtest",
+      "survivorship",
+      "technicals"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/dual-momentum.md",
+   "title": "Dual Momentum Investing",
+   "author": "Gary Antonacci",
+   "year": 2015,
+   "principles": [
+    [
+     "Once a month compare the trailing twelve-month return of domestic stocks, foreign stocks and bills. Hold the stronger stock index if it beat bills, otherwise bonds. One decision a month, about one and a third switches a year.",
+     [
+      "momentum",
+      "regime",
+      "trend"
+     ]
+    ],
+    [
+     "Relative momentum raises return; absolute momentum against bills is what cuts drawdowns. In simulation the filter cut the worst loss from more than half to under thirty percent, at the cost of lagging sharp bottoms.",
+     [
+      "momentum",
+      "drawdown",
+      "backtest"
+     ]
+    ],
+    [
+     "Apply momentum to broad indexes, not single names: lower cost, less noise, no need to skip the most recent month for short-term reversal.",
+     [
+      "momentum",
+      "passive",
+      "discipline"
+     ]
+    ],
+    [
+     "The headline record is a simulation over a window with a historic bond bull market and only a few real bear markets. Expect whipsaws in choppy years and pedestrian stretches live.",
+     [
+      "backtest",
+      "survivorship",
+      "momentum"
+     ]
+    ],
+    [
+     "Adjust risk by the bond or cash weight around the signal, never by changing the signal.",
+     [
+      "allocation",
+      "discipline",
+      "momentum"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/irrational-exuberance.md",
+   "title": "Irrational Exuberance",
+   "author": "Robert J. Shiller",
+   "year": 2016,
+   "principles": [
+    [
+     "The cyclically adjusted price-to-earnings ratio, real price over ten-year average real earnings, predicts the next decade of real returns: the higher the reading, the weaker the decade. It says nothing about the next quarter.",
+     [
+      "cape",
+      "valuation",
+      "regime"
+     ]
+    ],
+    [
+     "Compare the valuation reading with the real bond yield. A high multiple alongside a high real yield is the dangerous pair; a high multiple with near-zero real yields is a weaker warning.",
+     [
+      "cape",
+      "rates",
+      "regime"
+     ]
+    ],
+    [
+     "Big headlines rarely cause big moves; the largest crashes came on no news. Late-stage moves are price feedback, with each rise recruiting the next buyer.",
+     [
+      "sentiment",
+      "bubbles",
+      "behavior"
+     ]
+    ],
+    [
+     "New-era stories recur with every technology and are the tell of a bubble, not the exception. Audit the story as well as the number.",
+     [
+      "bubbles",
+      "sentiment",
+      "contrarian"
+     ]
+    ],
+    [
+     "When valuations are high, respond gradually: lower equity exposure somewhat, raise the saving rate, hedge the exposures you cannot sell. Never exit wholesale.",
+     [
+      "cape",
+      "allocation",
+      "discipline"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/fooled-by-randomness.md",
+   "title": "Fooled by Randomness",
+   "author": "Nassim Nicholas Taleb",
+   "year": 2005,
+   "principles": [
+    [
+     "Among ten thousand managers flipping coins, a few hundred show five straight winning years by chance. Discount any track record by the size of the cohort it came from.",
+     [
+      "survivorship",
+      "backtest",
+      "behavior"
+     ]
+    ],
+    [
+     "Checking a good strategy daily shows a loss almost half the time and the pain of losses outweighs gains. Look less often; the signal only appears over years.",
+     [
+      "behavior",
+      "discipline",
+      "expectations"
+     ]
+    ],
+    [
+     "Define the point that proves the trade wrong before entering, and honour it. Reclassifying a losing trade as a long-term investment is denial, not patience.",
+     [
+      "invalidation",
+      "stops",
+      "discipline"
+     ]
+    ],
+    [
+     "Cap the loss in absolute terms, whatever the probability. Never carry a position where one rare event ends you; prefer capped losses and open upside.",
+     [
+      "risk",
+      "position_sizing",
+      "leverage"
+     ]
+    ],
+    [
+     "A past that contains no catastrophe does not bound the future. History is a survivorship-biased sample, and things that never happened before do happen.",
+     [
+      "risk",
+      "survivorship",
+      "macro"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/popular-delusions.md",
+   "title": "Extraordinary Popular Delusions and the Madness of Crowds",
+   "author": "Charles Mackay",
+   "year": 1841,
+   "principles": [
+    [
+     "A bubble has a repeatable anatomy: cheap credit, a big unverifiable story, a powerful sponsor, publicised early gains, a boom in speculation infrastructure, copycats and frauds at the top, insiders quietly leaving, a failed rescue rally, then collapse into the lenders.",
+     [
+      "bubbles",
+      "sentiment",
+      "regime"
+     ]
+    ],
+    [
+     "When speculation spreads from professionals to everyone, with new ventures launched daily to catch the flow, the mania is near its end.",
+     [
+      "bubbles",
+      "sentiment",
+      "contrarian"
+     ]
+    ],
+    [
+     "The official rescue after the first break produces one last rally. Do not mistake it for a new leg up.",
+     [
+      "bubbles",
+      "bottoms",
+      "discipline"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/when-genius-failed.md",
+   "title": "When Genius Failed",
+   "author": "Roger Lowenstein",
+   "year": 2001,
+   "principles": [
+    [
+     "A fund at twenty-five to thirty times leverage lost in a day more than ten times what its model said was possible. Size for a far-worse-than-modelled outcome, not for the model.",
+     [
+      "leverage",
+      "risk",
+      "position_sizing"
+     ]
+    ],
+    [
+     "Dozens of supposedly uncorrelated trades were one bet on spreads and liquidity. In a panic correlations go to one; ask what single shock hurts every position at once.",
+     [
+      "correlation",
+      "diversification",
+      "risk"
+     ]
+    ],
+    [
+     "Being right eventually does not help if you can be forced out first. Liquidity and the ability to hold are part of the thesis.",
+     [
+      "risk",
+      "leverage",
+      "discipline"
+     ]
+    ],
+    [
+     "Returning capital to investors right before it was needed turned a bad quarter into ruin. Keep the cushion when the edge is shrinking, not just when it is large.",
+     [
+      "leverage",
+      "risk",
+      "drawdown"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/market-wizards.md",
+   "title": "Market Wizards",
+   "author": "Jack D. Schwager",
+   "year": 1989,
+   "principles": [
+    [
+     "Sixteen traders with incompatible methods converge on the same first rule: risk control. Most cap the risk on any one trade at one percent of equity and tell novices to trade far smaller than they want to.",
+     [
+      "position_sizing",
+      "risk",
+      "discipline"
+     ]
+    ],
+    [
+     "Place the stop where the trade is proven wrong, then size the position to fit that distance. Never do it the other way round, and never widen a stop.",
+     [
+      "stops",
+      "position_sizing",
+      "invalidation"
+     ]
+    ],
+    [
+     "A handful of trades make the year; most are small losses. Cap the left tail and leave the right tail open rather than taking profits early.",
+     [
+      "exits",
+      "expectancy",
+      "discipline"
+     ]
+    ],
+    [
+     "Correlated positions are one position. Several similar trades at once is one trade several times as large, which caused one wizard's only losing year.",
+     [
+      "correlation",
+      "risk",
+      "position_sizing"
+     ]
+    ],
+    [
+     "Cut size after losses and often after big wins, because complacency follows victory. Trade only your own analysis; tips and other people's opinions destroyed several careers.",
+     [
+      "discipline",
+      "behavior",
+      "risk"
+     ]
+    ],
+    [
+     "A market that fails to rally on good news is weak; one that shrugs off bad news is strong. Read the reaction, not the news.",
+     [
+      "sentiment",
+      "expectations",
+      "technicals"
+     ]
+    ]
+   ]
+  },
+  {
+   "kind": "book",
+   "ref": "url:https://github.com/ungaroni/the-whole-shelf/blob/main/summaries/stock-market-wizards.md",
+   "title": "Stock Market Wizards",
+   "author": "Jack D. Schwager",
+   "year": 2001,
+   "principles": [
+    [
+     "Value-plus-catalyst screen: a large market-adjusted decline, a low multiple, price near book, manageable debt, positive cash flow, insider buying, and an identifiable, timeable catalyst. No catalyst, no trade.",
+     [
+      "screening",
+      "valuation",
+      "events"
+     ]
+    ],
+    [
+     "Risk control lives either in the stop or in the selection screen. Averaging down is survivable only unlevered, capped as a share of the portfolio, and on a balance-sheet thesis rather than a price thesis.",
+     [
+      "stops",
+      "risk",
+      "discipline"
+     ]
+    ],
+    [
+     "Short-side red flags double as long-side avoid rules: rising receivables, changed auditors, finance-chief churn, management blaming short sellers, a company abandoning its core business for the hot trend.",
+     [
+      "screening",
+      "risk",
+      "earnings"
+     ]
+    ],
+    [
+     "If the catalyst should have moved the stock and did not, get out flat. Time stops are as valid as price stops.",
+     [
+      "exits",
+      "events",
+      "discipline"
+     ]
+    ],
+    [
+     "Several interviewees were taken at the peak of a bubble and two later faced fraud or insider-trading charges. Treat every published record as a survivor's.",
+     [
+      "survivorship",
+      "behavior",
+      "risk"
+     ]
+    ]
+   ]
+  }
+ ]
+}

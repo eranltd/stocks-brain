@@ -1,0 +1,87 @@
+name: brain
+
+# Records one brain run (M3, routine close_run). The brain (prompts/brain.md) runs in a Claude Code session on the pack
+# built from the published data; its output is passed in here. The Action rebuilds the same pack from the data branch,
+# validates the picks against it (scripts/record_run.py: schema, guardrails, evidence keys, one run per market day),
+# lints, and publishes runs/run.<date>.json to the data branch. Nothing is written if any check fails.
+on:
+  workflow_dispatch:
+    inputs:
+      picks:
+        description: 'Brain output JSON: {"summary": "...", "picks": [...]}'
+        required: true
+        type: string
+      model:
+        description: "Who ran the brain (a generic label, no model IDs)"
+        type: string
+        default: "Claude Code session"
+      minutes:
+        description: "Wall-clock minutes the brain took"
+        type: string
+        default: "0"
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: daily  # shared with the daily run so the two never publish to the data branch at once
+  cancel-in-progress: false
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - id: start
+        run: echo "at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore published data (data branch)
+        id: restore
+        run: echo "base=$(bash scripts/data_branch.sh restore)" >> "$GITHUB_OUTPUT"
+
+      - name: Build the pack from the published data
+        run: python3 scripts/build_pack.py
+
+      - name: Validate and record the run (fails closed)
+        id: close_run
+        env:
+          PICKS: ${{ inputs.picks }}
+          MODEL: ${{ inputs.model }}
+          MINUTES: ${{ inputs.minutes }}
+        run: |
+          printf '%s' "$PICKS" > .cache/picks.json
+          python3 scripts/record_run.py --pack .cache/pack.json --picks .cache/picks.json --model "$MODEL" --minutes "$MINUTES"
+
+      - name: Lint (fails closed)
+        id: lint
+        run: python3 scripts/lint.py
+
+      - name: Record run and publish to the data branch
+        id: commit
+        if: always() && steps.restore.outputs.base != ''
+        env:
+          ROUTINE_CLOSE_RUN: ${{ steps.close_run.outcome }}
+          ROUTINE_LINT: ${{ steps.lint.outcome }}
+        run: |
+          if [ "${{ steps.close_run.outcome }}" != "success" ] || [ "${{ steps.lint.outcome }}" != "success" ]; then
+            bash scripts/data_branch.sh reset "${{ steps.restore.outputs.base }}"
+          fi
+          python3 scripts/ops_log.py --workflow brain --trigger "${{ github.event_name }}" \
+            --started "${{ steps.start.outputs.at }}" --run-id "${{ github.run_id }}" \
+            --url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          git config user.name "stocks-brain-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          out=$(bash scripts/data_branch.sh publish "${{ steps.restore.outputs.base }}" "data: brain run $(date -u +%F)" | tail -1)
+          echo "data branch: $out"
+          if [ "$out" = "published" ]; then echo "changed=true" >> "$GITHUB_OUTPUT"; else echo "changed=false" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Redeploy Pages
+        if: always() && steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pages.yml --ref main

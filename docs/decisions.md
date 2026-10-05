@@ -1,7 +1,7 @@
 ---
-version: 0.7.0
+version: 0.8.0
 updated_at: 2026-10-05
-change_note: Data on its own branch; runs and outcomes publish dates and returns, never prices; first brain pipeline.
+change_note: Brain runs are recorded by an Action (brain.yml), so only Actions write the data branch.
 ---
 # Decision log
 
@@ -20,6 +20,11 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   the numbers are faithful to the source; a cross-check against a second source is still pending.
 
 ## 2026-10-05
+- **Brain runs go through an Action.** The brain runs in a Claude Code session on the pack built from the published
+  data. Its output is passed to the `brain` workflow (manual dispatch), which rebuilds the same pack from the `data`
+  branch, validates the picks against it (`scripts/record_run.py`), lints and publishes the run record to the `data`
+  branch. Only Actions write that branch; nothing is written if a check fails. The scheduled `close_run` routine stays
+  planned until the owner chooses how the model call is paid for (open item above).
 - **Data on its own branch.** Branch protection on `main` (pull requests only) rejected the daily Action's data
   commits, so the tabs fed by daily data stayed empty. Code still goes through pull requests on `main`; everything the
   routines write (`data/`, `runs/`) is published to a `data` branch with full history (never force-pushed), and the

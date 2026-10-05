@@ -251,6 +251,8 @@ class Lint:
             for p in _json_files(kb_dir):
                 if p.name == "outcomes.json":
                     obj = self.schema(p, "outcome.schema.json")
+                    if obj and not obj["sample"] and any("ref_price" in o or "exit_price" in o for o in obj["items"]):
+                        self.err(p, "live outcomes carry raw prices (licence: publish returns only)")
                 elif p.name == "observations.json":
                     obj = self.schema(p, "observations.schema.json")
                     if obj:
@@ -313,6 +315,8 @@ class Lint:
             self.err(path, "ok run with a pack over its token cap (must have failed closed)")
         if run["status"] == "failed" and run["picks"]:
             self.err(path, "failed run must not carry picks")
+        if not run["sample"] and any("ref_price" in item for item in run["picks"]):
+            self.err(path, "live run carries a raw reference price (licence: record the date, publish returns only)")
         if not guard:
             return
         if len(run["picks"]) > guard["max_picks"]:

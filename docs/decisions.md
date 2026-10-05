@@ -1,7 +1,7 @@
 ---
-version: 0.6.0
-updated_at: 2026-10-04
-change_note: Household goal (diverse 4-5 stocks, +20% a year), home page review, portfolio rule v1 and the paper portfolio; first brain dry run; watchlist widened beyond big tech.
+version: 0.7.0
+updated_at: 2026-10-05
+change_note: Data on its own branch; runs and outcomes publish dates and returns, never prices; first brain pipeline.
 ---
 # Decision log
 
@@ -9,7 +9,6 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 
 ## Open items (waiting on the owner)
 - **Author of sources S-001 to S-005**: confirm they are the same channel (Micha) as the later batches.
-- **Reference prices in pick records**: runs and outcomes store single reference and exit closes. This is minor, but revisit at M3: drop them, or keep them as computed returns only.
 - **LLM step (M3)**: run the daily brain as a scheduled Claude Code routine on the owner's subscription (preferred) or through a paid API key.
 - **Paid connectors** (news, X, options data for implied moves): parked until the owner wants to spend.
 - **Satellite size**: `docs/household.md` proposes 10% of savings (2% per slot). The owner sets it.
@@ -19,6 +18,19 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Second price source**: Tiingo's daily returns show unusually low correlations between these names (for example
   AAPL to QQQ about 0.24 over a year). The diagnostic showed our pipeline reproduces the provider's data exactly, so
   the numbers are faithful to the source; a cross-check against a second source is still pending.
+
+## 2026-10-05
+- **Data on its own branch.** Branch protection on `main` (pull requests only) rejected the daily Action's data
+  commits, so the tabs fed by daily data stayed empty. Code still goes through pull requests on `main`; everything the
+  routines write (`data/`, `runs/`) is published to a `data` branch with full history (never force-pushed), and the
+  Pages build overlays it on `main`. No bypass of the protection is needed. To return to direct data commits later, add
+  the Action to the protection bypass list and point `scripts/data_branch.sh` publish back at `main`.
+- **No prices in runs or outcomes.** Run records now store the reference date only; scoring reads both closes from the
+  in-run adjusted series and publishes returns (provider licence). Synthetic samples keep their made-up prices. Lint
+  fails a live run or outcome that carries a price. This closes the open item about reference prices.
+- **The brain's pipeline (M3, run by hand for now).** `scripts/build_pack.py` builds a capped pack of live derived
+  numbers and curated text; `scripts/record_run.py` validates the brain's picks (schema, guardrails, evidence keys) and
+  writes the run. The brain itself is run in a Claude Code session on the owner's subscription until it is scheduled.
 
 ## 2026-10-04
 - **Household goal: a diverse portfolio of 4-5 stocks, +20% a year.** Recorded in settings (`goal`) and house rules.

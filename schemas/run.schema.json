@@ -51,11 +51,11 @@
       "type": "array", "maxItems": 10,
       "items": {
         "type": "object", "additionalProperties": false,
-        "required": ["id", "ref_date", "ref_price", "pick"],
+        "required": ["id", "ref_date", "pick"],
         "properties": {
           "id": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}:[A-Z][A-Z0-9.\\-]{0,9}$"},
           "ref_date": {"$ref": "common.schema.json#/$defs/date"},
-          "ref_price": {"type": "number", "exclusiveMinimum": 0},
+          "ref_price": {"type": "number", "exclusiveMinimum": 0, "description": "Samples only. Live runs record the date; returns come from the adjusted series at scoring time (provider licence: no raw prices)."},
           "pick": {"$ref": "pick.schema.json"}
         }
       }

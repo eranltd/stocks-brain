@@ -68,8 +68,10 @@ def score_outcomes(runs: list[dict], prices_dir: Path, existing: list[dict], st:
             out.append({
                 "pick_id": item["id"], "run_date": run["date"], "ticker": pick["ticker"],
                 "stance": pick["stance"], "conviction": pick["conviction"], "ref_date": item["ref_date"],
-                "ref_price": item["ref_price"], "horizon_days": horizon, "scored_date": bars[j]["date"],
-                "exit_price": bars[j]["close"], "benchmark_symbol": bench, **sc, "methodology_version": method,
+                "horizon_days": horizon, "scored_date": bars[j]["date"],
+                # Prices only in synthetic samples; live outcomes publish returns (provider licence).
+                **({"ref_price": bars[i]["close"], "exit_price": bars[j]["close"]} if run.get("sample") else {}),
+                "benchmark_symbol": bench, **sc, "methodology_version": method,
             })
     return sorted(out, key=lambda o: (o["run_date"], o["ticker"])), waiting
 

@@ -2,7 +2,7 @@
  "version": "1.0.0",
  "updated_at": "2026-10-05",
  "change_note": "Pre-registered rule set 1.0.0: monthly index autopilot and lump sum as the core plan; Five Leaders (three forms) as the testable satellite; v1, random baskets and all-21 as yardsticks; fixed numbers (10 bps, seed 20261005, 17 tries, 182 paper days); planned checks marked not computed.",
- "trader": "We are savers first. Every payday a standing order buys a broad index fund, whatever the news says. We never pause it and never sell the fund in a crash. Money we already have, such as a bonus, goes in all at once. A small stock pot (at most a tenth of our savings, so 2% per stock) opens only after a rule has earned it twice: first on past prices, then on a written paper record kept going forward for at least half a year. The rule we will test is Five Leaders. It holds up to five well-known companies from our list of 21, one per industry, ranked by their rise over the past year (skipping the latest month). A new name must not be more than 8% above its 50-day average and must sit above a rising 200-day average line. On each monthly review day a name leaves if it is below that line or has dropped out of the top ten. Empty slots wait in the index fund. Backtests reset every name to an equal share each month; in our real practice each name gets an equal share when bought, with no top-ups, and winners may drift. What we will NOT do: buy on tips, headlines or the AI's picks; add money to a falling stock; use stop orders or trade between review days; borrow or use options; change a rule after a loss; grow the pot to chase +20%. Real money goes behind a stock rule only if it beat five names drawn by lot from the same list, and the plain index fund, after costs. Nothing has been tested on real prices yet, and nothing here promises any return. If no rule earns it, the whole pot stays in the index fund, and that is a good outcome.",
+ "trader": "We are savers first. Once a month, on the first trading day after pay arrives, a standing order buys a broad index fund (our core), whatever the news. We never pause it and never sell the core in a crash. Money we already have, such as a bonus (a windfall), goes in all at once. Today that is the only real action.\n\nA small stock pot (at most a tenth of our savings, 2% per stock) opens only after a rule passes two checks: first on past prices, then on a written paper record (no real money) kept at least half a year. The pot is a separate holding; only its own parked index money is traded, on review days. The rule we will test is Five Leaders. Each month it ranks our 21 companies by their rise over the past year, ignoring the latest month, and holds up to five, one per sector. A newcomer must be above a rising 200-day average price and not over 8% above its 50-day average. A holding leaves if it falls below the 200-day average or is no longer picked. Empty slots wait in the index fund. Past-price tests reset holdings to equal each month; in real life names start equal, are never topped up, and winners may drift.\n\nWe will NOT: buy on tips, headlines or AI picks; add money to a falling stock; use stop orders or trade between review days; borrow or use options; change a rule after a loss; grow the pot to chase +20% a year. Real money follows a stock rule only if every money condition in the acceptance text is met, including beating random picks and the index fund after costs. Nothing here promises any return. If no rule earns a place, the pot stays in the index fund.",
  "rules": [
   {
    "id": "savings_monthly_autopilot",
@@ -14,7 +14,7 @@
     {
      "name": "every_weeks (live and test)",
      "value": "4 weeks, about monthly",
-     "why": "Monthly is the cadence the library backs (S-020.P03, S-050.P01) and matches a monthly pay date. Evidence: mixed. The test uses 4 weeks, so 13 buys a year against 12 live."
+     "why": "Monthly matches a monthly pay date. The library only describes monthly purchases (S-020.P03, S-050.P01) and never compares cadences, so E01 tests it. Evidence: mixed. A test 'week' is 5 trading days: 4 weeks is about 12.6 buys a year against 12 live."
     },
     {
      "name": "price condition",
@@ -44,7 +44,7 @@
     {
      "name": "horizons and start step",
      "value": "52, 104, 156 weeks; start every 4 weeks",
-     "why": "Fixed by the registry owner before any run. Independent windows are about span divided by horizon."
+     "why": "Fixed before any run. A week is 5 trading days. With about 2,500 daily bars the 52-week row has about 8 independent windows, 104 weeks 4, 156 weeks 2: only the 52-week row can give a verdict."
     },
     {
      "name": "amount",
@@ -58,12 +58,11 @@
     "S-020.P03",
     "S-050.P01",
     "S-050.P02",
-    "S-050.P03",
-    "S-017.P03"
+    "S-050.P03"
    ],
-   "why_included": "It is the core plan and the baseline for all savings arms. It is the easiest rule for a household to keep and it removes the urge to time the market. The evidence is good but comes from a few sources, so it is rated mixed.",
-   "adopt_if": "Adopted from day one, with no paper period. It is only replaced if another arm reaches the engine verdict 'better' against it (at a horizon with at least 8 independent windows) and the other pre-registered checks pass.",
-   "reject_if": "No history test can reject it; its own verdict is 'baseline'. We change it only if pay stops arriving monthly, or the broker's fee per order exceeds the printed break-even fee, and only at the yearly rule review.",
+   "why_included": "It is the core plan and the baseline for all savings arms. It is the easiest rule for a household to keep and it removes the urge to time the market. Support is consistent but thin: one book (S-020.P03) and one video-series note on a single start at a high (S-050.P01). Rated mixed.",
+   "adopt_if": "Adopted from day one, with no paper period; the order starts now and does not wait for the signed plan. A savings arm replaces it only on the engine verdict 'better' (8+ independent windows) AND through rule_change_protocol at the yearly review.",
+   "reject_if": "No history test can reject it; its own verdict is 'baseline'. It changes only at the yearly review, through rule_change_protocol: if pay stops arriving monthly, or the broker's fee per order is above the quarterly arm's printed break-even fee (fewer orders then win).",
    "engine": {
     "kind": "savings_contribute",
     "mode": "stream",
@@ -75,7 +74,7 @@
   {
    "id": "savings_weekly",
    "family": "savings",
-   "name": "Weekly buying: report-only arm",
+   "name": "Weekly buying (comparison only)",
    "plain": "Buy the index fund every week instead of every month. Report-only. We test it to see whether buying more often changes anything. The library says nothing about it. It means many small orders, which can cost more in broker fees.",
    "definition": "Report-only arm. Stream mode: one unit of cash arrives each week and everything on hand is bought every 1 week (about 50 orders a year). Cash waits the least. Cash waiting earns the T-bill fund return. Fill at the next close, no gate. Compared by start date with the 4-week baseline over horizons of 52, 104 and 156 weeks (starts every 4 weeks): median yearly-return gap, share of starts ahead, orders a year, and the break-even fixed fee per order.",
    "params": [
@@ -114,7 +113,7 @@
    "evidence": "untested",
    "library_refs": [],
    "why_included": "It answers the owner's question 'what if we buy every x weeks'. The library is silent on this rhythm, so the data has to speak. It is compared with monthly and cannot replace it by itself.",
-   "adopt_if": "Better than the monthly plan only if the engine says 'better' (median yearly-return gap of 50 bps (0.5 point) or more, and ahead in 80% or more of start dates) at a horizon with at least 8 independent windows, and the broker's real fee per order is below the printed break-even fee. Also required but NOT computed yet: 7 of 9 separate 52-week windows, same sign at 104 and 156 weeks, both data eras.",
+   "adopt_if": "Replaces monthly only if the program says 'better': a median gain of at least 0.5 point a year (50 basis points), ahead in at least 80% of start dates, with at least 8 independent periods; and the broker's real fee per order is under the printed break-even fee. People also check what the program does not yet: same result at 104 and 156 weeks, and in both data eras.",
    "reject_if": "Engine verdict 'worse', 'no_clear_difference' or 'too_few_independent_windows' at every horizon, or the broker fee per order is above the break-even fee. Then monthly stays. No clear difference is a normal, acceptable result, not a failure.",
    "engine": {
     "kind": "savings_contribute",
@@ -126,7 +125,7 @@
   {
    "id": "savings_biweekly",
    "family": "savings",
-   "name": "Every-two-weeks buying: report-only arm",
+   "name": "Every two weeks buying (comparison only)",
    "plain": "Buy the index fund every second week instead of every month. Report-only. It matches a two-week pay cycle. The library says nothing about this rhythm, so it is untested.",
    "definition": "Report-only arm. Stream mode: one unit of cash arrives each week and everything on hand is bought every 2 weeks (about 25 orders a year). Fits a two-weekly pay cycle. Cash waiting earns the T-bill fund return. Fill at the next close, no gate. Compared by start date with the 4-week baseline over horizons of 52, 104 and 156 weeks (starts every 4 weeks): median yearly-return gap, share of starts ahead, orders a year, and the break-even fixed fee per order.",
    "params": [
@@ -165,7 +164,7 @@
    "evidence": "untested",
    "library_refs": [],
    "why_included": "It answers the owner's question 'what if we buy every x weeks'. The library is silent on this rhythm, so the data has to speak. It is compared with monthly and cannot replace it by itself.",
-   "adopt_if": "Better than the monthly plan only if the engine says 'better' (median yearly-return gap of 50 bps (0.5 point) or more, and ahead in 80% or more of start dates) at a horizon with at least 8 independent windows, and the broker's real fee per order is below the printed break-even fee. Also required but NOT computed yet: 7 of 9 separate 52-week windows, same sign at 104 and 156 weeks, both data eras.",
+   "adopt_if": "Replaces monthly only if the program says 'better': a median gain of at least 0.5 point a year (50 basis points), ahead in at least 80% of start dates, with at least 8 independent periods; and the broker's real fee per order is under the printed break-even fee. People also check what the program does not yet: same result at 104 and 156 weeks, and in both data eras.",
    "reject_if": "Engine verdict 'worse', 'no_clear_difference' or 'too_few_independent_windows' at every horizon, or the broker fee per order is above the break-even fee. Then monthly stays. No clear difference is a normal, acceptable result, not a failure.",
    "engine": {
     "kind": "savings_contribute",
@@ -177,7 +176,7 @@
   {
    "id": "savings_quarterly",
    "family": "savings",
-   "name": "Quarterly buying: report-only arm",
+   "name": "Quarterly buying (comparison only)",
    "plain": "Save up three months, then buy the index fund once. Report-only. Fewer orders means less in broker fees, but the cash sits idle for longer. The engine also prints the fee at which this ties with monthly buying.",
    "definition": "Report-only arm. Stream mode: one unit of cash arrives each week and everything on hand is bought every 13 weeks (about 4 orders a year). Cash waits the longest, so the idle-cash cost is largest. The last weeks of cash may still be waiting when a window ends. Cash waiting earns the T-bill fund return. Fill at the next close, no gate. Compared by start date with the 4-week baseline over horizons of 52, 104 and 156 weeks (starts every 4 weeks): median yearly-return gap, share of starts ahead, orders a year, and the break-even fixed fee per order.",
    "params": [
@@ -216,8 +215,8 @@
    "evidence": "untested",
    "library_refs": [],
    "why_included": "It tests the other side of the trade-off: fewer orders, more idle cash. The break-even fee tells the household whether a broker with a high fee per order would favour it. The library is silent, so it stays report-only.",
-   "adopt_if": "Better than the monthly plan only if the engine says 'better' (median yearly-return gap of 50 bps (0.5 point) or more, and ahead in 80% or more of start dates) at a horizon with at least 8 independent windows, and the broker's real fee per order is below the printed break-even fee. Also required but NOT computed yet: 7 of 9 separate 52-week windows, same sign at 104 and 156 weeks, both data eras.",
-   "reject_if": "Engine verdict 'worse', 'no_clear_difference' or 'too_few_independent_windows' at every horizon, or the broker fee per order is above the break-even fee. Then monthly stays. No clear difference is a normal, acceptable result, not a failure.",
+   "adopt_if": "Better than the monthly plan on the engine verdict 'better' (median gain of 50 basis points a year or more, ahead in 80% or more of start dates, 8+ independent periods). Fewer orders is its point: otherwise it wins only if the broker's real fee per order is ABOVE the printed break-even fee.",
+   "reject_if": "Engine verdict 'worse', 'no_clear_difference' or 'too_few_independent_windows' at every horizon, unless the broker's real fee per order is above the printed break-even fee (then fewer orders win and the owner may choose it in writing). Otherwise monthly stays.",
    "engine": {
     "kind": "savings_contribute",
     "mode": "stream",
@@ -226,19 +225,19 @@
    }
   },
   {
-   "id": "pot_lump_sum",
+   "id": "windfall_lump_sum",
    "family": "savings",
-   "name": "Pot already in hand goes in all at once",
+   "name": "Cash windfall goes in all at once",
    "plain": "Money we already have beyond the emergency reserve (a bonus, a sale, a starting balance) goes into the index fund in one purchase. Only money that has not arrived yet is spread over time. The owner may choose otherwise, in writing.",
-   "definition": "A pot is cash on hand beyond the written emergency reserve and beyond the regular monthly savings. It is bought in the core fund in one order at the next close. Test today: windfall mode. 100 units are in hand on day one and all are invested at once (spread of 1 week). Horizons 52, 104 and 156 weeks, start dates every 4 weeks. It is the windfall baseline row, so its verdict word is 'baseline'. No trading cost is charged in this test.",
+   "definition": "A windfall is cash on hand beyond the written emergency reserve and beyond the regular monthly savings. It is bought in the core fund in one order at the next close. Test today: windfall mode. 100 units are in hand on day one and all are invested at once (spread of 1 week). Horizons 52, 104 and 156 weeks, start dates every 4 weeks. It is the windfall baseline row, so its verdict word is 'baseline'. No trading cost is charged in this test.",
    "params": [
     {
      "name": "spread_weeks",
      "value": "1 (one order)",
-     "why": "Historically a lump sum usually beat holding cash for a better entry, though long dry spells happen (S-007.P03). Evidence: mixed."
+     "why": "S-007.P03 says a lump sum beat holding cash for a better entry. It does not test equal weekly staging; that is what the 26 and 52 week arms measure. The default is an inference plus the library's warning against waiting. Evidence: mixed."
     },
     {
-     "name": "what counts as a pot",
+     "name": "what counts as a windfall",
      "value": "cash beyond the emergency reserve and the monthly savings",
      "why": "Money needed soon is not investable. The reserve size is private and not stored in the repo."
     },
@@ -259,7 +258,7 @@
     },
     {
      "name": "owner choice",
-     "value": "staging is allowed if written down before the pot exists",
+     "value": "staging is allowed if written down before the windfall exists",
      "why": "It is recorded as a preference with its printed cost, never as a test result."
     }
    ],
@@ -271,37 +270,38 @@
     "S-007.P03",
     "S-007.P04"
    ],
-   "why_included": "It covers money already in hand, which the monthly plan does not. It has one parameter. The library backs it, but the evidence is rated mixed because dry spells exist and the data here is one rising period.",
-   "adopt_if": "Adopted from day one as the default for any pot. A staged arm replaces it only on the engine verdict 'better' against it, at a horizon with at least 8 independent windows (median gap of 50 bps (0.5 point) or more, ahead in 80% or more of starts).",
-   "reject_if": "No history test can reject it; its verdict is 'baseline'. The owner may still pick staging in writing before the pot exists, for comfort. That is a stated preference, not a finding that staging wins.",
+   "why_included": "It covers money already in hand, which the monthly plan does not. It has one parameter. Support is S-007.P03 (a lump sum beat holding cash for a better entry, from one video) and S-007.P01/P04 on highs; it does not test staging. Rated mixed: dry spells exist and the data here is one rising period.",
+   "adopt_if": "Adopted from day one as the default for any windfall. A staged arm replaces it only on the engine verdict 'better' (8+ independent windows, gain of 50 basis points a year or more, ahead in 80% or more of starts) and through rule_change_protocol.",
+   "reject_if": "No history test can reject it; its verdict is 'baseline'. The owner may still pick staging in writing before the money is invested, for comfort. That is a stated preference, not a finding that staging wins.",
    "engine": {
     "kind": "savings_contribute",
     "mode": "windfall",
     "spread_weeks": 1,
-    "gate": "none"
+    "gate": "none",
+    "baseline": true
    }
   },
   {
-   "id": "pot_spread_26w",
+   "id": "windfall_spread_26w",
    "family": "savings",
-   "name": "Pot spread over 26 weeks: report-only arm",
-   "plain": "Put a pot in the index fund in equal weekly parts over half a year instead of all at once. Report-only. It may feel safer. The test shows what that comfort gave up or gained in the past. It is weakly supported.",
-   "definition": "Report-only arm. The pot is split into 26 equal parts. One part is bought at each weekly step for 26 weeks, each at the next close. The part not yet bought earns the T-bill fund return. Compared by start date with the lump sum over horizons of 52, 104 and 156 weeks (starts every 4 weeks): median multiple gap, median yearly-return gap, share of starts ahead, and the worst moment below the money put in. No trading cost is charged.",
+   "name": "Cash windfall spread over 26 weeks (comparison only)",
+   "plain": "Put a windfall in the index fund in equal weekly parts over half a year instead of all at once. Report-only. It may feel safer. The test shows what that comfort gave up or gained in the past. It is weakly supported.",
+   "definition": "Report-only arm. The windfall is split into 26 equal parts. One part is bought at each weekly step for 26 weeks, each at the next close. The part not yet bought earns the T-bill fund return. Compared by start date with the lump sum over horizons of 52, 104 and 156 weeks (starts every 4 weeks): median multiple gap, median yearly-return gap, share of starts ahead, and the worst moment below the money put in. No trading cost is charged.",
    "params": [
     {
      "name": "spread_weeks",
      "value": "26",
-     "why": "A common staging length (general knowledge, not from the library). The library only speaks of waiting for a better entry (S-007.P03). Evidence: weak."
+     "why": "A common staging length (general knowledge, not from the library). S-007.P03 speaks only of holding cash for a better entry, not of equal weekly staging. Evidence: weak."
     },
     {
      "name": "baseline compared with",
-     "value": "pot_lump_sum (one order)",
-     "why": "Same pot, same fills, same waiting-cash return."
+     "value": "windfall_lump_sum (one order)",
+     "why": "Same windfall, same fills, same waiting-cash return."
     },
     {
      "name": "tranches",
      "value": "equal weekly parts",
-     "why": "1/26 of the pot each week. No price rule, no skipping."
+     "why": "1/26 of the windfall each week. No price rule, no skipping."
     },
     {
      "name": "verdict words",
@@ -322,10 +322,9 @@
    "status": "testable_now",
    "evidence": "weak",
    "library_refs": [
-    "S-007.P02",
     "S-007.P03"
    ],
-   "why_included": "Many households stage a pot out of fear of buying at a high. This arm prices that habit against the lump sum. Report-only, so it cannot change the plan on its own.",
+   "why_included": "Many households stage a windfall out of fear of buying at a high. This arm prices that habit against the lump sum. Report-only, so it cannot change the plan on its own.",
    "adopt_if": "Replaces the lump sum only on the engine verdict 'better' (median yearly-return gap of 50 bps (0.5 point) or more, ahead in 80% or more of starts, at a horizon with at least 8 independent windows). Any staging result is shown as a price of comfort, not as timing skill.",
    "reject_if": "Verdict 'worse', 'no_clear_difference' or 'too_few_independent_windows' at every horizon: the lump sum stays. The owner may still choose staging in writing, knowing its printed cost.",
    "engine": {
@@ -336,26 +335,26 @@
    }
   },
   {
-   "id": "pot_spread_52w",
+   "id": "windfall_spread_52w",
    "family": "savings",
-   "name": "Pot spread over 52 weeks: report-only arm",
-   "plain": "Put a pot in the index fund in equal weekly parts over a year instead of all at once. Report-only. A slower, more cautious version. The test shows what that comfort gave up or gained in the past. It is weakly supported.",
-   "definition": "Report-only arm. The pot is split into 52 equal parts. One part is bought at each weekly step for 52 weeks, each at the next close. The part not yet bought earns the T-bill fund return. Compared by start date with the lump sum over horizons of 52, 104 and 156 weeks (starts every 4 weeks): median multiple gap, median yearly-return gap, share of starts ahead, and the worst moment below the money put in. No trading cost is charged.",
+   "name": "Cash windfall spread over 52 weeks (comparison only)",
+   "plain": "Put a windfall in the index fund in equal weekly parts over a year instead of all at once. Report-only. A slower, more cautious version. The test shows what that comfort gave up or gained in the past. It is weakly supported.",
+   "definition": "Report-only arm. The windfall is split into 52 equal parts. One part is bought at each weekly step for 52 weeks, each at the next close. The part not yet bought earns the T-bill fund return. Compared by start date with the lump sum over horizons of 52, 104 and 156 weeks (starts every 4 weeks): median multiple gap, median yearly-return gap, share of starts ahead, and the worst moment below the money put in. No trading cost is charged.",
    "params": [
     {
      "name": "spread_weeks",
      "value": "52",
-     "why": "A common staging length (general knowledge, not from the library). The library only speaks of waiting for a better entry (S-007.P03). Evidence: weak."
+     "why": "A common staging length (general knowledge, not from the library). S-007.P03 speaks only of holding cash for a better entry, not of equal weekly staging. Evidence: weak."
     },
     {
      "name": "baseline compared with",
-     "value": "pot_lump_sum (one order)",
-     "why": "Same pot, same fills, same waiting-cash return."
+     "value": "windfall_lump_sum (one order)",
+     "why": "Same windfall, same fills, same waiting-cash return."
     },
     {
      "name": "tranches",
      "value": "equal weekly parts",
-     "why": "1/52 of the pot each week. No price rule, no skipping."
+     "why": "1/52 of the windfall each week. No price rule, no skipping."
     },
     {
      "name": "verdict words",
@@ -376,7 +375,6 @@
    "status": "testable_now",
    "evidence": "weak",
    "library_refs": [
-    "S-007.P02",
     "S-007.P03"
    ],
    "why_included": "It is the slower staging option. It shows how the cost of comfort grows with the length of waiting. Report-only, so it cannot change the plan on its own.",
@@ -392,26 +390,26 @@
   {
    "id": "five_leaders",
    "family": "entry",
-   "name": "Five Leaders (Arm M2): basic version plus the 200-day line",
+   "name": "Five Leaders: main version, with the 200-day trend check",
    "status": "testable_now",
    "evidence": "weak",
-   "plain": "The basic version plus a long-term trend check at each monthly review. A new name must be above its 200-day average, and that average must be rising. A held name leaves if it closes below it. The money waits in the index fund. Untested.",
-   "definition": "Everything in the basic version (same ranking, top-10 keep, stretch veto, 1 per sector, 5 equal slots reset at each review, 10 bps, fills at the next close). Added, at the monthly review only: a NEW name needs its close above its 200-day average AND that average higher than it was 21 trading days earlier. A HELD name leaves if its close is below its 200-day average on review day or it is no longer in the top 10. The slot goes to the next allowed name, else stays in the core fund. Never checked daily; no stop orders between reviews. This is the 'Five Leaders' satellite.",
+   "plain": "Each month, rank our 21 companies by their rise over the past year (skipping the latest month); hold up to 5, one per sector. A newcomer must be above a rising 200-day average price. A holding goes if it is below that average or out of the top 10, unless it still qualifies as a newcomer and a slot is free.",
+   "definition": "Everything in the basic version (same ranking, top-10 retention, stretch veto, 1 per sector, 5 slots reset to equal at each review, 10 bps, next-close fills, split- and dividend-adjusted closes). Added, at the monthly review only: a NEW name needs its close above its 200-day average AND that average higher than 21 trading days earlier. A HELD name is kept only while it ranks in the top 10 and its close is above its 200-day average. A released name can be picked again as a new name if it passes the new-name tests and a slot is free after the better-ranked names; otherwise the slot goes to the next allowed name, else the index fund. Never checked daily; no stop orders between reviews. This is the 'Five Leaders' satellite.",
    "params": [
     {
      "name": "long average",
      "value": "200 trading days, simple",
-     "why": "The library gives 200 for large stocks and indexes (S-050.P04). Not tuned. 160 and 250 days are planned as neighbour checks, not computed yet. Evidence weak."
+     "why": "S-050.P04 gives 200 days for mega-caps and indexes but 150 for individual growth stocks. The 21 names mix both, so 200 is one fixed choice, not tuned. 150, 160 and 250 days are planned neighbour checks (E06), not computed yet. Evidence weak."
     },
     {
      "name": "rising line (entry only)",
      "value": "average today above its value 21 trading days ago",
-     "why": "The library says the average must be flat or rising (S-050.P05) but gives no number. 21 days is one review step. Evidence weak."
+     "why": "S-050.P05 says the average must be flat or rising and gives no number. We require it strictly higher than 21 trading days ago (21 = one review step), stricter than flat. House choice, not tuned. Evidence weak."
     },
     {
      "name": "exit check",
      "value": "review day only; close below the 200-day average",
-     "why": "The library's source says to exit on any daily close below it (S-050.P07) but offers no backtest (S-050.P11). A daily stop would add trades, and stops made slow systems worse (S-046.P04). Evidence weak."
+     "why": "The library source says exit on any daily close below the long average (S-050.P07) but offers no backtest (S-050.P11). We deliberately deviate: review day only, a house convention (no trading between reviews), so a break can be held up to a month. S-046.P04 is about added stops. Evidence weak."
     },
     {
      "name": "proceeds",
@@ -427,6 +425,11 @@
      "name": "tries",
      "value": "1 of the 17 counted",
      "why": "Adjusted p = p times 17, the same bar as the basic version."
+    },
+    {
+     "name": "provenance of the numbers",
+     "value": "200 days and 8% echo the site's setup checks",
+     "why": "The site's setup checks, whose real-price base rates were published before this registry, use similar numbers. No result of this rule had been seen, but the settings are not clean of that history."
     }
    ],
    "library_refs": [
@@ -434,14 +437,11 @@
     "S-050.P05",
     "S-050.P07",
     "S-050.P11",
-    "S-039.P02",
-    "S-046.P04",
-    "S-030.P02",
-    "S-040.P01"
+    "S-046.P04"
    ],
    "why_included": "This is the satellite the household wants to run. The 200-day line is the written test of whether avoiding downtrends helps. The source for it offers no backtest, so the evidence is weak.",
-   "adopt_if": "Verdict passes_history: adjusted p <= 0.05 (17 tries), at least the 60th percentile in both halves, deepest drop no more than 15 pts worse than the core, turnover <= 200% a year. Today the engine compares it only with its own random baskets; the paired with-and-without test of the 200-day line is not computed yet. Then at least 182 paper days before small money.",
-   "reject_if": "Verdict rejected (under the 50th percentile of the random baskets). If the basic version passes_history and this one does not, the 200-day line is dropped and the basic version kept. Turnover above 200% a year or a deepest drop 15 pts worse than the core blocks passes_history.",
+   "adopt_if": "Verdict passes_history: adjusted p <= 0.05 (17 tries), 60th percentile or better in both halves, deepest drop within 15 pts of the core, turnover <= 200%. The paired with-and-without 200-day test is not computed yet. Money needs every condition in the acceptance text (a first screen only: passes_history opens no money).",
+   "reject_if": "Verdict rejected (under the 50th percentile of the random baskets). If only the basic version passes_history, the basic version is used (E05 and the acceptance text decide any other mix). Turnover above 200% or a drop 15+ pts worse than the core blocks passes_history.",
    "engine": {
     "kind": "satellite_select",
     "slots": 5,
@@ -477,16 +477,16 @@
   {
    "id": "five_leaders_m1",
    "family": "entry",
-   "name": "Five Leaders, basic version (Arm M1)",
+   "name": "Five Leaders: basic version, no trend check",
    "status": "testable_now",
-   "evidence": "mixed",
-   "plain": "Each month, rank the watchlist by how much each company rose over the past year, ignoring the latest month. Hold up to 5, one per industry, skipping any that ran up too fast lately. Keep a holding while it stays in the top 10. Untested on real prices.",
-   "definition": "Decided at the close of the first trading day of each month, using closes up to that day; filled at the next close; 10 bps per unit of weight traded. Only names with 253 trading days of history are eligible. Rank: close 21 trading days ago divided by close 252 days ago, measured against the benchmark (same order as plain excess return). A held name stays while its rank is 10 or better among eligible names. A new name must not be stretched: its close is under 8% above its 50-day average. At most 1 name per sector. 5 slots, each 1/5 of the sleeve, weights reset to equal at every review. No correlation cap, no 200-day line, no daily stops. Unfilled slots stay in the core index fund.",
+   "evidence": "weak",
+   "plain": "Each month, rank our 21 companies by their rise over the past year, skipping the latest month. Hold up to 5, one per sector, and skip any that jumped too far above their recent trend. A holding stays while it is in the top 10 of the 21. No trend check.",
+   "definition": "Decided at the close of the first trading day of each month, using closes up to that day (split- and dividend-adjusted); filled at the next close; 10 bps per unit of weight traded. Only names with 253 trading days of unbroken history are eligible. Rank: close 21 trading days ago divided by close 252 days ago (same order as excess return over any benchmark). A held name keeps priority while it ranks in the top 10 of the eligible names; a released name can be picked again like a new name if a slot is free. A new name must not be stretched: its close is under 8% above its 50-day average. At most 1 name per sector. 5 slots, each 1/5 of the stock pot, reset to equal at every review. No correlation cap, no 200-day line, no daily stops. Unfilled slots stay in the index fund.",
    "params": [
     {
      "name": "strength measure",
      "value": "close 21 days ago / close 252 days ago",
-     "why": "The library favours relative strength over about 6 to 12 months (S-040.P01, S-030.P01) and implies the skip of the latest month for single names (S-030.P03). The exact 12-1 form is not tuned. Evidence mixed."
+     "why": "The library favours relative strength over about 6 months (S-040.P01) and 12-month index returns (S-030.P01). S-030.P03 says apply momentum to broad indexes, NOT single names, so a 21-name stock version goes beyond the library. The 12-1 form and the skip are house choices, untested. Evidence weak."
     },
     {
      "name": "slots and sizing",
@@ -501,7 +501,7 @@
     {
      "name": "stretch veto",
      "value": "new names only; close under 8% above the 50-day",
-     "why": "House 'never chase' rule. Evidence weak: the library has no tested number. Never sells a held name."
+     "why": "House 'never chase' rule. The library has no tested number: S-050.P08 calls 15 to 20% above the long average extended (a scale-out rule, untested) and S-010.P01 is about an index, not a stock. S-050.P04 distrusts 50-day averages as signals. Evidence weak."
     },
     {
      "name": "sector cap",
@@ -516,7 +516,12 @@
     {
      "name": "tries",
      "value": "1 of the 17 counted",
-     "why": "Adjusted p = p times 17. Needs a beat of about the 99.7th percentile of the random baskets."
+     "why": "Needs adjusted p <= 0.05: at most 4 of 2000 random baskets at or above it (about the 99.8th percentile)."
+    },
+    {
+     "name": "provenance of the numbers",
+     "value": "8% and the 50-day line echo the site's setup checks",
+     "why": "The site's setup checks, whose real-price base rates were published before this registry, use similar numbers. No result of this rule had been seen, but the settings are not clean of that history."
     }
    ],
    "library_refs": [
@@ -529,11 +534,13 @@
     "S-035.P04",
     "S-014.P03",
     "S-010.P01",
-    "S-032.P02"
+    "S-032.P02",
+    "S-050.P04",
+    "S-050.P08"
    ],
-   "why_included": "The plain version of the idea: buy the strongest names, one per industry, do not chase. It is the base that the 200-day line is added to, so we can see what that line changes.",
-   "adopt_if": "Verdict passes_history: adjusted p <= 0.05 against the random baskets (17 tries), at least the 60th percentile in both halves of the history, deepest drop no more than 15 pts worse than the core, turnover <= 200% a year. That only opens the Paper stage; no money moves on history, and the owner decides sizes.",
-   "reject_if": "Verdict rejected: beats under the 50th percentile of the random baskets. Turnover above 200% a year or a deepest drop more than 15 pts worse than the core stops it reading passes_history (it reads candidate or inconclusive), and it cannot carry money.",
+   "why_included": "The plain version of the idea: buy the strongest names, one per sector, do not chase. It is the base that the 200-day line is added to, so we can see what that line changes.",
+   "adopt_if": "Verdict passes_history: adjusted p <= 0.05 against the random baskets (17 tries), 60th percentile or better in both halves, deepest drop within 15 pts of the core, turnover <= 200%. Money needs every condition in the acceptance text (a first screen only: passes_history opens no money).",
+   "reject_if": "Verdict rejected: beats under the 50th percentile of the random baskets. Turnover above 200% a year or a deepest drop more than 15 pts worse than the core stops it reading passes_history, and it cannot carry money.",
    "engine": {
     "kind": "satellite_select",
     "slots": 5,
@@ -558,11 +565,11 @@
   {
    "id": "five_leaders_quarterly",
    "family": "entry",
-   "name": "Five Leaders, reviewed every three months",
+   "name": "Five Leaders: reviewed every three months",
    "status": "testable_now",
    "evidence": "untested",
    "plain": "The same as Five Leaders, but we only look in January, April, July and October. The aim is fewer trades and less temptation to tinker. We do not know yet whether it helps or hurts.",
-   "definition": "The same as Five Leaders with the 200-day line (ranking, top-10 keep, stretch veto, 1 per sector, 5 equal slots, 200-day entry and exit checks, 10 bps, fills at the next close), but decided only at the close of the first trading day of January, April, July and October, using closes up to that day. Between reviews nothing is bought or sold. Names still need 253 trading days of history. Unfilled slots stay in the core index fund. The random baskets are decided on the same quarterly days.",
+   "definition": "The same as Five Leaders with the 200-day line (ranking, top-10 retention, stretch veto, 1 per sector, 5 equal slots, 200-day entry and exit checks, 10 bps, next-close fills), but decided at the close of the first trading day of January, April, July and October, and once on the first test day (whatever its month), using closes up to that day. Between reviews nothing is bought or sold. Names still need 253 trading days of unbroken history. Unfilled slots stay in the index fund. The random baskets are decided on the same days.",
    "params": [
     {
      "name": "review months",
@@ -587,13 +594,11 @@
    ],
    "library_refs": [
     "S-021.P05",
-    "S-026.P05",
-    "S-032.P02",
-    "S-021.P03"
+    "S-026.P05"
    ],
    "why_included": "Fewer looks may mean fewer trades and more patience for two non-experts. Costing it as a counted arm shows what a slower calendar gives up.",
-   "adopt_if": "Verdict passes_history on its own (adjusted p <= 0.05 with 17 tries, at least the 60th percentile in both halves, deepest drop within 15 pts of the core, turnover <= 200%). It is preferred over monthly only if it also passes and its turnover is lower. Both are read side by side; a formal head-to-head test is not computed yet.",
-   "reject_if": "Verdict rejected (under the 50th percentile of the random baskets), or anything short of passes_history while monthly Five Leaders passes: then monthly stays the plan. No money moves on history.",
+   "adopt_if": "Verdict passes_history like the others. Chosen over the monthly version only by the E05 rule: it also passes, its percentile is within 10 points of monthly and its turnover is at most 60% of monthly. Paper only, no money.",
+   "reject_if": "Verdict rejected (under the 50th percentile of its own random baskets), or it fails the E05 comparison with the monthly version: then monthly stays.",
    "engine": {
     "kind": "satellite_select",
     "slots": 5,
@@ -659,7 +664,7 @@
     {
      "name": "sizing",
      "value": "equal, reset every month",
-     "why": "As implemented. Recorded turnover is 419.6% a year counting buys and sells (data/market/longrun.json), about 210% of the sleeve replaced a year, the basis of the 200% limit."
+     "why": "As implemented. Recorded turnover is 419.6% a year counting buys and sells (data/market/longrun.json: same-close fills, shorter window), about 210% of the pot replaced; the engine prints its own figure on the full history."
     },
     {
      "name": "highest verdict allowed",
@@ -673,14 +678,11 @@
     }
    ],
    "library_refs": [
-    "S-040.P01",
-    "S-010.P01",
-    "S-021.P05",
-    "S-026.P05"
+    "S-010.P01"
    ],
    "why_included": "Every new rule must be compared with the rule already running. Its history and its setup-check gate were seen before this registry, so they count as spent tries, not as clean evidence.",
-   "adopt_if": "Never from history alone: capped at candidate even if the engine prints passes_history. It could carry money only through its forward paper record (data/portfolio/paper.json, never edited): at least 182 paper days and the same bars as any satellite (adjusted p <= 0.05, turnover <= 200% a year, deepest drop within 15 pts of the core).",
-   "reject_if": "Engine verdict rejected (beats under the 50th percentile of the random baskets). Also it cannot carry money while turnover is above 200% a year: at about 210% replaced a year (419.6% counting buys and sells) it sits just over the limit as it stands, and a lower-turnover version would be a v2 with a new record.",
+   "adopt_if": "Never from history alone: capped at candidate, and a candidate has no plan role and no money. It can move up only by the candidate route: at least 24 months of registry forward record (data/portfolio/paper_rules.json, next-close fills), forward percentile 80 or more, 100% on-time orders, and the turnover and drop limits still met. The older paper.json uses same-close fills and does not count.",
+   "reject_if": "Engine verdict rejected (under the 50th percentile). passes_history is also blocked while turnover is above 200% of the pot replaced a year; site records put v1 near 210% on that basis (419.6% counting buys and sells), so the engine's own figure decides. A lower-turnover version would be a v2 with a new record.",
    "engine": {
     "kind": "satellite_select",
     "slots": 5,
@@ -697,18 +699,18 @@
    "name": "Equal slots at purchase, no top-ups, winners drift",
    "status": "process_only",
    "evidence": "mixed",
-   "plain": "Each company we buy gets one equal slot, about 2% of savings. After that we leave it alone: nothing is added to a winner or a loser, and winners can grow. Empty slots wait in the index fund. People follow this by hand; the engine does not test it yet.",
-   "definition": "Household practice: when a name is bought it gets 1/5 of the stock pot, taken from the part parked in the index fund. After that it is never topped up and never averaged down, and its weight drifts. A single name that grows past 25% of the pot is trimmed back to 20% at a review. Backtests do NOT do this: the engine resets every slot to equal at each review, which sells winners and adds to laggards and counts that trading as turnover. The drift arm (E04) is reserved and needs engine work, so this rule is process_only until then and no result checks it.",
+   "plain": "Each company we buy gets one equal slot, about 2% of savings. We never add to a winner or a loser. A winner may grow, but if one name passes a quarter of the pot we trim it back to a fifth at the next review. By hand; no test covers it yet.",
+   "definition": "Household practice: when a name is bought it gets 1/5 of the stock pot, paid for from the pot's own parked index units (or the proceeds of the name it replaces). After that it is never topped up and never averaged down, and its weight drifts. A single name that grows past 25% of the pot is trimmed back to 20% at a review. Backtests do NOT do this: the engine resets every slot to equal at each review, which sells winners, adds to laggards and counts that trading as turnover. The drift arm (E04) is reserved and needs engine work, so this rule is process_only until then and no result checks it.",
    "params": [
     {
      "name": "slots",
      "value": "5 slots; 1/5 of the pot each (about 2% of savings at a 10% pot)",
-     "why": "House goal. Losing one slot entirely costs about 2% of savings (S-045.P01, S-040.P03). Evidence mixed."
+     "why": "House goal. A total loss of one slot costs about 2% of savings, the ceiling in S-045.P01 and S-040.P03 (most traders stay at 1% or less, S-035.P01), though those assume a stop. About 15 names capture diversification (S-028.P02); 5 is concentrated. Evidence mixed."
     },
     {
      "name": "top-ups",
      "value": "never",
-     "why": "Adding to a fallen name is not information (S-047.P02). Averaging down is only survivable on a business thesis (S-036.P02)."
+     "why": "Adding to a fallen name is not information (S-047.P02). S-036.P02 allows averaging down only when unlevered, capped and on a business thesis; we never do it."
     },
     {
      "name": "drift",
@@ -718,7 +720,7 @@
     {
      "name": "trim",
      "value": "above 25% of the pot, back to 20%, at a review",
-     "why": "A name grown too large is a valid reason to sell (S-024.P05). The 25% line is a convention. Not run in any test."
+     "why": "A name grown too large is a valid reason to sell (S-024.P05). The 25% line is a convention. S-043.P05 warns that trimming winners is reverse sizing, allowed only if it is the one way you can hold. Not run in any test."
     },
     {
      "name": "backtest sizing",
@@ -734,31 +736,33 @@
     "S-043.P03",
     "S-045.P01",
     "S-040.P03",
-    "S-043.P05"
+    "S-043.P05",
+    "S-035.P01",
+    "S-028.P02"
    ],
    "why_included": "Monthly resets conflict with the household's wish to hold winners and never add to losers. Writing the practice down now keeps it fixed before any result is seen, and flags that the tests do not match it yet.",
-   "adopt_if": "Adopted now as a written habit for any funded satellite. The drift arm (E04) is judged only after the engine can run drift with matching random baskets; then it must reach the same verdicts (passes_history bars) as the reset version, and the reset is kept only if it clearly beats drift.",
-   "reject_if": "Once E04 can run: drift is dropped if its deepest drop is more than 5 pts worse than the reset version and it saves less than 40% of the trading. Until then no data can reject it, and only the rule-change protocol can change it.",
+   "adopt_if": "Adopted now as a written habit for any funded stock pot. E04 judges it once the engine can run drift with matching random baskets; until then no data can reject it.",
+   "reject_if": "E04 is the single source: drift is dropped only if its deepest drop is more than 5 points worse than the reset version AND it saves less than 40% of the trading, at 10 bps, in both halves. Until then only the rule-change protocol changes it.",
    "engine": null
   },
   {
-   "id": "satellite_sleeve_cap",
+   "id": "stock_pot_size",
    "family": "sizing",
    "name": "Stock pot size: at most 10% of savings, filled once",
    "status": "process_only",
    "evidence": "weak",
    "plain": "The stock pot is at most 10% of our investable savings (the owner confirms), so each of 5 slots is about 2%. It is filled once, never topped up, and never grown to chase the +20% goal. If it grows past 15%, it is trimmed back.",
-   "definition": "Stage Paper means no money moves. If money is ever funded, the owner decides the size, never above 10% of investable savings (index fund plus pot, not the emergency reserve). Funded once, from new money or a named pot if there is one, else by a one-time sale of index fund (the only allowed exception to 'never sell the fund'; may be taxable; the owner decides in writing). Salary keeps going 100% to the index fund; the pot is never topped up afterwards. Once a year, on the first monthly buy day of the tax year: if the pot is above 15% of the total, sell the same share of every held name until it is back to 10% and buy the index fund; if below 5%, do nothing. Needs a household-account test (E11), not built, so process_only. Nothing in the engine checks it.",
+   "definition": "Stage Paper means no money moves. If ever funded, the owner decides the size, at most 10% of investable savings (index fund plus pot, not the emergency reserve), and writes the source down once: new money or a windfall, else a one-time sale of core index units (may be taxable). After that the pot is its own holding. A name is bought from the pot's parked index units or the proceeds of the name it replaces; nothing is bought from salary or the core. Salary keeps going 100% to the core. Annual band: above 15% of the total, sell the same share of every held name back to 10% and buy the core; below 5%, do nothing. Needs the household-account test (E11), not built, so process_only.",
    "params": [
     {
      "name": "size limit",
      "value": "at most 10% of investable savings (owner confirms); 2% per slot",
-     "why": "docs/household.md proposes it. Speculative money should be a few percent, separate and capped (S-020.P04, S-022.P01). Evidence weak."
+     "why": "docs/household.md proposes 10%. The library says speculative money should be 'a few percent', separate and capped (S-020.P04, S-022.P01), so 10% is above it: our convention, and the owner decides. Evidence weak."
     },
     {
      "name": "trim band",
      "value": "above 15% of the total, back to 10%",
-     "why": "Reuses the library's 5-point drift band (S-022.P04). Not tested. Evidence weak."
+     "why": "A house convention reusing the 5-point stock/bond band of S-022.P04. Not tested. Evidence weak."
     },
     {
      "name": "check",
@@ -772,8 +776,8 @@
     },
     {
      "name": "review of the whole idea",
-     "value": "after 36 months of funded record, if behind the index fund, close the pot",
-     "why": "A convention, not evidence. Long enough not to fire in an ordinary losing stretch (S-003.P02). Reopening is a rule change."
+     "value": "after 36 months funded, if behind the core by money-weighted return, close the pot",
+     "why": "A convention, not evidence. S-003.P02 warns a strategy winning 3 years in 5 is often behind for stretches, so 36 months can fire in an ordinary losing stretch (about 1 in 3 in a coin model). Reopening is a rule change. 60 months is an option."
     },
     {
      "name": "who decides",
@@ -787,10 +791,7 @@
     "S-022.P04",
     "S-021.P03",
     "S-032.P02",
-    "S-047.P02",
-    "S-028.P03",
-    "S-003.P02",
-    "S-050.P11"
+    "S-003.P02"
    ],
    "why_included": "It caps the household's worst case at about a tenth of savings for almost no effort. It is a safety limit, not a return rule, so hindsight has little to flatter.",
    "adopt_if": "Adopted now as the size limit for any funded satellite. Once the household-account test (E11) exists it is judged by how often the 15% band fires, the share traded and the cost, never by return. The owner confirms the 10% before any money moves.",
@@ -814,7 +815,7 @@
     {
      "name": "action",
      "value": "none: same contribution, no sales, no extra buys",
-     "why": "Starting at a high still did well and never stopping matters most (S-050.P01). Gains are lost by selling after falls (S-020.P03). Respond gradually, never exit wholesale (S-031.P05)."
+     "why": "Starting at a high still did well; never stopping matters most (S-050.P01). Selling after falls costs the gains (S-020.P03). S-031.P05 concerns high valuations and advises trimming exposure somewhat; we do not follow that part, only its 'never exit wholesale'."
     },
     {
      "name": "emergency reserve",
@@ -829,17 +830,18 @@
     {
      "name": "evidence note",
      "value": "mixed",
-     "why": "The principles agree on not selling in a fall, but nothing here was tested on this household's data."
+     "why": "Principles on holding through a fall (S-028.P03, S-020.P03) are in tension with others that cut risk in drawdowns (S-046.P02, S-040.P03). Nothing was tested on this household's data; the no-action stance is our choice."
     }
    ],
    "library_refs": [
     "S-028.P03",
     "S-050.P01",
-    "S-007.P03",
     "S-020.P03",
     "S-031.P05",
     "S-034.P03",
-    "S-032.P02"
+    "S-032.P02",
+    "S-046.P02",
+    "S-040.P03"
    ],
    "why_included": "The most likely way the plan fails is a person selling in a crash. Writing the response down in calm times, as a check rather than a trade, is the cheapest protection.",
    "adopt_if": "Adopted now as a written habit. Checked by the journal: an entry at every level reached, and zero trades caused by drawdown depth. Nothing in the engine scores it.",
@@ -853,7 +855,7 @@
    "evidence": "mixed",
    "name": "One signed plan, no overrides, one calendar",
    "plain": "Before any stock money we sign a one-page plan. After that we never trade on a tip, a headline, the AI, a hunch, a fall or a rise. We decide only on review day and place orders within a few days. We write every decision down.",
-   "definition": "A private one-page plan, never in this public repo, signed before any stock money and re-signed yearly. It names the rules, the pot size (owner's choice, at most 10% of savings, 2% a slot), and who places and checks orders. Decide only on review day. Orders are exactly the rule's list, placed within 5 trading days. Write a dated note before each buy and write down every decision. We will NOT: buy on tips, headlines or the AI's picks; buy a stock far above its recent average; add money to a falling stock; use stop orders or trade between review days; borrow or use options; pause the monthly index purchase or sell the index fund in a crash; change a rule after a loss or outside the yearly review; grow the stock pot to chase +20%.",
+   "definition": "A private one-page plan, never in this public repo, signed before any stock money and re-signed yearly. It names the rules, the pot size (owner's choice, at most 10% of savings, 2% a slot), and who places and checks orders. Decide only on review day. Orders are exactly the rule's list plus the two written trims, placed within 5 trading days. Write a dated note before each buy and write down every decision. We will NOT: buy on tips, headlines or the AI's picks; buy a stock far above its recent average; add money to a falling stock; use stop orders or trade between review days; borrow or use options; pause the monthly index purchase or sell the index fund in a crash; change a rule after a loss or outside the yearly review; grow the stock pot to chase +20%.",
    "params": [
     {
      "name": "review day",
@@ -868,7 +870,7 @@
     {
      "name": "banned triggers",
      "value": "tips, videos, headlines, AI picks, analyst calls, a price fall or rise",
-     "why": "Trade only your own tested rule (S-035.P05). Never add because a price fell (S-047.P02). Never buy or sell on price alone (S-022.P06)."
+     "why": "Trade only your own analysis; tips and others' opinions ended careers (S-035.P05). Never add because a price fell (S-047.P02). Never sell a sound business only because its price fell, nor buy it only because it rose (S-022.P06). Orders from a registered rule's list are the exception."
     },
     {
      "name": "half-drop sentence",
@@ -877,13 +879,13 @@
     },
     {
      "name": "departure limit",
-     "value": "2 in any rolling 12 months, then the pot returns to paper",
-     "why": "Our convention. A third to a half of people given identical written rules still failed on execution (S-046.P05)."
+     "value": "1 override or late order resets the record; a 2nd in 12 months sells the pot",
+     "why": "Our convention. A second departure in any rolling 12 months sells the pot into the index fund at the next review; the pot then returns to the paper stage with its record kept. A third to a half of people given identical written rules still failed on execution (S-046.P05)."
     },
     {
      "name": "re-funding",
      "value": "20 compliant reviews in a row",
-     "why": "Judge the process on at least 20 signals taken without deviation (S-044.P02)."
+     "why": "Our convention. It borrows the 20-sample floor of S-044.P02, which is about judging an edge, not regaining trust. Count only reviews where every listed order was placed in the window."
     },
     {
      "name": "succession",
@@ -899,29 +901,26 @@
    "library_refs": [
     "S-028.P03",
     "S-044.P02",
-    "S-044.P03",
     "S-046.P05",
     "S-035.P05",
     "S-047.P02",
     "S-022.P06",
     "S-020.P03",
-    "S-050.P01",
-    "S-045.P04",
-    "S-032.P02"
+    "S-050.P01"
    ],
    "why_included": "The home for 'no overrides'. The other rules survive a fall only if people follow them, and the library says execution and temperament separate outcomes more than rules do (S-046.P05). The limits are our conventions. It is not testable on prices.",
-   "adopt_if": "Adopted as a house practice: signed before any stock money and before the monthly standing order starts. It stays while the written record shows every listed order placed inside the window and zero departures. The engine does not check this; the household's own journal does.",
-   "reject_if": "Prices cannot reject it. Any change goes only through rule_change_protocol. Two departures in 12 months send the pot back to paper. With no signed plan, no stock money moves, whatever the rule verdicts say.",
+   "adopt_if": "Adopted as a house practice: signed before any stock money. The monthly standing order starts now and does not wait for it. It stays while the journal shows no more than one departure in any 12 months. The engine does not check this; the household's own journal does.",
+   "reject_if": "Prices cannot reject it. Any change goes only through rule_change_protocol. A second departure in 12 months sells the pot into the index fund (back to paper, record kept). With no signed plan, no stock money moves, whatever the rule verdicts say.",
    "engine": null
   },
   {
    "id": "rule_change_protocol",
    "family": "process",
    "status": "process_only",
-   "evidence": "replicated",
+   "evidence": "mixed",
    "name": "Rules change once a year, never after a fall, and every change is counted",
    "plain": "Rules change only at the once-a-year review, with a written note, after waiting three months, and never while we are down 20% or more. Every change starts a fresh record and counts as one more try against luck. We keep the watchlist frozen.",
-   "definition": "At the once-a-year review we score: did we follow the plan; real cost per trade against the engine's 10 basis points (if higher, re-run at the real cost and use that verdict); the whole plan against the index fund alone; the fund's tracking and fees. A change needs: a dated proposal in docs/decisions.md with reason and cost; at least 3 monthly reviews of waiting; no change while the core or stock pot is 20% or more down at month end; 20 compliant decisions in a row before a change motivated by results; the effect surviving 20-25% nudges to its settings; a new rule id and a forward record from zero. Each variant whose real-data result is computed or viewed adds 1 to the tries count (17 today); a ledger keeps it, not built yet. Bug fixes may be made any time with a note. The 21-name watchlist and sector labels are frozen; new names count only from their add date.",
+   "definition": "Yearly review scores: did we follow the plan; real cost per trade against the engine's 10 bps (re-run if higher); the plan against the index fund alone; the fund's tracking and fees (S-017.P01). A change needs: a dated proposal in docs/decisions.md; 3 months of waiting; no change while the core or pot is down 20%+; 20 compliant decisions before a results-driven change; the effect surviving 20-25% nudges; a new rule id and forward record. A veto check run once on frozen settings is not a try; a variant whose result is read and then used to pick a setting, or any re-test after a frozen verdict, adds 1 to the tries count (17; by hand, no ledger yet). The program refuses a changed pre-registration unless tries_counted is raised. The 21-name watchlist and sector labels are frozen by agreement and the freeze hash; the engine has no add dates, so treat any addition as a rule change.",
    "params": [
     {
      "name": "change window",
@@ -945,13 +944,13 @@
     },
     {
      "name": "tries count",
-     "value": "17 today, +1 per variant viewed; ledger not built yet",
-     "why": "Search results must be corrected for the number tried (S-037.P01, S-037.P02); discount a record by the cohort it came from (S-032.P01). The engine reads only the number 17 today."
+     "value": "17 now; +1 per variant read and used; no ledger yet",
+     "why": "Search results must be corrected for the number tried (S-037.P01, S-037.P02); discount a record by the cohort it came from (S-032.P01). The engine reads only the number 17, and the freeze needs it raised after any change."
     },
     {
      "name": "compliance first",
      "value": "20 compliant decisions before a results-driven change",
-     "why": "Judge the process on at least 20 signals (S-044.P02)."
+     "why": "Our convention, borrowing the 20-sample floor of S-044.P02 (about judging an edge, not permitting rule changes)."
     },
     {
      "name": "real-cost re-run",
@@ -960,8 +959,8 @@
     },
     {
      "name": "watchlist freeze",
-     "value": "21 names and sectors fixed; later names enter at their add date",
-     "why": "Today's names were picked with hindsight. Freezing the list keeps the forward record clean. General practice, not from the library."
+     "value": "21 names and sectors fixed; any addition is a rule change",
+     "why": "Today's names were picked with hindsight. The freeze hash covers the list, but the engine has no add dates: a new name is pickable once it has a year of prices. General practice, not from the library."
     }
    ],
    "library_refs": [
@@ -973,10 +972,11 @@
     "S-025.P03",
     "S-032.P01",
     "S-020.P01",
-    "S-026.P05"
+    "S-026.P05",
+    "S-017.P01"
    ],
-   "why_included": "It guards against the best-replicated failure on the shelf: choosing rules after seeing results (S-037.P01, S-037.P02). It also keeps the tries count honest. The 'replicated' rating is about that bias; the waiting periods and the 20% freeze are our conventions.",
-   "adopt_if": "Adopted now, before any real-data run. The tries ledger must exist before the first real-data run of this registry; until then the number 17 is only a fixed count in this file. The engine does not check this practice.",
+   "why_included": "It guards against a well-documented failure: choosing rules after seeing results (S-037.P01, S-037.P02, S-032.P01). The sources are a few books and one large test, so the evidence is rated mixed; the waiting periods and the 20% freeze are our conventions. It also keeps the tries count honest.",
+   "adopt_if": "Adopted now. The tries ledger is NOT built: until it exists the number 17 is a fixed count in this file and every re-freeze needs a dated decisions.md entry. The program refuses a changed pre-registration unless tries_counted is raised. The rest is followed by people; the engine does not check it.",
    "reject_if": "Prices cannot reject it; it changes only by its own procedure. A change made outside it voids that rule's record, which restarts from zero, and the change counts as a try.",
    "engine": null
   },
@@ -984,8 +984,8 @@
    "id": "control_core_only",
    "family": "savings",
    "name": "Index Only: everything in the core fund",
-   "plain": "All the money goes into the index fund and stays there. No stock picking. Every other plan must beat this after costs. It is also what satellite money does whenever no stock rule has earned trust.",
-   "definition": "Control, not a user rule. 100% in the core index fund (SPY proxy, adjusted closes so dividends count as reinvested), never sold. In the satellite test it starts after the first trading year, pays one 10 bps entry cost, and fills at the next close. Its deepest drop is the yardstick for the rule 'deepest drop no more than 15 points worse than the core', and each rule's yearly-growth (CAGR) gap to it is printed. The savings arms buy this same fund. It is also the default plan: satellite money stays here until a satellite rule reaches passes_history AND passes the paper record (at least 182 days). Stage Paper means no money moves.",
+   "plain": "The 'core' is the broad index fund: all the money goes into it and stays there. No stock picking. Every other plan must beat this after costs. It is also what stock-pot money does whenever no stock rule has earned trust.",
+   "definition": "Control, not a user rule. 100% in the core index fund (SPY proxy, adjusted closes so dividends count as reinvested), never sold by the control. In the satellite test it starts after the first trading year, pays one 10 bps entry cost, and fills at the next close. Its deepest drop is the yardstick for the rule 'deepest drop no more than 15 points worse than the core', and each rule's yearly-growth (CAGR) gap to it is printed. The savings arms buy this same fund. It is also the default plan: satellite money stays here until a satellite rule reaches passes_history AND passes the paper record (at least 182 days). Stage Paper means no money moves.",
    "params": [
     {
      "name": "core fund",
@@ -995,7 +995,7 @@
     {
      "name": "satellite weight",
      "value": "0%",
-     "why": "The honest benchmark (S-017.P01, S-020.P01). Satellite money is at most 10% of savings, 2% per slot, and the owner decides sizes."
+     "why": "The honest benchmark: investors as a group earn the market return minus costs (S-020.P01), and fund tables hide the losers (S-020.P05). Stock-pot money is at most 10% of savings, 2% per slot; the owner sets sizes."
     },
     {
      "name": "trading cost",
@@ -1014,15 +1014,15 @@
     }
    ],
    "status": "control",
-   "evidence": "replicated",
+   "evidence": "mixed",
    "library_refs": [
     "S-020.P01",
-    "S-020.P03",
-    "S-050.P01",
-    "S-017.P01"
+    "S-020.P05",
+    "S-021.P01",
+    "S-021.P05"
    ],
-   "why_included": "Something simple must be the bar. Most active ideas fail to beat the index after costs, so the default when nothing passes is: do nothing special, stay in the index fund.",
-   "adopt_if": "Never adopted or dropped by a test; it is the yardstick and the default. Satellite money leaves it only after a rule shows passes_history and a paper record of at least 182 days, and the owner sets the size.",
+   "why_included": "Something simple must be the bar. Most active ideas fail to beat the index after costs (S-021.P01) and the households that trade most earn less (S-021.P05), so the default when nothing passes is: do nothing special, stay in the index fund.",
+   "adopt_if": "Never adopted or dropped by a test; it is the yardstick and the default. Stock-pot money leaves it only when a stock rule passes history AND meets every money condition in the acceptance text, and the owner sets the size.",
    "reject_if": "Not rejected by any result. Only the owner can move away from it, in writing, by choosing to fund a satellite.",
    "engine": {
     "kind": "control",
@@ -1054,7 +1054,7 @@
     {
      "name": "hindsight",
      "value": "the list was chosen knowing today's winners",
-     "why": "So this control probably flatters. A rule is also tested against random baskets from the same list (control_random_basket)."
+     "why": "The list was chosen knowing today's winners, so this control probably flatters (survivorship, S-020.P05; history is a survivor's sample, S-032.P05). A rule is also tested against random baskets from the same list (control_random_basket)."
     },
     {
      "name": "not computed yet",
@@ -1064,7 +1064,10 @@
    ],
    "status": "control",
    "evidence": "untested",
-   "library_refs": [],
+   "library_refs": [
+    "S-032.P05",
+    "S-020.P05"
+   ],
    "why_included": "It separates 'the rule picked well' from 'the list was already good'. The library has nothing on this yardstick, so it is untested as a method.",
    "adopt_if": "Always run beside the satellite rules; never adopted. A rule is only worth following if it also beats the random baskets (verdict passes_history), and its gap to this control is read next to that.",
    "reject_if": "Not rejected by any result. If a rule's CAGR gap to it is zero or negative, the rule has added nothing over owning the list. That is a reason to doubt it, but the engine verdict does not read this gap yet.",
@@ -1077,8 +1080,8 @@
    "id": "control_random_basket",
    "family": "entry",
    "name": "Lucky dip: random names with the same rules",
-   "plain": "At every review, the same number of names as the rule holds are drawn by lot from the same list, with the same replacement rate, caps, sizing, exits and costs. Done 2000 times. A rule that cannot beat these draws has shown only luck.",
-   "definition": "Control and the luck yardstick. 2000 draws, seed 20261005 (plus the draw number). At each decision day a draw holds as many names as the rule did, keeps each held name with the rule's own turnover rate if it is still eligible, and fills the rest from shuffled eligible names, using the rule's sector cap, sizing, exits, next-close fills and 10 bps cost. The rule's yearly growth (CAGR) is ranked among the draws, and also for each half of the period. p = share of draws at or above the rule; adjusted p (stricter, for the 17 ideas tried) = p times 17, capped at 1. Verdicts: rejected below the 50th percentile; passes_history needs adjusted p of 0.05 or less (99.71st percentile), 60+ in both halves, deepest drop no more than 15 points worse than the core, turnover at most 200% a year; candidate or inconclusive otherwise.",
+   "plain": "At every review, as many names as the rule holds (up to five) are drawn by lot from the same list, with the same replacement rate, caps, sizing, exits and costs. Done 2000 times. A rule that cannot beat these draws has shown only luck.",
+   "definition": "Control and the luck yardstick. 2000 draws, seed 20261005 (plus the draw number). At each decision day a draw holds as many names as the rule did, keeps each held name with the rule's own turnover rate if it is still eligible, and fills the rest from shuffled eligible names, using the rule's sector cap, sizing, exits, next-close fills and 10 bps cost. The rule's yearly growth (CAGR) is ranked among the draws, and also for each half of the period. p = (draws at or above the rule + 1) / 2001; adjusted p (stricter, for the 17 ideas tried) = p times 17, capped at 1. Verdicts: rejected below the 50th percentile; passes_history needs adjusted p of 0.05 or less (at most 4 of 2000 draws at or above the rule), 60+ in both halves, deepest drop no more than 15 points worse than the core, turnover at most 200% a year; candidate or inconclusive otherwise.",
    "params": [
     {
      "name": "draws",
@@ -1097,8 +1100,8 @@
     },
     {
      "name": "bar",
-     "value": "adjusted p 0.05 or less, 17 tries",
-     "why": "Set by the registry owner. Equals the 99.71st percentile of the draws. Percentile below 50 means rejected."
+     "value": "adjusted p 0.05 or less at 17 tries",
+     "why": "Set by the registry owner. With 2000 draws that means at most 4 draws at or above the rule (about the 99.8th percentile). Percentile below 50 means rejected. 95 in the settings is the significance level, not the bar."
     },
     {
      "name": "halves",
@@ -1115,11 +1118,9 @@
    "evidence": "replicated",
    "library_refs": [
     "S-037.P01",
-    "S-037.P02",
-    "S-048.P01",
-    "S-048.P02"
+    "S-048.P01"
    ],
-   "why_included": "Most chart and momentum rules look good until the number of tries is counted (S-037.P01). Random picks from the same list are the fairest yardstick for luck. It is the main test for every satellite rule.",
+   "why_included": "Chart rules look good until the number tried is counted: the best of thousands tested on the S&P 500 was indistinguishable from luck (S-037.P01). Random picks from the same list are the fairest yardstick for luck (S-048.P01 tests rules against random entries). It is the main test for every satellite rule.",
    "adopt_if": "Never adopted; it runs beside every satellite rule. A rule's fate depends on it: passes_history needs adjusted p of 0.05 or less, plus 60+ in each half, drawdown and turnover limits.",
    "reject_if": "Not rejected. If the rule falls below the 50th percentile of the draws, the verdict is rejected. Between the bars it reads candidate or inconclusive, never adopted.",
    "engine": {
@@ -1149,7 +1150,7 @@
     {
      "name": "stale after",
      "value": "120 days",
-     "why": "The longest normal gap between reports is about 112 days. An older figure is treated as missing, so it fails."
+     "why": "General knowledge: the usual gap from a third-quarter filing to the annual one is about 112 days at the 40- and 60-day deadlines; 120 adds a week of margin."
     },
     {
      "name": "restatements",
@@ -1159,7 +1160,7 @@
     {
      "name": "delisted names",
      "value": "must be included",
-     "why": "Leaving out companies that failed makes any company-numbers test look better than it was."
+     "why": "Leaving out companies that failed makes any company-numbers test look better than it was (survivorship, S-020.P05)."
     },
     {
      "name": "minimum history",
@@ -1179,7 +1180,7 @@
    ],
    "library_refs": [
     "S-024.P01",
-    "S-025.P02"
+    "S-020.P05"
    ],
    "data_needed": "Point-in-time company statements: period end, filing date, form type, first-reported values, delisted names, 15+ years, split-adjusted shares. No provider is approved; the owner decides.",
    "why_included": "Without this, any test on company numbers would peek at figures that were not public yet. It costs no counted try and moves no money. It is dormant because the house rule is to ask before choosing a data provider or adding a dependency.",
@@ -1191,7 +1192,7 @@
    "id": "fund_quality_gate",
    "family": "fundamental",
    "status": "needs_data",
-   "evidence": "mixed",
+   "evidence": "weak",
    "name": "Quality gate: steady cash profits, no quiet dilution",
    "plain": "A veto, never a pick. Only hold a company with operating and cash profit in most recent years, at least 10% a year earned on shareholders' money, and no more than 2% new shares a year. Dormant until trusted company numbers exist.",
    "definition": "Dormant: needs approved point-in-time data (fund_data_contract); the engine computes none of this today. At a review a name passes if, on figures in force that day: operating profit is positive in 4 of the last 5 years and in the last 12 months; operating cash flow is positive in 4 of 5 years and last-12-month free cash flow (cash flow minus capital spending) is positive; last-12-month cash flow is at least the reported profit; return on average shareholders' equity is at least 10% in 4 of 5 years; shares are up no more than 2% on a year ago. One failing report: no new buy, no sale. A second failing report in a row: the name leaves at the next review. Financials and Utilities are out of scope. It only removes names; it never ranks them.",
@@ -1204,7 +1205,7 @@
     {
      "name": "return on equity floor",
      "value": "10%",
-     "why": "S-024.P01. The 15% moat figure in S-024.P02 is not used. Very high returns often mean heavy debt (S-024.P02), so it is a floor, never a rank."
+     "why": "S-024.P01. The 15% moat figure in S-024.P02 is not used. Very high returns often mean heavy debt (S-024.P02): a floor, never a rank. No debt test here, so ROE can be debt-flattered."
     },
     {
      "name": "cash conversion",
@@ -1229,7 +1230,7 @@
     {
      "name": "role",
      "value": "veto only",
-     "why": "Ranking by quality is not in the library's screen. No test exists here, so the evidence is mixed at best."
+     "why": "S-024.P01's screen has no quality ranking; S-025.P01 ranks on return on capital, used only in rung C. No test exists here, so the evidence is weak."
     }
    ],
    "library_refs": [
@@ -1238,10 +1239,11 @@
     "S-024.P03",
     "S-024.P06",
     "S-023.P04",
-    "S-027.P02"
+    "S-027.P02",
+    "S-025.P01"
    ],
    "data_needed": "Approved point-in-time statements: operating profit, operating and free cash flow, net profit, shareholders' equity, diluted shares, for 5+ fiscal years, delisted names included.",
-   "why_included": "The library's own company screen made exact. It removes names rather than picking them, and it trades rarely. The library describes the screen but gives no tested hit rate, so the evidence is mixed. It is rung B of fund_price_combine.",
+   "why_included": "Most of the library's company screen (S-024.P01), made exact. It leaves out the clean-balance-sheet test, so a return on equity of 10% can still come from debt (S-024.P02); that gap is open and the owner may add a debt test before data is approved. It removes names rather than picking them. The library gives no tested hit rate, so the evidence is weak.",
    "adopt_if": "After a provider is approved, on a broad universe with delisted names (15+ years): the share of names losing over half within 12 months must be lower than in at least 95% of random baskets, and hold with dates +30 days. Then it joins rung B and needs passes_history there. The engine computes none of this yet.",
    "reject_if": "It fails either test, fails the +30-day delay, or the hand check in fund_data_contract fails. Inconclusive counts as rejected. Rejected means dropped, never loosened or tightened after seeing results.",
    "engine": null
@@ -1252,13 +1254,13 @@
    "status": "needs_data",
    "evidence": "untested",
    "name": "Sales per share growing at least 3% a year",
-   "plain": "The owner's own idea. Only hold a company whose sales per share are up at least 3% a year over the latest year and over three years. A floor that keeps out shrinking firms, never a reason to prefer fast growers. Dormant until data exists.",
+   "plain": "The owner's own idea. Only hold a company whose sales per share are up at least 3% a year over the latest year and over three years. A floor that keeps out firms with flat or slow sales per share, never a reason to prefer fast growers. Dormant until data exists.",
    "definition": "Dormant: needs approved point-in-time data; the engine computes none of this today. Sales per share = last-12-month sales divided by diluted average shares, split-adjusted. g1 is its growth against a year ago. g3 is its yearly growth rate over 3 years. A name passes if both are at least 3%. If either cannot be worked out, it fails. It is a veto, never a rank. It sits behind fund_quality_gate, because buybacks can lift sales per share while the business shrinks. A held name leaves after 2 failing reports in a row. Retirement rule, fixed now: if on the watchlist the floor changes who is eligible in fewer than 1 name-month in 10, it is called inert and deleted, never tightened.",
    "params": [
     {
      "name": "growth floor",
      "value": "3% a year on both windows",
-     "why": "S-024.P04 uses 3% as a long-run growth rate. Borrowed, not fitted or tested as a floor. No library evidence supports it as a filter."
+     "why": "Our own number, no source. It echoes the 3% terminal growth that S-024.P04 uses when discounting free cash flows: a valuation assumption, not evidence about sales or filters. Untested."
     },
     {
      "name": "windows",
@@ -1268,12 +1270,12 @@
     {
      "name": "role",
      "value": "veto only",
-     "why": "Growth is already in the price (S-023.P06). The library gives no evidence that fast growers do better, so no ranking."
+     "why": "S-023.P06 shows overpaying for great growers lost money; it does not say growth is fully priced in. The library has no tested evidence that fast growers do better (S-029.P05), so no ranking."
     },
     {
      "name": "share basis",
      "value": "diluted average shares, split-adjusted",
-     "why": "Buybacks and new shares move the number. That is why it differs from plain sales (S-024.P06, S-013.P01)."
+     "why": "Per-share counts dilution (S-024.P06). But buybacks lift it too, and S-013.P01 rates growth from a lower share count weaker than revenue growth, which is why this sits behind fund_quality_gate. The owner's choice of per-share is untested."
     },
     {
      "name": "retirement",
@@ -1306,17 +1308,17 @@
    "evidence": "untested",
    "name": "Numbers allow, price confirms: the three-rung ladder",
    "plain": "A company must first be allowed by its numbers, then confirmed by its price. Neither can buy alone. Only if a test shows it helps do we also prefer firms that are good value for their quality. Dormant until data exists.",
-   "definition": "Dormant: the engine runs only rung A today (five_leaders, price only). At each review, with figures in force that day: 1) Scope: watchlist minus Financials and Utilities (rungs B, C). 2) Numbers allow (B, C): fund_quality_gate and fund_rps_growth both pass. 3) Price confirms: the Five Leaders entry tests (above a rising 200-day line, not stretched). 4) Rank by 12-month return skipping the latest month. Rung C only: add the value-and-quality rank; best total wins, ties to the better price rank. 5) 1 name per sector, 5 slots, equal at each review in tests. A held name leaves after 2 failing reports in a row, below its 200-day line at a review, or out of the top 10. Valuation never causes an exit. Ladder: A price only; B adds step 2; C adds the value-and-quality rank.",
+   "definition": "Dormant: the engine runs only rung A today (five_leaders, price only). At each review, with figures in force that day: 1) Scope: watchlist minus Financials and Utilities (rungs B, C). 2) Numbers allow (B, C): fund_quality_gate and fund_rps_growth both pass. 3) Price confirms: the Five Leaders entry tests (above a rising 200-day line, not stretched). 4) Rank by 12-month return skipping the latest month. Rung C only: add the earnings-yield and return-on-capital ranks to the price rank (three ranks, equal weight); best total wins, ties to the better price rank. 5) 1 name per sector, 5 slots, equal at each review in tests. A held name leaves after 2 failing reports in a row, below its 200-day line at a review, or out of the top 10. Valuation never causes an exit. Ladder: A price only; B adds step 2; C adds the value-and-quality rank.",
    "params": [
     {
      "name": "order",
      "value": "numbers veto, then price veto, then rank",
-     "why": "Never buy only because a price is high or only because it fell (S-022.P06). Both together beat either alone in the library's own formula (S-025.P01), which is not a test of this ladder."
+     "why": "Numbers must pass before price can confirm; neither buys alone. Never buy a sound business only because its price rose (S-022.P06). That source also says never sell on a price fall; our 200-day exit departs from it. S-025.P01 does not test this order: it combines two value-and-quality ranks only."
     },
     {
      "name": "rank weights",
-     "value": "equal: add the two ranks",
-     "why": "The library's own method (S-025.P01). Nothing to tune."
+     "value": "equal weight: price rank + earnings-yield rank + return-on-capital rank",
+     "why": "S-025.P01 adds only the last two ranks. Adding the price rank is our design and untested (value and quality get 2/3 of the weight; the owner confirms). Ties go to the better price rank."
     },
     {
      "name": "value-and-quality rank",
@@ -1326,7 +1328,7 @@
     {
      "name": "scope",
      "value": "Financials and Utilities out of rungs B and C",
-     "why": "Their capital structures make both ratios misleading (S-025.P02). The owner may keep a price-only slot for them."
+     "why": "S-025.P02 excludes them from the earnings-yield and return-on-capital ranks (rung C). For rung B it is our choice: operating profit and cash flow are not comparable for banks, insurers and regulated utilities. The owner may keep a price-only slot for them."
     },
     {
      "name": "ladder stopping rule",
@@ -1368,7 +1370,7 @@
    "plain": "The core plan, usable now with no paper period. Every payday a standing order buys the index fund. Money already in hand goes in all at once. Nothing is sold in a fall, and rules change only at the yearly review.",
    "rule_ids": [
     "savings_monthly_autopilot",
-    "pot_lump_sum",
+    "windfall_lump_sum",
     "drawdown_playbook",
     "precommit_no_override",
     "rule_change_protocol"
@@ -1378,13 +1380,13 @@
   {
    "id": "set_five_leaders",
    "name": "Five Leaders",
-   "plain": "The small stock pot, testable on prices today. The main rule holds up to five names, one per industry, ranked by their past year, above a rising 200-day line and not stretched. Two variants are tested beside it: one without the 200-day line, one reviewed quarterly. The pot is at most a tenth of savings.",
+   "plain": "The small stock pot, testable on prices today. The main rule holds up to five names, one per sector, ranked by their past year, above a rising 200-day line and not stretched. Two variants are tested beside it: one without the 200-day line, one reviewed quarterly. The pot is at most a tenth of savings.",
    "rule_ids": [
     "five_leaders",
     "five_leaders_m1",
     "five_leaders_quarterly",
     "size_equal_slots_no_topup",
-    "satellite_sleeve_cap"
+    "stock_pot_size"
    ],
    "role": "satellite_plan"
   },
@@ -1394,10 +1396,10 @@
    "plain": "The whole trader today: Monthly Autopilot for the savings plus Five Leaders for the small pot. The pot stays in the index fund until Five Leaders beats random picks in history and then earns a paper record. If it never does, nothing changes.",
    "rule_ids": [
     "savings_monthly_autopilot",
-    "pot_lump_sum",
+    "windfall_lump_sum",
     "five_leaders",
     "size_equal_slots_no_topup",
-    "satellite_sleeve_cap",
+    "stock_pot_size",
     "drawdown_playbook",
     "precommit_no_override",
     "rule_change_protocol"
@@ -1410,14 +1412,14 @@
    "plain": "The same trader once trustworthy company accounts exist: a company must pass its numbers (cash profits, no quiet dilution, sales per share up at least 3% a year) before its price counts. Dormant until the owner approves a data provider. Nothing in it is tested yet.",
    "rule_ids": [
     "savings_monthly_autopilot",
-    "pot_lump_sum",
+    "windfall_lump_sum",
     "fund_data_contract",
     "fund_quality_gate",
     "fund_rps_growth",
     "fund_price_combine",
     "five_leaders",
     "size_equal_slots_no_topup",
-    "satellite_sleeve_cap",
+    "stock_pot_size",
     "drawdown_playbook",
     "precommit_no_override",
     "rule_change_protocol"
@@ -1431,7 +1433,7 @@
    "rule_ids": [
     "control_core_only",
     "savings_monthly_autopilot",
-    "pot_lump_sum",
+    "windfall_lump_sum",
     "drawdown_playbook",
     "precommit_no_override",
     "rule_change_protocol"
@@ -1441,7 +1443,7 @@
   {
    "id": "set_yardsticks",
    "name": "Yardsticks: Rule v1, Lucky Dip, All 21",
-   "plain": "The tape measures, not plans. Rule v1 is the stock rule the site already runs. The lucky dip is five names drawn by lot with the same caps, sizes, exits and costs as the rule under test. All 21 is every watchlist name held equally. A new rule must beat the lucky dips.",
+   "plain": "The tape measures, not plans. Rule v1 is the stock rule the site already runs. The lucky dip draws, by lot, as many names as the rule held at each review (same replacement rate, caps, sizes and costs). All 21 is every eligible watchlist name held equally. A new rule must beat the lucky dips.",
    "rule_ids": [
     "baseline_portfolio_v1",
     "control_random_basket",
@@ -1456,7 +1458,7 @@
    "question": "Before any rule result is opened: does the verdict code call pure luck skilled no more often than its bar says, and how small a yearly edge could it ever see?",
    "method": "Planned, not computed yet: (1) run 200 random-pick pseudo-rules in the Five Leaders frame through the full verdict code, each against its own random baskets, judged at 1 try and at 17 tries. (2) Find the smallest yearly edge the history sees 80% of the time. (3) Plant known edges of 2, 4, 6 and 8 points a year and count how often they are found. Today only the repo tests check that a random picker is not called skilled more often than chance.",
    "null_model": "The random baskets themselves: a random picker's percentile should be spread evenly from low to high.",
-   "pass_criteria": "Planned requirement: 4 to 16 false 'skilled' calls out of 200 at 1 try, none passing at 17 tries, percentiles spread evenly. If it fails, no satellite verdict is trusted. The smallest visible edge is shown next to every verdict. If it is bigger than the gap between the goal and the core, the site says history cannot see an edge that size.",
+   "pass_criteria": "Planned requirement: 4 to 16 false 'skilled' calls out of 200 at 1 try, at most 2 out of 200 at 17 tries (a correct pipeline expects 0.6 and exceeds 2 about 2% of the time), percentiles spread evenly. If it fails, no satellite verdict is trusted. The smallest visible edge is shown next to every verdict. If it is bigger than the gap between the goal and the core, the site says history cannot see an edge that size.",
    "rule_ids": [
     "control_random_basket",
     "five_leaders_m1",
@@ -1497,13 +1499,13 @@
   {
    "id": "E02_windfall_lump_vs_staged",
    "question": "For money already in hand, how much does staging over 26 or 52 weeks give up against investing all at once?",
-   "method": "Runs today: a pot of 100 units arrives on day one and is invested at once (baseline) or in equal weekly parts over 26 or 52 weeks. Idle money earns the T-bill fund. Fills at the next close, no trading cost charged (the break-even fee per order is printed), rolling starts every 4 weeks over 52, 104 and 156 weeks, paired with the lump sum by start date. Independent windows = span divided by horizon. Not computed yet: other start offsets, a T-bill-era split, regret.",
+   "method": "Runs today: a windfall of 100 units arrives on day one and is invested at once (baseline) or in equal weekly parts over 26 or 52 weeks. Idle money earns the T-bill fund. Fills at the next close, no trading cost charged. No break-even fee is printed for these arms (only the salary-stream arms have one), rolling starts every 4 weeks over 52, 104 and 156 weeks, paired with the lump sum by start date. Independent windows = span divided by horizon. Not computed yet: break-even fee, other start offsets, a T-bill-era split, regret.",
    "null_model": "Lump sum at once, with the same costs and fills.",
    "pass_criteria": "[engine] Staging is 'better' only with at least 8 independent windows, a median gain of at least 50 bps a year and better in at least 80% of starts; otherwise no_clear_difference, worse or too_few_independent_windows, and the lump sum stays. [planned] Any staging result is shown to the owner as the price of comfort, never as timing skill.",
    "rule_ids": [
-    "pot_lump_sum",
-    "pot_spread_26w",
-    "pot_spread_52w"
+    "windfall_lump_sum",
+    "windfall_spread_26w",
+    "windfall_spread_52w"
    ],
    "metrics": [
     "median money-weighted return difference vs lump sum (bps a year)",
@@ -1517,7 +1519,7 @@
   {
    "id": "E03_satellite_selection",
    "question": "Does the 12-1 ranking (five_leaders_m1), or that ranking plus the 200-day line (five_leaders), pick better names than random baskets, and where does rule v1 sit on the same yardstick?",
-   "method": "Runs today: after a 252-day warm-up, each rule is simulated with monthly decisions on that day's data, next-close fills, 10 bps, names joining after 253 days, unfilled slots in the core. Each is compared with 2000 random baskets (seed 20261005) with the same number of names at every decision, replacement rate, caps, sizing, exits and costs, with p adjusted for 17 tries. Controls: core only and all 21 names equal. The verdict is read once and frozen. Not computed yet: conditional or paired nulls, crash checks.",
+   "method": "Runs today: after a 253-day warm-up, each rule is simulated with monthly decisions on that day's data, next-close fills, 10 bps, names joining after 253 days, unfilled slots in the core. Each is compared with 2000 random baskets (seed 20261005) with the same number of names at every decision, replacement rate, caps, sizing, exits and costs, with p adjusted for 17 tries. Controls: core only and all 21 names equal. The verdict is read once and frozen. Not computed yet: conditional or paired nulls, crash checks.",
    "null_model": "control_random_basket: same names pool, same count, replacement rate, caps, sizing, exits, fills and costs; only which names differs.",
    "pass_criteria": "[engine] The verdict word set by the [engine] items in the acceptance text: passes_history, candidate, inconclusive or rejected. v1 is capped at candidate. [planned] Gaps to the core and to all 21 are shown but not in the verdict yet. Whether the 200-day line helps (five_leaders against five_leaders_m1) needs a paired test that is not built.",
    "rule_ids": [
@@ -1544,7 +1546,7 @@
    "question": "On the same picks, does the household practice (equal at entry, no top-ups, winners drift) cost anything against resetting to equal at every review?",
    "method": "Planned, not computed yet: needs engine work. Run Five Leaders with drift sizing (no resets, no top-ups, a 25% trim back to 20%) against the same rule with the monthly equal reset that every backtest uses today. The random baskets must drift the same way, paired draw by draw. Until it is built, backtests describe the reset rule, not the household practice.",
    "null_model": "The same sizing switch applied to the random baskets, paired draw by draw.",
-   "pass_criteria": "Planned requirement: drift stays the default unless the reset beats it by 10 percentile points and 1 point a year at 30 bps in both halves. Drift is dropped if it worsens the deepest drop by more than 5 points while saving less than 40% of turnover. Build this before any money (see open questions).",
+   "pass_criteria": "Planned requirement: drift stays the household practice. It is dropped only if its deepest drop is more than 5 points worse than the reset version AND it saves less than 40% of the trading, at 10 bps, in both halves. Build this before any money (see open questions).",
    "rule_ids": [
     "size_equal_slots_no_topup",
     "five_leaders",
@@ -1564,7 +1566,7 @@
    "question": "Is a quarterly review of Five Leaders no worse than a monthly one, at lower turnover?",
    "method": "Runs today: five_leaders (monthly) and five_leaders_quarterly (first trading day of Jan, Apr, Jul, Oct) run in the same frame at 10 bps. Each is judged against its own 2000 random baskets drawn on its own decision days, with p adjusted for 17 tries. Both rows show percentile, turnover, drop and growth. The choice between them is made by people reading the two rows, not by code.",
    "null_model": "Random baskets matched to each cadence's own decisions, names held and replacement rate.",
-   "pass_criteria": "[engine] Each cadence gets its own verdict. [planned, read by people] Prefer quarterly if its percentile is within 10 points of monthly and its turnover is at most 60% of monthly. Prefer monthly only if it beats quarterly by 10 percentile points. This comparison is written down now but not coded.",
+   "pass_criteria": "[engine] Each cadence gets its own verdict. [planned, read by people] Prefer quarterly if it passes_history, its percentile is within 10 points of monthly and its turnover is at most 60% of monthly; otherwise monthly stays. If only the basic version or quarterly passes, the one that passes is used; if several pass, the lower turnover wins.",
    "rule_ids": [
     "five_leaders",
     "five_leaders_quarterly",
@@ -1582,7 +1584,7 @@
   {
    "id": "E06_plateau_and_timing_luck",
    "question": "Is a passing satellite rule a broad plateau or a lucky spike: do nearby settings, other review days and a later fill behave similarly?",
-   "method": "Planned, not computed yet: for every rule at candidate or better, move one setting at a time by about a fifth to a quarter (lookback 252 to 200 or 315; skipped month 21 to 17 or 26; keep rank 10 to 8 or 12; stretch 8% to 6% or 10%; 200-day line to 160 or 250; slope window 21 to 17 or 26). Also slots 5 to 4, sector cap 1 to 2, review on trading day 1, 6, 11 and 16, and a fill 5 days late. Each variant gets its own random baskets. Veto only; not counted as tries.",
+   "method": "Planned, not computed yet: for every rule at candidate or better, move one setting at a time by about a fifth to a quarter (lookback 252 to 200 or 315; skipped month 21 to 17 or 26; keep rank 10 to 8 or 12; stretch 8% to 6% or 10%; 200-day line to 150, 160 or 250; slope window 21 to 17 or 26). Also slots 5 to 4, sector cap 1 to 2, review on trading day 1, 6, 11 and 16, and a fill 5 days late. Each variant gets its own random baskets. Veto only; not counted as tries.",
    "null_model": "Each neighbour, review day and fill delay gets its own random baskets.",
    "pass_criteria": "Planned requirement: at least 75% of neighbours at percentile 70 or more, none below 50, the centre no more than 15 points above the neighbour median, all four review days at 70 or more. A neighbour median below 50 means REJECT. A rule that fails with a 5-day fill window shrinks its order window to the next close.",
    "rule_ids": [
@@ -1604,7 +1606,7 @@
    "question": "How much of a result comes from knowing today which 21 names became big winners, rather than from the rule?",
    "method": "Planned, not computed yet: (1) hindsight bonus = all-21 growth minus a broad equal-weight fund's growth; subtract it from the rule. (2) Leave one name out, 21 reruns, for the rule and its random baskets. (3) Drop the top 1, 2 and 3 names. (4) A stale-signal placebo ranking by the return from 24 to 12 months ago. (5) A look-ahead ceiling shown only as an upper bound. (6) Sector-matched baskets. The all-21 gap is shown today; the rest is new engine work.",
    "null_model": "Random baskets redone on each changed list of names; the stale-signal placebo is a rule that can only profit from hindsight.",
-   "pass_criteria": "Planned requirement for ADOPT: leave-one-out minimum percentile 60 or more; dropping the best name keeps 80 or more; the placebo at least 20 points below the rule; top name under half of the excess; hindsight-adjusted growth at least the core's. REJECT if the placebo is within 5 points or dropping the best name leaves under 50.",
+   "pass_criteria": "Planned requirement before any money: leave-one-out minimum percentile 60 or more; dropping the best name keeps 80 or more; the placebo at least 20 points below the rule; top name under half of the excess; hindsight-adjusted growth at least the core's. REJECT if the placebo is within 5 points or dropping the best name leaves under 50.",
    "rule_ids": [
     "five_leaders",
     "five_leaders_m1",
@@ -1648,7 +1650,7 @@
    "question": "Does a satellite result survive higher trading costs?",
    "method": "Planned, not computed yet: today the engine runs one cost, 10 bps per unit of weight traded. Planned: re-run every candidate at 10, 20, 30 and 50 bps with its random baskets at the same cost, and find the cost where its percentile falls to 50 and where its edge over all 21 reaches zero. Taxes are not modelled, so turnover stands in for them.",
    "null_model": "The random baskets at the same cost.",
-   "pass_criteria": "Planned requirement for ADOPT: percentile 90 or more at 30 bps and break-even cost against all 21 of at least 50 bps. REJECT if the percentile is below 50 at 20 bps. [engine] The turnover limit (at most 200% a year) is checked today at 10 bps. Rule v1 is recorded at 419.6% a year counting buys and sells, about 210% replaced.",
+   "pass_criteria": "Planned requirement before any money: percentile 90 or more at 30 bps and break-even cost against all 21 of at least 50 bps. REJECT if the percentile is below 50 at 20 bps. [engine] The turnover limit (at most 200% a year) is checked today at 10 bps. Rule v1 is recorded at 419.6% a year counting buys and sells, about 210% replaced.",
    "rule_ids": [
     "five_leaders_m1",
     "five_leaders",
@@ -1685,11 +1687,11 @@
   {
    "id": "E11_household_account",
    "question": "What does the whole household account look like with a 10% stock pot run by the rule, against Index Only and against random pots, and how often does the 15% band fire?",
-   "method": "Planned, not computed yet: a household-account wrapper. The monthly stream goes into the core; a pot of 10% of investable savings is funded once and run by Five Leaders, and by 200 matched random pots. Yearly check at 15% with a trim back to 10% (with and without the trim, descriptive only). Money-weighted and time-weighted results are shown apart and never mixed.",
+   "method": "Planned, not computed yet: a household-account wrapper. The monthly stream goes into the core; a pot of 10% of investable savings is funded once and run by Five Leaders, and by 200 matched random pots. Yearly check at 15% with a trim back to 10% (a house convention reusing the 5-point stock/bond band of S-022.P04; descriptive only, with and without the trim). Money-weighted and time-weighted results are shown apart and never mixed.",
    "null_model": "Index Only with the same payments, and random pots in the same 90/10 mix.",
    "pass_criteria": "Planned requirement: descriptive only. It never gives a verdict on a rule. It shows the owner how far a 10% pot can move the household before the size is confirmed. Using the +20% goal as a pass or fail test is forbidden.",
    "rule_ids": [
-    "satellite_sleeve_cap",
+    "stock_pot_size",
     "control_core_only",
     "savings_monthly_autopilot",
     "five_leaders",
@@ -1730,13 +1732,13 @@
    "question": "On prices it has never seen, does each tracked satellite rule behave as its history promised, and does the household follow the plan without overrides?",
    "method": "Partly runs today: the forward ledger (paper_rules.json) records each tracked rule's holdings on the first run of each review month with that day's data, never edited. A rule whose settings change starts a new record and the old one is kept. Each track is replayed by the same engine and, after 6 decisions and about six months, compared with random baskets on the recorded days (forward percentile). Planned: scoring orders from the private journal, deviation counts, a band from history, demotion tests. Overrides reset a rule's record (people enforce this).",
    "null_model": "Random baskets over the forward window only. Their percentile is spread evenly when there is no skill, so a short record proves little on its own.",
-   "pass_criteria": "[engine] Forward percentile is computed after 6 decisions. [planned] Money for a passes_history rule needs at least 182 paper days, forward percentile of 50 or more, 100% on-time orders, and the owner's size within the 10% cap. A candidate moves up only after 24 months forward at percentile 80 or more. Demotion: forward percentile below 20 after 24 months, or forward excess below the historical 5th percentile.",
+   "pass_criteria": "[engine] Forward percentile appears once a rule has 6 decisions AND a track over 126 trading days (about 7 monthly decisions; about 16 months quarterly). [planned] Money for a passes_history rule needs 182 paper days, forward percentile 50 or more, 100% on-time orders, the owner's size within the 10% cap. A candidate moves up only after 24 months at forward percentile 80 or more. Demotion: forward percentile under 20 after 24 months, or forward excess under the historical 5th percentile.",
    "rule_ids": [
     "baseline_portfolio_v1",
     "five_leaders_m1",
     "five_leaders",
     "five_leaders_quarterly",
-    "satellite_sleeve_cap",
+    "stock_pot_size",
     "precommit_no_override",
     "drawdown_playbook",
     "rule_change_protocol",
@@ -1778,30 +1780,31 @@
   "min_paper_days": 182,
   "text": {
    "adopt": [
-    "[engine] passes_history (ADOPT on history) needs ALL of: p adjusted for 17 tries of 0.05 or less (beating about 99.7% of 2000 random baskets, and a bar the null runs can reach); at least the 60th percentile in BOTH halves of the history; deepest drop no more than 15 points worse than the core; turnover at most 200% a year, stops included.",
-    "[engine] Turnover is the percent of the sleeve replaced per year (a sale and a purchase count once), stops included. Rule v1 is about 210% on this basis, so it sits just over the 200% limit.",
-    "[engine] Test conditions are fixed: decisions on the first trading day of the month (quarter for the quarterly arm) on that day's data, fills at the next close, 10 bps per unit of weight traded, names join after 253 trading days, random-draw seed 20261005.",
-    "[engine] Tries counted = 17, one global count, split: savings 7 (weekly, 2-weekly, monthly, quarterly, lump sum, 26 and 52 weeks); satellite 6 (rule v1, v1's setup-check gate, M1, M2, M2 with drift [reserved], M2 quarterly); household account 2 and fundamental rungs B and C 2 [all four reserved]. Reserved tries keep the bar strict.",
-    "[engine] The history verdict is read once, on the first real-price run, and frozen. Later days update displayed numbers only. A change to any rule setting, acceptance number, cost or the 17 tries starts a new freeze, which counts as a new pre-registration.",
-    "[engine] A savings arm (weekly, every 2 weeks, quarterly, staged pot) replaces its baseline only when its verdict is 'better': at least 8 independent windows, a median gain of at least 50 bps a year and better in at least 80% of rolling starts. Otherwise the baseline stays (no_clear_difference, worse or too_few_independent_windows).",
-    "[planned] Meaning of ADOPT: the rule becomes the plan's satellite rule ON PAPER only. Money also needs at least 182 days of forward paper record, forward percentile of 50 or more, 100% on-time orders, the house trust ladder and the owner's sleeve size (at most 10% of savings, 2% a slot). No code enforces this; people check it.",
-    "[planned] The core plan (monthly autopilot, lump sum) is adopted now. It needs no paper period, and no test result can pause the monthly purchase.",
-    "[planned] Beats the core fund and all 21 names equally weighted on growth rate after costs. The engine prints both gaps for every rule, but the verdict word does not use them yet; the owner reads them before any money.",
+    "Status of every check below is as of 2026-10-05: [engine] means the program computes it on every daily run; [planned] means written down now, not built yet, so people check it by hand before any money. The page header shows whether real prices have been run.",
+    "[engine] passes_history (a first screen: it opens no money) needs ALL of: adjusted p of 0.05 or less (17 tries, 2000 random baskets: at most 4 baskets at or above the rule, p = (count+1)/2001 times 17, about the 99.8th percentile); at least the 60th percentile in BOTH halves of the history; deepest drop no more than 15 points worse than the core; turnover at most 200% a year.",
+    "[engine] Turnover is the percent of the stock pot replaced per year (a sale and a purchase count once), equal-weight resets and stops included. Rule v1: the site's record is 419.6% counting buys and sells (about 210% on this basis, shorter window, same-close fills); the engine prints its own figure, which may land above or below 200%.",
+    "[engine] Test conditions are fixed: decisions on the first trading day of the month (quarter for the quarterly arm) plus one on the first test day, on that day's data; fills at the next close; 10 bps per unit of weight traded; names join after 253 trading days of unbroken prices (a missing bar stops the run); random-draw seed 20261005.",
+    "[engine] We count 17 'tries': every variant we run or hold in reserve, because the more variants are tested, the likelier one wins by luck. 7 are savings plans, 6 are stock-rule variants, 5 are held in reserve for checks not built yet (drift sizing, the household account, two fundamental rungs). Reserved tries keep the bar strict.",
+    "[engine] The history verdict is read once, on the first real-price run, and frozen. Later days update displayed numbers only. A change to a rule's engine settings, to the settings rule v1 reads, to the watchlist or its sector labels, to an acceptance number, the cost or the tries starts a new freeze; the program accepts it only if tries_counted was raised, and keeps the old freeze in the file.",
+    "[planned] The freeze hash does not cover the wording of the money gates and vetoes, or the engine code: public git history protects them. Any change to them after the first real-data run needs a dated decisions.md entry and +1 try.",
+    "[engine] A savings arm (weekly, every 2 weeks, quarterly, staged windfall) replaces its baseline only when its verdict is 'better': at least 8 independent windows, a median gain of at least 50 bps a year and better in at least 80% of rolling starts, and then through rule_change_protocol. Only the 52-week row can reach a verdict; 104 and 156 weeks show the sign only.",
+    "[planned] Money for a passes_history rule needs ALL of: 182+ paper days, forward percentile 50 or more, 100% on-time orders, growth after costs ahead of the core and all 21 names (the owner reads the printed gaps), the E06-E10 vetoes once built, the owner's size within 10%. No code enforces this. The forward gate is a sanity check: about half of luck-only rules pass percentile 50.",
+    "[planned] The core plan (monthly autopilot, cash windfall in one go) is adopted now. It needs no paper period, and no test result can pause the monthly purchase.",
     "[planned] Stability and hindsight checks (E06-E08): at least 75% of neighbouring settings at percentile 70 or more, none below 50; best name removed keeps 80; leave-one-out minimum 60; placebo 20 points lower; ahead of the random median in at least 6 of 9 years. Until they run, passes_history is a first screen only.",
-    "[planned] Family-wise and cost checks (E09, E10): Reality Check p of 0.10 or less, deflated Sharpe ratio 0.95 or more, percentile 90 or more at 30 bps, break-even cost against all 21 of at least 50 bps. The engine runs only 10 bps and the Bonferroni check today.",
-    "[planned] E00 calibration passes first: random pseudo-rules are not called skilled more than the bar allows. Today only the repo tests check that a random picker is not called skilled more often than chance.",
-    "[planned] Components stay only on their own tests: the 200-day line (five_leaders against five_leaders_m1, paired), drift against reset (E04), quarterly against monthly (E05). They are credited for risk or cost, never for picking skill. Today the three rows are shown side by side.",
-    "[planned] Savings extras: same sign at 52, 104 and 156 weeks; worst moment no more than 2 points worse; a T-bill-era run; the broker's real fee per order below the printed break-even fee (the break-even fee is computed today, the broker fee is not in the system).",
+    "[planned] Family-wise and cost checks (E09, E10): Reality Check p of 0.10 or less, deflated Sharpe ratio 0.95 or more, percentile 90 or more at 30 bps, break-even cost against all 21 of at least 50 bps. The engine runs only 10 bps and the Bonferroni check.",
+    "[planned] E00 calibration passes first. Today a small repo test (12 random pickers, 80 draws each, at most 3 tail results) guards only against gross miscalibration; it does not test the 17-try bar.",
+    "[planned] Components stay only on their own tests: the 200-day line (five_leaders against five_leaders_m1, paired), drift against reset (E04), quarterly against monthly (E05). They are credited for risk or cost, never for picking skill. For now the rows are shown side by side.",
+    "[planned] Savings extras: same sign at 52, 104 and 156 weeks; worst moment no more than 2 points worse; a T-bill-era run; the broker's real fee per order against the printed break-even fee (printed for salary-stream arms; the broker fee is not in the system).",
     "[planned] At least 30 distinct position entries over the history, so a result does not rest on a handful of trades. The engine counts decisions, not entries.",
     "[planned] Fundamental rungs (dormant): the same satellite numbers, first on a broad point-in-time universe, surviving a 30-day data delay. Rung C needs the 95th percentile over rung B on a paired null.",
-    "[planned] House rules stay in force while a rule is under test: docs/household.md rule 2 (3 of 4 setup checks), rule 4 (act on the monthly date) and the trust ladder describe rule v1. Before any money follows Five Leaders, they must be rewritten with a change note."
+    "[planned] House rules stay in force while a rule is under test: docs/household.md rule 2 (3 of 4 setup checks), rule 3 (no entries near earnings or macro events), rule 4 (no averaging down 'by default') and the trust ladder describe rule v1. Rule 3 conflicts with 'orders are exactly the rule's list'; they must be rewritten with a change note before any money follows Five Leaders."
    ],
    "candidate": [
     "[engine] candidate: not rejected, unadjusted p of 0.05 or less (beat about 95% of random baskets) and the 60th percentile or better in both halves, but the adjusted-p bar, the drop limit or the turnover limit is missed.",
     "[engine] The forward ledger records every tracked satellite rule from its first run, whatever its verdict. A candidate has no plan role and no money. It is a rule worth watching on the forward record.",
     "[engine] baseline_portfolio_v1 is capped at candidate: its history was seen before this registry was written, so its best possible verdict is candidate.",
     "[planned] Any other rule whose real-price history was viewed before registration is capped at candidate too; so is a rule with a regime or crash-month weakness once those checks exist.",
-    "[planned] Candidate to ADOPT for money: at least 24 months of forward record with forward percentile of 80 or more, 100% on-time orders, and the risk and cost limits still met. The ledger computes the forward percentile after 6 decisions; people check the rest.",
+    "[planned] A candidate moves toward money only after at least 24 months of forward record with forward percentile of 80 or more, 100% on-time orders, and the risk and cost limits still met. The ledger computes the forward percentile; people check the rest.",
     "[engine] A savings arm that leans better but misses 50 bps or the 80% share is reported as no_clear_difference. The baseline stays. [planned] A re-test later is a new counted try."
    ],
    "reject": [
@@ -1813,8 +1816,8 @@
     "[planned] Hindsight failure: percentile below 50 with the best name removed, or the placebo within 5 points of the rule (E07). Risk failure: deepest drop more than 25 points worse than the core. The engine already blocks passes_history beyond 15 points.",
     "[planned] The rule cannot be written as code, or needs a judgment call (S-037.P03).",
     "[planned] Pipeline failure: if E00 fails, no satellite verdict is trusted until the pipeline is fixed.",
-    "[planned] Forward demotion: forward percentile below 20 after 24 months, or forward 12-month excess below the historical 5th percentile. Any discretionary override resets the record. Two deviations in 12 months send the pot back to paper.",
-    "[planned] Sleeve sunset: after 36 months funded, a pot that is behind both the core and the random median closes, and the money goes back to the core.",
+    "[planned] Forward demotion: forward percentile below 20 after 24 months, or forward 12-month excess below the historical 5th percentile. An override or late order resets the record; a second one in 12 months sells the pot into the index fund (back to paper, record kept).",
+    "[planned] Stock pot sunset: after 36 months funded, if the pot's money-weighted return is below the core's over the same dated flows, the pot closes and the money goes back to the core.",
     "[planned] Fundamental rules: a result that fails the 30-day delay stress or the hand check is rejected as look-ahead. A sales-per-share floor that changes almost nothing is deleted, never tightened."
    ]
   }
@@ -1948,7 +1951,7 @@
    "owner_decision": true
   },
   {
-   "question": "Satellite size and funding: confirm at most 10% of investable savings, funded once (default), or the 90/10 split of every payment, or 0% (Index Only). Can both adults watch one slot fall by half without selling?",
+   "question": "Stock pot size and funding: the library says speculative money should be a few percent (S-020.P04), and the house proposes at most 10% of investable savings, funded once from new money, a windfall or a one-time sale of core units, or the 90/10 split of every payment, or 0% (Index Only). Which? Can both adults watch one slot fall by half without selling?",
    "owner_decision": true
   },
   {
@@ -1956,11 +1959,11 @@
    "owner_decision": true
   },
   {
-   "question": "Paper period before satellite money: registry uses 182 days like docs/household.md; the research synthesis wanted 365 days. Which?",
+   "question": "Decided for this version: 182 days (half a year) of paper record before any money, as in docs/household.md; the research wanted 365. A longer wait can be chosen at the yearly review. Do we accept 182 days?",
    "owner_decision": true
   },
   {
-   "question": "Turnover ceiling: passes_history needs at most 200% of the sleeve replaced a year (a sale and a purchase count once; stops included). Rule v1 is about 210% on that basis (419.6% counting buys and sells). Set a lower ceiling, such as 100%, before the first run?",
+   "question": "Decided for this version: the stock pot may replace at most 200% of itself a year (a sale and a purchase count once; rule v1 is about 210%). Fixed now; a change is a new freeze and a counted try. Do we accept it, or choose a lower ceiling such as 100% before the first real-data run?",
    "owner_decision": true
   },
   {
@@ -1976,7 +1979,7 @@
    "owner_decision": true
   },
   {
-   "question": "Is there a pot beyond the emergency reserve? Lump sum (default) or staged over a fixed number of months, in writing now? How big is the emergency reserve (private)? Who places orders and who checks them?",
+   "question": "Is there a windfall (cash beyond the emergency reserve)? Lump sum (default) or staged over a fixed number of months, in writing now? How big is the emergency reserve (private)? Who places orders and who checks them?",
    "owner_decision": true
   },
   {
@@ -1984,7 +1987,7 @@
    "owner_decision": true
   },
   {
-   "question": "Benchmark: the new rules rank against the core, while v1 still measures strength against QQQ. Re-point v1 to the core? That would be a v2 with a new record.",
+   "question": "Benchmark: ranking by 12-1 return is the same against any benchmark, so it does not matter for the new rules; v1 still measures strength against QQQ. Re-point v1 to the core? That would be a v2 with a new record.",
    "owner_decision": true
   },
   {
@@ -1994,10 +1997,6 @@
   {
    "question": "Financials and Utilities names (CME, AEP, XEL) are ineligible for the fundamental rungs. Accept that, or keep a separate price-only slot for them?",
    "owner_decision": true
-  },
-  {
-   "question": "Tries counting: keep one global count of 17 (conservative; it tightens the satellite bar) or split savings and satellite into separate families (needs a schema change and lint change)?",
-   "owner_decision": false
   },
   {
    "question": "Before the first real-data run: freeze the method constants for the planned checks (Reality Check blocks of 3, 6 and 12 months, the drawdown-episode definition, Bartlett lag 12, seed 20261005), and pass the second-source price check (docs/decisions.md) before any correlation claim or before dropping v1's correlation cap.",

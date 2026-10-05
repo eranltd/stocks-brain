@@ -21,6 +21,27 @@ const EVIDENCE = { replicated: "text-accent", mixed: "text-people", weak: "text-
 const DOT = { passes_history: "var(--accent)", candidate: "var(--people)", inconclusive: "var(--ink-3)", rejected: "var(--down)" };
 const HORIZON = (w) => (w % 52 === 0 ? `${w / 52} year${w === 52 ? "" : "s"}` : `${w} weeks`);
 
+// "[engine]" = computed by the program on every daily run; "[planned]" = written down, not built yet, people check it by hand.
+const TAG = /^\[(engine|planned)[^\]]*\]\s*/;
+function Tagged({ text }) {
+  const m = text.match(TAG);
+  const body = m ? text.slice(m[0].length) : text;
+  return (
+    <>
+      {m && <span className={`mr-1.5 inline-block rounded-full border px-2 py-0.5 align-middle font-mono text-[10.5px] uppercase tracking-[0.06em] ${m[1] === "engine" ? "border-accent/50 text-accent" : "border-dashed border-people/60 text-people"}`}>{m[1] === "engine" ? "program" : "planned"}</span>}
+      {body}
+    </>
+  );
+}
+const adoptLabel = (r) => {
+  if (r.engine?.baseline) return "We use it";
+  if (r.family === "savings" && r.status === "testable_now") return "Replaces the baseline if";
+  if (r.status === "testable_now") return "Passes history if";
+  if (r.status === "reference_baseline") return "Can move up if";
+  if (r.status === "control") return "Used as";
+  return "We follow it when";
+};
+
 function Stat({ k, v, tone = "", sub }) {
   return (
     <div className="min-w-0">
@@ -51,18 +72,25 @@ export default function Playbook({ data, go }) {
     <Container className="pt-14">
       <Reveal className="eyebrow mb-4">Playbook · rules v{rb.version} · {fmtDate(rb.updated_at)}{res ? ` · ${res.sample ? "sample prices" : `tested on real prices to ${fmtDate(res.as_of)}`}` : ""}</Reveal>
       <Headline size="xl" className="max-w-[16ch]">The trader we <Accent>want to be.</Accent></Headline>
-      <Reveal delay={250} as="p" className="mt-6 max-w-[64ch] text-[clamp(17px,1.7vw,20px)] leading-relaxed text-ink-2">{rb.trader}</Reveal>
+      <div className="mt-6 grid max-w-[64ch] gap-4">
+        {rb.trader.split("\n\n").map((para, i) => <Reveal key={i} delay={250 + i * 90} as="p" className="text-[clamp(17px,1.7vw,20px)] leading-relaxed text-ink-2">{para}</Reveal>)}
+      </div>
       <Reveal delay={350} className="mt-8 flex flex-wrap gap-2 text-[13px]">
         <span className="pill">{rb.rules.length} rules</span>
         <span className="pill">{counts.tested} tested on history</span>
         {counts.needs > 0 && <span className="pill border-dashed border-people/60 text-people">{counts.needs} need data</span>}
         <span className="pill">{counts.process} process</span>
-        <span className="pill" title="Every variant tried counts against a rule: more tries make luck easier.">{rb.tries_counted} tries counted</span>
+        <span className="pill">{rb.tries_counted} tries counted</span>
       </Reveal>
+      <p className="mt-3 max-w-[64ch] text-[13px] leading-relaxed text-ink-3">A "try" is any variant we run or keep in reserve. The more tries, the likelier one wins by luck, so the bar for "not luck" rises with each.</p>
       <Reveal className="card mt-8 border-people/40 p-5 text-[14.5px] leading-relaxed text-ink-2 sm:p-6">
         <span className="text-people">How to read the evidence.</span> History tests use today's watchlist, so every name is a survivor and every result is flattered.
         A rule is judged only against <span className="text-ink">random names under the same conditions</span>, never against the +{goal}% goal, and nothing here moves money:
         a rule that passes history goes on to the forward paper record, which cannot be re-fitted.
+        <span className="mt-3 block text-ink-3">
+          Evidence ratings: <b className="font-medium text-ink-2">replicated</b> = independent replication named in the sources we keep; <b className="font-medium text-ink-2">mixed</b> = backed by more than one source, with caveats or gaps;
+          <b className="font-medium text-ink-2"> weak</b> = one source's claim, an inference, or our own convention; <b className="font-medium text-ink-2">untested</b> = our sources are silent; <b className="font-medium text-ink-2">contradicted</b> = they argue against it.
+        </span>
       </Reveal>
 
       {res?.frozen && <FrozenNote res={res} name={name} />}
@@ -169,7 +197,7 @@ function Savings({ rb, res, name }) {
         {stream.map((r) => <SavingsCard key={r.id} r={r} name={name} />)}
       </div>
       <p className="meta mt-3 normal-case tracking-[0.04em]">
-        "Fee tie": the fixed fee per trade, as a share of one weekly contribution, at which buying less often catches up with weekly buying. Maximum difference between cadences here: {fmtNum(maxBps, 0)} basis points a year.
+        "Fee tie": the fixed fee per trade, as a share of one weekly contribution, at which buying less often catches up with weekly buying. Maximum difference between cadences here: {fmtNum(maxBps, 0)} basis points a year (100 basis points, written bp, = 1 percentage point).
         "Worst gap" is the 1-in-10 worst moment between what you had put in and what the account was worth.
       </p>
       {windfall.length > 0 && (
@@ -404,7 +432,7 @@ function Rules({ rb, satVerdict, go }) {
   return (
     <section className="pt-24">
       <SectionHead eyebrow="Every rule" title={<>Written down, <Accent>in advance.</Accent></>} size="md"
-        lede="Each rule has one fixed set of numbers, taken from the literature or the library, never tuned on our data. The reason, the evidence and the test that would retire it are next to it." />
+        lede="Each rule has one fixed set of numbers, written down before any result was seen. Some come from the sources we keep; many are our own conventions, and each says which. The reason, the evidence rating and what would drop it are next to it." />
       {FAMILIES.map(([fam, title, sub]) => {
         const list = rb.rules.filter((r) => r.family === fam);
         if (!list.length) return null;
@@ -442,11 +470,11 @@ function RuleCard({ r, verdict, i, go }) {
           )}
           <div><div className="meta mb-1">Why it is on the list</div><p className="text-ink-2">{r.why_included}</p></div>
           <div className="grid gap-3 sm:grid-cols-2">
-            <div><div className="meta mb-1 text-accent">Adopt if</div><p className="text-ink-2">{r.adopt_if}</p></div>
-            <div><div className="meta mb-1 text-down">Drop if</div><p className="text-ink-2">{r.reject_if}</p></div>
+            <div><div className="meta mb-1 text-accent">{adoptLabel(r)}</div><p className="text-ink-2">{r.adopt_if}</p></div>
+            <div><div className="meta mb-1 text-down">Dropped if</div><p className="text-ink-2">{r.reject_if}</p></div>
           </div>
           {r.library_refs.length > 0 && (
-            <div className="flex flex-wrap items-center gap-1.5"><span className="meta mr-1">From the library</span>
+            <div className="flex flex-wrap items-center gap-1.5"><span className="meta mr-1">Sources cited</span>
               {r.library_refs.map((x) => <button key={x} type="button" onClick={() => go("insights")} className="rounded-full border border-line-2 px-2.5 py-1 font-mono text-[11.5px] text-ink-2 hover:text-ink">{x}</button>)}</div>
           )}
           {r.data_needed && r.status === "needs_data" && <p className="text-people">Needs data we do not have: {r.data_needed}. The owner approves any provider first.</p>}
@@ -459,31 +487,41 @@ function RuleCard({ r, verdict, i, go }) {
 /* --------------------------------------------------------------- process */
 
 function Process({ rb }) {
-  const list = rb.rules.filter((r) => r.status === "process_only");
+  const byId = Object.fromEntries(rb.rules.map((r) => [r.id, r]));
+  const monthly = ["savings_monthly_autopilot", "drawdown_playbook", "precommit_no_override"].map((id) => byId[id]).filter(Boolean);
+  const yearly = ["rule_change_protocol", "stock_pot_size"].map((id) => byId[id]).filter(Boolean);
   const month = new Date().toISOString().slice(0, 7);
-  const key = `sb-checklist-${month}`; // this device only
-  const [done, setDone] = useState(() => { try { return JSON.parse(localStorage.getItem(key) || "[]"); } catch { return []; } });
-  if (!list.length) return null;
+  const [done, setDone] = useState(() => { try { return JSON.parse(localStorage.getItem(`sb-checklist-${month}`) || "[]"); } catch { return []; } });
+  if (!monthly.length && !yearly.length) return null;
   const toggle = (id) => {
     const next = done.includes(id) ? done.filter((x) => x !== id) : [...done, id];
     setDone(next);
-    try { localStorage.setItem(key, JSON.stringify(next)); } catch { /* storage may be unavailable */ }
+    try { localStorage.setItem(`sb-checklist-${month}`, JSON.stringify(next)); } catch { /* storage may be unavailable */ }
   };
+  const List = ({ list }) => (
+    <ul>
+      {list.map((r) => (
+        <li key={r.id} className="border-b border-line last:border-0">
+          <button type="button" onClick={() => toggle(r.id)} aria-pressed={done.includes(r.id)} className="flex min-h-[56px] w-full items-start gap-4 px-2 py-3 text-left">
+            <span className={`mt-0.5 grid size-6 shrink-0 place-items-center rounded-full border text-[12px] ${done.includes(r.id) ? "border-accent bg-accent text-bg" : "border-line-2 text-transparent"}`}>✓</span>
+            <span><span className="block font-medium">{r.name}</span><span className="block text-[14px] leading-relaxed text-ink-2">{r.plain}</span></span>
+          </button>
+        </li>
+      ))}
+    </ul>
+  );
   return (
     <section className="pt-24">
-      <SectionHead eyebrow={`This month · ${month}`} title={<>The monthly <Accent>checklist.</Accent></>} size="md" lede="Process rules are the ones a person can check. Ticks stay on this device." />
-      <Reveal className="card p-3 sm:p-5">
-        <ul>
-          {list.map((r) => (
-            <li key={r.id} className="border-b border-line last:border-0">
-              <button type="button" onClick={() => toggle(r.id)} aria-pressed={done.includes(r.id)} className="flex min-h-[56px] w-full items-start gap-4 px-2 py-3 text-left">
-                <span className={`mt-0.5 grid size-6 shrink-0 place-items-center rounded-full border text-[12px] ${done.includes(r.id) ? "border-accent bg-accent text-bg" : "border-line-2 text-transparent"}`}>✓</span>
-                <span><span className="block font-medium">{r.name}</span><span className="block text-[14px] leading-relaxed text-ink-2">{r.plain}</span></span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      </Reveal>
+      <SectionHead eyebrow={`This month · ${month}`} title={<>The monthly <Accent>checklist.</Accent></>} size="md"
+        lede="Each month: check the index-fund order went through; read the paper record; write down any fall of 10% or more; place no other orders. Until a stock rule has earned money, the index purchase is the only real action. Ticks stay on this device." />
+      <Reveal className="card p-3 sm:p-5"><List list={monthly} /></Reveal>
+      {yearly.length > 0 && (
+        <>
+          <h3 className="mt-10 text-[22px] font-semibold tracking-[-0.02em]">Once a year</h3>
+          <p className="mt-1 text-[14px] text-ink-3">Review the rules and the stock pot size at the yearly review, never right after a fall.</p>
+          <Reveal className="card mt-4 p-3 sm:p-5"><List list={yearly} /></Reveal>
+        </>
+      )}
     </section>
   );
 }
@@ -492,25 +530,47 @@ function Process({ rb }) {
 
 function Testing({ rb }) {
   const a = rb.acceptance;
+  const alpha = (100 - a.satellite.null_percentile_min) / 100;
+  const maxAbove = Math.max(0, Math.floor((alpha * (a.null_runs + 1)) / rb.tries_counted - 1));
+  const pctBar = (100 * (a.null_runs - maxAbove)) / a.null_runs;
+  const isPlanned = (x) => /^\[planned/.test(x);
   return (
     <section className="pt-24">
       <SectionHead eyebrow="How we test" title={<>How a rule <Accent>earns its place.</Accent></>} size="md"
         lede={`Written before any result was seen. ${rb.tries_counted} variants are counted as tries, so the bar for "not luck" rises with every rule added.`} />
+      <Reveal className="card mb-4 p-5 text-[14.5px] leading-relaxed text-ink-2">
+        <span className="mr-1.5 inline-block rounded-full border border-accent/50 px-2 py-0.5 align-middle font-mono text-[10.5px] uppercase tracking-[0.06em] text-accent">program</span>
+        checked automatically on every daily run. <span className="mx-1.5 inline-block rounded-full border border-dashed border-people/60 px-2 py-0.5 align-middle font-mono text-[10.5px] uppercase tracking-[0.06em] text-people">planned</span>
+        written down now but not built yet: people check it by hand before any money. "E04" and the like name the experiments listed below.
+      </Reveal>
       <div className="grid gap-4 lg:grid-cols-3">
-        {[["adopt", "Moves to the paper record", "text-accent"], ["candidate", "Stays a candidate", "text-people"], ["reject", "Dropped", "text-down"]].map(([k, t, c]) => (
-          <Reveal key={k} className="card p-6"><div className={`meta mb-3 ${c}`}>{t}</div>
-            <ul className="grid gap-2 text-[14.5px] leading-relaxed text-ink-2">{a.text[k].map((x) => <li key={x} className="flex gap-2"><span className={c}>–</span>{x}</li>)}</ul></Reveal>
-        ))}
+        {[["adopt", "Passes history (paper record only, no money)", "text-accent"], ["candidate", "Stays a candidate", "text-people"], ["reject", "Dropped", "text-down"]].map(([k, t, c]) => {
+          const now = a.text[k].filter((x) => !isPlanned(x));
+          const later = a.text[k].filter(isPlanned);
+          return (
+            <Reveal key={k} className="card p-6"><div className={`meta mb-3 ${c}`}>{t}</div>
+              <ul className="grid gap-2 text-[14.5px] leading-relaxed text-ink-2">{now.map((x) => <li key={x} className="flex gap-2"><span className={c}>–</span><span><Tagged text={x} /></span></li>)}</ul>
+              {later.length > 0 && (
+                <details className="mt-4">
+                  <summary className="meta cursor-pointer hover:text-ink">Later checks, not built yet ({later.length})</summary>
+                  <ul className="mt-3 grid gap-2 text-[14.5px] leading-relaxed text-ink-2">{later.map((x) => <li key={x} className="flex gap-2"><span className={c}>–</span><span><Tagged text={x} /></span></li>)}</ul>
+                </details>
+              )}
+            </Reveal>
+          );
+        })}
       </div>
       <Reveal className="card mt-4 p-6 text-[14.5px] leading-relaxed text-ink-2">
         <div className="meta mb-3">The numbers</div>
-        Beat at least {a.satellite.null_percentile_min}% of random draws (stricter after counting tries), at least {a.satellite.halves_percentile_min}% in each half of history; deepest drop no more than {a.satellite.max_dd_worse_than_core_pts} points worse than the core;
-        trading under {a.satellite.max_turnover_pct_year}% of the sleeve a year; fills the day after the signal; at least {a.min_paper_days} days of forward paper record before any money.
+        A rule must beat almost every random pick: out of {a.null_runs} random baskets, at most {maxAbove} may match or beat it (about {fmtNum(pctBar, 1)}% beaten: the {a.satellite.null_percentile_min}% bar, tightened for {rb.tries_counted} tries),
+        and it must beat at least {a.satellite.halves_percentile_min}% of them in each half of history. Its worst fall may be at most {a.satellite.max_dd_worse_than_core_pts} points deeper than the index fund's.
+        It may replace at most {a.satellite.max_turnover_pct_year}% of the stock pot a year ({a.satellite.max_turnover_pct_year}% means the whole pot twice). Orders fill the day after the signal.
+        Then at least {a.min_paper_days} days of forward paper record, and every other money condition, before any money.
       </Reveal>
       <div className="mt-6 grid gap-3">
         {rb.experiments.map((e) => (
           <Reveal key={e.id} className="card p-5">
-            <div className="font-medium">{e.question}</div>
+            <div className="font-medium"><span className="meta mr-2 normal-case tracking-[0.04em]">{e.id.split("_")[0]}</span>{e.question}</div>
             <p className="mt-2 text-[14px] leading-relaxed text-ink-2">{e.method}</p>
             <p className="meta mt-3 normal-case tracking-[0.04em]">Against: {e.null_model} · Pass: {e.pass_criteria}</p>
           </Reveal>
@@ -531,19 +591,27 @@ function Testing({ rb }) {
 /* ------------------------------------------------------------- decisions */
 
 function Decisions({ rb, go }) {
-  const qs = [...rb.open_questions].sort((a, b) => Number(b.owner_decision) - Number(a.owner_decision));
-  if (!qs.length) return null;
+  const owner = rb.open_questions.filter((q) => q.owner_decision);
+  const housekeeping = rb.open_questions.filter((q) => !q.owner_decision);
+  if (!owner.length && !housekeeping.length) return null;
   return (
     <section className="pt-24">
-      <SectionHead eyebrow="Open" title={<>What only <Accent>you</Accent> can decide.</>} size="md" />
+      <SectionHead eyebrow="Open" title={<>What only <Accent>you</Accent> can decide.</>} size="md"
+        lede="Where a number is marked 'decided for this version', it is fixed in the registry and you are only asked whether you accept it. Changing one later is a new version and a counted try." />
       <ul className="grid gap-3 md:grid-cols-2">
-        {qs.map((q) => (
-          <li key={q.question} className={`card p-5 ${q.owner_decision ? "border-people/40" : ""}`}>
-            {q.owner_decision && <span className="pill mb-3 border-dashed border-people/60 text-people">owner decision</span>}
+        {owner.map((q) => (
+          <li key={q.question} className="card border-people/40 p-5">
+            <span className="pill mb-3 border-dashed border-people/60 text-people">owner decision</span>
             <p className="text-[15px] leading-relaxed">{q.question}</p>
           </li>
         ))}
       </ul>
+      {housekeeping.length > 0 && (
+        <details className="mt-6">
+          <summary className="meta cursor-pointer hover:text-ink">Housekeeping for the program's author, no decision needed ({housekeeping.length})</summary>
+          <ul className="mt-3 grid gap-3 md:grid-cols-2">{housekeeping.map((q) => <li key={q.question} className="card p-5 text-[14.5px] leading-relaxed text-ink-2">{q.question}</li>)}</ul>
+        </details>
+      )}
       <button type="button" onClick={() => go("admin")} className="meta mt-5 inline-flex items-center gap-1 hover:text-ink">Decision log <ArrowRight className="size-3.5" /></button>
     </section>
   );

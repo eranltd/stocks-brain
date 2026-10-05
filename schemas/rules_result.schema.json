@@ -254,6 +254,7 @@
         "as_of",
         "registry_version",
         "registry_hash",
+        "tries_counted",
         "satellite",
         "savings"
       ],
@@ -274,6 +275,17 @@
         "savings": {
           "type": "object",
           "description": "'<weeks>:<rule id>' -> {verdict}"
+        },
+        "tries_counted": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "superseded": {
+          "type": "array",
+          "description": "Earlier freezes, kept when a change to the pre-registration started a new one (which needs a higher tries_counted).",
+          "items": {
+            "type": "object"
+          }
         }
       }
     }

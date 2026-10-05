@@ -1,7 +1,7 @@
 ---
-version: 0.8.0
+version: 0.9.0
 updated_at: 2026-10-05
-change_note: Brain runs are recorded by an Action (brain.yml), so only Actions write the data branch.
+change_note: The pre-registered rule registry 1.0.0, how it was built and reviewed, and what it fixes in place.
 ---
 # Decision log
 
@@ -20,6 +20,39 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   the numbers are faithful to the source; a cross-check against a second source is still pending.
 
 ## 2026-10-05
+- **Pre-registered rule registry 1.0.0 (`config/rules.json`).** Written on 2026-10-05, before any rule ran on real prices. It
+  holds 23 rules, six plans, 14 experiments, the acceptance numbers and the tries. Fixed numbers: decisions on the first trading
+  day of the month, fills at the next close, 10 bps per unit of weight traded (satellite and controls; the savings test charges no
+  cost), 2000 random baskets, seed 20261005, 17 tries, a passes-history bar of adjusted p of 0.05 or less (at most 4 of 2000
+  baskets at or above the rule), 60th percentile in both halves, a drop within 15 points of the core, turnover at most 200% of the
+  stock pot replaced a year (a sale and a purchase count once), savings arms need 8 independent windows, 50 bps and 80% of starts,
+  182 paper days. Seen before it was written: rule v1's history, the core and the all-names yardstick. Not seen: any result of the
+  Five Leaders rules or the random baskets. The research that produced it (library mining, five lenses, three judges, a synthesis
+  and a critic) and a five-reviewer adversarial pass are in this session's history; about 100 review findings were applied.
+- **What the registry fixes, and where it departs from the research.** Backtests reset to equal weights each month while the
+  household practice lets winners drift; the drift arm is reserved. The 200-day exit is a review-day check, not a daily stop.
+  The stretch veto, one-per-sector cap and 200-day line are parameters of Five Leaders, not separate rules. Weekly, two-weekly and
+  quarterly buying and 26 and 52 week staging are comparison arms. Fundamentals are dormant (no data provider approved). The paper
+  period is 182 days like `docs/household.md` (the research wanted 365: an owner question). Rule v1 is capped at candidate. M1 and
+  M2 are not capped: their numbers (8% stretch, 50 and 200 day averages) echo the site's setup checks, whose base rates were
+  published earlier, so the settings are not clean of that history (said in the rules); no result of the rules themselves was seen.
+- **The history verdict is read once.** `data/market/rules.json` carries a `frozen` block written on the first real-data run. A
+  change to the rules' engine settings, the acceptance numbers, the tries, the cost, the settings rule v1 reads or the watchlist
+  starts a new freeze, which the program accepts only if `tries_counted` is raised; the earlier freeze stays in the file. So a
+  watchlist change now needs `tries_counted` +1 in `config/rules.json` and a line here, or the rules step stops (the day's market
+  data still publishes). The wording of the money gates is protected by git history only. The tries ledger is not built.
+- **Guards added.** A price gap that would silently restart a name's 253-day clock stops the rules and ledger steps (they name the
+  names and dates). The forward ledger and the freeze know rule v1's real settings. Only one windfall and one stream savings
+  baseline are allowed (lint).
+- **Funding the stock pot, stated once.** The pot is its own holding, funded once from new money or a windfall, else by a one-time
+  sale of core index units (the only exception to never selling the core, may be taxable, the owner writes it down). After that
+  only the pot's own parked index money and the proceeds of the name a rule replaces are traded. Nothing is bought from salary.
+- **Money gate, stated once.** passes_history is a first screen and opens no money. Money needs 182+ paper days, a forward
+  percentile of 50 or more (a sanity check: about half of luck-only rules pass it), 100% on-time orders, growth after costs ahead
+  of the core and all 21 names, the planned vetoes once built, and the owner's size within 10%. `docs/household.md` rules 2, 3, 4
+  and the trust ladder describe rule v1 and stay in force until a rule is adopted; they must be rewritten with a change note first.
+- **Turnover has one basis.** The engine reports the percent of the stock pot replaced per year. Rule v1's site record of 419.6%
+  counts buys and sells, which is about 210% on the engine's basis, just over the 200% limit; the engine prints its own figure.
 - **Brain runs go through an Action.** The brain runs in a Claude Code session on the pack built from the published
   data. Its output is passed to the `brain` workflow (manual dispatch), which rebuilds the same pack from the `data`
   branch, validates the picks against it (`scripts/record_run.py`), lints and publishes the run record to the `data`

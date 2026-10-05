@@ -445,26 +445,40 @@ def cap_verdict(status: str, verdict: str, why: list[str]) -> tuple[str, list[st
     return verdict, why
 
 
-def registry_hash(rc: dict, cost: float) -> str:
-    """Everything that decides a history verdict: the rules' engine settings, the acceptance numbers, the tries count
-    and the cost. A change here is a new pre-registration, so a new freeze."""
+def registry_hash(rc: dict, cost: float, st: dict, wl: dict) -> str:
+    """Everything that decides a history verdict: the rules' engine settings, the acceptance numbers, the tries count, the
+    cost, the settings rule v1 reads (config/settings.json setup and portfolio) and the universe (the watchlist's symbols and
+    sector labels, the core and the benchmark). A change here is a new pre-registration, so a new freeze. The wording of the
+    money gates is protected by the public git history only (see the registry's acceptance text)."""
     core = {"rules": [[r["id"], r["status"], r.get("engine")] for r in rc["rules"]], "acceptance": {k: v for k, v in rc["acceptance"].items() if k != "text"},
-            "tries": rc["tries_counted"], "cost_bps": cost}
+            "tries": rc["tries_counted"], "cost_bps": cost, "setup": st["setup"], "portfolio": st["portfolio"],
+            "universe": sorted((s["symbol"], s["sector"]) for s in wl["symbols"]),
+            "core": (wl.get("core") or {}).get("symbol"), "benchmark": st["scoring"]["benchmark"]["symbol"]}
     return hashlib.sha256(json.dumps(core, sort_keys=True).encode()).hexdigest()[:16]
 
 
-def freeze_verdicts(prev: dict | None, doc: dict, rc: dict, cost: float) -> dict:
+def freeze_verdicts(prev: dict | None, doc: dict, rc: dict, cost: float, st: dict, wl: dict) -> dict:
     """The history verdict is read ONCE, on the first real-data run of a registry. The daily recompute keeps updating the
     numbers (display), but a verdict that flips on a lucky day is optional stopping, so the decision uses the frozen one.
-    Later data counts only through the forward ledger. A change to anything that decides a verdict starts a new freeze."""
-    h = registry_hash(rc, cost)
+    Later data counts only through the forward ledger. A change to anything that decides a verdict (see registry_hash) starts a
+    new freeze, but only if `tries_counted` was raised, so a re-read always costs a try; the superseded freeze stays in the
+    file. Without the raised count the run fails closed."""
+    h = registry_hash(rc, cost, st, wl)
     old = (prev or {}).get("frozen")
     if old and old.get("registry_hash") == h:
         return old
+    if old and rc["tries_counted"] <= old.get("tries_counted", 0):
+        raise SystemExit(f"rules: something that decides a verdict changed (rule settings, acceptance numbers, cost, rule v1's settings or the watchlist) "
+                         f"since the verdicts were frozen on {old['as_of']}. A changed pre-registration is a new try: raise tries_counted in config/rules.json "
+                         f"above {old.get('tries_counted', 0)} (and note it in docs/decisions.md), or restore the old settings.")
     sat = {r["id"]: {"verdict": r["verdict"], "percentile": r["percentile"], "p_adjusted": r["p_adjusted"], "reasons": r["reasons"]}
            for r in (doc.get("satellite") or {}).get("rules", [])}
     sav = {f"{hz['weeks']}:{r['id']}": {"verdict": r["verdict"]} for hz in (doc.get("savings") or {}).get("horizons", []) for r in hz["rows"]}
-    return {"as_of": doc["as_of"], "registry_version": rc["version"], "registry_hash": h, "satellite": sat, "savings": sav}
+    history = [*(old.get("superseded", []) if old else []), {k: v for k, v in old.items() if k != "superseded"}] if old else []
+    out = {"as_of": doc["as_of"], "registry_version": rc["version"], "registry_hash": h, "tries_counted": rc["tries_counted"], "satellite": sat, "savings": sav}
+    if history:
+        out["superseded"] = history
+    return out
 
 
 def judge_savings(row: dict, independent: int, acc: dict) -> str:
@@ -491,6 +505,8 @@ def compute_rules(prices_dir: Path, st: dict, wl: dict, rc: dict, sample: bool, 
     M = rl.build_market(raw, members, core, bench, cash, sectors)
     if not M or M["n"] < rl.WARM + 2 * rl.Y:
         return None
+    if (gaps := rl.gap_report(M)):
+        raise SystemExit("rules: a price gap would silently shrink the universe (fix the data first): " + "; ".join(gaps))
     acc, tries = rc["acceptance"], rc["tries_counted"]
     goal = st["goal"]["annual_return_pct"]
     lag, cost = acc["fill_lag_days"], st["portfolio"]["cost_bps"]
@@ -594,7 +610,7 @@ def run_rules() -> None:
     if not doc:
         raise SystemExit("rules: not enough aligned history for the core, benchmark and watchlist")
     path = MARKET / "rules.json"
-    doc["frozen"] = freeze_verdicts(load_json(path) if path.exists() else None, doc, rc, st["portfolio"]["cost_bps"])
+    doc["frozen"] = freeze_verdicts(load_json(path) if path.exists() else None, doc, rc, st["portfolio"]["cost_bps"], st, wl)
     _write(path, doc, "rules_result.schema.json", compact=True)
     print("rules:", f"registry {rc['version']}, as of {doc['as_of']}")
     print(*summarize_rules(doc), sep="\n")
@@ -611,8 +627,12 @@ def _rule_market(prices_dir: Path, st: dict, wl: dict):
     return rl.build_market(raw, members, core, bench, cash, sectors)
 
 
-def _engine_hash(cfg: dict, cost: float, lag: int) -> str:
-    return hashlib.sha256(json.dumps({"cfg": cfg, "cost_bps": cost, "lag": lag}, sort_keys=True).encode()).hexdigest()[:16]
+def _engine_hash(cfg: dict, cost: float, lag: int, st: dict | None = None) -> str:
+    """Identity of a rule's record. Rule v1 reads its numbers from config/settings.json, so those are part of its identity."""
+    body = {"cfg": cfg, "cost_bps": cost, "lag": lag}
+    if st is not None and cfg.get("selection", {}).get("method") == "v1":
+        body["v1_settings"] = {"setup": st["setup"], "portfolio": st["portfolio"]}
+    return hashlib.sha256(json.dumps(body, sort_keys=True).encode()).hexdigest()[:16]
 
 
 def update_ledger(prev: dict | None, M: dict, st: dict, rc: dict, sample: bool) -> dict:
@@ -638,7 +658,7 @@ def update_ledger(prev: dict | None, M: dict, st: dict, rc: dict, sample: bool) 
             continue
         live_ids.add(r["id"])
         cfg = {k: v for k, v in eng.items() if k != "kind"}
-        h = _engine_hash(cfg, cost, lag)
+        h = _engine_hash(cfg, cost, lag, st)
         old = prev_rules.get(r["id"])
         if old and old.get("engine_hash") != h:  # the rule changed: freeze its record, start a new one
             retired[f"{r['id']}@{old.get('engine_hash', 'legacy')[:8]}"] = {**old, "retired_on": today}
@@ -682,6 +702,11 @@ def update_ledger(prev: dict | None, M: dict, st: dict, rc: dict, sample: bool) 
             "bench": [round(100 * c / bench_c[base], 3) for c in bench_c[base:]], "rules": out, "retired": retired}
 
 
+def rl_gap_report(M: dict) -> list[str]:
+    import rules as rl
+    return rl.gap_report(M)
+
+
 def run_ledger() -> None:
     if not (CONFIG / "rules.json").exists():
         print("ledger: no config/rules.json yet, nothing to record")
@@ -691,6 +716,8 @@ def run_ledger() -> None:
     M = _rule_market(PRICES, st, wl)
     if not M:
         raise SystemExit("ledger: missing core or benchmark prices")
+    if (gaps := rl_gap_report(M)):
+        raise SystemExit("ledger: a price gap would silently shrink the universe (nothing recorded today): " + "; ".join(gaps))
     path = DATA / "portfolio" / "paper_rules.json"
     doc = update_ledger(load_json(path) if path.exists() else None, M, st, rc, sample=False)
     _write(path, doc, "paper_rules.schema.json", compact=True)

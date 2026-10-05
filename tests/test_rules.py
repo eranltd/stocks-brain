@@ -284,32 +284,94 @@ class FrozenVerdictTest(unittest.TestCase):
     RC = {"version": "1.0.0", "tries_counted": 17,
           "rules": [{"id": "r1", "status": "testable_now", "engine": {"kind": "satellite_select", "slots": 3}}],
           "acceptance": {"fill_lag_days": 1, "null_runs": 2000, "text": {"adopt": []}}}
+    ST, WL = settings(), watchlist()
 
     def doc(self, as_of, verdict):
         return {"as_of": as_of, "sample": False,
                 "satellite": {"rules": [{"id": "r1", "verdict": verdict, "percentile": 99.0, "p_adjusted": 0.01, "reasons": ["x"]}]},
                 "savings": {"horizons": [{"weeks": 52, "rows": [{"id": "s1", "verdict": "better"}]}]}}
 
+    def freeze(self, prev, doc, rc=None, st=None, wl=None):
+        return routines_code.freeze_verdicts(prev, doc, rc or self.RC, 10, st or self.ST, wl or self.WL)
+
     def test_the_first_verdict_is_kept_when_later_data_flips_it(self):
         first = self.doc("2026-10-05", "inconclusive")
-        first["frozen"] = routines_code.freeze_verdicts(None, first, self.RC, 10)
+        first["frozen"] = self.freeze(None, first)
         later = self.doc("2026-11-03", "passes_history")  # a lucky day
-        later["frozen"] = routines_code.freeze_verdicts(first, later, self.RC, 10)
+        later["frozen"] = self.freeze(first, later)
         self.assertEqual(later["frozen"]["as_of"], "2026-10-05")
         self.assertEqual(later["frozen"]["satellite"]["r1"]["verdict"], "inconclusive")
         self.assertEqual(later["satellite"]["rules"][0]["verdict"], "passes_history")  # the display number still updates
         self.assertEqual(later["frozen"]["savings"]["52:s1"]["verdict"], "better")
+        self.assertNotIn("superseded", later["frozen"])
 
-    def test_a_change_to_anything_that_decides_a_verdict_starts_a_new_freeze(self):
+    def test_a_change_that_decides_a_verdict_is_a_new_try_or_the_run_fails_closed(self):
+        import copy
         first = self.doc("2026-10-05", "inconclusive")
-        first["frozen"] = routines_code.freeze_verdicts(None, first, self.RC, 10)
-        for changed in ({**self.RC, "tries_counted": 18},
-                        {**self.RC, "acceptance": {**self.RC["acceptance"], "null_runs": 5000}},
-                        {**self.RC, "rules": [{**self.RC["rules"][0], "engine": {"kind": "satellite_select", "slots": 4}}]}):
-            nxt = self.doc("2026-11-03", "passes_history")
-            self.assertEqual(routines_code.freeze_verdicts(first, nxt, changed, 10)["satellite"]["r1"]["verdict"], "passes_history")
-        text_only = {**self.RC, "acceptance": {**self.RC["acceptance"], "text": {"adopt": ["reworded"]}}}  # prose changes are not a new pre-registration
-        self.assertEqual(routines_code.freeze_verdicts(first, self.doc("2026-11-03", "passes_history"), text_only, 10)["as_of"], "2026-10-05")
+        first["frozen"] = self.freeze(None, first)
+        nxt = self.doc("2026-11-03", "passes_history")
+        engine = {**self.RC, "rules": [{**self.RC["rules"][0], "engine": {"kind": "satellite_select", "slots": 4}}]}
+        accept = {**self.RC, "acceptance": {**self.RC["acceptance"], "null_runs": 5000}}
+        st2 = copy.deepcopy(self.ST)
+        st2["setup"]["stretch_pct"] = self.ST["setup"].get("stretch_pct", 8) + 1  # a number rule v1 reads
+        st3 = copy.deepcopy(self.ST)
+        st3["portfolio"]["entry_min_checks"] = self.ST["portfolio"]["entry_min_checks"] - 1
+        wl2 = copy.deepcopy(self.WL)
+        wl2["symbols"][0]["sector"] = "Somewhere else"
+        wl3 = copy.deepcopy(self.WL)
+        wl3["symbols"] = wl3["symbols"][:-1]
+        for label, kw in {"engine": {"rc": engine}, "acceptance": {"rc": accept}, "v1 setup": {"st": st2}, "v1 portfolio": {"st": st3},
+                          "sector label": {"wl": wl2}, "watchlist": {"wl": wl3}}.items():
+            with self.assertRaises(SystemExit, msg=label):  # same tries: not allowed
+                self.freeze(first, nxt, **kw)
+        bumped = {**engine, "tries_counted": 18}
+        new = self.freeze(first, nxt, rc=bumped)
+        self.assertEqual(new["satellite"]["r1"]["verdict"], "passes_history")
+        self.assertEqual(new["tries_counted"], 18)
+        self.assertEqual(new["superseded"][0]["as_of"], "2026-10-05")  # the earlier verdict is not lost
+        self.assertEqual(new["superseded"][0]["satellite"]["r1"]["verdict"], "inconclusive")
+        third = self.freeze({"frozen": new}, self.doc("2026-12-01", "rejected"), rc={**bumped, "tries_counted": 19, "acceptance": {**bumped["acceptance"], "null_runs": 6000}})
+        self.assertEqual(len(third["superseded"]), 2)
+
+    def test_prose_changes_are_not_a_new_pre_registration(self):
+        first = self.doc("2026-10-05", "inconclusive")
+        first["frozen"] = self.freeze(None, first)
+        text_only = {**self.RC, "acceptance": {**self.RC["acceptance"], "text": {"adopt": ["reworded"]}}}
+        self.assertEqual(self.freeze(first, self.doc("2026-11-03", "passes_history"), rc=text_only)["as_of"], "2026-10-05")
+
+
+class GapGuardTest(unittest.TestCase):
+    def test_one_missing_bar_is_reported_not_silently_absorbed(self):
+        M, names = synthetic_market(1500)
+        self.assertEqual(rules.gap_report(M), [])
+        ds = dates(1500)
+        raw = {"QQQ": bars(ds, walk(1500, 0.0005, 0.01, 1)), "SPY": bars(ds, walk(1500, 0.0004, 0.008, 2)),
+               "SGOV": bars(ds, [100 * (1 + 0.00008) ** k for k in range(1500)])}
+        sectors = {}
+        for k in range(3):
+            s = f"T{k}"
+            raw[s] = bars(ds, walk(1500, 0.0003, 0.014, 10 + k))
+            sectors[s] = f"S{k}"
+        del raw["T1"][700]  # one missing day in the middle of its history
+        M2 = rules.build_market(raw, ["T0", "T1", "T2"], "SPY", "QQQ", "SGOV", sectors)
+        report = rules.gap_report(M2)
+        self.assertEqual(len(report), 1)
+        self.assertIn("T1", report[0])
+        self.assertEqual(M2["first"]["T1"], 701)  # the clock restarted on the day after the gap
+        self.assertEqual(M2["first"]["T0"], 0)
+
+
+class V1LedgerIdentityTest(unittest.TestCase):
+    def test_rule_v1_record_is_tied_to_the_settings_it_reads(self):
+        import copy
+        st = settings()
+        cfg = {"slots": 5, "selection": {"method": "v1"}}
+        base = routines_code._engine_hash(cfg, 10, 1, st)
+        st2 = copy.deepcopy(st)
+        st2["portfolio"]["entry_min_checks"] = st["portfolio"]["entry_min_checks"] - 1
+        self.assertNotEqual(base, routines_code._engine_hash(cfg, 10, 1, st2))
+        other = {"slots": 5, "selection": {"method": "filters", "rank": "rs_12_1", "filters": []}}
+        self.assertEqual(routines_code._engine_hash(other, 10, 1, st), routines_code._engine_hash(other, 10, 1, st2))  # others do not read those settings
 
 
 class SleeveTest(unittest.TestCase):

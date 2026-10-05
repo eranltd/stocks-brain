@@ -42,11 +42,15 @@ def build_market(raw: dict[str, list[dict]], members: list[str], core: str, benc
     al = mk.align_tail({s: raw[s] for s in names if raw.get(s)}, dates)
     if len(al.get(core, [])) != n or len(al.get(bench, [])) != n:
         return None
-    closes, first = {}, {}
+    closes, first, gaps = {}, {}, {}
     for s in members:
         if s in al:
             closes[s] = [None] * (n - len(al[s])) + al[s]
             first[s] = n - len(al[s])
+            have = {b["date"] for b in raw[s]}
+            lost = [d for d in dates[: first[s]] if d in have]  # real bars thrown away because of one missing day after them
+            if lost:
+                gaps[s] = {"bars_discarded": len(lost), "from": lost[0], "to": lost[-1], "restarts_on": dates[first[s]]}
     cash_ret = [0.0] * n
     if cash and raw.get(cash):
         m = {b["date"]: b["close"] for b in raw[cash]}
@@ -69,7 +73,16 @@ def build_market(raw: dict[str, list[dict]], members: list[str], core: str, benc
                 row[k] = max(b["high"] - b["low"], abs(b["high"] - c[k - 1]), abs(b["low"] - c[k - 1]))
         tr[s] = row
     return {"n": n, "dates": dates, "c": closes, "first": first, "core": core_c, "bench": al[bench],
-            "sector": sectors, "cash": cash_ret, "core_on": trend_flags(core_c), "tr": tr, "core_symbol": core, "bench_symbol": bench}
+            "sector": sectors, "cash": cash_ret, "core_on": trend_flags(core_c), "tr": tr, "core_symbol": core, "bench_symbol": bench,
+            "gaps": gaps}
+
+
+def gap_report(M: dict) -> list[str]:
+    """One missing bar inside a name's history makes the market builder keep only the unbroken stretch that ends on the last
+    date, which silently restarts that name's 253-day clock and removes it from the universe (and from the random-basket
+    pool) for a year. A pre-registered test must not run on a universe that shrank by accident, so callers fail closed."""
+    return [f"{s}: {g['bars_discarded']} earlier bars ({g['from']} to {g['to']}) dropped, history restarts on {g['restarts_on']}"
+            for s, g in sorted(M.get("gaps", {}).items())]
 
 
 def trend_flags(c: list[float]) -> list[bool]:

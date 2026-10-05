@@ -363,7 +363,9 @@ function Forward({ rb, data, name }) {
                     <td className="num px-4 py-3 font-mono">{r.decisions}</td>
                     <td className={`num px-4 py-3 font-mono ${ret >= 0 ? "text-accent" : "text-down"}`}>{fmtPct(ret, 1)}</td>
                     <td className="num px-4 py-3 font-mono text-ink-2">{fmtPct(coreRet, 1)}</td>
-                    <td className="num px-4 py-3 font-mono">{r.forward_percentile != null ? `${fmtNum(r.forward_percentile, 0)}%` : <span className="text-ink-3">needs 3 decisions</span>}</td>
+                    <td className="num px-4 py-3 font-mono">{r.forward_percentile != null
+                      ? <>{fmtNum(r.forward_percentile, 0)}%{last < min ? <span className="text-ink-3"> provisional</span> : null}</>
+                      : <span className="text-ink-3">after 6 decisions</span>}{r.stale ? <span className="block text-[11.5px] text-people">prices missing: last good track</span> : null}</td>
                     <td className="px-4 py-3 font-mono text-[13px]">{r.rebalances.at(-1).holdings.join(" · ") || <span className="text-ink-3">core only</span>}</td>
                   </tr>
                 );

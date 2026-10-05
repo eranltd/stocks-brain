@@ -97,7 +97,7 @@ class EngineEqualsReferenceTest(unittest.TestCase):
 def perturb_after(M, cut, seed=3):
     """A copy of the market whose prices after day `cut` are replaced by a wild different future."""
     r = random.Random(seed)
-    N = dict(M)
+    N = {k: v for k, v in M.items() if k != "_corr"}  # never share the correlation cache with the real future
     N["c"] = {}
     for s, c in M["c"].items():
         f, out = 1.0, list(c)
@@ -186,7 +186,7 @@ class SavingsMathTest(unittest.TestCase):
         g = 0.0005
         M = self.market(g)
         weekly = rules.run_savings(M, 300, 104, 1)
-        self.assertAlmostEqual(weekly["irr_pct"], ((1 + g) ** 252 - 1) * 100, delta=0.6)  # fills one day late
+        self.assertAlmostEqual(weekly["irr_pct"], ((1 + g) ** 252 - 1) * 100, delta=0.1)  # 252-day year; the gap is the one-day fill lag
         lump = rules.run_savings(M, 300, 104, mode="windfall", spread_weeks=1)
         self.assertAlmostEqual(lump["multiple"], (1 + g) ** (104 * 5 - 1), places=6)
         spread = rules.run_savings(M, 300, 104, mode="windfall", spread_weeks=26)
@@ -281,8 +281,8 @@ class SleeveTest(unittest.TestCase):
         cfg = {"slots": 4, "max_per_sector": 2, "selection": {"method": "filters", "rank": "rs_6m", "keep": {"mode": "same_filters"},
                                                               "filters": [{"f": "trend50_200"}, {"f": "rs_6m"}]}}
         res = rules.run_sleeve(cfg, M, SETUP, 300, lag=1)
-        a = rules.matched_null(M, 300, res["rebalances"], 4, {"max_per_sector": 2}, False, 20, 7, 1, 10)
-        b = rules.matched_null(M, 300, res["rebalances"], 4, {"max_per_sector": 2}, False, 20, 7, 1, 10)
+        a = rules.matched_null(M, SETUP, 300, res["rebalances"], cfg, 20, 7, 1, 10)
+        b = rules.matched_null(M, SETUP, 300, res["rebalances"], cfg, 20, 7, 1, 10)
         self.assertEqual(a, b)
         self.assertAlmostEqual(a["avg_names"], sum(len(r["holdings"]) for r in res["rebalances"]) / len(res["rebalances"]), places=9)
         self.assertGreaterEqual(a["q"], 0.0)
@@ -291,8 +291,9 @@ class SleeveTest(unittest.TestCase):
     def test_rule_holding_no_names_has_a_degenerate_null_equal_to_itself(self):
         """Exposure is matched: a rule that never leaves the core has a null that never leaves the core either."""
         M, _ = synthetic_market(1500, syms=6)
-        res = rules.run_sleeve({"slots": 5, "selection": {"method": "core"}}, M, SETUP, 300, lag=1)
-        nul = rules.matched_null(M, 300, res["rebalances"], 5, {}, False, 10, 1, 1, 10)
+        cfg = {"slots": 5, "selection": {"method": "core"}}
+        res = rules.run_sleeve(cfg, M, SETUP, 300, lag=1)
+        nul = rules.matched_null(M, SETUP, 300, res["rebalances"], cfg, 10, 1, 1, 10)
         self.assertEqual(len({round(x[0], 9) for x in nul["runs"]}), 1)
         self.assertAlmostEqual(nul["runs"][0][0], rules.cagr(res["values"]), places=6)
 
@@ -303,8 +304,9 @@ class SleeveTest(unittest.TestCase):
         tails = 0
         trials = 12
         for seed in range(trials):
-            res = rules.run_sleeve({"slots": 4, "max_per_sector": 2, "selection": {"method": "random"}}, M, SETUP, 300, lag=1, seed=100 + seed)
-            nul = rules.matched_null(M, 300, res["rebalances"], 4, {"max_per_sector": 2}, False, 80, 9, 1, 10)
+            cfg = {"slots": 4, "max_per_sector": 2, "selection": {"method": "random"}}
+            res = rules.run_sleeve(cfg, M, SETUP, 300, lag=1, seed=100 + seed)
+            nul = rules.matched_null(M, SETUP, 300, res["rebalances"], cfg, 80, 9, 1, 10)
             pct = rules.percentile_of(rules.cagr(res["values"]), [x[0] for x in nul["runs"]])
             tails += pct > 95 or pct < 5
         self.assertLessEqual(tails, 3)
@@ -367,6 +369,117 @@ class LedgerTest(unittest.TestCase):
         after = routines_code.update_ledger(prev, perturb_after(truncate(M, 1100), 1099), st, self.RC, sample=True)
         for k, rebs in recorded.items():
             self.assertEqual(after["rules"][k]["rebalances"][: len(rebs)], rebs)
+
+
+class ReviewFixesTest(unittest.TestCase):
+    """One test per confirmed finding of the adversarial engine review."""
+
+    def test_correlation_cap_cannot_leak_the_future(self):
+        M, _ = synthetic_market(1500, syms=8)
+        cfg = {"slots": 4, "max_pair_corr": 0.3, "selection": {"method": "filters", "rank": "rs_6m", "filters": [{"f": "rs_6m"}]}}
+        rules.run_sleeve(cfg, M, SETUP, 260, lag=1)  # fills M's cache
+        self.assertNotIn("_corr", perturb_after(M, 900))
+
+    def test_savings_decisions_inside_the_window_ignore_later_data(self):
+        M, _ = synthetic_market(1500)
+        start, h = 300, 104
+        cut = start + 40 * rules.WEEK
+        for gate in (False, True):
+            a, b = [], []
+            rules.run_savings(M, start, h, 4, gate=gate, trace=a)
+            rules.run_savings(perturb_after(M, cut), start, h, 4, gate=gate, trace=b)
+            self.assertEqual(a[: cut - start + 1], b[: cut - start + 1])
+
+    def test_scripted_replay_decides_on_recorded_days_not_month_starts(self):
+        M, names = synthetic_market(1500, syms=6)
+        day = next(k for k in range(400, 600) if M["dates"][k][:7] == M["dates"][k - 2][:7] != M["dates"][k - 3][:7])  # 3rd trading day
+        cfg = {"slots": 3, "selection": {"method": "scripted", "picks": {day: names[:2]}}}
+        res = rules.run_sleeve(cfg, M, SETUP, day, lag=1)
+        self.assertEqual(res["rebalances"][0]["holdings"], names[:2])
+
+    def test_stop_exits_count_as_trading(self):
+        M, _ = synthetic_market(1500, syms=6)
+        cfg = {"slots": 4, "exit": {"kind": "atr_trail", "k": 0.5, "n": 14},
+               "selection": {"method": "filters", "rank": "rs_6m", "filters": [{"f": "rs_6m"}]}}
+        res = rules.run_sleeve(cfg, M, SETUP, 300, lag=1)
+        self.assertTrue(res["stops"])
+        years = (len(res["values"]) - 1) / rules.Y
+        self.assertGreater(rules.turnover_per_year(res["rebalances"], years, res["stops"]), rules.turnover_per_year(res["rebalances"], years))
+
+    def test_null_replays_the_rules_own_exits(self):
+        """A random picker with a stop is not called skilled against a null that also stops out."""
+        M, _ = synthetic_market(1500, syms=10)
+        tails = 0
+        for seed in range(8):
+            cfg = {"slots": 4, "exit": {"kind": "atr_trail", "k": 2, "n": 14}, "sizing": "inverse_vol", "selection": {"method": "random"}}
+            res = rules.run_sleeve(cfg, M, SETUP, 300, lag=1, seed=200 + seed)
+            nul = rules.matched_null(M, SETUP, 300, res["rebalances"], cfg, 30, 11, 1, 10)
+            pct = rules.percentile_of(rules.cagr(res["values"]), [x[0] for x in nul["runs"]])
+            tails += pct > 95 or pct < 5
+        self.assertLessEqual(tails, 2)
+
+    def test_every_name_control_is_never_levered(self):
+        M, _ = synthetic_market(1500, syms=8)
+        w = rules.target_weights({"slots": 3, "selection": {"method": "all"}}, M, rules.eligible(M, 800), 800)
+        self.assertAlmostEqual(sum(w.values()), 1.0)
+        self.assertNotIn(rules.CORE, w)
+
+    def test_core_with_a_missing_day_still_builds(self):
+        ds = dates(900)
+        raw = {"QQQ": bars(ds, walk(900, 0.0005, 0.01, 1)), "SPY": bars(ds[:400] + ds[401:], walk(899, 0.0004, 0.008, 2)),
+               "T0": bars(ds, walk(900, 0.0004, 0.01, 3))}
+        M = rules.build_market(raw, ["T0"], "SPY", "QQQ", None, {"T0": "X"})
+        self.assertIsNotNone(M)
+        self.assertEqual(M["n"], 899)
+
+    def test_verdict_needs_reachable_significance(self):
+        acc = {"null_percentile_min": 95, "halves_percentile_min": 50, "reject_below_percentile": 50,
+               "max_dd_worse_than_core_pts": 10, "max_turnover_pct_year": 300}
+        row = {"percentile": 100.0, "percentile_halves": [99.0, 99.0], "p_value": 1 / 101, "p_adjusted": 20 / 101,
+               "max_dd_vs_core_pts": 0.0, "turnover_pct_year": 50.0}
+        self.assertNotEqual(routines_code.judge_satellite(row, acc, 20, 100)[0], "passes_history")  # 100 runs cannot reach 0.05/20
+        row |= {"p_value": 1 / 1001, "p_adjusted": 20 / 1001}
+        self.assertEqual(routines_code.judge_satellite(row, acc, 20, 1000)[0], "passes_history")
+
+
+class LedgerRobustnessTest(unittest.TestCase):
+    def setUp(self):
+        self.M, _ = synthetic_market(1500, syms=8)
+        self.st = dict(SETUP)
+        self.st["portfolio"] = {**SETUP["portfolio"], "slots": 3}
+        self.rc = {"acceptance": {"fill_lag_days": 1, "null_runs": 20, "null_seed": 5},
+                   "rules": [{"id": "mom", "status": "testable_now", "engine": {"kind": "satellite_select", "slots": 3, "selection": {
+                       "method": "filters", "rank": "rs_6m", "filters": [{"f": "rs_6m"}], "keep": {"mode": "none"}}}}]}
+
+    def run_months(self, rc, upto=1100, prev=None):
+        for n in range(1000, upto, 5):
+            prev = routines_code.update_ledger(prev, truncate(self.M, n), self.st, rc, sample=True)
+        return prev
+
+    def test_changed_rule_settings_freeze_the_old_record(self):
+        prev = self.run_months(self.rc)
+        changed = {**self.rc, "rules": [{**self.rc["rules"][0], "engine": {**self.rc["rules"][0]["engine"], "slots": 2}}]}
+        after = routines_code.update_ledger(prev, truncate(self.M, 1110), self.st, changed, sample=True)
+        frozen = [k for k in after["retired"] if k.startswith("mom@")]
+        self.assertEqual(len(frozen), 1)
+        self.assertEqual(after["retired"][frozen[0]]["values"], prev["rules"]["mom"]["values"])  # not recomputed
+        self.assertEqual(after["rules"]["mom"]["decisions"], 1)  # a fresh record
+
+    def test_removed_rule_keeps_its_record(self):
+        prev = self.run_months(self.rc)
+        after = routines_code.update_ledger(prev, truncate(self.M, 1110), self.st, {**self.rc, "rules": []}, sample=True)
+        self.assertNotIn("mom", after["rules"])
+        self.assertTrue(any(k.startswith("mom@") for k in after["retired"]))
+
+    def test_missing_name_keeps_the_last_good_track(self):
+        prev = self.run_months(self.rc)
+        held = {s for x in prev["rules"]["mom"]["rebalances"] for s in x["holdings"]}
+        self.assertTrue(held)
+        M2 = truncate(self.M, 1110)
+        M2["c"] = {s: c for s, c in M2["c"].items() if s not in held}
+        after = routines_code.update_ledger(prev, M2, self.st, self.rc, sample=True)
+        self.assertTrue(after["rules"]["mom"]["stale"])
+        self.assertEqual(after["rules"]["mom"]["values"], prev["rules"]["mom"]["values"])
 
 
 if __name__ == "__main__":

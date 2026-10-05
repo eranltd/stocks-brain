@@ -75,11 +75,13 @@ jobs:
       - name: Rule backtests (derived numbers only)
         id: rule_backtests
         if: env.MONTHLY != 'true' && env.DRY != 'true'
+        continue-on-error: true  # research step: a failure is logged but must not discard the day's market data
         run: python3 scripts/routines_code.py rules
 
       - name: Forward ledger of every rule
         id: rule_ledger
         if: env.MONTHLY != 'true' && env.DRY != 'true'
+        continue-on-error: true  # research step: a failure is logged but must not discard the day's market data
         run: python3 scripts/routines_code.py ledger
 
       - name: Calibration

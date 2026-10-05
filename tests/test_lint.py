@@ -7,7 +7,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 
 import scoring  # noqa: E402
 from _common import SAMPLES, Validator, load_json, parse_front_matter  # noqa: E402
-from lint import SECRET_PATTERNS  # noqa: E402
+from lint import MODEL_PORTFOLIO_FILES, SECRET_PATTERNS  # noqa: E402
 
 RUN = sorted((SAMPLES / "runs").glob("run.*.json"))[-1]
 
@@ -59,6 +59,30 @@ class ScoringTest(unittest.TestCase):
         s = scoring.score("bullish", 100, 110, 100, 105, 1.0)
         self.assertAlmostEqual(s["excess_pct"], 5.0)
         self.assertEqual(s["verdict"], "hit")
+
+
+class PersonalHoldingsGuardTest(unittest.TestCase):
+    """The guard is key-based. Public model portfolios may say `holdings`; nothing else may, and no other forbidden key may."""
+
+    def test_only_the_machine_written_model_portfolios_may_use_holdings(self):
+        self.assertEqual(MODEL_PORTFOLIO_FILES, {"data/market/longrun.json", "data/market/rules.json",
+                                                 "data/portfolio/paper.json", "data/portfolio/paper_rules.json"})
+
+    def test_model_portfolio_files_have_closed_schemas_without_personal_keys(self):
+        guard = set(load_json(Path(__file__).resolve().parent.parent / "docs" / "guardrails.json")["forbidden_keys"]) - {"holdings"}
+        for name in ("longrun.schema.json", "paper.schema.json", "paper_rules.schema.json", "rules_result.schema.json"):
+            schema = load_json(Path(__file__).resolve().parent.parent / "schemas" / name)
+
+            def walk(node):
+                if isinstance(node, dict):
+                    props = node.get("properties", {})
+                    self.assertFalse(guard & set(props), f"{name} defines a personal key {guard & set(props)}")
+                    for v in node.values():
+                        walk(v)
+                elif isinstance(node, list):
+                    for v in node:
+                        walk(v)
+            walk(schema)
 
 
 class HygieneTest(unittest.TestCase):

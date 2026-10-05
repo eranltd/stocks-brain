@@ -34,6 +34,7 @@ FORBIDDEN_FILES = re.compile(r"(^\.env(\..*)?$|\.pem$|\.key$|^id_(rsa|ed25519)|\
 EXTERNAL_URL = re.compile(r"(?:https?:)?//[a-z0-9.-]+\.[a-z]{2,}", re.I)
 # Plain links are fine (e.g. "edit on GitHub"); scripts, styles and fonts must be bundled.
 SITE_URL_ALLOW = {"http://www.w3.org/2000/svg", "https://github.com", "https://www.youtube.com"}
+MODEL_PORTFOLIO_FILES = {"data/market/longrun.json", "data/market/rules.json", "data/portfolio/paper.json", "data/portfolio/paper_rules.json"}
 SITE_SOURCES = ("site/src/", "site/public/", "site/index.html", "site/vite.config.js")
 
 
@@ -404,6 +405,10 @@ class Lint:
                     hits = _keys(load_json(path)) & forbidden
                 except Exception:  # noqa: BLE001  (JSON errors reported elsewhere)
                     hits = set()
+                if rel.as_posix() in MODEL_PORTFOLIO_FILES:
+                    # Public model portfolios (a rule's picks, written by the Action, closed schema, tickers only).
+                    # Only the word "holdings" is allowed there; every other forbidden key still applies.
+                    hits.discard("holdings")
                 if hits:
                     self.err(path, f"forbidden personal-holdings keys {sorted(hits)}")
             in_code = rel.parts[0] in ("scripts", "site") and path.suffix in (".py", ".js", ".jsx", ".html")

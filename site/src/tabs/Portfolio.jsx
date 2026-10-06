@@ -3,6 +3,7 @@ import { fmtDate, fmtNum, fmtPct } from "../lib/format.js";
 import { avgPairCorr, basketSeries, goalPath, portfolioVol, weeklyStats, weightsFor } from "../lib/stats.js";
 import { COLORS, LABELS, STATUS, nextRebalance, universeConcentration } from "../components/goal.jsx";
 import { LinesChart } from "../components/lines.jsx";
+import { MEASURES, bestChanges, halvesCheck, prepare, rank, scoreMix, searchMixes, standing } from "../lib/mix.js";
 import { Accent, ArrowRight, Container, Empty, Headline, Reveal, SectionHead, Segmented } from "../components/ui.jsx";
 
 const KEY = "sb-portfolio-v1"; // this device only; never sent anywhere
@@ -26,6 +27,7 @@ export default function Portfolio({ data, go }) {
     save({ picked: next, mode });
   };
   const setM = (m) => { setMode(m); save({ picked, mode: m }); };
+  const useMix = (names) => { setPicked(names); save({ picked: names, mode }); try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch { /* not available */ } };
 
   const view = useMemo(() => {
     if (!lr || !picked.length) return null;
@@ -139,6 +141,8 @@ export default function Portfolio({ data, go }) {
         </>
       )}
 
+      <MixAndMatch data={data} lr={lr} picked={picked} useMix={useMix} slots={slots} minNames={minNames} go={go} />
+
       <section className="pt-24">
         <SectionHead eyebrow="Correlation map · daily returns, last 12 months" title={<>Do they move <Accent>together?</Accent></>}
           lede={<>1.00 means two names move in lockstep. A diverse portfolio wants low numbers between its holdings. {u.concentrated ? `This watchlist spans only ${u.sectors} sectors, so expect high numbers.` : ""}</>} size="md" />
@@ -204,6 +208,133 @@ export default function Portfolio({ data, go }) {
       </Reveal>
       <p className="meta mt-10 normal-case tracking-[0.04em]">Analysis only, not financial advice. Lines are indexed to 100; the site publishes returns, not prices.</p>
     </Container>
+  );
+}
+
+const SHORT = (s) => (s ?? "").replace("Information Technology", "Tech").replace("Communication Services", "Comms").replace("Consumer ", "Cons. ");
+
+function MixChips({ names, sectors, picked }) {
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {names.map((s) => (
+        <span key={s} className={`rounded-full border px-2.5 py-1 font-mono text-[12.5px] ${picked.includes(s) ? "border-accent/60 text-accent" : "border-line-2"}`}>
+          {s}<span className="ml-1.5 font-sans text-[11px] text-ink-3">{SHORT(sectors[s])}</span>
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function MixAndMatch({ data, lr, picked, useMix, slots, minNames, go }) {
+  const [measure, setMeasure] = useState("profit");
+  const [size, setSize] = useState(String(slots));
+  const [limit, setLimit] = useState(true);
+  const [on, setOn] = useState(false);
+  const symbols = useMemo(() => Object.keys(lr.weekly.members), [lr]);
+  const prep = useMemo(() => prepare(lr.weekly, symbols), [lr, symbols]);
+  const cap = limit ? lr.rule.max_per_sector : null;
+  const k = Number(size);
+  const all = useMemo(() => (on ? searchMixes(prep, data.sectors, { k, cap }) : null), [on, prep, k, cap, data.sectors]);
+  const halves = useMemo(() => (all ? halvesCheck(all) : null), [all]);
+  const top = useMemo(() => (all ? rank(all, measure).slice(0, 5) : []), [all, measure]);
+  const mine = useMemo(() => (picked.length ? scoreMix(prep, picked.map((s) => symbols.indexOf(s))) : null), [prep, picked, symbols]);
+  const changes = useMemo(() => (on && picked.length ? bestChanges(prep, data.sectors, picked, { slots, cap, measure }) : null), [on, prep, picked, slots, cap, measure, data.sectors]);
+  const solo = useMemo(() => symbols.map((_, i) => scoreMix(prep, [i]).cagr), [prep, symbols]);
+  const withoutBest = (m) => {
+    const best = m.idx.reduce((a, b) => (solo[b] > solo[a] ? b : a));
+    return { name: symbols[best], score: scoreMix(prep, m.idx.filter((i) => i !== best)) };
+  };
+  const measureLabel = MEASURES[measure].label.toLowerCase();
+  const sizes = Array.from({ length: slots - minNames + 1 }, (_, i) => String(minNames + i));
+  const rejected = (data.rulesResult?.satellite?.rules ?? []).filter((r) => r.verdict === "rejected");
+  const rejLo = rejected.length ? Math.min(...rejected.map((r) => r.percentile)) : null;
+  const rejHi = rejected.length ? Math.max(...rejected.map((r) => r.percentile)) : null;
+  const dates = lr.weekly.dates;
+  const med = all ? rank(all, measure)[Math.floor(all.length / 2)] : null;
+  const f = MEASURES[measure].pick;
+  const delta = (s) => (mine ? s.cagr - mine.cagr : 0);
+
+  return (
+    <section className="pt-24">
+      <SectionHead eyebrow="Mix and match" title={<>Which names, together, <Accent>earned the most?</Accent></>} size="md"
+        lede={<>Try every possible mix of {minNames}–{slots} of our {symbols.length} names on the same history, and see which would have earned the most, earned the most for the risk, or fallen the least. This is hindsight: read the reality check before using any of it.</>} />
+      <Reveal className="card p-5 sm:p-7">
+        <div className="flex flex-wrap items-center gap-3">
+          <Segmented label="Rank mixes by" value={measure} onChange={setMeasure} options={Object.entries(MEASURES).map(([value, m]) => ({ value, label: m.label }))} />
+          {sizes.length > 1 && <Segmented label="Names in the mix" value={size} onChange={setSize} options={sizes.map((s) => ({ value: s, label: `${s} names` }))} />}
+          <button type="button" aria-pressed={limit} onClick={() => setLimit(!limit)} className={`pill ${limit ? "border-accent/50 text-accent" : "text-ink-2"}`}>{limit ? `At most ${lr.rule.max_per_sector} per sector (house rule)` : "Any mix, even all one sector"}</button>
+        </div>
+        {!on && (
+          <div className="mt-5">
+            <button type="button" className="btn" onClick={() => setOn(true)}>Try every mix <ArrowRight /></button>
+            <p className="mt-3 text-[13.5px] text-ink-3">It takes a moment, runs in your browser, and saves nothing.</p>
+          </div>
+        )}
+      </Reveal>
+
+      {on && all && (
+        <>
+          {mine && (
+            <Reveal className="card mt-4 p-5 sm:p-7">
+              <div className="meta mb-2">Where your mix stands · equal shares</div>
+              <p className="text-[16px] leading-relaxed">
+                <b className="num font-mono">{picked.join(" · ")}</b> returned <b className="num font-mono">{fmtPct(mine.cagr, 1)}</b> a year with a deepest drop of <b className="num font-mono text-down">{fmtPct(mine.dd, 0)}</b>.
+                {picked.length === k ? <> By {measureLabel} it beat <b className="num font-mono">{fmtNum(standing(all, measure, f(mine)), 0)}%</b> of the {fmtNum(all.length, 0)} possible mixes.</> : <> It has {picked.length} names; the comparison below uses {k}.</>}
+                {" "}The middle mix returned {fmtPct(med.cagr, 1)} a year; the best returned {fmtPct(top[0].cagr, 1)}.
+              </p>
+            </Reveal>
+          )}
+
+          <h3 className="mt-10 text-[22px] font-semibold tracking-[-0.02em]">The five best mixes, by {measureLabel}</h3>
+          <div className="mt-4 grid gap-3 lg:grid-cols-2">
+            {top.map((m, i) => {
+              const names = m.idx.map((x) => symbols[x]);
+              const wo = withoutBest(m);
+              return (
+                <Reveal key={names.join("-")} delay={i * 50} className="card p-5">
+                  <div className="flex items-center justify-between gap-3"><span className="meta">#{i + 1}</span><button type="button" className="pill text-ink-2 hover:text-ink" onClick={() => useMix(names)}>Use this mix</button></div>
+                  <div className="mt-3"><MixChips names={names} sectors={data.sectors} picked={picked} /></div>
+                  <dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-1 text-[13px]">
+                    <Row k="A year" v={fmtPct(m.cagr, 1)} tone={m.cagr >= data.settings.goal.annual_return_pct ? "text-accent" : ""} />
+                    <Row k="Deepest drop" v={fmtPct(m.dd, 0)} tone="text-down" />
+                    <Row k="Yearly swing" v={`${fmtNum(m.vol, 0)}%`} />
+                    <Row k={`Without ${wo.name}`} v={`${fmtPct(wo.score.cagr, 1)}`} />
+                  </dl>
+                </Reveal>
+              );
+            })}
+          </div>
+
+          {changes && changes.changes.length > 0 && (
+            <Reveal className="card mt-4 p-5 sm:p-7">
+              <div className="meta mb-3">{picked.length < slots ? "Best name to add to your mix" : "Best single swaps for your mix"} · by {measureLabel}</div>
+              <ul className="grid gap-3">
+                {changes.changes.map((c) => (
+                  <li key={c.names.join("-")} className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-3 first:border-0 first:pt-0">
+                    <div>
+                      <div className="font-mono text-[15px]">{c.kind === "swap" ? <>{c.drop} → <span className="text-accent">{c.add}</span></> : <>+ <span className="text-accent">{c.add}</span></>} <span className="font-sans text-[12.5px] text-ink-3">{SHORT(data.sectors[c.add])}</span></div>
+                      <div className="mt-0.5 text-[13px] text-ink-3">{fmtPct(c.score.cagr, 1)} a year ({fmtPct(delta(c.score), 1)} vs now), deepest drop {fmtPct(c.score.dd, 0)}</div>
+                    </div>
+                    <button type="button" className="pill text-ink-2 hover:text-ink" onClick={() => useMix(c.names)}>Try it</button>
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+          )}
+
+          <Reveal className="card mt-4 border-people/40 p-5 text-[14.5px] leading-relaxed text-ink-2 sm:p-7">
+            <div className="meta mb-3 text-people">Reality check</div>
+            <ul className="grid gap-3">
+              <li><b className="font-medium text-ink">The best mix always looks great afterwards.</b> With {fmtNum(all.length, 0)} mixes to choose from, some mix has to come out on top; that shows what happened, not what comes next.</li>
+              <li><b className="font-medium text-ink">The list was picked with hindsight.</b> These {symbols.length} are companies that became large. Past winners inside it kept winning partly by construction: picked on the first half of the history (to {fmtDate(dates[prep.mid])}), the 20 best mixes ranked at about the {fmtNum(halves.medianPercentile, 0)}th percentile in the second half (50 would be a coin flip; rank correlation {fmtNum(halves.rankCorrelation, 2)}). That is a feature of a survivors' list, not a promise.</li>
+              {rejLo != null && <li><b className="font-medium text-ink">Our own pre-registered test found no edge in picking by past strength.</b> The stock rules that chose names by past strength each month beat only {fmtNum(rejLo, 0)}% to {fmtNum(rejHi, 0)}% of random picks from this list. <button type="button" className="underline hover:text-ink" onClick={() => go("playbook")}>See the Playbook</button>.</li>}
+              <li><b className="font-medium text-ink">The top mixes lean on a few high-swing names.</b> They fell {fmtPct(top[0].dd, 0)} at their worst, and without their single best name the first one would have returned {fmtPct(withoutBest(top[0]).score.cagr, 1)} instead of {fmtPct(top[0].cagr, 1)}.</li>
+              <li>Equal shares, rebalanced about monthly, history of {fmtNum(lr.years, 1)} years. Analysis only, not advice; nothing is bought and nothing here is saved.</li>
+            </ul>
+          </Reveal>
+        </>
+      )}
+    </section>
   );
 }
 

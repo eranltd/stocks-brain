@@ -7,7 +7,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 
 import scoring  # noqa: E402
 from _common import SAMPLES, Validator, load_json, parse_front_matter  # noqa: E402
-from lint import MODEL_PORTFOLIO_FILES, SECRET_PATTERNS  # noqa: E402
+from lint import BRAIN_WORKFLOW, MODEL_PORTFOLIO_FILES, SECRET_PATTERNS, Lint  # noqa: E402
 
 RUN = sorted((SAMPLES / "runs").glob("run.*.json"))[-1]
 
@@ -83,6 +83,63 @@ class PersonalHoldingsGuardTest(unittest.TestCase):
                     for v in node:
                         walk(v)
             walk(schema)
+
+
+class RoutineRunnerTest(unittest.TestCase):
+    """github_actions routines need their cron in a workflow; an active claude_routine needs its prompt and the saved
+    brain workflow instead."""
+
+    ST = {"cost": {"hard_cap_usd": 2.5}}
+
+    def routine(self, **kw):
+        r = {"id": "x", "cadence": "daily", "cron": "47 4 * * 2-6", "runner": "github_actions", "status": "active",
+             "uses_llm": False, "max_cost_usd": 0}
+        r.update(kw)
+        return r
+
+    def errors(self, *routines, workflows="", root=None):
+        lint = Lint()
+        lint.check_routines({"routines": list(routines)}, self.ST, workflows,
+                            **({"root": root} if root else {}))
+        return lint.errors
+
+    def tree(self, prompt=True, brain=True):
+        import tempfile
+        root = Path(tempfile.mkdtemp())
+        if prompt:
+            (root / "prompts").mkdir()
+            (root / "prompts" / "daily.md").write_text("x")
+        if brain:
+            (root / BRAIN_WORKFLOW).parent.mkdir(parents=True)
+            (root / BRAIN_WORKFLOW).write_text("x")
+        return root
+
+    def test_github_actions_routine_needs_its_cron_in_a_workflow(self):
+        self.assertTrue(any("is in no workflow" in e for e in self.errors(self.routine())))
+        self.assertEqual(self.errors(self.routine(), workflows='- cron: "47 4 * * 2-6"'), [])
+
+    def test_active_claude_routine_needs_prompt_and_brain_workflow_not_a_cron(self):
+        r = self.routine(runner="claude_routine", uses_llm=True, max_cost_usd=1.0, prompt="prompts/daily.md")
+        self.assertEqual(self.errors(r, root=self.tree()), [])
+        self.assertTrue(any("prompt prompts/daily.md does not exist" in e for e in self.errors(r, root=self.tree(prompt=False))))
+        self.assertTrue(any(BRAIN_WORKFLOW in e for e in self.errors(r, root=self.tree(brain=False))))
+
+    def test_claude_routine_rules(self):
+        no_prompt = self.routine(runner="claude_routine", uses_llm=True, max_cost_usd=1.0)
+        self.assertTrue(any("needs a prompt" in e for e in self.errors(no_prompt, root=self.tree())))
+        no_llm = self.routine(runner="claude_routine", prompt="prompts/daily.md")
+        self.assertTrue(any("uses_llm must be true" in e for e in self.errors(no_llm, root=self.tree())))
+        stray = self.routine(prompt="prompts/daily.md")
+        self.assertTrue(any("only a claude_routine" in e for e in self.errors(stray, workflows="47 4 * * 2-6")))
+        planned = self.routine(runner="claude_routine", uses_llm=True, max_cost_usd=1.0, prompt="prompts/daily.md", status="planned")
+        self.assertEqual(self.errors(planned, root=self.tree(prompt=False, brain=False)), [])
+
+    def test_repo_close_run_is_a_scheduled_claude_routine(self):
+        rt = load_json(Path(__file__).resolve().parent.parent / "config" / "routines.json")
+        runners = {r["id"]: r["runner"] for r in rt["routines"]}
+        self.assertEqual(runners.pop("close_run"), "claude_routine")
+        self.assertEqual(set(runners.values()), {"github_actions"})
+        self.assertEqual(Validator().validate(rt, "routines.schema.json"), [])
 
 
 class HygieneTest(unittest.TestCase):

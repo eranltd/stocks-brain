@@ -36,6 +36,7 @@ EXTERNAL_URL = re.compile(r"(?:https?:)?//[a-z0-9.-]+\.[a-z]{2,}", re.I)
 SITE_URL_ALLOW = {"http://www.w3.org/2000/svg", "https://github.com", "https://www.youtube.com"}
 MODEL_PORTFOLIO_FILES = {"data/market/longrun.json", "data/market/rules.json", "data/portfolio/paper.json", "data/portfolio/paper_rules.json"}
 SITE_SOURCES = ("site/src/", "site/public/", "site/index.html", "site/vite.config.js")
+BRAIN_WORKFLOW = ".claude/workflows/brain.js"  # the saved workflow a claude_routine runs by name
 
 
 class Lint:
@@ -90,18 +91,7 @@ class Lint:
         rt = self.schema(CONFIG / "routines.json", "routines.schema.json")
         if rt and st:
             workflows = "\n".join(p.read_text() for p in (ROOT / ".github" / "workflows").glob("*.yml"))
-            ids = [r["id"] for r in rt["routines"]]
-            if len(ids) != len(set(ids)):
-                self.err(CONFIG / "routines.json", "duplicate routine ids")
-            for r in rt["routines"]:
-                if r["uses_llm"] and not 0 < r["max_cost_usd"] <= st["cost"]["hard_cap_usd"]:
-                    self.err(CONFIG / "routines.json", f"{r['id']}: LLM routine needs 0 < max_cost_usd <= hard_cap_usd")
-                if not r["uses_llm"] and r["max_cost_usd"] != 0:
-                    self.err(CONFIG / "routines.json", f"{r['id']}: code-only routine must have max_cost_usd 0")
-                if r["status"] == "active" and r["cron"] and r["cron"] not in workflows:
-                    self.err(CONFIG / "routines.json", f"{r['id']}: active but cron {r['cron']!r} is in no workflow")
-                if (r["cadence"] == "on_demand") != (r["cron"] is None):
-                    self.err(CONFIG / "routines.json", f"{r['id']}: cron must be null exactly for on_demand")
+            self.check_routines(rt, st, workflows)
         if st:
             c = st["cost"]
             if not c["target_usd"] <= c["warn_usd"] <= c["hard_cap_usd"]:
@@ -121,6 +111,36 @@ class Lint:
             if len(syms) != len(set(syms)):
                 self.err(CONFIG / "watchlist.json", "duplicate symbols")
         return st, wl
+
+    def check_routines(self, rt: dict, st: dict, workflows: str, root: Path = ROOT) -> None:
+        """Costs, schedules and runners. A github_actions routine's cron must be in a workflow file. A claude_routine
+        is a scheduled Claude Code session (its cron lives in the Routine, not in the repo): it must use the model,
+        and when active its instructions and the saved brain workflow must exist."""
+        where = CONFIG / "routines.json"
+        ids = [r["id"] for r in rt["routines"]]
+        if len(ids) != len(set(ids)):
+            self.err(where, "duplicate routine ids")
+        for r in rt["routines"]:
+            if r["uses_llm"] and not 0 < r["max_cost_usd"] <= st["cost"]["hard_cap_usd"]:
+                self.err(where, f"{r['id']}: LLM routine needs 0 < max_cost_usd <= hard_cap_usd")
+            if not r["uses_llm"] and r["max_cost_usd"] != 0:
+                self.err(where, f"{r['id']}: code-only routine must have max_cost_usd 0")
+            if (r["cadence"] == "on_demand") != (r["cron"] is None):
+                self.err(where, f"{r['id']}: cron must be null exactly for on_demand")
+            if r["runner"] == "claude_routine":
+                if not r["uses_llm"]:
+                    self.err(where, f"{r['id']}: a claude_routine runs the model, so uses_llm must be true")
+                if not r.get("prompt"):
+                    self.err(where, f"{r['id']}: a claude_routine needs a prompt file")
+                elif r["status"] == "active" and not (root / r["prompt"]).is_file():
+                    self.err(where, f"{r['id']}: active but its prompt {r['prompt']} does not exist")
+                if r["status"] == "active" and not (root / BRAIN_WORKFLOW).is_file():
+                    self.err(where, f"{r['id']}: active but the saved workflow {BRAIN_WORKFLOW} does not exist")
+            else:
+                if "prompt" in r:
+                    self.err(where, f"{r['id']}: only a claude_routine has a prompt")
+                if r["status"] == "active" and r["cron"] and r["cron"] not in workflows:
+                    self.err(where, f"{r['id']}: active but cron {r['cron']!r} is in no workflow")
 
     def check_rules(self, path: Path, rc: dict) -> None:
         """The registry must match what the engine can run, cite real library ids, and count its tries honestly."""

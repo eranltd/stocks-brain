@@ -1,7 +1,7 @@
 ---
-version: 0.8.0
-updated_at: 2026-10-05
-change_note: The pre-registered rule set 1.0.0 (config/rules.json); long-average filters; history verdicts are read once; the reference baseline is capped at candidate; forward comparison after 6 decisions.
+version: 0.9.0
+updated_at: 2026-10-06
+change_note: The brain runs by itself every market morning as a scheduled Claude Code routine; brain.yml re-checks and records each run and fails closed.
 ---
 # Methodology
 
@@ -10,8 +10,14 @@ change_note: The pre-registered rule set 1.0.0 (config/rules.json); long-average
    Each fetch re-pulls the whole kept window, so stored history is adjusted consistently.
    All symbols must fetch and validate, or nothing is written.
 2. **build_pack**: docs, prices and recent runs go into one JSON pack. The run stops if the pack exceeds `pack.token_cap`.
-3. **run_brain**: one LLM call with JSON-schema output and at most one repair retry. The run stops if
-   the projected cost exceeds `cost.hard_cap_usd` or schema validation fails twice.
+3. **brain** (routine `close_run`): a scheduled Claude Code session on the household's Claude subscription, Tuesday to
+   Saturday at 04:47 UTC (after the Monday to Friday closes are published), follows `prompts/daily_brain_routine.md`. It
+   restores the published data, builds the pack, and stops if `scripts/brain_status.py` says that market day's run already
+   exists (so holidays are skipped). Otherwise it runs the saved workflow `.claude/workflows/brain.js` (`prompts/brain.md`:
+   three analyst lenses, a skeptic per candidate, a constructor and a reviewer) and checks the picks with
+   `record_run.check_picks`. It records them only by dispatching the `brain` Action, which rebuilds the same pack from the
+   `data` branch, refuses the run if the data has moved on, validates and lints, and writes nothing if any check fails.
+   The session never commits, edits files or fetches prices.
 4. **score_picks**: pure code. Each pick older than `scoring.horizon_days` trading days is scored against the benchmark.
 5. **lint**: schemas, hygiene and size caps. Publish only when lint passes.
 

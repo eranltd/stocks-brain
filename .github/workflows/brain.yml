@@ -1,9 +1,12 @@
 name: brain
 
-# Records one brain run (M3, routine close_run). The brain (prompts/brain.md) runs in a Claude Code session on the pack
-# built from the published data; its output is passed in here. The Action rebuilds the same pack from the data branch,
-# validates the picks against it (scripts/record_run.py: schema, guardrails, evidence keys, one run per market day),
-# lints, and publishes runs/run.<date>.json to the data branch. Nothing is written if any check fails.
+# Records one brain run (routine close_run). The brain runs by itself every market morning (Tue-Sat 04:47 UTC, after the
+# Mon-Fri closes) as a scheduled Claude Code routine on the household's Claude subscription: the session follows
+# prompts/daily_brain_routine.md, builds the pack from the published data, runs the saved workflow .claude/workflows/brain.js
+# (prompts/brain.md), and dispatches this workflow with its output. It can still be dispatched by hand the same way.
+# The Action rebuilds the same pack from the data branch, refuses the run if the data has moved on, validates the picks
+# against it (scripts/record_run.py: schema, guardrails, evidence keys, one run per market day), lints, and publishes
+# runs/run.<date>.json to the data branch. Nothing is written if any check fails.
 on:
   workflow_dispatch:
     inputs:

@@ -16,7 +16,7 @@ export default function Runs({ data }) {
       <SectionHead
         eyebrow="Runs"
         title={<>Every call, <Accent>on the record.</Accent></>}
-        lede={`One model call per day. Each run records its cost, minutes, pack hash and the doc versions it read. Over ${fmtUsd(settings.cost.hard_cap_usd)} projected, or over the token cap, the run stops before calling the model.`}
+        lede={`One brain run per market day, started by itself each morning. Each run records its cost, minutes, pack hash and the doc versions it read. Over ${fmtUsd(settings.cost.hard_cap_usd)} projected, or over the token cap, the run stops before calling the model.`}
         right={<span className="meta">{runs.length} logged</span>}
       />
       <Strip

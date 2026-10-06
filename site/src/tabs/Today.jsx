@@ -34,7 +34,7 @@ export default function Today({ data, go }) {
         {run && run.picks.length > 0 && (
           <section id="picks" className="scroll-mt-28 pt-24">
             <SectionHead eyebrow={`The brain · ${fmtDate(run.date)}`} title={<>What the brain <Accent>flagged.</Accent></>}
-              lede="Each pick is a stance, a thesis and the condition that would prove it wrong. Code scores it after the horizon." size="md" />
+              lede="The brain runs by itself every market morning. Each pick is a stance, a thesis and the condition that would prove it wrong. Code scores it after the horizon." size="md" />
             <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
               {run.picks.map((p, i) => <PickCard key={p.id} item={p} i={i} name={data.names[p.pick.ticker]} horizon={data.settings.scoring.horizon_days} />)}
             </div>

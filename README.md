@@ -1,8 +1,8 @@
 # stocks·brain
 
 A personal, public stock-analysis agent. Every day it fetches Nasdaq data for a watchlist, builds a capped context pack,
-makes **one** LLM call that returns schema-checked picks, scores past picks with code, and publishes a static dashboard
-on GitHub Pages.
+runs the brain by itself every market morning (a scheduled Claude Code routine) whose picks are schema-checked and
+recorded by an Action, scores past picks with code, and publishes a static dashboard on GitHub Pages.
 
 **The household goal:** a diverse portfolio of 4-5 stocks around an index-fund core, aiming for +20% a year. The home page
 leads with a computed verdict, checks the goal against history, shows what portfolio rule v1 holds and why, and keeps a
@@ -32,10 +32,11 @@ samples/     deterministic synthetic data so the dashboard renders before live d
 scripts/     _common.py (strict stdlib JSON-Schema subset), lint.py, scoring.py, market.py (setup checks, base
              rates, context), portfolio.py (rule v1, goal check), routines_code.py (daily code-only steps),
              make_sample_data.py, build_site.py
-prompts/     brain.md
+prompts/     brain.md (the brain's rules), daily_brain_routine.md (what the scheduled brain session does)
+.claude/workflows/brain.js  the saved multi-agent brain workflow the routine runs by name
 site/        React + Tailwind + Vite dashboard (builds to _site/)
 tests/       unittest suite (stdlib)
-.github/workflows/  lint.yml (PRs), pages.yml (deploy on main)
+.github/workflows/  lint.yml (PRs), pages.yml (deploy on main), daily.yml (code-only routines), brain.yml (records a brain run)
 ```
 
 ## Quickstart
@@ -80,14 +81,32 @@ It has no third-party runtime scripts or fonts: everything is bundled and served
 | regime_monitor | Mon–Fri 23:40 | `data/kb/regime.json` |
 | calibration | 1st of month 13:00 | `data/kb/calibration.json` |
 
-It lints, commits the data to `main` and redeploys Pages. Lint fails if a routine marked `active` in
-`config/routines.json` has no matching cron in a workflow. To test, run the workflow by hand
+It lints, commits the data to `main` and redeploys Pages. Lint fails if a GitHub Actions routine marked `active` in
+`config/routines.json` has no matching cron in a workflow (a Claude routine such as the brain needs its prompt file and
+`.claude/workflows/brain.js` instead). To test, run the workflow by hand
 (Actions → daily → Run workflow). It defaults to a dry run.
 
 ```bash
 python3 scripts/fetch_prices.py --dry-run     # fetch + validate, write nothing
 python3 scripts/routines_code.py all          # score, regime, calibration
 ```
+
+## The daily brain (Claude routine)
+
+The brain runs by itself Tuesday to Saturday at 04:47 UTC, after the Monday to Friday closes are published. It is a
+scheduled Claude Code routine on the household's Claude subscription (no API key, no new dependency). The session
+follows `prompts/daily_brain_routine.md`:
+
+```bash
+bash scripts/data_branch.sh restore >/dev/null   # the published data
+python3 scripts/build_pack.py                     # the pack the brain reads
+python3 scripts/brain_status.py                   # {"as_of", "recorded", "run_file", "hold"}: stop if already recorded
+```
+
+then runs the saved workflow `brain` (`.claude/workflows/brain.js`), checks the picks, and dispatches `brain.yml`, which
+rebuilds the pack, refuses the run if the data moved on, validates, lints and publishes `runs/run.<date>.json`, or
+writes nothing. To run it by hand, follow the same file in a Claude Code session. To stop it, pause the routine in
+Claude Code, or set `close_run` to `paused` in `config/routines.json` (see `docs/decisions.md`).
 
 ## Connectors and routines
 
@@ -109,9 +128,9 @@ tags match the day, up to `pack.library_principles_max`.
 |---|---|---|
 | M1 | Folders, schemas, seed docs, lint, dashboard on sample data | done |
 | M2 | `fetch_prices.py` behind a provider adapter (Tiingo) + `daily.yml` with code-only routines | done |
-| M3 | `build_pack.py` + `run_brain.py` (target < $1/run, warn > $2, hard cap $2.50) | needs an LLM SDK decision |
+| M3 | `build_pack.py` + the brain (`prompts/brain.md`) + `record_run.py` through `brain.yml` | done |
 | M4 | Scoring (code only, pick vs benchmark after N days) | done (`routines_code.py score`), waits for live picks |
-| M5 | Daily Claude Code routine | |
+| M5 | Daily Claude Code routine | the brain runs daily (`close_run`); other routines planned |
 
 ## Dependencies
 

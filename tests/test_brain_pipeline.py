@@ -62,6 +62,19 @@ class BrainPipelineTest(unittest.TestCase):
         self.assertTrue(all(k == k.lower() for k in build_pack.evidence_keys(self.pack)))
         self.assertLessEqual(len(self.pack["library"]), settings()["pack"]["library_principles_max"])
 
+    def test_pack_carries_the_frozen_rule_verdicts_when_they_exist(self):
+        self.assertEqual(self.pack["rules_history"], {})  # no real-data result in this fixture
+        d = self.tmp / "with_rules"
+        shutil.copytree(self.data, d)
+        res = {"sample": False, "tries_counted": 17, "frozen": {"as_of": "2026-10-02", "satellite": {"five_leaders": {"verdict": "rejected", "percentile": 15.2}}},
+               "satellite": {"controls": {"core": {"cagr_pct": 14.87}, "equal_weight": {"cagr_pct": 21.62}},
+                             "rules": [{"id": "five_leaders", "stats": {"cagr_pct": 15.8}, "turnover_pct_year": 237.0}]}}
+        dump_json(d / "market" / "rules.json", res)
+        pack = build_pack.build(d, self.tmp / "runs", today="2026-10-05")
+        self.assertEqual(pack["rules_history"]["verdicts"]["five_leaders"], {"verdict": "rejected", "beat_random_pct": 15.2, "cagr": 15.8, "turnover_pct_year": 237.0})
+        self.assertEqual(pack["rules_history"]["yardsticks"], {"core_cagr": 14.9, "all_names_equal_cagr": 21.6})
+        self.assertIn("rules_history.verdicts.five_leaders", build_pack.evidence_keys(pack))
+
     def test_refuses_sample_data(self):
         d = self.tmp / "sample_only"
         dump_json(d / "market" / "derived.json", {"sample": True})

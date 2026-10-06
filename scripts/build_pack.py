@@ -90,6 +90,19 @@ def build(data_dir: Path = DATA, runs_dir: Path = RUNS, today: str | None = None
     claims = {o["id"].lower(): {"text": o["text"], "tickers": o["tickers"], "as_of": o["as_of"], "expires": o["expires"],
                                 "status": o.get("status", "unverified")} for o in live}
 
+    rules_res = load_json(data_dir / "market" / "rules.json") if (data_dir / "market" / "rules.json").exists() else None
+    rules_history = {}
+    if rules_res and not rules_res.get("sample") and rules_res.get("frozen"):
+        sat = {r["id"]: r for r in (rules_res.get("satellite") or {}).get("rules", [])}
+        ctrl = (rules_res.get("satellite") or {}).get("controls", {})
+        rules_history = {
+            "frozen_on": rules_res["frozen"]["as_of"], "tries_counted": rules_res["tries_counted"],
+            "note": "history verdicts of the pre-registered stock rules against 2000 random baskets from the same list, read once and frozen; beat_random_pct is the share of random baskets beaten",
+            "verdicts": {rid: {"verdict": v["verdict"], "beat_random_pct": r1(v["percentile"]), "cagr": r1(sat[rid]["stats"]["cagr_pct"]),
+                               "turnover_pct_year": r1(sat[rid]["turnover_pct_year"])}
+                         for rid, v in rules_res["frozen"]["satellite"].items() if rid in sat},
+            "yardsticks": {"core_cagr": r1(ctrl.get("core", {}).get("cagr_pct")), "all_names_equal_cagr": r1(ctrl.get("equal_weight", {}).get("cagr_pct"))},
+        }
     _, strategy = parse_front_matter((DOCS / "strategy.md").read_text(encoding="utf-8"))
     learn = load_json(DOCS / "learnings.json")
     recent = []
@@ -114,6 +127,7 @@ def build(data_dir: Path = DATA, runs_dir: Path = RUNS, today: str | None = None
         "rule_v1": {"holdings": longrun["now"]["holdings"], "last_rebalance": longrun["now"]["last_rebalance"],
                     "diversification": longrun["now"]["diversification"],
                     "history": {k: longrun["stats"][k] for k in ("rule", "equal_weight", "core")}} if longrun else {},
+        "rules_history": rules_history,
         "library": pick_library(load_json(kb / "library.json") if (kb / "library.json").exists() else None, st["pack"]["library_principles_max"]),
         "learnings": {x["id"].lower(): x for x in learn["items"] if x.get("status") == "active"},
         "claims": claims,

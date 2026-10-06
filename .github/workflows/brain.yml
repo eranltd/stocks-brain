@@ -11,6 +11,10 @@ on:
         description: 'Brain output JSON: {"summary": "...", "picks": [...]}'
         required: true
         type: string
+      as_of:
+        description: "The market date (YYYY-MM-DD) of the pack the brain read; the run is refused if the data has moved on"
+        required: true
+        type: string
       model:
         description: "Who ran the brain (a generic label, no model IDs)"
         type: string
@@ -46,6 +50,17 @@ jobs:
 
       - name: Build the pack from the published data
         run: python3 scripts/build_pack.py
+
+      - name: Check the data still ends on the day the brain read
+        env:
+          EXPECT: ${{ inputs.as_of }}
+        run: |
+          python3 - <<'PY'
+          import json, os, sys
+          got = json.load(open(".cache/pack.json"))["pack"]["meta"]["as_of"]
+          if got != os.environ["EXPECT"]:
+              sys.exit(f"the data now ends on {got}, but the brain read {os.environ['EXPECT']}: run the brain again on the new day")
+          PY
 
       - name: Validate and record the run (fails closed)
         id: close_run

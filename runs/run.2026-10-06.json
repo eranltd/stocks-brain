@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "run_id": "run.2026-10-06",
+  "date": "2026-10-06",
+  "generated_at": "2026-10-07T10:49:42Z",
+  "status": "ok",
+  "sample": false,
+  "model": "Claude Code routine",
+  "cost": {
+    "usd": 0.0,
+    "input_tokens": 9069,
+    "output_tokens": 1252,
+    "cap_usd": 2.5
+  },
+  "duration_minutes": 5.0,
+  "pack": {
+    "hash": "e5af6f8e9c5242a6421338da7befc1ebb7ec181dc542ad4d35c118360558b2df",
+    "tokens": 9069,
+    "cap_tokens": 12000
+  },
+  "doc_versions": {
+    "strategy": "0.2.0",
+    "methodology": "0.10.0",
+    "guardrails": "0.1.0",
+    "learnings": "0.1.0"
+  },
+  "repair_retries": 0,
+  "summary": "The frozen history test (rules_history) rejected every pre-registered stock rule: each beat only a small share of random baskets from this list, with heavy turnover, and holding every name equally did better than the core and any rule. Setup checks and past strength have shown no edge over random picks here; nothing below is expected to beat the index. Base rates agree: gate passers did slightly worse than failers. Regime is normal and up, breadth under half. Ladder at Paper, so no money moves. Four neutral, low-conviction stances: paper tracking and a watch, not leans.",
+  "picks": [
+    {
+      "id": "2026-10-06:MSFT",
+      "ref_date": "2026-10-06",
+      "pick": {
+        "ticker": "MSFT",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Only name passing all four setup checks without being stretched, with a large lead over the benchmark across the last quarter and half year. But it lagged badly over the full year and sits close to the stretch line. The history test found no edge in such checks, and the all-four-checks group did worst in the base rates, so this is a neutral paper hold. The one Pershing Square disclosed-book call is bullish and has done well, but that fund's record is thin and proves nothing.",
+        "risks": [
+          "The history test rejected the rules, so passing every check has shown no edge over random baskets.",
+          "Deepest past-year drop and highest volatility of the three rule names; a small further rise would make it stretched.",
+          "The recent surge rests mainly on one window and may already be priced in."
+        ],
+        "invalidation": "Becomes stretched above its medium trend, falls back below that trend line, or starts trailing the benchmark over the last quarter; the paper hold should then be dropped.",
+        "evidence": [
+          "market.msft",
+          "market.msft.setup",
+          "market.msft.risk",
+          "rules_history.verdicts",
+          "base_rates.by_score",
+          "people.calls.msft",
+          "people.record.bill-ackman"
+        ]
+      }
+    },
+    {
+      "id": "2026-10-06:AAPL",
+      "ref_date": "2026-10-06",
+      "pick": {
+        "ticker": "AAPL",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Passes three of four setup checks, is not stretched, and leads the benchmark over the last half year and full year with a shallower past-year drop than the other large technology names. Short-term strength has faded: the last quarter trails the benchmark and that check fails. A kept name under the rule, but the rules that select such names were rejected, so this is an unproven screen, not a reason to expect outperformance.",
+        "risks": [
+          "The history test found no edge from setup checks, so a pass says little about the next month.",
+          "Its short-term lead has faded; the last month and quarter both trail the benchmark.",
+          "Shares a sector with Microsoft, so holding both uses the whole sector limit."
+        ],
+        "invalidation": "Drops to fewer than three setup checks, loses its long trend, or becomes stretched above its medium trend; the paper hold should then be dropped.",
+        "evidence": [
+          "market.aapl",
+          "market.aapl.setup",
+          "market.aapl.risk",
+          "rules_history.verdicts",
+          "rules_history.yardsticks",
+          "rule_v1.history"
+        ]
+      }
+    },
+    {
+      "id": "2026-10-06:GILD",
+      "ref_date": "2026-10-06",
+      "pick": {
+        "ticker": "GILD",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Passes three setup checks, is not stretched, and moves almost independently of the benchmark, so it adds health care exposure the technology names lack. That is a diversification argument only. Its relative strength is mixed: it trails the benchmark over the last month and half year, and its year-long lead is tiny. Its risk is not low, and the rule that selects it was rejected against random baskets.",
+        "risks": [
+          "No proven edge: the history test rejected the rule, and the check count is flat in the base rates.",
+          "Past-year drop and volatility are well above the core's; a low link to the market can mean lagging a rising index.",
+          "Same-sector Amgen is fairly correlated with it, so health care exposure is less diversified than it looks."
+        ],
+        "invalidation": "Falls below its medium trend, fails more setup checks at the monthly review, or the rule drops it; the paper hold should then be dropped.",
+        "evidence": [
+          "market.gild",
+          "market.gild.setup",
+          "market.gild.risk",
+          "rules_history.verdicts",
+          "base_rates.by_score",
+          "rule_v1.history"
+        ]
+      }
+    },
+    {
+      "id": "2026-10-06:NVDA",
+      "ref_date": "2026-10-06",
+      "pick": {
+        "ticker": "NVDA",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Do not add. It leads the benchmark in every window, mostly through the last quarter, but it is flagged stretched above its medium trend and its volatility check fails. House rules forbid a new entry in a stretched name, and the library notes that breakouts far above long averages have less fuel. A watch for a pullback, not a lean.",
+        "risks": [
+          "Stretched names are more often retested than extended; a pullback is the common outcome.",
+          "Very high volatility and a very deep long-run drop make it a wide-swing holding even in a small slot.",
+          "The history test rejected the rules, so strength alone proves little."
+        ],
+        "invalidation": "A pullback that clears the stretched flag and restores calm trading would reopen it for review; continued stretching keeps it out.",
+        "evidence": [
+          "market.nvda",
+          "market.nvda.setup",
+          "market.nvda.risk",
+          "rules_history.verdicts",
+          "base_rates.by_score",
+          "library.s-019:p02"
+        ]
+      }
+    }
+  ]
+}

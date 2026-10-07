@@ -1,0 +1,389 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-10-07",
+  "change_note": "People we learn from: who we follow and why, what the research says about following them, and a ledger of their dated public calls that code scores against the core.",
+  "purpose": "We follow a few investors, teachers and writers to learn how good investors think, and we measure every public call they make on our list against the S&P 500 core, the same way we measure our own rules.",
+  "how_we_use": [
+    "We learn principles and ways of thinking from these people; we do not copy their trades.",
+    "Every call is logged with the date it became public and a link to the source, and code scores it against the S&P 500 core like our own picks.",
+    "No money ever follows one person's call alone; a call is context, never the only reason for a pick.",
+    "A 13F shows a fund's US long positions as of a quarter end, up to about forty-five days late; shorts, foreign shares and later trades are missing.",
+    "A fund's 13F is the firm's book, not necessarily the named person's own pick, so each call names the fund it came from.",
+    "People talk their book: they tend to praise what their funds own, so we measure them like anyone else.",
+    "A person needs at least ten calls that are half a year old before their record can tell us anything.",
+    "We paraphrase and link to the source; we never copy their text."
+  ],
+  "evidence": [
+    {
+      "topic": "Most stock influencers studied did not help",
+      "claim": "A working paper studied 72 million StockTwits posts from over 29,000 finfluencers. The average one showed close to no skill. In the December 2024 version about 28% gave useful advice (up to about 2.6% a month above the market after risk), 17% showed no skill, and 55% were antiskilled: following them trailed the market by about 2.3% a month after risk. The skilled ones had fewer followers and posted less; the unskilled tended to be too optimistic and posted most around price peaks.",
+      "citation": "Kakhbod, Kazempour, Livdan and Schuerhoff, 'Finfluencers', working paper, version of 27 December 2024 (AEA/ASSA 2025 conference program).",
+      "url": "https://www.aeaweb.org/conference/2025/program/paper/i3ry3n4t"
+    },
+    {
+      "topic": "The earlier version of the same study",
+      "claim": "The April 2023 version reported similar shares (28% skilled, 16% unskilled, 56% antiskilled), said the less-skilled posters had more followers and more sway over small investors' trades, and estimated that going against them could have earned about 1.2% a month out of sample. That 1.2% figure is in this earlier version only.",
+      "citation": "Schuerhoff, Kakhbod, Kazempour and Livdan, 'Finfluencers', Swiss Finance Institute Research Paper No. 23-30, 25 April 2023.",
+      "url": "https://www.sfi.ch/en/publications/n-23-30-finfluencers"
+    },
+    {
+      "topic": "Curated writers can carry information",
+      "claim": "On a large US investor platform, the views in articles and in reader comments predicted later stock returns and earnings surprises. The Finfluencers authors identify the platform as Seeking Alpha and read the contrast with StockTwits as curated, semi-professional writers carrying more information; that contrast is their reading, not a finding of this study.",
+      "citation": "Chen, De, Hu and Hwang (2014), 'Wisdom of Crowds: The Value of Stock Opinions Transmitted Through Social Media', Review of Financial Studies 27(5).",
+      "url": "https://ideas.repec.org/a/oup/rfinst/v27y2014i5p1367-1403..html"
+    },
+    {
+      "topic": "What Buffett's record is made of",
+      "claim": "Berkshire Hathaway's long record (a Sharpe ratio of about 0.79 over 1976-2017) is largely explained by owning cheap, safe, high-quality stocks with about 1.7 to 1 leverage; after those factors its alpha was no longer significant. A portfolio built from its 13F filings also did well, but it used quarter-end holdings and ignored the filing delay, so in our reading it measures Berkshire's picking, not what a copier could earn after each filing. The authors disclose that they work at AQR.",
+      "citation": "Frazzini, Kabiller and Pedersen (2018), 'Buffett's Alpha', Financial Analysts Journal 74(4).",
+      "url": "https://rpc.cfainstitute.org/en/research/financial-analysts-journal/2018/faj-v74-n4-3"
+    },
+    {
+      "topic": "Copying disclosed holdings: early evidence",
+      "claim": "In 1990s data on high-expense mutual funds, a copycat that bought a fund's holdings as soon as they were disclosed earned less than the fund before expenses, but about the same, possibly more, after expenses. This is a mutual-fund study, not a 13F study.",
+      "citation": "Frank, Poterba, Shackelford and Shoven (2004), 'Copycat Funds', Journal of Law and Economics 47(2).",
+      "url": "https://ideas.repec.org/a/ucp/jlawec/y2004v47i2p515-41.html"
+    },
+    {
+      "topic": "Copying disclosed holdings: later evidence",
+      "claim": "Hypothetical copycats of active mutual funds did about as well as the funds they copied after costs, did relatively better once quarterly disclosure began in 2004, and varied a lot from fund to fund; copying past winners did better than most funds. Again mutual funds, not hedge-fund 13Fs.",
+      "citation": "Verbeek and Wang (2013), 'Better than the original? The relative success of copycat funds', Journal of Banking and Finance 37(9).",
+      "url": "https://ideas.repec.org/a/eee/jbfina/v37y2013i9p3454-3471.html"
+    },
+    {
+      "topic": "The best positions can be hidden",
+      "claim": "Some managers, especially hedge funds, get permission to disclose certain holdings later. Private information was the main reason, and those hidden positions did better for up to twelve months, so part of what a 13F copier wants is missing when the filing first appears.",
+      "citation": "Agarwal, Jiang, Tang and Yang (2013), 'Uncovering Hedge Fund Skill from the Portfolio Holdings They Hide', Journal of Finance 68(2).",
+      "url": "https://ideas.repec.org/a/bla/jfinan/v68y2013i2p739-783.html"
+    },
+    {
+      "topic": "What a 13F shows and when",
+      "claim": "Managers with $100 million or more in covered US securities file Form 13F within 45 days after each quarter end. Short positions, shares that trade only outside the US and mutual fund shares are not reported. A 13F is a late, quarter-end, long-only and partial view of a portfolio.",
+      "citation": "U.S. SEC, Division of Investment Management, 'Frequently Asked Questions About Form 13F'.",
+      "url": "https://www.sec.gov/rules-regulations/staff-guidance/frequently-asked-questions-about-form-13f"
+    },
+    {
+      "topic": "ARK publishes daily",
+      "claim": "ARK updates its ETFs' holdings on its site at the end of every trading day and offers trade notifications for its actively managed ETFs, a much faster view than a quarterly 13F.",
+      "citation": "ARK Funds Help Center, holdings and trade-notification pages.",
+      "url": "https://helpcenter.ark-funds.com/can-you-explain-the-date-listed-on-the-ark-etf-holdings-documents"
+    },
+    {
+      "topic": "No archive of ARK's past trades",
+      "claim": "ARK says it does not provide historical trade archives, so a record of its moves has to be collected going forward.",
+      "citation": "ARK Funds Help Center, 'Do you share historical trades?'",
+      "url": "https://helpcenter.ark-funds.com/do-you-share-historical-trades"
+    }
+  ],
+  "people": [
+    {
+      "id": "warren-buffett",
+      "name": "Warren Buffett",
+      "kind": "teacher",
+      "status": "following",
+      "style": "quality value, owner mindset, very long holding periods",
+      "learn": "Think like a part-owner of a business, not a ticker trader. For non-professionals he advises a low-cost S&P 500 index fund, bought over a long period and not sold when news is bad. That backs our S&P 500 core.",
+      "caution": "Now 96 and Chairman Emeritus (2026-09-18); he no longer writes the annual letter, only occasional messages. He advises amateurs against stock picking. Berkshire's 13F is the company's book, not his own calls.",
+      "links": [
+        {"label": "Berkshire Hathaway: letters to shareholders (1977-2024)", "url": "https://www.berkshirehathaway.com/letters/letters.html"},
+        {"label": "2013 letter (index-fund advice for non-professionals)", "url": "https://www.berkshirehathaway.com/letters/2013ltr.pdf"},
+        {"label": "Thanksgiving message (2025-11-10)", "url": "https://www.berkshirehathaway.com/news/nov1025.pdf"},
+        {"label": "Berkshire release: Chairman Emeritus (2026-09-18)", "url": "https://www.berkshirehathaway.com/news/sep1826.pdf"}
+      ],
+      "x_handle": "",
+      "holdings_13f": {"filer": "Berkshire Hathaway Inc", "cik": "0001067983"}
+    },
+    {
+      "id": "howard-marks",
+      "name": "Howard Marks",
+      "kind": "investor",
+      "status": "following",
+      "style": "market cycles, risk, investor psychology",
+      "learn": "How to judge where we are in a market cycle, why he sees risk mainly as the chance of permanent loss (often from overpaying) rather than price swings, and how crowd psychology drives bubbles and busts. Useful for sizing the satellite and staying calm in drawdowns.",
+      "caution": "Oaktree is best known for credit and distressed debt. His memos are about markets and risk and generally do not make calls on our watchlist stocks. Oaktree's 13F is a firm book, not his personal picks.",
+      "links": [
+        {"label": "Memos from Howard Marks (Oaktree, 1990-2026)", "url": "https://www.oaktreecapital.com/insights/memos"},
+        {"label": "Oaktree leadership (Co-Chair and Co-Founder)", "url": "https://www.oaktreecapital.com/about/leadership"}
+      ],
+      "x_handle": "",
+      "holdings_13f": {"filer": "Oaktree Capital Management LP", "cik": "0000949509"}
+    },
+    {
+      "id": "terry-smith",
+      "name": "Terry Smith",
+      "kind": "investor",
+      "status": "following",
+      "style": "quality growth, buy-and-hold, low turnover",
+      "learn": "His three-step rule: buy good companies, don't overpay, do nothing. His annual letter compares the fund's look-through returns on capital and margins with the S&P 500 and FTSE 100, a simple quality test we can copy for a small satellite.",
+      "caution": "In 2025 his flagship fund rose 0.8% against 12.8% for the MSCI World (in sterling), part of a recent lag, though it is still ahead since its 2010 launch. He argues index funds act as momentum strategies, unlike our index-core view.",
+      "links": [
+        {"label": "Fundsmith Equity Fund annual letter (Jan 2026, covers 2025)", "url": "https://www.fundsmith.co.uk/media/4hcfd1pg/2025-fef-annual-letter-web.pdf"},
+        {"label": "Fundsmith (firm site)", "url": "https://www.fundsmith.com/"},
+        {"label": "Fundsmith on X (firm account, not personal)", "url": "https://twitter.com/FundsmithLLP"}
+      ],
+      "x_handle": "",
+      "holdings_13f": {"filer": "Fundsmith LLP", "cik": "0001569205"}
+    },
+    {
+      "id": "bill-ackman",
+      "name": "Bill Ackman",
+      "kind": "investor",
+      "status": "following",
+      "style": "concentrated quality, activist",
+      "learn": "How a concentrated portfolio of a few high-quality businesses with predictable cash flows is built and explained, with a written case for each holding in his annual letter. A model for writing down why we own each satellite stock and when we would sell.",
+      "caution": "He runs a concentrated activist fund and posts often on X. He publicly argues for positions his funds own (for example Fannie Mae and Freddie Mac), so treat his calls as advocacy and measure them.",
+      "links": [
+        {"label": "Pershing Square Holdings materials (letters, reports)", "url": "https://pershingsquareholdings.com/materials/"},
+        {"label": "Pershing Square Holdings 2025 Annual Report with his letter", "url": "https://assets.pershingsquareholdings.com/wp-content/uploads/2026/02/18175039/Pershing-Square-Holdings-Ltd.-2025-Annual-Report.pdf"},
+        {"label": "Bill Ackman on X", "url": "https://x.com/BillAckman"}
+      ],
+      "x_handle": "BillAckman",
+      "holdings_13f": {"filer": "Pershing Square Inc.", "cik": "0002026053"}
+    },
+    {
+      "id": "aswath-damodaran",
+      "name": "Aswath Damodaran",
+      "kind": "educator",
+      "status": "following",
+      "style": "valuation, narrative plus numbers, intrinsic value",
+      "learn": "How to turn a company's story into numbers and a fair value, check what the price already assumes, and use his yearly industry datasets (multiples, risk and discount rates) to sanity-check our few satellite picks.",
+      "caution": "A teacher at NYU Stern, not a fund manager we can score: his valuations rest on assumptions he publishes, so treat them as worked examples, not a track record.",
+      "links": [
+        {"label": "Damodaran Online (NYU Stern home page)", "url": "https://pages.stern.nyu.edu/~adamodar/"},
+        {"label": "Musings on Markets (blog)", "url": "https://aswathdamodaran.blogspot.com/"},
+        {"label": "Musings on Markets (Substack edition)", "url": "https://aswathdamodaran.substack.com/"},
+        {"label": "Data page (industry data, updated each January)", "url": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/data.html"}
+      ],
+      "x_handle": "AswathDamodaran",
+      "holdings_13f": null
+    },
+    {
+      "id": "cathie-wood",
+      "name": "Cathie Wood",
+      "kind": "investor",
+      "status": "following",
+      "style": "thematic growth, disruptive innovation, high conviction",
+      "learn": "How a high-conviction growth manager frames long-term innovation themes. ARK publishes its ETFs' holdings daily and offers trade notifications, a live case for checking whether bold thematic bets beat the index afterwards.",
+      "caution": "Her flagship fund has been very volatile with deep drawdowns and lagged the Nasdaq-100 over 2014-2023; her views naturally favour what her funds own. Measure, don't copy.",
+      "links": [
+        {"label": "ARK trade notifications (sign-up page)", "url": "https://ark-funds.com/trade-notifications"},
+        {"label": "ARK help: subscribing to trade notifications", "url": "https://helpcenter.ark-funds.com/how-do-i-subscribe-to-trade-notifications"}
+      ],
+      "x_handle": "CathieDWood",
+      "holdings_13f": {"filer": "ARK Investment Management LLC", "cik": "0001697748"}
+    },
+    {
+      "id": "stanley-druckenmiller",
+      "name": "Stanley Druckenmiller",
+      "kind": "investor",
+      "status": "following",
+      "style": "top-down macro, liquidity and central banks, concentrated bets",
+      "learn": "How a macro investor watches central banks and liquidity, not just earnings, to judge the market, and bets big only when convinced; his quarterly 13F shows the US stocks his family office held.",
+      "caution": "Publishes no letters; his views come through interviews. The 13F is about 45 days late and shows only long US-listed positions (no shorts, futures or currencies), so it is only part of his book.",
+      "links": [
+        {"label": "SEC EDGAR 13F filings, Duquesne Family Office LLC", "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001536411&type=13F-HR&dateb=&owner=include&count=10"}
+      ],
+      "x_handle": "",
+      "holdings_13f": {"filer": "Duquesne Family Office LLC", "cik": "0001536411"}
+    },
+    {
+      "id": "li-lu",
+      "name": "Li Lu",
+      "kind": "investor",
+      "status": "following",
+      "style": "concentrated quality value, patient and selective",
+      "learn": "Selectivity and patience: wait for rare chances to buy high-quality businesses with durable moats and trustworthy managers. Suits a small, slow satellite next to an index core.",
+      "caution": "Publishes rarely (the latest item listed is a December 2024 speech); concentrated, with Asian as well as US holdings; the 13F shows only US-listed longs, about 45 days late. Hard to copy.",
+      "links": [
+        {"label": "Himalaya Capital (firm site)", "url": "https://www.himcap.com/"},
+        {"label": "Himalaya Capital publications (essays, speeches, interviews)", "url": "https://www.himcap.com/publications"},
+        {"label": "SEC EDGAR 13F filings, Himalaya Capital Management LLC", "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001709323&type=13F-HR&dateb=&owner=include&count=10"}
+      ],
+      "x_handle": "",
+      "holdings_13f": {"filer": "Himalaya Capital Management LLC", "cik": "0001709323"}
+    },
+    {
+      "id": "morgan-housel",
+      "name": "Morgan Housel",
+      "kind": "writer",
+      "status": "following",
+      "style": "behaviour, long-term thinking",
+      "learn": "Argues most money outcomes come from behaviour more than skill: be patient, leave room for error, avoid forced selling and let compounding work. In our reading, that supports holding the index core and keeping the satellite small.",
+      "caution": "Writes about behaviour and history, not stock picks, so he is useful for temperament, not for choosing names. He is a partner at Collaborative Fund, a private investment firm, not a public-stock fund manager.",
+      "links": [
+        {"label": "Official site", "url": "https://www.morganhousel.com/"},
+        {"label": "Collaborative Fund blog (author page)", "url": "https://collabfund.com/blog/authors/morgan/"},
+        {"label": "Podcast (Apple Podcasts)", "url": "https://podcasts.apple.com/us/podcast/the-morgan-housel-podcast/id1675310669"}
+      ],
+      "x_handle": "morganhousel",
+      "holdings_13f": null
+    },
+    {
+      "id": "ben-carlson",
+      "name": "Ben Carlson",
+      "kind": "educator",
+      "status": "following",
+      "style": "index investing, market history, risk",
+      "learn": "Market history and base rates: drawdowns and crashes are a normal part of investing, simple diversified portfolios are hard to beat, and expectations should be realistic. Useful for asking whether a satellite stock is worth its extra risk.",
+      "caution": "Works at Ritholtz Wealth Management, which sells advice; his site carries its disclosures and some podcast episodes are paid sponsor interviews. He writes commentary, not stock calls we can score.",
+      "links": [
+        {"label": "A Wealth of Common Sense (blog)", "url": "https://awealthofcommonsense.com/"},
+        {"label": "About page", "url": "https://awealthofcommonsense.com/about/"},
+        {"label": "Animal Spirits podcast", "url": "https://awealthofcommonsense.com/podcast/"}
+      ],
+      "x_handle": "awealthofcs",
+      "holdings_13f": null
+    },
+    {
+      "id": "nick-maggiulli",
+      "name": "Nick Maggiulli",
+      "kind": "writer",
+      "status": "following",
+      "style": "data-driven personal finance, index investing",
+      "learn": "Uses data to test common money questions, such as investing now versus waiting and how hard it is to beat an index with single stocks. Shows how to judge a satellite with evidence instead of stories.",
+      "caution": "Works at Ritholtz Wealth Management, which sells advice. His blog and the firm's team page list different titles, so we do not state one. He writes data essays, not stock calls.",
+      "links": [
+        {"label": "Of Dollars And Data (blog)", "url": "https://ofdollarsanddata.com/"},
+        {"label": "About page", "url": "https://ofdollarsanddata.com/about/"}
+      ],
+      "x_handle": "dollarsanddata",
+      "holdings_13f": null
+    },
+    {
+      "id": "john-bogle",
+      "name": "John C. Bogle",
+      "kind": "teacher",
+      "status": "principles_only",
+      "style": "index investing, low costs",
+      "learn": "Why the index core comes first: costs compound against you, he argued most active funds trail the market over time, and staying the course beats trading. Every satellite pick has to justify its place against this.",
+      "caution": "Died 16 January 2019, aged 89. As Vanguard's founder he had a stake in the case for indexing. We follow his principles only; there are no new calls to track.",
+      "links": [
+        {"label": "Bogle Center: Bogle Archive (speeches, books, papers)", "url": "https://boglecenter.net/bogle-archive/"},
+        {"label": "John C. Bogle Center for Financial Literacy", "url": "https://boglecenter.net/"}
+      ],
+      "x_handle": "",
+      "holdings_13f": null
+    },
+    {
+      "id": "charlie-munger",
+      "name": "Charlie Munger",
+      "kind": "teacher",
+      "status": "principles_only",
+      "style": "quality at a fair price, patience",
+      "learn": "In Buffett's telling, Munger urged buying wonderful businesses at fair prices rather than fair businesses at wonderful prices, then being patient. We use that idea for a small, high-quality satellite held for years.",
+      "caution": "Died 28 November 2023 (Berkshire release). Berkshire worked at a scale and with tools, such as buying whole companies, that a household lacks. We use his principles only; no calls to score.",
+      "links": [
+        {"label": "Berkshire Hathaway release on his death (2023-11-28)", "url": "https://www.berkshirehathaway.com/news/nov2823.pdf"},
+        {"label": "Buffett's 2023 letter, opening tribute to Munger", "url": "https://www.berkshirehathaway.com/letters/2023ltr.pdf"},
+        {"label": "Berkshire shareholder letters index", "url": "https://www.berkshirehathaway.com/letters/letters.html"}
+      ],
+      "x_handle": "",
+      "holdings_13f": null
+    },
+    {
+      "id": "peter-lynch",
+      "name": "Peter Lynch",
+      "kind": "teacher",
+      "status": "principles_only",
+      "style": "growth at a reasonable price, know what you own",
+      "learn": "Know what you own and why, in a few sentences. Do your own homework on businesses you understand, and look again when the story changes. That makes a good checklist for each satellite stock.",
+      "caution": "His Lynch Foundation bio lists him as Vice Chairman of Fidelity Management & Research Company. We found no regular public stock calls from him. His Magellan record (1977-1990) comes from a different era.",
+      "links": [
+        {"label": "The Lynch Foundation: Peter Lynch bio", "url": "https://thelynchfoundation.com/peterlynch"}
+      ],
+      "x_handle": "",
+      "holdings_13f": null
+    }
+  ],
+  "calls": [
+    {
+      "id": "2025-05-15-fundsmith-pep",
+      "person": "terry-smith",
+      "via": "Fundsmith LLP",
+      "date": "2025-05-15",
+      "ticker": "PEP",
+      "stance": "bearish",
+      "what": "Fundsmith's 13F for the quarter to 2025-03-31 no longer lists PepsiCo, which it held at the end of 2024: a full exit.",
+      "source_kind": "13f",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1569205/000152002325000003/0001520023-25-000003-index.htm"
+    },
+    {
+      "id": "2025-08-14-berkshire-tmus",
+      "person": "warren-buffett",
+      "via": "Berkshire Hathaway Inc",
+      "date": "2025-08-14",
+      "ticker": "TMUS",
+      "stance": "bearish",
+      "what": "Berkshire's 13F for the quarter to 2025-06-30 no longer lists T-Mobile US, which it held at 2025-03-31: a full exit.",
+      "source_kind": "13f",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000095012325008343/0000950123-25-008343-index.htm"
+    },
+    {
+      "id": "2025-08-14-pershing-amzn",
+      "person": "bill-ackman",
+      "via": "Pershing Square Capital Management, L.P.",
+      "date": "2025-08-14",
+      "ticker": "AMZN",
+      "stance": "bullish",
+      "what": "Pershing Square's 13F for the quarter to 2025-06-30 shows a new Amazon position, not held at 2025-03-31.",
+      "source_kind": "13f",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1336528/000117266125003509/0001172661-25-003509-index.htm"
+    },
+    {
+      "id": "2025-11-14-berkshire-googl",
+      "person": "warren-buffett",
+      "via": "Berkshire Hathaway Inc",
+      "date": "2025-11-14",
+      "ticker": "GOOGL",
+      "stance": "bullish",
+      "what": "Berkshire's 13F for the quarter to 2025-09-30 shows a new Alphabet Class A stake, not held at 2025-06-30.",
+      "source_kind": "13f",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000119312525282901/0001193125-25-282901-index.htm"
+    },
+    {
+      "id": "2026-02-17-pershing-meta",
+      "person": "bill-ackman",
+      "via": "Pershing Square Capital Management, L.P.",
+      "date": "2026-02-17",
+      "ticker": "META",
+      "stance": "bullish",
+      "what": "Pershing Square's 13F for the quarter to 2025-12-31 shows a new Meta Platforms Class A position, not held at 2025-09-30.",
+      "source_kind": "13f",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1336528/000117266126001091/0001172661-26-001091-index.htm"
+    },
+    {
+      "id": "2026-05-12-ark-avgo",
+      "person": "cathie-wood",
+      "via": "ARK Investment Management LLC",
+      "date": "2026-05-12",
+      "ticker": "AVGO",
+      "stance": "bullish",
+      "what": "ARK's 13F for the quarter to 2026-03-31 shows a new Broadcom position, absent from its 13Fs for 2024-12-31 to 2025-12-31.",
+      "source_kind": "13f",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1697748/000110465926059240/0001104659-26-059240-index.htm"
+    },
+    {
+      "id": "2026-05-15-berkshire-amzn",
+      "person": "warren-buffett",
+      "via": "Berkshire Hathaway Inc",
+      "date": "2026-05-15",
+      "ticker": "AMZN",
+      "stance": "bearish",
+      "what": "Berkshire's 13F for the quarter to 2026-03-31 no longer lists Amazon, which it held (already cut) at 2025-12-31: a full exit.",
+      "note": "Filed after Greg Abel became CEO at the end of 2025: Berkshire's call, not Buffett's own.",
+      "source_kind": "13f",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1067983/000119312526226661/0001193125-26-226661-index.htm"
+    },
+    {
+      "id": "2026-05-15-pershing-msft",
+      "person": "bill-ackman",
+      "via": "Pershing Square Capital Management, L.P.",
+      "date": "2026-05-15",
+      "ticker": "MSFT",
+      "stance": "bullish",
+      "what": "Pershing Square's 13F for the quarter to 2026-03-31 shows a new Microsoft position, not held at 2025-12-31.",
+      "source_kind": "13f",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1336528/000117266126002336/0001172661-26-002336-index.htm"
+    }
+  ]
+}

@@ -4,6 +4,7 @@ import { cap, fmtDate, fmtNum, fmtPct, pad2 } from "../lib/format.js";
 import { BriefSections, marketBrief } from "../components/brief.jsx";
 import { BaseRates, GoalSection, MarketContext, PortfolioNow, nextRebalance } from "../components/goal.jsx";
 import { STAGES, TrustLadder, trustStage } from "../components/trust.jsx";
+import { callsTouching, shortVia } from "../lib/people.js";
 import { Accent, ArrowRight, Chip, Container, Conviction, Headline, Reveal, SectionHead } from "../components/ui.jsx";
 
 const TONE = { bullish: "var(--accent)", bearish: "var(--down)", neutral: "var(--flat)" };
@@ -27,6 +28,7 @@ export default function Today({ data, go }) {
       <Container>
         <GoalSection data={data} />
         <PortfolioNow data={data} go={go} />
+        <PeopleNote data={data} go={go} />
         <MarketContext data={data} />
         <BaseRates data={data} />
         <div className="pt-24"><TrustLadder data={data} go={go} /></div>
@@ -43,6 +45,31 @@ export default function Today({ data, go }) {
         <p className="meta mt-20 normal-case tracking-[0.04em]">A research notebook for one household, not financial advice. Every number on this page is computed by code from public market data.</p>
       </Container>
     </>
+  );
+}
+
+/** One line linking to People when a logged public call touches a name the paper record holds or the brain picked. */
+function PeopleNote({ data, go }) {
+  const calls = data.people?.calls ?? [];
+  if (!calls.length) return null;
+  const paper = data.paper && !data.paper.sample ? data.paper : null;
+  const held = paper?.rebalances.at(-1)?.holdings ?? (data.livePrices ? data.longrun?.now.holdings : null) ?? [];
+  const picked = data.sample ? [] : (data.lastOk?.picks ?? []).map((p) => p.pick.ticker);
+  const touching = callsTouching(calls, [...held, ...picked]);
+  if (!touching.length) return null;
+  return (
+    <Reveal className="card mt-8 flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+      <div className="min-w-0">
+        <div className="meta mb-2 text-people">People we learn from</div>
+        <p className="text-[15px] leading-relaxed text-ink-2">
+          {touching.length === 1 ? "A logged public call touches" : `${touching.length} logged public calls touch`} names held or picked here:{" "}
+          {touching.map((c, i) => (
+            <span key={c.id}>{i ? "; " : ""}<span className="font-mono text-ink">{c.ticker}</span> {c.stance} by {shortVia(c.via)}, public {fmtDate(c.date).replace(/^\w+, /, "")}</span>
+          ))}. Context only: each is scored against the core.
+        </p>
+      </div>
+      <button type="button" onClick={() => go("people")} className="btn shrink-0 self-start sm:self-center">Their calls <ArrowRight /></button>
+    </Reveal>
   );
 }
 

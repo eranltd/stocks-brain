@@ -1,7 +1,7 @@
 ---
-version: 0.9.0
-updated_at: 2026-10-06
-change_note: The brain runs by itself every market morning as a scheduled Claude Code routine; brain.yml re-checks and records each run and fails closed.
+version: 0.10.0
+updated_at: 2026-10-07
+change_note: People we learn from - each dated public call is scored against the core on the weekly lines; the brain fires at 05:47 and 11:47 UTC.
 ---
 # Methodology
 
@@ -11,7 +11,8 @@ change_note: The brain runs by itself every market morning as a scheduled Claude
    All symbols must fetch and validate, or nothing is written.
 2. **build_pack**: docs, prices and recent runs go into one JSON pack. The run stops if the pack exceeds `pack.token_cap`.
 3. **brain** (routine `close_run`): a scheduled Claude Code session on the household's Claude subscription, Tuesday to
-   Saturday at 04:47 UTC (after the Monday to Friday closes are published), follows `prompts/daily_brain_routine.md`. It
+   Saturday at 05:47 UTC and again at 11:47 UTC in case the data run was late (after the Monday to Friday closes are
+   published), follows `prompts/daily_brain_routine.md`. It
    restores the published data, builds the pack, and stops if `scripts/brain_status.py` says that market day's run already
    exists (so holidays are skipped). Otherwise it runs the saved workflow `.claude/workflows/brain.js` (`prompts/brain.md`:
    three analyst lenses, a skeptic per candidate, a constructor and a reviewer) and checks the picks with
@@ -160,6 +161,30 @@ cash earns the T-bill fund's return, and zero before that fund existed (pessimis
   different future leaves every decision unchanged (a mutation check proves the test can fail); the fast period simulator used by the
   null equals the daily engine to nine decimals; a small repo test (12 random pickers against 80-draw nulls) guards only against gross miscalibration of the null; it does not test the
   17-try bar. A price gap that would silently shrink the universe stops the run instead of shortening a name's history.
+
+## People we learn from (code only)
+`config/people.json` lists the investors, teachers and writers we follow: what we learn from each, where they publish, a
+caution, the research on following people in public, and a ledger of their dated **public** calls on our watchlist names.
+A call records who made it and through which fund (`via`), the day it became public, the ticker, bullish or bearish, a
+paraphrase of what they did and a link to the source. People kept for their principles only have no calls. The People
+tab shows all of it. Learn from them, but measure them: `scripts/people.py` (routine `score_people`) scores each call
+on the published weekly indexed lines in `data/market/longrun.json` (one point every five trading days, no prices):
+- A call starts at the first weekly point **strictly after** the day it became public (for a 13F, its filing date),
+  so nothing is known before it was public; the start can be up to a week after that day.
+- Growth of the name and of the S&P 500 core over 13, 26 and 52 weekly points once that much time has passed, and so far
+  to the latest point. `excess = (1 + name) / (1 + core) - 1`, in percent.
+- Signed excess is the excess for a bullish call and minus the excess for a bearish one; the call was right when it is
+  above zero.
+- A call on a name that is not on the watchlist is kept and shown but not scored.
+- Per person and per fund: calls, scored calls, calls matured at 26 weeks, the share right at 26 weeks and the median
+  signed excess at 26 weeks. Fewer than ten matured calls is too few to judge.
+- A 13F is a fund's quarter-end US long book filed up to about forty-five days late, and the firm's book rather than the
+  named person's own pick; each call names the fund it came from. The pack shows this as context, never as the only
+  evidence for a pick.
+- Why context only: in the largest study, most stock influencers did not help their followers beat the market (the
+  People tab cites the research), a 13F is late
+  and partial, and people tend to praise what their funds own. Until a record has ten matured calls it cannot tell
+  skill from luck, so no call is ever the only reason for a pick and none moves money.
 
 ## Evidence labels (the Playbook's rules)
 `replicated`: independent replication named in the cited library material. `mixed`: backed by principles from more than one source, with

@@ -1,7 +1,7 @@
 {
-  "version": "0.3.0",
-  "updated_at": "2026-10-04",
-  "change_note": "Prices: derived-only publication.",
+  "version": "0.4.0",
+  "updated_at": "2026-10-07",
+  "change_note": "People we learn from: the people list and its call ledger (manual), a planned 13F source (not connected), and the confirmed X handles to follow.",
   "sources": [
     {
       "id": "prices",
@@ -29,8 +29,15 @@
         "pack"
       ],
       "secret_env": null,
-      "follow": [],
-      "note": "Store derived signals and links only, never post text. Handles are public; add them to follow[]."
+      "follow": [
+        "BillAckman",
+        "AswathDamodaran",
+        "CathieDWood",
+        "morganhousel",
+        "awealthofcs",
+        "dollarsanddata"
+      ],
+      "note": "Planned and parked: the X connector costs money. Store derived signals and links only, never post text. follow[] holds the confirmed handles of the people in config/people.json."
     },
     {
       "id": "news",
@@ -73,6 +80,35 @@
       "secret_env": null,
       "follow": [],
       "note": "Paraphrased principles with a citation. The repo is public: never commit source text."
+    },
+    {
+      "id": "people",
+      "kind": "people",
+      "label": "People we learn from",
+      "status": "active",
+      "provider": "manual",
+      "cadence": "when a call is public",
+      "feeds": [
+        "config/people.json",
+        "data/people/scores.json"
+      ],
+      "secret_env": null,
+      "follow": [],
+      "note": "Who we follow, why, and their dated public calls with a link to each source, added by hand and paraphrased. Code scores every call against the S&P 500 core on the published weekly lines."
+    },
+    {
+      "id": "holdings_13f",
+      "kind": "filings",
+      "label": "Fund holdings (SEC 13F filings)",
+      "status": "planned",
+      "provider": null,
+      "cadence": "quarterly, up to ~45 days late",
+      "feeds": [
+        "config/people.json calls"
+      ],
+      "secret_env": null,
+      "follow": [],
+      "note": "SEC EDGAR 13F filings: free and official, US long positions only, filed up to about forty-five days after each quarter end. Not connected; the household decides before any provider is connected. Until then calls are added by hand."
     }
   ]
 }

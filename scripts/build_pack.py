@@ -2,7 +2,7 @@
 """Build the brain's context pack (M3): one capped JSON document of DERIVED numbers and curated text.
 
 The brain reads only this pack and cites evidence by pack key (lowercase dot paths such as
-`market.nvda.setup` or `library.s-028:p02`). Numbers come from code; the pack carries no raw prices.
+`market.nvda.setup`, `library.s-028:p02` or `people.calls.nvda`). Numbers come from code; the pack carries no raw prices.
 Fails closed when the pack is over `pack.token_cap` (settings).
 
 Usage: python3 scripts/build_pack.py [--out .cache/pack.json] [--data DIR] [--runs DIR]
@@ -68,6 +68,27 @@ def pick_library(lib: dict | None, limit: int) -> dict:
     return {pid.lower().replace(".", ":"): body for _, pid, body in scored[:limit]}
 
 
+PEOPLE_CALLS_PER_NAME = 3  # the newest public calls per watchlist name; keeps the pack under its cap as the ledger grows
+PEOPLE_NOTE = ("context only: what people we follow said publicly and how their calls have done against the core "
+               "(signed excess in percent: above zero means the call was right); never the only evidence for a pick")
+
+
+def people_block(scores: dict | None, on_list: set[str]) -> dict:
+    """Compact view of data/people/scores.json. Keys stay citable: people.record.<person id>, people.calls.<ticker>."""
+    if not scores or scores.get("sample"):
+        return {"note": PEOPLE_NOTE, "record": {}, "calls": {}}
+    record = {p["person"]: {"name": p["name"], "via": p["vias"], "scored": p["scored"], "matured_26w": p["matured_26w"],
+                            "right_26w_pct": r1(p["right_26w_pct"]), "median_signed_excess_26w": r1(p["median_signed_excess_26w"]),
+                            "enough": p["enough"]} for p in scores["people"]}
+    calls: dict[str, list] = {}
+    for c in sorted(scores["calls"], key=lambda c: c["date"], reverse=True):
+        if c["ticker"] in on_list and len(calls.get(c["ticker"].lower(), [])) < PEOPLE_CALLS_PER_NAME:
+            calls.setdefault(c["ticker"].lower(), []).append(
+                {"person": c["person"], "via": c["via"], "stance": c["stance"], "date": c["date"], "weeks_since": c["weeks_since"],
+                 "signed_excess_so_far": r1((c["so_far"] or {}).get("signed_excess_pct"))})
+    return {"note": PEOPLE_NOTE, "as_of": scores["as_of"], "min_matured": scores["min_matured"], "record": record, "calls": calls}
+
+
 def build(data_dir: Path = DATA, runs_dir: Path = RUNS, today: str | None = None) -> dict:
     st, wl = settings(), watchlist()
     kb = data_dir / "kb"
@@ -131,6 +152,7 @@ def build(data_dir: Path = DATA, runs_dir: Path = RUNS, today: str | None = None
         "library": pick_library(load_json(kb / "library.json") if (kb / "library.json").exists() else None, st["pack"]["library_principles_max"]),
         "learnings": {x["id"].lower(): x for x in learn["items"] if x.get("status") == "active"},
         "claims": claims,
+        "people": people_block(load_json(data_dir / "people" / "scores.json") if (data_dir / "people" / "scores.json").exists() else None, set(names)),
         "recent_runs": recent,
     }
     return pack

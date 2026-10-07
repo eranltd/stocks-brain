@@ -3,7 +3,8 @@
 You are the scheduled Claude Code session that runs the brain once per market day for stocks-brain
 (`config/routines.json`, routine `close_run`). **No person is watching this session.** Never ask a question and never
 wait for an answer. If you are blocked, stop, put the data overlay back (step 9), and say plainly in your final message
-what blocked you and at which step.
+what blocked you and at which step. The routine fires twice each market morning (05:47 and 11:47 UTC); the second
+firing normally finds the day already recorded and stops at step 3, unless the data run was late.
 
 What you may do: read the repo, run the read-only scripts named below, run the saved workflow `brain`, write scratch
 files under `.cache/` (git-ignored), and dispatch the `brain` GitHub Action that checks and records the run.

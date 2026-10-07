@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Code-only routines (no LLM): derive, score matured picks, regime monitor, calibration,
-long-run portfolio statistics, the forward-only paper portfolio and the forward ledger of every rule.
+long-run portfolio statistics, the forward-only paper portfolio, the forward ledger of every rule and the scores of
+the public calls of the people we learn from.
 
-Usage: python3 scripts/routines_code.py derive|score|regime|calibration|longrun|paper|rules|ledger|all
+Usage: python3 scripts/routines_code.py derive|score|regime|calibration|longrun|paper|rules|ledger|people|all
 Each step reads public data, computes with plain arithmetic, validates against its schema,
 and writes under data/kb/. Rules are documented in docs/methodology.md.
 """
@@ -726,8 +727,29 @@ def run_ledger() -> None:
     print(f"ledger: {len(n)} rules, decisions {n}, as of {doc['as_of']}")
 
 
+# ------------------------------------------------------- people we learn from
+
+def run_people() -> None:
+    """Score every public call in config/people.json on the published weekly lines (data/market/longrun.json)."""
+    import people as pp
+    cfg_path, lr_path = CONFIG / "people.json", MARKET / "longrun.json"
+    if not cfg_path.exists():
+        print("people: no config/people.json yet, nothing to score")
+        return
+    cfg = load_json(cfg_path)
+    errs = Validator().validate(cfg, "people.schema.json")
+    if errs:
+        raise SystemExit(f"people: config/people.json fails its schema (nothing written): {errs[:5]}")
+    if not lr_path.exists():
+        raise SystemExit("people: no data/market/longrun.json (run the portfolio_rule step first)")
+    longrun = load_json(lr_path)
+    doc = pp.compute_scores(cfg, longrun, {s["symbol"] for s in watchlist()["symbols"]})
+    _write(DATA / "people" / "scores.json", doc, "people_scores.schema.json")
+    print(*pp.summarize(doc), sep="\n")
+
+
 STEPS = {"derive": run_derive, "score": run_score, "regime": run_regime, "calibration": run_calibration,
-         "longrun": run_longrun, "paper": run_paper, "rules": run_rules, "ledger": run_ledger}
+         "longrun": run_longrun, "paper": run_paper, "rules": run_rules, "ledger": run_ledger, "people": run_people}
 
 if __name__ == "__main__":
     which = sys.argv[1] if len(sys.argv) > 1 else "all"

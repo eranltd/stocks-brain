@@ -33,7 +33,8 @@ SECRET_PATTERNS = [
 FORBIDDEN_FILES = re.compile(r"(^\.env(\..*)?$|\.pem$|\.key$|^id_(rsa|ed25519)|\.p12$|\.pfx$)")
 EXTERNAL_URL = re.compile(r"(?:https?:)?//[a-z0-9.-]+\.[a-z]{2,}", re.I)
 # Plain links are fine (e.g. "edit on GitHub"); scripts, styles and fonts must be bundled.
-SITE_URL_ALLOW = {"http://www.w3.org/2000/svg", "https://github.com", "https://www.youtube.com"}
+# Outbound link targets the site may build (never fetched): repo, library videos, the People tab's X and SEC 13F links.
+SITE_URL_ALLOW = {"http://www.w3.org/2000/svg", "https://github.com", "https://www.youtube.com", "https://x.com", "https://www.sec.gov"}
 MODEL_PORTFOLIO_FILES = {"data/market/longrun.json", "data/market/rules.json", "data/portfolio/paper.json", "data/portfolio/paper_rules.json"}
 SITE_SOURCES = ("site/src/", "site/public/", "site/index.html", "site/vite.config.js")
 BRAIN_WORKFLOW = ".claude/workflows/brain.js"  # the saved workflow a claude_routine runs by name
@@ -99,6 +100,11 @@ class Lint:
             bars_cap = load_json(SCHEMAS / "prices.schema.json")["properties"]["bars"]["maxItems"]
             if st["prices"]["keep_days"] > bars_cap:
                 self.err(CONFIG / "settings.json", f"prices.keep_days {st['prices']['keep_days']} > prices schema maxItems {bars_cap}: every fetch would fail")
+        people_path = CONFIG / "people.json"
+        if people_path.exists():
+            pc = self.schema(people_path, "people.schema.json")
+            if pc:
+                self.check_people(people_path, pc, src)
         rules_path = CONFIG / "rules.json"
         if rules_path.exists():
             rc = self.schema(rules_path, "rules.schema.json")
@@ -141,6 +147,36 @@ class Lint:
                     self.err(where, f"{r['id']}: only a claude_routine has a prompt")
                 if r["status"] == "active" and r["cron"] and r["cron"] not in workflows:
                     self.err(where, f"{r['id']}: active but cron {r['cron']!r} is in no workflow")
+
+    def check_people(self, path: Path, pc: dict, src: dict | None = None, today: str | None = None) -> None:
+        """Learn from them, but measure them: every call names a person we follow, has a real public date (never in the
+        future) and a unique id that starts with that date. Text is paraphrased, never quoted."""
+        today = today or date.today().isoformat()
+        ids = [p["id"] for p in pc["people"]]
+        if len(ids) != len(set(ids)):
+            self.err(path, "duplicate person ids")
+        status = {p["id"]: p["status"] for p in pc["people"]}
+        cids = [c["id"] for c in pc["calls"]]
+        if len(cids) != len(set(cids)):
+            self.err(path, "duplicate call ids")
+        for c in pc["calls"]:
+            if c["person"] not in status:
+                self.err(path, f"call {c['id']}: unknown person {c['person']!r}")
+            elif status[c["person"]] != "following":
+                self.err(path, f"call {c['id']}: {c['person']} is {status[c['person']]}; calls are tracked only for people we follow")
+            if c["date"] > today:
+                self.err(path, f"call {c['id']}: date {c['date']} is in the future")
+            if not c["id"].startswith(c["date"] + "-"):
+                self.err(path, f"call {c['id']}: id must start with its date {c['date']}")
+        texts = [*((f"person {p['id']}", p[k]) for p in pc["people"] for k in ("learn", "caution")),
+                 *((f"call {c['id']}", c["what"]) for c in pc["calls"]), *(("evidence", e["claim"]) for e in pc["evidence"])]
+        for where, text in texts:
+            if text.count('"') >= 2:
+                self.err(path, f"{where}: looks like a quotation; paraphrase in our own words")
+        follow = {h.lstrip("@").lower() for s in (src or {}).get("sources", []) if s["id"] == "x_accounts" for h in s["follow"]}
+        for p in pc["people"]:
+            if src and p["x_handle"] and p["x_handle"].lower() not in follow:
+                self.warn(path, f"{p['id']}: X handle {p['x_handle']} is not in config/sources.json x_accounts.follow")
 
     def check_rules(self, path: Path, rc: dict) -> None:
         """The registry must match what the engine can run, cite real library ids, and count its tries honestly."""
@@ -368,7 +404,8 @@ class Lint:
                              (DATA / "market" / "longrun.json", "longrun.schema.json"),
                              (DATA / "market" / "rules.json", "rules_result.schema.json"),
                              (DATA / "portfolio" / "paper_rules.json", "paper_rules.schema.json"),
-                             (DATA / "portfolio" / "paper.json", "paper.schema.json")):
+                             (DATA / "portfolio" / "paper.json", "paper.schema.json"),
+                             (DATA / "people" / "scores.json", "people_scores.schema.json")):
             if path.exists():
                 self.schema(path, schema)
         for p in _walk(ROOT):

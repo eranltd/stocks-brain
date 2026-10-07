@@ -1,0 +1,83 @@
+{
+  "$id": "people.schema.json",
+  "title": "People we learn from (config/people.json)",
+  "description": "Who the household follows and why, what the research says about following investors in public, and a ledger of their dated public calls that code scores against the core (data/people/scores.json). Paraphrased text and links only; no personal holdings.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "updated_at", "change_note", "purpose", "how_we_use", "evidence", "people", "calls"],
+  "properties": {
+    "version": {"$ref": "common.schema.json#/$defs/semver"},
+    "updated_at": {"$ref": "common.schema.json#/$defs/date"},
+    "change_note": {"$ref": "common.schema.json#/$defs/change_note"},
+    "purpose": {"type": "string", "minLength": 20, "maxLength": 300},
+    "how_we_use": {"type": "array", "minItems": 1, "maxItems": 12, "items": {"type": "string", "minLength": 10, "maxLength": 240}},
+    "evidence": {
+      "type": "array", "maxItems": 20,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["topic", "claim", "citation", "url"],
+        "properties": {
+          "topic": {"type": "string", "minLength": 3, "maxLength": 60},
+          "claim": {"type": "string", "minLength": 20, "maxLength": 600},
+          "citation": {"type": "string", "minLength": 10, "maxLength": 240},
+          "url": {"$ref": "#/$defs/url"}
+        }
+      }
+    },
+    "people": {
+      "type": "array", "minItems": 1, "maxItems": 40,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "name", "kind", "status", "style", "learn", "caution", "links", "x_handle", "holdings_13f"],
+        "properties": {
+          "id": {"$ref": "#/$defs/person_id"},
+          "name": {"type": "string", "minLength": 2, "maxLength": 60},
+          "kind": {"enum": ["investor", "educator", "writer", "teacher"]},
+          "status": {"enum": ["following", "principles_only"],
+                     "description": "principles_only: deceased or not publishing calls; we keep their principles and track no calls"},
+          "style": {"type": "string", "minLength": 3, "maxLength": 120},
+          "learn": {"type": "string", "minLength": 20, "maxLength": 420},
+          "caution": {"type": "string", "minLength": 20, "maxLength": 420},
+          "links": {
+            "type": "array", "minItems": 1, "maxItems": 8,
+            "items": {
+              "type": "object", "additionalProperties": false, "required": ["label", "url"],
+              "properties": {"label": {"type": "string", "minLength": 3, "maxLength": 90}, "url": {"$ref": "#/$defs/url"}}
+            }
+          },
+          "x_handle": {"type": "string", "pattern": "^([A-Za-z0-9_]{1,15})?$", "description": "a confirmed X handle without @, or empty"},
+          "holdings_13f": {
+            "anyOf": [
+              {"type": "null"},
+              {"type": "object", "additionalProperties": false, "required": ["filer", "cik"],
+               "properties": {"filer": {"type": "string", "minLength": 3, "maxLength": 80}, "cik": {"type": "string", "pattern": "^\\d{10}$"}}}
+            ]
+          }
+        }
+      }
+    },
+    "calls": {
+      "type": "array", "maxItems": 500,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "person", "via", "date", "ticker", "stance", "what", "source_kind", "source_url"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}-[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 60},
+          "person": {"$ref": "#/$defs/person_id"},
+          "via": {"type": "string", "minLength": 2, "maxLength": 80, "description": "the fund or outlet the call came from; a 13F call is the fund's"},
+          "date": {"$ref": "common.schema.json#/$defs/date", "description": "the day the call became public (for a 13F, its filing date)"},
+          "ticker": {"$ref": "common.schema.json#/$defs/ticker"},
+          "stance": {"enum": ["bullish", "bearish"]},
+          "what": {"type": "string", "minLength": 10, "maxLength": 160},
+          "note": {"type": "string", "minLength": 3, "maxLength": 200},
+          "source_kind": {"enum": ["13f", "letter", "memo", "interview", "post"]},
+          "source_url": {"$ref": "#/$defs/url"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "person_id": {"type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$", "maxLength": 40},
+    "url": {"type": "string", "pattern": "^https://[^\\s]+$", "maxLength": 300}
+  }
+}

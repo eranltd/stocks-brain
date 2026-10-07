@@ -23,14 +23,17 @@ forward paper record that cannot be re-fitted. Money moves only when the trust l
 ```
 docs/        strategy.md, methodology.md (front matter: version, updated_at, change_note)
              guardrails.json, learnings.json (same three keys)
-config/      watchlist.json, settings.json, sources.json (connectors), routines.json (schedule)
+config/      watchlist.json, settings.json, sources.json (connectors), routines.json (schedule),
+             people.json (people we learn from, the research on following them, their dated public calls)
 schemas/     JSON Schemas for every file above, plus pick, run, outcome, prices, library
 data/        market/derived.json + longrun.json (returns only, no prices), portfolio/paper.json (forward record),
-             kb/outcomes.json, kb/library.json, ops/routine_runs.json  (raw bars stay in git-ignored .cache/)
+             kb/outcomes.json, kb/library.json, people/scores.json, ops/routine_runs.json
+             (raw bars stay in git-ignored .cache/)
 runs/        run.<date>.json, one per run
 samples/     deterministic synthetic data so the dashboard renders before live data exists
 scripts/     _common.py (strict stdlib JSON-Schema subset), lint.py, scoring.py, market.py (setup checks, base
-             rates, context), portfolio.py (rule v1, goal check), routines_code.py (daily code-only steps),
+             rates, context), portfolio.py (rule v1, goal check), people.py (scores people's calls),
+             routines_code.py (daily code-only steps),
              make_sample_data.py, build_site.py
 prompts/     brain.md (the brain's rules), daily_brain_routine.md (what the scheduled brain session does)
 .claude/workflows/brain.js  the saved multi-agent brain workflow the routine runs by name
@@ -60,7 +63,8 @@ It runs full-screen and works offline with the last data it saw.
 ## Dashboard
 
 Today (verdict, goal check, portfolio, market context, do the rules work, trust ladder) · Portfolio (4-5 stock builder,
-correlation map, rule history, paper record) · Watchlist · Track record · KB (every pick) · Insights (library principles + dated claims) · Learnings ·
+correlation map, rule history, paper record) · Playbook · People (who we learn from, the research, their scored
+calls) · Watchlist · Track record · KB (every pick) · Insights (library principles + dated claims) · Learnings ·
 Runs (brain cost/time) · Routines (schedule, caps, run history) · How it works (pipeline map, roadmap) ·
 Admin (the rule book with versions and GitHub edit links, connectors, decision log).
 
@@ -79,6 +83,7 @@ It has no third-party runtime scripts or fonts: everything is bundled and served
 | fetch_prices (Tiingo, all-or-nothing) | Mon–Fri 23:40 | `data/prices/` |
 | score_picks | Mon–Fri 23:40 | `data/kb/outcomes.json` |
 | regime_monitor | Mon–Fri 23:40 | `data/kb/regime.json` |
+| score_people | Mon–Fri 23:40 | `data/people/scores.json` |
 | calibration | 1st of month 13:00 | `data/kb/calibration.json` |
 
 It lints, commits the data to `main` and redeploys Pages. Lint fails if a GitHub Actions routine marked `active` in
@@ -93,8 +98,8 @@ python3 scripts/routines_code.py all          # score, regime, calibration
 
 ## The daily brain (Claude routine)
 
-The brain runs by itself Tuesday to Saturday at 04:47 UTC, after the Monday to Friday closes are published. It is a
-scheduled Claude Code routine on the household's Claude subscription (no API key, no new dependency). The session
+The brain runs by itself Tuesday to Saturday at 05:47 UTC, after the Monday to Friday closes are published, and fires
+again at 11:47 UTC in case the data run was late (a day already recorded is skipped). It is a scheduled Claude Code routine on the household's Claude subscription (no API key, no new dependency). The session
 follows `prompts/daily_brain_routine.md`:
 
 ```bash
@@ -110,7 +115,8 @@ Claude Code, or set `close_run` to `paused` in `config/routines.json` (see `docs
 
 ## Connectors and routines
 
-- `config/sources.json` declares every data source: prices, X accounts, news, filings, library. A connector names its
+- `config/sources.json` declares every data source: prices, X accounts, news, filings, 13F holdings (planned), library,
+  people. A connector names its
   secret by **environment-variable name only**. Values live in GitHub Actions secrets.
 - `config/routines.json` is the operating rhythm: daily close run and scoring, weekly opportunity scan and thesis review,
   monthly calibration and post-mortem. Every LLM routine has a cost cap, and anything that changes rules opens a PR for
@@ -121,6 +127,21 @@ Claude Code, or set `close_run` to `paused` in `config/routines.json` (see `docs
 `data/kb/library.json` holds **paraphrased principles with a citation**. Each one is at most 280 characters and lint
 rejects quotations. Never commit source text: the repo is public. The packer will include only principles whose
 tags match the day, up to `pack.library_principles_max`.
+
+## People we learn from
+
+`config/people.json` lists the investors, teachers and writers the household follows: what we learn from each, where
+they publish, what to be careful about, and what the research says about following people in public (in the largest
+study most stock influencers did not help; copying a fund's 13F works only partly, and late). It also holds a ledger of their dated
+**public** calls on our watchlist names (for a 13F, the filing date), each with a link to the source. Learn from them,
+but measure them: `routines_code.py people` (routine `score_people`) scores every call against the S&P 500 core on the
+published weekly lines, from the first weekly close after the call became public, over 13, 26 and 52 weeks, and writes
+`data/people/scores.json`. A person's record says nothing until ten of their calls are half a year old. The brain sees
+a compact view in `pack.people`, as context only. Calls are added by hand; no 13F or X connector is connected.
+
+The site's **People** tab (in the phone's bottom bar) shows it all: who we follow and why, what to be careful about,
+where each publishes, the research with links, and every call with how it has done against the core so far and at 13,
+26 and 52 weeks, marked right, wrong or still maturing.
 
 ## Roadmap
 

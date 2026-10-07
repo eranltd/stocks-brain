@@ -1,7 +1,7 @@
 ---
-version: 0.11.0
-updated_at: 2026-10-06
-change_note: The brain runs every market morning as a scheduled Claude Code routine on the household subscription.
+version: 0.12.0
+updated_at: 2026-10-07
+change_note: People we learn from, measured against the core; the brain fires twice each market morning to catch a late data run.
 ---
 # Decision log
 
@@ -17,6 +17,28 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Second price source**: Tiingo's daily returns show unusually low correlations between these names (for example
   AAPL to QQQ about 0.24 over a year). The diagnostic showed our pipeline reproduces the provider's data exactly, so
   the numbers are faithful to the source; a cross-check against a second source is still pending.
+
+## 2026-10-07
+- **People we learn from** (`config/people.json`, routine `score_people`). The household asked for a clear section on the
+  people we follow to learn more. Each person has what we learn from them, where they publish and a caution; the file
+  also carries what the research says about following people in public (in the largest study most stock influencers did not help; copying a
+  fund's disclosed holdings works only partly and late) and a ledger of their dated public calls. Learn from them, but
+  measure them: code scores every call against the S&P 500 core from the first weekly close after it became public,
+  the same honesty the Playbook applies to our own rules. A record needs ten calls that are half a year old before it
+  can say anything, and the brain may use it only as context, never as the only evidence for a pick.
+- **The first calls are 13F filings, added by hand.** A 13F is the fund's book (so each call names the fund), US longs
+  only, up to about forty-five days late. SEC EDGAR is free and official, but it is listed as a planned source, not
+  connected: the household decides before any provider is connected. The X accounts of the people we follow are
+  listed in `config/sources.json`; the X connector stays parked because it costs money. Only facts confirmed from
+  primary or official sources are in the file; links and handles that could not be confirmed were left out.
+- **A People tab, in the phone's bottom bar.** The site gets a "People we learn from" tab: how we use them, what the
+  research says (with links), who we follow and why (with each person's caution, where they publish, their X handle
+  and 13F filings when confirmed), their calls with how each did against the core so far and at 13, 26 and 52 weeks,
+  what is connected and how to add someone. A person's record reads "too few to judge" until ten of their calls are
+  half a year old. Today shows one line when a logged call touches a name the paper record holds or the brain picked.
+- **The brain fires at 05:47 and 11:47 UTC** (routine `close_run`, was 04:47). The daily data run has been starting
+  about three hours late (around 02:40 to 03:20 UTC instead of 23:40), so the morning firing could find no new close.
+  The second firing catches a late data run; when the day is already recorded it stops before calling the model.
 
 ## 2026-10-06
 - **The brain runs every market morning by itself** (routine `close_run`, now active). The household asked for it to

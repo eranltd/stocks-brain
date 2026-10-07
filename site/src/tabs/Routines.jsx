@@ -23,7 +23,7 @@ const NOTE = {
 function when(r) {
   if (!r.cron) return "when you ask";
   const [m, h, dom, , dow] = r.cron.split(" ");
-  const t = `${pad2(+h)}:${pad2(+m)} UTC`;
+  const t = h.split(",").map((x) => `${pad2(+x)}:${pad2(+m)}`).join(" and ") + " UTC";
   if (r.cadence === "daily") return `${days(dow)} · ${t}`;
   if (r.cadence === "weekly") return `${DOW[+dow] ?? dow} · ${t}`;
   return `day ${dom} of the month · ${t}`;
@@ -35,17 +35,20 @@ function days(dow) {
   return b === undefined ? DOW[a] ?? dow : `${DOW[a] ?? a}–${DOW[b] ?? b}`;
 }
 
-/** Next fire time for the simple cron shapes we use: "m h * * d-d|d|*" and "m h D * *". */
+/** Next fire time for the simple cron shapes we use: "m h * * d-d|d|*" and "m h D * *"; h may be a list ("5,11"). */
 function nextRun(cron, from = new Date()) {
   if (!cron) return null;
   const [m, h, dom, , dow] = cron.split(" ");
+  const hours = h.split(",").map(Number).sort((a, b) => a - b);
   const days = dow === "*" ? null : dow.includes("-") ? (() => { const [a, b] = dow.split("-").map(Number); return Array.from({ length: b - a + 1 }, (_, i) => a + i); })() : [Number(dow)];
   for (let i = 0; i < 400; i++) {
-    const d = new Date(Date.UTC(from.getUTCFullYear(), from.getUTCMonth(), from.getUTCDate() + i, +h, +m));
-    if (d <= from) continue;
-    if (dom !== "*" && d.getUTCDate() !== +dom) continue;
-    if (days && !days.includes(d.getUTCDay())) continue;
-    return d;
+    for (const hh of hours) {
+      const d = new Date(Date.UTC(from.getUTCFullYear(), from.getUTCMonth(), from.getUTCDate() + i, hh, +m));
+      if (d <= from) continue;
+      if (dom !== "*" && d.getUTCDate() !== +dom) continue;
+      if (days && !days.includes(d.getUTCDay())) continue;
+      return d;
+    }
   }
   return null;
 }

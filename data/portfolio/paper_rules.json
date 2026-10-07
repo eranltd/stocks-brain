@@ -1,19 +1,22 @@
 {
-"as_of":"2026-10-05",
+"as_of":"2026-10-06",
 "sample":false,
 "note":"Forward only: each rule's holdings are written on the first run of the month with that day's data and never edited. Values indexed to 100 at each rule's start; core and benchmark from the earliest start.",
 "dates":[
 "2026-10-02",
-"2026-10-05"
+"2026-10-05",
+"2026-10-06"
 ],
 "core":[
 100.0,
-100.674
+100.674,
+101.228
 ],
 "bench":[
 100.0,
-100.883
+100.883,
+101.345
 ],
-"rules":{"five_leaders":{"started":"2026-10-02","rebalances":[{"date":"2026-10-02","holdings":["AMGN","FANG","GOOGL","MNST","AAPL"]}],"values":[100.0,99.9],"decisions":1,"engine_hash":"5e8536cf438bfae1"},"five_leaders_m1":{"started":"2026-10-02","rebalances":[{"date":"2026-10-02","holdings":["AMGN","FANG","GOOGL","MNST","PCAR"]}],"values":[100.0,99.9],"decisions":1,"engine_hash":"0a3131128820fb6f"},"five_leaders_quarterly":{"started":"2026-10-02","rebalances":[{"date":"2026-10-02","holdings":["AMGN","FANG","GOOGL","MNST","AAPL"]}],"values":[100.0,99.9],"decisions":1,"engine_hash":"cf2668536ddeded4"},"baseline_portfolio_v1":{"started":"2026-10-02","rebalances":[{"date":"2026-10-02","holdings":["MSFT","AAPL","GILD"]}],"values":[100.0,99.9],"decisions":1,"engine_hash":"0b6963018e2f8469"}},
+"rules":{"five_leaders":{"started":"2026-10-02","rebalances":[{"date":"2026-10-02","holdings":["AMGN","FANG","GOOGL","MNST","AAPL"]}],"values":[100.0,99.9,99.974],"decisions":1,"engine_hash":"5e8536cf438bfae1"},"five_leaders_m1":{"started":"2026-10-02","rebalances":[{"date":"2026-10-02","holdings":["AMGN","FANG","GOOGL","MNST","PCAR"]}],"values":[100.0,99.9,99.922],"decisions":1,"engine_hash":"0a3131128820fb6f"},"five_leaders_quarterly":{"started":"2026-10-02","rebalances":[{"date":"2026-10-02","holdings":["AMGN","FANG","GOOGL","MNST","AAPL"]}],"values":[100.0,99.9,99.974],"decisions":1,"engine_hash":"cf2668536ddeded4"},"baseline_portfolio_v1":{"started":"2026-10-02","rebalances":[{"date":"2026-10-02","holdings":["MSFT","AAPL","GILD"]}],"values":[100.0,99.9,100.266],"decisions":1,"engine_hash":"0b6963018e2f8469"}},
 "retired":{}
 }

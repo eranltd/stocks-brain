@@ -6,6 +6,7 @@ import { Container } from "./components/ui.jsx";
 import Today from "./tabs/Today.jsx";
 import Portfolio from "./tabs/Portfolio.jsx";
 import Playbook from "./tabs/Playbook.jsx";
+import People from "./tabs/People.jsx";
 import Watchlist from "./tabs/Watchlist.jsx";
 import TrackRecord from "./tabs/TrackRecord.jsx";
 import KB from "./tabs/KB.jsx";
@@ -21,6 +22,7 @@ const TABS = [
   { id: "today", label: "Today", C: Today },
   { id: "portfolio", label: "Portfolio", C: Portfolio },
   { id: "playbook", label: "Playbook", C: Playbook },
+  { id: "people", label: "People", C: People },
   { id: "watchlist", label: "Watchlist", C: Watchlist },
   { id: "track", label: "Track record", C: TrackRecord },
   { id: "kb", label: "KB", C: KB },

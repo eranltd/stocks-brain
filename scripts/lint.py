@@ -9,6 +9,7 @@ import re
 import sys
 from datetime import date
 from pathlib import Path
+from urllib.parse import urlsplit
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _common import (  # noqa: E402
@@ -33,9 +34,18 @@ SECRET_PATTERNS = [
 FORBIDDEN_FILES = re.compile(r"(^\.env(\..*)?$|\.pem$|\.key$|^id_(rsa|ed25519)|\.p12$|\.pfx$)")
 EXTERNAL_URL = re.compile(r"(?:https?:)?//[a-z0-9.-]+\.[a-z]{2,}", re.I)
 # Plain links are fine (e.g. "edit on GitHub"); scripts, styles and fonts must be bundled.
-SITE_URL_ALLOW = {"http://www.w3.org/2000/svg", "https://github.com", "https://www.youtube.com"}
+# Outbound link targets the site may build (never fetched): repo, library videos, the People tab's X and SEC 13F links.
+SITE_URL_ALLOW = {"http://www.w3.org/2000/svg", "https://github.com", "https://www.youtube.com", "https://x.com", "https://www.sec.gov"}
+SITE_HOST_ALLOW = {urlsplit(a).netloc.lower() for a in SITE_URL_ALLOW}  # exact hosts: "x.co" must not pass as a prefix of "x.com"
+PRICE_LIKE = re.compile(r"(\$|USD\s?|US\$)\s?\d|\d[\d,.]*\s?(dollars|per share)\b", re.I)
+
+
+def site_url_allowed(url: str) -> bool:
+    """True when a URL found in site sources points at an allowed host (compared exactly, never as a prefix)."""
+    return urlsplit(url if url.startswith("//") or "://" in url[:8] else "https:" + url).netloc.lower() in SITE_HOST_ALLOW
 MODEL_PORTFOLIO_FILES = {"data/market/longrun.json", "data/market/rules.json", "data/portfolio/paper.json", "data/portfolio/paper_rules.json"}
 SITE_SOURCES = ("site/src/", "site/public/", "site/index.html", "site/vite.config.js")
+BRAIN_WORKFLOW = ".claude/workflows/brain.js"  # the saved workflow a claude_routine runs by name
 
 
 class Lint:
@@ -90,18 +100,7 @@ class Lint:
         rt = self.schema(CONFIG / "routines.json", "routines.schema.json")
         if rt and st:
             workflows = "\n".join(p.read_text() for p in (ROOT / ".github" / "workflows").glob("*.yml"))
-            ids = [r["id"] for r in rt["routines"]]
-            if len(ids) != len(set(ids)):
-                self.err(CONFIG / "routines.json", "duplicate routine ids")
-            for r in rt["routines"]:
-                if r["uses_llm"] and not 0 < r["max_cost_usd"] <= st["cost"]["hard_cap_usd"]:
-                    self.err(CONFIG / "routines.json", f"{r['id']}: LLM routine needs 0 < max_cost_usd <= hard_cap_usd")
-                if not r["uses_llm"] and r["max_cost_usd"] != 0:
-                    self.err(CONFIG / "routines.json", f"{r['id']}: code-only routine must have max_cost_usd 0")
-                if r["status"] == "active" and r["cron"] and r["cron"] not in workflows:
-                    self.err(CONFIG / "routines.json", f"{r['id']}: active but cron {r['cron']!r} is in no workflow")
-                if (r["cadence"] == "on_demand") != (r["cron"] is None):
-                    self.err(CONFIG / "routines.json", f"{r['id']}: cron must be null exactly for on_demand")
+            self.check_routines(rt, st, workflows)
         if st:
             c = st["cost"]
             if not c["target_usd"] <= c["warn_usd"] <= c["hard_cap_usd"]:
@@ -109,6 +108,11 @@ class Lint:
             bars_cap = load_json(SCHEMAS / "prices.schema.json")["properties"]["bars"]["maxItems"]
             if st["prices"]["keep_days"] > bars_cap:
                 self.err(CONFIG / "settings.json", f"prices.keep_days {st['prices']['keep_days']} > prices schema maxItems {bars_cap}: every fetch would fail")
+        people_path = CONFIG / "people.json"
+        if people_path.exists():
+            pc = self.schema(people_path, "people.schema.json")
+            if pc:
+                self.check_people(people_path, pc, src)
         rules_path = CONFIG / "rules.json"
         if rules_path.exists():
             rc = self.schema(rules_path, "rules.schema.json")
@@ -121,6 +125,70 @@ class Lint:
             if len(syms) != len(set(syms)):
                 self.err(CONFIG / "watchlist.json", "duplicate symbols")
         return st, wl
+
+    def check_routines(self, rt: dict, st: dict, workflows: str, root: Path = ROOT) -> None:
+        """Costs, schedules and runners. A github_actions routine's cron must be in a workflow file. A claude_routine
+        is a scheduled Claude Code session (its cron lives in the Routine, not in the repo): it must use the model,
+        and when active its instructions and the saved brain workflow must exist."""
+        where = CONFIG / "routines.json"
+        ids = [r["id"] for r in rt["routines"]]
+        if len(ids) != len(set(ids)):
+            self.err(where, "duplicate routine ids")
+        for r in rt["routines"]:
+            if r["uses_llm"] and not 0 < r["max_cost_usd"] <= st["cost"]["hard_cap_usd"]:
+                self.err(where, f"{r['id']}: LLM routine needs 0 < max_cost_usd <= hard_cap_usd")
+            if not r["uses_llm"] and r["max_cost_usd"] != 0:
+                self.err(where, f"{r['id']}: code-only routine must have max_cost_usd 0")
+            if (r["cadence"] == "on_demand") != (r["cron"] is None):
+                self.err(where, f"{r['id']}: cron must be null exactly for on_demand")
+            if r["runner"] == "claude_routine":
+                if not r["uses_llm"]:
+                    self.err(where, f"{r['id']}: a claude_routine runs the model, so uses_llm must be true")
+                if not r.get("prompt"):
+                    self.err(where, f"{r['id']}: a claude_routine needs a prompt file")
+                elif r["status"] == "active" and not (root / r["prompt"]).is_file():
+                    self.err(where, f"{r['id']}: active but its prompt {r['prompt']} does not exist")
+                if r["status"] == "active" and not (root / BRAIN_WORKFLOW).is_file():
+                    self.err(where, f"{r['id']}: active but the saved workflow {BRAIN_WORKFLOW} does not exist")
+            else:
+                if "prompt" in r:
+                    self.err(where, f"{r['id']}: only a claude_routine has a prompt")
+                if r["status"] == "active" and r["cron"] and r["cron"] not in workflows:
+                    self.err(where, f"{r['id']}: active but cron {r['cron']!r} is in no workflow")
+
+    def check_people(self, path: Path, pc: dict, src: dict | None = None, today: str | None = None) -> None:
+        """Learn from them, but measure them: every call names a person we follow, has a real public date (never in the
+        future) and a unique id that starts with that date. Text is paraphrased, never quoted."""
+        today = today or date.today().isoformat()
+        ids = [p["id"] for p in pc["people"]]
+        if len(ids) != len(set(ids)):
+            self.err(path, "duplicate person ids")
+        status = {p["id"]: p["status"] for p in pc["people"]}
+        cids = [c["id"] for c in pc["calls"]]
+        if len(cids) != len(set(cids)):
+            self.err(path, "duplicate call ids")
+        for c in pc["calls"]:
+            if c["person"] not in status:
+                self.err(path, f"call {c['id']}: unknown person {c['person']!r}")
+            elif status[c["person"]] != "following":
+                self.err(path, f"call {c['id']}: {c['person']} is {status[c['person']]}; calls are tracked only for people we follow")
+            if c["date"] > today:
+                self.err(path, f"call {c['id']}: date {c['date']} is in the future")
+            if not c["id"].startswith(c["date"] + "-"):
+                self.err(path, f"call {c['id']}: id must start with its date {c['date']}")
+        call_texts = [(f"call {c['id']}", c[k]) for c in pc["calls"] for k in ("what", "note") if c.get(k)]
+        texts = [*((f"person {p['id']}", p[k]) for p in pc["people"] for k in ("learn", "caution")),
+                 *call_texts, *(("evidence", e["claim"]) for e in pc["evidence"])]
+        for where, text in texts:
+            if text.count('"') >= 2:
+                self.err(path, f"{where}: looks like a quotation; paraphrase in our own words")
+        for where, text in call_texts:  # the repo is public: derived returns only, never a price
+            if PRICE_LIKE.search(text):
+                self.err(path, f"{where}: looks like a price; describe the action, not the price")
+        follow = {h.lstrip("@").lower() for s in (src or {}).get("sources", []) if s["id"] == "x_accounts" for h in s["follow"]}
+        for p in pc["people"]:
+            if src and p["x_handle"] and p["x_handle"].lower() not in follow:
+                self.warn(path, f"{p['id']}: X handle {p['x_handle']} is not in config/sources.json x_accounts.follow")
 
     def check_rules(self, path: Path, rc: dict) -> None:
         """The registry must match what the engine can run, cite real library ids, and count its tries honestly."""
@@ -348,7 +416,8 @@ class Lint:
                              (DATA / "market" / "longrun.json", "longrun.schema.json"),
                              (DATA / "market" / "rules.json", "rules_result.schema.json"),
                              (DATA / "portfolio" / "paper_rules.json", "paper_rules.schema.json"),
-                             (DATA / "portfolio" / "paper.json", "paper.schema.json")):
+                             (DATA / "portfolio" / "paper.json", "paper.schema.json"),
+                             (DATA / "people" / "scores.json", "people_scores.schema.json")):
             if path.exists():
                 self.schema(path, schema)
         for p in _walk(ROOT):
@@ -424,7 +493,7 @@ class Lint:
             if rel.as_posix().startswith(SITE_SOURCES):
                 for m in EXTERNAL_URL.finditer(text):
                     url = m.group(0)
-                    if not any(a.startswith(url) for a in SITE_URL_ALLOW):
+                    if not site_url_allowed(url):
                         self.err(path, f"external URL {url!r}; the site must be self-contained")
         if data_bytes > max_data * 1024 * 1024:
             self.err("data/", f"data+runs+samples total {data_bytes / 1e6:.1f} MB > {max_data} MB")

@@ -93,6 +93,20 @@ def main() -> int:
     paper = DATA / "portfolio" / "paper.json"
     if price_source == "live" and paper.exists():
         _copy(paper, OUT / "portfolio" / "paper.json")
+    # People we learn from: their calls' scores, same source rule as prices (computed from the sample closes in sample mode).
+    people_scores = None
+    people_cfg = CONFIG / "people.json"
+    if people_cfg.exists():
+        if price_source == "live" and (DATA / "people" / "scores.json").exists():
+            _copy(DATA / "people" / "scores.json", OUT / "people" / "scores.json")
+            people_scores = "people/scores.json"
+        elif price_source == "sample":
+            import routines_code
+            from _common import watchlist
+            doc = routines_code.compute_people(SAMPLES / "prices", load_json(people_cfg), watchlist(), sample=True)
+            if doc:
+                dump_json(OUT / "people" / "scores.json", doc)
+                people_scores = "people/scores.json"
     kb = {}
     # Curated knowledge (library, observations) is always the real file once it has content.
     def curated(name: str, key: str) -> Path:
@@ -104,7 +118,8 @@ def main() -> int:
         if (base / f"{name}.json").exists():
             _copy(base / f"{name}.json", OUT / "kb" / f"{name}.json")
             kb[name] = f"kb/{name}.json"
-    cfg_docs = ("watchlist", "settings", "sources", "routines", *(("rules",) if (CONFIG / "rules.json").exists() else ()))
+    cfg_docs = ("watchlist", "settings", "sources", "routines", *(("rules",) if (CONFIG / "rules.json").exists() else ()),
+                *(("people",) if people_cfg.exists() else ()))
     for name in cfg_docs:
         _copy(CONFIG / f"{name}.json", OUT / "config" / f"{name}.json")
 
@@ -142,6 +157,7 @@ def main() -> int:
         "rules_result": rules_result,
         "paper_rules": "portfolio/paper_rules.json" if price_source == "live" and ledger.exists() else None,
         "paper": "portfolio/paper.json" if price_source == "live" and paper.exists() else None,
+        "people_scores": people_scores,
         "kb": kb,
         "docs": docs,
     })

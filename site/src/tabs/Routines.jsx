@@ -10,27 +10,58 @@ const CADENCE = [
   { id: "on_demand", label: "On demand" },
 ];
 const DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+// Who starts a routine: a GitHub Actions schedule in the repo, or a scheduled Claude Code session (a Claude routine).
+const RUNNER = {
+  github_actions: { label: "GitHub Action", cls: "text-ink-2", title: "Started by a schedule in a GitHub Actions workflow file" },
+  claude_routine: { label: "Claude routine", cls: "border-ai/40 text-ai", title: "Started by a scheduled Claude Code session on the household's Claude subscription" },
+};
+// One plain-English line for routines whose card needs more than the schedule says.
+const NOTE = {
+  close_run: "The brain runs by itself every market morning, then the brain workflow checks its picks and records them. If a check fails, nothing is recorded.",
+};
+// A plainer schedule label where the cron alone would mislead (a Tue–Sat UTC cron covers the Mon–Fri US market days).
+const WHEN = {
+  close_run: "Morning after each US trading day (Mon–Fri) · 05:47 UTC, retry 11:47",
+};
 
 function when(r) {
+  if (WHEN[r.id]) return WHEN[r.id];
   if (!r.cron) return "when you ask";
   const [m, h, dom, , dow] = r.cron.split(" ");
-  const t = `${pad2(+h)}:${pad2(+m)} UTC`;
-  if (r.cadence === "daily") return `${dow === "1-5" ? "Mon–Fri" : "daily"} · ${t}`;
+  const t = h.split(",").map((x) => `${pad2(+x)}:${pad2(+m)}`).join(" and ") + " UTC";
+  if (r.cadence === "daily") return `${days(dow)} · ${t}`;
   if (r.cadence === "weekly") return `${DOW[+dow] ?? dow} · ${t}`;
   return `day ${dom} of the month · ${t}`;
 }
 
-/** Next fire time for the simple cron shapes we use: "m h * * d-d|d|*" and "m h D * *". */
+/** Scheduled Claude sessions run on the subscription ($0 per run); the other model routines carry a cost cap. */
+function llmDesc(llm) {
+  const capped = llm.filter((r) => r.runner !== "claude_routine");
+  const sub = llm.length - capped.length;
+  const cap = capped.length ? `${sub ? "the others are" : "each is"} capped at up to $${Math.max(...capped.map((r) => r.max_cost_usd)).toFixed(2)} per run` : "";
+  return [sub ? `${sub === 1 ? "One runs" : `${sub} run`} on the Claude subscription, $0 per run` : "", cap].filter(Boolean).join("; ").replace(/^./, (c) => c.toUpperCase()) + ".";
+}
+
+function days(dow) {
+  if (dow === "*") return "daily";
+  const [a, b] = dow.split("-").map(Number);
+  return b === undefined ? DOW[a] ?? dow : `${DOW[a] ?? a}–${DOW[b] ?? b}`;
+}
+
+/** Next fire time for the simple cron shapes we use: "m h * * d-d|d|*" and "m h D * *"; h may be a list ("5,11"). */
 function nextRun(cron, from = new Date()) {
   if (!cron) return null;
   const [m, h, dom, , dow] = cron.split(" ");
+  const hours = h.split(",").map(Number).sort((a, b) => a - b);
   const days = dow === "*" ? null : dow.includes("-") ? (() => { const [a, b] = dow.split("-").map(Number); return Array.from({ length: b - a + 1 }, (_, i) => a + i); })() : [Number(dow)];
   for (let i = 0; i < 400; i++) {
-    const d = new Date(Date.UTC(from.getUTCFullYear(), from.getUTCMonth(), from.getUTCDate() + i, +h, +m));
-    if (d <= from) continue;
-    if (dom !== "*" && d.getUTCDate() !== +dom) continue;
-    if (days && !days.includes(d.getUTCDay())) continue;
-    return d;
+    for (const hh of hours) {
+      const d = new Date(Date.UTC(from.getUTCFullYear(), from.getUTCMonth(), from.getUTCDate() + i, hh, +m));
+      if (d <= from) continue;
+      if (dom !== "*" && d.getUTCDate() !== +dom) continue;
+      if (days && !days.includes(d.getUTCDay())) continue;
+      return d;
+    }
   }
   return null;
 }
@@ -63,7 +94,7 @@ export default function Routines({ data }) {
       <SectionHead
         eyebrow={`Routines · v${routines.version}`}
         title={<>Every routine, <Accent>in the open.</Accent></>}
-        lede="What runs, when, what it may spend and what it writes. Each run records its outcome in the repo, failures included, and that log is shown below. Routines that would change rules or the watchlist open a pull request for you instead of acting."
+        lede="What runs, when, who starts it, what it may spend and what it writes. Each run records its outcome in the repo, failures included, and that log is shown below. Routines that would change rules or the watchlist open a pull request for you instead of acting."
         right={
           <div className="flex flex-wrap gap-2">
             <a className="btn px-5 py-3 text-[14px]" href={`${repo}/blob/main/config/routines.json`} target="_blank" rel="noreferrer">routines.json <ArrowRight className="size-4 -rotate-45" /></a>
@@ -76,7 +107,7 @@ export default function Routines({ data }) {
           { value: `${active.length}/${all.length}`, label: "active", desc: "The rest are planned and switch on milestone by milestone." },
           { value: next ? relTime(next.at) : "—", label: next ? `next: ${next.r.name}` : "nothing scheduled", tone: "flat", desc: next ? `${next.at.toUTCString().replace(":00 GMT", " UTC")}` : "" },
           { value: last ? last.status : "none yet", label: "last run", tone: !last ? "flat" : last.status === "success" ? "accent" : last.status === "partial" ? "people" : "down", desc: last ? `${fmtDate(last.finished_at.slice(0, 10))} · ${last.trigger}` : "The first scheduled run needs the Tiingo key and main as the default branch." },
-          { value: llm.length, label: "use the model", tone: "ai", desc: `Each capped; the highest cap is $${Math.max(...llm.map((r) => r.max_cost_usd)).toFixed(2)} per run.` },
+          { value: llm.length, label: "use the model", tone: "ai", desc: llmDesc(llm) },
         ]}
       />
 
@@ -103,7 +134,9 @@ export default function Routines({ data }) {
                 <Chip kind={r.status === "active" ? "active" : "planned"} icon={false}>{r.status}</Chip>
               </div>
               <h3 className="mt-5 text-[21px] font-semibold tracking-[-0.02em]">{r.name}</h3>
-              <p className="mt-3 text-[14.5px] leading-relaxed text-ink-2">{r.why}</p>
+              {NOTE[r.id] && r.status === "active"
+                ? <p className="mt-3 border-l-2 border-ai/50 pl-3 text-[14.5px] leading-relaxed text-ink">{NOTE[r.id]}</p>
+                : <p className="mt-3 text-[14.5px] leading-relaxed text-ink-2">{r.why}</p>}
               <dl className="mt-5 grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1.5 border-t border-line pt-4 text-[13px]">
                 <dt className="meta">milestone</dt><dd>{r.milestone}</dd>
                 <dt className="meta">reads</dt><dd className="truncate font-mono text-[12px]">{r.inputs.join(", ") || "its own outputs"}</dd>
@@ -113,7 +146,10 @@ export default function Routines({ data }) {
                 <dd>{lr ? <a href={lr.url} target="_blank" rel="noreferrer" className={`hover:underline ${lr.outcome === "success" ? "text-accent" : "text-down"}`}>{lr.outcome} · {lr.at.slice(0, 10)}</a> : <span className="text-ink-3">never ran</span>}</dd>
               </dl>
               <div className="mt-auto flex flex-wrap items-center gap-2 pt-5 [margin-top:max(1.25rem,auto)]">
-                {r.uses_llm ? <span className="pill border-ai/40 bg-ai/10 py-1 text-[11px] text-ai">✦ AI · cap ${r.max_cost_usd.toFixed(2)}</span> : <span className="pill py-1 text-[11px] text-ink-2">plain code · $0</span>}
+                {RUNNER[r.runner] && <span className={`pill py-1 text-[11px] ${RUNNER[r.runner].cls}`} title={RUNNER[r.runner].title}>{RUNNER[r.runner].label}</span>}
+                {r.uses_llm
+                  ? <span className="pill border-ai/40 bg-ai/10 py-1 text-[11px] text-ai">{r.runner === "claude_routine" ? "✦ AI · Claude subscription, $0 per run" : `✦ AI · cap $${r.max_cost_usd.toFixed(2)}`}</span>
+                  : <span className="pill py-1 text-[11px] text-ink-2">plain code · $0</span>}
                 {r.human_gate && <span className="pill border-dashed border-people/60 py-1 text-[11px] text-people">you approve</span>}
               </div>
             </article>

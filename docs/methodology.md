@@ -1,7 +1,7 @@
 ---
-version: 0.8.0
-updated_at: 2026-10-05
-change_note: The pre-registered rule set 1.0.0 (config/rules.json); long-average filters; history verdicts are read once; the reference baseline is capped at candidate; forward comparison after 6 decisions.
+version: 0.10.0
+updated_at: 2026-10-07
+change_note: People we learn from - each dated public call is scored against the core from fixed trading days; the brain fires at 05:47 and 11:47 UTC.
 ---
 # Methodology
 
@@ -10,8 +10,15 @@ change_note: The pre-registered rule set 1.0.0 (config/rules.json); long-average
    Each fetch re-pulls the whole kept window, so stored history is adjusted consistently.
    All symbols must fetch and validate, or nothing is written.
 2. **build_pack**: docs, prices and recent runs go into one JSON pack. The run stops if the pack exceeds `pack.token_cap`.
-3. **run_brain**: one LLM call with JSON-schema output and at most one repair retry. The run stops if
-   the projected cost exceeds `cost.hard_cap_usd` or schema validation fails twice.
+3. **brain** (routine `close_run`): a scheduled Claude Code session on the household's Claude subscription, Tuesday to
+   Saturday at 05:47 UTC and again at 11:47 UTC in case the data run was late (after the Monday to Friday closes are
+   published), follows `prompts/daily_brain_routine.md`. It
+   restores the published data, builds the pack, and stops if `scripts/brain_status.py` says that market day's run already
+   exists (so holidays are skipped). Otherwise it runs the saved workflow `.claude/workflows/brain.js` (`prompts/brain.md`:
+   three analyst lenses, a skeptic per candidate, a constructor and a reviewer) and checks the picks with
+   `record_run.check_picks`. It records them only by dispatching the `brain` Action, which rebuilds the same pack from the
+   `data` branch, refuses the run if the data has moved on, validates and lints, and writes nothing if any check fails.
+   The session never commits, edits files or fetches prices.
 4. **score_picks**: pure code. Each pick older than `scoring.horizon_days` trading days is scored against the benchmark.
 5. **lint**: schemas, hygiene and size caps. Publish only when lint passes.
 
@@ -154,6 +161,34 @@ cash earns the T-bill fund's return, and zero before that fund existed (pessimis
   different future leaves every decision unchanged (a mutation check proves the test can fail); the fast period simulator used by the
   null equals the daily engine to nine decimals; a small repo test (12 random pickers against 80-draw nulls) guards only against gross miscalibration of the null; it does not test the
   17-try bar. A price gap that would silently shrink the universe stops the run instead of shortening a name's history.
+
+## People we learn from (code only)
+`config/people.json` lists the investors, teachers and writers we follow: what we learn from each, where they publish, a
+caution, the research on following people in public, and a ledger of their dated **public** calls on our watchlist names.
+A call records who made it and through which fund (`via`), the day it became public, the ticker, bullish or bearish, a
+paraphrase of what they did and a link to the source. People kept for their principles only have no calls. The People
+tab shows all of it. Learn from them, but measure them: `scripts/people.py` (routine `score_people`) scores each call
+on the daily closes of the name and the S&P 500 core that the daily Action already holds (never published; only
+percentages and dates are written to `data/people/scores.json`):
+- A call starts on the first trading day **strictly after** the day it became public (for a 13F, its filing date; the
+  fund may have said it earlier), so nothing is known before it was public.
+- Growth of the name and of the core over 13, 26 and 52 weeks of five trading days (65, 130 and 260 trading days) once
+  that much time has passed, and so far to the latest close. The start and every finished horizon are fixed trading
+  days, so a new close moves only "so far". `excess = (1 + name) / (1 + core) - 1`, in percent.
+- Signed excess is the excess for a bullish call and minus the excess for a bearish one; the call was right when it is
+  above zero.
+- A call on a name that is not on the watchlist is kept and shown but not scored, and so is a call made before the
+  history we hold for the name (or with a gap of more than a week after its public date).
+- Per person and per fund: calls, scored calls, calls matured at 26 weeks, the share right at 26 weeks and the median
+  signed excess at 26 weeks. Fewer than ten matured calls is too few to judge.
+- A 13F is a fund's quarter-end US long book filed up to about forty-five days late, and the firm's book rather than the
+  named person's own pick; each call names the fund it came from. A call marked `credit_person: false` (Berkshire's,
+  for example) counts in the fund's record only. The pack shows all of this as context, never as the only evidence for
+  a pick, and tells the brain to name the fund, not the person.
+- Why context only: in a study of over 29,000 StockTwits finfluencers, most gave advice that did not beat the market
+  after risk (the People tab cites the research), a 13F is late and partial, and people tend to praise what their funds
+  own. Until a record has ten matured calls it cannot tell skill from luck, so no call is ever the only reason for a
+  pick and none moves money.
 
 ## Evidence labels (the Playbook's rules)
 `replicated`: independent replication named in the cited library material. `mixed`: backed by principles from more than one source, with

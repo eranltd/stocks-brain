@@ -19,9 +19,9 @@ const STATIONS = [
   { id: "library", label: "Library", kind: "data", x: 200, y: 310, lx: 0, ly: 40, glyph: "▤", branch: "library", file: "data/kb/library.json", m: "M1",
     text: "Principles from books and lectures, in our own words with a citation. Only the ones whose tags match the day enter the pack." },
   { id: "packer", label: "Packer", kind: "code", x: 380, y: 150, lx: -18, ly: -30, glyph: "◫", file: "scripts/build_pack.py", m: "M3",
-    text: "Docs, prices, recent runs and matching principles go into one JSON. Over the token cap, the run stops before any model call." },
-  { id: "brain", label: "Brain · AI", kind: "ai", x: 540, y: 150, lx: 0, ly: 42, glyph: "✦", file: "scripts/run_brain.py", m: "M3",
-    text: "Exactly one model call. Output must match pick.schema.json; one repair retry at most; a projected cost over the cap stops the run." },
+    text: "Docs, derived returns and risk numbers (no prices), recent runs, matching principles and the scored calls of the people we learn from (context only) go into one JSON. Over the token cap, the run stops before any model call." },
+  { id: "brain", label: "Brain · AI", kind: "ai", x: 540, y: 150, lx: 0, ly: 42, glyph: "✦", file: "prompts/brain.md", m: "M3",
+    text: "Runs by itself every market morning as a scheduled Claude session, with a second try later that morning in case the data was late: three analysts, a skeptic for each name, a builder and a reviewer read the pack. Picks must match pick.schema.json or nothing is recorded." },
   { id: "checker", label: "Checker", kind: "code", x: 690, y: 150, lx: 0, ly: 42, glyph: "✓", file: "schemas/ + scripts/lint.py", m: "M1",
     text: "Schema and guardrails: tickers must be on the watchlist, no digits in pick prose, no banned phrases, size caps, no secrets." },
   { id: "runs", label: "Run record", kind: "data", x: 840, y: 150, lx: 0, ly: 42, glyph: "◉", file: "runs/run.<date>.json", m: "M1",
@@ -249,13 +249,13 @@ function MapShowcase() {
 const MILESTONES = [
   { id: "M1", label: "Scaffold", desc: "Schemas, docs, lint, dashboard on sample data." },
   { id: "M2", label: "Prices", desc: "fetch_prices adapter + scheduled Action." },
-  { id: "M3", label: "Brain", desc: "build_pack + run_brain. Under $1 a run." },
+  { id: "M3", label: "Brain", desc: "build_pack, the brain, then record_run checks it." },
   { id: "M4", label: "Scoring", desc: "score_picks: pick vs benchmark after N days." },
-  { id: "M5", label: "Routine", desc: "A daily Claude Code routine runs the loop." },
+  { id: "M5", label: "Routine", desc: "Scheduled routines run the loop. The brain already runs by itself every market morning." },
 ];
 
 function RunIt({ data }) {
-  const done = 1;
+  const done = 4;
   return (
     <div className="grid gap-12 xl:grid-cols-[minmax(0,7fr)_minmax(0,4fr)]">
       <div>
@@ -267,7 +267,7 @@ function RunIt({ data }) {
         <Strip
           cells={[
             { value: MILESTONES.length, label: "milestones", desc: "From scaffold to a daily routine." },
-            { value: done, label: "shipped", desc: "Milestone 1: this page, on sample data." },
+            { value: done, label: "shipped", desc: "The dashboard, daily prices, the brain and scoring. Next: the other scheduled routines." },
             { value: "You", label: "choose providers", tone: "people", dashed: true, desc: "No data source or dependency without your yes." },
           ]}
         />

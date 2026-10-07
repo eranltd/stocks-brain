@@ -3,7 +3,7 @@ import { Markdown, stripFrontMatter } from "../lib/markdown.jsx";
 import { cap, fmtK, fmtUsd, pad2, relDays } from "../lib/format.js";
 import { Accent, ArrowRight, Chip, Container, Reveal, SectionHead } from "../components/ui.jsx";
 
-const ORDER = ["household", "shelf", "strategy", "guardrails", "methodology", "learnings", "watchlist", "settings", "sources", "routines", "library", "decisions"];
+const ORDER = ["household", "shelf", "strategy", "guardrails", "methodology", "learnings", "watchlist", "settings", "sources", "people", "routines", "library", "decisions"];
 const ABOUT = {
   strategy: "What a pick is, and what the brain looks for.",
   guardrails: "The lines a pick never crosses.",
@@ -12,6 +12,7 @@ const ABOUT = {
   watchlist: "The names the brain may pick from.",
   settings: "Caps, costs, horizon and benchmark.",
   sources: "Where data comes from: the connectors.",
+  people: "People we learn from, the research on following them, and their dated public calls.",
   routines: "The schedule: what runs when, and what it may spend.",
   library: "Principles from books and lectures.",
   decisions: "Every decision and why, plus what is still open.",
@@ -43,6 +44,7 @@ function stats(doc, data) {
     case "watchlist": return `${c.symbols.length} symbols · bench ${data.bench.symbol}`;
     case "settings": return `pack ${fmtK(c.pack.token_cap)} · target ${fmtUsd(c.cost.target_usd)} · ${c.scoring.horizon_days}d horizon`;
     case "sources": return `${c.sources.length} connectors · ${c.sources.filter((s) => s.status === "active").length} active`;
+    case "people": return `${c.people.length} people · ${c.calls.length} calls · ${c.evidence.length} findings`;
     case "routines": return `${c.routines.length} routines · ${c.routines.filter((r) => r.uses_llm).length} use the model`;
     case "library": return `${c.sources.length} sources · ${c.sources.reduce((a, s) => a + s.principles.length, 0)} principles`;
     default: return "";
@@ -107,7 +109,7 @@ export default function Admin({ data }) {
   );
 }
 
-const KIND_ICON = { prices: "↗", social: "@", news: "≣", filings: "▤", library: "❏", other: "•" };
+const KIND_ICON = { prices: "↗", social: "@", news: "≣", filings: "▤", library: "❏", people: "◎", other: "•" };
 
 function Connectors({ sources, editUrl }) {
   return (
@@ -123,7 +125,7 @@ function Connectors({ sources, editUrl }) {
         {sources.sources.map((s, i) => (
           <Reveal key={s.id} delay={(i % 3) * 70} className={`card p-7 ${s.status === "planned" ? "border-dashed" : ""}`}>
             <div className="flex items-start justify-between gap-3">
-              <span className="grid size-11 place-items-center rounded-xl border border-line-2 font-mono text-[18px] text-ink-2">{KIND_ICON[s.kind]}</span>
+              <span className="grid size-11 place-items-center rounded-xl border border-line-2 font-mono text-[18px] text-ink-2">{KIND_ICON[s.kind] ?? KIND_ICON.other}</span>
               <Chip kind={s.status} icon={false}>{s.status}</Chip>
             </div>
             <h4 className="mt-5 text-[20px] font-semibold tracking-[-0.02em]">{s.label}</h4>

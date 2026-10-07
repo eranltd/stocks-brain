@@ -241,9 +241,10 @@ const ICONS = {
   routines: <><circle cx="12" cy="12" r="8" /><path d="M12 8v4l3 2" /></>,
   portfolio: <><circle cx="12" cy="12" r="8.5" /><path d="M12 3.5V12l6 6" /><path d="M12 12H3.5" /></>,
   playbook: <><path d="M5 4.5h11a3 3 0 0 1 3 3V20H8a3 3 0 0 1-3-3V4.5Z" /><path d="M8.5 9h7M8.5 12.5h7M8.5 16h4" /></>,
+  people: <><circle cx="9" cy="8.5" r="3" /><path d="M3.5 19a5.5 5.5 0 0 1 11 0" /><path d="M15.5 5.8a3 3 0 0 1 0 5.4M17.5 14.2a5.5 5.5 0 0 1 3 4.8" /></>,
   more: <><circle cx="6" cy="12" r="1.3" /><circle cx="12" cy="12" r="1.3" /><circle cx="18" cy="12" r="1.3" /></>,
 };
-const PRIMARY = ["today", "portfolio", "playbook", "insights"];
+const PRIMARY = ["today", "portfolio", "playbook", "people", "insights"];
 
 export function MobileNav({ tabs, active, onNav, sampleTabs }) {
   const [open, setOpen] = useState(false);
@@ -267,7 +268,7 @@ export function MobileNav({ tabs, active, onNav, sampleTabs }) {
   return (
     <>
       <nav aria-label="Sections" className="fixed inset-x-0 bottom-0 z-50 border-t border-line bg-bg/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl sm:hidden">
-        <div className="grid grid-cols-5">
+        <div className="grid grid-cols-6">
           {PRIMARY.map((id) => <Item key={id} id={id} label={tabs.find((t) => t.id === id).label} on={active === id} onClick={() => go(id)} />)}
           <Item id="more" label="More" on={moreActive || open} onClick={() => setOpen(!open)} />
         </div>

@@ -1,0 +1,108 @@
+{
+  "$id": "people_scores.schema.json",
+  "title": "Scores of people's public calls (data/people/scores.json)",
+  "description": "Each call in config/people.json scored against the S&P 500 core on the daily closes, from fixed trading days (scripts/people.py). Percentages and dates only; no prices and no holdings.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["as_of", "sample", "core", "config_version", "series", "method", "horizons_weeks", "judge_at_weeks", "min_matured", "calls", "people", "vias"],
+  "properties": {
+    "as_of": {"$ref": "common.schema.json#/$defs/date"},
+    "sample": {"type": "boolean"},
+    "core": {"$ref": "common.schema.json#/$defs/ticker"},
+    "config_version": {"$ref": "common.schema.json#/$defs/semver"},
+    "series": {"type": "string", "maxLength": 120},
+    "method": {"type": "string", "maxLength": 400},
+    "horizons_weeks": {"type": "array", "minItems": 1, "maxItems": 6, "items": {"type": "integer", "minimum": 1}},
+    "judge_at_weeks": {"type": "integer", "minimum": 1},
+    "min_matured": {"type": "integer", "minimum": 1},
+    "calls": {
+      "type": "array", "maxItems": 500,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "person", "via", "date", "ticker", "stance", "scored", "start_date", "weeks_since", "so_far", "w13", "w26", "w52"],
+        "properties": {
+          "id": {"type": "string", "maxLength": 60},
+          "person": {"type": "string", "maxLength": 40},
+          "via": {"type": "string", "maxLength": 80},
+          "date": {"$ref": "common.schema.json#/$defs/date"},
+          "ticker": {"$ref": "common.schema.json#/$defs/ticker"},
+          "stance": {"enum": ["bullish", "bearish"]},
+          "credit_person": {"type": "boolean", "description": "false: the firm's move, counted for the fund only"},
+          "scored": {"type": "boolean"},
+          "note": {"type": "string", "maxLength": 80, "description": "why an unscored call is not scored"},
+          "start_date": {"anyOf": [{"type": "null"}, {"$ref": "common.schema.json#/$defs/date"}]},
+          "weeks_since": {"type": ["integer", "null"], "minimum": 0},
+          "so_far": {"$ref": "#/$defs/leg"},
+          "w13": {"$ref": "#/$defs/leg"},
+          "w26": {"$ref": "#/$defs/leg"},
+          "w52": {"$ref": "#/$defs/leg"}
+        }
+      }
+    },
+    "people": {"type": "array", "maxItems": 40, "items": {"$ref": "#/$defs/person_record"}},
+    "vias": {"type": "array", "maxItems": 80, "items": {"$ref": "#/$defs/via_record"}}
+  },
+  "$defs": {
+    "leg": {
+      "anyOf": [
+        {"type": "null"},
+        {"type": "object", "additionalProperties": false,
+         "required": ["weeks", "end_date", "name_pct", "core_pct", "excess_pct", "signed_excess_pct", "right"],
+         "properties": {
+           "weeks": {"type": "integer", "minimum": 1},
+           "end_date": {"$ref": "common.schema.json#/$defs/date"},
+           "name_pct": {"type": "number"},
+           "core_pct": {"type": "number"},
+           "excess_pct": {"type": "number"},
+           "signed_excess_pct": {"type": "number"},
+           "right": {"type": "boolean"}
+         }}
+      ]
+    },
+    "stats": {
+      "n": {"type": "integer", "minimum": 0},
+      "scored": {"type": "integer", "minimum": 0},
+      "matured_26w": {"type": "integer", "minimum": 0},
+      "right_26w_pct": {"type": ["number", "null"], "minimum": 0, "maximum": 100},
+      "median_signed_excess_26w": {"type": ["number", "null"]},
+      "right_so_far_pct": {"type": ["number", "null"], "minimum": 0, "maximum": 100},
+      "median_signed_excess_so_far": {"type": ["number", "null"]},
+      "enough": {"type": "boolean"}
+    },
+    "person_record": {
+      "type": "object", "additionalProperties": false,
+      "required": ["person", "name", "vias", "n", "scored", "matured_26w", "right_26w_pct", "median_signed_excess_26w",
+                   "right_so_far_pct", "median_signed_excess_so_far", "enough"],
+      "properties": {
+        "person": {"type": "string", "maxLength": 40},
+        "name": {"type": "string", "maxLength": 60},
+        "vias": {"type": "array", "items": {"type": "string", "maxLength": 80}},
+        "n": {"$ref": "#/$defs/stats/n"},
+        "scored": {"$ref": "#/$defs/stats/scored"},
+        "matured_26w": {"$ref": "#/$defs/stats/matured_26w"},
+        "right_26w_pct": {"$ref": "#/$defs/stats/right_26w_pct"},
+        "median_signed_excess_26w": {"$ref": "#/$defs/stats/median_signed_excess_26w"},
+        "right_so_far_pct": {"$ref": "#/$defs/stats/right_so_far_pct"},
+        "median_signed_excess_so_far": {"$ref": "#/$defs/stats/median_signed_excess_so_far"},
+        "enough": {"$ref": "#/$defs/stats/enough"}
+      }
+    },
+    "via_record": {
+      "type": "object", "additionalProperties": false,
+      "required": ["via", "persons", "n", "scored", "matured_26w", "right_26w_pct", "median_signed_excess_26w",
+                   "right_so_far_pct", "median_signed_excess_so_far", "enough"],
+      "properties": {
+        "via": {"type": "string", "maxLength": 80},
+        "persons": {"type": "array", "items": {"type": "string", "maxLength": 40}},
+        "n": {"$ref": "#/$defs/stats/n"},
+        "scored": {"$ref": "#/$defs/stats/scored"},
+        "matured_26w": {"$ref": "#/$defs/stats/matured_26w"},
+        "right_26w_pct": {"$ref": "#/$defs/stats/right_26w_pct"},
+        "median_signed_excess_26w": {"$ref": "#/$defs/stats/median_signed_excess_26w"},
+        "right_so_far_pct": {"$ref": "#/$defs/stats/right_so_far_pct"},
+        "median_signed_excess_so_far": {"$ref": "#/$defs/stats/median_signed_excess_so_far"},
+        "enough": {"$ref": "#/$defs/stats/enough"}
+      }
+    }
+  }
+}

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Code-only routines (no LLM): derive, score matured picks, regime monitor, calibration,
-long-run portfolio statistics, the forward-only paper portfolio and the forward ledger of every rule.
+long-run portfolio statistics, the forward-only paper portfolio, the forward ledger of every rule and the scores of
+the public calls of the people we learn from.
 
-Usage: python3 scripts/routines_code.py derive|score|regime|calibration|longrun|paper|rules|ledger|all
+Usage: python3 scripts/routines_code.py derive|score|regime|calibration|longrun|paper|rules|ledger|people|all
 Each step reads public data, computes with plain arithmetic, validates against its schema,
 and writes under data/kb/. Rules are documented in docs/methodology.md.
 """
@@ -726,8 +727,55 @@ def run_ledger() -> None:
     print(f"ledger: {len(n)} rules, decisions {n}, as of {doc['as_of']}")
 
 
+# ------------------------------------------------------- people we learn from
+
+def people_series(prices_dir: Path, wl: dict, tickers: set[str]) -> tuple[dict, str] | None:
+    """Daily closes of the core and the called names on the core's trading days, each list as long as the dates
+    (None before a name's history begins). Raw closes stay in memory; only percentages are ever written."""
+    import market as mk
+    core = (wl.get("core") or {}).get("symbol")
+    core_bars = _bars(prices_dir, core) if core else []
+    if not core_bars:
+        return None
+    dates = [b["date"] for b in core_bars]
+    closes = mk.align_tail({core: core_bars, **{t: _bars(prices_dir, t) for t in tickers if t != core}}, dates)
+    if len(closes.get(core, [])) != len(dates):
+        return None
+    n = len(dates)
+    members = {t: [None] * (n - len(v)) + v for t, v in closes.items() if t != core}
+    return {"dates": dates, "core": closes[core], "members": members}, core
+
+
+def compute_people(prices_dir: Path, cfg: dict, wl: dict, sample: bool) -> dict | None:
+    import people as pp
+    on_list = {s["symbol"] for s in wl["symbols"]}
+    got = people_series(prices_dir, wl, {c["ticker"] for c in cfg["calls"] if c["ticker"] in on_list})
+    if not got:
+        return None
+    series, core = got
+    return pp.compute_scores(cfg, series, on_list, core=core, sample=sample)
+
+
+def run_people() -> None:
+    """Score every public call in config/people.json on the daily closes (fixed trading days, never re-gridded)."""
+    import people as pp
+    cfg_path = CONFIG / "people.json"
+    if not cfg_path.exists():
+        print("people: no config/people.json yet, nothing to score")
+        return
+    cfg = load_json(cfg_path)
+    errs = Validator().validate(cfg, "people.schema.json")
+    if errs:
+        raise SystemExit(f"people: config/people.json fails its schema (nothing written): {errs[:5]}")
+    doc = compute_people(PRICES, cfg, watchlist(), sample=False)
+    if not doc:
+        raise SystemExit("people: no daily closes for the core (run fetch_prices first)")
+    _write(DATA / "people" / "scores.json", doc, "people_scores.schema.json")
+    print(*pp.summarize(doc), sep="\n")
+
+
 STEPS = {"derive": run_derive, "score": run_score, "regime": run_regime, "calibration": run_calibration,
-         "longrun": run_longrun, "paper": run_paper, "rules": run_rules, "ledger": run_ledger}
+         "longrun": run_longrun, "paper": run_paper, "rules": run_rules, "ledger": run_ledger, "people": run_people}
 
 if __name__ == "__main__":
     which = sys.argv[1] if len(sys.argv) > 1 else "all"

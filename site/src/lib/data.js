@@ -23,6 +23,7 @@ export async function loadAll(onProgress = () => {}) {
     ...Object.values(manifest.kb),
     ...manifest.docs.map((d) => d.file),
     ...(manifest.ops ? [manifest.ops] : []),
+    ...(manifest.people_scores ? [manifest.people_scores] : []),
   ];
   let done = 0;
   const entries = await Promise.all(
@@ -67,6 +68,9 @@ export function derive(manifest, files) {
   const sources = files[doc("sources").file];
   const routines = files[doc("routines").file];
   const rulebook = doc("rules") ? files[doc("rules").file] : null;
+  // People we learn from (config/people.json) and code's scores of their dated public calls (data/people/scores.json).
+  const people = doc("people") ? files[doc("people").file] : null;
+  const peopleScores = manifest.people_scores ? files[manifest.people_scores] : null;
   const outcomes = manifest.kb.outcomes ? files[manifest.kb.outcomes].items : [];
   const library = manifest.kb.library ? files[manifest.kb.library] : null;
   const regime = manifest.kb.regime ? files[manifest.kb.regime] : null;
@@ -110,7 +114,7 @@ export function derive(manifest, files) {
 
   return {
     market, manifest, runs, shownRuns, latest, lastOk, prices, watchlist, settings, learnings, guardrails,
-    outcomes, library, sources, routines, names, bench, kb, docs, regime, calibration, observations, opsLog, longrun, paper, sectors, core, rulebook, rulesResult, ledger,
+    outcomes, library, sources, routines, names, bench, kb, docs, regime, calibration, observations, opsLog, longrun, paper, sectors, core, rulebook, rulesResult, ledger, people, peopleScores,
     sample: manifest.source === "sample", livePrices: manifest.price_source === "live",
   };
 }

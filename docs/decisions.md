@@ -1,7 +1,7 @@
 ---
-version: 0.10.0
-updated_at: 2026-10-05
-change_note: The first real-data run of registry 1.0.0 and the verdicts it froze.
+version: 0.12.0
+updated_at: 2026-10-07
+change_note: People we learn from, measured against the core; the brain fires twice each market morning to catch a late data run.
 ---
 # Decision log
 
@@ -9,7 +9,6 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 
 ## Open items (waiting on the owner)
 - **Author of sources S-001 to S-005**: confirm they are the same channel (Micha) as the later batches.
-- **LLM step (M3)**: run the daily brain as a scheduled Claude Code routine on the owner's subscription (preferred) or through a paid API key.
 - **Paid connectors** (news, X, options data for implied moves): parked until the owner wants to spend.
 - **Satellite size**: `docs/household.md` proposes 10% of savings (2% per slot). The owner sets it.
 - **Market file size**: `derived.json` is written one line per symbol (compact) and is about 330 KB with 21 names.
@@ -18,6 +17,62 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Second price source**: Tiingo's daily returns show unusually low correlations between these names (for example
   AAPL to QQQ about 0.24 over a year). The diagnostic showed our pipeline reproduces the provider's data exactly, so
   the numbers are faithful to the source; a cross-check against a second source is still pending.
+
+## 2026-10-07
+- **People we learn from** (`config/people.json`, routine `score_people`). The household asked for a clear section on the
+  people we follow to learn more. Each person has what we learn from them, where they publish and a caution; the file
+  also carries what the research says about following people in public (in a study of over 29,000 StockTwits
+  finfluencers most gave advice that did not beat the market after risk; studies of copying disclosed mutual-fund holdings
+  found copycats roughly matched the funds after costs, and a 13F is late and partial) and a ledger of their dated public calls. Learn from them, but
+  measure them: code scores every call against the S&P 500 core from the first trading day after it became public,
+  the same honesty the Playbook applies to our own rules. A record needs ten calls that are half a year old before it
+  can say anything, and the brain may use it only as context, never as the only evidence for a pick.
+- **The first calls are 13F filings, added by hand.** A 13F is the fund's book (so each call names the fund), US longs
+  only, up to about forty-five days late. SEC EDGAR is free and official, but it is listed as a planned source, not
+  connected: the household decides before any provider is connected. The X accounts of the people we follow are
+  listed in `config/sources.json`; the X connector stays parked because it costs money. Only facts confirmed from
+  primary or official sources, or a named reputable report (see the research notes), are in the file; links and
+  handles that could not be confirmed were left out.
+- **Scored on fixed trading days, not the weekly chart grid.** The weekly lines are anchored on the latest close, so
+  every new day moved each call's start and its finished 13, 26 and 52 week results. Calls are now scored on the
+  daily closes the Action already holds: the start is the first trading day after the public date and each horizon is
+  a fixed number of trading days (65, 130, 260), so only "so far" moves. Only percentages and dates are published.
+- **A 13F is the firm's book.** Berkshire's three moves are marked as the firm's own (`credit_person: false`): they
+  count for Berkshire Hathaway, not for Warren Buffett, who is Chairman Emeritus and whose successor made the later
+  decisions. The pack carries a record per fund (`people.fund`) and tells the brain to name the fund, not the person.
+  The dates shown are 13F filing dates; a fund may have mentioned a stake earlier, which we do not claim until a
+  primary source confirms it.
+- **A People tab, in the phone's bottom bar.** The site gets a "People we learn from" tab: how we use them, what the
+  research says (with links), who we follow and why (with each person's caution, where they publish, their X handle
+  and 13F filings when confirmed), their calls with how each did against the core so far and at 13, 26 and 52 weeks,
+  what is connected and how to add someone. A person's record reads "too few to judge" until ten of their calls are
+  half a year old. Today shows one line when a logged call touches a name the paper record holds or the brain picked.
+- **The brain fires at 05:47 and 11:47 UTC** (routine `close_run`, was 04:47). The daily data run has been starting
+  about three hours late (around 02:40 to 03:20 UTC instead of 23:40), so the morning firing could find no new close.
+  The second firing catches a late data run; when the day is already recorded it stops before calling the model.
+
+## 2026-10-06
+- **The brain runs every market morning by itself** (routine `close_run`, now active). The household asked for it to
+  run daily without anyone starting it. It is a scheduled Claude Code routine: a cloud session on the household's Claude
+  subscription, started by a cron trigger Tuesday to Saturday at 04:47 UTC, after `daily.yml` has published the Monday to
+  Friday closes at 23:40 UTC. The session follows `prompts/daily_brain_routine.md`: a clean checkout of `main`, restore
+  the published data, build the pack, then `scripts/brain_status.py`. If that market day's run already exists it stops
+  without calling the model (this is also how holidays are skipped). Otherwise it runs the saved workflow
+  `.claude/workflows/brain.js` (the same four steps as the hand runs: three analyst lenses, a skeptic per candidate, a
+  constructor, a reviewer), checks the picks with `record_run.check_picks`, and dispatches the `brain` Action with them.
+  This closes the open item on how the model step is paid for.
+- **Why a routine, not an API key or a third-party Action.** No new dependency, no model secret in the repo's Actions,
+  and no per-call bill: the subscription is already paid. The registry keeps its cost cap (lint requires one for every
+  model routine) as a ceiling, not a bill.
+- **How it fails closed.** The session may not commit, push, edit files, fetch prices or write a model name; its only
+  write path is dispatching `brain.yml`, which rebuilds the same pack from the `data` branch, refuses the run if the data
+  moved on (the session then starts over once), validates, lints and writes nothing if any check fails. If the session
+  itself fails, nothing is recorded and the site keeps showing the last good run; the Routines tab shows when the brain
+  last ran. Lint now knows two runners: a GitHub Actions routine's cron must be in a workflow file; an active Claude
+  routine needs its prompt file and the saved workflow instead.
+- **How to stop it.** Pause or delete the routine in Claude Code (claude.ai/code, Routines). To stop it from the repo,
+  set `close_run` to `paused` in `config/routines.json` through a pull request: the session reads it first and stops.
+  Disabling the `brain` workflow in GitHub Actions also stops anything from being recorded.
 
 ## 2026-10-05
 - **First real-data run of registry 1.0.0, verdicts frozen (2026-10-05, prices to 2026-10-02, 9.0 years, 2000 random baskets).**

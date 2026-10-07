@@ -1,7 +1,7 @@
 ---
 version: 0.10.0
 updated_at: 2026-10-07
-change_note: People we learn from - each dated public call is scored against the core on the weekly lines; the brain fires at 05:47 and 11:47 UTC.
+change_note: People we learn from - each dated public call is scored against the core from fixed trading days; the brain fires at 05:47 and 11:47 UTC.
 ---
 # Methodology
 
@@ -168,23 +168,27 @@ caution, the research on following people in public, and a ledger of their dated
 A call records who made it and through which fund (`via`), the day it became public, the ticker, bullish or bearish, a
 paraphrase of what they did and a link to the source. People kept for their principles only have no calls. The People
 tab shows all of it. Learn from them, but measure them: `scripts/people.py` (routine `score_people`) scores each call
-on the published weekly indexed lines in `data/market/longrun.json` (one point every five trading days, no prices):
-- A call starts at the first weekly point **strictly after** the day it became public (for a 13F, its filing date),
-  so nothing is known before it was public; the start can be up to a week after that day.
-- Growth of the name and of the S&P 500 core over 13, 26 and 52 weekly points once that much time has passed, and so far
-  to the latest point. `excess = (1 + name) / (1 + core) - 1`, in percent.
+on the daily closes of the name and the S&P 500 core that the daily Action already holds (never published; only
+percentages and dates are written to `data/people/scores.json`):
+- A call starts on the first trading day **strictly after** the day it became public (for a 13F, its filing date; the
+  fund may have said it earlier), so nothing is known before it was public.
+- Growth of the name and of the core over 13, 26 and 52 weeks of five trading days (65, 130 and 260 trading days) once
+  that much time has passed, and so far to the latest close. The start and every finished horizon are fixed trading
+  days, so a new close moves only "so far". `excess = (1 + name) / (1 + core) - 1`, in percent.
 - Signed excess is the excess for a bullish call and minus the excess for a bearish one; the call was right when it is
   above zero.
-- A call on a name that is not on the watchlist is kept and shown but not scored.
+- A call on a name that is not on the watchlist is kept and shown but not scored, and so is a call made before the
+  history we hold for the name (or with a gap of more than a week after its public date).
 - Per person and per fund: calls, scored calls, calls matured at 26 weeks, the share right at 26 weeks and the median
   signed excess at 26 weeks. Fewer than ten matured calls is too few to judge.
 - A 13F is a fund's quarter-end US long book filed up to about forty-five days late, and the firm's book rather than the
-  named person's own pick; each call names the fund it came from. The pack shows this as context, never as the only
-  evidence for a pick.
-- Why context only: in the largest study, most stock influencers did not help their followers beat the market (the
-  People tab cites the research), a 13F is late
-  and partial, and people tend to praise what their funds own. Until a record has ten matured calls it cannot tell
-  skill from luck, so no call is ever the only reason for a pick and none moves money.
+  named person's own pick; each call names the fund it came from. A call marked `credit_person: false` (Berkshire's,
+  for example) counts in the fund's record only. The pack shows all of this as context, never as the only evidence for
+  a pick, and tells the brain to name the fund, not the person.
+- Why context only: in a study of over 29,000 StockTwits finfluencers, most gave advice that did not beat the market
+  after risk (the People tab cites the research), a 13F is late and partial, and people tend to praise what their funds
+  own. Until a record has ten matured calls it cannot tell skill from luck, so no call is ever the only reason for a
+  pick and none moves money.
 
 ## Evidence labels (the Playbook's rules)
 `replicated`: independent replication named in the cited library material. `mixed`: backed by principles from more than one source, with

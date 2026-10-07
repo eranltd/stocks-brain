@@ -37,7 +37,7 @@
         "awealthofcs",
         "dollarsanddata"
       ],
-      "note": "Planned and parked: the X connector costs money. Store derived signals and links only, never post text. follow[] holds the confirmed handles of the people in config/people.json."
+      "note": "Planned and parked: the X connector costs money. If the household turns it on, it keeps links and derived signals only, never post text, and follows only the confirmed accounts of the people we follow."
     },
     {
       "id": "news",
@@ -94,7 +94,7 @@
       ],
       "secret_env": null,
       "follow": [],
-      "note": "Who we follow, why, and their dated public calls with a link to each source, added by hand and paraphrased. Code scores every call against the S&P 500 core on the published weekly lines."
+      "note": "Who we follow, why, and their dated public calls with a link to each source, added by hand and paraphrased. Code scores every call against the S&P 500 core from the daily closes; only percentages are published."
     },
     {
       "id": "holdings_13f",

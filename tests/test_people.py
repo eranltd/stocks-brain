@@ -17,14 +17,24 @@ import routines_code  # noqa: E402
 from _common import CONFIG, DOCS, ROOT, SAMPLES, Validator, dump_json, load_json, settings, watchlist  # noqa: E402
 from lint import Lint  # noqa: E402
 
-N = 60
-DATES = [(date(2025, 1, 6) + timedelta(days=7 * k)).isoformat() for k in range(N)]
-WEEKLY = {
+def _weekdays(start: date, n: int) -> list[str]:
+    out, d = [], start
+    while len(out) < n:
+        if d.weekday() < 5:
+            out.append(d.isoformat())
+        d += timedelta(days=1)
+    return out
+
+
+N = 300  # trading days
+DATES = _weekdays(date(2025, 1, 6), N)
+SERIES = {
     "dates": DATES,
-    "core": [100 * 1.01 ** k for k in range(N)],
-    "members": {"UPP": [100 * 1.02 ** k for k in range(N)], "FLAT": [100.0] * N},
+    "core": [100 * 1.001 ** k for k in range(N)],
+    "members": {"UPP": [100 * 1.002 ** k for k in range(N)], "FLAT": [100.0] * N,
+                "LATE": [None] * 100 + [50 * 1.003 ** k for k in range(N - 100)]},
 }
-ON_LIST = {"UPP", "FLAT", "NOHIST"}
+ON_LIST = {"UPP", "FLAT", "LATE", "NOHIST"}
 
 
 def call(**kw):
@@ -34,60 +44,99 @@ def call(**kw):
     return c
 
 
+def score(c, series=SERIES):
+    return people.score_call(c, series, ON_LIST)
+
+
+def drop_last(series, k=1):
+    return {"dates": series["dates"][:-k], "core": series["core"][:-k], "members": {t: v[:-k] for t, v in series["members"].items()}}
+
+
 class ScoreCallTest(unittest.TestCase):
     def test_bullish_excess_is_relative_growth(self):
-        r = people.score_call(call(), WEEKLY, ON_LIST)
+        r = score(call())
         self.assertTrue(r["scored"])
-        self.assertEqual(r["start_date"], DATES[1])  # the date itself is a weekly point: start strictly after it
+        self.assertEqual(r["start_date"], DATES[1])  # the date itself is a trading day: start strictly after it
         w = r["w13"]
-        self.assertEqual((w["weeks"], w["end_date"]), (13, DATES[14]))
-        self.assertAlmostEqual(w["excess_pct"], ((1.02 / 1.01) ** 13 - 1) * 100, places=2)
-        self.assertAlmostEqual(w["name_pct"], (1.02 ** 13 - 1) * 100, places=2)
+        self.assertEqual((w["weeks"], w["end_date"]), (13, DATES[1 + 65]))
+        self.assertAlmostEqual(w["excess_pct"], ((1.002 / 1.001) ** 65 - 1) * 100, places=2)
+        self.assertAlmostEqual(w["name_pct"], (1.002 ** 65 - 1) * 100, places=2)
         self.assertEqual(w["signed_excess_pct"], w["excess_pct"])
         self.assertTrue(w["right"])
+        self.assertEqual(r["w26"]["end_date"], DATES[1 + 130])
+        self.assertEqual(r["w52"]["end_date"], DATES[1 + 260])
+        self.assertIsNone(score(call(date=DATES[60]))["w52"])  # 260 trading days after that start is past the end
 
     def test_bearish_is_right_when_the_name_lagged(self):
-        r = people.score_call(call(ticker="FLAT", stance="bearish"), WEEKLY, ON_LIST)
+        r = score(call(ticker="FLAT", stance="bearish"))
         w = r["w26"]
         self.assertLess(w["excess_pct"], 0)
         self.assertEqual(w["signed_excess_pct"], -w["excess_pct"])
         self.assertTrue(w["right"])
-        bull = people.score_call(call(ticker="FLAT"), WEEKLY, ON_LIST)["w26"]
-        self.assertFalse(bull["right"])
+        self.assertFalse(score(call(ticker="FLAT"))["w26"]["right"])
 
-    def test_start_is_strictly_after_the_public_date(self):
-        between = (date.fromisoformat(DATES[3]) + timedelta(days=2)).isoformat()
-        self.assertEqual(people.score_call(call(date=between), WEEKLY, ON_LIST)["start_date"], DATES[4])
-        self.assertEqual(people.score_call(call(date=DATES[3]), WEEKLY, ON_LIST)["start_date"], DATES[4])
+    def test_start_is_the_first_trading_day_after_the_public_date(self):
+        friday = next(d for d in DATES[5:] if date.fromisoformat(d).weekday() == 4)
+        saturday = (date.fromisoformat(friday) + timedelta(days=1)).isoformat()
+        monday = DATES[DATES.index(friday) + 1]
+        self.assertEqual(score(call(date=friday))["start_date"], monday)
+        self.assertEqual(score(call(date=saturday))["start_date"], monday)
+
+    def test_a_new_close_never_moves_the_start_or_a_finished_horizon(self):
+        c = call(date=DATES[20])
+        full, shorter = score(c), score(c, drop_last(SERIES))
+        self.assertEqual(full["start_date"], shorter["start_date"])
+        for h in ("w13", "w26"):
+            self.assertEqual(full[h], shorter[h])
+        self.assertNotEqual(full["so_far"], shorter["so_far"])  # only "so far" moves with the latest close
+        five = score(c, drop_last(SERIES, 5))
+        self.assertEqual((five["start_date"], five["w13"], five["w26"]), (full["start_date"], full["w13"], full["w26"]))
 
     def test_maturity(self):
-        r = people.score_call(call(date=DATES[N - 20]), WEEKLY, ON_LIST)  # starts at N-19: 18 weeks of data after it
-        self.assertEqual(r["weeks_since"], 18)
+        r = score(call(date=DATES[N - 101]))  # starts at N-100: 99 trading days of data after it
+        self.assertEqual(r["weeks_since"], 19)
         self.assertIsNotNone(r["w13"])
         self.assertIsNone(r["w26"])
         self.assertIsNone(r["w52"])
-        self.assertEqual(r["so_far"]["weeks"], 18)
+        self.assertEqual(r["so_far"]["weeks"], 19)
         self.assertEqual(r["so_far"]["end_date"], DATES[-1])
 
     def test_unscored_calls_are_kept_with_a_reason(self):
-        off = people.score_call(call(ticker="ZZZ"), WEEKLY, ON_LIST)
+        off = score(call(ticker="ZZZ"))
         self.assertEqual((off["scored"], off["note"]), (False, "not on our list"))
         self.assertIsNone(off["so_far"])
-        self.assertEqual(people.score_call(call(ticker="NOHIST"), WEEKLY, ON_LIST)["note"], people.NOTES["no_history"])
-        self.assertEqual(people.score_call(call(date=DATES[-1]), WEEKLY, ON_LIST)["note"], people.NOTES["too_new"])
-        last_but_one = people.score_call(call(date=DATES[-2]), WEEKLY, ON_LIST)
+        self.assertEqual(score(call(ticker="NOHIST"))["note"], people.NOTES["no_history"])
+        self.assertEqual(score(call(date=DATES[-1]))["note"], people.NOTES["too_new"])
+        last_but_one = score(call(date=DATES[-2]))
         self.assertTrue(last_but_one["scored"])
-        self.assertIsNone(last_but_one["so_far"])  # starts on the last point: nothing to measure yet
+        self.assertIsNone(last_but_one["so_far"])  # starts on the last day: nothing to measure yet
+
+    def test_a_call_before_the_history_is_not_scored(self):
+        before = (date.fromisoformat(DATES[0]) - timedelta(days=400)).isoformat()
+        r = score(call(date=before))
+        self.assertEqual((r["scored"], r["note"], r["start_date"]), (False, people.NOTES["before_history"], None))
+        # the day before the first close: we cannot know there was no trading day in between, so not scored either
+        self.assertEqual(score(call(date="2025-01-05"))["note"], people.NOTES["before_history"])
+        # a name whose own history starts after the public date
+        self.assertEqual(score(call(ticker="LATE", date=DATES[50]))["note"], people.NOTES["before_history"])
+        self.assertTrue(score(call(ticker="LATE", date=DATES[120]))["scored"])
+        # a hole in the history right after the public date
+        gap = {**SERIES, "dates": DATES[:10] + [(date.fromisoformat(d) + timedelta(days=30)).isoformat() for d in DATES[10:]]}
+        self.assertEqual(score(call(date=DATES[9]), gap)["note"], people.NOTES["before_history"])
+
+    def test_the_firms_own_call_is_flagged(self):
+        self.assertTrue(score(call())["credit_person"])
+        self.assertFalse(score(call(credit_person=False))["credit_person"])
 
 
 class RecordTest(unittest.TestCase):
     def cfg(self, n_calls, start=0):
-        return {"version": "1.0.0", "people": [{"id": "someone", "name": "Some One"}],
+        return {"version": "1.0.0", "people": [{"id": "someone", "name": "Some One"}, {"id": "other", "name": "Other One"}],
                 "calls": [call(id=f"{DATES[start + k]}-fund-upp", date=DATES[start + k]) for k in range(n_calls)]
                 + [call(id=f"{DATES[0]}-fund-zzz", ticker="ZZZ")]}
 
-    def doc(self, cfg):
-        return people.compute_scores(cfg, {"weekly": WEEKLY, "sample": False, "core": "COREX"}, ON_LIST)
+    def doc(self, cfg, series=SERIES):
+        return people.compute_scores(cfg, series, ON_LIST, core="SPY", sample=False)
 
     def test_enough_needs_ten_matured_calls(self):
         nine = self.doc(self.cfg(9))
@@ -96,18 +145,26 @@ class RecordTest(unittest.TestCase):
         self.assertEqual(p["right_26w_pct"], 100.0)
         ten = self.doc(self.cfg(10))["people"][0]
         self.assertEqual((ten["matured_26w"], ten["enough"]), (10, True))
-        young = self.doc(self.cfg(12, start=N - 20))["people"][0]  # scored but none half a year old
+        young = self.doc(self.cfg(12, start=N - 101))["people"][0]  # scored but none half a year old
         self.assertEqual((young["scored"], young["matured_26w"], young["enough"]), (12, 0, False))
         self.assertIsNone(young["right_26w_pct"])
         self.assertIsNone(young["median_signed_excess_26w"])
 
     def test_output_matches_its_schema_and_groups_by_fund(self):
         d = self.doc(self.cfg(3))
-        d["config_version"] = "1.0.0"
-        d["core"] = "SPY"
         self.assertEqual(Validator().validate(d, "people_scores.schema.json"), [])
         self.assertEqual([v["via"] for v in d["vias"]], ["Some Fund LP"])
         self.assertEqual(d["as_of"], DATES[-1])
+        self.assertNotIn("weekly", d["series"])
+
+    def test_the_firms_own_calls_count_for_the_fund_only(self):
+        cfg = self.cfg(3)
+        cfg["calls"].append(call(id=f"{DATES[4]}-firm-upp", person="other", via="Big Firm Inc", date=DATES[4], credit_person=False))
+        d = self.doc(cfg)
+        self.assertEqual([p["person"] for p in d["people"]], ["someone"])
+        firm = {v["via"]: v for v in d["vias"]}["Big Firm Inc"]
+        self.assertEqual((firm["n"], firm["scored"], firm["persons"]), (1, 1, []))
+        self.assertEqual(Validator().validate(d, "people_scores.schema.json"), [])
 
     def test_unknown_person_fails_closed(self):
         cfg = self.cfg(1)
@@ -157,6 +214,9 @@ class PeopleLintTest(unittest.TestCase):
             "id not dated": (lambda c: c["calls"][0].__setitem__("id", "2020-01-01-x"), "must start with its date"),
             "principles only": (lambda c: c["calls"][0].__setitem__("person", "john-bogle"), "principles_only"),
             "quotation": (lambda c: c["calls"][0].__setitem__("what", 'He said "buy it all" on air.'), "quotation"),
+            "price in what": (lambda c: c["calls"][0].__setitem__("what", "Bought the name at $187 a share."), "looks like a price"),
+            "price in note": (lambda c: c["calls"][0].__setitem__("note", "Paid about 187 dollars a share."), "looks like a price"),
+            "quote in note": (lambda c: c["calls"][0].__setitem__("note", 'He called it "a bargain" on air.'), "quotation"),
         }
         for name, (mutate, msg) in cases.items():
             c = copy.deepcopy(self.cfg)
@@ -181,7 +241,7 @@ class PackPeopleTest(unittest.TestCase):
         dump_json(data / "market" / "longrun.json", longrun)
         cls.on_list = {s["symbol"] for s in wl["symbols"]}
         cls.cfg = load_json(CONFIG / "people.json")
-        cls.scores = people.compute_scores(cls.cfg, longrun, cls.on_list)
+        cls.scores = routines_code.compute_people(SAMPLES / "prices", cls.cfg, wl, sample=False)
         (cls.tmp / "runs").mkdir()
         cls.data = data
         cls.guard = load_json(DOCS / "guardrails.json")
@@ -192,7 +252,7 @@ class PackPeopleTest(unittest.TestCase):
 
     def test_empty_block_without_scores(self):
         pack = build_pack.build(self.data, self.tmp / "runs", today="2026-10-05")
-        self.assertEqual(pack["people"], {"note": build_pack.PEOPLE_NOTE, "record": {}, "calls": {}})
+        self.assertEqual(pack["people"], {"note": build_pack.PEOPLE_NOTE, "record": {}, "fund": {}, "calls": {}})
 
     def test_block_keys_are_citable(self):
         self.assertEqual(Validator().validate(self.scores, "people_scores.schema.json"), [])
@@ -205,6 +265,16 @@ class PackPeopleTest(unittest.TestCase):
         self.assertEqual(set(block["record"]), {p["person"] for p in self.scores["people"]})
         for row in block["record"].values():
             self.assertEqual(set(row), {"name", "via", "scored", "matured_26w", "right_26w_pct", "median_signed_excess_26w", "enough"})
+        self.assertIn("name the fund", block["note"])
+        # Berkshire's 13F moves are the firm's: no record for Buffett, a fund record for Berkshire, and no person on its calls
+        self.assertNotIn("warren-buffett", block["record"])
+        self.assertIn("berkshire-hathaway", block["fund"])
+        self.assertEqual(block["fund"]["berkshire-hathaway"]["persons"], [])
+        amzn = {c["fund"]: c for c in block["calls"]["amzn"]}
+        self.assertNotIn("person", amzn["berkshire-hathaway"])
+        self.assertIn("not Buffett's own", amzn["berkshire-hathaway"]["note"])
+        self.assertEqual(amzn["pershing-square-capital-management"]["person"], "bill-ackman")
+        self.assertTrue(all(c["source_kind"] == "13f" for v in block["calls"].values() for c in v))
         self.assertTrue(block["calls"])
         self.assertTrue(all(t == t.lower() and t.upper() in self.on_list for t in block["calls"]))
         self.assertTrue(all(len(v) <= build_pack.PEOPLE_CALLS_PER_NAME for v in block["calls"].values()))
@@ -216,7 +286,7 @@ class PackPeopleTest(unittest.TestCase):
                "picks": [{"ticker": ticker.upper(), "stance": "neutral", "conviction": "low",
                           "thesis": "A fund we follow made a public call on this name; on its own that proves nothing, so we stay neutral.",
                           "risks": ["Their record is too short to judge"], "invalidation": "A clear break of its long average.",
-                          "evidence": [f"people.calls.{ticker}", f"people.record.{person}", "people"]}]}
+                          "evidence": [f"people.calls.{ticker}", f"people.record.{person}", "people.fund.berkshire-hathaway", "people"]}]}
         self.assertEqual(record_run.check_picks(out, pack, self.guard, self.on_list), [])
         out["picks"][0]["evidence"].append("people.record.nobody")
         self.assertTrue(record_run.check_picks(out, pack, self.guard, self.on_list))

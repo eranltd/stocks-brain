@@ -1,7 +1,7 @@
 {
   "$id": "people_scores.schema.json",
   "title": "Scores of people's public calls (data/people/scores.json)",
-  "description": "Each call in config/people.json scored against the S&P 500 core on the published weekly indexed lines (scripts/people.py). Percentages only; no prices and no holdings.",
+  "description": "Each call in config/people.json scored against the S&P 500 core on the daily closes, from fixed trading days (scripts/people.py). Percentages and dates only; no prices and no holdings.",
   "type": "object",
   "additionalProperties": false,
   "required": ["as_of", "sample", "core", "config_version", "series", "method", "horizons_weeks", "judge_at_weeks", "min_matured", "calls", "people", "vias"],
@@ -27,6 +27,7 @@
           "date": {"$ref": "common.schema.json#/$defs/date"},
           "ticker": {"$ref": "common.schema.json#/$defs/ticker"},
           "stance": {"enum": ["bullish", "bearish"]},
+          "credit_person": {"type": "boolean", "description": "false: the firm's move, counted for the fund only"},
           "scored": {"type": "boolean"},
           "note": {"type": "string", "maxLength": 80, "description": "why an unscored call is not scored"},
           "start_date": {"anyOf": [{"type": "null"}, {"$ref": "common.schema.json#/$defs/date"}]},

@@ -131,12 +131,14 @@ tags match the day, up to `pack.library_principles_max`.
 ## People we learn from
 
 `config/people.json` lists the investors, teachers and writers the household follows: what we learn from each, where
-they publish, what to be careful about, and what the research says about following people in public (in the largest
-study most stock influencers did not help; copying a fund's 13F works only partly, and late). It also holds a ledger of their dated
+they publish, what to be careful about, and what the research says about following people in public (in a study of
+over 29,000 StockTwits finfluencers, most gave advice that did not beat the market after risk; studies of copying a
+fund's disclosed holdings found copycats roughly matched the funds after costs, and a 13F is late and partial). It also holds a ledger of their dated
 **public** calls on our watchlist names (for a 13F, the filing date), each with a link to the source. Learn from them,
 but measure them: `routines_code.py people` (routine `score_people`) scores every call against the S&P 500 core on the
-published weekly lines, from the first weekly close after the call became public, over 13, 26 and 52 weeks, and writes
-`data/people/scores.json`. A person's record says nothing until ten of their calls are half a year old. The brain sees
+daily closes the Action holds, from the first trading day after the call became public, over 13, 26 and 52 weeks, and
+writes only percentages to `data/people/scores.json`. A 13F is the fund's book: a call the file marks as the firm's own
+(Berkshire's, for example) counts for the fund only, never for the person. A person's record says nothing until ten of their calls are half a year old. The brain sees
 a compact view in `pack.people`, as context only. Calls are added by hand; no 13F or X connector is connected.
 
 The site's **People** tab (in the phone's bottom bar) shows it all: who we follow and why, what to be careful about,

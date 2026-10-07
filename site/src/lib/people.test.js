@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { callStatus, callsTouching, edgarUrl, groupPeople, joinCalls, ownLinks, recordLine, shortVia } from "./people.js";
+import { callerName, callStatus, callsTouching, edgarUrl, groupPeople, isFirmCall, joinCalls, ownLinks, recordLine, shortVia, statusPhrase } from "./people.js";
 
 test("shortVia drops legal suffixes and 'Capital/Investment Management'", () => {
   assert.equal(shortVia("Pershing Square Capital Management, L.P."), "Pershing Square");
@@ -9,13 +9,24 @@ test("shortVia drops legal suffixes and 'Capital/Investment Management'", () => 
   assert.equal(shortVia("Fundsmith LLP"), "Fundsmith");
 });
 
-test("groupPeople: principles only, 13F filers we follow, then teachers", () => {
+test("groupPeople: principles only, then investors by kind, then teachers, educators and writers", () => {
   const g = groupPeople([
-    { id: "a", status: "following", holdings_13f: { cik: "0000000001" } },
-    { id: "b", status: "following", holdings_13f: null },
-    { id: "c", status: "principles_only", holdings_13f: null },
+    { id: "a", kind: "investor", status: "following", holdings_13f: { cik: "0000000001" } },
+    { id: "b", kind: "writer", status: "following", holdings_13f: null },
+    { id: "c", kind: "teacher", status: "principles_only", holdings_13f: null },
+    { id: "d", kind: "teacher", status: "following", holdings_13f: { cik: "0000000002" } },
   ]);
-  assert.deepEqual([g.investors.map((p) => p.id), g.teachers.map((p) => p.id), g.principles.map((p) => p.id)], [["a"], ["b"], ["c"]]);
+  assert.deepEqual([g.investors.map((p) => p.id), g.teachers.map((p) => p.id), g.principles.map((p) => p.id)], [["a"], ["b", "d"], ["c"]]);
+});
+
+test("a firm's own call names the fund, never the person", () => {
+  const p = { name: "Some One" };
+  assert.equal(callerName({ via: "Berkshire Hathaway Inc", credit_person: false }, p), "Berkshire Hathaway");
+  assert.equal(callerName({ via: "Pershing Square Capital Management, L.P." }, p), "Some One");
+  assert.equal(isFirmCall({ credit_person: false }), true);
+  assert.equal(isFirmCall({}), false);
+  const firm = [{ via: "Berkshire Hathaway Inc" }, { via: "Berkshire Hathaway Inc" }];
+  assert.equal(recordLine({ status: "following" }, undefined, 26, 10, firm), "2 Berkshire Hathaway calls logged, scored as the firm's, not as personal picks.");
 });
 
 test("ownLinks drops an EDGAR link that repeats the CIK link", () => {
@@ -38,6 +49,13 @@ test("callStatus reads the 26-week leg, else maturing, else the reason it is not
   assert.equal(callStatus({ scored: true, w26: { right: false } }).kind, "wrong");
   assert.deepEqual(callStatus({ scored: true, w26: null, weeks_since: 19 }), { kind: "maturing", label: "maturing", detail: "19 of 26 weeks" });
   assert.equal(callStatus({ scored: false, reason: "not on our list" }).detail, "not on our list");
+});
+
+test("statusPhrase says how a judged call did, or how far a young one has to go", () => {
+  assert.equal(statusPhrase({ scored: true, w26: { right: false, signed_excess_pct: -20.06 } }), "judged wrong at 26 weeks, −20.1% for the call vs the core");
+  assert.equal(statusPhrase({ scored: true, w26: { right: true, signed_excess_pct: 4.32 } }), "judged right at 26 weeks, +4.3% for the call vs the core");
+  assert.equal(statusPhrase({ scored: true, w26: null, weeks_since: 19 }), "maturing, 19 of 26 weeks");
+  assert.equal(statusPhrase({ scored: false, reason: "not on our list" }), "not scored: not on our list");
 });
 
 test("joinCalls keeps the config note, adds scores by id, and sorts newest first", () => {

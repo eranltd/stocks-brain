@@ -2,7 +2,7 @@
 """Build the brain's context pack (M3): one capped JSON document of DERIVED numbers and curated text.
 
 The brain reads only this pack and cites evidence by pack key (lowercase dot paths such as
-`market.nvda.setup`, `library.s-028:p02` or `people.calls.nvda`). Numbers come from code; the pack carries no raw prices.
+`market.nvda.setup`, `library.s-028:p02`, `people.calls.nvda` or `people.fund.berkshire-hathaway`). Numbers come from code; the pack carries no raw prices.
 Fails closed when the pack is over `pack.token_cap` (settings).
 
 Usage: python3 scripts/build_pack.py [--out .cache/pack.json] [--data DIR] [--runs DIR]
@@ -12,12 +12,13 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import sys
 from datetime import date
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _common import DATA, DOCS, ROOT, RUNS, load_json, parse_front_matter, settings, watchlist  # noqa: E402
+from _common import CONFIG, DATA, DOCS, ROOT, RUNS, load_json, parse_front_matter, settings, watchlist  # noqa: E402
 
 TAG_WEIGHT = {  # what a stock-picking step most needs from the library
     "relative_strength": 3, "momentum": 3, "trend": 3, "overextension": 3, "earnings": 3, "events": 2,
@@ -69,24 +70,44 @@ def pick_library(lib: dict | None, limit: int) -> dict:
 
 
 PEOPLE_CALLS_PER_NAME = 3  # the newest public calls per watchlist name; keeps the pack under its cap as the ledger grows
-PEOPLE_NOTE = ("context only: what people we follow said publicly and how their calls have done against the core "
-               "(signed excess in percent: above zero means the call was right); never the only evidence for a pick")
+PEOPLE_NOTE = ("context only: public calls of people we follow and how they have done against the core (signed excess in percent: "
+               "above zero means the call was right); never the only evidence for a pick. A 13F call is the fund's disclosed book: "
+               "name the fund (via), not the person, and follow any note on the call. A call with no person is the firm's own "
+               "and counts only in people.fund")
 
 
-def people_block(scores: dict | None, on_list: set[str]) -> dict:
-    """Compact view of data/people/scores.json. Keys stay citable: people.record.<person id>, people.calls.<ticker>."""
+def fund_key(via: str) -> str:
+    """'Berkshire Hathaway Inc' -> 'berkshire-hathaway': a citable, lowercase key for people.fund."""
+    short = re.sub(r",?\s+(Inc\.?|LLC|LLP|L\.P\.|LP)$", "", via, flags=re.I)
+    return re.sub(r"[^a-z0-9]+", "-", short.lower()).strip("-")
+
+
+def _rec(p: dict) -> dict:
+    return {"scored": p["scored"], "matured_26w": p["matured_26w"], "right_26w_pct": r1(p["right_26w_pct"]),
+            "median_signed_excess_26w": r1(p["median_signed_excess_26w"]), "enough": p["enough"]}
+
+
+def people_block(scores: dict | None, on_list: set[str], cfg: dict | None = None) -> dict:
+    """Compact view of data/people/scores.json. Keys stay citable: people.record.<person id>, people.fund.<fund>,
+    people.calls.<ticker>. A call the config marks as the firm's own (credit_person false) carries no person."""
     if not scores or scores.get("sample"):
-        return {"note": PEOPLE_NOTE, "record": {}, "calls": {}}
-    record = {p["person"]: {"name": p["name"], "via": p["vias"], "scored": p["scored"], "matured_26w": p["matured_26w"],
-                            "right_26w_pct": r1(p["right_26w_pct"]), "median_signed_excess_26w": r1(p["median_signed_excess_26w"]),
-                            "enough": p["enough"]} for p in scores["people"]}
+        return {"note": PEOPLE_NOTE, "record": {}, "fund": {}, "calls": {}}
+    notes = {c["id"]: c["note"] for c in (cfg or {}).get("calls", []) if c.get("note")}
+    kinds = {c["id"]: c["source_kind"] for c in (cfg or {}).get("calls", [])}
+    record = {p["person"]: {"name": p["name"], "via": p["vias"], **_rec(p)} for p in scores["people"]}
+    fund = {fund_key(v["via"]): {"name": v["via"], "persons": v["persons"], **_rec(v)} for v in scores["vias"]}
     calls: dict[str, list] = {}
     for c in sorted(scores["calls"], key=lambda c: c["date"], reverse=True):
         if c["ticker"] in on_list and len(calls.get(c["ticker"].lower(), [])) < PEOPLE_CALLS_PER_NAME:
-            calls.setdefault(c["ticker"].lower(), []).append(
-                {"person": c["person"], "via": c["via"], "stance": c["stance"], "date": c["date"], "weeks_since": c["weeks_since"],
-                 "signed_excess_so_far": r1((c["so_far"] or {}).get("signed_excess_pct"))})
-    return {"note": PEOPLE_NOTE, "as_of": scores["as_of"], "min_matured": scores["min_matured"], "record": record, "calls": calls}
+            row = {"via": c["via"], "fund": fund_key(c["via"])}
+            if c.get("credit_person", True):
+                row["person"] = c["person"]
+            row.update({"stance": c["stance"], "date": c["date"], "source_kind": kinds.get(c["id"]), "weeks_since": c["weeks_since"],
+                        "signed_excess_so_far": r1((c["so_far"] or {}).get("signed_excess_pct"))})
+            if notes.get(c["id"]):
+                row["note"] = notes[c["id"]]
+            calls.setdefault(c["ticker"].lower(), []).append({k: v for k, v in row.items() if v is not None})
+    return {"note": PEOPLE_NOTE, "as_of": scores["as_of"], "min_matured": scores["min_matured"], "record": record, "fund": fund, "calls": calls}
 
 
 def build(data_dir: Path = DATA, runs_dir: Path = RUNS, today: str | None = None) -> dict:
@@ -152,7 +173,8 @@ def build(data_dir: Path = DATA, runs_dir: Path = RUNS, today: str | None = None
         "library": pick_library(load_json(kb / "library.json") if (kb / "library.json").exists() else None, st["pack"]["library_principles_max"]),
         "learnings": {x["id"].lower(): x for x in learn["items"] if x.get("status") == "active"},
         "claims": claims,
-        "people": people_block(load_json(data_dir / "people" / "scores.json") if (data_dir / "people" / "scores.json").exists() else None, set(names)),
+        "people": people_block(load_json(data_dir / "people" / "scores.json") if (data_dir / "people" / "scores.json").exists() else None, set(names),
+                               load_json(CONFIG / "people.json") if (CONFIG / "people.json").exists() else None),
         "recent_runs": recent,
     }
     return pack

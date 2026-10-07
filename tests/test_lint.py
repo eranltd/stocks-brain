@@ -143,6 +143,13 @@ class RoutineRunnerTest(unittest.TestCase):
 
 
 class HygieneTest(unittest.TestCase):
+    def test_site_urls_are_compared_by_exact_host(self):
+        import lint
+        for url in ("https://x.com", "//github.com", "https://www.sec.gov", "http://www.w3.org"):
+            self.assertTrue(lint.site_url_allowed(url), url)
+        for url in ("https://x.co", "https://www.sec.go", "https://github.co", "https://x.com.evil.io", "https://cdn.example.com"):
+            self.assertFalse(lint.site_url_allowed(url), url)
+
     def test_secret_patterns_catch_keys(self):
         fake = "sk-" + "ant-" + "a" * 30  # assembled so this file never holds a literal key
         self.assertTrue(any(rx.search(fake) for _, rx in SECRET_PATTERNS))

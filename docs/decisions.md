@@ -21,16 +21,27 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 ## 2026-10-07
 - **People we learn from** (`config/people.json`, routine `score_people`). The household asked for a clear section on the
   people we follow to learn more. Each person has what we learn from them, where they publish and a caution; the file
-  also carries what the research says about following people in public (in the largest study most stock influencers did not help; copying a
-  fund's disclosed holdings works only partly and late) and a ledger of their dated public calls. Learn from them, but
-  measure them: code scores every call against the S&P 500 core from the first weekly close after it became public,
+  also carries what the research says about following people in public (in a study of over 29,000 StockTwits
+  finfluencers most gave advice that did not beat the market after risk; studies of copying disclosed mutual-fund holdings
+  found copycats roughly matched the funds after costs, and a 13F is late and partial) and a ledger of their dated public calls. Learn from them, but
+  measure them: code scores every call against the S&P 500 core from the first trading day after it became public,
   the same honesty the Playbook applies to our own rules. A record needs ten calls that are half a year old before it
   can say anything, and the brain may use it only as context, never as the only evidence for a pick.
 - **The first calls are 13F filings, added by hand.** A 13F is the fund's book (so each call names the fund), US longs
   only, up to about forty-five days late. SEC EDGAR is free and official, but it is listed as a planned source, not
   connected: the household decides before any provider is connected. The X accounts of the people we follow are
   listed in `config/sources.json`; the X connector stays parked because it costs money. Only facts confirmed from
-  primary or official sources are in the file; links and handles that could not be confirmed were left out.
+  primary or official sources, or a named reputable report (see the research notes), are in the file; links and
+  handles that could not be confirmed were left out.
+- **Scored on fixed trading days, not the weekly chart grid.** The weekly lines are anchored on the latest close, so
+  every new day moved each call's start and its finished 13, 26 and 52 week results. Calls are now scored on the
+  daily closes the Action already holds: the start is the first trading day after the public date and each horizon is
+  a fixed number of trading days (65, 130, 260), so only "so far" moves. Only percentages and dates are published.
+- **A 13F is the firm's book.** Berkshire's three moves are marked as the firm's own (`credit_person: false`): they
+  count for Berkshire Hathaway, not for Warren Buffett, who is Chairman Emeritus and whose successor made the later
+  decisions. The pack carries a record per fund (`people.fund`) and tells the brain to name the fund, not the person.
+  The dates shown are 13F filing dates; a fund may have mentioned a stake earlier, which we do not claim until a
+  primary source confirms it.
 - **A People tab, in the phone's bottom bar.** The site gets a "People we learn from" tab: how we use them, what the
   research says (with links), who we follow and why (with each person's caution, where they publish, their X handle
   and 13F filings when confirmed), their calls with how each did against the core so far and at 13, 26 and 52 weeks,

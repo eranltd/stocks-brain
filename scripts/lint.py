@@ -9,6 +9,7 @@ import re
 import sys
 from datetime import date
 from pathlib import Path
+from urllib.parse import urlsplit
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _common import (  # noqa: E402
@@ -35,6 +36,13 @@ EXTERNAL_URL = re.compile(r"(?:https?:)?//[a-z0-9.-]+\.[a-z]{2,}", re.I)
 # Plain links are fine (e.g. "edit on GitHub"); scripts, styles and fonts must be bundled.
 # Outbound link targets the site may build (never fetched): repo, library videos, the People tab's X and SEC 13F links.
 SITE_URL_ALLOW = {"http://www.w3.org/2000/svg", "https://github.com", "https://www.youtube.com", "https://x.com", "https://www.sec.gov"}
+SITE_HOST_ALLOW = {urlsplit(a).netloc.lower() for a in SITE_URL_ALLOW}  # exact hosts: "x.co" must not pass as a prefix of "x.com"
+PRICE_LIKE = re.compile(r"(\$|USD\s?|US\$)\s?\d|\d[\d,.]*\s?(dollars|per share)\b", re.I)
+
+
+def site_url_allowed(url: str) -> bool:
+    """True when a URL found in site sources points at an allowed host (compared exactly, never as a prefix)."""
+    return urlsplit(url if url.startswith("//") or "://" in url[:8] else "https:" + url).netloc.lower() in SITE_HOST_ALLOW
 MODEL_PORTFOLIO_FILES = {"data/market/longrun.json", "data/market/rules.json", "data/portfolio/paper.json", "data/portfolio/paper_rules.json"}
 SITE_SOURCES = ("site/src/", "site/public/", "site/index.html", "site/vite.config.js")
 BRAIN_WORKFLOW = ".claude/workflows/brain.js"  # the saved workflow a claude_routine runs by name
@@ -168,11 +176,15 @@ class Lint:
                 self.err(path, f"call {c['id']}: date {c['date']} is in the future")
             if not c["id"].startswith(c["date"] + "-"):
                 self.err(path, f"call {c['id']}: id must start with its date {c['date']}")
+        call_texts = [(f"call {c['id']}", c[k]) for c in pc["calls"] for k in ("what", "note") if c.get(k)]
         texts = [*((f"person {p['id']}", p[k]) for p in pc["people"] for k in ("learn", "caution")),
-                 *((f"call {c['id']}", c["what"]) for c in pc["calls"]), *(("evidence", e["claim"]) for e in pc["evidence"])]
+                 *call_texts, *(("evidence", e["claim"]) for e in pc["evidence"])]
         for where, text in texts:
             if text.count('"') >= 2:
                 self.err(path, f"{where}: looks like a quotation; paraphrase in our own words")
+        for where, text in call_texts:  # the repo is public: derived returns only, never a price
+            if PRICE_LIKE.search(text):
+                self.err(path, f"{where}: looks like a price; describe the action, not the price")
         follow = {h.lstrip("@").lower() for s in (src or {}).get("sources", []) if s["id"] == "x_accounts" for h in s["follow"]}
         for p in pc["people"]:
             if src and p["x_handle"] and p["x_handle"].lower() not in follow:
@@ -481,7 +493,7 @@ class Lint:
             if rel.as_posix().startswith(SITE_SOURCES):
                 for m in EXTERNAL_URL.finditer(text):
                     url = m.group(0)
-                    if not any(a.startswith(url) for a in SITE_URL_ALLOW):
+                    if not site_url_allowed(url):
                         self.err(path, f"external URL {url!r}; the site must be self-contained")
         if data_bytes > max_data * 1024 * 1024:
             self.err("data/", f"data+runs+samples total {data_bytes / 1e6:.1f} MB > {max_data} MB")

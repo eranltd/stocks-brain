@@ -199,13 +199,13 @@
       "max_cost_usd": 0,
       "inputs": [
         "config/people.json",
-        "data/market/longrun.json"
+        ".cache/prices (daily closes, never published)"
       ],
       "outputs": [
         "data/people/scores.json"
       ],
       "human_gate": false,
-      "why": "Learn from them, but measure them. Each dated public call of a person we follow is scored against the S&P 500 core from the first weekly close after it became public, over 13, 26 and 52 weeks. Fewer than ten half-year-old calls proves nothing."
+      "why": "Learn from them, but measure them. Each dated public call of a person we follow is scored against the S&P 500 core from the first trading day after it became public, over 13, 26 and 52 weeks. Fewer than ten half-year-old calls proves nothing."
     },
     {
       "id": "news_social_digest",

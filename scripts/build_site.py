@@ -93,20 +93,20 @@ def main() -> int:
     paper = DATA / "portfolio" / "paper.json"
     if price_source == "live" and paper.exists():
         _copy(paper, OUT / "portfolio" / "paper.json")
-    # People we learn from: their calls' scores, same source rule as prices (computed from the sample lines in sample mode).
+    # People we learn from: their calls' scores, same source rule as prices (computed from the sample closes in sample mode).
     people_scores = None
     people_cfg = CONFIG / "people.json"
     if people_cfg.exists():
         if price_source == "live" and (DATA / "people" / "scores.json").exists():
             _copy(DATA / "people" / "scores.json", OUT / "people" / "scores.json")
             people_scores = "people/scores.json"
-        elif price_source == "sample" and (OUT / "market" / "longrun.json").exists():
-            import people as pp
+        elif price_source == "sample":
+            import routines_code
             from _common import watchlist
-            doc = pp.compute_scores(load_json(people_cfg), load_json(OUT / "market" / "longrun.json"),
-                                    {s["symbol"] for s in watchlist()["symbols"]})
-            dump_json(OUT / "people" / "scores.json", doc)
-            people_scores = "people/scores.json"
+            doc = routines_code.compute_people(SAMPLES / "prices", load_json(people_cfg), watchlist(), sample=True)
+            if doc:
+                dump_json(OUT / "people" / "scores.json", doc)
+                people_scores = "people/scores.json"
     kb = {}
     # Curated knowledge (library, observations) is always the real file once it has content.
     def curated(name: str, key: str) -> Path:

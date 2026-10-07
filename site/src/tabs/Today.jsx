@@ -4,7 +4,7 @@ import { cap, fmtDate, fmtNum, fmtPct, pad2 } from "../lib/format.js";
 import { BriefSections, marketBrief } from "../components/brief.jsx";
 import { BaseRates, GoalSection, MarketContext, PortfolioNow, nextRebalance } from "../components/goal.jsx";
 import { STAGES, TrustLadder, trustStage } from "../components/trust.jsx";
-import { callsTouching, shortVia } from "../lib/people.js";
+import { callsTouching, joinCalls, shortVia, statusPhrase } from "../lib/people.js";
 import { Accent, ArrowRight, Chip, Container, Conviction, Headline, Reveal, SectionHead } from "../components/ui.jsx";
 
 const TONE = { bullish: "var(--accent)", bearish: "var(--down)", neutral: "var(--flat)" };
@@ -50,8 +50,9 @@ export default function Today({ data, go }) {
 
 /** One line linking to People when a logged public call touches a name the paper record holds or the brain picked. */
 function PeopleNote({ data, go }) {
-  const calls = data.people?.calls ?? [];
+  const calls = joinCalls(data.people, data.peopleScores);
   if (!calls.length) return null;
+  const judge = data.peopleScores?.judge_at_weeks ?? 26;
   const paper = data.paper && !data.paper.sample ? data.paper : null;
   const held = paper?.rebalances.at(-1)?.holdings ?? (data.livePrices ? data.longrun?.now.holdings : null) ?? [];
   const picked = data.sample ? [] : (data.lastOk?.picks ?? []).map((p) => p.pick.ticker);
@@ -64,7 +65,7 @@ function PeopleNote({ data, go }) {
         <p className="text-[15px] leading-relaxed text-ink-2">
           {touching.length === 1 ? "A logged public call touches" : `${touching.length} logged public calls touch`} names held or picked here:{" "}
           {touching.map((c, i) => (
-            <span key={c.id}>{i ? "; " : ""}<span className="font-mono text-ink">{c.ticker}</span> {c.stance} by {shortVia(c.via)}, public {fmtDate(c.date).replace(/^\w+, /, "")}</span>
+            <span key={c.id}>{i ? "; " : ""}<span className="font-mono text-ink">{c.ticker}</span> {c.stance} by {shortVia(c.via)} ({c.source_kind === "13f" ? "13F filed" : "public"} {fmtDate(c.date).replace(/^\w+, /, "")}): {statusPhrase(c, judge)}</span>
           ))}. Context only: each is scored against the core.
         </p>
       </div>

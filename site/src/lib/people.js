@@ -9,15 +9,23 @@ export function shortVia(via) {
     .trim();
 }
 
-/** Who shows their moves (a 13F filer we follow), who teaches, and whose principles we keep. */
+/** Investors we follow, teachers (teacher, educator or writer, by their kind), and whose principles we keep. */
 export function groupPeople(people) {
   const groups = { investors: [], teachers: [], principles: [] };
   for (const p of people ?? []) {
     if (p.status === "principles_only") groups.principles.push(p);
-    else if (p.holdings_13f) groups.investors.push(p);
+    else if (p.kind === "investor") groups.investors.push(p);
     else groups.teachers.push(p);
   }
   return groups;
+}
+
+/** A call the config marks as the firm's own (credit_person false) is never credited to the person. */
+export const isFirmCall = (c) => c?.credit_person === false;
+
+/** Who made the call, as shown: the fund for the firm's own calls, else the person. */
+export function callerName(c, person) {
+  return isFirmCall(c) ? shortVia(c.via) : person?.name ?? c.person;
 }
 
 export const edgarUrl = (cik) => `https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=${cik}&type=13F-HR`;
@@ -30,10 +38,16 @@ export function ownLinks(p) {
 
 const plural = (n, one, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 
-/** One plain line for a person's record, e.g. "3 calls logged, 2 half a year old: too few to judge (needs 10)". */
-export function recordLine(person, rec, judgeWeeks = 26, minMatured = 10) {
+/**
+ * One plain line for a person's record, e.g. "3 calls logged, 2 half a year old: too few to judge (needs 10)".
+ * firmCalls: calls on this person's fund that are the firm's own (scored for the fund, never for the person).
+ */
+export function recordLine(person, rec, judgeWeeks = 26, minMatured = 10, firmCalls = []) {
   if (person.status === "principles_only") return "Principles only: no calls to score.";
-  if (!rec || !rec.n) return "No calls logged yet.";
+  if (!rec || !rec.n) {
+    if (firmCalls.length) return `${plural(firmCalls.length, `${shortVia(firmCalls[0].via)} call`)} logged, scored as the firm's, not as personal picks.`;
+    return "No calls logged yet.";
+  }
   const age = judgeWeeks === 26 ? "half a year old" : `${judgeWeeks} weeks old`;
   const head = `${plural(rec.n, "call")} logged, ${rec.matured_26w} ${age}`;
   if (!rec.enough) return `${head}: too few to judge (needs ${minMatured}).`;
@@ -47,6 +61,16 @@ export function callStatus(c, judgeWeeks = 26) {
   const leg = c[`w${judgeWeeks}`];
   if (leg) return leg.right ? { kind: "right", label: "right" } : { kind: "wrong", label: "wrong" };
   return { kind: "maturing", label: "maturing", detail: `${c.weeks_since ?? 0} of ${judgeWeeks} weeks` };
+}
+
+/** Where a call stands, in words, e.g. "judged wrong at 26 weeks, −20.1% for the call vs the core". */
+export function statusPhrase(c, judgeWeeks = 26) {
+  const st = callStatus(c, judgeWeeks);
+  const leg = c[`w${judgeWeeks}`];
+  const pct = (v) => `${v >= 0 ? "+" : "−"}${Math.abs(v).toFixed(1)}%`;
+  if (st.kind === "right" || st.kind === "wrong") return `judged ${st.kind} at ${judgeWeeks} weeks, ${pct(leg.signed_excess_pct)} for the call vs the core`;
+  if (st.kind === "maturing") return `maturing, ${st.detail}`;
+  return st.detail ? `not scored: ${st.detail}` : "not scored";
 }
 
 /** Logged calls on any of the given tickers, newest first. */

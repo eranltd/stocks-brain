@@ -729,10 +729,37 @@ def run_ledger() -> None:
 
 # ------------------------------------------------------- people we learn from
 
-def run_people() -> None:
-    """Score every public call in config/people.json on the published weekly lines (data/market/longrun.json)."""
+def people_series(prices_dir: Path, wl: dict, tickers: set[str]) -> tuple[dict, str] | None:
+    """Daily closes of the core and the called names on the core's trading days, each list as long as the dates
+    (None before a name's history begins). Raw closes stay in memory; only percentages are ever written."""
+    import market as mk
+    core = (wl.get("core") or {}).get("symbol")
+    core_bars = _bars(prices_dir, core) if core else []
+    if not core_bars:
+        return None
+    dates = [b["date"] for b in core_bars]
+    closes = mk.align_tail({core: core_bars, **{t: _bars(prices_dir, t) for t in tickers if t != core}}, dates)
+    if len(closes.get(core, [])) != len(dates):
+        return None
+    n = len(dates)
+    members = {t: [None] * (n - len(v)) + v for t, v in closes.items() if t != core}
+    return {"dates": dates, "core": closes[core], "members": members}, core
+
+
+def compute_people(prices_dir: Path, cfg: dict, wl: dict, sample: bool) -> dict | None:
     import people as pp
-    cfg_path, lr_path = CONFIG / "people.json", MARKET / "longrun.json"
+    on_list = {s["symbol"] for s in wl["symbols"]}
+    got = people_series(prices_dir, wl, {c["ticker"] for c in cfg["calls"] if c["ticker"] in on_list})
+    if not got:
+        return None
+    series, core = got
+    return pp.compute_scores(cfg, series, on_list, core=core, sample=sample)
+
+
+def run_people() -> None:
+    """Score every public call in config/people.json on the daily closes (fixed trading days, never re-gridded)."""
+    import people as pp
+    cfg_path = CONFIG / "people.json"
     if not cfg_path.exists():
         print("people: no config/people.json yet, nothing to score")
         return
@@ -740,10 +767,9 @@ def run_people() -> None:
     errs = Validator().validate(cfg, "people.schema.json")
     if errs:
         raise SystemExit(f"people: config/people.json fails its schema (nothing written): {errs[:5]}")
-    if not lr_path.exists():
-        raise SystemExit("people: no data/market/longrun.json (run the portfolio_rule step first)")
-    longrun = load_json(lr_path)
-    doc = pp.compute_scores(cfg, longrun, {s["symbol"] for s in watchlist()["symbols"]})
+    doc = compute_people(PRICES, cfg, watchlist(), sample=False)
+    if not doc:
+        raise SystemExit("people: no daily closes for the core (run fetch_prices first)")
     _write(DATA / "people" / "scores.json", doc, "people_scores.schema.json")
     print(*pp.summarize(doc), sep="\n")
 

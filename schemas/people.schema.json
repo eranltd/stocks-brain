@@ -70,6 +70,7 @@
           "stance": {"enum": ["bullish", "bearish"]},
           "what": {"type": "string", "minLength": 10, "maxLength": 160},
           "note": {"type": "string", "minLength": 3, "maxLength": 200},
+          "credit_person": {"type": "boolean", "description": "false when the call is the firm's move, not the named person's own: it is scored for the fund only and never credited to the person"},
           "source_kind": {"enum": ["13f", "letter", "memo", "interview", "post"]},
           "source_url": {"$ref": "#/$defs/url"}
         }

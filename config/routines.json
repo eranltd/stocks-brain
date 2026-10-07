@@ -1,7 +1,7 @@
 {
   "version": "0.7.0",
   "updated_at": "2026-10-07",
-  "change_note": "Score the public calls of the people we learn from (score_people); the brain fires at 05:47 and 11:47 UTC so a late data run is still caught.",
+  "change_note": "Score the public calls of the people we learn from (score_people); the brain fires at 05:23 and 11:23 UTC so a late data run is still caught.",
   "timezone": "UTC",
   "routines": [
     {
@@ -49,7 +49,7 @@
       "id": "close_run",
       "name": "Daily brain run",
       "cadence": "daily",
-      "cron": "47 5,11 * * 2-6",
+      "cron": "23 5,11 * * 2-6",
       "runner": "claude_routine",
       "status": "active",
       "milestone": "M3",

@@ -47,9 +47,14 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   and 13F filings when confirmed), their calls with how each did against the core so far and at 13, 26 and 52 weeks,
   what is connected and how to add someone. A person's record reads "too few to judge" until ten of their calls are
   half a year old. Today shows one line when a logged call touches a name the paper record holds or the brain picked.
-- **The brain fires at 05:47 and 11:47 UTC** (routine `close_run`, was 04:47). The daily data run has been starting
+- **The brain fires at 05:23 and 11:23 UTC** (routine `close_run`, was 04:47). The daily data run has been starting
   about three hours late (around 02:40 to 03:20 UTC instead of 23:40), so the morning firing could find no new close.
   The second firing catches a late data run; when the day is already recorded it stops before calling the model.
+- **The routine wakes one dedicated session, not a fresh one each time.** The first live test (07 Oct) ran the brain
+  to the end, but a fresh session per firing had no GitHub access, so it could not dispatch `brain.yml` and nothing
+  was recorded. The routine now wakes a dedicated Claude Code session that has this repository and its GitHub access
+  attached; it starts again from step 1 of `prompts/daily_brain_routine.md` every morning. The brain's summary is now
+  asked to stay well under the six-hundred-character limit (the test run went nine characters over and had to trim).
 
 ## 2026-10-06
 - **The brain runs every market morning by itself** (routine `close_run`, now active). The household asked for it to

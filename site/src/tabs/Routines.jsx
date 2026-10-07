@@ -21,7 +21,7 @@ const NOTE = {
 };
 // A plainer schedule label where the cron alone would mislead (a Tue–Sat UTC cron covers the Mon–Fri US market days).
 const WHEN = {
-  close_run: "Morning after each US trading day (Mon–Fri) · 05:47 UTC, retry 11:47",
+  close_run: "Morning after each US trading day (Mon–Fri) · 05:23 UTC, retry 11:23",
 };
 
 function when(r) {

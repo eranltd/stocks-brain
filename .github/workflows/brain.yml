@@ -1,6 +1,6 @@
 name: brain
 
-# Records one brain run (routine close_run). The brain runs by itself every market morning (Tue-Sat 05:47 and 11:47 UTC, after the
+# Records one brain run (routine close_run). The brain runs by itself every market morning (Tue-Sat 05:23 and 11:23 UTC, after the
 # Mon-Fri closes) as a scheduled Claude Code routine on the household's Claude subscription: the session follows
 # prompts/daily_brain_routine.md, builds the pack from the published data, runs the saved workflow .claude/workflows/brain.js
 # (prompts/brain.md), and dispatches this workflow with its output. It can still be dispatched by hand the same way.

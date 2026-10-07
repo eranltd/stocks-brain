@@ -98,8 +98,8 @@ python3 scripts/routines_code.py all          # score, regime, calibration
 
 ## The daily brain (Claude routine)
 
-The brain runs by itself Tuesday to Saturday at 05:47 UTC, after the Monday to Friday closes are published, and fires
-again at 11:47 UTC in case the data run was late (a day already recorded is skipped). It is a scheduled Claude Code routine on the household's Claude subscription (no API key, no new dependency). The session
+The brain runs by itself Tuesday to Saturday at 05:23 UTC, after the Monday to Friday closes are published, and fires
+again at 11:23 UTC in case the data run was late (a day already recorded is skipped). It is a scheduled Claude Code routine on the household's Claude subscription (no API key, no new dependency). The session
 follows `prompts/daily_brain_routine.md`:
 
 ```bash

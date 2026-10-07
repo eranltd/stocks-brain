@@ -1,7 +1,7 @@
 ---
 version: 0.10.0
 updated_at: 2026-10-07
-change_note: People we learn from - each dated public call is scored against the core from fixed trading days; the brain fires at 05:47 and 11:47 UTC.
+change_note: People we learn from - each dated public call is scored against the core from fixed trading days; the brain fires at 05:23 and 11:23 UTC.
 ---
 # Methodology
 
@@ -11,7 +11,7 @@ change_note: People we learn from - each dated public call is scored against the
    All symbols must fetch and validate, or nothing is written.
 2. **build_pack**: docs, prices and recent runs go into one JSON pack. The run stops if the pack exceeds `pack.token_cap`.
 3. **brain** (routine `close_run`): a scheduled Claude Code session on the household's Claude subscription, Tuesday to
-   Saturday at 05:47 UTC and again at 11:47 UTC in case the data run was late (after the Monday to Friday closes are
+   Saturday at 05:23 UTC and again at 11:23 UTC in case the data run was late (after the Monday to Friday closes are
    published), follows `prompts/daily_brain_routine.md`. It
    restores the published data, builds the pack, and stops if `scripts/brain_status.py` says that market day's run already
    exists (so holidays are skipped). Otherwise it runs the saved workflow `.claude/workflows/brain.js` (`prompts/brain.md`:

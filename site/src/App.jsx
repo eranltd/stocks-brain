@@ -4,6 +4,7 @@ import { loadAll } from "./lib/data.js";
 import { Field, Footer, Header, Loader, MobileNav } from "./components/shell.jsx";
 import { Container } from "./components/ui.jsx";
 import Today from "./tabs/Today.jsx";
+import Details from "./tabs/Details.jsx";
 import Portfolio from "./tabs/Portfolio.jsx";
 import Playbook from "./tabs/Playbook.jsx";
 import People from "./tabs/People.jsx";
@@ -20,6 +21,7 @@ import Stock from "./tabs/Stock.jsx";
 
 const TABS = [
   { id: "today", label: "Today", C: Today },
+  { id: "details", label: "Full dashboard", C: Details },
   { id: "portfolio", label: "Portfolio", C: Portfolio },
   { id: "playbook", label: "Playbook", C: Playbook },
   { id: "people", label: "People", C: People },

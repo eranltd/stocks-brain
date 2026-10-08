@@ -1,233 +1,246 @@
-import { addTradingDays } from "../lib/data.js";
-import { daysBetween } from "../lib/stats.js";
-import { cap, fmtDate, fmtNum, fmtPct, pad2 } from "../lib/format.js";
-import { BriefSections, marketBrief } from "../components/brief.jsx";
-import { BaseRates, GoalSection, MarketContext, PortfolioNow, nextRebalance } from "../components/goal.jsx";
-import { STAGES, TrustLadder, trustStage } from "../components/trust.jsx";
-import { callsTouching, joinCalls, shortVia, statusPhrase } from "../lib/people.js";
-import { Accent, ArrowRight, Chip, Container, Conviction, Headline, Reveal, SectionHead } from "../components/ui.jsx";
+import { fmtDate, fmtNum, fmtPct, numWord, relDays } from "../lib/format.js";
+import { marketBrief } from "../components/brief.jsx";
+import { STAGES } from "../components/trust.jsx";
+import { nextRebalance } from "../components/goal.jsx";
+import { ArrowRight, Reveal } from "../components/ui.jsx";
+import { todayCall } from "./Details.jsx";
 
-const TONE = { bullish: "var(--accent)", bearish: "var(--down)", neutral: "var(--flat)" };
+const STANCE = {
+  bullish: { word: "Leaning up", tone: "var(--accent)" },
+  bearish: { word: "Leaning down", tone: "var(--down)" },
+  neutral: { word: "Just watching", tone: "var(--flat)" },
+};
+const CONFIDENCE = { low: "low confidence", medium: "medium confidence", high: "high confidence" };
+
+const firstSentence = (t) => (t.match(/^.*?[.!?](\s|$)/) || [t])[0].trim();
+const plural = (n, one, many) => (n === 1 ? one : many);
 
 /**
- * Home: the decision first. Verdict (computed from the trust stage, data freshness and the rule),
- * then the goal check, the portfolio, market context, whether the rules work, and the trust ladder.
+ * Home: one short, plain-language post. Hi, today is X, the last run was Y, here is what the market did,
+ * what we learned, and what we should do. Everything is computed or copied from the data; the full
+ * dashboard (old home page) lives under "Full dashboard".
  */
 export default function Today({ data, go }) {
+  const call = todayCall(data);
   const brief = marketBrief(data);
   const run = data.sample ? null : data.lastOk;
+  const todayIso = new Date().toISOString().slice(0, 10);
   return (
-    <>
-      <section className="relative isolate -mt-[76px] overflow-hidden pt-[76px]">
-        {/* Decoration must not show fake calls: the wall shows real library principles. */}
-        <HeroWall items={libraryWall(data.library)} />
-        <Container className="flex min-h-[82vh] flex-col items-center justify-center py-20 text-center">
-          <Verdict data={data} go={go} />
-        </Container>
-      </section>
-      <Container>
-        <GoalSection data={data} />
-        <PortfolioNow data={data} go={go} />
-        <PeopleNote data={data} go={go} />
-        <MarketContext data={data} />
-        <BaseRates data={data} />
-        <div className="pt-24"><TrustLadder data={data} go={go} /></div>
-        <BriefSections data={data} brief={brief} go={go} />
-        {run && run.picks.length > 0 && (
-          <section id="picks" className="scroll-mt-28 pt-24">
-            <SectionHead eyebrow={`The brain · ${fmtDate(run.date)}`} title={<>What the brain <Accent>flagged.</Accent></>}
-              lede="The brain runs by itself every market morning. Each pick is a stance, a thesis and the condition that would prove it wrong. Code scores it after the horizon." size="md" />
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-              {run.picks.map((p, i) => <PickCard key={p.id} item={p} i={i} name={data.names[p.pick.ticker]} horizon={data.settings.scoring.horizon_days} />)}
-            </div>
-          </section>
-        )}
-        <p className="meta mt-20 normal-case tracking-[0.04em]">A research notebook for one household, not financial advice. Every number on this page is computed by code from public market data.</p>
-      </Container>
-    </>
+    <div className="mx-auto w-full max-w-[560px] px-4 pb-24 pt-6 sm:pt-10">
+      <PostHeader data={data} todayIso={todayIso} />
+      <div className="mt-5 grid gap-5">
+        <Hello data={data} call={call} run={run} todayIso={todayIso} />
+        <WhatToDo data={data} call={call} />
+        <MarketToday data={data} />
+        <Learned data={data} call={call} brief={brief} run={run} />
+        {run && run.picks.length > 0 && <BrainNotes data={data} run={run} />}
+      </div>
+      <Reveal className="mt-8 grid gap-3 text-center">
+        <button type="button" onClick={() => go("details")} className="btn btn-primary justify-center">See the full dashboard <ArrowRight /></button>
+        <button type="button" onClick={() => go("portfolio")} className="btn justify-center">The portfolio <ArrowRight /></button>
+        <p className="meta mt-6 normal-case tracking-[0.04em]">A research notebook for one household, not financial advice. Every number here is computed by code from public market data.</p>
+      </Reveal>
+    </div>
   );
 }
 
-/** One line linking to People when a logged public call touches a name the paper record holds or the brain picked. */
-function PeopleNote({ data, go }) {
-  const calls = joinCalls(data.people, data.peopleScores);
-  if (!calls.length) return null;
-  const judge = data.peopleScores?.judge_at_weeks ?? 26;
-  const paper = data.paper && !data.paper.sample ? data.paper : null;
-  const held = paper?.rebalances.at(-1)?.holdings ?? (data.livePrices ? data.longrun?.now.holdings : null) ?? [];
-  const picked = data.sample ? [] : (data.lastOk?.picks ?? []).map((p) => p.pick.ticker);
-  const touching = callsTouching(calls, [...held, ...picked]);
-  if (!touching.length) return null;
+/* ------------------------------------------------------------------ post chrome */
+
+function PostHeader({ data, todayIso }) {
   return (
-    <Reveal className="card mt-8 flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
-      <div className="min-w-0">
-        <div className="meta mb-2 text-people">People we learn from</div>
-        <p className="text-[15px] leading-relaxed text-ink-2">
-          {touching.length === 1 ? "A logged public call touches" : `${touching.length} logged public calls touch`} names held or picked here:{" "}
-          {touching.map((c, i) => (
-            <span key={c.id}>{i ? "; " : ""}<span className="font-mono text-ink">{c.ticker}</span> {c.stance} by {shortVia(c.via)} ({c.source_kind === "13f" ? "13F filed" : "public"} {fmtDate(c.date).replace(/^\w+, /, "")}): {statusPhrase(c, judge)}</span>
-          ))}. Context only: each is scored against the core.
-        </p>
+    <header className="flex items-center gap-3">
+      <span className="grid size-11 shrink-0 place-items-center rounded-full border-2 border-accent/60 bg-surface font-mono text-[15px] font-medium text-accent" aria-hidden="true">sb</span>
+      <div className="min-w-0 flex-1">
+        <div className="text-[15px] leading-tight font-semibold">stocks·brain</div>
+        <div className="meta normal-case tracking-[0.04em]">{data.sample ? "Sample data" : "Daily note"}</div>
       </div>
-      <button type="button" onClick={() => go("people")} className="btn shrink-0 self-start sm:self-center">Their calls <ArrowRight /></button>
+      <time dateTime={todayIso} className="meta shrink-0">{fmtDate(todayIso)}</time>
+    </header>
+  );
+}
+
+/** One square-ish "slide" of the post: a kicker, a big line, then the body. */
+function Slide({ n, of, kicker, tone = "var(--accent)", delay = 0, children }) {
+  return (
+    <Reveal delay={delay} as="article" className="card overflow-hidden" style={{ "--tone": tone }}>
+      <div className="h-1.5" style={{ background: tone }} />
+      <div className="p-6 sm:p-8">
+        <div className="mb-5 flex items-center justify-between">
+          <span className="meta" style={{ color: tone }}>{kicker}</span>
+          <span className="meta">{n} / {of}</span>
+        </div>
+        {children}
+      </div>
     </Reveal>
   );
 }
 
-const VERDICT_WORD = { passes_history: "passes history", candidate: "candidate", inconclusive: "inconclusive", rejected: "rejected" };
+const Big = ({ children }) => <h2 className="display text-[clamp(30px,8vw,40px)] leading-[1.05] tracking-[-0.03em]">{children}</h2>;
+const Para = ({ children, className = "" }) => <p className={`text-[16.5px] leading-relaxed text-ink-2 ${className}`}>{children}</p>;
+const Ink = ({ children }) => <span className="text-ink">{children}</span>;
 
-function Verdict({ data, go }) {
-  const { stage, small } = trustStage(data);
-  const asOf = data.market.as_of;
-  const age = daysBetween(asOf, new Date().toISOString().slice(0, 10));
-  const stale = age > 4;
-  const lr = data.longrun;
-  const paper = data.paper && !data.paper.sample ? data.paper : null;
-  // The forward paper record is what the household follows; the history test's path can differ (it keeps names it already held).
-  const rec = paper?.rebalances.at(-1) ?? null;
-  const held = rec ? rec.holdings : (lr?.now.holdings ?? []);
-  const corePct = rec ? rec.core_pct : (lr?.now.diversification.core_pct ?? 100);
-  const met = small.filter((c) => c.ok).length;
-  const rebalanceToday = stage >= 2 && rec?.date === asOf;
-  const v1res = data.rulesResult?.satellite?.rules?.find((r) => r.id === "baseline_portfolio_v1"); // the frozen history verdict
-
-  let head, accent;
-  if (stale) [head, accent] = ["Data is stale.", "Don't act on it."];
-  else if (rebalanceToday) [head, accent] = ["Rebalance day.", "Follow the rule, nothing more."];
-  else [head, accent] = ["Nothing to do today.", stage >= 2 ? "Hold the portfolio." : "The core plan stands."];
-
+function Fact({ label, value, note }) {
   return (
-    <>
-      <Reveal>
-        <span className={`pill mb-10 ${stale ? "border-down/50 text-down" : data.livePrices ? "border-accent/40 text-accent" : "border-dashed border-people/60 text-people"}`}>
-          <span className="size-2 rounded-full bg-current" />
-          {data.livePrices ? "Market close" : "Sample prices"} · {fmtDate(asOf)}{stale ? ` · ${age} days old` : ""}
-        </span>
-      </Reveal>
-      <Headline size="xl" className="max-w-[15ch]">{head} <Accent>{accent}</Accent></Headline>
-      <Reveal delay={350} as="p" className="mx-auto mt-8 max-w-[58ch] text-[clamp(17px,1.8vw,21px)] leading-relaxed text-ink-2">
-        {stale ? (
-          <>The newest market close in the data is {fmtDate(asOf)}. The daily routine may have failed; check Routines before reading anything else.</>
-        ) : (
+    <div className="flex items-baseline justify-between gap-4 border-t border-line py-3 first:border-0 first:pt-0">
+      <div className="min-w-0">
+        <div className="text-[15px] text-ink">{label}</div>
+        {note && <div className="meta mt-0.5 normal-case tracking-[0.03em]">{note}</div>}
+      </div>
+      <div className="shrink-0 text-right text-[15px] font-medium text-ink">{value}</div>
+    </div>
+  );
+}
+
+const SLIDES = 5;
+
+/* ------------------------------------------------------------------ 1. hello */
+
+function Hello({ data, call, run, todayIso }) {
+  const lastRun = data.latest?.date ?? null;
+  const asOf = call.asOf;
+  return (
+    <Slide n={1} of={SLIDES} kicker="Hello">
+      <Big>Hi! Today is <span className="text-accent">{fmtDate(todayIso).replace(/\s\d{4}$/, "")}.</span></Big>
+      <div className="mt-6">
+        <Fact label="Last market close we have" value={fmtDate(asOf).replace(/\s\d{4}$/, "")} note={call.stale ? `${call.age} days old: the daily update may have failed` : relDays(asOf)} />
+        <Fact label="Last time the brain ran" value={lastRun ? fmtDate(lastRun).replace(/\s\d{4}$/, "") : "Not yet"} note={lastRun ? relDays(lastRun) : null} />
+        {run && <Fact label="What it flagged" value={`${numWord(run.picks.length).toLowerCase()} ${plural(run.picks.length, "name", "names")}`} note="Details in note 5" />}
+      </div>
+      {call.stale && <Para className="mt-5 text-down">The data is stale. Please don't act on anything below until the daily update runs again.</Para>}
+    </Slide>
+  );
+}
+
+/* ------------------------------------------------------------------ 2. what to do */
+
+function WhatToDo({ data, call }) {
+  const { stage, small, met, held, corePct, rec, lr, asOf, head, accent, stale } = call;
+  const tone = stale ? "var(--down)" : "var(--accent)";
+  const hasRule = Boolean(lr || rec);
+  return (
+    <Slide n={2} of={SLIDES} kicker="What should we do?" tone={tone} delay={60}>
+      <Big>{head} <span style={{ color: tone }}>{accent}</span></Big>
+      {!stale && (
+        <Para className="mt-5">
+          {hasRule && (
+            <>
+              The practice portfolio holds <Ink>{held.length ? held.join(", ") : "no single stocks"}</Ink>
+              {corePct > 0 ? <> and <Ink>{fmtNum(corePct, 0)}%</Ink> in a plain index fund</> : null}. It takes its next look on <Ink>{fmtDate(nextRebalance(asOf))}</Ink>.{" "}
+            </>
+          )}
+          {stage >= 2
+            ? <>We are at trust stage {stage}: {STAGES[stage].money.toLowerCase()}, within the house limits.</>
+            : <>No real money moves yet. We first need <Ink>{numWord(small.length).toLowerCase()} conditions</Ink> met to trust the plan, and <Ink>{met} of {small.length}</Ink> are so far.</>}
+        </Para>
+      )}
+      <div className="mt-6 rounded-2xl border border-line-2 bg-surface-2 p-4 text-[14px] leading-relaxed text-ink-2">
+        <span className="text-ink">In short:</span> keep the savings in the index fund. Anything else is a practice run on paper.
+      </div>
+    </Slide>
+  );
+}
+
+/* ------------------------------------------------------------------ 3. the market */
+
+function MarketToday({ data }) {
+  const ctx = data.market.context;
+  const spx = ctx?.instruments?.find((i) => i.role === "spx");
+  const part = ctx?.participation_spx ?? ctx?.participation_ndx;
+  const reg = data.regime;
+  const trendWord = reg ? (reg.trend === "up" ? "going up" : reg.trend === "down" ? "going down" : "moving sideways") : null;
+  const calm = reg ? (reg.state === "normal" ? "calm" : reg.state === "stressed" ? "jumpy" : reg.state) : null;
+  return (
+    <Slide n={3} of={SLIDES} kicker={`The market · close of ${fmtDate(data.market.as_of).replace(/\s\d{4}$/, "")}`} tone="var(--ai)" delay={120}>
+      <Big>
+        {reg ? <>The market is <span style={{ color: "var(--ai)" }}>{calm}, {trendWord}.</span></> : <>Here is the market <span style={{ color: "var(--ai)" }}>today.</span></>}
+      </Big>
+      <div className="mt-6">
+        {spx && (
           <>
-            {lr || rec ? <>{rec ? "The rule's paper portfolio holds" : "The rule would hold"} <span className="text-ink">{held.length ? held.join(", ") : "no stocks"}</span>{corePct > 0 ? <> and {fmtNum(corePct, 0)}% index fund</> : null}; it next looks on {fmtDate(nextRebalance(asOf))}. {v1res ? <>On past prices its Playbook test reads <span className="text-ink">{VERDICT_WORD[v1res.verdict] ?? v1res.verdict}</span>: it beat {fmtNum(v1res.percentile, 0)}% of random picks from the same list. </> : null}</> : null}
-            {stage >= 2 ? <>Trust stage {stage}: {STAGES[stage].money.toLowerCase()}, within the house limits.</> : <>No money moves until trust stage 2: <span className="text-ink">{met} of {small.length}</span> conditions met.</>}
+            <Fact label={`${spx.name}, past month`} value={fmtPct(spx.ret_20d_pct, 1)} />
+            <Fact label={`${spx.name}, past year`} value={fmtPct(spx.ret_250d_pct, 1)} note={spx.from_high_pct >= -0.5 ? "right at its high" : `${fmtPct(spx.from_high_pct, 1)} from its high`} />
           </>
         )}
-      </Reveal>
-      <Reveal delay={500} className="mt-10 flex flex-wrap justify-center gap-3">
-        {stale ? (
-          <button type="button" onClick={() => go("routines")} className="btn btn-primary">Open routines <ArrowRight /></button>
-        ) : (
-          <a href="#goal" className="btn btn-primary">
-            The +{data.settings.goal.annual_return_pct}% goal check
-            <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M6 13l6 6 6-6" /></svg>
-          </a>
+        {ctx?.cash_yield_pct != null && <Fact label="Cash in T-bills pays" value={`${fmtNum(ctx.cash_yield_pct, 1)}% a year`} note="the bar any stock idea has to beat" />}
+      </div>
+      {part && (
+        <Para className="mt-5">
+          {part.state === "narrow"
+            ? <>A few giant companies are carrying the market. The average stock is <Ink>{fmtPct(part.eq_vs_cap_60d_pct, 1)}</Ink> against the index over 60 days, so the headline number looks stronger than most companies feel.</>
+            : part.state === "broad"
+              ? <>The rise is broad: the average stock is keeping up with the index, which is a healthier sign.</>
+              : <>The average stock is roughly keeping pace with the index, so the picture is mixed.</>}
+        </Para>
+      )}
+    </Slide>
+  );
+}
+
+/* ------------------------------------------------------------------ 4. what we learned */
+
+function Learned({ data, call, brief, run }) {
+  const br = data.market.base_rates;
+  const edge = br && br.gate.pass.ci_low != null && br.gate.pass.ci_low > 0;
+  const better = br && br.gate.pass.mean != null && br.gate.fail.mean != null && br.gate.pass.mean > br.gate.fail.mean;
+  const lesson = brief.lessons[0];
+  const titleOf = (s) => (s.title.match(/\(([^()]*)\)\s*$/) || [, s.title])[1];
+  return (
+    <Slide n={4} of={SLIDES} kicker="What we learned" tone="var(--people)" delay={180}>
+      <Big>{edge ? <>Our checks <span style={{ color: "var(--people)" }}>helped.</span></> : better ? <>A hint of help, <span style={{ color: "var(--people)" }}>nothing proven.</span></> : <>Our checks haven't <span style={{ color: "var(--people)" }}>beaten luck.</span></>}</Big>
+      <ul className="mt-6 grid gap-4 text-[16px] leading-relaxed text-ink-2">
+        {call.v1res && (
+          <li className="relative pl-5 before:absolute before:left-0 before:top-[0.7em] before:h-px before:w-3 before:bg-people">
+            On past prices, our stock-picking rule beat only <Ink>{fmtNum(call.v1res.percentile, 0)}%</Ink> of random picks from the same list. That is a test on history, not a promise.
+          </li>
         )}
-        <button type="button" onClick={() => go("portfolio")} className="btn">The portfolio <ArrowRight /></button>
-      </Reveal>
-    </>
+        {br && (
+          <li className="relative pl-5 before:absolute before:left-0 before:top-[0.7em] before:h-px before:w-3 before:bg-people">
+            {edge ? "Names that passed the checks did measurably better than the index afterwards." : better ? "Names that passed the checks did slightly better than the rest, but not by enough to trust." : "Names that passed the checks did no better than the ones that failed."}
+          </li>
+        )}
+        {run?.summary && (
+          <li className="relative pl-5 before:absolute before:left-0 before:top-[0.7em] before:h-px before:w-3 before:bg-people">
+            <span className="text-ink">The brain's own summary:</span> {run.summary}
+          </li>
+        )}
+      </ul>
+      {lesson && (
+        <figure className="mt-6 rounded-2xl border border-line-2 bg-surface-2 p-4">
+          <figcaption className="meta mb-2" style={{ color: "var(--people)" }}>A lesson that fits today · {lesson.why}</figcaption>
+          <blockquote className="text-[15px] leading-relaxed text-ink">{lesson.p.text}</blockquote>
+          <div className="meta mt-2 truncate normal-case tracking-[0.04em]" title={lesson.p.source.title}>{titleOf(lesson.p.source)}</div>
+        </figure>
+      )}
+    </Slide>
   );
 }
 
-/** Tilted wall of faded KB cards drifting in opposite directions behind the hero headline. */
-function libraryWall(library) {
-  return (library?.sources ?? []).flatMap((s) => s.principles.map((p) => ({
-    id: p.id, principle: true, title: (s.title.match(/\(([^()]*)\)\s*$/) || [, s.title])[1], text: p.text, tag: p.tags[0], date: s.published ?? String(s.year),
-  })));
-}
+/* ------------------------------------------------------------------ 5. the brain's notes */
 
-function HeroWall({ items }) {
-  const COLS = 7;
-  const pool = items.length ? items : [];
-  const columns = Array.from({ length: COLS }, (_, c) => pool.filter((_, i) => i % COLS === c).slice(0, 5));
-  if (!pool.length) return null;
+function BrainNotes({ data, run }) {
+  const picks = run.picks;
+  const watching = picks.filter((p) => p.pick.stance === "neutral").length;
   return (
-    <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
-      <div className="absolute top-1/2 left-1/2 flex w-[190%] -translate-x-1/2 -translate-y-1/2 rotate-[-13deg] gap-6 sm:w-[150%]">
-        {columns.map((col, c) => (
-          <div key={c} className={`min-w-0 flex-1 flex-col gap-6 ${c >= 4 ? "hidden sm:flex" : "flex"}`} style={{ animation: `${c % 2 ? "wall-down" : "wall-up"} ${70 + c * 9}s linear infinite` }}>
-            {[...col, ...col].map((k, i) => <WallCard key={`${k.id}-${i}`} k={k} />)}
-          </div>
-        ))}
-      </div>
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_58%_52%_at_50%_52%,var(--bg)_35%,transparent_100%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,var(--bg)_0%,transparent_18%,transparent_70%,var(--bg)_100%)]" />
-    </div>
-  );
-}
-
-function WallCard({ k }) {
-  if (k.principle) {
-    return (
-      <div className="rounded-[22px] border border-line-2 bg-surface/80 p-6 opacity-35 sm:opacity-50">
-        <div className="flex items-center justify-between">
-          <span className="font-mono text-[11px] tracking-[0.18em] text-ink-3 uppercase">{k.id}</span>
-          <span className="font-mono text-[11px] tracking-[0.14em] text-accent uppercase">{k.tag.replaceAll("_", " ")}</span>
-        </div>
-        <p className="mt-5 line-clamp-4 text-[17px] leading-snug text-ink-2">{k.text}</p>
-        <div className="mt-5 truncate font-mono text-[11px] tracking-[0.14em] text-ink-3">{k.date} · {k.title}</div>
-      </div>
-    );
-  }
-  const tone = k.stance === "bullish" ? "text-accent" : k.stance === "bearish" ? "text-down" : "text-ink-2";
-  return (
-    <div className="rounded-[22px] border border-line-2 bg-surface/80 p-6 opacity-35 sm:opacity-50">
-      <div className="flex items-center justify-between">
-        <span className="font-mono text-[11px] tracking-[0.18em] text-ink-3 uppercase">{k.id}</span>
-        <Conviction level={k.conviction} showLabel={false} />
-      </div>
-      <div className={`mt-5 font-mono text-[34px] leading-none ${tone}`}>{k.ticker}</div>
-      <p className="mt-4 line-clamp-3 text-[15px] leading-snug text-ink-2">{k.thesis}</p>
-      <div className="mt-5 flex items-center justify-between">
-        <Chip kind={k.verdict} className="py-1 text-[11px]">{k.verdict}</Chip>
-        <span className="font-mono text-[11px] tracking-[0.14em] text-ink-3">{k.date}</span>
-      </div>
-    </div>
-  );
-}
-
-export function PickCard({ item, i, name, horizon }) {
-  const { pick } = item;
-  const tone = TONE[pick.stance];
-  return (
-    <Reveal delay={i * 90} as="article" className="card card-hover group overflow-hidden" style={{ "--tone": tone }}>
-      <div className="stripes relative h-56 border-b-2 px-7 pt-6" style={{ borderColor: tone }}>
-        <div className="flex items-start justify-between">
-          <span className="display text-[96px] leading-[0.8] font-medium tracking-[-0.06em] text-ink transition-transform duration-700 group-hover:-translate-y-1">{pad2(i + 1)}</span>
-          <Conviction level={pick.conviction} />
-        </div>
-        <div className="absolute bottom-6 left-7 right-7">
-          <div className="font-mono text-[32px] leading-none font-medium tracking-[-0.02em]" style={{ color: tone }}>{pick.ticker}</div>
-          <div className="meta mt-3">{pick.stance} · {name}</div>
-        </div>
-      </div>
-      <div className="p-7">
-        <div className="flex items-center justify-between gap-3">
-          <Chip kind={pick.stance} />
-          <span className="meta">+{horizon} trading days</span>
-        </div>
-        <p className="mt-5 text-[16px] leading-relaxed text-ink">{pick.thesis}</p>
-        <div className="mt-6 grid gap-4 text-[14px]">
-          <div>
-            <div className="meta mb-2">Risks</div>
-            <ul className="grid gap-1 text-ink-2">
-              {pick.risks.map((r) => <li key={r} className="relative pl-4 before:absolute before:left-0 before:top-[0.7em] before:h-px before:w-2 before:bg-ink-3">{r}</li>)}
-            </ul>
-          </div>
-          <div>
-            <div className="meta mb-2">Wrong if</div>
-            <p className="text-ink-2">{pick.invalidation}</p>
-          </div>
-        </div>
-        <div className="mt-6 flex flex-wrap gap-1.5">
-          {pick.evidence.map((e) => <span key={e} className="rounded-full border border-line-2 px-2.5 py-1 font-mono text-[11.5px] text-ink-2">{e}</span>)}
-        </div>
-        <div className="meta mt-6 flex items-center justify-between border-t border-line pt-5">
-          <span className="text-ink">{item.ref_price != null ? <>ref <span className="num">{fmtNum(item.ref_price)}</span></> : "from the close of"}</span>
-          <span className="num">{item.ref_date} → {addTradingDays(item.ref_date, horizon)}</span>
-        </div>
-      </div>
-    </Reveal>
+    <Slide n={5} of={SLIDES} kicker={`The brain's notes · ${fmtDate(run.date).replace(/\s\d{4}$/, "")}`} delay={240}>
+      <Big>
+        {picks.length} {plural(picks.length, "name", "names")} on the list,{" "}
+        <span className="text-accent">{watching === picks.length ? "none to chase." : `${watching} just ${plural(watching, "a watch", "watches")}.`}</span>
+      </Big>
+      <ul className="mt-6 grid gap-0">
+        {picks.map(({ id, pick }) => {
+          const s = STANCE[pick.stance];
+          return (
+            <li key={id} className="border-t border-line py-4 first:border-0 first:pt-0">
+              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                <span className="font-mono text-[20px] font-medium" style={{ color: s.tone }}>{pick.ticker}</span>
+                <span className="meta" style={{ color: s.tone }}>{s.word} · {CONFIDENCE[pick.conviction]}</span>
+              </div>
+              <div className="mt-0.5 text-[13.5px] text-ink-3">{data.names[pick.ticker]}</div>
+              <p className="mt-2 text-[15px] leading-relaxed text-ink-2">{firstSentence(pick.thesis)}</p>
+            </li>
+          );
+        })}
+      </ul>
+    </Slide>
   );
 }

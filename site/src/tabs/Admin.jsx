@@ -3,7 +3,7 @@ import { Markdown, stripFrontMatter } from "../lib/markdown.jsx";
 import { cap, fmtK, fmtUsd, pad2, relDays } from "../lib/format.js";
 import { Accent, ArrowRight, Chip, Container, Reveal, SectionHead } from "../components/ui.jsx";
 
-const ORDER = ["household", "shelf", "strategy", "guardrails", "methodology", "learnings", "watchlist", "settings", "sources", "people", "routines", "library", "decisions"];
+const ORDER = ["household", "shelf", "strategy", "guardrails", "methodology", "learnings", "watchlist", "settings", "sources", "people", "outlook", "routines", "library", "decisions"];
 const ABOUT = {
   strategy: "What a pick is, and what the brain looks for.",
   guardrails: "The lines a pick never crosses.",
@@ -13,6 +13,7 @@ const ABOUT = {
   settings: "Caps, costs, horizon and benchmark.",
   sources: "Where data comes from: the connectors.",
   people: "People we learn from, the research on following them, and their dated public calls.",
+  outlook: "What's next for each company: latest quarter, its own guidance, next results date. Linked and dated.",
   routines: "The schedule: what runs when, and what it may spend.",
   library: "Principles from books and lectures.",
   decisions: "Every decision and why, plus what is still open.",
@@ -45,6 +46,7 @@ function stats(doc, data) {
     case "settings": return `pack ${fmtK(c.pack.token_cap)} · target ${fmtUsd(c.cost.target_usd)} · ${c.scoring.horizon_days}d horizon`;
     case "sources": return `${c.sources.length} connectors · ${c.sources.filter((s) => s.status === "active").length} active`;
     case "people": return `${c.people.length} people · ${c.calls.length} calls · ${c.evidence.length} findings`;
+    case "outlook": return `${c.companies.length} companies · ${c.companies.filter((x) => x.next_earnings?.date).length} results dates`;
     case "routines": return `${c.routines.length} routines · ${c.routines.filter((r) => r.uses_llm).length} use the model`;
     case "library": return `${c.sources.length} sources · ${c.sources.reduce((a, s) => a + s.principles.length, 0)} principles`;
     default: return "";

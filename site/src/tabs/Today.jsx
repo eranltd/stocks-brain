@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { addTradingDays } from "../lib/data.js";
 import { daysBetween } from "../lib/stats.js";
 import { cap, fmtDate, fmtNum, fmtPct, pad2 } from "../lib/format.js";
@@ -5,7 +6,9 @@ import { BriefSections, marketBrief } from "../components/brief.jsx";
 import { BaseRates, GoalSection, MarketContext, PortfolioNow, nextRebalance } from "../components/goal.jsx";
 import { STAGES, TrustLadder, trustStage } from "../components/trust.jsx";
 import { callsTouching, joinCalls, shortVia, statusPhrase } from "../lib/people.js";
-import { Accent, ArrowRight, Chip, Container, Conviction, Headline, Reveal, SectionHead } from "../components/ui.jsx";
+import { marketDay, shortSector } from "../lib/marketday.js";
+import { comingUp, inDays } from "../lib/outlook.js";
+import { Accent, ArrowRight, Chip, Container, Conviction, Headline, Reveal, SectionHead, Strip } from "../components/ui.jsx";
 
 const TONE = { bullish: "var(--accent)", bearish: "var(--down)", neutral: "var(--flat)" };
 
@@ -26,6 +29,8 @@ export default function Today({ data, go }) {
         </Container>
       </section>
       <Container>
+        <MarketToday data={data} go={go} />
+        <ComingUp data={data} go={go} />
         <GoalSection data={data} />
         <PortfolioNow data={data} go={go} />
         <PeopleNote data={data} go={go} />
@@ -45,6 +50,116 @@ export default function Today({ data, go }) {
         <p className="meta mt-20 normal-case tracking-[0.04em]">A research notebook for one household, not financial advice. Every number on this page is computed by code from public market data.</p>
       </Container>
     </>
+  );
+}
+
+const jumpToMarket = (e) => { e.preventDefault(); document.getElementById("market-today")?.scrollIntoView({ behavior: "smooth", block: "start" }); };
+const upDown = (v) => (v == null ? "" : v >= 0.05 ? "text-accent" : v <= -0.05 ? "text-down" : "text-ink-2"); // as shown, to one decimal
+const day = (iso) => fmtDate(iso).replace(/ \d{4}$/, ""); // "Thu, 22 Oct"
+
+/** One of the day's biggest movers on our list: tap to open its Stock page. */
+function Mover({ m, name, go }) {
+  return (
+    <li>
+      <button type="button" onClick={() => go(`stock/${m.symbol}`)} className="flex w-full min-h-[44px] items-center justify-between gap-2 rounded-xl border border-line px-3 py-2 text-left hover:border-ink-3">
+        <span className="min-w-0">
+          <span className="font-mono text-[14px] font-semibold">{m.symbol}</span>
+          <span className="block truncate text-[12px] text-ink-3">{name}</span>
+        </span>
+        <span className={`num shrink-0 font-mono text-[14px] ${upDown(m.pct)}`}>{fmtPct(m.pct, 1)}</span>
+      </button>
+    </li>
+  );
+}
+
+/** What the market did at the last close: index moves, our names' moves, sectors, and why the "why" is missing. */
+function MarketToday({ data, go }) {
+  const d = marketDay(data.market, data.watchlist, data.bench);
+  if (!d || !d.names) return null;
+  const lead = d.spx?.pct ?? d.bench?.pct ?? null;
+  const who = d.spx?.pct != null ? "The market" : "The Nasdaq-100"; // the S&P 500 leads; older data has only the benchmark's move
+  const verb = lead == null ? null : lead > 0.05 ? "rose" : lead < -0.05 ? "fell" : "barely moved";
+  const verbTone = verb === "rose" ? "text-accent" : verb === "fell" ? "text-down" : "text-ink-2"; // a fall never shows in the up colour
+  const pctOr = (v) => (v == null ? "–" : fmtPct(v, 2));
+  const tone = (v) => (v == null || Math.abs(v) < 0.005 ? "flat" : v > 0 ? "accent" : "down"); // as shown, to two decimals
+  return (
+    <section id="market-today" className="scroll-mt-28 pt-16 sm:pt-24">
+      <SectionHead eyebrow={`${data.livePrices ? "What the market did" : "Sample prices, not the market"} · ${fmtDate(d.date)}`} size="md"
+        title={verb ? <>{who} <span className={verbTone}>{verb}.</span></> : <>The last <Accent>close.</Accent></>}
+        lede={<>{d.counted ? <>Of our {d.names} names, <span className="text-ink">{d.rose} rose</span> and <span className="text-ink">{d.fell} fell</span>{d.flat ? `, ${d.flat} unchanged` : ""}.</> : <>Day moves of our names appear after the next daily run.</>} Day moves are percent changes from the close before; tap a name to open it.</>} />
+      <Strip dense cells={[
+        { value: pctOr(d.spx?.pct), label: d.spx?.name ?? "S&P 500", tone: tone(d.spx?.pct), desc: d.spx?.pct == null ? "Its day move appears after the next daily run." : "The broad US market, by size." },
+        { value: pctOr(d.bench?.pct), label: d.bench ? `Nasdaq-100 (${d.bench.symbol})` : "Nasdaq-100", tone: tone(d.bench?.pct), desc: "Our benchmark: the hundred largest Nasdaq companies." },
+        { value: d.counted ? `${d.rose}/${d.fell}` : "–", label: "our names up/down", tone: "flat", desc: `${d.counted} of ${d.names} names on our list.` },
+        { value: d.breadth == null ? "–" : `${fmtNum(d.breadth, 0)}%`, label: "above 50-day avg", tone: "flat", desc: "Share of our names above their fifty-day average: a slow read of breadth." },
+      ]} />
+      {(d.risers.length > 0 || d.fallers.length > 0) && (
+        <Reveal className="card mt-4 p-5 sm:p-6">
+          <div className="grid grid-cols-2 gap-3 sm:gap-6">
+            <div className="min-w-0">
+              <div className="meta mb-2 text-accent">Biggest risers</div>
+              <ul className="grid gap-2">{d.risers.map((m) => <Mover key={m.symbol} m={m} name={data.names[m.symbol]} go={go} />)}{!d.risers.length && <li className="text-[13px] text-ink-3">None rose.</li>}</ul>
+            </div>
+            <div className="min-w-0">
+              <div className="meta mb-2 text-down">Biggest fallers</div>
+              <ul className="grid gap-2">{d.fallers.map((m) => <Mover key={m.symbol} m={m} name={data.names[m.symbol]} go={go} />)}{!d.fallers.length && <li className="text-[13px] text-ink-3">None fell.</li>}</ul>
+            </div>
+          </div>
+          {d.sectors.length > 0 && (
+            <p className="mt-5 text-[13.5px] leading-relaxed text-ink-2">
+              <span className="meta mr-2">By sector</span>
+              {d.sectors.map((x, i) => (
+                <Fragment key={x.sector}>{i ? " · " : ""}<span className="whitespace-nowrap">{shortSector(x.sector)} <span className={`num font-mono ${upDown(x.avg)}`}>{fmtPct(x.avg, 1)}</span></span></Fragment>
+              ))}
+            </p>
+          )}
+        </Reveal>
+      )}
+      <p className="mt-4 text-[14px] leading-relaxed text-ink-2">
+        {d.spx && d.spx.pct == null && <>The {d.spx.name}'s day move appears after the next daily run. </>}
+        {d.spx?.fromHigh != null && <>The {d.spx.name} is {d.spx.fromHigh > -0.05 ? "at" : `${Math.abs(d.spx.fromHigh).toFixed(1)}% below`} its one-year high. </>}
+        {d.breadth != null && <>{fmtNum(d.breadth, 0)}% of our names are above their fifty-day average. </>}
+      </p>
+      <p className="meta mt-3 normal-case tracking-[0.04em]">
+        Why it moved is not connected yet: news feeds cost money, so this shows what moved, not why. The US market closes at 4 pm New York time (20:00 UTC; 21:00 in winter) and our data arrives after the nightly run, so this updates overnight.
+      </p>
+    </section>
+  );
+}
+
+/** Earnings dates for our names in the next thirty days, from the outlook cards; held or picked names first. Hidden when none. */
+function ComingUp({ data, go }) {
+  const today = new Date().toISOString().slice(0, 10);
+  const paper = data.paper && !data.paper.sample ? data.paper : null;
+  const held = paper?.rebalances.at(-1)?.holdings ?? (data.livePrices ? data.longrun?.now.holdings : null) ?? [];
+  const picked = data.sample ? [] : (data.lastOk?.picks ?? []).map((p) => p.pick.ticker);
+  const rows = comingUp(data.outlook, today, 30, [...picked, ...held]);
+  if (!rows.length) return null;
+  return (
+    <Reveal className="card mt-6 p-5 sm:p-6">
+      <div className="flex items-baseline justify-between gap-3">
+        <div className="meta text-accent">Coming up · earnings</div>
+        <span className="meta normal-case tracking-[0.04em]">next 30 days</span>
+      </div>
+      <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+        {rows.map((r) => (
+          <li key={r.ticker}>
+            <button type="button" onClick={() => go(`stock/${r.ticker}`)} className="flex w-full min-h-[44px] items-center justify-between gap-3 rounded-xl border border-line px-3 py-2 text-left hover:border-ink-3">
+              <span className="min-w-0">
+                <span className="font-mono text-[14px] font-semibold">{r.ticker}</span>
+                <span className="ml-2 text-[13px] text-ink-3">{r.name}</span>
+                {r.first && <span className="ml-2 text-[11.5px] text-people">held or picked</span>}
+              </span>
+              <span className="shrink-0 text-right text-[13px]">
+                <span className="block text-ink">{day(r.date)}</span>
+                <span className="block text-[12px] text-ink-3">{inDays(r.days)}{r.confirmed ? "" : " · expected"}</span>
+              </span>
+            </button>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-3 text-[12.5px] leading-relaxed text-ink-3">A results day can move a stock a lot either way: event risk, not a signal. Dates from each company's outlook card; "expected" means the company has not confirmed it yet.</p>
+    </Reveal>
   );
 }
 
@@ -99,10 +214,12 @@ function Verdict({ data, go }) {
   return (
     <>
       <Reveal>
-        <span className={`pill mb-10 ${stale ? "border-down/50 text-down" : data.livePrices ? "border-accent/40 text-accent" : "border-dashed border-people/60 text-people"}`}>
+        <a href="#market-today" onClick={jumpToMarket} title="What the market did at this close"
+          className={`pill mb-10 min-h-[36px] hover:bg-surface ${stale ? "border-down/50 text-down" : data.livePrices ? "border-accent/40 text-accent" : "border-dashed border-people/60 text-people"}`}>
           <span className="size-2 rounded-full bg-current" />
           {data.livePrices ? "Market close" : "Sample prices"} · {fmtDate(asOf)}{stale ? ` · ${age} days old` : ""}
-        </span>
+          <span aria-hidden="true">↓</span>
+        </a>
       </Reveal>
       <Headline size="xl" className="max-w-[15ch]">{head} <Accent>{accent}</Accent></Headline>
       <Reveal delay={350} as="p" className="mx-auto mt-8 max-w-[58ch] text-[clamp(17px,1.8vw,21px)] leading-relaxed text-ink-2">
@@ -125,6 +242,13 @@ function Verdict({ data, go }) {
           </a>
         )}
         <button type="button" onClick={() => go("portfolio")} className="btn">The portfolio <ArrowRight /></button>
+      </Reveal>
+      <Reveal delay={600}>
+        <a href="#market-today" onClick={jumpToMarket}
+          className="meta mt-4 inline-flex min-h-[44px] items-center gap-2 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">
+          What the market did at the close
+          <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M6 13l6 6 6-6" /></svg>
+        </a>
       </Reveal>
     </>
   );

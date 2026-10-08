@@ -119,7 +119,7 @@ def main() -> int:
             _copy(base / f"{name}.json", OUT / "kb" / f"{name}.json")
             kb[name] = f"kb/{name}.json"
     cfg_docs = ("watchlist", "settings", "sources", "routines", *(("rules",) if (CONFIG / "rules.json").exists() else ()),
-                *(("people",) if people_cfg.exists() else ()))
+                *(("people",) if people_cfg.exists() else ()), *(("outlook",) if (CONFIG / "outlook.json").exists() else ()))
     for name in cfg_docs:
         _copy(CONFIG / f"{name}.json", OUT / "config" / f"{name}.json")
 

@@ -2,7 +2,8 @@
 """Build the brain's context pack (M3): one capped JSON document of DERIVED numbers and curated text.
 
 The brain reads only this pack and cites evidence by pack key (lowercase dot paths such as
-`market.nvda.setup`, `library.s-028:p02`, `people.calls.nvda` or `people.fund.berkshire-hathaway`). Numbers come from code; the pack carries no raw prices.
+`market.nvda.setup`, `library.s-028:p02`, `people.calls.nvda`, `people.fund.berkshire-hathaway` or
+`outlook.next_earnings.nvda`). Numbers come from code; the pack carries no raw prices.
 Fails closed when the pack is over `pack.token_cap` (settings).
 
 Usage: python3 scripts/build_pack.py [--out .cache/pack.json] [--data DIR] [--runs DIR]
@@ -110,7 +111,28 @@ def people_block(scores: dict | None, on_list: set[str], cfg: dict | None = None
     return {"note": PEOPLE_NOTE, "as_of": scores["as_of"], "min_matured": scores["min_matured"], "record": record, "fund": fund, "calls": calls}
 
 
-def build(data_dir: Path = DATA, runs_dir: Path = RUNS, today: str | None = None) -> dict:
+OUTLOOK_NOTE = ("company statements and dates, context only; never evidence that a stock will beat the index; an earnings date "
+                "within about two weeks is event risk")
+
+
+def outlook_block(cfg: dict | None, on_list: set[str], today: str) -> dict:
+    """Compact view of config/outlook.json: the next earnings date per watchlist name (days from `today`, whether the
+    company confirmed it; dates already past are left out) and whether the company gives its own guidance. Citable as outlook.next_earnings.<ticker>
+    and outlook.guidance.<ticker>; empty when the file has no companies."""
+    nxt, guid = {}, {}
+    for c in (cfg or {}).get("companies", []):
+        t = c["ticker"]
+        if t not in on_list:
+            continue
+        ne = c["next_earnings"]
+        if ne.get("date") and ne["date"] >= today:  # a past date means new results are out and the card is due a refresh
+            nxt[t.lower()] = {"date": ne["date"], "days": (date.fromisoformat(ne["date"]) - date.fromisoformat(today)).days,
+                              "confirmed": bool(ne["confirmed"])}
+        guid[t.lower()] = "given" if c["guidance"]["given"] else "none"
+    return {"note": OUTLOOK_NOTE, "next_earnings": nxt, "guidance": guid}
+
+
+def build(data_dir: Path = DATA, runs_dir: Path = RUNS, today: str | None = None, outlook: dict | None = None) -> dict:
     st, wl = settings(), watchlist()
     kb = data_dir / "kb"
     derived = load_json(data_dir / "market" / "derived.json")
@@ -175,6 +197,8 @@ def build(data_dir: Path = DATA, runs_dir: Path = RUNS, today: str | None = None
         "claims": claims,
         "people": people_block(load_json(data_dir / "people" / "scores.json") if (data_dir / "people" / "scores.json").exists() else None, set(names),
                                load_json(CONFIG / "people.json") if (CONFIG / "people.json").exists() else None),
+        "outlook": outlook_block(outlook if outlook is not None else (load_json(CONFIG / "outlook.json") if (CONFIG / "outlook.json").exists() else None),
+                                 set(names), today),
         "recent_runs": recent,
     }
     return pack

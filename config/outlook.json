@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-10-08",
+  "change_note": "New file: the shape of the company outlook cards. The researched cards arrive through a pull request after they are checked.",
+  "purpose": "What's next for each company on our list: its latest quarter, what it says about the coming one, when it next reports and what is coming up. Context for the household, researched from the companies' own releases and filings.",
+  "how_to_read": [
+    "What a company says about its future is its own statement, not a forecast we endorse.",
+    "We paraphrase in our own words and link to the source; we never copy their text.",
+    "No prices, price targets or analyst ratings, ever: only what the company reported and announced.",
+    "Cards are refreshed after each earnings season; each one shows the day it was researched.",
+    "A card is flagged when new results are out since it was written, until it is refreshed."
+  ],
+  "companies": []
+}

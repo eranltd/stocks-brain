@@ -1,7 +1,7 @@
 ---
-version: 0.12.0
-updated_at: 2026-10-07
-change_note: People we learn from, measured against the core; the brain fires twice each market morning to catch a late data run.
+version: 0.13.0
+updated_at: 2026-10-08
+change_note: Market today on the Today tab; company outlook cards researched from primary sources and kept in config with links and dates.
 ---
 # Decision log
 
@@ -10,6 +10,8 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 ## Open items (waiting on the owner)
 - **Author of sources S-001 to S-005**: confirm they are the same channel (Micha) as the later batches.
 - **Paid connectors** (news, X, options data for implied moves): parked until the owner wants to spend.
+- **SEC XBRL financials**: a free, official feed that could fill the outlook cards' numbers by code. Not connected
+  until the household decides (see 2026-10-08).
 - **Satellite size**: `docs/household.md` proposes 10% of savings (2% per slot). The owner sets it.
 - **Market file size**: `derived.json` is written one line per symbol (compact) and is about 330 KB with 21 names.
   Past roughly 35 names it would hit lint's 512 KB cap and the daily run would fail closed; before that, move the
@@ -17,6 +19,26 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Second price source**: Tiingo's daily returns show unusually low correlations between these names (for example
   AAPL to QQQ about 0.24 over a year). The diagnostic showed our pipeline reproduces the provider's data exactly, so
   the numbers are faithful to the source; a cross-check against a second source is still pending.
+
+## 2026-10-08
+- **What the market did, on Today.** The household asked where to see what the market did today. Today now opens with
+  the last close: the S&P 500's and the Nasdaq-100's day moves, how many of our names rose and fell, the three biggest
+  risers and fallers (tap to open), an average day move per sector, the S&P 500's distance from its high and the share of
+  our names above their fifty-day average. The context funds now carry a day move too (percent only, from the closes the
+  Action already holds). It says plainly that it cannot say why: news is not connected.
+- **Company outlook cards are researched from primary sources and kept in config** (`config/outlook.json`), not bought
+  as a feed. The household asked where the companies are headed (what's next for Nvidia, finance and product). A paid
+  fundamentals or estimates feed would cost money, bring analyst targets and ratings we do not want, and add a provider
+  the household has not approved. A card per company, researched after each earnings season from the company's own
+  releases and filings, paraphrased, linked and dated, answers the question for free, can be checked by anyone, and
+  says when it is out of date (the Stock page flags it once new results are out). Lint keeps prices, price targets,
+  ratings and quotations out. The refresh is a saved workflow (`outlook`): researchers in batches, a skeptic per batch,
+  then a pull request a person merges. The file starts empty; the first researched cards arrive through that pull
+  request after they are checked. The brain sees only dates and whether guidance exists, as context and event risk,
+  never as evidence that a stock will beat the index.
+- **News ("why it moved") stays parked.** It needs a paid feed; the market section shows what moved, not why.
+- **SEC XBRL financials** (the SEC's free, official machine-readable company figures) could later fill the finance part
+  of each card by code instead of by hand. Connecting it is a household decision: it is listed here, not connected.
 
 ## 2026-10-07
 - **People we learn from** (`config/people.json`, routine `score_people`). The household asked for a clear section on the

@@ -4,6 +4,7 @@ import { useInView } from "../lib/motion.js";
 import { Accent, ArrowRight, Chip, Container, Conviction, Empty, Headline, Reveal, Segmented, Strip } from "../components/ui.jsx";
 import { STAGES, trustStage } from "../components/trust.jsx";
 import { STATUS } from "../components/goal.jsx";
+import { cardFor, daysUntil, growthWords, inDays, isStale, KIND_LABEL } from "../lib/outlook.js";
 
 /** Plain-language summary, assembled by code from the computed numbers (no model). */
 function plainWords(row, checks, benchSymbol, benchLabel, liveClaims, settings, baseRate) {
@@ -182,6 +183,8 @@ export default function Stock({ data, symbol, go }) {
         <StockChart row={row} bench={isBench ? null : benchRow} benchSymbol={bench.symbol} picks={sample ? [] : picks} />
       </Reveal>
 
+      {!isBench && <WhatsNext card={cardFor(data.outlook, symbol)} symbol={symbol} today={today} hasFile={Boolean(data.outlook)} />}
+
       {long && (
         <Reveal className="card mt-6 p-6 sm:p-8">
           <div className="flex flex-wrap items-baseline justify-between gap-3">
@@ -315,6 +318,100 @@ export default function Stock({ data, symbol, go }) {
 
       <p className="meta mt-16 normal-case tracking-[0.04em]">Analysis only, not financial advice. Lines are indexed to 100; the site publishes returns, not raw prices.</p>
     </Container>
+  );
+}
+
+/* ------------------------------------------------------------ what's next */
+
+const ext = { target: "_blank", rel: "noopener noreferrer" };
+const host = (u) => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return "source"; } };
+const dayOnly = (iso) => fmtDate(iso).replace(/^\w+, /, ""); // "19 Nov 2026"
+
+function Src({ url }) {
+  if (!url) return null;
+  return <a href={url} {...ext} className="ml-1 whitespace-nowrap text-[12px] text-ink-3 underline decoration-line-2 underline-offset-2 hover:text-ink">{host(url)} ↗</a>;
+}
+
+const SubHead = ({ children }) => <div className="meta mb-3 text-accent">{children}</div>;
+
+/** The company's own story: the latest quarter, its guidance, what is coming up and what could change it. Paraphrased and linked. */
+function WhatsNext({ card, symbol, today, hasFile }) {
+  if (!card) {
+    return (
+      <Reveal className="card mt-6 p-6 sm:p-8">
+        <h3 className="text-[22px] font-semibold tracking-[-0.02em]">What's next</h3>
+        <p className="mt-3 max-w-[62ch] text-[15px] leading-relaxed text-ink-2">
+          {hasFile ? `No outlook card for ${symbol} yet.` : "No outlook file yet."} Cards are researched after each earnings season from the company's own releases and filings: the latest quarter, what the company says about the next one, its next results date and what is coming up, each with a link.
+        </p>
+      </Reveal>
+    );
+  }
+  const { latest: lt, guidance: g, next_earnings: ne } = card;
+  const stale = isStale(card, today);
+  const days = daysUntil(ne.date, today);
+  const growth = growthWords(lt.revenue_growth_yoy_pct);
+  return (
+    <Reveal className="card mt-6 p-6 sm:p-8">
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
+        <h3 className="text-[22px] font-semibold tracking-[-0.02em]">What's next</h3>
+        <span className="meta normal-case tracking-[0.04em]">researched {dayOnly(card.as_of)}</span>
+      </div>
+      {stale && (
+        <p className="mt-4 rounded-2xl border border-dashed border-people/60 px-4 py-3 text-[14px] text-people">New results are out since this was written; due for a refresh.</p>
+      )}
+      <p className="mt-4 max-w-[70ch] text-[15.5px] leading-relaxed text-ink-2">{card.business}</p>
+
+      <div className="mt-6 grid gap-6 lg:grid-cols-3 lg:gap-8">
+        <div className="min-w-0">
+          <SubHead>Finance · {lt.period}</SubHead>
+          <div className="text-[17px] font-semibold leading-snug">Revenue {lt.revenue}</div>
+          <div className="mt-1 text-[13.5px] text-ink-3">{growth ? `${growth} · ` : ""}reported {dayOnly(lt.reported_on)}<Src url={lt.source_url} /></div>
+          <ul className="mt-3 grid gap-1.5 text-[14.5px] leading-relaxed text-ink-2">
+            {lt.highlights.map((h) => <li key={h} className="relative pl-4 before:absolute before:left-0 before:top-[0.75em] before:h-px before:w-2 before:bg-ink-3">{h}</li>)}
+          </ul>
+          <div className="mt-4 rounded-2xl border border-line px-4 py-3">
+            <div className="meta mb-1">The company's own outlook{g.given && g.period ? ` · ${g.period}` : ""}</div>
+            <p className="text-[14.5px] leading-relaxed">{g.given ? g.text : <span className="text-ink-2">{g.text}</span>}<Src url={g.source_url} /></p>
+          </div>
+        </div>
+
+        <div className="min-w-0">
+          <SubHead>Coming up</SubHead>
+          <div className="rounded-2xl border border-line px-4 py-3">
+            <div className="meta mb-1">Next results</div>
+            {ne.date ? (
+              <div className="flex flex-wrap items-center gap-2 text-[15px]">
+                <span className="font-semibold">{fmtDate(ne.date)}</span>
+                {days != null && <span className="text-ink-3">{inDays(days)}</span>}
+                {!ne.confirmed && <span className="pill border-dashed py-0.5 text-[10.5px] text-people">expected</span>}
+              </div>
+            ) : <div className="text-[15px] text-ink-2">Not announced yet</div>}
+            {ne.note && <p className="mt-1 text-[13px] leading-relaxed text-ink-3">{ne.note}<Src url={ne.source_url} /></p>}
+            {!ne.note && <Src url={ne.source_url} />}
+          </div>
+          {card.whats_next.length > 0 && (
+            <ul className="mt-3 grid gap-3">
+              {card.whats_next.map((w) => (
+                <li key={w.item} className="text-[14.5px] leading-relaxed">
+                  <div className="meta mb-0.5 normal-case tracking-[0.04em]"><span className="uppercase tracking-[0.14em]">{KIND_LABEL[w.kind] ?? w.kind}</span> · {w.when}</div>
+                  <span>{w.item}</span><Src url={w.source_url} />
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div className="min-w-0">
+          <SubHead>What could change the story</SubHead>
+          {card.watch.length ? (
+            <ul className="grid gap-3">
+              {card.watch.map((w) => <li key={w.item} className="text-[14.5px] leading-relaxed text-ink-2">{w.item}<Src url={w.source_url} /></li>)}
+            </ul>
+          ) : <p className="text-[14px] text-ink-3">Nothing noted.</p>}
+        </div>
+      </div>
+      <p className="meta mt-6 normal-case tracking-[0.04em]">The company's own statements, paraphrased with links; not a forecast we endorse. No prices, price targets or ratings. A results day is event risk, not a signal.</p>
+    </Reveal>
   );
 }
 

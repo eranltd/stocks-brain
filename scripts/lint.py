@@ -42,7 +42,30 @@ OUTLOOK_BANNED = ("price target", "target price", "buy rating", "sell rating", "
 STOCK_PRICE = re.compile(r"\b(share|stock) price\b[^.;]{0,40}\d"  # "the share price fell to 120"
                          r"|\b(closed|opened|trad(ed|es|ing))\s+(at|near|around|above|below)\s+(\$|US\$|USD\s?)?\d"  # "shares closed at 120"
                          r"|\bmarket cap(italization|italisation)?\b", re.I)  # a stock's market value is its price times its shares
+# Analyst opinions and stock moves in other words: "outperform", "upgraded the stock to buy", "PT raised", "shares jumped".
+# Targeted so a company's own "investor and analyst day" or "network upgrade" still passes.
+OUTLOOK_OPINION = re.compile(r"\banalysts?'?\s+(rating|estimate|consensus|expectation|target)s?\b"
+                             r"|\b(up|down)grad(ed|es|e)\b[^.;]{0,30}\b(stock|shares|buy|sell|hold|neutral|outperform)\b"
+                             r"|\b(out|under)perform(s|ed|ing)?\b|\bstrong buy\b|\bprice objective\b|\bconsensus\b|\bmarket value\b", re.I)
+PRICE_TARGET_PT = re.compile(r"\bPTs?\s+(raised|cut|lowered|increased|reduced|of|to)\b")  # "PT" alone is Pacific Time
+STOCK_MOVE = re.compile(r"\b(stock|shares|share price)\s+(rose|fell|jumped|climbed|dropped|gained|lost|surged|slid|plunged|rallied"
+                        r"|soared|tumbled|sank)\b", re.I)
 QUOTE_MARKS = ('"', "“", "”")  # straight and curly double quotes
+# A phrase in single quotes ('in the coming months'); apostrophes (Apple's, can't, investors') never open one.
+SINGLE_QUOTED = re.compile(r"(?<![\w])['‘][^'‘’\n]{2,}?['’](?![\w])")
+# Words a household will not follow; the cards say them in plain words ("profit per share", "capital spending").
+OUTLOOK_JARGON = re.compile(r"\b(YoY|QoQ|GAAP|EPS|opex|capex|EBITDA|PDUFA|bps?)\b|\bbasis points?\b", re.I)
+FIRST_PERSON = re.compile(r"\bI\b|\b[Mm]y\b|\b[Mm]e\b")  # research-process remarks ("I read it in a copy") stay out
+# Card links go to the company itself, a regulator or the newswire that carried its release, never to a copy on a quote,
+# rating or news site. Suffix match: "investor.apple.com" passes as apple.com.
+OUTLOOK_SOURCE_HOSTS = (
+    "sec.gov", "cftc.gov", "fda.gov", "businesswire.com", "prnewswire.com", "globenewswire.com",
+    "apple.com", "microsoft.com", "nvidia.com", "aboutamazon.com", "amazon.com", "abc.xyz", "blog.google", "atmeta.com",
+    "fb.com", "meta.com", "broadcom.com", "costco.com", "amgen.com", "intuitive.com", "intuitivesurgical.com", "gilead.com",
+    "pepsico.com", "monsterbevcorp.com", "aep.com", "xcelenergy.com", "cintas.com", "paccar.com", "cmegroup.com",
+    "t-mobile.com", "diamondbackenergy.com", "linde.com",
+)
+OUTLOOK_STALE_DAYS = 98  # no next date and the latest report a quarter and a week old: newer results are probably out
 PRICE_LIKE = re.compile(r"(\$|USD\s?|US\$)\s?\d|\d[\d,.]*\s?(dollars|per share)\b", re.I)
 
 
@@ -229,6 +252,22 @@ class Lint:
                 self.err(path, f"{t}: guidance given needs its source_url")
             if ne["date"] and ne["date"] < today:
                 self.warn(path, f"{t}: new results are out since this card was researched (next_earnings {ne['date']}); refresh it")
+            elif not ne["date"] and (date.fromisoformat(today) - date.fromisoformat(lt["reported_on"])).days >= OUTLOOK_STALE_DAYS:
+                self.warn(path, f"{t}: no next results date and the latest report ({lt['reported_on']}) is over {OUTLOOK_STALE_DAYS} days old; "
+                                "newer results are probably out, refresh it")
+            if FIRST_PERSON.search(ne["note"]):
+                self.warn(path, f"{t} next_earnings.note: first person; say what the company announced, not how we found it")
+            for w in c["whats_next"]:
+                if w.get("date") and w.get("status") == "done" and w["date"] > today:
+                    self.err(path, f"{t} whats_next: marked done but dated {w['date']}, in the future")
+                elif w.get("date") and w.get("status") == "ahead" and w["date"] < today:
+                    self.warn(path, f"{t} whats_next: marked ahead but its date {w['date']} has passed; refresh it")
+            urls = [lt["source_url"], c["guidance"]["source_url"], ne["source_url"], *(w["source_url"] for w in c["whats_next"]),
+                    *(w["source_url"] for w in c["watch"])]
+            for u in filter(None, urls):
+                host = (urlsplit(u).hostname or "").lower()
+                if not any(host == h or host.endswith("." + h) for h in OUTLOOK_SOURCE_HOSTS):
+                    self.warn(path, f"{t}: source {host} is not the company, a regulator or a newswire; link the original release")
             texts = [("name", c["name"]), ("business", c["business"]), ("latest.period", lt["period"]),
                      *(("latest.highlights", h) for h in lt["highlights"]), ("latest.revenue", lt["revenue"]),
                      ("guidance.period", c["guidance"]["period"]), ("guidance.text", c["guidance"]["text"]), ("next_earnings.note", ne["note"]),
@@ -239,10 +278,14 @@ class Lint:
                 for b in OUTLOOK_BANNED:
                     if b in low:
                         self.err(path, f"{t} {where}: {b!r}; the cards carry no price targets or ratings")
-                if STOCK_PRICE.search(text):
+                if OUTLOOK_OPINION.search(text) or PRICE_TARGET_PT.search(text):
+                    self.err(path, f"{t} {where}: looks like an analyst rating or estimate; the cards carry no ratings or targets")
+                if STOCK_PRICE.search(text) or STOCK_MOVE.search(text):
                     self.err(path, f"{t} {where}: looks like a stock price; describe the company's results, not its price")
-                if sum(text.count(q) for q in QUOTE_MARKS) >= 2:
+                if sum(text.count(q) for q in QUOTE_MARKS) >= 2 or SINGLE_QUOTED.search(text):
                     self.err(path, f"{t} {where}: looks like a quotation; paraphrase in our own words")
+                if m := OUTLOOK_JARGON.search(text):
+                    self.warn(path, f"{t} {where}: {m.group(0)!r} is jargon; say it in plain words")
 
     def check_rules(self, path: Path, rc: dict) -> None:
         """The registry must match what the engine can run, cite real library ids, and count its tries honestly."""

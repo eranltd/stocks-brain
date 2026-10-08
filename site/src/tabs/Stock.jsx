@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { fmtDate, fmtNum, fmtPct, fmtShort, cap } from "../lib/format.js";
+import { fmtDate, fmtNum, fmtPct, fmtShort, cap, signTone } from "../lib/format.js";
 import { useInView } from "../lib/motion.js";
 import { Accent, ArrowRight, Chip, Container, Conviction, Empty, Headline, Reveal, Segmented, Strip } from "../components/ui.jsx";
 import { STAGES, trustStage } from "../components/trust.jsx";
 import { STATUS } from "../components/goal.jsx";
-import { cardFor, daysUntil, growthWords, inDays, isStale, KIND_LABEL } from "../lib/outlook.js";
+import { cardFor, daysUntil, growthWords, inDays, KIND_LABEL, splitWhatsNext, staleness, todayISO } from "../lib/outlook.js";
 
 /** Plain-language summary, assembled by code from the computed numbers (no model). */
 function plainWords(row, checks, benchSymbol, benchLabel, liveClaims, settings, baseRate) {
@@ -102,7 +102,7 @@ export default function Stock({ data, symbol, go }) {
   const checks = setupChecks(row, bench.symbol, settings);
   const passed = checks.filter((c) => c.pass).length;
   const aliases = [symbol, ...(watchlist.symbols.find((s) => s.symbol === symbol)?.aliases ?? [])];
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayISO();
   const claims = (observations?.items ?? []).filter((o) => o.tickers.some((t) => aliases.includes(t))).sort((a, b) => b.as_of.localeCompare(a.as_of));
   const liveClaims = claims.filter((c) => c.expires >= today);
   const picks = kb.filter((k) => k.ticker === symbol);
@@ -131,7 +131,7 @@ export default function Stock({ data, symbol, go }) {
       <div className="flex flex-wrap items-end justify-between gap-6">
         <div className="min-w-0">
           <Reveal className="eyebrow mb-4">{names[symbol]} · {market.provider === "sample" ? "sample prices" : `live · ${market.provider}`} · {fmtDate(row.last_date)}</Reveal>
-          <Headline size="xl">{symbol} <Accent>{fmtPct(row.change_1d_pct, 2)}</Accent></Headline>
+          <Headline size="xl">{symbol} <span className={TONE_TEXT[signTone(row.change_1d_pct, 2)]}>{fmtPct(row.change_1d_pct, 2)}</span></Headline>
         </div>
         {!isBench && (
           <Reveal delay={200} className="card px-6 py-5 text-right">
@@ -333,6 +333,33 @@ function Src({ url }) {
 }
 
 const SubHead = ({ children }) => <div className="meta mb-3 text-accent">{children}</div>;
+const TONE_TEXT = { accent: "text-accent", down: "text-down", flat: "text-ink-2" };
+
+/** Why the card may be out of date, in words: firm only when the company confirmed the date that has passed. */
+function staleWords(s) {
+  if (!s) return null;
+  if (s.kind === "passed" && s.confirmed) return "New results are out since this was written; due for a refresh.";
+  if (s.kind === "passed") return `Its expected results date (${dayOnly(s.date)}) has passed; this card may be out of date.`;
+  return "Newer results are probably out; this card may be out of date.";
+}
+
+/** A list of "what's next" items under a small label. */
+function NextList({ label, items }) {
+  if (!items.length) return null;
+  return (
+    <div className="mt-4">
+      <div className="meta mb-2 normal-case tracking-[0.04em] text-ink-2">{label}</div>
+      <ul className="grid gap-3">
+        {items.map((w) => (
+          <li key={w.item} className="text-[14.5px] leading-relaxed">
+            <div className="meta mb-0.5 normal-case tracking-[0.04em]"><span className="uppercase tracking-[0.14em]">{KIND_LABEL[w.kind] ?? w.kind}</span> · {w.when}</div>
+            <span>{w.item}</span><Src url={w.source_url} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 /** The company's own story: the latest quarter, its guidance, what is coming up and what could change it. Paraphrased and linked. */
 function WhatsNext({ card, symbol, today, hasFile }) {
@@ -347,7 +374,8 @@ function WhatsNext({ card, symbol, today, hasFile }) {
     );
   }
   const { latest: lt, guidance: g, next_earnings: ne } = card;
-  const stale = isStale(card, today);
+  const stale = staleWords(staleness(card, today));
+  const groups = splitWhatsNext(card.whats_next, today);
   const days = daysUntil(ne.date, today);
   const growth = growthWords(lt.revenue_growth_yoy_pct);
   return (
@@ -357,7 +385,7 @@ function WhatsNext({ card, symbol, today, hasFile }) {
         <span className="meta normal-case tracking-[0.04em]">researched {dayOnly(card.as_of)}</span>
       </div>
       {stale && (
-        <p className="mt-4 rounded-2xl border border-dashed border-people/60 px-4 py-3 text-[14px] text-people">New results are out since this was written; due for a refresh.</p>
+        <p className="mt-4 rounded-2xl border border-dashed border-people/60 px-4 py-3 text-[14px] text-people">{stale}</p>
       )}
       <p className="mt-4 max-w-[70ch] text-[15.5px] leading-relaxed text-ink-2">{card.business}</p>
 
@@ -376,7 +404,7 @@ function WhatsNext({ card, symbol, today, hasFile }) {
         </div>
 
         <div className="min-w-0">
-          <SubHead>Coming up</SubHead>
+          <SubHead>Next results and news</SubHead>
           <div className="rounded-2xl border border-line px-4 py-3">
             <div className="meta mb-1">Next results</div>
             {ne.date ? (
@@ -389,16 +417,9 @@ function WhatsNext({ card, symbol, today, hasFile }) {
             {ne.note && <p className="mt-1 text-[13px] leading-relaxed text-ink-3">{ne.note}<Src url={ne.source_url} /></p>}
             {!ne.note && <Src url={ne.source_url} />}
           </div>
-          {card.whats_next.length > 0 && (
-            <ul className="mt-3 grid gap-3">
-              {card.whats_next.map((w) => (
-                <li key={w.item} className="text-[14.5px] leading-relaxed">
-                  <div className="meta mb-0.5 normal-case tracking-[0.04em]"><span className="uppercase tracking-[0.14em]">{KIND_LABEL[w.kind] ?? w.kind}</span> · {w.when}</div>
-                  <span>{w.item}</span><Src url={w.source_url} />
-                </li>
-              ))}
-            </ul>
-          )}
+          <NextList label="Ahead" items={groups.ahead} />
+          <NextList label="Recently" items={groups.recent} />
+          <NextList label="Recent news and what's ahead" items={groups.other} />
         </div>
 
         <div className="min-w-0">
@@ -407,10 +428,10 @@ function WhatsNext({ card, symbol, today, hasFile }) {
             <ul className="grid gap-3">
               {card.watch.map((w) => <li key={w.item} className="text-[14.5px] leading-relaxed text-ink-2">{w.item}<Src url={w.source_url} /></li>)}
             </ul>
-          ) : <p className="text-[14px] text-ink-3">Nothing noted.</p>}
+          ) : <p className="text-[14px] text-ink-3">No risks noted from the company's own filings yet.</p>}
         </div>
       </div>
-      <p className="meta mt-6 normal-case tracking-[0.04em]">The company's own statements, paraphrased with links; not a forecast we endorse. No prices, price targets or ratings. A results day is event risk, not a signal.</p>
+      <p className="meta mt-6 normal-case tracking-[0.04em]">The company's own statements, paraphrased with links; not a forecast we endorse. No prices, price targets or ratings. A results day can move a stock a lot either way; it is not a signal.</p>
     </Reveal>
   );
 }

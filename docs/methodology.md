@@ -207,19 +207,24 @@ percentages and dates are written to `data/people/scores.json`):
 `config/outlook.json` holds one card per watchlist company: what it does, its latest reported quarter (the period, the
 day it reported, revenue as reported and its change from the same quarter a year earlier, up to three highlights), the
 company's own guidance, its next results date (marked expected until the company confirms it), up to four things it has
-announced are coming (product, finance, regulatory, deal or other) and up to three things that could change the story.
-Every item links to its primary source: the company's own release or investor page, its SEC filing, or a regulator.
+announced or recently done (product, finance, regulatory, deal or other; each marked done or ahead, with its day when
+the source names one) and one to three things that could change the story. Every item links to its primary source: the
+company's own release or investor page, its SEC filing, a regulator, or the newswire that carried the release.
 - **Rules** (lint `check_outlook`): tickers on the watchlist and unique; https links (shown as links only, never
   fetched by the site); real dates, with the research day and the report day never in the future and the report never
-  after the research; a confirmed date needs a date; text paraphrased, never quoted; no share prices, price targets or
-  analyst ratings. A card whose next results date has passed is flagged on the Stock page ("new results are out") and
-  warned by lint until it is refreshed.
+  after the research; a confirmed date needs a date; text paraphrased, never quoted (single or double quotes); no share
+  prices or stock moves, price targets, analyst ratings or estimates. Lint warns on finance shorthand (EPS, capex,
+  GAAP and the like), on links to anything but the company, a regulator or a newswire, on first-person notes, and on an
+  item marked ahead whose day has passed. A card whose next results date has passed is flagged on the Stock page
+  ("new results are out" when the company confirmed the date, softer when it was only expected), and so is a card with
+  no date whose latest report is more than 98 days old ("newer results are probably out"); lint warns the same way.
 - **Refresh**: the saved workflow `.claude/workflows/outlook.js` (`outlook`), run on request after each earnings
   season with `{today, tickers?}`. It researches the companies in batches of four or five from primary sources, then
   a skeptic per batch re-opens every source, drops what it cannot confirm and runs the schema and lint check. The session
   that ran it writes `config/outlook.json`, runs lint and the tests, and opens a pull request; a person merges it.
-- **Use**: the Stock page shows the card ("What's next"), Today lists earnings dates in the next thirty days (held or
-  picked names first), and the pack carries `outlook`: each name's next results date with days to go and whether it
+- **Use**: the Stock page shows the card ("What's next", its coming items split into Ahead and Recently), Today lists
+  earnings dates in the next thirty days (names we hold or picked, then the rest, each by date, and the held or picked
+  names with no date yet), and the pack carries `outlook`: each name's next results date with days to go and whether it
   is confirmed, and whether the company gives guidance. Context only: a company's own outlook is its statement, not a
   forecast we endorse and never evidence that its stock will beat the index; a results date within about two weeks is
   event risk.

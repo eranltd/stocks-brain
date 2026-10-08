@@ -27,13 +27,13 @@ def card(ticker: str, **kw) -> dict:
         "business": "Makes things people buy; most money comes from one product line.",
         "latest": {"period": "fiscal Q2 2027", "reported_on": "2026-08-20", "revenue": "10.0 billion US dollars",
                    "revenue_growth_yoy_pct": 12.5, "highlights": ["The main segment grew faster than the rest."],
-                   "source_url": "https://example.org/results"},
+                   "source_url": "https://www.sec.gov/example/results"},
         "guidance": {"given": True, "period": "fiscal Q3 2027", "text": "The company expects revenue to grow again next quarter.",
-                     "source_url": "https://example.org/outlook"},
-        "next_earnings": {"date": "2026-10-20", "confirmed": True, "note": "", "source_url": "https://example.org/ir"},
+                     "source_url": "https://www.sec.gov/example/outlook"},
+        "next_earnings": {"date": "2026-10-20", "confirmed": True, "note": "", "source_url": "https://www.prnewswire.com/example/ir"},
         "whats_next": [{"item": "A new product line is due to launch.", "when": "first half of 2027", "kind": "product",
-                        "source_url": "https://example.org/launch"}],
-        "watch": [{"item": "Export rules could limit sales to some countries.", "source_url": "https://example.org/10q"}],
+                        "source_url": "https://www.businesswire.com/example/launch"}],
+        "watch": [{"item": "Export rules could limit sales to some countries.", "source_url": "https://www.sec.gov/example/10q"}],
     }
     for k, v in kw.items():
         if isinstance(v, dict) and isinstance(c.get(k), dict):
@@ -113,6 +113,9 @@ class OutlookConfigTest(unittest.TestCase):
             "lowercase ticker": card(t.lower()),
             "growth as text": card(t, latest={"revenue_growth_yoy_pct": "12%"}),
             "extra key": {**card(t), "price_target": 1},
+            "no watch": card(t, watch=[]),
+            "bad status": card(t, whats_next=[{**card(t)["whats_next"][0], "status": "soon"}]),
+            "bad item date": card(t, whats_next=[{**card(t)["whats_next"][0], "date": "next week"}]),
         }
         for name, c in cases.items():
             self.assertTrue(self.v.validate(self.doc(c), "outlook.schema.json"), f"{name} was not caught")
@@ -137,6 +140,18 @@ class OutlookConfigTest(unittest.TestCase):
             "closed at": (card(a, latest={"highlights": ["Shares closed at 120 after the report."]}), "looks like a stock price"),
             "market cap": (card(a, business="A chip maker with the largest market cap in the world today."), "looks like a stock price"),
             "rating in the period": (card(a, guidance={"period": "buy rating"}), "'buy rating'"),
+            "single quotation": (card(a, whats_next=[{**card(a)["whats_next"][0], "when": "Muse 'in the coming months'"}]), "quotation"),
+            "curly single quotation": (card(a, guidance={"text": "The chief called demand ‘insane’ on the call."}), "quotation"),
+            "stock rose": (card(a, latest={"highlights": ["The stock rose 5% after the report."]}), "looks like a stock price"),
+            "shares jumped": (card(a, watch=[{"item": "Shares jumped 8% on the news of the deal.", "source_url": "https://www.sec.gov/x"}]), "looks like a stock price"),
+            "price objective": (card(a, business="A chip maker; one bank set a price objective of 200 on it."), "analyst rating"),
+            "PT raised": (card(a, guidance={"text": "One broker said its PT raised to 250 after the quarter."}), "analyst rating"),
+            "upgraded to buy": (card(a, watch=[{"item": "A broker upgraded the stock to buy this week.", "source_url": "https://www.sec.gov/x"}]), "analyst rating"),
+            "outperform": (card(a, latest={"highlights": ["Two banks rate it outperform after the quarter."]}), "analyst rating"),
+            "consensus": (card(a, guidance={"text": "Revenue guidance sits above the consensus estimate for the quarter."}), "analyst rating"),
+            "analyst estimates": (card(a, guidance={"text": "Revenue guidance sits above analyst estimates for the quarter."}), "analyst rating"),
+            "market value": (card(a, business="A chip maker with a market value of 4 trillion dollars today."), "analyst rating"),
+            "done in the future": (card(a, whats_next=[{**card(a)["whats_next"][0], "status": "done", "date": "2026-11-01"}]), "marked done but dated 2026-11-01"),
         }
         for name, (c, msg) in cases.items():
             errors, _ = self.lint(self.doc(c))
@@ -149,6 +164,30 @@ class OutlookConfigTest(unittest.TestCase):
         # company results in dollars are fine: they are the company's figures, not its share price
         ok = card(b, latest={"revenue": "$46.7 billion", "highlights": ["Data-center revenue rose to $41.1 billion."]})
         self.assertEqual(self.lint(self.doc(ok))[0], [])
+        # a company's own words that only look like the banned ones: apostrophes, analyst days, network upgrades, Pacific Time
+        fine = card(b, business="Apple's phones and Sjogren's drugs can't be compared; investors' money goes elsewhere.",
+                    guidance={"text": "The company will hold its investor and analyst day in March, with the call at 2pm PT."},
+                    whats_next=[{**card(b)["whats_next"][0], "item": "A network upgrade and a fleet upgraded to new trucks.", "status": "ahead", "date": "2026-12-01"}],
+                    watch=[{"item": "Shares outstanding fell after buybacks; stock options vest in 2027.", "source_url": "https://www.sec.gov/x"}])
+        self.assertEqual(self.lint(self.doc(fine)), ([], []))
+
+    def test_lint_warnings(self):
+        a = self.syms[0]
+        cases = {
+            "jargon": (card(a, guidance={"text": "EPS of $2.00 and capex of $1B next quarter."}), "'EPS' is jargon"),
+            "basis points": (card(a, latest={"highlights": ["Margin rose 120 bp from a year earlier."]}), "'bp' is jargon"),
+            "first person": (card(a, next_earnings={"note": "I read it in a copy because the site blocked my fetch."}), "first person"),
+            "quote site": (card(a, next_earnings={"source_url": "https://finance.yahoo.com/some-article"}), "source finance.yahoo.com"),
+            "lookalike host": (card(a, latest={"source_url": "https://notsec.gov.example.com/x"}), "source notsec.gov.example.com"),
+            "ahead in the past": (card(a, whats_next=[{**card(a)["whats_next"][0], "status": "ahead", "date": "2026-10-01"}]), "has passed"),
+            "probably stale": (card(a, latest={"reported_on": "2026-07-02"}, next_earnings={"date": None, "confirmed": False}), "probably out"),
+        }
+        for name, (c, msg) in cases.items():
+            errors, warnings = self.lint(self.doc(c))
+            self.assertEqual(errors, [], name)
+            self.assertTrue(any(msg in w for w in warnings), f"{name}: {warnings}")
+        _, warnings = self.lint(self.doc(card(a, latest={"reported_on": "2026-07-03"}, next_earnings={"date": None, "confirmed": False})))
+        self.assertEqual(warnings, [], "97 days after the report is not yet stale")
 
     def test_a_card_past_its_next_results_is_flagged(self):
         errors, warnings = self.lint(self.doc(card(self.syms[0], next_earnings={"date": "2026-10-07"})))
@@ -157,8 +196,14 @@ class OutlookConfigTest(unittest.TestCase):
 
     def test_how_to_read_names_the_rules(self):
         text = " ".join(self.cfg["how_to_read"]).lower()
-        for words in ("not a forecast", "paraphrase", "price targets", "refreshed after each earnings season", "flagged"):
+        for words in ("not a forecast", "paraphrase", "price targets", "refreshed after each earnings season", "flagged", "probably out"):
             self.assertIn(words, text)
+
+    def test_every_coming_item_says_whether_it_is_done_or_ahead(self):
+        for c in self.cfg["companies"]:
+            self.assertTrue(c["watch"], c["ticker"])
+            for w in c["whats_next"]:
+                self.assertIn(w.get("status"), ("done", "ahead"), f"{c['ticker']}: {w['item']}")
 
 
 class OutlookPackTest(unittest.TestCase):

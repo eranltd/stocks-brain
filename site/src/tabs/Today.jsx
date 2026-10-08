@@ -1,13 +1,13 @@
 import { Fragment } from "react";
 import { addTradingDays } from "../lib/data.js";
 import { daysBetween } from "../lib/stats.js";
-import { cap, fmtDate, fmtNum, fmtPct, pad2 } from "../lib/format.js";
+import { cap, fmtDate, fmtNum, fmtPct, pad2, signTone } from "../lib/format.js";
 import { BriefSections, marketBrief } from "../components/brief.jsx";
 import { BaseRates, GoalSection, MarketContext, PortfolioNow, nextRebalance } from "../components/goal.jsx";
 import { STAGES, TrustLadder, trustStage } from "../components/trust.jsx";
 import { callsTouching, joinCalls, shortVia, statusPhrase } from "../lib/people.js";
 import { marketDay, shortSector } from "../lib/marketday.js";
-import { comingUp, inDays } from "../lib/outlook.js";
+import { comingUp, inDays, todayISO } from "../lib/outlook.js";
 import { Accent, ArrowRight, Chip, Container, Conviction, Headline, Reveal, SectionHead, Strip } from "../components/ui.jsx";
 
 const TONE = { bullish: "var(--accent)", bearish: "var(--down)", neutral: "var(--flat)" };
@@ -81,7 +81,7 @@ function MarketToday({ data, go }) {
   const verb = lead == null ? null : lead > 0.05 ? "rose" : lead < -0.05 ? "fell" : "barely moved";
   const verbTone = verb === "rose" ? "text-accent" : verb === "fell" ? "text-down" : "text-ink-2"; // a fall never shows in the up colour
   const pctOr = (v) => (v == null ? "–" : fmtPct(v, 2));
-  const tone = (v) => (v == null || Math.abs(v) < 0.005 ? "flat" : v > 0 ? "accent" : "down"); // as shown, to two decimals
+  const tone = (v) => signTone(v, 2); // as shown, to two decimals
   return (
     <section id="market-today" className="scroll-mt-28 pt-16 sm:pt-24">
       <SectionHead eyebrow={`${data.livePrices ? "What the market did" : "Sample prices, not the market"} · ${fmtDate(d.date)}`} size="md"
@@ -127,37 +127,55 @@ function MarketToday({ data, go }) {
   );
 }
 
-/** Earnings dates for our names in the next thirty days, from the outlook cards; held or picked names first. Hidden when none. */
+/**
+ * Earnings dates for our names in the next thirty days, from the outlook cards: names we hold or picked first, then the
+ * rest of the list, each by date; held or picked names with no date yet are named below. Hidden when there is nothing.
+ */
 function ComingUp({ data, go }) {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayISO();
   const paper = data.paper && !data.paper.sample ? data.paper : null;
   const held = paper?.rebalances.at(-1)?.holdings ?? (data.livePrices ? data.longrun?.now.holdings : null) ?? [];
   const picked = data.sample ? [] : (data.lastOk?.picks ?? []).map((p) => p.pick.ticker);
-  const rows = comingUp(data.outlook, today, 30, [...picked, ...held]);
-  if (!rows.length) return null;
+  const { ahead, undated } = comingUp(data.outlook, today, 30, [...held, ...picked]);
+  if (!ahead.length && !undated.length) return null;
+  const tag = (t) => (held.includes(t) ? "held" : "picked");
+  const groups = [["Names we hold or picked", ahead.filter((r) => r.first)], ["Others on our list", ahead.filter((r) => !r.first)]].filter(([, rows]) => rows.length);
   return (
     <Reveal className="card mt-6 p-5 sm:p-6">
       <div className="flex items-baseline justify-between gap-3">
         <div className="meta text-accent">Coming up · earnings</div>
         <span className="meta normal-case tracking-[0.04em]">next 30 days</span>
       </div>
-      <ul className="mt-3 grid gap-2 sm:grid-cols-2">
-        {rows.map((r) => (
-          <li key={r.ticker}>
-            <button type="button" onClick={() => go(`stock/${r.ticker}`)} className="flex w-full min-h-[44px] items-center justify-between gap-3 rounded-xl border border-line px-3 py-2 text-left hover:border-ink-3">
-              <span className="min-w-0">
-                <span className="font-mono text-[14px] font-semibold">{r.ticker}</span>
-                <span className="ml-2 text-[13px] text-ink-3">{r.name}</span>
-                {r.first && <span className="ml-2 text-[11.5px] text-people">held or picked</span>}
-              </span>
-              <span className="shrink-0 text-right text-[13px]">
-                <span className="block text-ink">{day(r.date)}</span>
-                <span className="block text-[12px] text-ink-3">{inDays(r.days)}{r.confirmed ? "" : " · expected"}</span>
-              </span>
-            </button>
-          </li>
-        ))}
-      </ul>
+      {groups.map(([label, rows]) => (
+        <div key={label} className="mt-4">
+          <div className="meta mb-2 normal-case tracking-[0.04em]">{label}</div>
+          <ul className="grid gap-2 sm:grid-cols-2">
+            {rows.map((r) => (
+              <li key={r.ticker}>
+                <button type="button" onClick={() => go(`stock/${r.ticker}`)} className="flex w-full min-h-[44px] items-center justify-between gap-3 rounded-xl border border-line px-3 py-2 text-left hover:border-ink-3">
+                  <span className="min-w-0">
+                    <span className="font-mono text-[14px] font-semibold">{r.ticker}</span>
+                    {r.first && <span className="pill ml-2 whitespace-nowrap py-0.5 text-[10.5px] text-people">{tag(r.ticker)}</span>}
+                    <span className="block truncate text-[12px] text-ink-3">{data.names[r.ticker] ?? r.name}</span>
+                  </span>
+                  <span className="shrink-0 text-right text-[13px]">
+                    <span className="block text-ink">{day(r.date)}</span>
+                    <span className="block text-[12px] text-ink-3">{inDays(r.days)}{r.confirmed ? "" : " · expected"}</span>
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+      {undated.length > 0 && (
+        <p className="mt-3 text-[13.5px] leading-relaxed text-ink-2">
+          No date announced yet:{" "}
+          {undated.map((u, i) => (
+            <Fragment key={u.ticker}>{i ? ", " : ""}<button type="button" onClick={() => go(`stock/${u.ticker}`)} className="font-mono text-ink underline decoration-line-2 underline-offset-2 hover:decoration-ink">{u.ticker}</button> ({tag(u.ticker)})</Fragment>
+          ))}
+        </p>
+      )}
       <p className="mt-3 text-[12.5px] leading-relaxed text-ink-3">A results day can move a stock a lot either way: event risk, not a signal. Dates from each company's outlook card; "expected" means the company has not confirmed it yet.</p>
     </Reveal>
   );
@@ -194,7 +212,7 @@ const VERDICT_WORD = { passes_history: "passes history", candidate: "candidate",
 function Verdict({ data, go }) {
   const { stage, small } = trustStage(data);
   const asOf = data.market.as_of;
-  const age = daysBetween(asOf, new Date().toISOString().slice(0, 10));
+  const age = daysBetween(asOf, todayISO());
   const stale = age > 4;
   const lr = data.longrun;
   const paper = data.paper && !data.paper.sample ? data.paper : null;

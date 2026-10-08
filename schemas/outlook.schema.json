@@ -4,76 +4,257 @@
   "description": "What's next for each watchlist company: the latest reported quarter, the company's own guidance, the next earnings date, coming products and events, and what could change the story. Researched from primary sources, paraphrased, linked and dated. No prices, price targets or ratings; context only, never a forecast we endorse.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["version", "updated_at", "change_note", "purpose", "how_to_read", "companies"],
+  "required": [
+    "version",
+    "updated_at",
+    "change_note",
+    "purpose",
+    "how_to_read",
+    "companies"
+  ],
   "properties": {
-    "version": {"$ref": "common.schema.json#/$defs/semver"},
-    "updated_at": {"$ref": "common.schema.json#/$defs/date"},
-    "change_note": {"$ref": "common.schema.json#/$defs/change_note"},
-    "purpose": {"type": "string", "minLength": 20, "maxLength": 300},
-    "how_to_read": {"type": "array", "minItems": 1, "maxItems": 10, "items": {"type": "string", "minLength": 10, "maxLength": 240}},
-    "companies": {
-      "type": "array", "maxItems": 60,
+    "version": {
+      "$ref": "common.schema.json#/$defs/semver"
+    },
+    "updated_at": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "change_note": {
+      "$ref": "common.schema.json#/$defs/change_note"
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 300
+    },
+    "how_to_read": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 10,
       "items": {
-        "type": "object", "additionalProperties": false,
-        "required": ["ticker", "name", "as_of", "business", "latest", "guidance", "next_earnings", "whats_next", "watch"],
+        "type": "string",
+        "minLength": 10,
+        "maxLength": 240
+      }
+    },
+    "companies": {
+      "type": "array",
+      "maxItems": 60,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ticker",
+          "name",
+          "as_of",
+          "business",
+          "latest",
+          "guidance",
+          "next_earnings",
+          "whats_next",
+          "watch"
+        ],
         "properties": {
-          "ticker": {"$ref": "common.schema.json#/$defs/ticker"},
-          "name": {"type": "string", "minLength": 2, "maxLength": 60},
-          "as_of": {"$ref": "common.schema.json#/$defs/date", "description": "the day the card was researched"},
-          "business": {"type": "string", "minLength": 20, "maxLength": 300, "description": "what the company does and where its money comes from, in one or two plain sentences"},
+          "ticker": {
+            "$ref": "common.schema.json#/$defs/ticker"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 60
+          },
+          "as_of": {
+            "$ref": "common.schema.json#/$defs/date",
+            "description": "the day the card was researched"
+          },
+          "business": {
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 300,
+            "description": "what the company does and where its money comes from, in one or two plain sentences"
+          },
           "latest": {
-            "type": "object", "additionalProperties": false,
-            "required": ["period", "reported_on", "revenue", "revenue_growth_yoy_pct", "highlights", "source_url"],
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "period",
+              "reported_on",
+              "revenue",
+              "revenue_growth_yoy_pct",
+              "highlights",
+              "source_url"
+            ],
             "properties": {
-              "period": {"type": "string", "minLength": 2, "maxLength": 40, "description": "the company's own name for the quarter, e.g. fiscal Q2 2027"},
-              "reported_on": {"$ref": "common.schema.json#/$defs/date"},
-              "revenue": {"type": "string", "minLength": 2, "maxLength": 60, "description": "the quarter's revenue as reported, in words and figures (a company result, never a share price)"},
-              "revenue_growth_yoy_pct": {"type": ["number", "null"], "minimum": -100, "maximum": 1000},
-              "highlights": {"type": "array", "minItems": 1, "maxItems": 3, "items": {"type": "string", "minLength": 10, "maxLength": 200}},
-              "source_url": {"$ref": "#/$defs/url"}
+              "period": {
+                "type": "string",
+                "minLength": 2,
+                "maxLength": 48,
+                "description": "the company's own name for the quarter, e.g. fiscal Q2 2027"
+              },
+              "reported_on": {
+                "$ref": "common.schema.json#/$defs/date"
+              },
+              "revenue": {
+                "type": "string",
+                "minLength": 2,
+                "maxLength": 60,
+                "description": "the quarter's revenue as reported, in words and figures (a company result, never a share price)"
+              },
+              "revenue_growth_yoy_pct": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": -100,
+                "maximum": 1000
+              },
+              "highlights": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 3,
+                "items": {
+                  "type": "string",
+                  "minLength": 10,
+                  "maxLength": 200
+                }
+              },
+              "source_url": {
+                "$ref": "#/$defs/url"
+              }
             }
           },
           "guidance": {
-            "type": "object", "additionalProperties": false,
-            "required": ["given", "period", "text", "source_url"],
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "given",
+              "period",
+              "text",
+              "source_url"
+            ],
             "properties": {
-              "given": {"type": "boolean", "description": "true when the company gave its own outlook for a coming period"},
-              "period": {"type": "string", "maxLength": 40},
-              "text": {"type": "string", "minLength": 10, "maxLength": 300},
-              "source_url": {"anyOf": [{"$ref": "#/$defs/url"}, {"type": "null"}]}
+              "given": {
+                "type": "boolean",
+                "description": "true when the company gave its own outlook for a coming period"
+              },
+              "period": {
+                "type": "string",
+                "maxLength": 48
+              },
+              "text": {
+                "type": "string",
+                "minLength": 10,
+                "maxLength": 300
+              },
+              "source_url": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/url"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
             }
           },
           "next_earnings": {
-            "type": "object", "additionalProperties": false,
-            "required": ["date", "confirmed", "note", "source_url"],
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "date",
+              "confirmed",
+              "note",
+              "source_url"
+            ],
             "properties": {
-              "date": {"anyOf": [{"$ref": "common.schema.json#/$defs/date"}, {"type": "null"}]},
-              "confirmed": {"type": "boolean", "description": "true only when the company itself announced the date"},
-              "note": {"type": "string", "maxLength": 200},
-              "source_url": {"anyOf": [{"$ref": "#/$defs/url"}, {"type": "null"}]}
+              "date": {
+                "anyOf": [
+                  {
+                    "$ref": "common.schema.json#/$defs/date"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "confirmed": {
+                "type": "boolean",
+                "description": "true only when the company itself announced the date"
+              },
+              "note": {
+                "type": "string",
+                "maxLength": 260
+              },
+              "source_url": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/url"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
             }
           },
           "whats_next": {
-            "type": "array", "maxItems": 4,
+            "type": "array",
+            "maxItems": 4,
             "items": {
-              "type": "object", "additionalProperties": false,
-              "required": ["item", "when", "kind", "source_url"],
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "item",
+                "when",
+                "kind",
+                "source_url"
+              ],
               "properties": {
-                "item": {"type": "string", "minLength": 10, "maxLength": 200},
-                "when": {"type": "string", "minLength": 2, "maxLength": 40},
-                "kind": {"enum": ["product", "finance", "regulatory", "deal", "other"]},
-                "source_url": {"$ref": "#/$defs/url"}
+                "item": {
+                  "type": "string",
+                  "minLength": 10,
+                  "maxLength": 220
+                },
+                "when": {
+                  "type": "string",
+                  "minLength": 2,
+                  "maxLength": 64
+                },
+                "kind": {
+                  "enum": [
+                    "product",
+                    "finance",
+                    "regulatory",
+                    "deal",
+                    "other"
+                  ]
+                },
+                "source_url": {
+                  "$ref": "#/$defs/url"
+                }
               }
             }
           },
           "watch": {
-            "type": "array", "maxItems": 3,
+            "type": "array",
+            "maxItems": 3,
             "items": {
-              "type": "object", "additionalProperties": false,
-              "required": ["item", "source_url"],
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "item",
+                "source_url"
+              ],
               "properties": {
-                "item": {"type": "string", "minLength": 10, "maxLength": 200},
-                "source_url": {"$ref": "#/$defs/url"}
+                "item": {
+                  "type": "string",
+                  "minLength": 10,
+                  "maxLength": 200
+                },
+                "source_url": {
+                  "$ref": "#/$defs/url"
+                }
               }
             }
           }
@@ -82,6 +263,10 @@
     }
   },
   "$defs": {
-    "url": {"type": "string", "pattern": "^https://[^\\s]+$", "maxLength": 300}
+    "url": {
+      "type": "string",
+      "pattern": "^https://[^\\s]+$",
+      "maxLength": 300
+    }
   }
 }

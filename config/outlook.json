@@ -1,7 +1,7 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "updated_at": "2026-10-08",
-  "change_note": "New file: the shape of the company outlook cards. The researched cards arrive through a pull request after they are checked.",
+  "change_note": "First cards for all 21 names, researched on 8 Oct 2026 from company filings and releases, each re-checked by a second reader.",
   "purpose": "What's next for each company on our list: its latest quarter, what it says about the coming one, when it next reports and what is coming up. Context for the household, researched from the companies' own releases and filings.",
   "how_to_read": [
     "What a company says about its future is its own statement, not a forecast we endorse.",
@@ -10,5 +10,1329 @@
     "Cards are refreshed after each earnings season; each one shows the day it was researched.",
     "A card is flagged when new results are out since it was written, until it is refreshed."
   ],
-  "companies": []
+  "companies": [
+    {
+      "ticker": "AAPL",
+      "name": "Apple Inc.",
+      "as_of": "2026-10-08",
+      "business": "Sells iPhone, Mac, iPad, wearables (Watch, AirPods) and services such as the App Store, iCloud, Apple Music, Apple Pay and advertising.",
+      "latest": {
+        "period": "Q3 fiscal 2026 (quarter ended 27 Jun 2026)",
+        "reported_on": "2026-07-30",
+        "revenue": "$109.4 billion",
+        "revenue_growth_yoy_pct": 16,
+        "highlights": [
+          "iPhone $54.3B (+22%, led by Pro models), Mac $10.4B (+29%), Services $30.7B (+12%); iPad down 6%; Greater China +22%.",
+          "Gross margin 50.1%, about 2 points of which came from tariff refunds; diluted EPS $2.02 (+29%), incl. $0.11 from refunds.",
+          "Bought back $25.8B of stock and paid $4.0B dividends in the quarter; a new $100B buyback program was added in April 2026."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm"
+      },
+      "guidance": {
+        "given": false,
+        "period": "",
+        "text": "Gives its outlook only on the earnings call; we found no written copy from the company to link.",
+        "source_url": null
+      },
+      "next_earnings": {
+        "date": "2026-11-02",
+        "confirmed": false,
+        "note": "Reported by MacTrast and MacRumors (6 Oct 2026), citing Apple's IR page: Mon 2 Nov 2026, call 2pm PT; not seen directly on Apple's IR site.",
+        "source_url": "https://www.mactrast.com/2026/10/apple-to-announce-fiscal-q4-2026-earnings-on-november-2/"
+      },
+      "whats_next": [
+        {
+          "item": "iPhone Duo, Apple's first foldable iPhone (from $1,999 in the US): pre-orders 16 Oct, on sale 23 Oct in 70+ countries, 28 more on 30 Oct.",
+          "when": "October 2026",
+          "kind": "product",
+          "source_url": "https://www.apple.com/newsroom/2026/09/apple-unveils-iphone-duo/"
+        },
+        {
+          "item": "iPhone 18 Pro and Pro Max (A20 Pro chip, 2nm) launched: pre-orders 12 Sep, in stores 18 Sep, 20 more countries 25 Sep.",
+          "when": "September 2026 (first weeks fall in fiscal Q4)",
+          "kind": "product",
+          "source_url": "https://www.apple.com/newsroom/2026/09/apple-debuts-iphone-18-pro-and-iphone-18-pro-max/"
+        },
+        {
+          "item": "Siri AI launched in beta with iOS 27 (English first); French, Japanese, Korean, Portuguese and Spanish to follow; not initially in the EU.",
+          "when": "iOS 27 on 14 Sep 2026; more languages in October 2026",
+          "kind": "product",
+          "source_url": "https://www.apple.com/newsroom/2026/09/apple-debuts-iphone-18-pro-and-iphone-18-pro-max/"
+        },
+        {
+          "item": "CEO change: John Ternus became CEO and Tim Cook Executive Chair on 1 Sep 2026.",
+          "when": "effective 1 September 2026",
+          "kind": "other",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000114036126015711/ef20071035_8k.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "Apple says chip, memory (DRAM) and storage (NAND) shortages and cost increases are expected to intensify and could hurt revenue and margins.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm"
+        },
+        {
+          "item": "Tariffs: refunds after a 20 Feb 2026 Supreme Court ruling lifted Q3 margin, but further Section 232/301 or other tariff measures remain possible.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm"
+        },
+        {
+          "item": "Legal: US DOJ antitrust suit over smartphones, EU Digital Markets Act probes and Epic Games App Store case remain open.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "MSFT",
+      "name": "Microsoft Corporation",
+      "as_of": "2026-10-08",
+      "business": "Sells cloud computing (Azure), Microsoft 365/Copilot and other business software, LinkedIn, Windows, Xbox gaming and search advertising.",
+      "latest": {
+        "period": "Q4 fiscal 2026 (quarter ended 30 Jun 2026)",
+        "reported_on": "2026-07-29",
+        "revenue": "$90.0 billion",
+        "revenue_growth_yoy_pct": 18,
+        "highlights": [
+          "Microsoft Cloud revenue $59.3B (+27%); Azure and other cloud services +43%; Azure passed $100B annual revenue; Microsoft 365 Copilot over 30M paid seats.",
+          "Operating income $40.6B (+18%); GAAP net income $35.8B (+31%), helped by a $3.2B gain on its Anthropic investment.",
+          "Commercial remaining performance obligation up 84% to $678B; $10.2B returned to shareholders in the quarter."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323632/msft-ex99_1.htm"
+      },
+      "guidance": {
+        "given": true,
+        "period": "Q1 fiscal 2027 (quarter ended 30 Sep 2026)",
+        "text": "Revenue $89.85B-$90.95B; Azure growth 44%-45% in constant currency (new Azure definition); operating margin roughly flat YoY; capital spending over $50B in the quarter.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm"
+      },
+      "next_earnings": {
+        "date": "2026-10-28",
+        "confirmed": false,
+        "note": "Expected: Microsoft's investor events page lists Wednesday 28 Oct 2026 for FY27 Q1; no formal date press release or call time seen yet.",
+        "source_url": "https://www.microsoft.com/en-us/investor/events/fy-2027/earnings-fy-2027-q1"
+      },
+      "whats_next": [
+        {
+          "item": "New reporting from FY27: two segments, Agents and Infra (Azure, Microsoft 365, GitHub) and Devices and Consumer (search/ads, Xbox, Windows), with restated history.",
+          "when": "starting with FY27 Q1 results",
+          "kind": "finance",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm"
+        },
+        {
+          "item": "Continued heavy data-center build: FY26 additions to property and equipment were $115.9B, up from $64.6B in FY25.",
+          "when": "fiscal 2026 (Q1 FY27 capex guided above $50B)",
+          "kind": "finance",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323632/msft-ex99_1.htm"
+        },
+        {
+          "item": "Microsoft guided Microsoft 365 commercial cloud growth of about 17% in constant currency for Q1 FY27 under the new definition (now including GitHub).",
+          "when": "Q1 fiscal 2027",
+          "kind": "finance",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965dex991.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "OpenAI ties: about 25% stake; FY26 revenue from OpenAI arrangements $24.1B; non-GAAP results exclude OpenAI investment swings.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm"
+        },
+        {
+          "item": "10-K flags power availability and limited datacenter component supply as possible limits on capacity growth.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm"
+        },
+        {
+          "item": "Consumer side weak in Q4: More Personal Computing revenue -4%, Windows OEM/Devices -7%, Xbox content and services -10%.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323632/msft-ex99_1.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "NVDA",
+      "name": "NVIDIA Corporation",
+      "as_of": "2026-10-08",
+      "business": "Designs AI accelerators (GPUs), CPUs, networking gear and full rack-scale AI data-center systems with software, plus PC/workstation graphics and robotics/auto chips.",
+      "latest": {
+        "period": "Q2 fiscal 2027 (quarter ended 26 Jul 2026)",
+        "reported_on": "2026-08-26",
+        "revenue": "$96.2 billion",
+        "revenue_growth_yoy_pct": 106,
+        "highlights": [
+          "Data Center revenue $89.0B, up 117% YoY and 18% QoQ on the Blackwell Ultra ramp; Hyperscale $48.7B (+102%), AI Clouds/Industrial/Enterprise $40.3B (+138%).",
+          "GAAP gross margin 75.0%; GAAP net income $59.7B (+126%); Edge Computing (PCs, workstations, robotics) revenue $7.2B, up 27% YoY.",
+          "Returned about $26.0B in Q2 via buybacks and dividends; supply commitments rose to $279B from $119B, mainly for memory."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27cfocommentary.htm"
+      },
+      "guidance": {
+        "given": true,
+        "period": "Q3 fiscal 2027 (quarter ending late Oct 2026)",
+        "text": "Revenue about $108.0B (plus or minus 2%), assuming no China data-center compute revenue; gross margin about 74.0% (+/-0.5 pt); GAAP opex about $9.2B.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27cfocommentary.htm"
+      },
+      "next_earnings": {
+        "date": null,
+        "confirmed": false,
+        "note": "Not yet announced by NVIDIA as of 8 Oct 2026; in recent years the Q3 report came on a Wednesday in the second half of November, with the date set in late October.",
+        "source_url": null
+      },
+      "whats_next": [
+        {
+          "item": "Vera Rubin, the platform after Blackwell, began production shipments; NVIDIA says it will ship Blackwell and Rubin side by side and faces some supply limits.",
+          "when": "third quarter of fiscal 2027 (Aug-Oct 2026)",
+          "kind": "product",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm"
+        },
+        {
+          "item": "After Rubin: Rubin Ultra debuts Kyber racks (144 GPUs per rack, linkable to 1,152 across eight racks); Feynman is named as the architecture that follows.",
+          "when": "not dated by NVIDIA (a 2025 post tied Kyber to 2027)",
+          "kind": "product",
+          "source_url": "https://developer.nvidia.com/blog/nvidia-vera-rubin-pod-seven-chips-five-rack-scale-systems-one-ai-supercomputer/"
+        },
+        {
+          "item": "Agreed on 2 Sep 2026 to buy Hugging Face (open-model platform) for about $11.9B plus up to ~$1.0B retention equity, pending regulatory approvals.",
+          "when": "expected to close in first half of 2027",
+          "kind": "deal",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000078/nvda-20260902.htm"
+        },
+        {
+          "item": "Backing a ~4.25 GW AI campus in Ohio (SB Energy, OpenAI as tenant) with guarantees capped at $105B; NVIDIA says each GPU generation there could mean $150-200B revenue.",
+          "when": "first sites ready from 2028 (fiscal 2029)",
+          "kind": "deal",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27cfocommentary.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "Export controls: Beijing has limited US-licensed H200 sales; H200 shipments under 1% of Data Center revenue after a $0.4B H200 charge; NVIDIA says it is effectively shut out of China data centers.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm"
+        },
+        {
+          "item": "Rising commitments: $366B in supply, cloud, lease and other commitments plus up to $108.5B in data-center guarantees, $105B of it tied to the Ohio campus leased to OpenAI.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27cfocommentary.htm"
+        },
+        {
+          "item": "Receivables climbed to $63.1B (60 days of sales, from 45) due to longer payment terms on large multi-quarter deals.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27cfocommentary.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "AMZN",
+      "name": "Amazon.com, Inc.",
+      "as_of": "2026-10-08",
+      "business": "Online retail and third-party marketplace, Amazon Web Services cloud computing, advertising, and Prime subscriptions.",
+      "latest": {
+        "period": "Q2 2026 (quarter ended 30 Jun 2026)",
+        "reported_on": "2026-07-30",
+        "revenue": "$200.6 billion",
+        "revenue_growth_yoy_pct": 20,
+        "highlights": [
+          "AWS sales rose 37% to $42.2B, its fastest growth in 18 quarters. AWS operating income was $16.6B, up from $10.2B a year earlier.",
+          "Operating income rose to $27.5B from $19.2B. Net income of $62.6B includes $53.4B of pre-tax non-operating income, mainly from its Anthropic investments.",
+          "Trailing-12-month free cash flow was an outflow of $7.6B, versus an inflow of $18.2B a year earlier, after net equipment purchases rose $66.1B, mostly for AI."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0001018724/000101872426000024/amzn-20260630xex991.htm"
+      },
+      "guidance": {
+        "given": true,
+        "period": "Q3 2026",
+        "text": "Expects Q3 net sales of $197B-$202B (+9% to 12%; nearly 4 points higher excluding Prime Day in both years) and operating income of $22.5B-$26.5B, versus $17.4B a year earlier.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0001018724/000101872426000024/amzn-20260630xex991.htm"
+      },
+      "next_earnings": {
+        "date": null,
+        "confirmed": false,
+        "note": "As of 2026-10-08 Amazon has not announced its Q3 2026 date. It announced the Q2 call about two weeks ahead (16 Jul for 30 Jul), and has reported Q3 in late October in past years.",
+        "source_url": "https://press.aboutamazon.com/2026/7/amazon-com-to-webcast-second-quarter-2026-financial-results-conference-call"
+      },
+      "whats_next": [
+        {
+          "item": "Amazon Leo satellite internet: nearly 400 satellites in orbit, which Amazon says is enough to start initial service.",
+          "when": "this year (2026), per the Q2 release",
+          "kind": "product",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001018724/000101872426000024/amzn-20260630xex991.htm"
+        },
+        {
+          "item": "Pending Globalstar acquisition: holders choose $90 cash or 0.3210 Amazon shares per share, with cash capped at 40% of shares. Terms adjust in some cases.",
+          "when": "completion expected in 2027",
+          "kind": "deal",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926089294/tm2617924-1_s4.htm"
+        },
+        {
+          "item": "About $496B of contracted services not yet booked as revenue, mostly AWS. In 2026, OpenAI expanded its AWS commitment by $100B and Anthropic by more than $100B.",
+          "when": "multi-year (avg. remaining life 6.4 years, as of 30 Jun 2026)",
+          "kind": "finance",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/amzn-20260630.htm"
+        },
+        {
+          "item": "Zoox received an NHTSA exemption allowing it to charge for robotaxi rides. Alexa+ expanded to Germany, Austria, France and Brazil.",
+          "when": "no launch date given for paid Zoox service",
+          "kind": "product",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001018724/000101872426000024/amzn-20260630xex991.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "Issued £4.25B of sterling senior notes in four tranches (due 2029-2045) on 14 Sept 2026, at a time when trailing free cash flow was negative.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926107526/tm2624614d5_8k.htm"
+        },
+        {
+          "item": "Headline profit relies on non-operating gains from its Anthropic stake, which can swing either way from quarter to quarter.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001018724/000101872426000024/amzn-20260630xex991.htm"
+        },
+        {
+          "item": "Antitrust and consumer-protection cases from the FTC, state attorneys general and private plaintiffs in the US, Canada and UK seek billions in damages.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/amzn-20260630.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "GOOGL",
+      "name": "Alphabet Inc.",
+      "as_of": "2026-10-08",
+      "business": "Google Search and advertising, YouTube, Google Cloud (including Gemini AI models and TPU chips), Android and devices, plus other ventures.",
+      "latest": {
+        "period": "Q2 2026 (quarter ended 30 Jun 2026)",
+        "reported_on": "2026-07-22",
+        "revenue": "$119.8 billion",
+        "revenue_growth_yoy_pct": 24,
+        "highlights": [
+          "Google Cloud revenue rose 82% to $24.8B and its operating income rose to $8.8B from $2.8B. Search and other revenue grew 17% to $63.3B.",
+          "Operating income rose 30% to $40.8B (34% margin). EPS of $9.11 includes a $99.0B gain on equity securities, which added $6.26 per share.",
+          "Capex was $44.9B and quarterly free cash flow was negative $5.9B. No buybacks. Raised $49.6B net from stock issuance and $20.3B from notes."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0001652044/000165204426000066/googexhibit991q22026.htm"
+      },
+      "guidance": {
+        "given": false,
+        "period": "",
+        "text": "The company gives no outlook for the coming period.",
+        "source_url": null
+      },
+      "next_earnings": {
+        "date": "2026-10-28",
+        "confirmed": true,
+        "note": "Q3 2026 call on Wed 28 Oct 2026, 1:30pm PT / 4:30pm ET. Alphabet announced the date on 6 Oct 2026.",
+        "source_url": "https://abc.xyz/investor/news/news-details/2026/Alphabet-Announces-Date-of-Third-Quarter-2026-Financial-Results-Conference-Call-2026-8tpGZsLS6v/default.aspx"
+      },
+      "whats_next": [
+        {
+          "item": "Revenue backlog of $519.5B, of which $513.9B is Google Cloud. Alphabet expects to recognize just over half of it within 24 months.",
+          "when": "next 24 months and beyond (as of 30 Jun 2026)",
+          "kind": "finance",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm"
+        },
+        {
+          "item": "Closed a $25B US dollar senior notes offering in ten tranches, maturing 2028 to 2056 and beyond, after the Q2 stock and note raises.",
+          "when": "closed 10 Aug 2026",
+          "kind": "finance",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526342390/d171253d8k.htm"
+        },
+        {
+          "item": "The Gemini app has 950M monthly users and nearly 90% of the Fortune 100 use Gemini Enterprise. Alphabet also introduced Gemini 3.5 Flash Cyber alongside its security products.",
+          "when": "as of the Q2 2026 release",
+          "kind": "product",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001652044/000165204426000066/googexhibit991q22026.htm"
+        },
+        {
+          "item": "$69.5B remains under the $70B buyback authorization from Apr 2025, but no shares were repurchased in H1 2026. A $0.22 quarterly dividend was paid 14 Sep 2026.",
+          "when": "no expiration date on the program",
+          "kind": "finance",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "Ad-tech antitrust case: the final remedies judgment is still pending after Nov 2025 closing arguments. Google says DOJ's structural remedies could be materially adverse.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm"
+        },
+        {
+          "item": "Search antitrust case: Google (Jan 2026) and the DOJ and states (Feb 2026) both appealed the final judgment, which requires data-sharing and syndication to rivals.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm"
+        },
+        {
+          "item": "Large gains on equity holdings drove Q2 EPS. Alphabet says swings in these investments could make other income significantly volatile in future periods.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001652044/000165204426000066/googexhibit991q22026.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "META",
+      "name": "Meta Platforms, Inc.",
+      "as_of": "2026-10-08",
+      "business": "Facebook, Instagram, WhatsApp and Messenger, funded by advertising, plus Reality Labs (AI glasses, VR headsets) and Meta AI.",
+      "latest": {
+        "period": "Q2 2026 (quarter ended 30 Jun 2026)",
+        "reported_on": "2026-07-29",
+        "revenue": "$60.8 billion",
+        "revenue_growth_yoy_pct": 28,
+        "highlights": [
+          "Ad impressions rose 14% and average price per ad rose 12%. Daily active people across its apps reached 3.60B (+3%).",
+          "Costs rose 55% to $42.0B, including a $2.4B legal charge and $1.18B of severance from the May 2026 layoffs. Operating margin fell to 31% from 43%, and net income fell 14% to $15.85B.",
+          "Family of Apps operating income was $23.4B and Reality Labs lost $4.6B. Capex, including finance-lease principal, was $31.1B. No buybacks."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0001326801/000162828026050596/meta-06302026xexhibit991.htm"
+      },
+      "guidance": {
+        "given": true,
+        "period": "Q3 2026 and full year 2026",
+        "text": "Q3 revenue of $61-64B. For FY2026: total expenses of $165-169B, capex of $130-145B (narrowed from $125-145B), and operating income above 2025's level.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0001326801/000162828026050596/meta-06302026xexhibit991.htm"
+      },
+      "next_earnings": {
+        "date": null,
+        "confirmed": false,
+        "note": "As of 2026-10-08 Meta has not announced its Q3 2026 date; its 2026 IR announcement page does not exist yet. Meta reported Q3 2025 on 29 Oct 2025. Third-party calendars estimate 28 Oct 2026, which Meta has not confirmed.",
+        "source_url": "https://investor.atmeta.com/investor-news/press-release-details/2025/Meta-to-Announce-Third-Quarter-2025-Results/default.aspx"
+      },
+      "whats_next": [
+        {
+          "item": "Meta VR Glasses, a roughly 100-gram VR headset in a glasses frame, tethered to a pocket puck that holds compute and battery. Price $1,299.99.",
+          "when": "on sale Spring 2027",
+          "kind": "product",
+          "source_url": "https://about.fb.com/news/2026/09/introducing-meta-vr-glasses-3d-movies-immersive-live-sports-100-grams/"
+        },
+        {
+          "item": "New AI glasses: Ray-Ban Meta Audio from $349, and a new Meta Adventurer version from $249. Ray-Ban Meta Gen 3 is on sale from $449.",
+          "when": "Audio ships 13 Oct 2026; Adventurer on sale 23 Oct 2026",
+          "kind": "product",
+          "source_url": "https://about.fb.com/news/2026/09/introducing-ray-ban-meta-audio-glasses-new-styles-plus-muse/"
+        },
+        {
+          "item": "Muse, Meta's personal AI agent, is coming to its AI glasses. A US hearing-enhancement feature ($149.99, or included with Meta One) is also launching.",
+          "when": "Muse 'in the coming months'; hearing feature 'later this year'",
+          "kind": "product",
+          "source_url": "https://about.fb.com/news/2026/09/the-biggest-news-from-connect-2026/"
+        },
+        {
+          "item": "Full-year 2026 capex planned at $130-145B to support AI and the core business. Meta issued $25B of senior notes in May 2026.",
+          "when": "fiscal 2026",
+          "kind": "finance",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/meta-20260630.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "US youth-safety litigation: juries ruled against Meta in two trials (a $375M New Mexico penalty and a $6M award shared with YouTube). The next two user bellwether trials start 28 Oct 2026.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/meta-20260630.htm"
+        },
+        {
+          "item": "EU Commission issued preliminary Digital Services Act findings (Apr and Jul 2026) on under-13 users and potentially addictive design on Facebook and Instagram.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/meta-20260630.htm"
+        },
+        {
+          "item": "In Q2, expenses grew 55% while revenue grew 28%, and operating margin fell to 31% from 43%.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001326801/000162828026050596/meta-06302026xexhibit991.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "AVGO",
+      "name": "Broadcom Inc.",
+      "as_of": "2026-10-08",
+      "business": "Makes custom AI chips (XPUs) and networking chips for big cloud/AI customers, plus broadband, wireless and storage chips; also sells infrastructure software (VMware).",
+      "latest": {
+        "period": "Q3 fiscal 2026 (quarter ended 2 Aug 2026)",
+        "reported_on": "2026-09-02",
+        "revenue": "$29.6 billion",
+        "revenue_growth_yoy_pct": 86,
+        "highlights": [
+          "AI semiconductor revenue $16.7B, up 221% YoY and 54% QoQ; semiconductor solutions $20.8B (+127%), infrastructure software $8.8B (+29%).",
+          "GAAP net income $13.1B (+216%); non-GAAP operating income $20.1B (+92%); free cash flow $13.7B, 46% of revenue.",
+          "Quarterly dividend held at $0.65/share; cash and equivalents $24.0B at quarter end."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000076/avgo-08022026x8kxex99.htm"
+      },
+      "guidance": {
+        "given": true,
+        "period": "Q4 fiscal 2026 (quarter ending 1 Nov 2026)",
+        "text": "Revenue about $34.8B (+93% YoY), with AI semiconductor revenue expected near $21.7B (+236%); non-GAAP operating income about 66% of revenue.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000076/avgo-08022026x8kxex99.htm"
+      },
+      "next_earnings": {
+        "date": null,
+        "confirmed": false,
+        "note": "Not yet announced as of 8 Oct 2026; Broadcom has typically posted its Q4 date in November and reported in mid-December.",
+        "source_url": null
+      },
+      "whats_next": [
+        {
+          "item": "Firm contract backlog of about $179.2B (incl. a long-term custom AI accelerator deal signed last quarter); about 25% expected to become revenue within 12 months.",
+          "when": "next 12 months from 2 Aug 2026",
+          "kind": "finance",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000080/avgo-20260802.htm"
+        },
+        {
+          "item": "AI XPV platform with financial partners aims to enable over 20 GW of compute on Broadcom custom XPUs and networking for frontier AI labs; first tranche $35B.",
+          "when": "through 2028 (launched June 2026)",
+          "kind": "deal",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000080/avgo-20260802.htm"
+        },
+        {
+          "item": "Q4 AI semiconductor revenue expected to accelerate to about $21.7B.",
+          "when": "Q4 fiscal 2026",
+          "kind": "finance",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000076/avgo-08022026x8kxex99.htm"
+        },
+        {
+          "item": "About $10.1B remained available under stock buyback authorizations at quarter end.",
+          "when": "as of 2 Aug 2026",
+          "kind": "finance",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000080/avgo-20260802.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "Customer concentration: top five end customers about 55% of Q3 revenue; direct sales to one distributor alone 50%.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000080/avgo-20260802.htm"
+        },
+        {
+          "item": "Broadcom backstops a customer's 5-year AI-rack lease obligations; maximum exposure about $29B once all racks deploy (nothing paid so far).",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000080/avgo-20260802.htm"
+        },
+        {
+          "item": "Higher mix of chip sales (lower margin than software) and new rack/lease business models could weigh on gross margin, per the 10-Q.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000080/avgo-20260802.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "COST",
+      "name": "Costco Wholesale Corporation",
+      "as_of": "2026-10-08",
+      "business": "Membership warehouse clubs selling groceries, household goods, gasoline and its Kirkland Signature brand, funded partly by annual membership fees.",
+      "latest": {
+        "period": "Q4 fiscal 2026 (16 weeks ended 30 Aug 2026)",
+        "reported_on": "2026-09-24",
+        "revenue": "$95.7 billion",
+        "revenue_growth_yoy_pct": 11.1,
+        "highlights": [
+          "Net sales rose 11.2% to $93.9B. Comparable sales rose 9.4% (6.7% excluding gas prices and FX), and digitally-enabled comparable sales rose 19.5%.",
+          "Q4 net income was $3.0B ($6.75 per share vs $5.87), including a one-time $0.15 per share benefit from IEEPA tariff refunds. Full-year net income was $9.2B.",
+          "Q4 membership fees were $1.85B, up from $1.72B. Costco operates 939 warehouses, 647 of them in the US and Puerto Rico."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0000909832/000090983226000084/costex9918-k92426.htm"
+      },
+      "guidance": {
+        "given": false,
+        "period": "",
+        "text": "The company gives no outlook for the coming period.",
+        "source_url": null
+      },
+      "next_earnings": {
+        "date": null,
+        "confirmed": false,
+        "note": "Costco has not announced its Q1 fiscal 2027 date as of 2026-10-08. It usually reports Q1 in December, and third-party calendars estimate about 10 Dec 2026, which Costco has not confirmed.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0000909832/000090983226000084/costex9918-k92426.htm"
+      },
+      "whats_next": [
+        {
+          "item": "Plans to open up to 33 new warehouses, including 5 relocations, after opening 28 (including 3 relocations) in fiscal 2026.",
+          "when": "fiscal 2027 (Sept 2026-Aug 2027)",
+          "kind": "other",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/909832/000090983226000093/cost-20260830.htm"
+        },
+        {
+          "item": "Intends to spend about $7.5B on capital expenditures, up from $6.4B in fiscal 2026.",
+          "when": "fiscal 2027",
+          "kind": "finance",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/909832/000090983226000093/cost-20260830.htm"
+        },
+        {
+          "item": "The $4B buyback authorization from Jan 2023 (about $1.1B left at 30 Aug 2026) expires. The annual shareholder meeting is set for 21 Jan 2027.",
+          "when": "January 2027",
+          "kind": "finance",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/909832/000090983226000093/cost-20260830.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "Costco says higher tariffs are more likely to hurt than help its results. It received $184M of IEEPA refunds in FY2026 and $155M since, mostly for member value.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/909832/000090983226000093/cost-20260830.htm"
+        },
+        {
+          "item": "Four class actions filed in Mar 2026 seek IEEPA tariff refunds for members who paid higher prices. One court denied Costco's motion to dismiss on 17 Jul 2026.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/909832/000090983226000093/cost-20260830.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "AMGN",
+      "name": "Amgen Inc.",
+      "as_of": "2026-10-08",
+      "business": "Biotech drugmaker: heart (Repatha), bone (Prolia, Evenity), inflammation (Tezspire, Tepezza, Uplizna), cancer (Imdelltra, Blincyto) and biosimilars.",
+      "latest": {
+        "period": "Q2 2026 (quarter ended 30 Jun 2026)",
+        "reported_on": "2026-08-04",
+        "revenue": "$10.1 billion",
+        "revenue_growth_yoy_pct": 10,
+        "highlights": [
+          "Product sales grew 9% to $9.5B, mainly on volume. Repatha rose 37% to $953M, Evenity 38%, Tezspire 42%, Imdelltra 115% and Uplizna 90%.",
+          "Biosimilar launches cut Prolia sales by 32% and Xgeva by 34%. Non-GAAP operating margin was 48.4% of product sales, 0.5 points lower than a year earlier.",
+          "Free cash flow was $3.5B, up from $1.9B. Amgen bought back no shares in the quarter. The dividend was $2.52 a share, 6% higher than a year earlier."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0000318154/000031815426000124/amgn-20260630earningsrelea.htm"
+      },
+      "guidance": {
+        "given": true,
+        "period": "Full year 2026",
+        "text": "Total revenues of $38.2B-$39.4B and non-GAAP EPS of $22.30-$23.50. Capital spending of about $2.6B. Share buybacks of no more than $3.0B.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0000318154/000031815426000124/amgn-20260630earningsrelea.htm"
+      },
+      "next_earnings": {
+        "date": null,
+        "confirmed": false,
+        "note": "As of 8 Oct 2026 Amgen had not announced a Q3 2026 date, and no reputable outlet reported one. Amgen usually posts a webcast notice about a week before it reports.",
+        "source_url": null
+      },
+      "whats_next": [
+        {
+          "item": "In the Phase 3 DeLLphi-305 trial, adding Imdelltra to Imfinzi improved overall survival as first-line maintenance in extensive-stage small cell lung cancer. Amgen plans to share the data with regulators.",
+          "when": "announced 8 Sep 2026; full data at a coming congress",
+          "kind": "regulatory",
+          "source_url": "https://www.amgen.com/newsroom/press-releases/2026/09/imdelltra-in-combination-with-imfinzi-demonstrated-landmark-improvement-in-overall-survival-in-first-line-extensive-stage-small-cell-lung-cancer"
+        },
+        {
+          "item": "Dazodalibep met its main goal in the Phase 3 OASIZ 301 trial in Sjogren's disease. A second Phase 3 trial, OASIZ 303, is still running.",
+          "when": "OASIZ 301 out 22 Sep 2026; OASIZ 303 due Q4 2026",
+          "kind": "product",
+          "source_url": "https://www.amgen.com/newsroom/press-releases/2026/09/amgen-announces-positive-topline-phase-3-results-for-dazodalibep-in-moderatetosevere-systemic-sjgrens-disease"
+        },
+        {
+          "item": "MariTide, Amgen's obesity drug, is in several MARITIME Phase 3 studies. Three more Phase 3 studies in type 2 diabetes are planned. No readout date given.",
+          "when": "Diabetes studies expected to start in 2026",
+          "kind": "product",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000318154/000031815426000124/amgn-20260630earningsrelea.htm"
+        },
+        {
+          "item": "The FDA cut required patient monitoring after each of the first two Imdelltra doses from 22-24 hours to 6-8 hours.",
+          "when": "Announced 14 Sep 2026",
+          "kind": "regulatory",
+          "source_url": "https://www.amgen.com/newsroom/press-releases/2026/09/fda-approves-reduced-monitoring-time-for-first-two-doses-of-imdelltra"
+        }
+      ],
+      "watch": [
+        {
+          "item": "Biosimilar competition is eating into Prolia and Xgeva. In Q2, Prolia sales fell 32% and Xgeva 34%.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000318154/000031815426000124/amgn-20260630earningsrelea.htm"
+        },
+        {
+          "item": "The FDA wants Tavneos off the U.S. market. Amgen asked for a hearing on 1 Jun 2026 and filed supporting materials on 23 Jul 2026. No outcome found as of 8 Oct.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000318154/000031815426000124/amgn-20260630earningsrelea.htm"
+        },
+        {
+          "item": "An FDA partial clinical hold stopped new enrollment in two subcutaneous blinatumomab studies. Amgen is talking with the FDA about reopening them.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000318154/000031815426000124/amgn-20260630earningsrelea.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "ISRG",
+      "name": "Intuitive Surgical, Inc.",
+      "as_of": "2026-10-08",
+      "business": "Makes da Vinci surgical robots and the Ion lung-biopsy system, plus the instruments, accessories and service that go with them.",
+      "latest": {
+        "period": "Q2 2026 (quarter ended 30 Jun 2026)",
+        "reported_on": "2026-07-16",
+        "revenue": "$2.89 billion",
+        "revenue_growth_yoy_pct": 19,
+        "highlights": [
+          "Worldwide procedures grew about 16%: da Vinci about 15% and Ion about 36%. Intuitive placed 468 da Vinci systems (246 da Vinci 5), up from 395 a year earlier.",
+          "Instruments and accessories revenue rose 18% to $1.73B. Non-GAAP gross margin was 70.0%, up from 67.9%, helped by IEEPA tariff refunds worth about $0.08 a share.",
+          "Cash and investments ended the quarter at $8.63B. Intuitive bought back about 0.9M shares for $0.38B."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0001035267/000103526726000047/q226ex-991earningsrelease.htm"
+      },
+      "guidance": {
+        "given": true,
+        "period": "Full year 2026 (updated 16 Jul 2026)",
+        "text": "da Vinci procedure growth of about 13.5%-15.5%, now expected near the midpoint (same range as April). Non-GAAP gross margin raised to 68%-69% (was 67.5%-68.5%), including about 1 point of tariff drag. Opex growth narrowed to 11%-13% from 11%-14%.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0001035267/000103526726000047/q226ex-991earningsrelease.htm"
+      },
+      "next_earnings": {
+        "date": "2026-10-20",
+        "confirmed": false,
+        "note": "Barchart (via Yahoo Finance, 30 Sep 2026) expects Q3 results after the market closes on 20 Oct. A search result showed Intuitive's investor site listing the Q3 call for 20 Oct at 1:30pm PT, but the page blocked access, so it is marked expected.",
+        "source_url": "https://finance.yahoo.com/markets/stocks/articles/know-ahead-intuitive-surgicals-earnings-142430542.html"
+      },
+      "whats_next": [
+        {
+          "item": "In March 2026 the FDA cleared updated da Vinci 5 force-feedback instruments, which can now be used more times. Wider availability depends on making more of them.",
+          "when": "As manufacturing volumes increase (no date given)",
+          "kind": "product",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1035267/000103526726000058/isrg-20260630.htm"
+        },
+        {
+          "item": "The FDA cleared da Vinci 5 for some chest-access heart procedures, such as mitral valve repair, using instruments without force feedback.",
+          "when": "Cleared January 2026",
+          "kind": "regulatory",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1035267/000103526726000058/isrg-20260630.htm"
+        },
+        {
+          "item": "Intuitive bought its distributors in Italy, Spain and Portugal for about $533M and now sells directly in those markets and nearby territories.",
+          "when": "Closed 1 Mar 2026. Shift to direct sales under way.",
+          "kind": "deal",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1035267/000103526726000058/isrg-20260630.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "Tariffs: the amount and timing of further IEEPA tariff refunds is uncertain. German-made endoscopes are tariffed, while most Mexico-made instruments are exempt under USMCA.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1035267/000103526726000058/isrg-20260630.htm"
+        },
+        {
+          "item": "Intuitive lists competition as a risk, including domestic robot makers in markets such as China.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1035267/000103526726000058/isrg-20260630.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "GILD",
+      "name": "Gilead Sciences, Inc.",
+      "as_of": "2026-10-08",
+      "business": "Biopharma focused on HIV treatment and prevention (Biktarvy, Descovy, Yeztugo), liver disease (Livdelzi), and cancer (Trodelvy, Kite cell therapies).",
+      "latest": {
+        "period": "Q2 2026 (quarter ended 30 Jun 2026)",
+        "reported_on": "2026-08-04",
+        "revenue": "$7.8 billion",
+        "revenue_growth_yoy_pct": 10.2,
+        "highlights": [
+          "HIV sales grew 12% to $5.7B. Biktarvy rose 7% to $3.8B, Descovy 48% to $967M, and Yeztugo (twice-yearly PrEP) brought in $232M. Trodelvy grew 26% to $457M.",
+          "GAAP loss of $8.45 a share, including $9.08 a share from acquired R&D charges, of which $7.0B was for Arcellx. Cell therapy sales fell 14% to $417M.",
+          "Operating cash flow was $3.6B. Gilead paid $1.0B in dividends and bought back $355M of stock. Cash and securities fell to $3.2B after acquisitions and debt repayment."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0000882095/000088209526000028/exhibit991earningspressrel.htm"
+      },
+      "guidance": {
+        "given": true,
+        "period": "Full year 2026 (updated 4 Aug 2026)",
+        "text": "Product sales of $30.1B-$30.4B. Excluding Veklury, raised to $29.8B-$30.1B (was $29.4B-$29.8B). Veklury cut to about $300M (was about $600M). Non-GAAP loss of $0.30-$0.65 a share, narrowed from a loss of $0.65-$1.05.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0000882095/000088209526000028/exhibit991earningspressrel.htm"
+      },
+      "next_earnings": {
+        "date": null,
+        "confirmed": false,
+        "note": "As of 8 Oct 2026 Gilead had not announced a Q3 2026 date. Data sites give conflicting estimates (22 Oct or 29 Oct), so no date is shown.",
+        "source_url": null
+      },
+      "whats_next": [
+        {
+          "item": "FDA decision on anito-cel, a CAR-T therapy for multiple myeloma that has relapsed after three or more prior treatments (fourth line or later). Gilead bought partner Arcellx in April 2026.",
+          "when": "PDUFA target date 23 Dec 2026",
+          "kind": "regulatory",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/882095/000088209526000031/gild-20260630.htm"
+        },
+        {
+          "item": "The FDA approved Bixlenvo (bictegravir + lenacapavir), a once-daily pill that can replace current treatment for adults whose HIV is already suppressed.",
+          "when": "Announced 27 Aug 2026, its PDUFA target date",
+          "kind": "product",
+          "source_url": "https://www.gilead.com/news/news-details/2026/u-s--fda-approves-gileads-bixlenvo-a-new-once-daily-single-tablet-option-for-virologically-suppressed-adults-with-hiv-including-those-on-complex-regimens"
+        },
+        {
+          "item": "The FDA is reviewing a once-weekly Yeztugo pill for HIV prevention.",
+          "when": "PDUFA target date 2 Feb 2027",
+          "kind": "regulatory",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000882095/000088209526000028/exhibit991earningspressrel.htm"
+        },
+        {
+          "item": "Islatravir + lenacapavir, a once-weekly HIV treatment pill developed with Merck, had positive results in the Phase 3 ISLEND-1 and ISLEND-2 trials. No filing timing given.",
+          "when": "Reported in the Q2 2026 results",
+          "kind": "product",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000882095/000088209526000028/exhibit991earningspressrel.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "Cell therapy sales are falling: in Q2, Yescarta fell 12% and Tecartus 24%. Expected Veklury sales were cut in half, to about $300M.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000882095/000088209526000028/exhibit991earningspressrel.htm"
+        },
+        {
+          "item": "Cash and securities fell from $10.6B to $3.2B in the first half, after deals (Arcellx, Tubulis, Ouro) and debt repayment. 2026 EPS guidance is negative on both GAAP and non-GAAP.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000882095/000088209526000028/exhibit991earningspressrel.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "PEP",
+      "name": "PepsiCo, Inc.",
+      "as_of": "2026-10-08",
+      "business": "Global snacks and drinks: Frito-Lay, Quaker, Pepsi, Gatorade and others, sold through North American and international divisions.",
+      "latest": {
+        "period": "Q3 2026 (12 weeks ended 5 Sep 2026)",
+        "reported_on": "2026-10-08",
+        "revenue": "$25.27 billion",
+        "revenue_growth_yoy_pct": 5.6,
+        "highlights": [
+          "Organic revenue rose 3.1%, with volume growth in both drinks and foods. Core EPS rose 2% to $2.34. Tariff refunds added about 4 points to core operating profit.",
+          "North America foods and beverages were both flat on an organic basis. Abroad, organic growth was 9% in EMEA, 9% in Asia Pacific Foods and 6% in LatAm Foods.",
+          "Reported EPS rose 17% to $2.23. Net revenue for the year to date was $68.9B, up 6.7%."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0000077476/000007747626000050/q320268-kxexhibit991.htm"
+      },
+      "guidance": {
+        "given": true,
+        "period": "Full year 2026 (updated 8 Oct 2026)",
+        "text": "Organic revenue about +3% and net revenue about +6%. Core EPS growth cut to +2.5%-3.5% (was the low end of +5%-7%). Cash returned to shareholders unchanged at $8.9B: $7.9B dividends and $1.0B buybacks.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0000077476/000007747626000050/q320268-kxexhibit991.htm"
+      },
+      "next_earnings": {
+        "date": null,
+        "confirmed": false,
+        "note": "Q3 was reported 8 Oct 2026. PepsiCo has not yet announced a date for Q4 and full-year results.",
+        "source_url": null
+      },
+      "whats_next": [
+        {
+          "item": "PepsiCo is lining up more structural cost cuts. They are meant to pay for growth spending and offset rising input costs.",
+          "when": "To be carried out in the coming months",
+          "kind": "finance",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000077476/000007747626000050/q320268-kxexhibit991.htm"
+        },
+        {
+          "item": "PepsiCo expanded the multi-year productivity plan it started in 2019 and extended it.",
+          "when": "Through the end of 2030",
+          "kind": "finance",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000077476/000007747626000050/q320268-kxexhibit991.htm"
+        },
+        {
+          "item": "Plan to lift North America results with more innovation, stronger brand building and sharper execution in each sales channel.",
+          "when": "Ongoing (no date given)",
+          "kind": "product",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000077476/000007747626000050/q320268-kxexhibit991.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "North America is not growing organically. PFNA was flat, and PBNA's 5% reported growth came mainly from acquisitions made in 2025.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000077476/000007747626000050/q320268-kxexhibit991.htm"
+        },
+        {
+          "item": "Core EPS growth guidance was cut to +2.5%-3.5% from the low end of +5%-7%. Q3 core operating profit got about a 4-point lift from tariff refunds.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000077476/000007747626000050/q320268-kxexhibit991.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "MNST",
+      "name": "Monster Beverage Corporation",
+      "as_of": "2026-10-08",
+      "business": "Makes and sells energy drinks worldwide (Monster Energy plus other energy brands it owns) and a small craft beer, malt beverage and hard seltzer line",
+      "latest": {
+        "period": "Q2 2026 (quarter ended 30 Jun 2026)",
+        "reported_on": "2026-08-06",
+        "revenue": "$2.54 billion",
+        "revenue_growth_yoy_pct": 20.2,
+        "highlights": [
+          "Monster Energy Drinks segment sales rose 21.6% to $2.36 billion; Alcohol Brands fell 15.2% to $32.2 million",
+          "Sales outside the U.S. grew 34.6% to $1.16 billion, about 46% of the quarter's net sales (about 41% a year earlier)",
+          "Gross margin 55.9% vs 55.7% (pricing and mix, partly offset by higher aluminum can and freight-in costs); operating income +17.2% to $740.4 million"
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/865752/000110465926092046/tm2622396d1_ex99-1.htm"
+      },
+      "guidance": {
+        "given": false,
+        "period": "",
+        "text": "The company gives no outlook for the coming period.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/865752/000110465926092046/tm2622396d1_ex99-1.htm"
+      },
+      "next_earnings": {
+        "date": null,
+        "confirmed": false,
+        "note": "No Q3 2026 date announced as of 2026-10-08; in past years Monster announced its Q3 date in late October and reported in early November (a pattern, not a schedule)",
+        "source_url": "https://investors.monsterbevcorp.com/"
+      },
+      "whats_next": [
+        {
+          "item": "About $900 million remained available under existing share buyback authorizations; no shares were bought in Q2 2026",
+          "when": "as of 5 Aug 2026",
+          "kind": "finance",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/865752/000110465926092046/tm2622396d1_ex99-1.htm"
+        },
+        {
+          "item": "Two-for-one stock split paid as a 100% stock dividend, distributed after the close on 10 Aug 2026 with split-adjusted trading expected from 11 Aug",
+          "when": "August 2026",
+          "kind": "finance",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/865752/000110465926092046/tm2622396d1_ex99-1.htm"
+        },
+        {
+          "item": "2026 marketing plan raises spending on social, digital and media platforms and partnerships to back existing drinks and new launches",
+          "when": "2026",
+          "kind": "product",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/865752/000110465926092046/tm2622396d1_ex99-1.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "Company lists aluminum can costs, the Midwest Premium and additional U.S. tariffs among risks; higher can costs already weighed on Q2 margin",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/865752/000110465926092046/tm2622396d1_ex99-1.htm"
+        },
+        {
+          "item": "Alcohol Brands (craft beer, malt beverages, hard seltzer) sales kept shrinking, down 15.2% year over year in Q2",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/865752/000110465926092046/tm2622396d1_ex99-1.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "AEP",
+      "name": "American Electric Power Company",
+      "as_of": "2026-10-08",
+      "business": "Regulated electric utility serving customers across 11 U.S. states, with one of the largest U.S. power transmission networks",
+      "latest": {
+        "period": "Q2 2026 (quarter ended 30 Jun 2026)",
+        "reported_on": "2026-07-30",
+        "revenue": "$5.45 billion",
+        "revenue_growth_yoy_pct": 7,
+        "highlights": [
+          "Operating (non-GAAP) EPS $1.36 vs $1.43; GAAP EPS $1.31 vs $2.29 (Q2 2025 GAAP included a $480M one-time benefit tied to a FERC tax order)",
+          "Signed about 6 GW more large-load agreements in Q2, mostly in Texas, taking contracted load growth through 2030 to 69 GW",
+          "AEP Texas secured a DOE loan of up to $3.3 billion for nearly 100 transmission projects; AEP's DOE loans now total about $5 billion"
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0000004904/000000490426000055/a2q20268kpressreleaseex991.htm"
+      },
+      "guidance": {
+        "given": true,
+        "period": "Full year 2026 and through 2030",
+        "text": "Raised 2026 operating EPS range to $6.25-$6.55 (from $6.15-$6.45); reaffirmed 7%-9% annual operating earnings growth through 2030",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0000004904/000000490426000055/a2q20268kpressreleaseex991.htm"
+      },
+      "next_earnings": {
+        "date": "2026-10-28",
+        "confirmed": true,
+        "note": "Q3 2026 earnings webcast listed on AEP's investor events page for 28 Oct 2026, 9:00 a.m. ET (re-checked 2026-10-08)",
+        "source_url": "https://aep.com/investors/events"
+      },
+      "whats_next": [
+        {
+          "item": "$78 billion capital plan, plus more than $10 billion of further possible investment (Wyoming fuel cell project, Piketon, Ohio transmission, new generation)",
+          "when": "2026-2030",
+          "kind": "finance",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000004904/000000490426000055/a2q20268kpressreleaseex991.htm"
+        },
+        {
+          "item": "About 13 GW of gas turbine capacity secured for possible deployment, with up to 10 GW more being evaluated",
+          "when": "through 2031; additional through 2035",
+          "kind": "product",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000004904/000000490426000055/a2q20268kpressreleaseex991.htm"
+        },
+        {
+          "item": "Large-load tariffs approved in five states (Virginia added in Q2), three more state filings pending",
+          "when": "pending",
+          "kind": "regulatory",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000004904/000000490426000055/a2q20268kpressreleaseex991.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "Plan rests on 69 GW of contracted data-center and industrial load arriving through 2030 and on pending state large-load tariff decisions",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000004904/000000490426000055/a2q20268kpressreleaseex991.htm"
+        },
+        {
+          "item": "Operating earnings fell year over year in Q2, which the CEO tied to the 2025 transmission minority-stake sale and tax timing",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000004904/000000490426000055/a2q20268kpressreleaseex991.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "XEL",
+      "name": "Xcel Energy Inc.",
+      "as_of": "2026-10-08",
+      "business": "Regulated electric and natural gas utility serving customers in eight Western and Midwestern U.S. states (Minnesota, Colorado, Texas, New Mexico and others)",
+      "latest": {
+        "period": "Q2 2026 (quarter ended 30 Jun 2026)",
+        "reported_on": "2026-07-30",
+        "revenue": "$3.12 billion",
+        "revenue_growth_yoy_pct": -5.1,
+        "highlights": [
+          "GAAP and ongoing EPS both $0.93, up from $0.75, mainly from recovery of electric infrastructure spending, partly offset by higher financing costs",
+          "Retail electric sales rose 2.1% (1.5% weather-normalized); quarterly dividend raised to $0.5925 from $0.57",
+          "Google will pay all costs of serving a new Minnesota data center under an agreement signed earlier in 2026; company sees about $1.1B of customer benefits if approved"
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0000072903/000007290326000149/xcelearningsreleaseq22026.htm"
+      },
+      "guidance": {
+        "given": true,
+        "period": "Full year 2026 and long term",
+        "text": "Reaffirmed 2026 ongoing EPS of $4.04-$4.16; long-term EPS growth objective 6%-8%+ a year and dividend growth 4%-6% a year",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0000072903/000007290326000149/xcelearningsreleaseq22026.htm"
+      },
+      "next_earnings": {
+        "date": null,
+        "confirmed": false,
+        "note": "No Q3 2026 call announced as of 2026-10-08; Xcel has reported Q3 in late October in past years (a pattern, not a schedule)",
+        "source_url": "https://investors.xcelenergy.com/"
+      },
+      "whats_next": [
+        {
+          "item": "Minnesota regulators to decide on the Google data center service agreement and a 1,900 MW clean-energy charge",
+          "when": "decision expected early 2027",
+          "kind": "regulatory",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000072903/000007290326000149/xcelearningsreleaseq22026.htm"
+        },
+        {
+          "item": "Rate case decisions still pending: Colorado gas ($123M settlement), New Mexico electric ($90M stipulation), Minnesota gas ($38M settlement)",
+          "when": "Q4 2026 (Minnesota gas in November 2026)",
+          "kind": "regulatory",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000072903/000007290326000149/xcelearningsreleaseq22026.htm"
+        },
+        {
+          "item": "Forward share sale agreements cover 69.7 million unsettled shares, minimum expected proceeds of $5.2 billion",
+          "when": "as of 30 Jun 2026",
+          "kind": "finance",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000072903/000007290326000149/xcelearningsreleaseq22026.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "Colorado regulators verbally approved a $157M electric rate increase on 19 Aug 2026, below the $225M settlement; new rates expected from 29 Aug",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/72903/000007290326000160/xel-20260819.htm"
+        },
+        {
+          "item": "Smokehouse Creek wildfire (Texas): $503M estimated losses and costs, about $80M of insurance left, Texas Attorney General lawsuit pending",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000072903/000007290326000149/xcelearningsreleaseq22026.htm"
+        },
+        {
+          "item": "Interest expense projected to rise $240-$250 million in 2026 as the company borrows to fund its build-out",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000072903/000007290326000149/xcelearningsreleaseq22026.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "CTAS",
+      "name": "Cintas Corporation",
+      "as_of": "2026-10-08",
+      "business": "Rents and cleans work uniforms and supplies facility products (mats, restroom supplies), first aid and safety, and fire protection services for businesses",
+      "latest": {
+        "period": "Q1 fiscal 2027 (quarter ended 31 Aug 2026)",
+        "reported_on": "2026-09-23",
+        "revenue": "$3.01 billion",
+        "revenue_growth_yoy_pct": 10.9,
+        "highlights": [
+          "Organic growth 8.9%; Uniform Rental & Facility Services revenue $2.29 billion (+9.7%); First Aid & Safety $388.5 million (+16.1%)",
+          "Gross margin 51.5% (up 120 bp); operating margin 23.6% vs 22.7%; diluted EPS $1.36, or $1.39 excluding UniFirst deal costs",
+          "Free cash flow $464.8 million; $544.7 million of buybacks in Q1 and through 22 Sep 2026; $208.8 million quarterly dividend paid 15 Sep"
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/723254/000072325426000044/ex992026-8x31.htm"
+      },
+      "guidance": {
+        "given": true,
+        "period": "Fiscal 2027 (ending May 2027)",
+        "text": "Raised revenue outlook to $12.15-$12.27 billion (from $12.10-$12.25B) and adjusted EPS to $5.45-$5.54 (from $5.36-$5.50); excludes the pending UniFirst deal and future buybacks",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/723254/000072325426000044/ex992026-8x31.htm"
+      },
+      "next_earnings": {
+        "date": null,
+        "confirmed": false,
+        "note": "Q2 fiscal 2027 date not announced as of 2026-10-08; Cintas reported its fiscal Q2 on 18 Dec 2025 last year and in late December in prior years (a pattern, not a schedule)",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/723254/000072325426000044/ex992026-8x31.htm"
+      },
+      "whats_next": [
+        {
+          "item": "UniFirst acquisition: companies certified substantial compliance with the FTC's second request on 2 Oct and agreed not to close before 11 Dec 2026 unless the FTC ends its review sooner",
+          "when": "Cintas still expects closing before end of calendar 2026",
+          "kind": "deal",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/723254/000095010326015293/dp254677_8k.htm"
+        },
+        {
+          "item": "Canada's Competition Bureau is also reviewing the UniFirst deal; the companies completed their response to its information request on 29 Sep 2026",
+          "when": "pending",
+          "kind": "regulatory",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/723254/000095010326015293/dp254677_8k.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "FTC review outcome on UniFirst: guidance excludes the deal, so closing would change the numbers; deal costs already trimmed Q1 EPS by $0.03",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/723254/000072325426000044/ex992026-8x31.htm"
+        },
+        {
+          "item": "Guidance assumes constant exchange rates, no further buybacks and no significant economic disruption or downturn",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/723254/000072325426000044/ex992026-8x31.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "PCAR",
+      "name": "PACCAR Inc",
+      "as_of": "2026-10-08",
+      "business": "Builds heavy trucks under the Kenworth, Peterbilt and DAF brands, and also sells truck parts and provides truck financing and leasing.",
+      "latest": {
+        "period": "Q2 2026 (quarter ended 30 Jun 2026)",
+        "reported_on": "2026-07-28",
+        "revenue": "$7.55 billion (net sales and financial services revenues)",
+        "revenue_growth_yoy_pct": 0.5,
+        "highlights": [
+          "Net income was $752.0M ($1.43 per diluted share), up from $723.8M ($1.37) a year earlier. Global truck deliveries were 38,700, versus 39,300 a year earlier.",
+          "PACCAR Parts revenue reached a record $1.75B, with pre-tax income of $417.0M. Financial Services pre-tax income was $124.1M.",
+          "Dividends declared were $0.35 per share for the quarter, up from $0.33 a year earlier."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0000075362/000119312526318918/pcar-ex99_1.htm"
+      },
+      "guidance": {
+        "given": true,
+        "period": "Full year 2026",
+        "text": "PACCAR estimates 2026 Class 8 retail sales of 230,000-270,000 trucks in the US and Canada, and 290,000-330,000 registrations of trucks above 16 tonnes in Europe. It plans $700-750M of capex and $450-480M of R&D.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0000075362/000119312526318918/pcar-ex99_1.htm"
+      },
+      "next_earnings": {
+        "date": null,
+        "confirmed": false,
+        "note": "PACCAR had not announced a Q3 2026 date as of 8 Oct 2026. Its Q3 2025 results came out on 21 Oct 2025, but that is a past pattern, not a schedule.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/75362/000119312525244291/pcar-ex99_1.htm"
+      },
+      "whats_next": [
+        {
+          "item": "The company says it keeps investing in next-generation clean diesel, hybrid and battery-electric powertrains, connected vehicle services and new parts distribution centers.",
+          "when": "ongoing",
+          "kind": "product",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000075362/000119312526318918/pcar-ex99_1.htm"
+        }
+      ],
+      "watch": []
+    },
+    {
+      "ticker": "CME",
+      "name": "CME Group Inc.",
+      "as_of": "2026-10-08",
+      "business": "Runs futures and options exchanges and clearing houses (interest rates, stock indexes, energy, farm goods, metals, FX, crypto) and sells market data.",
+      "latest": {
+        "period": "Q2 2026 (quarter ended 30 Jun 2026)",
+        "reported_on": "2026-07-22",
+        "revenue": "$1.71 billion",
+        "revenue_growth_yoy_pct": 0.8,
+        "highlights": [
+          "Net income was $1.04B and diluted EPS $2.88 ($2.99 adjusted), versus $2.81 ($2.96 adjusted) a year earlier. Clearing and transaction fees were $1.35B, versus $1.39B.",
+          "Market data revenue hit a quarterly record of $238.1M, up from $198.1M. Average daily volume was 29.8M contracts, versus 30.2M a year earlier.",
+          "CME paid about $468M in dividends and repurchased $695M of stock in the quarter."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0001156375/000115637526000042/exhibit9916302026.htm"
+      },
+      "guidance": {
+        "given": false,
+        "period": "",
+        "text": "The company gives no outlook for the coming period.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0001156375/000115637526000042/exhibit9916302026.htm"
+      },
+      "next_earnings": {
+        "date": "2026-10-21",
+        "confirmed": true,
+        "note": "CME announced on 4 Sep 2026 that it will report Q3 2026 results before the market opens on Wed 21 Oct 2026, with a call at 7:30 a.m. CT.",
+        "source_url": "https://finviz.com/news/389149/cme-group-inc-announces-third-quarter-2026-earnings-release-conference-call"
+      },
+      "whats_next": [
+        {
+          "item": "CME plans to launch CME Securities Clearing, a new clearing house for US Treasury cash and repo trades, pending regulatory approvals. The SEC requires central clearing of Treasury cash trades by 31 Dec 2026.",
+          "when": "7 December 2026",
+          "kind": "product",
+          "source_url": "https://smb.orangeleader.com/article/CME-Group-to-Launch-CME-Securities-Clearing-on-December-7-to-Expand-Clearing-Capacity-Choice-and-Capital-Efficiency-in-the-US-Treasury-Market/6aa2cdd106b0f49a92997af3"
+        },
+        {
+          "item": "Terry Duffy will step down as CEO and become Executive Chairman. President and CFO Lynne Fitzpatrick will become CEO and join the board at that time.",
+          "when": "1 March 2027",
+          "kind": "other",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001156375/000119312526273442/d129556dex991.htm"
+        },
+        {
+          "item": "A Sep 2026 filing says Jack Tobin will become Deputy CFO on 2 Nov 2026 and CFO in March 2027, when Fitzpatrick moves to CEO.",
+          "when": "2 Nov 2026 / March 2027",
+          "kind": "other",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1156375/000119312526386091/d157844d8k.htm"
+        },
+        {
+          "item": "In the Q2 release, the CEO named single-stock futures, 1-ounce gold contracts traded 24/7, US Treasury clearing and compute futures as areas of new product work.",
+          "when": "2026",
+          "kind": "product",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001156375/000115637526000042/exhibit9916302026.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "CME planned compute futures on Nvidia H100 and B200 GPU rental prices for 5 Oct 2026. On 21 Sep the CFTC extended its review by 45 days, to 9 Nov 2026, citing novel or complex issues.",
+          "source_url": "https://www.cftc.gov/filings/documents/2026/orgdcmnymexcompcontr260921.pdf"
+        },
+        {
+          "item": "Q2 trading volume and clearing fees were slightly below a year earlier. Revenue growth came mainly from market data, not trading.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001156375/000115637526000042/exhibit9916302026.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "TMUS",
+      "name": "T-Mobile US, Inc.",
+      "as_of": "2026-10-08",
+      "business": "US wireless carrier (5G mobile phone and data plans) that also sells home broadband and fiber internet through joint ventures.",
+      "latest": {
+        "period": "Q2 2026 (quarter ended 30 Jun 2026)",
+        "reported_on": "2026-07-23",
+        "revenue": "$22.8 billion",
+        "revenue_growth_yoy_pct": 7.9,
+        "highlights": [
+          "Service revenue rose 8.9% to $19.0B and postpaid service revenue rose 12.6%. Core adjusted EBITDA rose 11.7% to $9.5B.",
+          "Postpaid net account additions fell 13% to 277K. Postpaid revenue per account rose 2% to $152.91, and account churn was 0.99% (0.92% a year earlier).",
+          "Returned $3.3B to shareholders in Q2 ($2.2B buybacks, $1.1B dividends). Net income was $3.2B (+0.5%) and EPS was $2.99 (+5.3%)."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0001283699/000128369926000100/tmus06302026ex991.htm"
+      },
+      "guidance": {
+        "given": true,
+        "period": "Full year 2026",
+        "text": "Raised adjusted free cash flow to $18.4-18.8B and operating cash flow to $28.4-28.8B. Kept core adjusted EBITDA at $37.1-37.5B, postpaid net account adds at 950K-1.05M and capex at about $10B.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0001283699/000128369926000100/tmus06302026ex991.htm"
+      },
+      "next_earnings": {
+        "date": "2026-10-28",
+        "confirmed": true,
+        "note": "Q3 2026 results at about 4:05pm ET on Wed 28 Oct 2026, with the call at 4:30pm ET. T-Mobile announced this via Business Wire on 17 Sep 2026. I read it in Yahoo Finance's copy because Business Wire blocked my fetch.",
+        "source_url": "https://finance.yahoo.com/markets/stocks/articles/t-mobile-host-q3-2026-160100171.html"
+      },
+      "whats_next": [
+        {
+          "item": "A shareholder return program of up to $18.2B runs through year-end 2026. Another $392M was repurchased in early Q3 (through 17 Jul).",
+          "when": "through 31 Dec 2026",
+          "kind": "finance",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001283699/000128369926000100/tmus06302026ex991.htm"
+        },
+        {
+          "item": "CFO Peter Osvaldik is retiring from the role. Jessica Uhl (former GE Vernova president and former Shell CFO) is CFO-designate and takes over after the 2026 annual report.",
+          "when": "new CFO mid-Sep 2026; current CFO retires Feb 2027",
+          "kind": "other",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1283699/000119312526381901/d155079d8k.htm"
+        },
+        {
+          "item": "Closing some dealer and company stores while moving partly to large-format experience stores ($108M of costs in Q2), alongside a 2025-2026 workforce program.",
+          "when": "ongoing in 2026",
+          "kind": "other",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001283699/000128369926000100/tmus06302026ex991.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "Postpaid net account additions slowed to 277K from 318K a year earlier. The full-year target stays at 950K-1.05M.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001283699/000128369926000100/tmus06302026ex991.htm"
+        },
+        {
+          "item": "UScellular merger-related costs ($146M after tax in Q2), severance and store-closing charges held net income growth to 0.5%.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001283699/000128369926000100/tmus06302026ex991.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "FANG",
+      "name": "Diamondback Energy, Inc.",
+      "as_of": "2026-10-08",
+      "business": "Independent oil and gas producer focused on the Permian Basin in West Texas. It also owns mineral and royalty interests through its Viper Energy subsidiary.",
+      "latest": {
+        "period": "Q2 2026 (quarter ended 30 Jun 2026)",
+        "reported_on": "2026-08-03",
+        "revenue": "$5.56 billion",
+        "revenue_growth_yoy_pct": 51.2,
+        "highlights": [
+          "Production averaged 1,018 MBOE/d (525 MBO/d of oil). The unhedged realized oil price was $96.82 per barrel.",
+          "Net income attributable to Diamondback was $1.88B ($6.65 per diluted share), versus $699M ($2.38) a year earlier. Free cash flow was $2.33B.",
+          "Total debt fell about $1.3B from the prior quarter to $12.8B. The base dividend was $1.10 per share, and Q2 buybacks totaled about $141M."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0001539838/000153983826000137/diamondbackex991-8x3x26.htm"
+      },
+      "guidance": {
+        "given": true,
+        "period": "Full year 2026 and Q3 2026",
+        "text": "Diamondback raised its 2026 guidance to 522+ MBO/d of oil and 1,000+ MBOE/d in total, and kept capex at about $3.9B. For Q3 it guides to 517-527 MBO/d of oil and $950M-$1.05B of cash capex.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0001539838/000153983826000137/diamondbackex991-8x3x26.htm"
+      },
+      "next_earnings": {
+        "date": "2026-11-02",
+        "confirmed": true,
+        "note": "Announced 30 Sep 2026: Q3 2026 results come after the market closes on 2 Nov 2026, with a call on 3 Nov at 8:00 a.m. CT.",
+        "source_url": "https://finviz.com/news/397202/diamondback-energy-inc-schedules-third-quarter-2026-conference-call-for-november-3-2026"
+      },
+      "whats_next": [
+        {
+          "item": "The CEO letter says the company dropped its formula-based framework for returning cash and will keep putting excess free cash flow toward cutting debt.",
+          "when": "2026 onward",
+          "kind": "finance",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001539838/000153983826000137/diamondbackex992-8x3x26.htm"
+        },
+        {
+          "item": "The board doubled the buyback authorization to $16.0B, with about $9.9B left. The company plans to buy back stock opportunistically.",
+          "when": "ongoing",
+          "kind": "finance",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001539838/000153983826000137/diamondbackex991-8x3x26.htm"
+        },
+        {
+          "item": "The company added a completion crew to bring forward drilled-but-unfinished wells. It expects its long-haul gas takeaway capacity to more than double by year-end.",
+          "when": "by end of 2026",
+          "kind": "other",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001539838/000153983826000137/diamondbackex992-8x3x26.htm"
+        },
+        {
+          "item": "The letter describes encouraging early tests in a chemical enhanced-oil-recovery program. It also has a shovel-ready, gigawatt-plus power project, but no signed contract yet.",
+          "when": "no date given",
+          "kind": "other",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001539838/000153983826000137/diamondbackex992-8x3x26.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "The CEO letter calls the oil market highly volatile and says the timing of supply getting back to normal can't be predicted. It expects cost inflation, for example on casing, into 2027.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001539838/000153983826000137/diamondbackex992-8x3x26.htm"
+        },
+        {
+          "item": "On 29-30 Sep 2026, two directors (Darin Holderness and Lance Robertson) resigned in a board stepdown under an amended stockholders agreement with SGF FANG Holdings.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1539838/000110465926112325/tm2626600d1_8k.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "LIN",
+      "name": "Linde plc",
+      "as_of": "2026-10-08",
+      "business": "Supplies industrial gases (oxygen, nitrogen, argon, hydrogen and others) to manufacturing, electronics, healthcare and energy customers, and builds gas-processing plants.",
+      "latest": {
+        "period": "Q2 2026 (quarter ended 30 Jun 2026)",
+        "reported_on": "2026-07-31",
+        "revenue": "$9.29 billion",
+        "revenue_growth_yoy_pct": 9,
+        "highlights": [
+          "Diluted EPS was $4.15 (up 11%) and adjusted EPS $4.50 (up 10%). The adjusted operating margin was 29.5%, and underlying sales rose 4%.",
+          "Project backlog stands at $11B. The sale-of-gas backlog reached a record $8.1B after a new long-term US electronics supply contract.",
+          "Free cash flow was $833M after $1.44B of capex. About $1.59B went back to shareholders through dividends and net buybacks."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1707925/000165495426007052/lin_ex991.htm"
+      },
+      "guidance": {
+        "given": true,
+        "period": "Q3 2026 and full year 2026",
+        "text": "Linde guides Q3 adjusted EPS to $4.45-4.55 (up 6-8%) and full-year 2026 adjusted EPS to $17.70-17.90 (up 8-9%). It plans $5.5-6.0B of capex for 2026.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1707925/000165495426007052/lin_ex991.htm"
+      },
+      "next_earnings": {
+        "date": "2026-10-29",
+        "confirmed": true,
+        "note": "Announced 5 Oct 2026: Q3 2026 results by 06:00 EDT on Thu 29 Oct 2026, with a webcast call at 09:00 EDT.",
+        "source_url": "https://www.placera.se/pressmeddelanden/linde-linde-announces-third-quarter-2026-earnings-and-conference-call-schedule-20261005"
+      },
+      "whats_next": [
+        {
+          "item": "Linde plans $5.5-6.0B of capex in 2026. It has an $11B project backlog, including a record $8.1B of contracted sale-of-gas projects.",
+          "when": "2026",
+          "kind": "finance",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1707925/000165495426007052/lin_ex991.htm"
+        },
+        {
+          "item": "The CEO says customer proposal activity remains robust, mainly in electronics, and expects to grow the backlog further.",
+          "when": "ongoing",
+          "kind": "deal",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1707925/000165495426007052/lin_ex991.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "The 10-Q shows recorded contingent liabilities of $1.1B for terminated RusChemAlliance projects and $0.7B for Amur GPP matters. Claims by Gazprom and RCA are still in court or arbitration.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1707925/000162828026051289/lin-20260630.htm"
+        },
+        {
+          "item": "Q3 EPS guidance of +6-8% is below Q2's +10%. The Q2 reported operating margin was 27.5%, 60 basis points lower than a year earlier.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1707925/000165495426007052/lin_ex991.htm"
+        }
+      ]
+    }
+  ]
 }

@@ -5,7 +5,7 @@ runs/run.<date>.json. Fails closed: nothing is written unless every check passes
 The brain returns `{"summary": "...", "picks": [...]}` (prompts/brain.md). Code then:
   - checks each pick against schemas/pick.schema.json and docs/guardrails.json (watchlist only, no digits in prose,
     no banned phrases, at most max_picks, unique tickers)
-  - checks every evidence key resolves to a key in the pack the brain was given
+  - checks every evidence key resolves to a key in the pack the brain was given (any section, outlook.* included)
   - attaches the reference DATE (the pack's market close); returns are computed by code at scoring time from the
     adjusted series, so no raw price is ever published (provider licence)
   - records cost, pack hash and token counts, and the version of every instruction doc

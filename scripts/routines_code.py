@@ -220,7 +220,7 @@ def compute_derived(prices_dir: Path, st: dict, wl: dict, sample: bool, provider
             "symbol": sym, "last_date": dates[-1],
             "from_high_pct": round(mk.pct(max(c[-252:]), c[-1]), 3), "vol20_pct": round(mk.vol_ann(c, 20), 2),
             "series": series,
-            "change_1d_pct": round(mk.pct(c[-2], c[-1]), 3), "ret_20d_pct": round(mk.ret(c, 20), 3),
+            "change_1d_pct": round(mk.day_change(c), 3), "ret_20d_pct": round(mk.ret(c, 20), 3),
             "ret_60d_pct": round(mk.ret(c, 60), 3),
             "dist_sma50_pct": round(mk.pct(s50, c[-1]), 3), "above_sma50": c[-1] > s50,
             "spark": [{"date": d, "v": round(v / spbase * 100, 2)} for d, v in zip(dates[-spark_n:], c[-spark_n:])],
@@ -259,6 +259,7 @@ def compute_derived(prices_dir: Path, st: dict, wl: dict, sample: bool, provider
         if not cc or len(cc) < 61:
             continue
         ctx["instruments"].append({"symbol": c["symbol"], "role": c["role"], "name": c["name"],
+                                   "change_1d_pct": round(mk.day_change(cc), 3),
                                    "ret_20d_pct": round(mk.ret(cc, 20), 3), "ret_60d_pct": round(mk.ret(cc, 60), 3),
                                    **({"ret_250d_pct": round(mk.ret(cc, 250), 3)} if len(cc) > 250 else {}),
                                    "from_high_pct": round(mk.pct(max(cc[-252:]), cc[-1]), 3)})

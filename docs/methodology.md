@@ -1,7 +1,7 @@
 ---
-version: 0.10.0
-updated_at: 2026-10-07
-change_note: People we learn from - each dated public call is scored against the core from fixed trading days; the brain fires at 05:23 and 11:23 UTC.
+version: 0.11.0
+updated_at: 2026-10-08
+change_note: Market today (day moves of the indexes and our names, by sector) and company outlook cards (researched from primary sources, context only).
 ---
 # Methodology
 
@@ -9,7 +9,7 @@ change_note: People we learn from - each dated public call is scored against the
 1. **fetch_prices**: the provider adapter (Tiingo, split/dividend-adjusted end-of-day bars) writes `.cache/prices/<SYMBOL>.json` (git-ignored; raw bars are never committed).
    Each fetch re-pulls the whole kept window, so stored history is adjusted consistently.
    All symbols must fetch and validate, or nothing is written.
-2. **build_pack**: docs, prices and recent runs go into one JSON pack. The run stops if the pack exceeds `pack.token_cap`.
+2. **build_pack**: docs, derived market numbers, people's calls, the outlook cards' dates and recent runs go into one JSON pack. The run stops if the pack exceeds `pack.token_cap`.
 3. **brain** (routine `close_run`): a scheduled Claude Code session on the household's Claude subscription, Tuesday to
    Saturday at 05:23 UTC and again at 11:23 UTC in case the data run was late (after the Monday to Friday closes are
    published), follows `prompts/daily_brain_routine.md`. It
@@ -87,6 +87,20 @@ From the context funds in `config/watchlist.json` (roles, not tickers, drive the
 - **Credit**: high-yield bond fund minus 7-10 year Treasury fund over 60 days.
 - **Core trend filter**: the core index fund above its ~10-month (210-day) average and its 12-month return above
   cash. Context for the core only, never a trading trigger.
+
+## Market today (code only)
+What the market did at the last close, on the Today post (in short) and the Full dashboard (in full), from
+`data/market/derived.json` (percent only):
+- **Day move**: `change_1d_pct = (close / previous close - 1) * 100` on adjusted closes, for every watchlist name, the
+  benchmark (the Nasdaq-100 through QQQ) and every context fund (the S&P 500 through SPY, cash, bonds and the rest).
+- **Our names**: how many rose and fell, the three biggest risers and fallers, and the average day move per sector
+  (sectors from `config/watchlist.json`, each name counted once, unweighted).
+- **Breadth and distance**: the S&P 500 fund's distance from its one-year high and the share of our names above their
+  fifty-day average.
+- **What it does not say**: why anything moved. News feeds cost money and are not connected, so the page shows what
+  moved, not why. The US market closes at 4 pm New York time (20:00 UTC in summer, 21:00 in winter) and the close
+  reaches the site after the nightly data run, so the section updates overnight. Data written before the day move was
+  added to the context funds shows a dash instead.
 
 ## The household goal check (code only)
 `settings.goal.annual_return_pct` (+20%) is compared with history, never used to pick stocks. For the rule, holding
@@ -189,6 +203,32 @@ percentages and dates are written to `data/people/scores.json`):
   after risk (the People tab cites the research), a 13F is late and partial, and people tend to praise what their funds
   own. Until a record has ten matured calls it cannot tell skill from luck, so no call is ever the only reason for a
   pick and none moves money.
+
+## Company outlook (researched, not computed)
+`config/outlook.json` holds one card per watchlist company: what it does, its latest reported quarter (the period, the
+day it reported, revenue as reported and its change from the same quarter a year earlier, up to three highlights), the
+company's own guidance, its next results date (marked expected until the company confirms it), up to four things it has
+announced or recently done (product, finance, regulatory, deal or other; each marked done or ahead, with its day when
+the source names one) and one to three things that could change the story. Every item links to its primary source: the
+company's own release or investor page, its SEC filing, a regulator, or the newswire that carried the release.
+- **Rules** (lint `check_outlook`): tickers on the watchlist and unique; https links (shown as links only, never
+  fetched by the site); real dates, with the research day and the report day never in the future and the report never
+  after the research; a confirmed date needs a date; text paraphrased, never quoted (single or double quotes); no share
+  prices or stock moves, price targets, analyst ratings or estimates. Lint warns on finance shorthand (EPS, capex,
+  GAAP and the like), on links to anything but the company, a regulator or a newswire, on first-person notes, and on an
+  item marked ahead whose day has passed. A card whose next results date has passed is flagged on the Stock page
+  ("new results are out" when the company confirmed the date, softer when it was only expected), and so is a card with
+  no date whose latest report is more than 98 days old ("newer results are probably out"); lint warns the same way.
+- **Refresh**: the saved workflow `.claude/workflows/outlook.js` (`outlook`), run on request after each earnings
+  season with `{today, tickers?}`. It researches the companies in batches of four or five from primary sources, then
+  a skeptic per batch re-opens every source, drops what it cannot confirm and runs the schema and lint check. The session
+  that ran it writes `config/outlook.json`, runs lint and the tests, and opens a pull request; a person merges it.
+- **Use**: the Stock page shows the card ("What's next", its coming items split into Ahead and Recently), Today lists
+  earnings dates in the next thirty days (names we hold or picked, then the rest, each by date, and the held or picked
+  names with no date yet), and the pack carries `outlook`: each name's next results date with days to go and whether it
+  is confirmed, and whether the company gives guidance. Context only: a company's own outlook is its statement, not a
+  forecast we endorse and never evidence that its stock will beat the index; a results date within about two weeks is
+  event risk.
 
 ## Evidence labels (the Playbook's rules)
 `replicated`: independent replication named in the cited library material. `mixed`: backed by principles from more than one source, with

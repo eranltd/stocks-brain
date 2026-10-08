@@ -37,6 +37,35 @@ EXTERNAL_URL = re.compile(r"(?:https?:)?//[a-z0-9.-]+\.[a-z]{2,}", re.I)
 # Outbound link targets the site may build (never fetched): repo, library videos, the People tab's X and SEC 13F links.
 SITE_URL_ALLOW = {"http://www.w3.org/2000/svg", "https://github.com", "https://www.youtube.com", "https://x.com", "https://www.sec.gov"}
 SITE_HOST_ALLOW = {urlsplit(a).netloc.lower() for a in SITE_URL_ALLOW}  # exact hosts: "x.co" must not pass as a prefix of "x.com"
+# Company outlook cards (config/outlook.json) carry what a company reported and announced, never a market opinion.
+OUTLOOK_BANNED = ("price target", "target price", "buy rating", "sell rating", "hold rating", "overweight", "underweight")
+STOCK_PRICE = re.compile(r"\b(share|stock) price\b[^.;]{0,40}\d"  # "the share price fell to 120"
+                         r"|\b(closed|opened|trad(ed|es|ing))\s+(at|near|around|above|below)\s+(\$|US\$|USD\s?)?\d"  # "shares closed at 120"
+                         r"|\bmarket cap(italization|italisation)?\b", re.I)  # a stock's market value is its price times its shares
+# Analyst opinions and stock moves in other words: "outperform", "upgraded the stock to buy", "PT raised", "shares jumped".
+# Targeted so a company's own "investor and analyst day" or "network upgrade" still passes.
+OUTLOOK_OPINION = re.compile(r"\banalysts?'?\s+(rating|estimate|consensus|expectation|target)s?\b"
+                             r"|\b(up|down)grad(ed|es|e)\b[^.;]{0,30}\b(stock|shares|buy|sell|hold|neutral|outperform)\b"
+                             r"|\b(out|under)perform(s|ed|ing)?\b|\bstrong buy\b|\bprice objective\b|\bconsensus\b|\bmarket value\b", re.I)
+PRICE_TARGET_PT = re.compile(r"\bPTs?\s+(raised|cut|lowered|increased|reduced|of|to)\b")  # "PT" alone is Pacific Time
+STOCK_MOVE = re.compile(r"\b(stock|shares|share price)\s+(rose|fell|jumped|climbed|dropped|gained|lost|surged|slid|plunged|rallied"
+                        r"|soared|tumbled|sank)\b", re.I)
+QUOTE_MARKS = ('"', "“", "”")  # straight and curly double quotes
+# A phrase in single quotes ('in the coming months'); apostrophes (Apple's, can't, investors') never open one.
+SINGLE_QUOTED = re.compile(r"(?<![\w])['‘][^'‘’\n]{2,}?['’](?![\w])")
+# Words a household will not follow; the cards say them in plain words ("profit per share", "capital spending").
+OUTLOOK_JARGON = re.compile(r"\b(YoY|QoQ|GAAP|EPS|opex|capex|EBITDA|PDUFA|bps?)\b|\bbasis points?\b", re.I)
+FIRST_PERSON = re.compile(r"\bI\b|\b[Mm]y\b|\b[Mm]e\b")  # research-process remarks ("I read it in a copy") stay out
+# Card links go to the company itself, a regulator or the newswire that carried its release, never to a copy on a quote,
+# rating or news site. Suffix match: "investor.apple.com" passes as apple.com.
+OUTLOOK_SOURCE_HOSTS = (
+    "sec.gov", "cftc.gov", "fda.gov", "businesswire.com", "prnewswire.com", "globenewswire.com",
+    "apple.com", "microsoft.com", "nvidia.com", "aboutamazon.com", "amazon.com", "abc.xyz", "blog.google", "atmeta.com",
+    "fb.com", "meta.com", "broadcom.com", "costco.com", "amgen.com", "intuitive.com", "intuitivesurgical.com", "gilead.com",
+    "pepsico.com", "monsterbevcorp.com", "aep.com", "xcelenergy.com", "cintas.com", "paccar.com", "cmegroup.com",
+    "t-mobile.com", "diamondbackenergy.com", "linde.com",
+)
+OUTLOOK_STALE_DAYS = 98  # no next date and the latest report a quarter and a week old: newer results are probably out
 PRICE_LIKE = re.compile(r"(\$|USD\s?|US\$)\s?\d|\d[\d,.]*\s?(dollars|per share)\b", re.I)
 
 
@@ -113,6 +142,11 @@ class Lint:
             pc = self.schema(people_path, "people.schema.json")
             if pc:
                 self.check_people(people_path, pc, src)
+        outlook_path = CONFIG / "outlook.json"
+        if outlook_path.exists():
+            oc = self.schema(outlook_path, "outlook.schema.json")
+            if oc and wl:
+                self.check_outlook(outlook_path, oc, wl)
         rules_path = CONFIG / "rules.json"
         if rules_path.exists():
             rc = self.schema(rules_path, "rules.schema.json")
@@ -189,6 +223,69 @@ class Lint:
         for p in pc["people"]:
             if src and p["x_handle"] and p["x_handle"].lower() not in follow:
                 self.warn(path, f"{p['id']}: X handle {p['x_handle']} is not in config/sources.json x_accounts.follow")
+
+    def check_outlook(self, path: Path, oc: dict, wl: dict, today: str | None = None) -> None:
+        """Company outlook cards: one per watchlist name, dated (never in the future), linked over https (the site shows
+        these as links only; nothing is fetched), paraphrased and free of prices, price targets and ratings."""
+        today = today or date.today().isoformat()
+        on_list = {s["symbol"] for s in wl["symbols"]}
+        tickers = [c["ticker"] for c in oc["companies"]]
+        if len(tickers) != len(set(tickers)):
+            self.err(path, "duplicate tickers")
+        if oc["updated_at"] > today:
+            self.err(path, f"updated_at {oc['updated_at']} is in the future")
+        for c in oc["companies"]:
+            t, lt, ne = c["ticker"], c["latest"], c["next_earnings"]
+            if t not in on_list:
+                self.err(path, f"{t}: not on the watchlist")
+            if c["as_of"] > today:
+                self.err(path, f"{t}: as_of {c['as_of']} is in the future")
+            if lt["reported_on"] > today:
+                self.err(path, f"{t}: latest.reported_on {lt['reported_on']} is in the future")
+            if lt["reported_on"] > c["as_of"]:
+                self.err(path, f"{t}: latest.reported_on {lt['reported_on']} is after the card was researched ({c['as_of']})")
+            if ne["confirmed"] and not ne["date"]:
+                self.err(path, f"{t}: next_earnings is confirmed but has no date")
+            if ne["date"] and ne["date"] <= lt["reported_on"]:
+                self.err(path, f"{t}: next_earnings.date {ne['date']} is not after the latest report ({lt['reported_on']})")
+            if c["guidance"]["given"] and not c["guidance"]["source_url"]:
+                self.err(path, f"{t}: guidance given needs its source_url")
+            if ne["date"] and ne["date"] < today:
+                self.warn(path, f"{t}: new results are out since this card was researched (next_earnings {ne['date']}); refresh it")
+            elif not ne["date"] and (date.fromisoformat(today) - date.fromisoformat(lt["reported_on"])).days >= OUTLOOK_STALE_DAYS:
+                self.warn(path, f"{t}: no next results date and the latest report ({lt['reported_on']}) is over {OUTLOOK_STALE_DAYS} days old; "
+                                "newer results are probably out, refresh it")
+            if FIRST_PERSON.search(ne["note"]):
+                self.warn(path, f"{t} next_earnings.note: first person; say what the company announced, not how we found it")
+            for w in c["whats_next"]:
+                if w.get("date") and w.get("status") == "done" and w["date"] > today:
+                    self.err(path, f"{t} whats_next: marked done but dated {w['date']}, in the future")
+                elif w.get("date") and w.get("status") == "ahead" and w["date"] < today:
+                    self.warn(path, f"{t} whats_next: marked ahead but its date {w['date']} has passed; refresh it")
+            urls = [lt["source_url"], c["guidance"]["source_url"], ne["source_url"], *(w["source_url"] for w in c["whats_next"]),
+                    *(w["source_url"] for w in c["watch"])]
+            for u in filter(None, urls):
+                host = (urlsplit(u).hostname or "").lower()
+                if not any(host == h or host.endswith("." + h) for h in OUTLOOK_SOURCE_HOSTS):
+                    self.warn(path, f"{t}: source {host} is not the company, a regulator or a newswire; link the original release")
+            texts = [("name", c["name"]), ("business", c["business"]), ("latest.period", lt["period"]),
+                     *(("latest.highlights", h) for h in lt["highlights"]), ("latest.revenue", lt["revenue"]),
+                     ("guidance.period", c["guidance"]["period"]), ("guidance.text", c["guidance"]["text"]), ("next_earnings.note", ne["note"]),
+                     *(("whats_next", w["item"]) for w in c["whats_next"]), *(("whats_next.when", w["when"]) for w in c["whats_next"]),
+                     *(("watch", w["item"]) for w in c["watch"])]
+            for where, text in texts:
+                low = text.lower()
+                for b in OUTLOOK_BANNED:
+                    if b in low:
+                        self.err(path, f"{t} {where}: {b!r}; the cards carry no price targets or ratings")
+                if OUTLOOK_OPINION.search(text) or PRICE_TARGET_PT.search(text):
+                    self.err(path, f"{t} {where}: looks like an analyst rating or estimate; the cards carry no ratings or targets")
+                if STOCK_PRICE.search(text) or STOCK_MOVE.search(text):
+                    self.err(path, f"{t} {where}: looks like a stock price; describe the company's results, not its price")
+                if sum(text.count(q) for q in QUOTE_MARKS) >= 2 or SINGLE_QUOTED.search(text):
+                    self.err(path, f"{t} {where}: looks like a quotation; paraphrase in our own words")
+                if m := OUTLOOK_JARGON.search(text):
+                    self.warn(path, f"{t} {where}: {m.group(0)!r} is jargon; say it in plain words")
 
     def check_rules(self, path: Path, rc: dict) -> None:
         """The registry must match what the engine can run, cite real library ids, and count its tries honestly."""

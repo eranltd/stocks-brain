@@ -19,6 +19,11 @@ def sma(c: list[float], n: int, i: int | None = None) -> float | None:
     return sum(c[i - n + 1:i + 1]) / n if i + 1 >= n else None
 
 
+def day_change(c: list[float]) -> float | None:
+    """The last close's move from the close before it (%), or None with fewer than two closes."""
+    return pct(c[-2], c[-1]) if len(c) >= 2 else None
+
+
 def ret(c: list[float], n: int, i: int | None = None) -> float | None:
     i = len(c) - 1 if i is None else i
     return pct(c[i - n], c[i]) if i - n >= 0 else None

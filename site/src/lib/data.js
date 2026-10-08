@@ -71,6 +71,8 @@ export function derive(manifest, files) {
   // People we learn from (config/people.json) and code's scores of their dated public calls (data/people/scores.json).
   const people = doc("people") ? files[doc("people").file] : null;
   const peopleScores = manifest.people_scores ? files[manifest.people_scores] : null;
+  // Company outlook cards (config/outlook.json): researched, paraphrased and linked; may hold no companies yet.
+  const outlook = doc("outlook") ? files[doc("outlook").file] : null;
   const outcomes = manifest.kb.outcomes ? files[manifest.kb.outcomes].items : [];
   const library = manifest.kb.library ? files[manifest.kb.library] : null;
   const regime = manifest.kb.regime ? files[manifest.kb.regime] : null;
@@ -114,7 +116,7 @@ export function derive(manifest, files) {
 
   return {
     market, manifest, runs, shownRuns, latest, lastOk, prices, watchlist, settings, learnings, guardrails,
-    outcomes, library, sources, routines, names, bench, kb, docs, regime, calibration, observations, opsLog, longrun, paper, sectors, core, rulebook, rulesResult, ledger, people, peopleScores,
+    outcomes, library, sources, routines, names, bench, kb, docs, regime, calibration, observations, opsLog, longrun, paper, sectors, core, rulebook, rulesResult, ledger, people, peopleScores, outlook,
     sample: manifest.source === "sample", livePrices: manifest.price_source === "live",
   };
 }

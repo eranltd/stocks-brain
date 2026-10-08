@@ -24,7 +24,8 @@ forward paper record that cannot be re-fitted. Money moves only when the trust l
 docs/        strategy.md, methodology.md (front matter: version, updated_at, change_note)
              guardrails.json, learnings.json (same three keys)
 config/      watchlist.json, settings.json, sources.json (connectors), routines.json (schedule),
-             people.json (people we learn from, the research on following them, their dated public calls)
+             people.json (people we learn from, the research on following them, their dated public calls),
+             outlook.json (company outlook cards: latest quarter, guidance, next results date, what's next; linked)
 schemas/     JSON Schemas for every file above, plus pick, run, outcome, prices, library
 data/        market/derived.json + longrun.json (returns only, no prices), portfolio/paper.json (forward record),
              kb/outcomes.json, kb/library.json, people/scores.json, ops/routine_runs.json
@@ -37,6 +38,7 @@ scripts/     _common.py (strict stdlib JSON-Schema subset), lint.py, scoring.py,
              make_sample_data.py, build_site.py
 prompts/     brain.md (the brain's rules), daily_brain_routine.md (what the scheduled brain session does)
 .claude/workflows/brain.js  the saved multi-agent brain workflow the routine runs by name
+.claude/workflows/outlook.js  the saved workflow that refreshes the company outlook cards (run on request)
 site/        React + Tailwind + Vite dashboard (builds to _site/)
 tests/       unittest suite (stdlib)
 .github/workflows/  lint.yml (PRs), pages.yml (deploy on main), daily.yml (code-only routines), brain.yml (records a brain run)
@@ -144,6 +146,29 @@ a compact view in `pack.people`, as context only. Calls are added by hand; no 13
 The site's **People** tab (in the phone's bottom bar) shows it all: who we follow and why, what to be careful about,
 where each publishes, the research with links, and every call with how it has done against the core so far and at 13,
 26 and 52 weeks, marked right, wrong or still maturing.
+
+## Market today and company outlook
+
+The **Today** post's market slide gives the last close in plain words: the S&P 500's and the Nasdaq-100's day moves, how
+many of our names rose and fell, and the biggest riser and faller. The **Full dashboard** opens with the whole market
+day: the three biggest risers and fallers, an average day move per sector, the S&P 500's distance from its high and the
+share of our names above their fifty-day average. Percent changes only. It shows what moved, not why: news costs money
+and is not connected. The close arrives with the nightly data run.
+
+`config/outlook.json` holds a **company outlook card** per name: the latest quarter (revenue and its change from a year
+earlier, highlights), the company's own guidance, the next results date (expected until confirmed), what is coming up
+and what could change the story, each linked to the company's release or filing. Paraphrased, dated, no prices,
+price targets or ratings (lint checks). The **Stock** page shows it as "What's next" (coming items split into Ahead and
+Recently) and flags it once new results are, or are probably, out; Today ("Coming up") and the Full dashboard list
+results dates in the next thirty days; the pack gives the brain the dates as event risk only.
+
+Refresh after each earnings season, in a Claude Code session on this repo:
+
+1. Run the saved workflow `outlook` with `{"today": "YYYY-MM-DD"}` (add `"tickers": [...]` for some names only).
+   Researchers read primary sources in batches of four or five; a skeptic per batch re-checks every claim.
+2. Put the returned `companies` into `config/outlook.json` (bump `version`, set `updated_at` and `change_note`), then
+   run `python3 scripts/lint.py` and `python3 -m unittest discover -s tests`.
+3. Open a pull request; a person reads the cards and merges.
 
 ## Roadmap
 

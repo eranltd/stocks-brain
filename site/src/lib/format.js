@@ -8,6 +8,8 @@ export const fmtShort = (iso) => shortFmt.format(parse(iso));
 export const fmtUsd = (v) => usd.format(v);
 export const fmtNum = (v, d = 2) => v.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
 export const fmtPct = (v, d = 2) => { const r = Math.abs(v).toFixed(d); const z = Number(r) === 0; return `${z ? "" : v > 0 ? "+" : "−"}${r}%`; };
+/** "accent" (up), "down" or "flat" for a percent change as it shows at `d` decimals: a fall never shows in the up colour. */
+export const signTone = (v, d = 2) => (v == null || Math.abs(v) < 0.5 / 10 ** d ? "flat" : v > 0 ? "accent" : "down");
 export const fmtK = (v) => (v >= 1000 ? `${(v / 1000).toFixed(1)}k` : String(v));
 
 export function relDays(iso, ref = new Date()) {

@@ -149,17 +149,18 @@ where each publishes, the research with links, and every call with how it has do
 
 ## Market today and company outlook
 
-The **Today** tab opens with what the market did at the last close: the S&P 500's and the Nasdaq-100's day moves, how
-many of our names rose and fell, the three biggest risers and fallers, an average day move per sector, the S&P 500's
-distance from its high and the share of our names above their fifty-day average. Percent changes only. It shows what
-moved, not why: news costs money and is not connected. The close arrives with the nightly data run.
+The **Today** post's market slide gives the last close in plain words: the S&P 500's and the Nasdaq-100's day moves, how
+many of our names rose and fell, and the biggest riser and faller. The **Full dashboard** opens with the whole market
+day: the three biggest risers and fallers, an average day move per sector, the S&P 500's distance from its high and the
+share of our names above their fifty-day average. Percent changes only. It shows what moved, not why: news costs money
+and is not connected. The close arrives with the nightly data run.
 
 `config/outlook.json` holds a **company outlook card** per name: the latest quarter (revenue and its change from a year
 earlier, highlights), the company's own guidance, the next results date (expected until confirmed), what is coming up
 and what could change the story, each linked to the company's release or filing. Paraphrased, dated, no prices,
 price targets or ratings (lint checks). The **Stock** page shows it as "What's next" (coming items split into Ahead and
-Recently) and flags it once new results are, or are probably, out; Today lists results dates in the next thirty days;
-the pack gives the brain the dates as event risk only.
+Recently) and flags it once new results are, or are probably, out; Today ("Coming up") and the Full dashboard list
+results dates in the next thirty days; the pack gives the brain the dates as event risk only.
 
 Refresh after each earnings season, in a Claude Code session on this repo:
 

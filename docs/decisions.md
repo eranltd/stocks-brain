@@ -21,10 +21,11 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   the numbers are faithful to the source; a cross-check against a second source is still pending.
 
 ## 2026-10-08
-- **What the market did, on Today.** The household asked where to see what the market did today. Today now opens with
-  the last close: the S&P 500's and the Nasdaq-100's day moves, how many of our names rose and fell, the three biggest
-  risers and fallers (tap to open), an average day move per sector, the S&P 500's distance from its high and the share of
-  our names above their fifty-day average. The context funds now carry a day move too (percent only, from the closes the
+- **What the market did, on Today.** The household asked where to see what the market did today. The Today post's
+  market slide gives the last close in plain words and the Full dashboard opens with the whole market day: the S&P
+  500's and the Nasdaq-100's day moves, how many of our names rose and fell, the three biggest risers and fallers (tap
+  to open), an average day move per sector, the S&P 500's distance from its high and the share of our names above their
+  fifty-day average. The context funds now carry a day move too (percent only, from the closes the
   Action already holds). It says plainly that it cannot say why: news is not connected.
 - **Company outlook cards are researched from primary sources and kept in config** (`config/outlook.json`), not bought
   as a feed. The household asked where the companies are headed (what's next for Nvidia, finance and product). A paid

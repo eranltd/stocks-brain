@@ -89,7 +89,8 @@ From the context funds in `config/watchlist.json` (roles, not tickers, drive the
   cash. Context for the core only, never a trading trigger.
 
 ## Market today (code only)
-What the market did at the last close, on the Today tab, from `data/market/derived.json` (percent only):
+What the market did at the last close, on the Today post (in short) and the Full dashboard (in full), from
+`data/market/derived.json` (percent only):
 - **Day move**: `change_1d_pct = (close / previous close - 1) * 100` on adjusted closes, for every watchlist name, the
   benchmark (the Nasdaq-100 through QQQ) and every context fund (the S&P 500 through SPY, cash, bonds and the rest).
 - **Our names**: how many rose and fell, the three biggest risers and fallers, and the average day move per sector

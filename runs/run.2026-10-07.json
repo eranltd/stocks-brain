@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "run_id": "run.2026-10-07",
+  "date": "2026-10-07",
+  "generated_at": "2026-10-08T05:29:44Z",
+  "status": "ok",
+  "sample": false,
+  "model": "Claude Code routine",
+  "cost": {
+    "usd": 0.0,
+    "input_tokens": 9133,
+    "output_tokens": 1063,
+    "cap_usd": 2.5
+  },
+  "duration_minutes": 5.0,
+  "pack": {
+    "hash": "7cec335060a330059c8fe530730cc5cf3abdecd5b551620b09b03945010c7140",
+    "tokens": 9133,
+    "cap_tokens": 12000
+  },
+  "doc_versions": {
+    "strategy": "0.2.0",
+    "methodology": "0.10.0",
+    "guardrails": "0.1.0",
+    "learnings": "0.1.0"
+  },
+  "repair_retries": 0,
+  "summary": "The frozen history test rejected all four stock rules: each beat only a small share of random baskets from this same list, and holding every name equally did better than the core and every rule. Setup checks and past strength show no edge here, so all leans are weak, neutral and low conviction. Nothing here is expected to beat the index. Ladder is at Paper; no money moves.",
+  "picks": [
+    {
+      "id": "2026-10-07:AAPL",
+      "ref_date": "2026-10-07",
+      "pick": {
+        "ticker": "AAPL",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Passes every setup check, is not stretched, and the paper rule already holds it. It leads the benchmark over the recent windows, but the history test rejected setup-based picking and the perfect-score group did worst in the base rates, so this is a diversification candidate and a name to watch, not a call to beat the index.",
+        "risks": [
+          "Setup checks and past strength showed no edge over random baskets from this list.",
+          "Its volatility is above the benchmark's, so calm is a threshold pass, not a quiet stock.",
+          "Large technology overlap with the index core, and it shares the sector cap with Microsoft."
+        ],
+        "invalidation": "Falls below its long average, loses its lead over the benchmark across the last quarter and half year, or the rule drops it at the monthly review.",
+        "evidence": [
+          "market.aapl",
+          "market.aapl.setup",
+          "market.aapl.risk",
+          "rules_history.verdicts",
+          "rules_history.yardsticks",
+          "base_rates.by_score",
+          "rule_v1.history",
+          "regime"
+        ]
+      }
+    },
+    {
+      "id": "2026-10-07:AMGN",
+      "ref_date": "2026-10-07",
+      "pick": {
+        "ticker": "AMGN",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Passes every setup check, is not stretched, and moves little with the benchmark, which helps a small satellite diversify. But the trend margin is thin, its recent volatility is the highest among the kept names, its long record is the weakest of them, and it is not yet in the recorded paper holdings. The history test found no edge from clean setups.",
+        "risks": [
+          "Long-run growth is near the core's and well under the goal, with a high share of losing years.",
+          "Same sector as Gilead, so one drug-pricing event could hit both.",
+          "The perfect-score group had the worst average month in the base rates."
+        ],
+        "invalidation": "Drops below its long average, loses its lead over the benchmark, or the rule drops it at the monthly review.",
+        "evidence": [
+          "market.amgn",
+          "market.amgn.setup",
+          "market.amgn.risk",
+          "market.amgn.long_run",
+          "rules_history.verdicts",
+          "base_rates.by_score",
+          "rule_v1.history"
+        ]
+      }
+    },
+    {
+      "id": "2026-10-07:MSFT",
+      "ref_date": "2026-10-07",
+      "pick": {
+        "ticker": "MSFT",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Passes every setup check and is not stretched, and the paper rule holds it, but the lead is a sharp rebound: over the last year it still trails the benchmark and its drawdown was deep. A Pershing Square call from its disclosed holdings is bullish, yet that fund's matured record is too thin to count as evidence. Weakest household fit of the kept names.",
+        "risks": [
+          "The recent lead follows a deep drop; the longer record is mixed and risk is heavy for a satellite.",
+          "The fund call has too few matured results to prove anything.",
+          "Takes the second technology slot, adding sector concentration."
+        ],
+        "invalidation": "Becomes stretched above its trend, loses its trend, or gives back its recent lead over the benchmark.",
+        "evidence": [
+          "market.msft",
+          "market.msft.setup",
+          "market.msft.risk",
+          "people.calls.msft",
+          "people.fund.pershing-square-capital-management",
+          "rules_history.verdicts",
+          "base_rates.by_score"
+        ]
+      }
+    },
+    {
+      "id": "2026-10-07:GILD",
+      "ref_date": "2026-10-07",
+      "pick": {
+        "ticker": "GILD",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Meets the gate with the minimum of three checks, is not stretched, and moves almost independently of the benchmark, so it diversifies. Yet its longer relative strength check fails, it lags the last month, and one more failed check removes it. It is a paper rule holding, not a new entry, and the history test found no edge.",
+        "risks": [
+          "Only the minimum checks pass and the half-year relative strength check fails.",
+          "Highest share of losing years among the rule's holdings, and a sizeable one-year drawdown.",
+          "Sector overlap with Amgen."
+        ],
+        "invalidation": "Fails a second setup check, or the rule drops it at the monthly review.",
+        "evidence": [
+          "market.gild",
+          "market.gild.setup",
+          "market.gild.risk",
+          "market.gild.long_run",
+          "rules_history.verdicts",
+          "base_rates.by_score",
+          "rule_v1.diversification"
+        ]
+      }
+    }
+  ]
+}

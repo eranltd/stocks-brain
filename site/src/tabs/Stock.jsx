@@ -5,6 +5,8 @@ import { Accent, ArrowRight, Chip, Container, Conviction, Empty, Headline, Revea
 import { STAGES, trustStage } from "../components/trust.jsx";
 import { STATUS } from "../components/goal.jsx";
 import { cardFor, daysUntil, growthWords, inDays, KIND_LABEL, splitWhatsNext, staleness, todayISO } from "../lib/outlook.js";
+import { gateReason, rowFor } from "../lib/checklist.js";
+import { ChecklistCard, VerdictPill } from "../components/checklist.jsx";
 
 /** Plain-language summary, assembled by code from the computed numbers (no model). */
 function plainWords(row, checks, benchSymbol, benchLabel, liveClaims, settings, baseRate) {
@@ -40,6 +42,8 @@ function actGate(data, row, checks) {
     { ok: stage >= 2, text: stage >= 2 ? `Trust stage ${stage} (${STAGES[stage].name}) allows small positions` : `Trust stage ${stage} (${STAGES[stage].name}): no money moves yet` },
     { ok: Boolean(held), text: st ? (held ? "The portfolio rule holds it" : `The portfolio rule leaves it out: ${STATUS[st.status].label.toLowerCase()}`) : "The portfolio rule has not run yet" },
     { ok: passed >= 3 && !stretched, text: stretched ? "Stretched above its trend: no new buys" : `${passed} of 4 setup checks pass (need 3)` },
+    // House rules, Before acting step 4: the checklist read and a written risk plan with reward-to-risk to TP1 of at least 2.
+    gateReason(data.checklist, rowFor(data.checklist, row.symbol), data.checklistCfg, row.last_date),
   ];
   return { ok: reasons.every((r) => r.ok), reasons };
 }
@@ -113,6 +117,8 @@ export default function Stock({ data, symbol, go }) {
   const long = data.longrun?.members.find((m) => m.symbol === symbol);
   const goal = settings.goal.annual_return_pct;
   const idx = others.findIndex((s) => s.symbol === symbol);
+  const ckRow = rowFor(data.checklist, symbol);
+  const jump = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   return (
     <Container className="pt-14">
@@ -132,11 +138,18 @@ export default function Stock({ data, symbol, go }) {
         <div className="min-w-0">
           <Reveal className="eyebrow mb-4">{names[symbol]} · {market.provider === "sample" ? "sample prices" : `live · ${market.provider}`} · {fmtDate(row.last_date)}</Reveal>
           <Headline size="xl">{symbol} <span className={TONE_TEXT[signTone(row.change_1d_pct, 2)]}>{fmtPct(row.change_1d_pct, 2)}</span></Headline>
-          {!isBench && (
-            <button type="button" onClick={() => document.getElementById("whats-next")?.scrollIntoView({ behavior: "smooth", block: "start" })} className="pill mt-4 min-h-[40px] max-w-full text-ink hover:border-ink-3">
-              What's next <span aria-hidden="true">↓</span>
-            </button>
-          )}
+          <div className="mt-4 flex flex-wrap gap-2">
+            {data.checklistCfg && (
+              <button type="button" onClick={() => jump("checklist")} className="pill min-h-[40px] max-w-full text-ink hover:border-ink-3">
+                Checklist {ckRow ? <VerdictPill verdict={ckRow.score.verdict} className="ml-1" /> : null} <span aria-hidden="true">↓</span>
+              </button>
+            )}
+            {!isBench && (
+              <button type="button" onClick={() => jump("whats-next")} className="pill min-h-[40px] max-w-full text-ink hover:border-ink-3">
+                What's next <span aria-hidden="true">↓</span>
+              </button>
+            )}
+          </div>
         </div>
         {!isBench && (
           <Reveal delay={200} className="card px-6 py-5 text-right">
@@ -147,7 +160,9 @@ export default function Stock({ data, symbol, go }) {
         )}
       </div>
 
-      <div className="mt-10 grid gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
+      <ChecklistCard data={data} symbol={symbol} go={go} />
+
+      <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
         <Reveal className="card p-6 sm:p-8">
           <div className="eyebrow mb-4">In plain words</div>
           <p className="text-[clamp(17px,1.7vw,20px)] leading-relaxed">{words.join(" ")}</p>

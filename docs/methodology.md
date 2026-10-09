@@ -1,7 +1,7 @@
 ---
-version: 0.11.0
-updated_at: 2026-10-08
-change_note: Market today (day moves of the indexes and our names, by sector) and company outlook cards (researched from primary sources, context only).
+version: 0.12.0
+updated_at: 2026-10-09
+change_note: Technical checklist (the eight steps from the household's video), computed daily, measured in history and forward; a written risk plan with reward-to-risk of at least 2 before any new paper entry.
 ---
 # Methodology
 
@@ -97,10 +97,79 @@ What the market did at the last close, on the Today post (in short) and the Full
   (sectors from `config/watchlist.json`, each name counted once, unweighted).
 - **Breadth and distance**: the S&P 500 fund's distance from its one-year high and the share of our names above their
   fifty-day average.
+- **Past market days** (the Today feed): each context fund carries its last 15 day moves (`recent_days`); for our names
+  and the benchmark the day moves of earlier days come from consecutive points of their indexed `series` (rounding to
+  two decimals of the index moves them by a few hundredths of a point at most).
 - **What it does not say**: why anything moved. News feeds cost money and are not connected, so the page shows what
   moved, not why. The US market closes at 4 pm New York time (20:00 UTC in summer, 21:00 in winter) and the close
   reaches the site after the nightly data run, so the section updates overnight. Data written before the day move was
   added to the context funds shows a dash instead.
+
+## Technical checklist (code only, unproven for us)
+The eight steps of a trading video the household liked, in `config/checklist.json` (steps, parameters, house rule),
+computed by the routine `technical_checklist` (`scripts/market.py`, `routines_code.py checklist`) for every watchlist
+name and the benchmark after each close, from the split- and dividend-adjusted daily bars the Action already holds.
+`data/market/checklist.json` carries percentages, ratios, counts and labels only: levels, gaps, stops and targets are
+percent distances from the last close, never prices, and volume is a ratio, never a share count. Every value at a close
+reads only bars up to that close (a test truncates the data after a day and gets the same answer). Each of the first
+seven steps leans bullish, bearish or neutral:
+1. **Candle pattern**: the last daily candle and the week so far (marked partial until Friday), against the candle before
+   it: bullish or bearish engulfing (the body covers the previous body, opposite colour), doji (body at most 10% of the
+   range), hammer or hanging man (lower shadow at least twice the body, small upper shadow; a hammer after a five-day
+   fall leans bullish, a hanging man after a rise bearish), shooting star or inverted hammer (the mirror), marubozu (body
+   at least 90% of the range), spinning top (body under 30%, neutral), else a plain up or down candle. Published: pattern,
+   body as a share of the range, where the close sits in the range. Daily and weekly combine: agreement wins, a neutral
+   defers to the other, a conflict is neutral. Five-minute candles are not possible: we have end-of-day data only.
+2. **Trend**: one point each, plus or minus, for the close against its 50-day average, the 50-day against the 200-day,
+   the 50-day's slope over 10 days, and the swing structure (the highest high and lowest low of each of three 21-day
+   blocks: higher highs and higher lows, lower and lower, or mixed). At least +3 is up, at most -3 down, else sideways.
+3. **Volume**: the last day's volume over the average of the 20 days before it; volume on up-close days over volume on
+   down-close days in the last 20 (capped at 10); the last 10 days' volume against the 10 before; the 10-day price move
+   (rising above +1%, falling below -1%). A rise **confirms** when up-day volume is at least 1.2 times down-day volume and
+   **weakens** when down-day volume leads or volume fell by 20% or more (flagged as price rising on falling volume, the
+   video's bull-trap warning). A fall confirms when down-day volume leads by the same margin; a fall on fading volume is
+   marked weakening but leans nowhere (we do not call bottoms).
+4. **Twenty-day average**: the close's percent distance from its 20-day average and the average's 5-day slope. Above a
+   rising average leans bullish, below a falling one bearish.
+5. **Gaps**: a gap is a day whose low is above the previous day's high (a gap up, which sits below the price) or whose
+   high is below the previous low (a gap down, above the price), of at least 0.5%. It stays open until a later day trades
+   back across it; a partial fill shrinks it. Open gaps of the last 60 trading days with size, distance from the close
+   and days open, and whether the last 5 days moved toward the nearest. The nearest gap within 10% leans the way the price
+   would move to close it (above: bullish; below: bearish), following the video's idea that stocks try to close gaps.
+6. **Support and resistance**: swing pivots over the last 250 trading days (a high above each of the five highs before
+   it and at least as high as the five after it, or the mirror for a low; used only once those five days have passed), grouped into zones within 1.5% of a zone's lowest
+   member; each zone's level is the mean and its touches the pivot count. The nearest two zones below the close are
+   support, the nearest two above resistance, as percent distances. Leans bullish when the nearest resistance is at least
+   twice as far as the nearest support (or nothing is overhead), bearish in the mirror case (or nothing is below).
+7. **RSI**: Wilder's 14-day relative strength index (the first average gain and loss are plain means of the first 14
+   changes, then each change is blended in with weight 1/14; a test reproduces a published worked example). 70 or more is
+   overbought and leans bearish, 30 or less oversold and leans bullish.
+8. **Risk plan** (not a lean): for a long entry at the last close. ATR is Wilder's 14-day average true range. Stop: a
+   quarter ATR below the nearest support or 2 ATR below the close, whichever is closer, but never closer than 1 ATR.
+   TP1: the nearest resistance, or 2 times the risk when nothing is overhead. TP2: the next resistance, or else the larger
+   of 2 times the risk and TP1 plus one risk. Reward-to-risk is each target's distance over the stop's. **House rule**:
+   a new paper entry needs reward-to-risk to TP1 of at least `house_rule.min_reward_to_risk` (2). A name at a one-year
+   high has no resistance overhead, so its TP1 is set at 2 times the risk by construction and fits the rule by
+   construction; the site says so.
+
+**Verdict**: net score = bullish steps minus bearish steps of the seven. At least +3 (`verdict.lean_threshold`) is lean
+up, at most -3 lean down, else mixed, with a one-line summary in words. **Changes** compare the close with the trading day
+before (verdict, RSI zone, side of the 20-day average, trend, volume, gaps opened or filled, a close through the
+previous day's nearest support or resistance, a notable daily candle, the house rule), and the last 15 trading days'
+verdicts and changes are kept for the feed.
+
+**Measurement.** History (`base_rates`): every 20 trading days from 2017 (after a one-year warm-up), each name's checklist
+with data up to that close, and its excess return over the benchmark 20 trading days later; samples per name do not
+overlap. Mean, 90% interval (z = 1.645), share positive and n by verdict, by net score bucket, by each step's lean, and
+for names that fit or fail the house rule. In-sample and on today's list of survivors (names that did well enough to be
+on the list today), so it flatters the checklist; the parameters are the video's and conventional values, not fitted.
+Forward (`forward`): on the first run, and then every 20 trading days, every name's verdict, net score and house-rule
+fit are written with that day's data and never edited; each is scored 20 trading days later the same way. The status
+stays `unproven` until the forward record, not the history, says otherwise, and changing it is a decision in
+`docs/decisions.md`. The household's own pre-registered history test rejected its setup and strength rules; the
+checklist is read with the same doubt. It never moves money, never replaces the index core and is never the only reason
+for a pick. The pack carries a compact `checklist` block (verdict, net, RSI zone, trend, side of the 20-day average,
+volume verdict, reward-to-risk to TP1, house-rule fit; base rates and forward by verdict).
 
 ## The household goal check (code only)
 `settings.goal.annual_return_pct` (+20%) is compared with history, never used to pick stocks. For the rule, holding

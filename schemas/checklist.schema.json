@@ -1,0 +1,1113 @@
+{
+  "$id": "checklist.schema.json",
+  "title": "Technical checklist (data/market/checklist.json)",
+  "description": "The eight-step technical checklist (config/checklist.json) for every watchlist name and the benchmark at the last close: candle, trend, volume, twenty-day average, gaps, support and resistance (percent distances), RSI and a risk plan (stop and targets as percent distances, reward-to-risk). What flipped since the day before, the last few verdicts, history base rates (in-sample, survivors) and the forward record. Percentages, ratios, counts and labels only: no prices, no levels, no raw volume.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "as_of",
+    "sample",
+    "provider",
+    "benchmark",
+    "config_version",
+    "status",
+    "note",
+    "house_rule",
+    "lean_threshold",
+    "symbols",
+    "skipped",
+    "base_rates",
+    "forward"
+  ],
+  "$defs": {
+    "lean": {
+      "enum": [
+        "bullish",
+        "bearish",
+        "neutral"
+      ]
+    },
+    "verdict": {
+      "enum": [
+        "lean_up",
+        "mixed",
+        "lean_down"
+      ]
+    },
+    "stats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "n",
+        "mean",
+        "ci_low",
+        "ci_high",
+        "hit_pct"
+      ],
+      "properties": {
+        "n": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mean": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "ci_low": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "ci_high": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "hit_pct": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    },
+    "candle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lean",
+        "pattern",
+        "body_pct",
+        "close_in_range_pct"
+      ],
+      "properties": {
+        "lean": {
+          "$ref": "#/$defs/lean"
+        },
+        "pattern": {
+          "enum": [
+            "bullish engulfing",
+            "bearish engulfing",
+            "doji",
+            "hammer",
+            "hanging man",
+            "shooting star",
+            "inverted hammer",
+            "bullish marubozu",
+            "bearish marubozu",
+            "spinning top",
+            "up day",
+            "down day",
+            "up week",
+            "down week"
+          ]
+        },
+        "body_pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "close_in_range_pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "partial": {
+          "type": "boolean"
+        }
+      }
+    },
+    "change": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "check",
+        "text",
+        "tone"
+      ],
+      "properties": {
+        "check": {
+          "enum": [
+            "score",
+            "candle",
+            "trend",
+            "volume",
+            "ma20",
+            "gaps",
+            "levels",
+            "rsi",
+            "risk_plan"
+          ]
+        },
+        "text": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 80,
+          "pattern": "^[^0-9]*$"
+        },
+        "tone": {
+          "$ref": "#/$defs/lean"
+        }
+      }
+    },
+    "level": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dist_pct",
+        "touches",
+        "days_ago"
+      ],
+      "properties": {
+        "dist_pct": {
+          "type": "number"
+        },
+        "touches": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "days_ago": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "gap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "where",
+        "size_pct",
+        "dist_pct",
+        "days_open"
+      ],
+      "properties": {
+        "where": {
+          "enum": [
+            "above",
+            "below"
+          ]
+        },
+        "size_pct": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "dist_pct": {
+          "type": "number"
+        },
+        "days_open": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "moving_toward": {
+          "type": "boolean"
+        }
+      }
+    },
+    "symbol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "symbol",
+        "as_of",
+        "candle",
+        "trend",
+        "volume",
+        "ma20",
+        "gaps",
+        "levels",
+        "rsi",
+        "risk_plan",
+        "score",
+        "changes",
+        "history"
+      ],
+      "properties": {
+        "symbol": {
+          "$ref": "common.schema.json#/$defs/ticker"
+        },
+        "as_of": {
+          "$ref": "common.schema.json#/$defs/date"
+        },
+        "candle": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "lean",
+            "daily",
+            "weekly"
+          ],
+          "properties": {
+            "lean": {
+              "$ref": "#/$defs/lean"
+            },
+            "daily": {
+              "$ref": "#/$defs/candle"
+            },
+            "weekly": {
+              "$ref": "#/$defs/candle"
+            }
+          }
+        },
+        "trend": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "direction",
+            "lean",
+            "points",
+            "above_sma50",
+            "dist_sma50_pct",
+            "sma50_above_sma200",
+            "dist_sma200_pct",
+            "slope50_pct",
+            "structure"
+          ],
+          "properties": {
+            "direction": {
+              "enum": [
+                "up",
+                "down",
+                "sideways"
+              ]
+            },
+            "lean": {
+              "$ref": "#/$defs/lean"
+            },
+            "points": {
+              "type": "integer",
+              "minimum": -4,
+              "maximum": 4
+            },
+            "above_sma50": {
+              "type": "boolean"
+            },
+            "dist_sma50_pct": {
+              "type": "number"
+            },
+            "sma50_above_sma200": {
+              "type": "boolean"
+            },
+            "dist_sma200_pct": {
+              "type": "number"
+            },
+            "slope50_pct": {
+              "type": "number"
+            },
+            "structure": {
+              "enum": [
+                "higher highs and higher lows",
+                "lower highs and lower lows",
+                "mixed"
+              ]
+            }
+          }
+        },
+        "volume": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "verdict",
+            "lean",
+            "move",
+            "move_pct",
+            "vs_avg20",
+            "up_down_ratio_20d",
+            "trend_pct",
+            "rising_on_falling_volume"
+          ],
+          "properties": {
+            "verdict": {
+              "enum": [
+                "confirms",
+                "weakening",
+                "neutral"
+              ]
+            },
+            "lean": {
+              "$ref": "#/$defs/lean"
+            },
+            "move": {
+              "enum": [
+                "rising",
+                "falling",
+                "flat"
+              ]
+            },
+            "move_pct": {
+              "type": "number"
+            },
+            "vs_avg20": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "up_down_ratio_20d": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10
+            },
+            "trend_pct": {
+              "type": "number"
+            },
+            "rising_on_falling_volume": {
+              "type": "boolean"
+            }
+          }
+        },
+        "ma20": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "side",
+            "dist_pct",
+            "slope_pct",
+            "lean"
+          ],
+          "properties": {
+            "side": {
+              "enum": [
+                "above",
+                "below"
+              ]
+            },
+            "dist_pct": {
+              "type": "number"
+            },
+            "slope_pct": {
+              "type": "number"
+            },
+            "lean": {
+              "$ref": "#/$defs/lean"
+            }
+          }
+        },
+        "gaps": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "verdict",
+            "lean",
+            "above",
+            "below",
+            "nearest",
+            "unfilled"
+          ],
+          "properties": {
+            "verdict": {
+              "enum": [
+                "gap_above",
+                "gap_below",
+                "none"
+              ]
+            },
+            "lean": {
+              "$ref": "#/$defs/lean"
+            },
+            "above": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "below": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "nearest": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "#/$defs/gap"
+                }
+              ]
+            },
+            "unfilled": {
+              "type": "array",
+              "maxItems": 10,
+              "items": {
+                "$ref": "#/$defs/gap"
+              }
+            }
+          }
+        },
+        "levels": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "lean",
+            "support",
+            "resistance"
+          ],
+          "properties": {
+            "lean": {
+              "$ref": "#/$defs/lean"
+            },
+            "support": {
+              "type": "array",
+              "maxItems": 2,
+              "items": {
+                "$ref": "#/$defs/level"
+              }
+            },
+            "resistance": {
+              "type": "array",
+              "maxItems": 2,
+              "items": {
+                "$ref": "#/$defs/level"
+              }
+            }
+          }
+        },
+        "rsi": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "zone",
+            "lean"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "zone": {
+              "enum": [
+                "overbought",
+                "oversold",
+                "neutral"
+              ]
+            },
+            "lean": {
+              "$ref": "#/$defs/lean"
+            }
+          }
+        },
+        "risk_plan": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "atr_pct",
+            "stop_pct",
+            "stop_basis",
+            "tp1_pct",
+            "tp1_basis",
+            "tp2_pct",
+            "tp2_basis",
+            "rr_tp1",
+            "rr_tp2",
+            "fits_house_rule"
+          ],
+          "properties": {
+            "atr_pct": {
+              "type": "number",
+              "minimum": 0
+            },
+            "stop_pct": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "stop_basis": {
+              "enum": [
+                "support",
+                "atr",
+                "min_atr"
+              ]
+            },
+            "tp1_pct": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "tp1_basis": {
+              "enum": [
+                "resistance",
+                "risk_multiple"
+              ]
+            },
+            "tp2_pct": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "tp2_basis": {
+              "enum": [
+                "resistance",
+                "risk_multiple"
+              ]
+            },
+            "rr_tp1": {
+              "type": "number",
+              "minimum": 0
+            },
+            "rr_tp2": {
+              "type": "number",
+              "minimum": 0
+            },
+            "fits_house_rule": {
+              "type": "boolean"
+            }
+          }
+        },
+        "score": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "bullish",
+            "bearish",
+            "neutral",
+            "net",
+            "verdict",
+            "leans",
+            "summary"
+          ],
+          "properties": {
+            "bullish": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 7
+            },
+            "bearish": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 7
+            },
+            "neutral": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 7
+            },
+            "net": {
+              "type": "integer",
+              "minimum": -7,
+              "maximum": 7
+            },
+            "verdict": {
+              "$ref": "#/$defs/verdict"
+            },
+            "leans": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "candle",
+                "trend",
+                "volume",
+                "ma20",
+                "gaps",
+                "levels",
+                "rsi"
+              ],
+              "properties": {
+                "candle": {
+                  "$ref": "#/$defs/lean"
+                },
+                "trend": {
+                  "$ref": "#/$defs/lean"
+                },
+                "volume": {
+                  "$ref": "#/$defs/lean"
+                },
+                "ma20": {
+                  "$ref": "#/$defs/lean"
+                },
+                "gaps": {
+                  "$ref": "#/$defs/lean"
+                },
+                "levels": {
+                  "$ref": "#/$defs/lean"
+                },
+                "rsi": {
+                  "$ref": "#/$defs/lean"
+                }
+              }
+            },
+            "summary": {
+              "type": "string",
+              "minLength": 5,
+              "maxLength": 240,
+              "pattern": "^[^0-9]*$"
+            }
+          }
+        },
+        "changes": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "$ref": "#/$defs/change"
+          }
+        },
+        "history": {
+          "type": "array",
+          "maxItems": 30,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "date",
+              "verdict",
+              "net",
+              "changes"
+            ],
+            "properties": {
+              "date": {
+                "$ref": "common.schema.json#/$defs/date"
+              },
+              "verdict": {
+                "$ref": "#/$defs/verdict"
+              },
+              "net": {
+                "type": "integer",
+                "minimum": -7,
+                "maximum": 7
+              },
+              "changes": {
+                "type": "array",
+                "maxItems": 20,
+                "items": {
+                  "$ref": "#/$defs/change"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "as_of": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "sample": {
+      "type": "boolean"
+    },
+    "provider": {
+      "type": "string",
+      "maxLength": 40
+    },
+    "benchmark": {
+      "$ref": "common.schema.json#/$defs/ticker"
+    },
+    "config_version": {
+      "$ref": "common.schema.json#/$defs/semver"
+    },
+    "status": {
+      "enum": [
+        "unproven",
+        "supported",
+        "rejected"
+      ]
+    },
+    "note": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 400
+    },
+    "house_rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "min_reward_to_risk",
+        "target"
+      ],
+      "properties": {
+        "min_reward_to_risk": {
+          "type": "number",
+          "minimum": 1
+        },
+        "target": {
+          "const": "tp1"
+        }
+      }
+    },
+    "lean_threshold": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 7
+    },
+    "symbols": {
+      "type": "array",
+      "maxItems": 61,
+      "items": {
+        "$ref": "#/$defs/symbol"
+      }
+    },
+    "skipped": {
+      "type": "array",
+      "maxItems": 61,
+      "items": {
+        "$ref": "common.schema.json#/$defs/ticker"
+      }
+    },
+    "base_rates": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "from",
+            "to",
+            "horizon_days",
+            "step_days",
+            "names",
+            "all",
+            "by_verdict",
+            "by_score",
+            "by_check",
+            "house_rule",
+            "note"
+          ],
+          "properties": {
+            "from": {
+              "$ref": "common.schema.json#/$defs/date"
+            },
+            "to": {
+              "$ref": "common.schema.json#/$defs/date"
+            },
+            "horizon_days": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "step_days": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "names": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "all": {
+              "$ref": "#/$defs/stats"
+            },
+            "by_verdict": {
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 3,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "verdict",
+                  "n",
+                  "mean",
+                  "ci_low",
+                  "ci_high",
+                  "hit_pct"
+                ],
+                "properties": {
+                  "verdict": {
+                    "$ref": "#/$defs/verdict"
+                  },
+                  "n": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "mean": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "ci_low": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "ci_high": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "hit_pct": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 100
+                  }
+                }
+              }
+            },
+            "by_score": {
+              "type": "array",
+              "minItems": 7,
+              "maxItems": 7,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "net",
+                  "n",
+                  "mean",
+                  "ci_low",
+                  "ci_high",
+                  "hit_pct"
+                ],
+                "properties": {
+                  "net": {
+                    "enum": [
+                      "-7..-5",
+                      "-4..-3",
+                      "-2..-1",
+                      "0..0",
+                      "1..2",
+                      "3..4",
+                      "5..7"
+                    ]
+                  },
+                  "n": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "mean": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "ci_low": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "ci_high": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "hit_pct": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 100
+                  }
+                }
+              }
+            },
+            "by_check": {
+              "type": "array",
+              "minItems": 7,
+              "maxItems": 7,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "check",
+                  "bullish",
+                  "bearish",
+                  "neutral"
+                ],
+                "properties": {
+                  "check": {
+                    "enum": [
+                      "candle",
+                      "trend",
+                      "volume",
+                      "ma20",
+                      "gaps",
+                      "levels",
+                      "rsi"
+                    ]
+                  },
+                  "bullish": {
+                    "$ref": "#/$defs/stats"
+                  },
+                  "bearish": {
+                    "$ref": "#/$defs/stats"
+                  },
+                  "neutral": {
+                    "$ref": "#/$defs/stats"
+                  }
+                }
+              }
+            },
+            "house_rule": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "fits",
+                "fails"
+              ],
+              "properties": {
+                "fits": {
+                  "$ref": "#/$defs/stats"
+                },
+                "fails": {
+                  "$ref": "#/$defs/stats"
+                }
+              }
+            },
+            "note": {
+              "type": "string",
+              "minLength": 10,
+              "maxLength": 300
+            }
+          }
+        }
+      ]
+    },
+    "forward": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "note",
+        "started",
+        "step_days",
+        "horizon_days",
+        "records",
+        "scored_records",
+        "by_verdict",
+        "house_rule"
+      ],
+      "properties": {
+        "note": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 300
+        },
+        "started": {
+          "$ref": "common.schema.json#/$defs/date"
+        },
+        "step_days": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "horizon_days": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "records": {
+          "type": "array",
+          "maxItems": 400,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "date",
+              "names"
+            ],
+            "properties": {
+              "date": {
+                "$ref": "common.schema.json#/$defs/date"
+              },
+              "names": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "verdict",
+                    "net",
+                    "fits"
+                  ],
+                  "properties": {
+                    "verdict": {
+                      "$ref": "#/$defs/verdict"
+                    },
+                    "net": {
+                      "type": "integer",
+                      "minimum": -7,
+                      "maximum": 7
+                    },
+                    "fits": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "scored_records": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "by_verdict": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "verdict",
+              "n",
+              "mean",
+              "ci_low",
+              "ci_high",
+              "hit_pct"
+            ],
+            "properties": {
+              "verdict": {
+                "$ref": "#/$defs/verdict"
+              },
+              "n": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "mean": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "ci_low": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "ci_high": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "hit_pct": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 100
+              }
+            }
+          }
+        },
+        "house_rule": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "fits",
+            "fails"
+          ],
+          "properties": {
+            "fits": {
+              "$ref": "#/$defs/stats"
+            },
+            "fails": {
+              "$ref": "#/$defs/stats"
+            }
+          }
+        }
+      }
+    }
+  }
+}

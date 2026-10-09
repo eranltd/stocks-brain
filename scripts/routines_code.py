@@ -3,7 +3,7 @@
 long-run portfolio statistics, the forward-only paper portfolio, the forward ledger of every rule and the scores of
 the public calls of the people we learn from.
 
-Usage: python3 scripts/routines_code.py derive|score|regime|calibration|longrun|paper|rules|ledger|people|all
+Usage: python3 scripts/routines_code.py derive|score|regime|calibration|longrun|paper|rules|ledger|people|checklist|all
 Each step reads public data, computes with plain arithmetic, validates against its schema,
 and writes under data/kb/. Rules are documented in docs/methodology.md.
 """
@@ -185,6 +185,9 @@ def _pct(a: float, b: float) -> float:
     return round((b / a - 1) * 100, 3)
 
 
+RECENT_DAYS = 15  # past day moves kept per context fund (the feed's past market days)
+
+
 def compute_derived(prices_dir: Path, st: dict, wl: dict, sample: bool, provider: str) -> dict:
     """Public, non-redistributive view of the market: returns, distances, risk, setup checks,
     base rates and market context. No absolute prices leave this function."""
@@ -262,7 +265,11 @@ def compute_derived(prices_dir: Path, st: dict, wl: dict, sample: bool, provider
                                    "change_1d_pct": round(mk.day_change(cc), 3),
                                    "ret_20d_pct": round(mk.ret(cc, 20), 3), "ret_60d_pct": round(mk.ret(cc, 60), 3),
                                    **({"ret_250d_pct": round(mk.ret(cc, 250), 3)} if len(cc) > 250 else {}),
-                                   "from_high_pct": round(mk.pct(max(cc[-252:]), cc[-1]), 3)})
+                                   "from_high_pct": round(mk.pct(max(cc[-252:]), cc[-1]), 3),
+                                   # Past market days for the Today feed (watchlist names and the benchmark have `series`).
+                                   "recent_days": [{"date": dates[len(dates) - len(cc) + k],
+                                                    "change_pct": round(mk.pct(cc[k - 1], cc[k]), 3)}
+                                                   for k in range(max(1, len(cc) - RECENT_DAYS), len(cc))]})
     cash = ctx_closes.get(role.get("cash"))
     if cash:
         ctx["cash_yield_pct"] = round(mk.cash_yield(cash), 2)
@@ -775,8 +782,171 @@ def run_people() -> None:
     print(*pp.summarize(doc), sep="\n")
 
 
+# ------------------------------------------------------- technical checklist
+
+CHECKLIST_NOTE = ("The eight-step checklist from a trading video the household liked, computed by code from end-of-day bars. Unproven for "
+                  "us: a description of the chart, not a forecast; never the only reason for a pick and never ahead of the index core.")
+FORWARD_NOTE = ("Forward only: every {step} trading days each name's verdict is written with that day's data and never edited; each is "
+                "scored {h} trading days later as its excess return over the benchmark.")
+BASE_RATES_NOTE = ("In-sample and on today's list of survivors: names that did well enough to be on the list today, so this flatters "
+                   "the checklist. Samples every {step} trading days do not overlap in time for one name, but names move together, so "
+                   "the real uncertainty is wider than the 90% ranges shown.")
+
+
+def checklist_params(cfg: dict) -> tuple[dict, dict]:
+    """(steps' params by step id, house numbers) from config/checklist.json."""
+    return ({s["id"]: s["params"] for s in cfg["steps"]},
+            {"min_reward_to_risk": cfg["house_rule"]["min_reward_to_risk"], "lean_threshold": cfg["verdict"]["lean_threshold"]})
+
+
+def align_bars_tail(raw: dict[str, list[dict]], dates: list[str]) -> dict[str, dict]:
+    """OHLCV lists for each symbol on the longest suffix of `dates` it fully covers (as market.align_tail, for whole bars).
+    Raw values stay in memory; only derived numbers are written."""
+    out = {}
+    for sym, bars in raw.items():
+        m = {b["date"]: b for b in bars}
+        rows = []
+        for d in reversed(dates):
+            if d not in m:
+                break
+            rows.append(m[d])
+        if rows:
+            rows.reverse()
+            out[sym] = {"dates": [b["date"] for b in rows], "o": [b["open"] for b in rows], "h": [b["high"] for b in rows],
+                        "l": [b["low"] for b in rows], "c": [b["close"] for b in rows], "v": [b.get("volume") or 0 for b in rows]}
+    return out
+
+
+def checklist_forward(prev: dict | None, rows: list[dict], series: dict[str, dict], bench: str, measure: dict) -> dict:
+    """The forward record: a snapshot of every name's verdict on the first run and then every `step_days` trading days,
+    written with that day's data and never edited; each scored `horizon_days` trading days later (excess return over the
+    benchmark, percent). Recomputed from the record each run."""
+    import market as mk
+    step, h = measure["step_days"], measure["horizon_days"]
+    dates = series[bench]["dates"]
+    today = dates[-1]
+    pos = {d: k for k, d in enumerate(dates)}
+    records = [dict(r) for r in (prev or {}).get("records", [])]
+    last = records[-1]["date"] if records else None
+    if last is None or (last < today and (last not in pos or len(dates) - 1 - pos[last] >= step)):
+        records.append({"date": today, "names": {r["symbol"]: {"verdict": r["score"]["verdict"], "net": r["score"]["net"],
+                                                               "fits": r["risk_plan"]["fits_house_rule"]}
+                                                 for r in rows if r["symbol"] != bench}})
+    b = series[bench]["c"]
+    by_v: dict[str, list[float]] = {k: [] for k in mk.VERDICTS}
+    rule = {"fits": [], "fails": []}
+    scored = 0
+    for rec in records:
+        bi = pos.get(rec["date"])
+        if bi is None or bi + h >= len(dates):
+            continue
+        scored += 1
+        for sym, x in rec["names"].items():
+            B = series.get(sym)
+            if not B:
+                continue
+            i = len(B["c"]) - (len(dates) - bi)
+            if i < 0 or B["dates"][i] != rec["date"]:
+                continue
+            fwd = mk.pct(B["c"][i], B["c"][i + h]) - mk.pct(b[bi], b[bi + h])
+            by_v[x["verdict"]].append(fwd)
+            rule["fits" if x["fits"] else "fails"].append(fwd)
+    return {"note": FORWARD_NOTE.format(step=step, h=h), "started": records[0]["date"], "step_days": step, "horizon_days": h,
+            "records": records, "scored_records": scored,
+            "by_verdict": [{"verdict": k, **mk._stats(v)} for k, v in by_v.items()],
+            "house_rule": {k: mk._stats(v) for k, v in rule.items()}}
+
+
+def forward_problems(fw) -> list[str]:
+    """Shape of a published forward record (checked on its own, so a later change elsewhere in the file cannot wedge the run)."""
+    import market as mk
+    if not isinstance(fw, dict) or not isinstance(fw.get("records"), list) or not fw["records"]:
+        return ["forward.records is missing or empty"]
+    out, last = [], ""
+    for k, r in enumerate(fw["records"]):
+        if not isinstance(r, dict) or not isinstance(r.get("date"), str) or not isinstance(r.get("names"), dict):
+            out.append(f"record {k}: needs date and names")
+            continue
+        if r["date"] <= last:
+            out.append(f"record {k}: dates must ascend")
+        last = r["date"]
+        for sym, x in r["names"].items():
+            if not isinstance(x, dict) or x.get("verdict") not in mk.VERDICTS or not isinstance(x.get("fits"), bool) or not isinstance(x.get("net"), int):
+                out.append(f"record {k} {sym}: needs verdict, net and fits")
+    return out
+
+
+def compute_checklist(prices_dir: Path, st: dict, wl: dict, cfg: dict, sample: bool, provider: str,
+                      prev: dict | None = None) -> dict | None:
+    """The technical checklist for every watchlist name and the benchmark at the last close, what flipped since the day
+    before, the last `history_days` verdicts, the history base rates and the forward record. Derived numbers only."""
+    import market as mk
+    P, house = checklist_params(cfg)
+    measure = cfg["measure"]
+    bench = st["scoring"]["benchmark"]["symbol"]
+    members = [s["symbol"] for s in wl["symbols"]]
+    raw = {s: _bars(prices_dir, s) for s in {*members, bench}}
+    if not raw[bench]:
+        return None
+    series = align_bars_tail({s: b for s, b in raw.items() if b}, [b["date"] for b in raw[bench]])
+    warm, hist = mk.checklist_warmup(P), measure["history_days"]
+    rows, skipped, preps = [], [], {}
+    for sym in [*members, bench]:
+        B = series.get(sym)
+        if not B or len(B["c"]) < warm + hist:
+            skipped.append(sym)
+            continue
+        pre = preps[sym] = mk.prep_checklist(B, P)
+        n = len(B["c"])
+        days = [mk.checklist_at(B, pre, i, P, house) for i in range(n - hist - 1, n)]
+        history = [{"date": B["dates"][n - hist + j], "verdict": cur["score"]["verdict"], "net": cur["score"]["net"],
+                    "changes": mk.checklist_changes(days[j], cur)} for j, cur in enumerate(days[1:])]
+        rows.append({"symbol": sym, "as_of": B["dates"][-1], **mk.public(days[-1]), "changes": history[-1]["changes"],
+                     "history": history})
+    if bench not in preps:
+        return None
+    full = {s: series[s] for s in preps}
+    rates = mk.checklist_base_rates(full, bench, P, house, measure, preps)
+    return {"as_of": series[bench]["dates"][-1], "sample": sample, "provider": provider, "benchmark": bench,
+            "config_version": cfg["version"], "status": cfg["status"], "note": CHECKLIST_NOTE,
+            "house_rule": {"min_reward_to_risk": house["min_reward_to_risk"], "target": cfg["house_rule"]["target"]},
+            "lean_threshold": house["lean_threshold"], "symbols": rows, "skipped": skipped,
+            "base_rates": {**rates, "note": BASE_RATES_NOTE.format(step=rates["step_days"])}
+            if rates["all"]["n"] else None,
+            "forward": checklist_forward(prev, rows, full, bench, measure)}
+
+
+def run_checklist() -> None:
+    cfg_path = CONFIG / "checklist.json"
+    if not cfg_path.exists():
+        print("checklist: no config/checklist.json, nothing to compute")
+        return
+    cfg = load_json(cfg_path)
+    errs = Validator().validate(cfg, "checklist_config.schema.json")
+    if errs:
+        raise SystemExit(f"checklist: config/checklist.json fails its schema (nothing written): {errs[:5]}")
+    st = settings()
+    path = MARKET / "checklist.json"
+    prev = None
+    if path.exists():  # the forward record is append-only: an unreadable record stops the run instead of starting over
+        prev = load_json(path).get("forward")
+        bad = forward_problems(prev)
+        if bad:
+            raise SystemExit(f"checklist: the published forward record is unreadable, so it would be lost (nothing written): {bad[:3]}")
+    doc = compute_checklist(PRICES, st, watchlist(), cfg, sample=False, provider=st["prices"]["provider"], prev=prev)
+    if not doc:
+        raise SystemExit("checklist: no benchmark prices in .cache/prices (run fetch_prices first)")
+    _write(path, doc, "checklist.schema.json", compact=True)
+    counts = {v: sum(r["score"]["verdict"] == v for r in doc["symbols"]) for v in ("lean_up", "mixed", "lean_down")}
+    br = doc["base_rates"]
+    print(f"checklist: {len(doc['symbols'])} symbols as of {doc['as_of']}, verdicts {counts}, skipped {doc['skipped']}; "
+          f"forward {len(doc['forward']['records'])} record(s), {doc['forward']['scored_records']} scored"
+          + (f"; history {br['from']}..{br['to']} n={br['all']['n']}" if br else ""))
+
+
 STEPS = {"derive": run_derive, "score": run_score, "regime": run_regime, "calibration": run_calibration,
-         "longrun": run_longrun, "paper": run_paper, "rules": run_rules, "ledger": run_ledger, "people": run_people}
+         "longrun": run_longrun, "paper": run_paper, "rules": run_rules, "ledger": run_ledger, "people": run_people,
+         "checklist": run_checklist}
 
 if __name__ == "__main__":
     which = sys.argv[1] if len(sys.argv) > 1 else "all"

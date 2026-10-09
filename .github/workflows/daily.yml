@@ -5,7 +5,7 @@ name: daily
 # Data is published to the `data` branch (data/ and runs/ only; scripts/data_branch.sh), so main can require PRs.
 on:
   schedule:
-    - cron: "40 23 * * 1-5"   # fetch_prices, score_picks, regime_monitor, ..., score_people (after the US close)
+    - cron: "40 23 * * 1-5"   # fetch_prices, score_picks, regime_monitor, ..., score_people, technical_checklist (after the US close)
     - cron: "0 13 1 * *"      # calibration
   workflow_dispatch:
     inputs:
@@ -90,6 +90,12 @@ jobs:
         continue-on-error: true  # research step: a failure is logged but must not discard the day's market data
         run: python3 scripts/routines_code.py people
 
+      - name: Technical checklist (derived numbers only)
+        id: technical_checklist
+        if: env.MONTHLY != 'true' && env.DRY != 'true'
+        continue-on-error: true  # research step: a failure is logged but must not discard the day's market data
+        run: python3 scripts/routines_code.py checklist
+
       - name: Calibration
         id: calibration
         if: env.DRY != 'true' && (env.MONTHLY == 'true' || github.event_name == 'workflow_dispatch')
@@ -113,6 +119,7 @@ jobs:
           ROUTINE_RULE_BACKTESTS: ${{ steps.rule_backtests.outcome }}
           ROUTINE_RULE_LEDGER: ${{ steps.rule_ledger.outcome }}
           ROUTINE_SCORE_PEOPLE: ${{ steps.score_people.outcome }}
+          ROUTINE_TECHNICAL_CHECKLIST: ${{ steps.technical_checklist.outcome }}
           ROUTINE_CALIBRATION: ${{ steps.calibration.outcome }}
           ROUTINE_LINT: ${{ steps.lint.outcome }}
         run: |

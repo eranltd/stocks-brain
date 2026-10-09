@@ -3,20 +3,26 @@ import { fmtDate, fmtNum, fmtPct, numWord } from "../lib/format.js";
 import { Sparkline } from "../components/charts.jsx";
 import { STATUS } from "../components/goal.jsx";
 import { Accent, Container, Reveal, SectionHead, Segmented, Strip } from "../components/ui.jsx";
+import { VerdictPill } from "../components/checklist.jsx";
 
 export default function Watchlist({ data, go }) {
-  const { watchlist, prices, bench, settings, regime, livePrices, market, longrun } = data;
+  const { watchlist, prices, bench, settings, regime, livePrices, market, longrun, checklist } = data;
   const ruleOf = Object.fromEntries((longrun?.now.status ?? []).map((x) => [x.symbol, x.status]));
+  // Technical checklist reading per name (unproven): null until the first daily run that computes it.
+  const ckOf = useMemo(() => Object.fromEntries((checklist?.symbols ?? []).map((x) => [x.symbol, x.score])), [checklist]);
   const [sort, setSort] = useState("list");
   const days = settings.site.sparkline_days;
 
   const rows = useMemo(() => {
-    const list = watchlist.symbols.map((s, i) => ({ ...s, i, m: prices[s.symbol] }));
-    const key = { gainers: (r) => -(r.m?.change_1d_pct ?? -1e9), losers: (r) => r.m?.change_1d_pct ?? 1e9, checks: (r) => -((r.m?.setup?.passed ?? -1) * 1000 + (r.m?.setup?.vs_bench_long_pct ?? 0)) }[sort];
+    const list = watchlist.symbols.map((s, i) => ({ ...s, i, m: prices[s.symbol], ck: ckOf[s.symbol] ?? null }));
+    const key = {
+      gainers: (r) => -(r.m?.change_1d_pct ?? -1e9), losers: (r) => r.m?.change_1d_pct ?? 1e9, checks: (r) => -((r.m?.setup?.passed ?? -1) * 1000 + (r.m?.setup?.vs_bench_long_pct ?? 0)),
+      checklist: (r) => -(r.ck?.net ?? -99) * 1000 + r.i, // highest net score first; list order breaks ties
+    }[sort];
     if (key) list.sort((a, b) => key(a) - key(b));
     if (sort === "symbol") list.sort((a, b) => a.symbol.localeCompare(b.symbol));
     return list;
-  }, [watchlist, prices, sort]);
+  }, [watchlist, prices, sort, ckOf]);
   const bm = { symbol: bench.symbol, name: bench.label, m: prices[bench.symbol] };
   const up = rows.filter((r) => r.m?.change_1d_pct > 0).length;
 
@@ -31,23 +37,28 @@ export default function Watchlist({ data, go }) {
             label="Sort"
             value={sort}
             onChange={setSort}
-            options={[{ value: "list", label: "List order" }, { value: "gainers", label: "Gainers" }, { value: "losers", label: "Losers" }, { value: "checks", label: "Checks" }, { value: "symbol", label: "A–Z" }]}
+            options={[{ value: "list", label: "List order" }, { value: "gainers", label: "Gainers" }, { value: "losers", label: "Losers" }, { value: "checks", label: "Checks" }, ...(checklist ? [{ value: "checklist", label: "Checklist" }] : []), { value: "symbol", label: "A–Z" }]}
           />
         }
       />
       {regime && <Regime regime={regime} above={rows.filter((r) => r.m?.above_sma50).length} total={rows.length} />}
       <div className="meta mb-3 hidden grid-cols-[minmax(150px,1.1fr)_minmax(140px,2fr)_minmax(100px,.8fr)_minmax(130px,.9fr)] gap-6 px-7 sm:grid">
-        <span>Name</span><span>{days} days, indexed</span><span className="text-right">Checks · rule</span><span className="text-right">Today</span>
+        <span>Name</span><span>{days} days, indexed</span><span className="text-right">Checks · checklist · rule</span><span className="text-right">Today</span>
       </div>
       <div className="grid gap-3">
         <Row r={bm} i={0} bench go={go} />
-        {rows.map((r, i) => <Row key={r.symbol} r={r} i={i + 1} go={go} rule={ruleOf[r.symbol]} />)}
+        {rows.map((r, i) => <Row key={r.symbol} r={r} i={i + 1} go={go} rule={ruleOf[r.symbol]} ck={r.ck} hasChecklist={Boolean(checklist)} />)}
       </div>
+      <p className="meta mt-6 normal-case tracking-[0.04em]">
+        {checklist
+          ? `Checklist: the eight-step technical checklist from the video, read by code${checklist.sample ? " from sample prices" : ""}. Unproven for us: a description of the chart, not a forecast. Open a name for its eight steps and risk plan.`
+          : "Checklist verdicts (lean up, mixed, lean down) appear after the next daily run."}
+      </p>
     </Container>
   );
 }
 
-function Row({ r, i, bench = false, go, rule }) {
+function Row({ r, i, bench = false, go, rule, ck, hasChecklist }) {
   const m = r.m;
   const tone = (m?.ret_20d_pct ?? 0) < 0 ? "down" : "accent";
   return (
@@ -75,6 +86,7 @@ function Row({ r, i, bench = false, go, rule }) {
           <>
             <span className="num font-mono sm:text-[16px]">{m?.setup ? `${m.setup.passed}/4` : "—"}</span>
             {m?.setup?.stretched && <span className="ml-1.5 text-[11px] text-people">stretched</span>}
+            {hasChecklist && <div className="mt-1"><VerdictPill verdict={ck?.verdict} /></div>}
             {rule && <div className={`hidden truncate text-[11.5px] sm:block ${STATUS[rule].tone}`}>{STATUS[rule].label}</div>}
           </>
         )}

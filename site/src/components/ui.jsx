@@ -67,7 +67,7 @@ export function SectionHead({ eyebrow, title, lede, right, size = "lg", classNam
           </Reveal>
         )}
       </div>
-      {right && <Reveal delay={300} className="flex items-center gap-3">{right}</Reveal>}
+      {right && <Reveal delay={300} className="flex min-w-0 max-w-full items-center gap-3">{right}</Reveal>}
     </div>
   );
 }

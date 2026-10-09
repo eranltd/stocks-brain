@@ -107,6 +107,20 @@ def main() -> int:
             if doc:
                 dump_json(OUT / "people" / "scores.json", doc)
                 people_scores = "people/scores.json"
+    # Technical checklist (config/checklist.json): same source rule as prices; samples are computed from the synthetic bars.
+    checklist = None
+    checklist_cfg = CONFIG / "checklist.json"
+    if checklist_cfg.exists():
+        if price_source == "live" and (MARKET / "checklist.json").exists():
+            _copy(MARKET / "checklist.json", OUT / "market" / "checklist.json")
+            checklist = "market/checklist.json"
+        elif price_source == "sample":
+            import routines_code
+            from _common import watchlist
+            doc = routines_code.compute_checklist(SAMPLES / "prices", st, watchlist(), load_json(checklist_cfg), sample=True, provider="sample")
+            if doc:
+                dump_json(OUT / "market" / "checklist.json", doc, compact=True)
+                checklist = "market/checklist.json"
     kb = {}
     # Curated knowledge (library, observations) is always the real file once it has content.
     def curated(name: str, key: str) -> Path:
@@ -119,7 +133,8 @@ def main() -> int:
             _copy(base / f"{name}.json", OUT / "kb" / f"{name}.json")
             kb[name] = f"kb/{name}.json"
     cfg_docs = ("watchlist", "settings", "sources", "routines", *(("rules",) if (CONFIG / "rules.json").exists() else ()),
-                *(("people",) if people_cfg.exists() else ()), *(("outlook",) if (CONFIG / "outlook.json").exists() else ()))
+                *(("people",) if people_cfg.exists() else ()), *(("outlook",) if (CONFIG / "outlook.json").exists() else ()),
+                *(("checklist",) if checklist_cfg.exists() else ()))
     for name in cfg_docs:
         _copy(CONFIG / f"{name}.json", OUT / "config" / f"{name}.json")
 
@@ -158,6 +173,7 @@ def main() -> int:
         "paper_rules": "portfolio/paper_rules.json" if price_source == "live" and ledger.exists() else None,
         "paper": "portfolio/paper.json" if price_source == "live" and paper.exists() else None,
         "people_scores": people_scores,
+        "checklist": checklist,
         "kb": kb,
         "docs": docs,
     })

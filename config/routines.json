@@ -1,7 +1,7 @@
 {
-  "version": "0.7.0",
-  "updated_at": "2026-10-07",
-  "change_note": "Score the public calls of the people we learn from (score_people); the brain fires at 05:23 and 11:23 UTC so a late data run is still caught.",
+  "version": "0.8.0",
+  "updated_at": "2026-10-09",
+  "change_note": "Technical checklist (technical_checklist): the eight steps from the household's video, computed daily from end-of-day bars and measured.",
   "timezone": "UTC",
   "routines": [
     {
@@ -206,6 +206,27 @@
       ],
       "human_gate": false,
       "why": "Learn from them, but measure them. Each dated public call of a person we follow is scored against the S&P 500 core from the first trading day after it became public, over 13, 26 and 52 weeks. Fewer than ten half-year-old calls proves nothing."
+    },
+    {
+      "id": "technical_checklist",
+      "name": "Technical checklist",
+      "cadence": "daily",
+      "cron": "40 23 * * 1-5",
+      "runner": "github_actions",
+      "status": "active",
+      "milestone": "M4",
+      "uses_llm": false,
+      "max_cost_usd": 0,
+      "inputs": [
+        ".cache/prices (daily bars, never published)",
+        "config/checklist.json",
+        "data/market/checklist.json"
+      ],
+      "outputs": [
+        "data/market/checklist.json"
+      ],
+      "human_gate": false,
+      "why": "The household's eight-step video checklist (candle, trend, volume, twenty-day average, gaps, levels, RSI, risk plan) for every name after each close, what flipped since yesterday, and how it did in history and forward. Unproven for us: measured, never trusted."
     },
     {
       "id": "news_social_digest",

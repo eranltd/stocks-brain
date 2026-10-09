@@ -147,6 +147,11 @@ class Lint:
             oc = self.schema(outlook_path, "outlook.schema.json")
             if oc and wl:
                 self.check_outlook(outlook_path, oc, wl)
+        checklist_path = CONFIG / "checklist.json"
+        if checklist_path.exists():
+            cc = self.schema(checklist_path, "checklist_config.schema.json")
+            if cc:
+                self.check_checklist(checklist_path, cc)
         rules_path = CONFIG / "rules.json"
         if rules_path.exists():
             rc = self.schema(rules_path, "rules.schema.json")
@@ -286,6 +291,50 @@ class Lint:
                     self.err(path, f"{t} {where}: looks like a quotation; paraphrase in our own words")
                 if m := OUTLOOK_JARGON.search(text):
                     self.warn(path, f"{t} {where}: {m.group(0)!r} is jargon; say it in plain words")
+
+    def check_checklist(self, path: Path, cc: dict, today: str | None = None) -> None:
+        """The technical checklist: the eight steps once each, in order, with every parameter the code reads and sane
+        numbers; only the risk plan is non-directional; paraphrased (no quotations) and free of prices."""
+        import market as mk
+        today = today or date.today().isoformat()
+        ids = [s["id"] for s in cc["steps"]]
+        if ids != list(mk.STEPS):
+            self.err(path, f"steps must be {list(mk.STEPS)} in that order, got {ids}")
+        for k, s in enumerate(cc["steps"], start=1):
+            if s["n"] != k:
+                self.err(path, f"{s['id']}: n must be {k}")
+            if s["directional"] != (s["id"] != "risk_plan"):
+                self.err(path, f"{s['id']}: only the risk plan is non-directional")
+            missing = [x for x in mk.PARAMS.get(s["id"], ()) if x not in s["params"]]
+            extra = [x for x in s["params"] if x not in mk.PARAMS.get(s["id"], ())]
+            if missing or extra:
+                self.err(path, f"{s['id']}: params missing {missing} or unknown {extra}")
+            for key in ("checks", "computes"):
+                if sum(s[key].count(q) for q in QUOTE_MARKS) >= 2 or SINGLE_QUOTED.search(s[key]):
+                    self.err(path, f"{s['id']}.{key}: looks like a quotation; paraphrase in our own words")
+                if PRICE_LIKE.search(s[key]):
+                    self.err(path, f"{s['id']}.{key}: looks like a price")
+        p = {s["id"]: s["params"] for s in cc["steps"]}
+        try:
+            if not 0 < p["rsi"]["oversold"] < p["rsi"]["overbought"] < 100:
+                self.err(path, "rsi: need 0 < oversold < overbought < 100")
+            if not 0 < p["risk_plan"]["stop_atr_min"] <= p["risk_plan"]["stop_atr_max"]:
+                self.err(path, "risk_plan: need 0 < stop_atr_min <= stop_atr_max")
+            if p["trend"]["sma_fast"] >= p["trend"]["sma_slow"] or p["trend"]["structure_days"] < 3:
+                self.err(path, "trend: sma_fast must be below sma_slow and structure_days at least 3")
+            if p["levels"]["pivot_window"] < 1 or p["volume"]["trend_days"] > p["volume"]["avg_days"]:
+                self.err(path, "levels.pivot_window must be at least 1 and volume.trend_days at most avg_days")
+            for sid, keys in mk.PARAMS.items():
+                for key in keys:
+                    if key.endswith("_days") or key in ("days", "period", "pivot_window", "max_listed", "min_points"):
+                        if not float(p[sid][key]).is_integer() or p[sid][key] < 1:
+                            self.err(path, f"{sid}.{key}: must be a whole number of at least 1")
+        except KeyError:
+            pass  # reported above
+        if cc["updated_at"] > today or cc["source"]["added"] > today:
+            self.err(path, "updated_at and source.added must not be in the future")
+        if cc["measure"]["step_days"] < cc["measure"]["horizon_days"]:
+            self.err(path, "measure.step_days must be at least horizon_days, so measured samples do not overlap")
 
     def check_rules(self, path: Path, rc: dict) -> None:
         """The registry must match what the engine can run, cite real library ids, and count its tries honestly."""
@@ -517,6 +566,11 @@ class Lint:
                              (DATA / "people" / "scores.json", "people_scores.schema.json")):
             if path.exists():
                 self.schema(path, schema)
+        cl_path = DATA / "market" / "checklist.json"
+        if cl_path.exists():
+            cl = self.schema(cl_path, "checklist.schema.json")
+            if cl:
+                self.check_checklist_data(cl_path, cl)
         for p in _walk(ROOT):
             rel = p.relative_to(ROOT).as_posix()
             if rel.startswith("data/") and p.suffix == ".json":
@@ -526,6 +580,25 @@ class Lint:
                     continue
                 if isinstance(obj, dict) and "bars" in obj and not obj.get("sample"):
                     self.err(p, "raw provider bars must not be committed (licence); publish derived numbers only")
+
+    def check_checklist_data(self, path: Path, cl: dict) -> None:
+        """Published checklist: only watchlist names and the benchmark, a live file is not a sample, and the forward record
+        is in date order with one record per date (it is append-only)."""
+        try:
+            wl, st = load_json(CONFIG / "watchlist.json"), load_json(CONFIG / "settings.json")
+        except Exception:  # noqa: BLE001  (reported by check_config)
+            return
+        allowed = {s["symbol"] for s in wl["symbols"]} | {st["scoring"]["benchmark"]["symbol"]}
+        for r in cl["symbols"]:
+            if r["symbol"] not in allowed:  # a warning: a stale file after a watchlist change must not discard the day's data
+                self.warn(path, f"{r['symbol']} is not on the watchlist or the benchmark (stale file? the next checklist run drops it)")
+        if cl["sample"]:
+            self.err(path, "data/ holds live data only; sample checklists are built on the fly by build_site.py")
+        dates = [r["date"] for r in cl["forward"]["records"]]
+        if dates != sorted(set(dates)):
+            self.err(path, "forward records must be in strictly ascending date order (append-only)")
+        if dates and dates[-1] > cl["as_of"]:
+            self.err(path, "a forward record is dated after as_of")
 
     def check_ops_and_batches(self) -> None:
         log = DATA / "ops" / "routine_runs.json"

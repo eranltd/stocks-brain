@@ -1,7 +1,7 @@
 ---
-version: 0.13.0
-updated_at: 2026-10-08
-change_note: Market today on the Today tab; company outlook cards researched from primary sources and kept in config with links and dates.
+version: 0.14.0
+updated_at: 2026-10-09
+change_note: The household's video checklist (eight technical steps and a written risk plan) is added to the process at the Paper stage, unproven and measured.
 ---
 # Decision log
 
@@ -19,6 +19,37 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Second price source**: Tiingo's daily returns show unusually low correlations between these names (for example
   AAPL to QQQ about 0.24 over a year). The diagnostic showed our pipeline reproduces the provider's data exactly, so
   the numbers are faithful to the source; a cross-check against a second source is still pending.
+
+## 2026-10-09
+- **The video's eight-step technical checklist joins the process, as an entry-and-exit checklist at the Paper stage.**
+  The household liked a trading video's checklist (candle pattern, trend, volume, the twenty-day average, gaps, support
+  and resistance, RSI, and risk management with a stop and two profit targets set before entering) and asked to add it
+  to how we invest. It is added as `config/checklist.json` and the daily routine `technical_checklist`
+  (`data/market/checklist.json`), computed by code after each close for every name and the benchmark.
+  **House rule** (`docs/household.md`, "Before acting"): before any new paper entry of a satellite name, the checklist is
+  read, a written risk plan (stop, TP1, TP2) exists, and reward-to-risk to TP1 is at least 2. This is the least invasive
+  place for it: the site's entry check reads the rule from `config/checklist.json` (`house_rule`), and nothing in
+  `config/settings.json` changed, so rule v1's settings, the registry and its frozen verdicts are untouched.
+- **One exit added.** Rule 5 of "Before acting" now also exits our own entry when its written stop is hit, so the plan
+  written before entering is followed; it is the one step that may come between monthly dates and it never adds a name.
+  The rule's recorded paper portfolio and ledger do not use it.
+- **What it does not change.** The pre-registered registry (`config/rules.json`), the frozen history verdicts, rule v1,
+  the forward paper portfolio and the rule ledger are unchanged; their records stay comparable. The checklist adds a
+  step before a household entry; it never makes a name a buy, never overrides the setup gate or the trust ladder, and
+  never moves money.
+- **Unproven for us, so measured like everything else.** The household's own pre-registered history test rejected its
+  setup and strength rules, and nothing says a video's checklist does better. The routine publishes its history since
+  2017 (every twenty trading days, excess return over the benchmark twenty days later, by verdict, by score, by step and
+  by house-rule fit), which is in-sample and on today's list of survivors and says so, and a forward record from today
+  (a snapshot every twenty trading days, never edited). The status stays `unproven` until the forward record, not the
+  history, shows an edge; changing it is a new entry here. The index core stays first.
+- **Faithful, within our data and licence.** Five-minute candles are not possible (end-of-day data only), so the candle
+  step reads the daily and weekly candles. Levels, gaps, stops and targets are published as percent distances from the
+  close, never prices, and volume as ratios (provider licence). Parameters are the video's and conventional values
+  (RSI fourteen days with seventy and thirty, the twenty-day average, a sixty-day gap window, a year of swing pivots, a
+  stop at the nearest support or two ATRs, whichever is closer, but at least one ATR), not fitted to our history. The
+  video applied the checklist to Blackstone, Nvidia and Bank of America; only Nvidia is on our list, and no tickers were
+  added.
 
 ## 2026-10-08
 - **What the market did, on Today.** The household asked where to see what the market did today. The Today post's

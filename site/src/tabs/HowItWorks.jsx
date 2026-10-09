@@ -19,7 +19,7 @@ const STATIONS = [
   { id: "library", label: "Library", kind: "data", x: 200, y: 310, lx: 0, ly: 40, glyph: "▤", branch: "library", file: "data/kb/library.json", m: "M1",
     text: "Principles from books and lectures, in our own words with a citation. Only the ones whose tags match the day enter the pack." },
   { id: "packer", label: "Packer", kind: "code", x: 380, y: 150, lx: -18, ly: -30, glyph: "◫", file: "scripts/build_pack.py", m: "M3",
-    text: "Docs, derived returns and risk numbers (no prices), recent runs, matching principles, the scored calls of the people we learn from and the companies' next results dates (context only) go into one JSON. Over the token cap, the run stops before any model call." },
+    text: "Docs, derived returns and risk numbers (no prices), recent runs, matching principles, the scored calls of the people we learn from, the companies' next results dates and the technical checklist's reading (context only, unproven) go into one JSON. Over the token cap, the run stops before any model call." },
   { id: "brain", label: "Brain · AI", kind: "ai", x: 540, y: 150, lx: 0, ly: 42, glyph: "✦", file: "prompts/brain.md", m: "M3",
     text: "Runs by itself every market morning as a scheduled Claude session, with a second try later that morning in case the data was late: three analysts, a skeptic for each name, a builder and a reviewer read the pack. Picks must match pick.schema.json or nothing is recorded." },
   { id: "checker", label: "Checker", kind: "code", x: 690, y: 150, lx: 0, ly: 42, glyph: "✓", file: "schemas/ + scripts/lint.py", m: "M1",

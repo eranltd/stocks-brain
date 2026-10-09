@@ -273,7 +273,14 @@ class Lint:
                 host = (urlsplit(u).hostname or "").lower()
                 if not any(host == h or host.endswith("." + h) for h in OUTLOOK_SOURCE_HOSTS):
                     self.warn(path, f"{t}: source {host} is not the company, a regulator or a newswire; link the original release")
-            texts = [("name", c["name"]), ("business", c["business"]), ("latest.period", lt["period"]),
+            if plain := c.get("plain"):
+                # The simple home and the brief show this sentence alone: words only, never a figure or a quotation.
+                if re.search(r"\d", plain):
+                    self.err(path, f"{t} plain: digits; the plain summary says it in words, with no numbers")
+                if any(q in plain for q in QUOTE_MARKS) or SINGLE_QUOTED.search(plain):
+                    self.err(path, f"{t} plain: quotation marks; the plain summary is in our own words")
+            texts = [("name", c["name"]), ("business", c["business"]), *((("plain", c["plain"]),) if c.get("plain") else ()),
+                     ("latest.period", lt["period"]),
                      *(("latest.highlights", h) for h in lt["highlights"]), ("latest.revenue", lt["revenue"]),
                      ("guidance.period", c["guidance"]["period"]), ("guidance.text", c["guidance"]["text"]), ("next_earnings.note", ne["note"]),
                      *(("whats_next", w["item"]) for w in c["whats_next"]), *(("whats_next.when", w["when"]) for w in c["whats_next"]),

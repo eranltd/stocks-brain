@@ -1,14 +1,15 @@
 {
-  "version": "1.2.0",
-  "updated_at": "2026-10-08",
-  "change_note": "Cards re-checked on 8 Oct 2026: plain words instead of finance shorthand, links to the companies' own releases, and each coming item marked as done or still ahead.",
+  "version": "1.3.0",
+  "updated_at": "2026-10-09",
+  "change_note": "Each card gains a plain one-sentence summary with no numbers, for the simple home page and the one-stock brief; the research itself is unchanged.",
   "purpose": "What's next for each company on our list: its latest quarter, what it says about the coming one, when it next reports and what is coming up. Context for the household, researched from the companies' own releases and filings.",
   "how_to_read": [
     "What a company says about its future is its own statement, not a forecast we endorse.",
     "We paraphrase in our own words and link to the source; we never copy their text.",
     "No prices, price targets or analyst ratings, ever: only what the company reported and announced.",
     "Cards are refreshed after each earnings season; each one shows the day it was researched.",
-    "A card is flagged when new results are out, or probably out, since it was written, until it is refreshed."
+    "A card is flagged when new results are out, or probably out, since it was written, until it is refreshed.",
+    "The plain summary is one sentence with no numbers, written from the same card for a quick read."
   ],
   "companies": [
     {
@@ -16,6 +17,7 @@
       "name": "Apple Inc.",
       "as_of": "2026-10-08",
       "business": "Sells iPhone, Mac, iPad, wearables (Watch, AirPods) and services such as the App Store, iCloud, Apple Music, Apple Pay and advertising.",
+      "plain": "Apple: iPhone and Mac sales grew strongly; its first foldable iPhone goes on sale later this month, but chip and memory shortages could hurt sales and profit.",
       "latest": {
         "period": "Q3 fiscal 2026 (quarter ended 27 Jun 2026)",
         "reported_on": "2026-07-30",
@@ -93,6 +95,7 @@
       "name": "Microsoft Corporation",
       "as_of": "2026-10-08",
       "business": "Sells cloud computing (Azure), Microsoft 365/Copilot and other business software, LinkedIn, Windows, Xbox gaming and search advertising.",
+      "plain": "Microsoft: its cloud business is growing fast and it keeps spending heavily on data centers; Windows and Xbox sales fell.",
       "latest": {
         "period": "Q4 fiscal 2026 (quarter ended 30 Jun 2026)",
         "reported_on": "2026-07-29",
@@ -160,6 +163,7 @@
       "name": "NVIDIA Corporation",
       "as_of": "2026-10-08",
       "business": "Designs AI accelerators (GPUs), CPUs, networking gear and full rack-scale AI data-center systems with software, plus PC/workstation graphics and robotics/auto chips.",
+      "plain": "Nvidia: sales of its AI chips are still growing very fast and its next chips have started shipping, but it says it is mostly shut out of China.",
       "latest": {
         "period": "Q2 fiscal 2027 (quarter ended 26 Jul 2026)",
         "reported_on": "2026-08-26",
@@ -234,6 +238,7 @@
       "name": "Amazon.com, Inc.",
       "as_of": "2026-10-08",
       "business": "Online retail and third-party marketplace, Amazon Web Services cloud computing, advertising, and Prime subscriptions.",
+      "plain": "Amazon: its cloud arm grew at its fastest pace in years, but heavy spending, mostly for AI, meant more cash went out than came in over the past year.",
       "latest": {
         "period": "Q2 2026 (quarter ended 30 Jun 2026)",
         "reported_on": "2026-07-30",
@@ -308,6 +313,7 @@
       "name": "Alphabet Inc.",
       "as_of": "2026-10-08",
       "business": "Google Search and advertising, YouTube, Google Cloud (including Gemini AI models and TPU chips), Android and devices, plus other ventures.",
+      "plain": "Alphabet: its cloud business is growing very fast and search keeps growing; it borrowed and sold new shares, and two big court cases over its market power are open.",
       "latest": {
         "period": "Q2 2026 (quarter ended 30 Jun 2026)",
         "reported_on": "2026-07-22",
@@ -383,6 +389,7 @@
       "name": "Meta Platforms, Inc.",
       "as_of": "2026-10-08",
       "business": "Facebook, Instagram, WhatsApp and Messenger, funded by advertising, plus Reality Labs (AI glasses, VR headsets) and Meta AI.",
+      "plain": "Meta: ad sales grew strongly, but costs grew even faster and profit fell; new AI glasses ship this month, and more child-safety court cases start soon.",
       "latest": {
         "period": "Q2 2026 (quarter ended 30 Jun 2026)",
         "reported_on": "2026-07-29",
@@ -458,6 +465,7 @@
       "name": "Broadcom Inc.",
       "as_of": "2026-10-08",
       "business": "Makes custom AI chips (XPUs) and networking chips for big cloud/AI customers, plus broadband, wireless and storage chips; also sells infrastructure software (VMware).",
+      "plain": "Broadcom: sales of its AI chips more than tripled and it expects even more next quarter; a few big customers bring in over half of its sales.",
       "latest": {
         "period": "Q3 fiscal 2026 (quarter ended 2 Aug 2026)",
         "reported_on": "2026-09-02",
@@ -532,6 +540,7 @@
       "name": "Costco Wholesale Corporation",
       "as_of": "2026-10-08",
       "business": "Membership warehouse clubs selling groceries, household goods, gasoline and its Kirkland Signature brand, funded partly by annual membership fees.",
+      "plain": "Costco: store sales keep growing and online sales grew faster; it plans more new stores this coming year, and it says higher tariffs are more likely to hurt than help.",
       "latest": {
         "period": "Q4 fiscal 2026 (16 weeks ended 30 Aug 2026)",
         "reported_on": "2026-09-24",
@@ -596,6 +605,7 @@
       "name": "Amgen Inc.",
       "as_of": "2026-10-08",
       "business": "Biotech drugmaker: heart (Repatha), bone (Prolia, Evenity), inflammation (Tezspire, Tepezza, Uplizna), cancer (Imdelltra, Blincyto) and biosimilars.",
+      "plain": "Amgen: newer medicines are growing, but copies from other makers are cutting sales of older drugs; a lung cancer drug helped patients live longer in a big trial.",
       "latest": {
         "period": "Q2 2026 (quarter ended 30 Jun 2026)",
         "reported_on": "2026-08-04",
@@ -672,6 +682,7 @@
       "name": "Intuitive Surgical, Inc.",
       "as_of": "2026-10-08",
       "business": "Makes da Vinci surgical robots and the Ion lung-biopsy system, plus the instruments, accessories and service that go with them.",
+      "plain": "Intuitive Surgical: more operations are done with its robots and it placed more of them; it expects to keep a bit more of each sale, while tariffs and rivals are risks.",
       "latest": {
         "period": "Q2 2026 (quarter ended 30 Jun 2026)",
         "reported_on": "2026-07-16",
@@ -736,6 +747,7 @@
       "name": "Gilead Sciences, Inc.",
       "as_of": "2026-10-08",
       "business": "Biopharma focused on HIV treatment and prevention (Biktarvy, Descovy, Yeztugo), liver disease (Livdelzi), and cancer (Trodelvy, Kite cell therapies).",
+      "plain": "Gilead: HIV medicines keep growing, but costs of buying other companies led to a loss; a US decision on a new blood cancer treatment is due in December.",
       "latest": {
         "period": "Q2 2026 (quarter ended 30 Jun 2026)",
         "reported_on": "2026-08-04",
@@ -809,6 +821,7 @@
       "name": "PepsiCo, Inc.",
       "as_of": "2026-10-08",
       "business": "Global snacks and drinks: Frito-Lay, Quaker, Pepsi, Gatorade and others, sold through North American and international divisions.",
+      "plain": "PepsiCo: sales grew slowly, with the growth coming from outside North America, and it lowered its profit outlook for the year; it plans more cost cuts.",
       "latest": {
         "period": "Q3 2026 (12 weeks ended 5 Sep 2026)",
         "reported_on": "2026-10-08",
@@ -872,6 +885,7 @@
       "name": "Monster Beverage Corporation",
       "as_of": "2026-10-08",
       "business": "Makes and sells energy drinks worldwide (Monster Energy plus other energy brands it owns) and a small craft beer, malt beverage and hard seltzer line",
+      "plain": "Monster: energy drink sales grew fast, especially abroad; its beer and seltzer line keeps shrinking, and it lists higher can costs as a risk.",
       "latest": {
         "period": "Q2 2026 (quarter ended 30 Jun 2026)",
         "reported_on": "2026-08-06",
@@ -936,6 +950,7 @@
       "name": "American Electric Power Company",
       "as_of": "2026-10-08",
       "business": "Regulated electric utility serving customers across 11 U.S. states, with one of the largest U.S. power transmission networks",
+      "plain": "American Electric Power: big users like data centers signed up for more power, and it raised its profit outlook; its building plan depends on that demand arriving.",
       "latest": {
         "period": "Q2 2026 (quarter ended 30 Jun 2026)",
         "reported_on": "2026-07-30",
@@ -999,6 +1014,7 @@
       "name": "Xcel Energy Inc.",
       "as_of": "2026-10-08",
       "business": "Regulated electric and natural gas utility serving customers in eight Western and Midwestern U.S. states (Minnesota, Colorado, Texas, New Mexico and others)",
+      "plain": "Xcel Energy: profit rose and it raised its payout to shareholders; regulators decide early next year on a Google data center deal, and a Texas wildfire lawsuit is open.",
       "latest": {
         "period": "Q2 2026 (quarter ended 30 Jun 2026)",
         "reported_on": "2026-07-30",
@@ -1066,6 +1082,7 @@
       "name": "Cintas Corporation",
       "as_of": "2026-10-08",
       "business": "Rents and cleans work uniforms and supplies facility products (mats, restroom supplies), first aid and safety, and fire protection services for businesses",
+      "plain": "Cintas: its work uniform and safety business keeps growing and it raised its outlook; US and Canadian regulators are still reviewing its planned purchase of UniFirst.",
       "latest": {
         "period": "Q1 fiscal 2027 (quarter ended 31 Aug 2026)",
         "reported_on": "2026-09-23",
@@ -1122,6 +1139,7 @@
       "name": "PACCAR Inc",
       "as_of": "2026-10-08",
       "business": "Builds heavy trucks under the Kenworth, Peterbilt and DAF brands, and also sells truck parts and provides truck financing and leasing.",
+      "plain": "PACCAR: truck deliveries were about flat but its parts business had record sales; it names tariffs, pollution rules and a weaker economy as risks.",
       "latest": {
         "period": "Q2 2026 (quarter ended 30 Jun 2026)",
         "reported_on": "2026-07-28",
@@ -1171,6 +1189,7 @@
       "name": "CME Group Inc.",
       "as_of": "2026-10-08",
       "business": "Runs futures and options exchanges and clearing houses (interest rates, stock indexes, energy, farm goods, metals, FX, crypto) and sells market data.",
+      "plain": "CME Group: trading was a bit slower but sales of market data hit a record; it plans a new service for US government bond trades in December and a new boss next year.",
       "latest": {
         "period": "Q2 2026 (quarter ended 30 Jun 2026)",
         "reported_on": "2026-07-22",
@@ -1244,6 +1263,7 @@
       "name": "T-Mobile US, Inc.",
       "as_of": "2026-10-08",
       "business": "US wireless carrier (5G mobile phone and data plans) that also sells home broadband and fiber internet through joint ventures.",
+      "plain": "T-Mobile: service sales keep growing and it now expects more cash this year, but it added fewer new customer accounts; a new finance chief takes over early next year.",
       "latest": {
         "period": "Q2 2026 (quarter ended 30 Jun 2026)",
         "reported_on": "2026-07-23",
@@ -1307,6 +1327,7 @@
       "name": "Diamondback Energy, Inc.",
       "as_of": "2026-10-08",
       "business": "Independent oil and gas producer focused on the Permian Basin in West Texas. It also owns mineral and royalty interests through its Viper Energy subsidiary.",
+      "plain": "Diamondback Energy: profit more than doubled and it is paying down debt; it expects to pump a bit more oil, but says the oil market is very unpredictable.",
       "latest": {
         "period": "Q2 2026 (quarter ended 30 Jun 2026)",
         "reported_on": "2026-08-03",
@@ -1377,6 +1398,7 @@
       "name": "Linde plc",
       "as_of": "2026-10-08",
       "business": "Supplies industrial gases (oxygen, nitrogen, argon, hydrogen and others) to manufacturing, electronics, healthcare and energy customers, and builds gas-processing plants.",
+      "plain": "Linde: profit grew and its signed future gas-supply deals hit a record after a new electronics contract; legal claims tied to cancelled Russian projects are still open.",
       "latest": {
         "period": "Q2 2026 (quarter ended 30 Jun 2026)",
         "reported_on": "2026-07-31",

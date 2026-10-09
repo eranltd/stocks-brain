@@ -84,6 +84,7 @@ class OutlookConfigTest(unittest.TestCase):
     def doc(self, *cards):
         d = copy.deepcopy(self.cfg)
         d["companies"] = list(cards)
+        d["updated_at"] = "2026-10-01"  # the fixtures' day, before TODAY: the repo file's own date may be later
         return d
 
     def lint(self, doc, today=TODAY):
@@ -93,7 +94,7 @@ class OutlookConfigTest(unittest.TestCase):
 
     def test_repo_file_is_valid_and_clean(self):
         self.assertEqual(self.v.validate(self.cfg, "outlook.schema.json"), [])
-        self.assertEqual(self.lint(self.cfg), ([], []))
+        self.assertEqual(self.lint(self.cfg, today=max(TODAY, self.cfg["updated_at"])), ([], []))  # clean on the day it was written
 
     def test_a_good_card_passes(self):
         d = self.doc(card(self.syms[0]), card(self.syms[1], guidance={"given": False, "period": "", "text": "The company gives no quarterly forecast.", "source_url": None},
@@ -170,6 +171,35 @@ class OutlookConfigTest(unittest.TestCase):
                     whats_next=[{**card(b)["whats_next"][0], "item": "A network upgrade and a fleet upgraded to new trucks.", "status": "ahead", "date": "2026-12-01"}],
                     watch=[{"item": "Shares outstanding fell after buybacks; stock options vest in 2027.", "source_url": "https://www.sec.gov/x"}])
         self.assertEqual(self.lint(self.doc(fine)), ([], []))
+
+    def test_plain_summary(self):
+        a = self.syms[0]
+        good = card(a, plain="Some Company: its main line keeps growing; a new product is due next year, and export rules are a risk.")
+        self.assertEqual(self.v.validate(self.doc(good), "outlook.schema.json"), [])
+        self.assertEqual(self.lint(self.doc(good)), ([], []))
+        self.assertEqual(self.lint(self.doc(card(a))), ([], []), "the field is optional")
+        for name, c in {"too long": card(a, plain="Some Company: " + "growing again, " * 13),
+                        "too short": card(a, plain="Growing."), "not text": card(a, plain=3)}.items():
+            self.assertTrue(self.v.validate(self.doc(c), "outlook.schema.json"), f"{name} was not caught")
+        cases = {
+            "digits": ("Some Company: sales grew 12% from a year earlier.", "plain: digits"),
+            "one double quote": ('Some Company: the chief called demand "insane on the call.', "plain: quotation marks"),
+            "curly quote": ("Some Company: the chief called demand “insane” on the call.", "plain: quotation marks"),
+            "single quotes": ("Some Company: the chief called demand 'insane' on the call.", "plain: quotation marks"),
+            "price target": ("Some Company: a bank raised its price target after the quarter.", "'price target'"),
+            "stock move": ("Some Company: the shares jumped after the quarter was reported.", "looks like a stock price"),
+        }
+        for name, (text, msg) in cases.items():
+            errors, _ = self.lint(self.doc(card(a, plain=text)))
+            self.assertTrue(any(msg in e for e in errors), f"{name}: {errors}")
+        # apostrophes are not quotation marks
+        self.assertEqual(self.lint(self.doc(card(a, plain="Some Company: Apple's rival can't keep up; investors' cash went elsewhere.")))[0], [])
+
+    def test_every_repo_card_has_a_plain_summary_that_starts_with_its_name(self):
+        for c in self.cfg["companies"]:
+            self.assertIn("plain", c, c["ticker"])
+            self.assertNotRegex(c["plain"], r"\d", c["ticker"])
+            self.assertTrue(c["plain"].split(":")[0] and ":" in c["plain"], c["ticker"])
 
     def test_lint_warnings(self):
         a = self.syms[0]

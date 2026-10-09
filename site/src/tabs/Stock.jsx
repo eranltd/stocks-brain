@@ -7,6 +7,8 @@ import { STATUS } from "../components/goal.jsx";
 import { cardFor, daysUntil, growthWords, inDays, KIND_LABEL, splitWhatsNext, staleness, todayISO } from "../lib/outlook.js";
 import { gateReason, rowFor } from "../lib/checklist.js";
 import { ChecklistCard, VerdictPill } from "../components/checklist.jsx";
+import { BRIEF_FOOTER, direction, eightChecks, readable, setupState, wherePaper } from "../lib/brief.js";
+import { shortName, whenWords } from "../lib/simple.js";
 
 /** Plain-language summary, assembled by code from the computed numbers (no model). */
 function plainWords(row, checks, benchSymbol, benchLabel, liveClaims, settings, baseRate) {
@@ -134,7 +136,9 @@ export default function Stock({ data, symbol, go }) {
         )}
       </Reveal>
 
-      <div className="flex flex-wrap items-end justify-between gap-6">
+      {!isBench && <StockBrief data={data} row={row} symbol={symbol} today={today} jump={jump} />}
+
+      <div className={`flex flex-wrap items-end justify-between gap-6 ${isBench ? "" : "mt-12"}`}>
         <div className="min-w-0">
           <Reveal className="eyebrow mb-4">{names[symbol]} · {market.provider === "sample" ? "sample prices" : `live · ${market.provider}`} · {fmtDate(row.last_date)}</Reveal>
           <Headline size="xl">{symbol} <span className={TONE_TEXT[signTone(row.change_1d_pct, 2)]}>{fmtPct(row.change_1d_pct, 2)}</span></Headline>
@@ -338,6 +342,119 @@ export default function Stock({ data, symbol, go }) {
 
       <p className="meta mt-16 normal-case tracking-[0.04em]">Analysis only, not financial advice. Lines are indexed to 100; the site publishes returns, not raw prices.</p>
     </Container>
+  );
+}
+
+/* ------------------------------------------------------------------ brief */
+
+const MARK = {
+  up: { glyph: "▲", cls: "bg-accent/15 text-accent", label: "leans up" },
+  down: { glyph: "▼", cls: "bg-down/15 text-down", label: "leans down" },
+  neutral: { glyph: "◆", cls: "bg-surface-2 text-ink-3", label: "neutral" },
+};
+const BRIEF_TONE = { accent: "text-accent", down: "text-down", flat: "text-ink" };
+
+function BriefHead({ children }) {
+  return <h3 className="meta mb-3 text-accent">{children}</h3>;
+}
+
+/**
+ * "<Company> in short": the household's eight-step checklist in plain words, whether a new paper entry is within the
+ * house rules and the plan in whole percents, and what is happening at the company. Wording: lib/brief.js.
+ */
+function StockBrief({ data, row, symbol, today, jump }) {
+  const cfg = data.checklistCfg;
+  const ck = data.checklist;
+  const ckRow = rowFor(ck, symbol);
+  const read = readable(ck, ckRow, row.last_date, { sampleSite: data.sample });
+  const reading = read.ok ? ckRow : null;
+  const dir = direction(reading);
+  const checks = reading ? eightChecks(reading, cfg) : null;
+  const where = wherePaper({ row: reading, setup: setupState(row, data.settings.setup.stretch_pct), read, min: cfg?.house_rule?.min_reward_to_risk ?? 2, benchLabel: `the ${data.bench.label.replace(/\s*\(.*\)$/, "")}` });
+  const card = cardFor(data.outlook, symbol);
+  const name = shortName(symbol, data.outlook, data.names);
+  const ne = card?.next_earnings;
+  const next = !card ? null : !ne?.date ? "Next results: not announced yet." : ne.date < today ? "New results are out since this was written; the card is due a refresh."
+    : `Next results: ${whenWords(ne.date, today)}${ne.confirmed ? "" : " (expected)"}.`;
+  return (
+    <Reveal as="section" id="brief" aria-label={`${name} in short`} className="card scroll-mt-28 p-6 sm:p-8">
+      <div className="eyebrow mb-3">{symbol} · the household's eight-step checklist</div>
+      <h2 className="display text-[clamp(32px,7.5vw,52px)] leading-[1.02]">{name} <Accent>in short.</Accent></h2>
+
+      <div className="mt-7">
+        <BriefHead>Going up or down?</BriefHead>
+        {dir ? (
+          <>
+            <div className={`display text-[clamp(40px,11vw,60px)] leading-none ${BRIEF_TONE[dir.tone]}`}>{dir.word}</div>
+            {dir.summary && <p className="mt-3 max-w-[60ch] text-[17px] leading-relaxed text-ink-2">{dir.summary}</p>}
+            <p className="mt-2 text-[13.5px] text-ink-3">A description of the chart, not a forecast.</p>
+          </>
+        ) : (
+          <p className="text-[17px] leading-relaxed text-ink-2">{read.why}</p>
+        )}
+      </div>
+
+      <div className="mt-8">
+        <BriefHead>The eight checks</BriefHead>
+        {checks ? (
+          <ol className="grid gap-2">
+            {checks.map((c) => {
+              const m = MARK[c.mark] ?? MARK.neutral;
+              return (
+                <li key={c.id}>
+                  <button type="button" onClick={() => jump(`checklist-${c.id}`)}
+                    className="flex min-h-[52px] w-full items-center gap-3 rounded-2xl border border-line px-4 py-3 text-left transition hover:border-ink-3">
+                    <span className={`grid size-8 shrink-0 place-items-center rounded-full text-[11px] ${m.cls}`} role="img" aria-label={m.label}>{m.glyph}</span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-[16px] leading-snug text-ink">{c.text}</span>
+                      {c.note && <span className="mt-0.5 block text-[13px] leading-snug text-ink-3">{c.note}</span>}
+                      <span lang="he" dir="rtl" className="mt-0.5 block text-left text-[12px] text-ink-3">{c.name_he}</span>
+                    </span>
+                    <span className="shrink-0 text-ink-3" aria-hidden="true">↓</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+        ) : (
+          <>
+            <p className="text-[16px] leading-relaxed text-ink-2">{read.why} The eight checks it reads:</p>
+            <ol className="mt-3 grid gap-1.5 text-[15px] text-ink-2">
+              {(cfg?.steps ?? []).map((s) => <li key={s.id}>{s.name} <span lang="he" dir="rtl" className="text-[12px] text-ink-3">{s.name_he}</span></li>)}
+            </ol>
+          </>
+        )}
+      </div>
+
+      <div className={`mt-8 rounded-2xl border p-5 ${where.ok ? "border-accent/50" : "border-people/40"}`}>
+        <BriefHead>Where to invest (on paper)</BriefHead>
+        <div className={`text-[20px] leading-snug font-semibold tracking-[-0.01em] ${where.ok ? "text-accent" : "text-people"}`}>{where.head}.</div>
+        {where.ok ? (
+          <ul className="mt-3 grid gap-2 text-[16px] leading-relaxed text-ink">
+            {where.plan.map((p) => <li key={p} className="relative pl-4 before:absolute before:left-0 before:top-[0.7em] before:h-px before:w-2 before:bg-ink-3">{p}.</li>)}
+          </ul>
+        ) : (
+          <div className="mt-3 grid gap-2 text-[16px] leading-relaxed">
+            <p className="text-ink-2"><span className="text-ink">Why not:</span> {where.why.join("; ")}.</p>
+            {where.wait.length > 0 && <p className="text-ink-2"><span className="text-ink">What would change it:</span> {where.wait.join("; ")}.</p>}
+          </div>
+        )}
+        <p className="mt-3 text-[13.5px] leading-relaxed text-ink-3">The house rule: three of the four setup checks pass, the stock is not stretched, and the first target is at least {where.min} times as far as the stop. A paper entry only; the monthly portfolio rule decides what the practice portfolio holds.</p>
+      </div>
+
+      <div className="mt-8">
+        <BriefHead>What's happening at the company</BriefHead>
+        {card ? (
+          <>
+            <p className="max-w-[62ch] text-[17px] leading-relaxed text-ink">{card.plain ?? card.business}</p>
+            {next && <p className="mt-2 text-[15.5px] text-ink-2">{next}</p>}
+          </>
+        ) : <p className="text-[16px] leading-relaxed text-ink-2">No company card yet; it is researched after each earnings season.</p>}
+        <button type="button" onClick={() => jump("whats-next")} className="meta mt-3 inline-flex min-h-[44px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">What's next <span aria-hidden="true">↓</span></button>
+      </div>
+
+      <p className="mt-6 border-t border-line pt-4 text-[14px] leading-relaxed text-ink-2">{BRIEF_FOOTER}</p>
+    </Reveal>
   );
 }
 

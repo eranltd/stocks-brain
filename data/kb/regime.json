@@ -1,15 +1,15 @@
 {
-  "as_of": "2026-10-07",
+  "as_of": "2026-10-08",
   "sample": false,
   "benchmark": "QQQ",
   "state": "normal",
   "trend": "up",
   "label": "normal · uptrend",
   "metrics": {
-    "vol_ann_pct": 15.33,
-    "drawdown_pct": -0.25,
-    "dist_sma_pct": 5.106,
-    "sma_slope_pct": 1.432
+    "vol_ann_pct": 15.68,
+    "drawdown_pct": -1.59,
+    "dist_sma_pct": 3.45,
+    "sma_slope_pct": 1.607
   },
   "params": {
     "vol_days": 20,

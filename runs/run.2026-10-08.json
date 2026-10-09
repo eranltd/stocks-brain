@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "run_id": "run.2026-10-08",
+  "date": "2026-10-08",
+  "generated_at": "2026-10-09T05:29:46Z",
+  "status": "ok",
+  "sample": false,
+  "model": "Claude Code routine",
+  "cost": {
+    "usd": 0.0,
+    "input_tokens": 9473,
+    "output_tokens": 1280,
+    "cap_usd": 2.5
+  },
+  "duration_minutes": 5.0,
+  "pack": {
+    "hash": "bb258db4e641f1b7c86d9b22d35b955b0ff5009f3f1e260d46194422b67bd530",
+    "tokens": 9473,
+    "cap_tokens": 12000
+  },
+  "doc_versions": {
+    "strategy": "0.2.0",
+    "methodology": "0.11.0",
+    "guardrails": "0.1.0",
+    "learnings": "0.1.0"
+  },
+  "repair_retries": 0,
+  "summary": "The frozen history test rejected all four stock rules: each beat only a small share of random baskets drawn from this same list, and holding every name equally did better than the index core and than every rule. So setup checks and past strength show no edge over random picks here. Every pick below is neutral and low conviction, and none is expected to beat the index. The trust ladder is at Paper, so no money moves.",
+  "picks": [
+    {
+      "id": "2026-10-08:MSFT",
+      "ref_date": "2026-10-08",
+      "pick": {
+        "ticker": "MSFT",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Passes every setup check and is not stretched, so it is the cleanest name by the rule's own screen. But the frozen history test rejected that screen, and the top score shows no reliable edge in the base rates. The lead was built in one quarter after a year far behind the benchmark, and it has stalled lately. The Pershing Square fund's disclosed call is bullish, but that fund's matured record is thin and poor, so it proves nothing. A paper holding to watch, not a lean.",
+        "risks": [
+          "The screen has shown no edge over random picks on this list.",
+          "A deep drop in the last year means the recent surge could partly reverse.",
+          "Earnings are due inside the scoring horizon, and the date is unconfirmed.",
+          "The fund's own matured calls have a weak record and too few cases to count."
+        ],
+        "invalidation": "It falls back below its medium-term trend line, or its lead over the benchmark fades, or the rule drops it at the monthly review.",
+        "evidence": [
+          "rules_history.verdicts",
+          "rules_history.yardsticks",
+          "base_rates.by_score",
+          "market.msft",
+          "market.msft.setup",
+          "market.msft.risk",
+          "people.calls.msft",
+          "outlook.next_earnings"
+        ]
+      }
+    },
+    {
+      "id": "2026-10-08:AAPL",
+      "ref_date": "2026-10-08",
+      "pick": {
+        "ticker": "AAPL",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Passes most setup checks with an intact trend, is not stretched, sits near its one-year high and has had the shallowest one-year drop on the list. Its lead over the benchmark rests on the half-year and year windows only, while the latest quarter and month are flat to slightly behind. The history test found no edge in this kind of strength, so this is a paper-held name to watch, not a call to beat the index.",
+        "risks": [
+          "Rules history rejected past strength as an edge over random baskets from this list.",
+          "Short-window relative strength is negative, so the lead may be stalling.",
+          "The index core already holds a large share of this megacap, and narrow participation means a few giants can reverse together.",
+          "Earnings fall within about a month, and the date is unconfirmed."
+        ],
+        "invalidation": "It falls below its trend line, or its lead over the benchmark over the last half year turns negative, or the rule drops it at the monthly review.",
+        "evidence": [
+          "rules_history.verdicts",
+          "rules_history.yardsticks",
+          "base_rates.by_score",
+          "market.aapl",
+          "market.aapl.setup",
+          "market.aapl.risk",
+          "context",
+          "outlook.next_earnings"
+        ]
+      }
+    },
+    {
+      "id": "2026-10-08:GILD",
+      "ref_date": "2026-10-08",
+      "pick": {
+        "ticker": "GILD",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Intact trend, not stretched, calm lately, and it moves almost independently of the benchmark and only weakly with the tech names, which is the one thing a diversified satellite wants. That is a diversification argument only. It fails the half-year strength check, its quarter and month are mixed, and the history test found no edge from the checks it passes. Paper-held, not a lean.",
+        "risks": [
+          "Rules history rejected setup-based picks as no better than random baskets.",
+          "Relative strength is inconsistent across windows, and one check fails.",
+          "Its long-run record has a high share of losing twelve-month windows for a calm name.",
+          "It shares a sector with Amgen, so only one more health care name could ever fit."
+        ],
+        "invalidation": "It drops below its trend line, or becomes stretched above it, or the rule drops it at the monthly review.",
+        "evidence": [
+          "rules_history.verdicts",
+          "rules_history.yardsticks",
+          "base_rates.by_score",
+          "market.gild",
+          "market.gild.setup",
+          "market.gild.risk",
+          "rule_v1.history",
+          "regime"
+        ]
+      }
+    },
+    {
+      "id": "2026-10-08:META",
+      "ref_date": "2026-10-08",
+      "pick": {
+        "ticker": "META",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Flagged as a name not to chase. It is stretched well above its trend after a sharp run, short-term volatility is far above its usual level, and it passes only half the setup checks, so it fails the household's new-name gate. This is not a bearish call, only a refusal to buy the run. The Pershing Square fund's disclosed call is bullish but has roughly broken even, and that fund's record is too thin to rely on.",
+        "risks": [
+          "A sharp run with high volatility often retraces, and losses on this name have been deep before.",
+          "The year is still behind the benchmark, so the move may be a bounce, not a trend.",
+          "Rules history shows no edge from past strength, so the run says little about what follows.",
+          "The fund call is too thin to count as evidence either way."
+        ],
+        "invalidation": "Volatility settles and the stretch fades while it holds its trend line, which would only make it eligible for review, not a buy.",
+        "evidence": [
+          "rules_history.verdicts",
+          "base_rates.by_score",
+          "market.meta",
+          "market.meta.setup",
+          "market.meta.risk",
+          "people.calls.meta",
+          "people.fund.pershing-square-capital-management"
+        ]
+      }
+    }
+  ]
+}

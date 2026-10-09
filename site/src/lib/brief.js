@@ -27,9 +27,20 @@ export function readable(checklist, row, lastClose = null, { sampleSite = false 
   return { ok: true, why: null };
 }
 
-/** The checklist's own summary without its leading verdict word (the brief shows the verdict big above it). */
+// The checklist summary's few trader words (scripts/market.py PHRASE), said the way the eight checks below say them.
+const EVERYDAY = [
+  [/\bbullish candles\b/g, "buyers winning the last candles"],
+  [/\bbearish candles\b/g, "sellers winning the last candles"],
+  [/\bRSI oversold\b/g, "RSI says oversold"],
+  [/\bRSI overbought\b/g, "RSI says overheated"],
+  [/\bReward-to-risk fits the house rule\./g, "The possible gain is big enough for the risk."],
+  [/\bReward-to-risk is below the house rule\./g, "The possible gain is too small for the risk."],
+];
+
+/** The checklist's own summary without its leading verdict word (the brief shows the verdict big above it), in everyday words. */
 export function plainSummary(summary) {
-  const s = String(summary ?? "").replace(/^(Leans up|Leans down|Mixed)\s*[:.]\s*/, "").trim();
+  let s = String(summary ?? "").replace(/^(Leans up|Leans down|Mixed)\s*[:.]\s*/, "").trim();
+  for (const [re, to] of EVERYDAY) s = s.replace(re, to);
   return s ? s.charAt(0).toUpperCase() + s.slice(1) : "";
 }
 

@@ -141,9 +141,10 @@ export function verdictChip(checklist, ticker) {
 
 /**
  * "Companies to know": three to five names, those we hold on paper or the brain picked first, then the day's biggest
- * movers. Each: {ticker, name, plain, chip, tag, to}. The benchmark is never one of them.
+ * movers (tagged with the day's move in words when `today` is given). Each: {ticker, name, plain, chip, tag, to}. The
+ * benchmark is never one of them.
  */
-export function companiesToKnow({ held = [], picked = [], day, outlook, checklist, names = {}, bench = null, min = 3, max = 5 }) {
+export function companiesToKnow({ held = [], picked = [], day, outlook, checklist, names = {}, bench = null, today = null, min = 3, max = 5 }) {
   const order = [];
   const tag = {};
   const add = (t, why) => { if (t && t !== bench && !order.includes(t)) { order.push(t); tag[t] = why; } };
@@ -154,7 +155,9 @@ export function companiesToKnow({ held = [], picked = [], day, outlook, checklis
   for (const m of movers) {
     if (order.length >= max || (added >= 2 && order.length >= min)) break;
     const n = order.length;
-    add(m.symbol, m.pct > 0 ? "one of the day's big risers" : "one of the day's big fallers");
+    // The day's move in words ("fell sharply yesterday"), so a "Going up" chip beside it reads as the chart, not the day.
+    const w = sizeWord(m.pct, "stock");
+    add(m.symbol, w && w !== "barely moved" && day?.date && today ? `${w} ${whenWords(day.date, today)}` : m.pct > 0 ? "one of the day's big risers" : "one of the day's big fallers");
     added += order.length - n;
   }
   return order.slice(0, max).map((t) => {

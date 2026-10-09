@@ -103,6 +103,10 @@ test("companies to know: held, then picked, then the day's movers; three to five
   const list = companiesToKnow({ held: ["AAA", "EEE"], picked: ["AAA", "CCC"], day: day(), outlook, checklist, names, bench: "IDX" });
   assert.deepEqual(list.map((c) => c.ticker), ["AAA", "EEE", "CCC", "FFF"]);
   assert.deepEqual(list.map((c) => c.tag), ["on paper", "on paper", "the brain is watching", "one of the day's big risers"]);
+  // with today's date, a mover's tag is the day's move in words, so a "Going up" chip beside a fall reads as the chart
+  const dated = companiesToKnow({ held: [], picked: [], day: day(), outlook, checklist, names, bench: "IDX", today: TODAY });
+  assert.deepEqual(dated.map((c) => c.tag), ["fell sharply yesterday", "rose yesterday"]);
+  dated.forEach((c) => noDigits(c.tag));
   assert.deepEqual(list.map((c) => c.chip?.word ?? null), ["Going up", null, "Going down", null]);
   assert.equal(list[0].plain, "Microsoft: its cloud business is growing fast.");
   assert.equal(list[0].to, "stock/AAA#brief");

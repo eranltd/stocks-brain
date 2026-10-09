@@ -167,7 +167,7 @@ function SimpleHome({ data, go, showDetails }) {
   const checklist = data.checklist && (!data.checklist.sample || data.sample) ? data.checklist : null;
   const market = marketWords(day, data.regime, todayIso);
   const news = newsLines({ outlook: data.outlook, day, people: data.people, today: todayIso, names: data.names });
-  const companies = companiesToKnow({ held, picked, day, outlook: data.outlook, checklist, names: data.names, bench: data.bench.symbol });
+  const companies = companiesToKnow({ held, picked, day, outlook: data.outlook, checklist, names: data.names, bench: data.bench.symbol, today: todayIso });
   const plan = planWords({ held, picked, checklist, outlook: data.outlook, names: data.names, stage: call.stage, nextCheck: nextRebalance(call.asOf), today: todayIso, bench: data.bench.symbol });
   const status = call.stale ? "The data is old: the daily update may have failed." : data.sample ? "Sample data, not the market." : "Live: updated after each US close.";
   const statusTone = call.stale ? "var(--down)" : data.sample ? "var(--people)" : "var(--accent)";

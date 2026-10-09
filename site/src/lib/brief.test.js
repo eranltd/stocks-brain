@@ -29,7 +29,9 @@ const row = (o = {}) => ({
 const setupOk = { passed: 4, stretched: false, checks: { trend: true, rs_3m: true, rs_6m: true, calm: true } };
 
 test("going up or down: the verdict as a big word with the checklist's own summary", () => {
-  assert.deepEqual(direction(row()), { word: "Going up", tone: "accent", mark: "up", summary: "Bullish candles, an uptrend, volume backs the rise. Reward-to-risk fits the house rule." });
+  assert.deepEqual(direction(row()), { word: "Going up", tone: "accent", mark: "up", summary: "Buyers winning the last candles, an uptrend, volume backs the rise. The possible gain is big enough for the risk." });
+  assert.equal(plainSummary("Mixed: an uptrend; against it, bearish candles, RSI overbought. Reward-to-risk is below the house rule."),
+    "An uptrend; against it, sellers winning the last candles, RSI says overheated. The possible gain is too small for the risk.");
   assert.equal(direction(row({ score: { verdict: "mixed", summary: "Mixed. Reward-to-risk is below the house rule." } })).word, "Mixed");
   assert.equal(direction(row({ score: { verdict: "lean_down", summary: "Leans down: a downtrend." } })).summary, "A downtrend.");
   assert.equal(direction(null), null);

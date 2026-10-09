@@ -7,6 +7,8 @@ import { comingUp, inDays, todayISO } from "../lib/outlook.js";
 import { ago, buildFeed, byDay, filterFeed, KIND_LABEL, KINDS } from "../lib/feed.js";
 import { ArrowRight, Reveal, Segmented } from "../components/ui.jsx";
 import { heldAndPicked, todayCall } from "./Details.jsx";
+import { marketDay } from "../lib/marketday.js";
+import { companiesToKnow, marketWords, newsLines, planWords } from "../lib/simple.js";
 
 const plural = (n, one, many) => (n === 1 ? one : many);
 const noYear = (iso) => fmtDate(iso).replace(/\s\d{4}$/, ""); // "Thu, 22 Oct"
@@ -29,7 +31,33 @@ const SOON_DAYS = 14;
  * thing the data knows (market closes, unusual moves, brain runs, company news, people's calls, checklist changes),
  * newest first. Everything is computed or copied from published data; nothing is fetched from elsewhere.
  */
-export default function Today({ data, go, live, checkNow }) {
+const VIEW_KEY = "sb:home-view";
+function readView() {
+  try { return window.localStorage.getItem(VIEW_KEY) === "details" ? "details" : "simple"; } catch { return "simple"; }
+}
+function saveView(v) {
+  try { window.localStorage.setItem(VIEW_KEY, v); } catch { /* private mode or blocked storage: the switch still works */ }
+}
+
+/**
+ * Home. "Simple" (the default) is four calm cards in words for a reader with no time for numbers; "Details" is the live
+ * feed. The choice is remembered on this device.
+ */
+export default function Today(props) {
+  const [view, setView] = useState(readView);
+  const pickView = (v) => { setView(v); saveView(v); window.scrollTo({ top: 0 }); };
+  return (
+    <>
+      <div className="mx-auto flex w-full max-w-[560px] justify-center px-4 pt-6 sm:pt-10">
+        <Segmented label="How much to show" value={view} onChange={pickView}
+          options={[{ value: "simple", label: "Simple" }, { value: "details", label: "Details" }]} />
+      </div>
+      {view === "simple" ? <SimpleHome {...props} showDetails={() => pickView("details")} /> : <LiveFeed {...props} />}
+    </>
+  );
+}
+
+function LiveFeed({ data, go, live, checkNow }) {
   const call = todayCall(data);
   const brief = marketBrief(data);
   const run = data.sample ? null : data.lastOk;
@@ -48,7 +76,7 @@ export default function Today({ data, go, live, checkNow }) {
     openAt(go, to);
   };
   return (
-    <div className="mx-auto w-full max-w-[560px] px-4 pb-24 pt-6 sm:pt-10">
+    <div className="mx-auto w-full max-w-[560px] px-4 pb-24 pt-6">
       <PostHeader data={data} todayIso={todayIso} live={live} checkNow={checkNow} stale={call.stale} age={call.age} />
       <div className="mt-5 grid gap-4">
         <TodayCard data={data} call={call} run={run} todayIso={todayIso} go={go} />
@@ -90,6 +118,135 @@ function useNow(ms = 60000) {
     return () => clearInterval(id);
   }, [ms]);
   return now;
+}
+
+/* ------------------------------------------------------------------ simple */
+
+const CHIP = {
+  accent: "border-accent/40 bg-accent/12 text-accent",
+  down: "border-down/40 bg-down/12 text-down",
+  flat: "border-line-2 bg-surface-2 text-ink-2",
+};
+const CHIP_MARK = { accent: "▲", down: "▼", flat: "◆" };
+const STEP_WORD = ["One", "Two", "Three"];
+const weekdayOf = (iso) => new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", { weekday: "long", timeZone: "UTC" });
+
+function SimpleCard({ kicker, tone = "var(--accent)", children, id }) {
+  return (
+    <Reveal as="article" id={id} className="card overflow-hidden">
+      <div className="h-1" style={{ background: tone }} />
+      <div className="p-6 sm:p-7">
+        <h2 className="meta mb-4" style={{ color: tone }}>{kicker}</h2>
+        {children}
+      </div>
+    </Reveal>
+  );
+}
+
+function TapLine({ onClick, children, tone }) {
+  return (
+    <button type="button" onClick={onClick}
+      className="flex min-h-[52px] w-full items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-3.5 text-left transition hover:border-ink-3">
+      {tone && <span className="size-2.5 shrink-0 rounded-full" style={{ background: TONE_VAR[tone] ?? "var(--ink-3)" }} aria-hidden="true" />}
+      <span className="min-w-0 flex-1 text-[17px] leading-snug text-ink">{children}</span>
+      <ArrowRight className="size-4 shrink-0 text-ink-3" />
+    </button>
+  );
+}
+
+/**
+ * The simple home: the market, the news, companies to know and our plan, in words. No figures: every sentence comes
+ * from lib/simple.js, which turns the same published data into words (dates as weekdays or month words).
+ */
+function SimpleHome({ data, go, showDetails }) {
+  const call = todayCall(data);
+  const todayIso = todayISO();
+  const { held, picked } = heldAndPicked(data);
+  const day = marketDay(data.market, data.watchlist, data.bench);
+  // A checklist from sample prices on a live site is not a reading of the market: no chips or reasons from it.
+  const checklist = data.checklist && (!data.checklist.sample || data.sample) ? data.checklist : null;
+  const market = marketWords(day, data.regime, todayIso);
+  const news = newsLines({ outlook: data.outlook, day, people: data.people, today: todayIso, names: data.names });
+  const companies = companiesToKnow({ held, picked, day, outlook: data.outlook, checklist, names: data.names, bench: data.bench.symbol });
+  const plan = planWords({ held, picked, checklist, outlook: data.outlook, names: data.names, stage: call.stage, nextCheck: nextRebalance(call.asOf), today: todayIso, bench: data.bench.symbol });
+  const status = call.stale ? "The data is old: the daily update may have failed." : data.sample ? "Sample data, not the market." : "Live: updated after each US close.";
+  const statusTone = call.stale ? "var(--down)" : data.sample ? "var(--people)" : "var(--accent)";
+  return (
+    <div className="mx-auto w-full max-w-[560px] px-4 pb-24 pt-8">
+      <header>
+        <h1 className="display text-[clamp(32px,8.5vw,44px)] leading-[1.05] tracking-[-0.03em]">Hi! It's <span className="text-accent">{weekdayOf(todayIso)}.</span></h1>
+        <p className="mt-3 flex items-center gap-2 text-[15px] text-ink-2">
+          <span className="inline-block size-2 shrink-0 rounded-full" style={{ background: statusTone }} aria-hidden="true" />
+          <span style={{ color: call.stale ? statusTone : undefined }}>{status}</span>
+        </p>
+      </header>
+
+      {call.stale && (
+        <p role="alert" className="mt-6 rounded-3xl border border-down/50 bg-down/10 p-5 text-[17px] leading-relaxed text-down">
+          Please don't act on anything below until the daily update runs again.
+        </p>
+      )}
+
+      <div className="mt-8 grid gap-6">
+        <SimpleCard kicker="The market" tone={TONE_VAR[market.tone] ?? "var(--accent)"}>
+          <p className="text-[clamp(22px,6vw,27px)] leading-snug font-semibold tracking-[-0.015em] text-ink">{market.main}</p>
+          {market.more && <p className="mt-3 text-[17px] leading-relaxed text-ink-2">{market.more}</p>}
+          <button type="button" onClick={() => openAt(go, "details#market-today")} className="meta mt-5 inline-flex min-h-[44px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">What the market did <ArrowRight className="size-3.5" /></button>
+        </SimpleCard>
+
+        <SimpleCard kicker="In the news" tone="var(--ink-2)">
+          {news.length ? (
+            <ul className="grid gap-2.5">
+              {news.map((n) => <li key={n.id}><TapLine onClick={() => openAt(go, n.to)} tone={n.tone}>{n.text}</TapLine></li>)}
+            </ul>
+          ) : <p className="text-[17px] leading-relaxed text-ink-2">Nothing new about our companies this week.</p>}
+        </SimpleCard>
+
+        <SimpleCard kicker="Companies to know" tone="var(--people)">
+          <ul className="grid gap-3">
+            {companies.map((c) => (
+              <li key={c.ticker}>
+                <button type="button" onClick={() => openAt(go, c.to)}
+                  className="block min-h-[52px] w-full rounded-2xl border border-line bg-surface p-4 text-left transition hover:border-ink-3">
+                  <span className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                    <span className="text-[20px] font-semibold tracking-[-0.01em] text-ink">{c.name}</span>
+                    {c.chip && (
+                      <span className={`pill py-0.5 text-[12px] normal-case tracking-[0.02em] ${CHIP[c.chip.tone]}`}>
+                        <span aria-hidden="true" className="text-[9px]">{CHIP_MARK[c.chip.tone]}</span>{c.chip.word}
+                      </span>
+                    )}
+                  </span>
+                  <span className="meta mt-1 block normal-case tracking-[0.04em]">{c.tag}</span>
+                  <span className="mt-2 block text-[16px] leading-relaxed text-ink-2">{c.plain ?? "Its short summary appears with the next company update."}</span>
+                  <span className="mt-3 inline-flex items-center gap-1 text-[14px] text-ink">In short <ArrowRight className="size-3.5" /></span>
+                </button>
+              </li>
+            ))}
+          </ul>
+          {!checklist && <p className="mt-4 text-[14.5px] leading-relaxed text-ink-3">The going up or down chips appear after the next daily run.</p>}
+        </SimpleCard>
+
+        <SimpleCard kicker="Our plan: one, two, three" tone="var(--accent)">
+          <ol className="grid gap-4">
+            {plan.steps.map((s, i) => (
+              <li key={STEP_WORD[i]} className="flex gap-4">
+                <span className="meta w-14 shrink-0 pt-1 text-accent">{STEP_WORD[i]}</span>
+                <span className="min-w-0 text-[18px] leading-snug text-ink">{s}</span>
+              </li>
+            ))}
+          </ol>
+          {plan.next && <p className="mt-5 border-t border-line pt-4 text-[17px] text-ink">{plan.next}</p>}
+          <p className="mt-3 text-[15px] leading-relaxed text-ink-2">{plan.honest}</p>
+          <button type="button" onClick={() => go("portfolio")} className="meta mt-4 inline-flex min-h-[44px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">The practice portfolio <ArrowRight className="size-3.5" /></button>
+        </SimpleCard>
+      </div>
+
+      <Reveal className="mt-10 grid gap-3 text-center">
+        <button type="button" onClick={showDetails} className="btn btn-primary justify-center">Show the details <ArrowRight /></button>
+        <p className="meta mt-6 normal-case tracking-[0.04em]">A practice notebook for one household, not financial advice.</p>
+      </Reveal>
+    </div>
+  );
 }
 
 /* ------------------------------------------------------------------ header */

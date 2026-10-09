@@ -73,6 +73,12 @@
             "maxLength": 300,
             "description": "what the company does and where its money comes from, in one or two plain sentences"
           },
+          "plain": {
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 180,
+            "description": "optional: one plain sentence for the simple home and the one-stock brief (Company: what happened and what is next), no digits and no quotation marks"
+          },
           "latest": {
             "type": "object",
             "additionalProperties": false,

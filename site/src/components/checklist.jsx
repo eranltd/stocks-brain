@@ -145,7 +145,7 @@ export function ChecklistCard({ data, symbol, go }) {
 
       <ol className="mt-5 grid gap-0">
         {rows.map((s) => (
-          <li key={s.id} className="border-t border-line py-3.5 first:border-0 first:pt-0">
+          <li key={s.id} id={`checklist-${s.id}`} className="scroll-mt-28 border-t border-line py-3.5 first:border-0 first:pt-0">
             <div className="flex items-start gap-3">
               {s.lean ? <Dot lean={s.lean} /> : <span className="mt-1.5 inline-block size-2.5 shrink-0 rounded-full border border-ink-3" aria-hidden="true" />}
               <div className="min-w-0 flex-1">

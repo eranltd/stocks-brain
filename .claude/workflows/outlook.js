@@ -36,6 +36,7 @@ STRICT RULES:
 CARD SHAPE (one per company, every field present):
   ticker (uppercase, as on the watchlist); name (the company's short name, 2-60 chars); as_of "${TODAY}";
   business: one or two plain sentences on what the company does and where its money comes from (20-300 chars);
+  plain: ONE plain sentence for a reader with no time for numbers (20-180 chars), starting with the company's short name and a colon, then what happened in the latest quarter and the one thing coming next or the main risk, all from this card's own confirmed items; NO digits at all (say grew fast, more than tripled, later this month, early next year) and no quotation marks of any kind;
   latest: {period (the company's own name for the most recent reported quarter, e.g. fiscal Q2 2027; 2-40 chars), reported_on, revenue (the quarter's revenue as reported, in words and figures, e.g. 46.7 billion US dollars; 2-60 chars), revenue_growth_yoy_pct (number: change against the same quarter a year earlier, as reported or computed from the company's own two figures; null when not comparable), highlights (1-3 short items, each 10-200 chars: what drove the quarter, in the company's segments' terms), source_url (the results release or the filing)};
   guidance: {given (true only when the company itself gave an outlook for a coming period), period (the period it covers, or empty), text (10-300 chars: a paraphrase of that outlook; when none is given, say plainly that the company gives no forecast, or what it does say), source_url (or null when nothing is given)};
   next_earnings: {date (YYYY-MM-DD or null), confirmed (true only when the company itself announced the date), note (0-200 chars: e.g. announced by the company on a date, or not yet announced), source_url (the announcement, or the page the expectation rests on, or null)};
@@ -47,13 +48,13 @@ HARD RULES: do not edit any tracked file, do not run git. Scratch files only und
 const STR = { type: 'string' }
 const URL_OR_NULL = { type: ['string', 'null'] }
 const CARD = { type: 'object', properties: {
-  ticker: STR, name: STR, as_of: STR, business: STR,
+  ticker: STR, name: STR, as_of: STR, business: STR, plain: STR,
   latest: { type: 'object', properties: { period: STR, reported_on: STR, revenue: STR, revenue_growth_yoy_pct: { type: ['number', 'null'] }, highlights: { type: 'array', items: STR }, source_url: STR }, required: ['period', 'reported_on', 'revenue', 'revenue_growth_yoy_pct', 'highlights', 'source_url'] },
   guidance: { type: 'object', properties: { given: { type: 'boolean' }, period: STR, text: STR, source_url: URL_OR_NULL }, required: ['given', 'period', 'text', 'source_url'] },
   next_earnings: { type: 'object', properties: { date: { type: ['string', 'null'] }, confirmed: { type: 'boolean' }, note: STR, source_url: URL_OR_NULL }, required: ['date', 'confirmed', 'note', 'source_url'] },
   whats_next: { type: 'array', items: { type: 'object', properties: { item: STR, when: STR, kind: { type: 'string', enum: ['product', 'finance', 'regulatory', 'deal', 'other'] }, status: { type: 'string', enum: ['done', 'ahead'] }, date: STR, source_url: STR }, required: ['item', 'when', 'kind', 'status', 'source_url'] } },
   watch: { type: 'array', minItems: 1, items: { type: 'object', properties: { item: STR, source_url: STR }, required: ['item', 'source_url'] } },
-}, required: ['ticker', 'name', 'as_of', 'business', 'latest', 'guidance', 'next_earnings', 'whats_next', 'watch'] }
+}, required: ['ticker', 'name', 'as_of', 'business', 'plain', 'latest', 'guidance', 'next_earnings', 'whats_next', 'watch'] }
 const BATCH_OUT = { type: 'object', properties: { companies: { type: 'array', items: CARD }, missing: { type: 'array', items: { type: 'object', properties: { ticker: STR, why: STR }, required: ['ticker', 'why'] } }, notes: STR }, required: ['companies', 'missing', 'notes'] }
 const CHECKED = { type: 'object', properties: { ...BATCH_OUT.properties, check: { type: 'array', items: STR }, fixes: { type: 'array', items: STR } }, required: [...BATCH_OUT.required, 'check', 'fixes'] }
 
@@ -80,7 +81,7 @@ const results = await pipeline(batches,
   (draft, batch, i) => {
     if (!draft) return null
     const file = `${SCRATCH}/batch-${i + 1}.json`
-    return agent(`${CTX}\nROLE: SKEPTIC for batch ${i + 1} (${batch.join(', ')}). Try to REFUTE every item in the draft cards below. Open every source_url and check that the page says what the item claims: numbers, periods, dates (is a next earnings date really announced by the company, or only expected? set confirmed accordingly), and that guidance is the company's own. Fix what is wrong from the primary source; DROP any item you cannot confirm (drop a whole card, into "missing", when its latest quarter cannot be confirmed). Check every STRICT RULE: no quotes of any kind, no prices, targets or ratings, plain words instead of shorthand, original sources not copies, status done or ahead on every coming item, paraphrase only, plain English, lengths. Then write the companies array as JSON to ${file} (mkdir -p ${SCRATCH} first) and run
+    return agent(`${CTX}\nROLE: SKEPTIC for batch ${i + 1} (${batch.join(', ')}). Try to REFUTE every item in the draft cards below. Open every source_url and check that the page says what the item claims: numbers, periods, dates (is a next earnings date really announced by the company, or only expected? set confirmed accordingly), and that guidance is the company's own. Fix what is wrong from the primary source; DROP any item you cannot confirm (drop a whole card, into "missing", when its latest quarter cannot be confirmed). Check every STRICT RULE: no quotes of any kind, a plain sentence with no digits that says only what the card confirms, no prices, targets or ratings, plain words instead of shorthand, original sources not copies, status done or ahead on every coming item, paraphrase only, plain English, lengths. Then write the companies array as JSON to ${file} (mkdir -p ${SCRATCH} first) and run
 ${checkCmd(file)}
 and fix every error and warning, rewriting the file, until it prints []. Return the corrected batch: companies exactly as the file holds them, missing, notes, fixes (one line per change you made) and check (the LAST output of the check command as a list of strings, empty when it printed []).
 DRAFT:\n${JSON.stringify(draft, null, 1)}`,

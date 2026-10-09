@@ -132,6 +132,11 @@ export default function Stock({ data, symbol, go }) {
         <div className="min-w-0">
           <Reveal className="eyebrow mb-4">{names[symbol]} · {market.provider === "sample" ? "sample prices" : `live · ${market.provider}`} · {fmtDate(row.last_date)}</Reveal>
           <Headline size="xl">{symbol} <span className={TONE_TEXT[signTone(row.change_1d_pct, 2)]}>{fmtPct(row.change_1d_pct, 2)}</span></Headline>
+          {!isBench && (
+            <button type="button" onClick={() => document.getElementById("whats-next")?.scrollIntoView({ behavior: "smooth", block: "start" })} className="pill mt-4 min-h-[40px] max-w-full text-ink hover:border-ink-3">
+              What's next <span aria-hidden="true">↓</span>
+            </button>
+          )}
         </div>
         {!isBench && (
           <Reveal delay={200} className="card px-6 py-5 text-right">
@@ -365,7 +370,7 @@ function NextList({ label, items }) {
 function WhatsNext({ card, symbol, today, hasFile }) {
   if (!card) {
     return (
-      <Reveal className="card mt-6 p-6 sm:p-8">
+      <Reveal id="whats-next" className="card mt-6 scroll-mt-28 p-6 sm:p-8">
         <h3 className="text-[22px] font-semibold tracking-[-0.02em]">What's next</h3>
         <p className="mt-3 max-w-[62ch] text-[15px] leading-relaxed text-ink-2">
           {hasFile ? `No outlook card for ${symbol} yet.` : "No outlook file yet."} Cards are researched after each earnings season from the company's own releases and filings: the latest quarter, what the company says about the next one, its next results date and what is coming up, each with a link.
@@ -379,7 +384,7 @@ function WhatsNext({ card, symbol, today, hasFile }) {
   const days = daysUntil(ne.date, today);
   const growth = growthWords(lt.revenue_growth_yoy_pct);
   return (
-    <Reveal className="card mt-6 p-6 sm:p-8">
+    <Reveal id="whats-next" className="card mt-6 scroll-mt-28 p-6 sm:p-8">
       <div className="flex flex-wrap items-baseline justify-between gap-3">
         <h3 className="text-[22px] font-semibold tracking-[-0.02em]">What's next</h3>
         <span className="meta normal-case tracking-[0.04em]">researched {dayOnly(card.as_of)}</span>

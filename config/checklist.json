@@ -1,0 +1,125 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-10-09",
+  "change_note": "First version: the eight-step technical checklist from a trading video the household liked, computed by code, measured on history and forward, with a written risk plan before any new paper entry.",
+  "purpose": "An entry-and-exit checklist for satellite names at the Paper stage: eight technical steps read before any new paper entry, and a written risk plan (stop, first and second targets) set before entering. Unproven for us: computed, shown and measured, never a signal that beats the index.",
+  "source": {
+    "kind": "video",
+    "title": "A Hebrew-language YouTube trading video: an eight-step technical checklist",
+    "description": "The host walks through eight checks (candle pattern, trend, volume, the twenty-period average, gaps, support and resistance, RSI, and risk management with a stop and two profit targets set before entering), then applies them to Blackstone, Nvidia and Bank of America. Only Nvidia is on our list; no tickers were added.",
+    "url": null,
+    "added": "2026-10-09"
+  },
+  "status": "unproven",
+  "how_to_read": [
+    "Each step leans bullish, bearish or neutral; the risk plan (step eight) is a plan, not a lean.",
+    "The verdict counts the seven directional steps: lean up, mixed or lean down. It is a description of the chart, not a forecast.",
+    "Levels and gaps are shown as percent distances from the last close, never as prices.",
+    "The history table is in-sample and on today's list of survivors, so it flatters the checklist; the forward record started on the day it was added.",
+    "The household's own pre-registered history test rejected its setup and strength rules. Read this checklist with the same doubt: the index core comes first."
+  ],
+  "steps": [
+    {
+      "id": "candle",
+      "n": 1,
+      "name": "Candle pattern",
+      "name_he": "תצורת הנר",
+      "checks": "Is the latest daily and weekly candle bullish (upward) or bearish (downward)?",
+      "computes": "Classifies the last daily candle and the week so far: engulfing, doji, hammer or hanging man, shooting star or inverted hammer, marubozu, spinning top, or a plain up or down candle; body as a share of the range and where the close sits in the range. The two leans combine: agreement wins, a neutral defers, a conflict is neutral.",
+      "directional": true,
+      "params": {"doji_body_pct": 10, "small_body_pct": 30, "marubozu_body_pct": 90, "shadow_ratio": 2, "prior_days": 5, "prior_weeks": 4}
+    },
+    {
+      "id": "trend",
+      "n": 2,
+      "name": "Trend",
+      "name_he": "מגמת המניה",
+      "checks": "Which way is the stock trending? Trade with the trend (the trend is your friend until the end) rather than trying to outguess it.",
+      "computes": "One point each, plus or minus: close above or below its fifty-day average; fifty-day above or below the two-hundred-day; the fifty-day's slope over ten days; higher highs and higher lows (or lower and lower) across three one-month blocks of the last three months. Three points or more is up, minus three or less is down, otherwise sideways.",
+      "directional": true,
+      "params": {"sma_fast": 50, "sma_slow": 200, "slope_days": 10, "structure_days": 63, "min_points": 3}
+    },
+    {
+      "id": "volume",
+      "n": 3,
+      "name": "Volume",
+      "name_he": "ווליום",
+      "checks": "Does volume support the move? A rising price on falling buying volume can be a bull trap or fading momentum.",
+      "computes": "The last day's volume against the twenty days before it; volume on up days against volume on down days over twenty days; the last ten days' volume against the ten before; the ten-day price move. A rise confirms when up-day volume leads, and weakens when down-day volume leads or volume fell by a fifth or more (flagged as price rising on falling volume). A fall confirms when down-day volume leads; a fall on fading volume is marked weakening but leans nowhere, because we do not call bottoms.",
+      "directional": true,
+      "params": {"avg_days": 20, "trend_days": 10, "flat_move_pct": 1, "confirm_ratio": 1.2, "fade_pct": 20}
+    },
+    {
+      "id": "ma20",
+      "n": 4,
+      "name": "Moving average 20",
+      "name_he": "ממוצע 20",
+      "checks": "Where is the price against the average of the last twenty closes: the short-term trend and an average support or resistance?",
+      "computes": "Percent distance of the close from its twenty-day average, and the average's slope over five days. Above a rising average leans bullish, below a falling one bearish, anything else neutral.",
+      "directional": true,
+      "params": {"days": 20, "slope_days": 5}
+    },
+    {
+      "id": "gaps",
+      "n": 5,
+      "name": "Gaps",
+      "name_he": "גאפים",
+      "checks": "Are there open gaps above or below the price, and is the stock trying to close them?",
+      "computes": "A gap is a day whose whole range sits above (or below) the day before. It stays open until a later day trades back across it; a partial fill shrinks it. Open gaps of the last sixty trading days with their size, distance from the close and days open; whether the last five days moved toward the nearest one. The nearest gap within ten percent leans the way the price would move to close it.",
+      "directional": true,
+      "params": {"lookback_days": 60, "min_gap_pct": 0.5, "lean_max_dist_pct": 10, "toward_days": 5, "max_listed": 5}
+    },
+    {
+      "id": "levels",
+      "n": 6,
+      "name": "Support and resistance",
+      "name_he": "תמיכות והתנגדויות",
+      "checks": "Where did price stall or reverse before? Those levels set entries and exits.",
+      "computes": "Swing pivots over about a year (a high above the five days before it and at least as high as the five after it, or the mirror for a low, used only once those five days have passed), grouped into zones within one and a half percent. The nearest two zones below the close are support, the nearest two above are resistance, each with its percent distance and how many pivots touched it. Leans bullish when resistance is at least twice as far as support (or nothing is overhead), bearish in the mirror case (or nothing is below).",
+      "directional": true,
+      "params": {"lookback_days": 250, "pivot_window": 5, "cluster_pct": 1.5, "lean_ratio": 2}
+    },
+    {
+      "id": "rsi",
+      "n": 7,
+      "name": "RSI",
+      "name_he": "RSI",
+      "checks": "Is the stock overbought (above seventy) or oversold (below thirty)?",
+      "computes": "Wilder's fourteen-day relative strength index on adjusted closes. Seventy or more is overbought and leans bearish, thirty or less is oversold and leans bullish, anything between is neutral.",
+      "directional": true,
+      "params": {"period": 14, "overbought": 70, "oversold": 30}
+    },
+    {
+      "id": "risk_plan",
+      "n": 8,
+      "name": "Risk management and exit",
+      "name_he": "ניהול סיכונים ולקיחת רווחים",
+      "checks": "Set the stop-loss and the profit targets (TP1, TP2) before entering, so emotion does not decide the exit.",
+      "computes": "For a long entry at the last close. Stop: just below the nearest support (a quarter of an ATR under it) or two ATRs below the close, whichever is closer, but never closer than one ATR (ATR is Wilder's fourteen-day average true range). TP1: the nearest resistance, or twice the risk when nothing is overhead. TP2: the next resistance, or else the larger of twice the risk and TP1 plus one risk. Reward-to-risk is each target's distance over the stop's.",
+      "directional": false,
+      "params": {"atr_days": 14, "stop_atr_max": 2, "stop_atr_min": 1, "below_support_atr": 0.25, "risk_multiple": 2}
+    }
+  ],
+  "verdict": {
+    "lean_threshold": 3,
+    "text": "Net score = bullish steps minus bearish steps (of the seven directional ones). Three or more is lean up, minus three or less is lean down, anything between is mixed."
+  },
+  "house_rule": {
+    "min_reward_to_risk": 2,
+    "target": "tp1",
+    "text": "Before any new paper entry of a satellite name: the checklist is read, a written risk plan (stop, TP1, TP2) exists, and reward-to-risk to TP1 is at least two. It adds to the setup gate and the trust ladder; it never overrides them and never makes a name a buy."
+  },
+  "measure": {
+    "from": "2017-01-01",
+    "horizon_days": 20,
+    "step_days": 20,
+    "history_days": 15,
+    "text": "History: every twenty trading days from 2017, each name's checklist with data up to that close and its excess return over the Nasdaq-100 benchmark twenty trading days later (in-sample, today's list of survivors). Forward: a snapshot of every name's verdict every twenty trading days from the day it was added, never edited, each scored twenty trading days later."
+  },
+  "notes": [
+    "Five-minute candles are not possible here: we only have end-of-day data. Daily and weekly candles only; the week in progress is marked partial.",
+    "Levels, gaps, stops and targets are shown as percent distances from the last close, never as prices (provider licence).",
+    "All prices are split- and dividend-adjusted end-of-day bars, so a gap or level can differ slightly from a broker's unadjusted chart.",
+    "Unproven for us. It is shown next to its own history and forward record; it never moves money, never replaces the index core and is never the only reason for a pick."
+  ]
+}

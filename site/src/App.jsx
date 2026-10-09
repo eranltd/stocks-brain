@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
-import { loadAll } from "./lib/data.js";
+import { loadAll, loadManifest } from "./lib/data.js";
 import { Field, Footer, Header, Loader, MobileNav } from "./components/shell.jsx";
 import { Container } from "./components/ui.jsx";
 import Today from "./tabs/Today.jsx";
@@ -38,6 +38,10 @@ const TABS = [
 // Tabs that show synthetic data until the brain (M3) produces real picks.
 const SAMPLE_TABS = ["track", "kb", "learnings", "runs"];
 // Routes: a tab id, or "stock/<SYMBOL>" for a stock page.
+// While the page is open, re-check the manifest this often (and when the tab comes back into view, at most once a minute).
+const POLL_MS = 10 * 60 * 1000;
+const FOCUS_MIN_MS = 60 * 1000;
+
 const fromHash = () => {
   const h = decodeURIComponent(window.location.hash.replace("#", ""));
   if (/^stock\/[A-Z][A-Z0-9.\-]{0,9}$/.test(h)) return h;
@@ -51,13 +55,58 @@ export default function App() {
   const [tab, setTab] = useState(fromHash);
   const [query, setQuery] = useState("");
   const [theme, setTheme] = useState(() => document.documentElement.dataset.theme || "dark");
+  // Live: {checkedAt, checking, fresh (new data just loaded), reload (new data is out but could not be loaded in place)}.
+  const [live, setLive] = useState({ checkedAt: null, checking: false, fresh: false, reload: false });
+  const built = useRef(null);
+  const lastCheck = useRef(0);
+  const inFlight = useRef(false); // one check at a time (the poll, focus and "Check now" can coincide)
+  const failedBuild = useRef(null); // a build that could not be loaded in place: do not refetch everything for it again
 
   useEffect(() => {
     const t0 = performance.now();
     loadAll(setProgress)
-      .then((d) => setTimeout(() => setData(d), Math.max(0, 700 - (performance.now() - t0))))
+      .then((d) => setTimeout(() => { built.current = d.manifest.built_at; lastCheck.current = Date.now(); setData(d); }, Math.max(0, 700 - (performance.now() - t0))))
       .catch((e) => setError(e));
   }, []);
+
+  // Re-check the manifest; when built_at moved, load the new data in place (no page reload). If that fails (for example a
+  // new site version changed the data's shape), keep what is shown and offer a refresh instead.
+  const checkNow = useCallback(async () => {
+    if (!built.current || inFlight.current) return;
+    inFlight.current = true;
+    lastCheck.current = Date.now();
+    setLive((l) => ({ ...l, checking: true }));
+    try {
+      const m = await loadManifest();
+      if (m.built_at === built.current || m.built_at === failedBuild.current) {
+        setLive((l) => ({ ...l, checking: false, checkedAt: new Date() }));
+        return;
+      }
+      try {
+        const d = await loadAll();
+        built.current = d.manifest.built_at;
+        setData(d);
+        setLive({ checking: false, checkedAt: new Date(), fresh: true, reload: false });
+        setTimeout(() => setLive((l) => ({ ...l, fresh: false })), 8000);
+      } catch {
+        failedBuild.current = m.built_at;
+        setLive((l) => ({ ...l, checking: false, checkedAt: new Date(), reload: true }));
+      }
+    } catch {
+      setLive((l) => ({ ...l, checking: false })); // offline: try again on the next tick
+    } finally {
+      inFlight.current = false;
+    }
+  }, []);
+
+  useEffect(() => {
+    const tick = () => { if (document.visibilityState === "visible") checkNow(); };
+    const back = () => { if (document.visibilityState === "visible" && Date.now() - lastCheck.current > FOCUS_MIN_MS) checkNow(); };
+    const id = setInterval(tick, POLL_MS);
+    document.addEventListener("visibilitychange", back);
+    window.addEventListener("focus", back);
+    return () => { clearInterval(id); document.removeEventListener("visibilitychange", back); window.removeEventListener("focus", back); };
+  }, [checkNow]);
 
   const go = useCallback((id) => {
     if (id === tab) return;
@@ -105,7 +154,7 @@ export default function App() {
             </div>
           </Container>
         )}
-        {data && <Active key={tab} data={data} go={go} query={query} setQuery={setQuery} openKB={openKB} symbol={symbol} />}
+        {data && <Active key={tab} data={data} go={go} query={query} setQuery={setQuery} openKB={openKB} symbol={symbol} live={live} checkNow={checkNow} />}
       </main>
       {data && <Footer data={data} />}
       <MobileNav tabs={TABS} active={navTab} onNav={go} sampleTabs={data?.sample ? SAMPLE_TABS : []} />

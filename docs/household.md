@@ -1,7 +1,7 @@
 ---
-version: 0.2.0
-updated_at: 2026-10-04
-change_note: The household goal (a diverse 4-5 stock portfolio, +20% a year) with an honest reality check; the trust ladder now rests on the rule's forward paper record; stretched names cannot be bought.
+version: 0.3.0
+updated_at: 2026-10-09
+change_note: Before any new paper entry, read the technical checklist and write a risk plan (stop, TP1, TP2) with reward-to-risk of at least 2 to TP1.
 ---
 # House rules
 
@@ -39,8 +39,14 @@ If the numbers fall back below a threshold, we step back down.
    a headline. Dated claims are unverified.
 2. A new name needs 3 of the 4 setup checks and must **not be stretched** above its trend (S-010, S-019).
 3. No earnings report or major macro event early in the month (S-005, S-013). Check by hand until the event calendar exists.
-4. A name leaves when the rule drops it at the monthly review. No averaging down by default.
-5. Stay within the size limits. One idea never decides the household's outcome.
+4. **Technical checklist and risk plan** (from the video we liked; `config/checklist.json`). Before any new paper entry of
+   a satellite name, read its eight-step checklist on the Stock page and write the risk plan down before entering: the
+   stop, the first target (TP1) and the second (TP2). Reward-to-risk to TP1 must be at least 2; if it is thinner, wait.
+   The checklist is unproven for us: it adds a check, never makes a name a buy and never overrides rules 1 to 3.
+5. A name leaves when the rule drops it at the monthly review, or when the written stop of our own entry is hit: an exit,
+   the one step that may come between monthly dates (the rule's recorded paper portfolio is unchanged). No averaging down
+   by default.
+6. Stay within the size limits. One idea never decides the household's outcome.
 
 ## Never
 - Never buy only because a stock is at a high, or only because it has fallen a lot.

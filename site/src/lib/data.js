@@ -11,6 +11,9 @@ async function get(path) {
   return path.endsWith(".md") ? res.text() : res.json();
 }
 
+/** Just the manifest: the live home page polls it and reloads the data when built_at changes. */
+export const loadManifest = () => get("manifest.json");
+
 export async function loadAll(onProgress = () => {}) {
   const manifest = await get("manifest.json");
   const paths = [
@@ -24,6 +27,8 @@ export async function loadAll(onProgress = () => {}) {
     ...manifest.docs.map((d) => d.file),
     ...(manifest.ops ? [manifest.ops] : []),
     ...(manifest.people_scores ? [manifest.people_scores] : []),
+    // Technical checklist (data/market/checklist.json): null until the first daily run that computes it.
+    ...(manifest.checklist ? [manifest.checklist] : []),
   ];
   let done = 0;
   const entries = await Promise.all(
@@ -73,6 +78,9 @@ export function derive(manifest, files) {
   const peopleScores = manifest.people_scores ? files[manifest.people_scores] : null;
   // Company outlook cards (config/outlook.json): researched, paraphrased and linked; may hold no companies yet.
   const outlook = doc("outlook") ? files[doc("outlook").file] : null;
+  // The eight-step technical checklist: its steps and house rule (config/checklist.json) and code's daily reading of it.
+  const checklistCfg = doc("checklist") ? files[doc("checklist").file] : null;
+  const checklist = manifest.checklist ? files[manifest.checklist] ?? null : null;
   const outcomes = manifest.kb.outcomes ? files[manifest.kb.outcomes].items : [];
   const library = manifest.kb.library ? files[manifest.kb.library] : null;
   const regime = manifest.kb.regime ? files[manifest.kb.regime] : null;
@@ -116,7 +124,7 @@ export function derive(manifest, files) {
 
   return {
     market, manifest, runs, shownRuns, latest, lastOk, prices, watchlist, settings, learnings, guardrails,
-    outcomes, library, sources, routines, names, bench, kb, docs, regime, calibration, observations, opsLog, longrun, paper, sectors, core, rulebook, rulesResult, ledger, people, peopleScores, outlook,
+    outcomes, library, sources, routines, names, bench, kb, docs, regime, calibration, observations, opsLog, longrun, paper, sectors, core, rulebook, rulesResult, ledger, people, peopleScores, outlook, checklist, checklistCfg,
     sample: manifest.source === "sample", livePrices: manifest.price_source === "live",
   };
 }

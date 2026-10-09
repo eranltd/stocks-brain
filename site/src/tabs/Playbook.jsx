@@ -1,7 +1,9 @@
 import { useMemo, useState } from "react";
-import { fmtDate, fmtNum, fmtPct } from "../lib/format.js";
+import { fmtDate, fmtNum, fmtPct, signTone } from "../lib/format.js";
 import { LinesChart } from "../components/lines.jsx";
 import { Accent, ArrowRight, Chip, Container, Empty, Headline, Reveal, SectionHead, Segmented } from "../components/ui.jsx";
+import { BaseRates } from "../components/checklist.jsx";
+import { edgeWords, fillNote, forwardWords } from "../lib/checklist.js";
 
 const FAMILIES = [
   ["savings", "Savings", "How often and how we buy the core"],
@@ -98,6 +100,7 @@ export default function Playbook({ data, go }) {
       <Savings rb={rb} res={res} name={name} />
       <Satellite rb={rb} res={res} name={name} data={data} />
       <Forward rb={rb} data={data} name={name} />
+      <TechChecklist data={data} />
       <Rules rb={rb} satVerdict={satVerdict} go={go} />
       <Process rb={rb} />
       <Testing rb={rb} />
@@ -424,6 +427,100 @@ function Forward({ rb, data, name }) {
           </table>
         </Reveal>
       )}
+    </section>
+  );
+}
+
+/* ------------------------------------------------------- technical checklist */
+
+const STEP_TONE = { accent: "text-accent", down: "text-down", flat: "text-ink-2" };
+
+/** The eight-step checklist from the video: each step, how code computes it, the paper-entry rule and what history says. */
+function TechChecklist({ data }) {
+  const cfg = data.checklistCfg;
+  if (!cfg) return null;
+  const ck = data.checklist;
+  const br = ck?.base_rates ?? null;
+  const hr = cfg.house_rule;
+  const bench = data.bench.label;
+  const edge = edgeWords(br);
+  const stepName = Object.fromEntries(cfg.steps.map((s) => [s.id, s.name]));
+  return (
+    <section id="checklist" className="scroll-mt-28 pt-24">
+      <SectionHead eyebrow={`Technical checklist · from the video · v${cfg.version}`} title={<>Read the chart, <Accent>write the exit first.</Accent></>} size="md" lede={cfg.purpose} />
+      <Reveal className="card border-people/40 p-5 text-[14.5px] leading-relaxed text-ink-2 sm:p-6">
+        <span className="pill mb-3 border-dashed border-people/60 text-people">{cfg.status}</span>
+        <ul className="grid gap-2">
+          {cfg.how_to_read.map((t) => <li key={t} className="relative pl-4 before:absolute before:left-0 before:top-[0.75em] before:h-px before:w-2 before:bg-people">{t}</li>)}
+        </ul>
+      </Reveal>
+
+      <ol className="mt-5 grid gap-3 md:grid-cols-2">
+        {cfg.steps.map((s, i) => (
+          <Reveal as="li" key={s.id} delay={(i % 2) * 60} className="card p-5 sm:p-6">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+              <span className="text-[17px] font-semibold"><span className="num mr-2 font-mono text-[13px] font-normal text-ink-3">{s.n}</span>{s.name}</span>
+              <span lang="he" dir="rtl" className="text-[13.5px] text-ink-2">{s.name_he}</span>
+            </div>
+            <p className="mt-2 text-[14.5px] leading-relaxed text-ink">{s.checks}</p>
+            <div className="meta mt-3 mb-1 normal-case tracking-[0.04em]">How we compute it{s.directional ? "" : " · a plan, not a lean"}</div>
+            <p className="text-[13.5px] leading-relaxed text-ink-2">{s.computes}</p>
+          </Reveal>
+        ))}
+      </ol>
+
+      <Reveal className="card mt-5 border-accent/40 p-5 sm:p-6">
+        <div className="meta mb-2 text-accent">The paper-entry rule</div>
+        <p className="text-[15.5px] leading-relaxed text-ink">{hr.text}</p>
+        <p className="mt-3 text-[14px] leading-relaxed text-ink-2">{cfg.verdict.text} The rule is judged on TP1 because TP2 would pass almost every time by construction.</p>
+      </Reveal>
+
+      <Reveal className="card mt-5 p-5 sm:p-6">
+        <div className="flex flex-wrap items-baseline justify-between gap-3">
+          <h3 className="text-[20px] font-semibold tracking-[-0.02em]">What history says</h3>
+          {br && <span className="meta normal-case tracking-[0.04em]">{fmtDate(br.from)} to {fmtDate(br.to)} · {br.names} names{ck.sample ? " · sample prices" : ""}</span>}
+        </div>
+        {br ? (
+          <>
+            <p className="mt-2 text-[14px] leading-relaxed text-ink-2">Every {br.step_days} trading days, each name's checklist with only the data up to that close, then its return against the {bench} over the next {br.horizon_days} trading days.</p>
+            <div className="mt-4"><BaseRates br={br} benchLabel={bench} /></div>
+            {edge && <p className="mt-4 text-[14px] leading-relaxed text-ink">{edge}</p>}
+            {br.house_rule && (
+              <p className="mt-2 text-[14px] leading-relaxed text-ink-2">
+                Names whose risk plan fit the rule: {fmtPct(br.house_rule.fits.mean ?? 0, 1)} on average ({br.house_rule.fits.n} cases); the rest: {fmtPct(br.house_rule.fails.mean ?? 0, 1)} ({br.house_rule.fails.n}).
+              </p>
+            )}
+            {br.by_check?.length > 0 && (
+              <div className="mt-5 overflow-x-auto">
+                <div className="meta mb-2 normal-case tracking-[0.04em]">Each step on its own: average vs the {bench} when it leaned</div>
+                <table className="w-full min-w-[300px] text-left text-[13.5px]">
+                  <thead className="meta normal-case tracking-[0.04em]"><tr className="border-b border-line"><th className="py-2 font-normal">Step</th><th className="py-2 pl-2 text-right font-normal">Leaned bullish</th><th className="py-2 pl-2 text-right font-normal">Leaned bearish</th></tr></thead>
+                  <tbody>
+                    {br.by_check.map((c) => (
+                      <tr key={c.check} className="border-b border-line last:border-0">
+                        <td className="py-2 pr-2">{stepName[c.check] ?? c.check}</td>
+                        {["bullish", "bearish"].map((k) => (
+                          <td key={k} className={`num whitespace-nowrap py-2 pl-2 text-right font-mono ${c[k]?.n ? STEP_TONE[signTone(c[k].mean, 1)] : "text-ink-3"}`}>
+                            {c[k]?.n ? fmtPct(c[k].mean, 1) : "–"}<span className="ml-1 text-[11px] text-ink-3">{c[k]?.n ?? 0}</span>
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <p className="mt-2 text-[12.5px] leading-relaxed text-ink-3">If a step worked, its bullish column would sit clearly above its bearish one. Small numbers after each figure are cases.</p>
+              </div>
+            )}
+            <p className="mt-4 text-[13px] leading-relaxed text-ink-3">{fillNote(br.note, br)}</p>
+          </>
+        ) : (
+          <p className="mt-2 text-[14px] leading-relaxed text-ink-2">Appears after the next daily run. {cfg.measure.text}</p>
+        )}
+        <p className="mt-3 text-[14px] leading-relaxed text-ink-2">{forwardWords(ck?.forward)}</p>
+      </Reveal>
+      <ul className="mt-5 grid gap-2 text-[13.5px] leading-relaxed text-ink-3">
+        {cfg.notes.map((n) => <li key={n} className="relative pl-4 before:absolute before:left-0 before:top-[0.75em] before:h-px before:w-2 before:bg-ink-3">{n}</li>)}
+      </ul>
     </section>
   );
 }

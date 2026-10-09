@@ -2,8 +2,8 @@
 """Build the brain's context pack (M3): one capped JSON document of DERIVED numbers and curated text.
 
 The brain reads only this pack and cites evidence by pack key (lowercase dot paths such as
-`market.nvda.setup`, `library.s-028:p02`, `people.calls.nvda`, `people.fund.berkshire-hathaway` or
-`outlook.next_earnings.nvda`). Numbers come from code; the pack carries no raw prices.
+`market.nvda.setup`, `library.s-028:p02`, `people.calls.nvda`, `people.fund.berkshire-hathaway`,
+`outlook.next_earnings.nvda` or `checklist.names.nvda`). Numbers come from code; the pack carries no raw prices.
 Fails closed when the pack is over `pack.token_cap` (settings).
 
 Usage: python3 scripts/build_pack.py [--out .cache/pack.json] [--data DIR] [--runs DIR]
@@ -132,6 +132,37 @@ def outlook_block(cfg: dict | None, on_list: set[str], today: str) -> dict:
     return {"note": OUTLOOK_NOTE, "next_earnings": nxt, "guidance": guid}
 
 
+CHECKLIST_NOTE = ("the household's eight-step video chart checklist, by code; unproven for us unless base_rates (in-sample, survivors) "
+                  "and forward show it; never the only reason for a pick. net: bullish minus bearish of seven steps; rsi: zone; ma20: "
+                  "side of the twenty-day average; rr_tp1: reward-to-risk to the first target; fits: rr_tp1 >= min_rr, needed for "
+                  "a new paper entry")
+CHECKLIST_NAMES_MAX = 40  # caps the block as the watchlist grows (the pack has a token cap)
+
+
+def checklist_block(doc: dict | None, on_list: set[str]) -> dict:
+    """Compact view of data/market/checklist.json, citable as checklist.names.<ticker>, checklist.base_rates and
+    checklist.forward (once a forward record has been scored). Empty on sample data or when the file does not exist yet."""
+    if not doc or doc.get("sample"):
+        return {}
+    names = {}
+    for r in doc["symbols"]:
+        if r["symbol"] in on_list and len(names) < CHECKLIST_NAMES_MAX:
+            names[r["symbol"].lower()] = {"verdict": r["score"]["verdict"], "net": r["score"]["net"], "rsi": r["rsi"]["zone"],
+                                          "trend": r["trend"]["direction"], "ma20": r["ma20"]["side"], "volume": r["volume"]["verdict"],
+                                          "rr_tp1": r1(r["risk_plan"]["rr_tp1"]), "fits": r["risk_plan"]["fits_house_rule"]}
+
+    def by_verdict(rows: list[dict]) -> dict:
+        return {x["verdict"]: {"n": x["n"], "mean": r1(x["mean"]), "ci": [r1(x["ci_low"]), r1(x["ci_high"])], "hit_pct": r1(x["hit_pct"])}
+                for x in rows}
+    br, fw = doc.get("base_rates"), doc["forward"]
+    out = {"note": CHECKLIST_NOTE, "as_of": doc["as_of"], "status": doc["status"], "min_rr": doc["house_rule"]["min_reward_to_risk"], "names": names}
+    if br:
+        out["base_rates"] = {"from": br["from"][:4], "to": br["to"][:4], "horizon_days": br["horizon_days"], "by_verdict": by_verdict(br["by_verdict"])}
+    if fw["scored_records"]:
+        out["forward"] = {"started": fw["started"], "scored_records": fw["scored_records"], "by_verdict": by_verdict(fw["by_verdict"])}
+    return out
+
+
 def build(data_dir: Path = DATA, runs_dir: Path = RUNS, today: str | None = None, outlook: dict | None = None) -> dict:
     st, wl = settings(), watchlist()
     kb = data_dir / "kb"
@@ -199,6 +230,8 @@ def build(data_dir: Path = DATA, runs_dir: Path = RUNS, today: str | None = None
                                load_json(CONFIG / "people.json") if (CONFIG / "people.json").exists() else None),
         "outlook": outlook_block(outlook if outlook is not None else (load_json(CONFIG / "outlook.json") if (CONFIG / "outlook.json").exists() else None),
                                  set(names), today),
+        "checklist": checklist_block(load_json(data_dir / "market" / "checklist.json") if (data_dir / "market" / "checklist.json").exists() else None,
+                                     set(names)),
         "recent_runs": recent,
     }
     return pack

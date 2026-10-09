@@ -262,7 +262,7 @@
         "instruments": {
           "type": "array",
           "maxItems": 20,
-          "description": "Context funds from config/watchlist.json context (fetched, never picked). change_1d_pct is the last close's move (absent in data written before it was added).",
+          "description": "Context funds from config/watchlist.json context (fetched, never picked). change_1d_pct is the last close's move (absent in data written before it was added). recent_days: the last 15 day moves (date, percent), oldest first, for the feed's past market days.",
           "items": {
             "type": "object",
             "additionalProperties": false,
@@ -301,6 +301,26 @@
               "from_high_pct": {
                 "type": "number",
                 "maximum": 0
+              },
+              "recent_days": {
+                "type": "array",
+                "maxItems": 30,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "date",
+                    "change_pct"
+                  ],
+                  "properties": {
+                    "date": {
+                      "$ref": "common.schema.json#/$defs/date"
+                    },
+                    "change_pct": {
+                      "type": "number"
+                    }
+                  }
+                }
               }
             }
           }

@@ -25,9 +25,11 @@ docs/        strategy.md, methodology.md (front matter: version, updated_at, cha
              guardrails.json, learnings.json (same three keys)
 config/      watchlist.json, settings.json, sources.json (connectors), routines.json (schedule),
              people.json (people we learn from, the research on following them, their dated public calls),
-             outlook.json (company outlook cards: latest quarter, guidance, next results date, what's next; linked)
+             outlook.json (company outlook cards: latest quarter, guidance, next results date, what's next; linked),
+             checklist.json (the eight-step technical checklist from the household's video: steps, parameters, house rule)
 schemas/     JSON Schemas for every file above, plus pick, run, outcome, prices, library
-data/        market/derived.json + longrun.json (returns only, no prices), portfolio/paper.json (forward record),
+data/        market/derived.json + longrun.json (returns only, no prices), market/checklist.json (the technical
+             checklist per name: percent distances, ratios and labels), portfolio/paper.json (forward record),
              kb/outcomes.json, kb/library.json, people/scores.json, ops/routine_runs.json
              (raw bars stay in git-ignored .cache/)
 runs/        run.<date>.json, one per run
@@ -86,6 +88,7 @@ It has no third-party runtime scripts or fonts: everything is bundled and served
 | score_picks | Mon–Fri 23:40 | `data/kb/outcomes.json` |
 | regime_monitor | Mon–Fri 23:40 | `data/kb/regime.json` |
 | score_people | Mon–Fri 23:40 | `data/people/scores.json` |
+| technical_checklist | Mon–Fri 23:40 | `data/market/checklist.json` |
 | calibration | 1st of month 13:00 | `data/kb/calibration.json` |
 
 It lints, commits the data to `main` and redeploys Pages. Lint fails if a GitHub Actions routine marked `active` in
@@ -169,6 +172,23 @@ Refresh after each earnings season, in a Claude Code session on this repo:
 2. Put the returned `companies` into `config/outlook.json` (bump `version`, set `updated_at` and `change_note`), then
    run `python3 scripts/lint.py` and `python3 -m unittest discover -s tests`.
 3. Open a pull request; a person reads the cards and merges.
+
+## Technical checklist (from the household's video)
+
+The household liked a trading video's eight-step checklist and asked to add it to how we invest. `config/checklist.json`
+holds the steps (candle pattern, trend, volume, the twenty-day average, gaps, support and resistance, RSI, and a risk plan
+with a stop and two targets set before entering), what each checks, how code computes it and its parameters. The routine
+`technical_checklist` (`routines_code.py checklist`) computes it for every name and the benchmark after each close and
+writes `data/market/checklist.json`: each step's lean, a verdict (lean up, mixed, lean down) with a plain-English line,
+what flipped since the day before, the last fifteen verdicts, and the risk plan as percent distances with its
+reward-to-risk. Levels, gaps, stops and targets are percent distances from the close, never prices; there are no
+five-minute candles (end-of-day data only).
+
+**House rule** (`docs/household.md`): before any new paper entry of a satellite name, the checklist is read, a written
+risk plan exists and reward-to-risk to the first target is at least 2. **Unproven for us**: the same file holds the
+checklist's history since 2017 (in-sample, on today's list of survivors, so flattering) and a forward record started on
+the day it was added. It never replaces the index core and is never the only reason for a pick
+(`docs/decisions.md`, 2026-10-09).
 
 ## Roadmap
 

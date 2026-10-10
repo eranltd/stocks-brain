@@ -91,6 +91,9 @@
   .btn { @apply inline-flex items-center gap-3 rounded-full border border-line-2 px-7 py-4 text-[17px] font-medium tracking-[-0.01em] transition duration-300 hover:-translate-y-0.5 hover:border-ink-3; }
   .btn-primary { @apply border-transparent bg-ink text-bg shadow-[0_18px_60px_-12px_rgb(255_255_255/0.25)]; }
   .num { font-variant-numeric: tabular-nums; }
+  /* "Top stocks" cards: one card and about a sixth of the next on a phone; two and a peek from tablet width. */
+  .top-card { width: calc((100% - 16px) / 1.15); }
+  @media (min-width: 48rem) { .top-card { width: calc((100% - 32px) / 2.15); } }
 
   /* corner brackets */
   .brackets { position: relative; }

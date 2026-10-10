@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { fmtDate, fmtPct } from "../lib/format.js";
 import { baseRateLine, edgeWords, fillNote, forwardWords, LEAN_TONE, riskPlan, rowFor, stepRows, VERDICT } from "../lib/checklist.js";
 import { ArrowRight, Reveal, Segmented } from "./ui.jsx";
@@ -6,7 +7,22 @@ import { CandlesView, useStoredChoice } from "./candles.jsx";
 /** The card's two views, remembered per device: the eight checks in words, or the same reading on candles. */
 export const CHECKLIST_VIEW_KEY = "sb:checklist-view";
 export const CHECKLIST_VIEWS = ["checks", "candles"];
-export const useChecklistView = () => useStoredChoice(CHECKLIST_VIEW_KEY, "checks", CHECKLIST_VIEWS);
+// A view asked for by another page before it opens a Stock page (the home's "See the candles"): taken once, on mount.
+let pendingView = null;
+export function requestChecklistView(v) {
+  if (CHECKLIST_VIEWS.includes(v)) pendingView = v;
+}
+export function useChecklistView() {
+  const [view, setView] = useStoredChoice(CHECKLIST_VIEW_KEY, "checks", CHECKLIST_VIEWS);
+  // Read during render, so the page and its card (both mount in one pass) each see the request.
+  const [asked] = useState(() => pendingView);
+  useEffect(() => {
+    if (!asked) return;
+    pendingView = null;
+    setView(asked);
+  }, [asked, setView]);
+  return [view, setView];
+}
 
 const TONE_TEXT = { accent: "text-accent", down: "text-down", flat: "text-ink-2" };
 const TONE_BG = { accent: "bg-accent", down: "bg-down", flat: "bg-flat" };

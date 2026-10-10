@@ -4,9 +4,39 @@ import { Sparkline } from "../components/charts.jsx";
 import { STATUS } from "../components/goal.jsx";
 import { Accent, Container, Reveal, SectionHead, Segmented, Strip } from "../components/ui.jsx";
 import { VerdictPill } from "../components/checklist.jsx";
+import { marketNote, NOT_YET, nounsFor } from "../lib/markets.js";
 
-export default function Watchlist({ data, go }) {
-  const { watchlist, prices, bench, settings, regime, livePrices, market, longrun, checklist } = data;
+/** The Stocks page: the chosen market's list (the header switch), or a calm line while it loads or before its numbers. */
+export default function Watchlist({ data, market: mk, go }) {
+  if (mk && !mk.isDefault && mk.state !== "ready") return <MarketWaitPage market={mk} />;
+  return <List data={mk && !mk.isDefault ? mk.data : data} go={go} />;
+}
+
+function MarketWaitPage({ market }) {
+  const label = market.entry?.label ?? market.id;
+  const note = marketNote(market.entry);
+  return (
+    <Container className="pt-20">
+      <SectionHead eyebrow={`Stocks · ${label}`} title={<>{label}: <Accent>{market.choices.find((c) => c.id === market.id)?.what ?? market.entry?.name}.</Accent></>} lede={note ?? undefined} />
+      <div className="card p-6 sm:p-8" role={market.state === "loading" ? "status" : undefined}>
+        {market.state === "loading" && <p className="text-[18px] text-ink-2">Loading {label}…</p>}
+        {market.state === "none" && <p className="text-[19px] leading-relaxed text-ink">{NOT_YET}</p>}
+        {market.state === "error" && (
+          <>
+            <p className="text-[18px] text-ink">{label} could not load just now.</p>
+            <button type="button" onClick={market.retry} className="btn mt-4 min-h-[52px] justify-center">Try again</button>
+          </>
+        )}
+      </div>
+    </Container>
+  );
+}
+
+function List({ data, go }) {
+  const { watchlist, prices, bench, settings, regime, livePrices, market, longrun, checklist, sectors } = data;
+  const entry = data.marketEntry ?? null;
+  const nouns = nounsFor(entry);
+  const note = marketNote(entry);
   const ruleOf = Object.fromEntries((longrun?.now.status ?? []).map((x) => [x.symbol, x.status]));
   // Technical checklist reading per name (unproven): null until the first daily run that computes it.
   const ckOf = useMemo(() => Object.fromEntries((checklist?.symbols ?? []).map((x) => [x.symbol, x.score])), [checklist]);
@@ -29,9 +59,9 @@ export default function Watchlist({ data, go }) {
   return (
     <Container className="pt-20">
       <SectionHead
-        eyebrow={`Watchlist · ${market.as_of ? fmtDate(market.as_of) : "no prices yet"} · ${livePrices ? `live · ${market.provider}` : "sample prices"}`}
-        title={<>{numWord(rows.length)} names, <Accent>one benchmark.</Accent></>}
-        lede={`${up} of ${rows.length} closed higher on the day. Lines show the last ${days} trading days indexed to 100. The site publishes returns, not raw prices (provider licence).`}
+        eyebrow={`${entry?.label ?? "Nasdaq"} · ${market.as_of ? fmtDate(market.as_of) : "no prices yet"} · ${livePrices ? `live · ${market.provider}` : "sample prices"}`}
+        title={<>{numWord(rows.length)} {nouns.many === "funds" ? "funds" : "names"}, <Accent>one benchmark.</Accent></>}
+        lede={`${note ? `${note} ` : ""}${up} of ${rows.length} closed higher on the day. Lines show the last ${days} trading days indexed to 100. The site publishes returns, not raw prices (provider licence).`}
         right={
           <Segmented
             label="Sort"
@@ -43,11 +73,11 @@ export default function Watchlist({ data, go }) {
       />
       {regime && <Regime regime={regime} above={rows.filter((r) => r.m?.above_sma50).length} total={rows.length} />}
       <div className="meta mb-3 hidden grid-cols-[minmax(150px,1.1fr)_minmax(140px,2fr)_minmax(100px,.8fr)_minmax(130px,.9fr)] gap-6 px-7 sm:grid">
-        <span>Name</span><span>{days} days, indexed</span><span className="text-right">Checks · checklist · rule</span><span className="text-right">Today</span>
+        <span>{nouns.many === "funds" ? "Fund · category" : "Name · sector"}</span><span>{days} days, indexed</span><span className="text-right">Checks · checklist · rule</span><span className="text-right">Today</span>
       </div>
       <div className="grid gap-3">
         <Row r={bm} i={0} bench go={go} />
-        {rows.map((r, i) => <Row key={r.symbol} r={r} i={i + 1} go={go} rule={ruleOf[r.symbol]} ck={r.ck} hasChecklist={Boolean(checklist)} />)}
+        {rows.map((r, i) => <Row key={r.symbol} r={r} i={i + 1} go={go} rule={ruleOf[r.symbol]} ck={r.ck} hasChecklist={Boolean(checklist)} group={sectors?.[r.symbol] ?? r.sector ?? r.category} />)}
       </div>
       <p className="meta mt-6 normal-case tracking-[0.04em]">
         {checklist
@@ -58,7 +88,7 @@ export default function Watchlist({ data, go }) {
   );
 }
 
-function Row({ r, i, bench = false, go, rule, ck, hasChecklist }) {
+function Row({ r, i, bench = false, go, rule, ck, hasChecklist, group = null }) {
   const m = r.m;
   const tone = (m?.ret_20d_pct ?? 0) < 0 ? "down" : "accent";
   return (
@@ -77,6 +107,7 @@ function Row({ r, i, bench = false, go, rule, ck, hasChecklist }) {
           {bench && <span className="pill hidden py-1 text-[11px] text-ink-3 sm:inline-flex">benchmark</span>}
         </div>
         <div className="truncate text-[13px] text-ink-3">{bench ? <span className="sm:hidden">Benchmark · </span> : null}{r.name}</div>
+        {group && <div className="truncate text-[12.5px] text-ink-3">{group}</div>}
       </div>
       <div className="row-span-2 sm:row-span-1">
         {m?.bars?.length > 1 ? <Sparkline bars={m.bars} tone={tone} delay={i * 60} indexed /> : <span className="meta">no data</span>}

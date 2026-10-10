@@ -1,7 +1,7 @@
 {
-  "version": "0.9.0",
+  "version": "0.10.0",
   "updated_at": "2026-10-10",
-  "change_note": "Technical checklist also publishes each name's indexed candles (percent from the last close, volume as a ratio) for the Stock page's chart.",
+  "change_note": "Other markets (TLV, iShares): their own fetch run three hours after the Nasdaq one, so each hour's requests stay within Tiingo's free plan; derived numbers, the checklist and candles per market.",
   "timezone": "UTC",
   "routines": [
     {
@@ -228,6 +228,49 @@
       ],
       "human_gate": false,
       "why": "The household's eight-step video checklist (candle, trend, volume, twenty-day average, gaps, levels, RSI, risk plan) for every name after each close, what flipped since yesterday, and how it did in history and forward. Unproven for us: measured, never trusted."
+    },
+    {
+      "id": "fetch_markets",
+      "name": "Fetch the other markets' prices",
+      "cadence": "daily",
+      "cron": "40 2 * * 2-6",
+      "runner": "github_actions",
+      "status": "active",
+      "milestone": "M4",
+      "uses_llm": false,
+      "max_cost_usd": 0,
+      "inputs": [
+        "prices",
+        "config/markets.json"
+      ],
+      "outputs": [
+        ".cache/prices (raw, never committed)"
+      ],
+      "human_gate": false,
+      "why": "Daily bars for the TLV and iShares lists and their benchmarks, three hours after the Nasdaq fetch so the two runs never share one hour of the provider's request cap. Each market is written only if all its symbols pass."
+    },
+    {
+      "id": "market_lists",
+      "name": "Other markets: numbers and checklist",
+      "cadence": "daily",
+      "cron": "40 2 * * 2-6",
+      "runner": "github_actions",
+      "status": "active",
+      "milestone": "M4",
+      "uses_llm": false,
+      "max_cost_usd": 0,
+      "inputs": [
+        ".cache/prices (daily bars, never published)",
+        "config/markets.json",
+        "config/checklist.json"
+      ],
+      "outputs": [
+        "data/markets/<id>/derived.json",
+        "data/markets/<id>/checklist.json",
+        "data/markets/<id>/candles/<SYMBOL>.json"
+      ],
+      "human_gate": false,
+      "why": "The same derived numbers, technical checklist and candles as the Nasdaq list, for each other market against its own benchmark (EIS for TLV, SPY for iShares). A market that fails keeps yesterday's files; Nasdaq is never touched."
     },
     {
       "id": "news_social_digest",

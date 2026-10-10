@@ -1,0 +1,67 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-10-10",
+  "change_note": "Twelve Israeli companies through their US listings (Tiingo has no Tel Aviv data). GICS sectors from iShares holdings files of Oct 8, 2026 (EIS; IJH for Ormat).",
+  "symbols": [
+    {
+      "symbol": "TEVA",
+      "name": "Teva Pharmaceutical",
+      "sector": "Health Care"
+    },
+    {
+      "symbol": "NICE",
+      "name": "NICE",
+      "sector": "Information Technology"
+    },
+    {
+      "symbol": "CHKP",
+      "name": "Check Point Software",
+      "sector": "Information Technology"
+    },
+    {
+      "symbol": "ESLT",
+      "name": "Elbit Systems",
+      "sector": "Industrials"
+    },
+    {
+      "symbol": "TSEM",
+      "name": "Tower Semiconductor",
+      "sector": "Information Technology"
+    },
+    {
+      "symbol": "ICL",
+      "name": "ICL Group",
+      "sector": "Materials"
+    },
+    {
+      "symbol": "WIX",
+      "name": "Wix.com",
+      "sector": "Information Technology"
+    },
+    {
+      "symbol": "MNDY",
+      "name": "monday.com",
+      "sector": "Information Technology"
+    },
+    {
+      "symbol": "GLBE",
+      "name": "Global-e Online",
+      "sector": "Consumer Discretionary"
+    },
+    {
+      "symbol": "NVMI",
+      "name": "Nova",
+      "sector": "Information Technology"
+    },
+    {
+      "symbol": "CAMT",
+      "name": "Camtek",
+      "sector": "Information Technology"
+    },
+    {
+      "symbol": "ORA",
+      "name": "Ormat Technologies",
+      "sector": "Utilities"
+    }
+  ]
+}

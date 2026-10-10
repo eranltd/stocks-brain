@@ -1,7 +1,7 @@
 {
-  "version": "0.6.1",
-  "updated_at": "2026-10-04",
-  "change_note": "Portfolio rule: names need 5 years of history; the test window is the longest span they all cover.",
+  "version": "0.7.0",
+  "updated_at": "2026-10-10",
+  "change_note": "Price request budget: Tiingo's free plan allows 50 requests an hour, so each fetch run (Nasdaq, then the other markets hours later) may use at most 40.",
   "pack": {
     "token_cap": 12000,
     "recent_runs": 5,
@@ -29,7 +29,9 @@
   },
   "prices": {
     "provider": "tiingo",
-    "keep_days": 2600
+    "keep_days": 2600,
+    "requests_per_hour": 50,
+    "max_requests_per_run": 40
   },
   "lint": {
     "max_file_kb": 512,

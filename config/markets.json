@@ -1,0 +1,41 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-10-10",
+  "change_note": "Two more markets for the header switch: Israeli companies through their US listings (against EIS) and a menu of iShares index funds (against SPY). Nasdaq stays the default and the only market the brain, rules, paper and people read.",
+  "default": "nasdaq",
+  "markets": [
+    {
+      "id": "nasdaq",
+      "label": "Nasdaq",
+      "name": "US leaders",
+      "kind": "stocks",
+      "watchlist": "config/watchlist.json",
+      "benchmark": "QQQ",
+      "benchmark_label": "Nasdaq-100 (QQQ proxy)",
+      "data": "data/market",
+      "note": "The main list: the brain, the rules, the paper portfolio and the people's scores all read this market only."
+    },
+    {
+      "id": "tlv",
+      "label": "TLV",
+      "name": "Israeli companies (US listings)",
+      "kind": "stocks",
+      "watchlist": "config/watchlists/tlv.json",
+      "benchmark": "EIS",
+      "benchmark_label": "Israel stock market (EIS proxy)",
+      "data": "data/markets/tlv",
+      "note": "Israeli companies that also trade in the US; Tel Aviv-only names are not covered by our data provider"
+    },
+    {
+      "id": "ishares",
+      "label": "iShares",
+      "name": "iShares index funds",
+      "kind": "funds",
+      "watchlist": "config/watchlists/ishares.json",
+      "benchmark": "SPY",
+      "benchmark_label": "S&P 500 (SPY proxy)",
+      "data": "data/markets/ishares",
+      "note": "A menu of broad iShares index funds, each measured against the S&P 500."
+    }
+  ]
+}

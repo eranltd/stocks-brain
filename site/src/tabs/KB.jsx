@@ -84,7 +84,7 @@ export default function KB({ data, query, setQuery, go }) {
           <div className="eyebrow mb-2">Library and claims</div>
           <p className="text-ink-2">Lessons from books and videos, plus dated claims, now live in Insights.</p>
         </div>
-        <button type="button" onClick={() => go("insights")} className="btn">Open Insights <ArrowRight /></button>
+        <button type="button" onClick={() => go("insights")} className="btn">Open Lessons <ArrowRight /></button>
       </Reveal>
     </Container>
   );

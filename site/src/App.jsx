@@ -1,8 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
-import { loadAll, loadManifest } from "./lib/data.js";
+import { loadAll, loadManifest, loadMarket } from "./lib/data.js";
+import { hashFor, parseHash } from "./lib/nav.js";
+import { DEFAULT_MARKET, defaultId, marketData, nasdaqData, pickMarket, switchChoices } from "./lib/markets.js";
 import { newerBundle } from "./lib/appversion.js";
-import { Field, Footer, Header, Loader, MobileNav } from "./components/shell.jsx";
+import { Field, Footer, Header, Loader, MobileNav, PageIntro } from "./components/shell.jsx";
 import { Container } from "./components/ui.jsx";
 import Today from "./tabs/Today.jsx";
 import Details from "./tabs/Details.jsx";
@@ -20,40 +22,26 @@ import HowItWorks from "./tabs/HowItWorks.jsx";
 import Admin from "./tabs/Admin.jsx";
 import Stock from "./tabs/Stock.jsx";
 
-const TABS = [
-  { id: "today", label: "Today", C: Today },
-  { id: "details", label: "Full dashboard", C: Details },
-  { id: "portfolio", label: "Portfolio", C: Portfolio },
-  { id: "playbook", label: "Playbook", C: Playbook },
-  { id: "people", label: "People", C: People },
-  { id: "watchlist", label: "Watchlist", C: Watchlist },
-  { id: "track", label: "Track record", C: TrackRecord },
-  { id: "kb", label: "KB", C: KB },
-  { id: "insights", label: "Insights", C: Insights },
-  { id: "learnings", label: "Learnings", C: Learnings },
-  { id: "runs", label: "Runs", C: Runs },
-  { id: "routines", label: "Routines", C: Routines },
-  { id: "how", label: "How it works", C: HowItWorks },
-  { id: "admin", label: "Admin", C: Admin },
-];
-// Tabs that show synthetic data until the brain (M3) produces real picks.
+// Every page by its route. The menu (three subjects and their pages) lives in lib/nav.js; routes stay as they were, so
+// old links (#insights, #playbook) still open the right page. Routes: a page id, or "stock/<SYMBOL>" for a stock page,
+// with "?m=<market>" when a market other than the default is chosen (#today?m=tlv).
+const PAGES = {
+  today: Today, details: Details, portfolio: Portfolio, playbook: Playbook, people: People, watchlist: Watchlist, track: TrackRecord,
+  kb: KB, insights: Insights, learnings: Learnings, runs: Runs, routines: Routines, how: HowItWorks, admin: Admin,
+};
+// Pages that show synthetic data until the brain (M3) produces real picks.
 const SAMPLE_TABS = ["track", "kb", "learnings", "runs"];
-// Routes: a tab id, or "stock/<SYMBOL>" for a stock page.
 // While the page is open, re-check the manifest this often (and when the tab comes back into view, at most once a minute).
 const POLL_MS = 10 * 60 * 1000;
 const FOCUS_MIN_MS = 60 * 1000;
-
-const fromHash = () => {
-  const h = decodeURIComponent(window.location.hash.replace("#", ""));
-  if (/^stock\/[A-Z][A-Z0-9.\-]{0,9}$/.test(h)) return h;
-  return TABS.some((t) => t.id === h) ? h : "today";
-};
 
 export default function App() {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [progress, setProgress] = useState(0);
-  const [tab, setTab] = useState(fromHash);
+  const [tab, setTab] = useState(() => parseHash(window.location.hash).route);
+  // The market the header switch shows: the hash's (a shared link) or the default, for this visit only.
+  const [wanted, setWanted] = useState(() => parseHash(window.location.hash).market);
   const [query, setQuery] = useState("");
   const [theme, setTheme] = useState(() => document.documentElement.dataset.theme || "dark");
   // Live: {checkedAt, checking, fresh (new data just loaded), reload (new data is out but could not be loaded in place)}.
@@ -115,23 +103,71 @@ export default function App() {
     return () => { clearInterval(id); document.removeEventListener("visibilitychange", back); window.removeEventListener("focus", back); };
   }, [checkNow]);
 
-  const go = useCallback((id) => {
-    if (id === tab) return;
+  const markets = data?.markets ?? null;
+  const defId = markets ? defaultId(markets) : DEFAULT_MARKET;
+  const marketId = markets ? pickMarket(markets, wanted) : (wanted ?? DEFAULT_MARKET);
+
+  // Open a route in a market (the current one unless given); the hash keeps both so the link opens the same view.
+  const navigate = useCallback((id, mk = marketId) => {
+    if (id === tab && mk === marketId) return;
     const swap = () => {
       setTab(id);
-      if (window.location.hash !== `#${id}`) history.pushState(null, "", `#${id}`);
+      setWanted(mk);
+      const h = hashFor(id, mk, defId);
+      if (window.location.hash !== h) history.pushState(null, "", h);
       window.scrollTo({ top: 0, behavior: "instant" });
     };
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (document.startViewTransition && !reduced) document.startViewTransition(() => flushSync(swap));
+    if (document.startViewTransition && !reduced && id !== tab) document.startViewTransition(() => flushSync(swap));
     else swap();
-  }, [tab]);
+  }, [tab, marketId, defId]);
+  const go = useCallback((id) => navigate(id), [navigate]);
+
+  // The switch: stay on the page, except a stock page, which belongs to its own market (open the new market's list).
+  const chooseMarket = useCallback((id) => {
+    if (tab.startsWith("stock/")) { navigate("watchlist", id); return; }
+    setWanted(id);
+    history.replaceState(null, "", hashFor(tab, id, defId));
+  }, [tab, navigate, defId]);
+  // A stock page opened for a symbol of another market moves the switch to that market (no new history entry).
+  const adoptMarket = useCallback((id) => {
+    setWanted(id);
+    history.replaceState(null, "", hashFor(tab, id, defId));
+  }, [tab, defId]);
 
   useEffect(() => {
-    const on = () => setTab(fromHash());
+    const on = () => { const h = parseHash(window.location.hash); setTab(h.route); setWanted(h.market); };
     window.addEventListener("popstate", on);
     return () => window.removeEventListener("popstate", on);
   }, []);
+
+  // The default market's data is loadAll's (outlook cut to its list); another market's view is fetched on first use.
+  const base = useMemo(() => nasdaqData(data), [data]);
+  const [other, setOther] = useState({ key: null, state: "loading", view: null });
+  const [attempt, setAttempt] = useState(0);
+  const otherKey = data && marketId !== defId ? `${data.manifest.built_at}|${marketId}|${attempt}` : null;
+  useEffect(() => {
+    if (!otherKey) return;
+    let live = true;
+    setOther({ key: otherKey, state: "loading", view: null });
+    loadMarket(data.manifest, marketId, data).then(
+      (view) => live && setOther({ key: otherKey, state: view.available ? "ready" : "none", view }),
+      () => live && setOther({ key: otherKey, state: "error", view: null }),
+    );
+    return () => { live = false; };
+  }, [otherKey]);
+  const otherData = useMemo(() => (other.view ? marketData(base, other.view) : null), [base, other.view]);
+  const market = useMemo(() => {
+    if (!data) return null;
+    const entry = data.markets.find((m) => m.id === marketId) ?? null;
+    const isDefault = marketId === defId;
+    const st = isDefault ? { state: entry?.available === false ? "none" : "ready", data: base }
+      : other.key === otherKey ? { state: other.state, data: otherData } : { state: "loading", data: null };
+    return {
+      id: marketId, entry, isDefault, defaultId: defId, choices: switchChoices(data.markets), ...st,
+      choose: chooseMarket, adopt: adoptMarket, retry: () => setAttempt((n) => n + 1),
+    };
+  }, [data, marketId, defId, base, other, otherKey, otherData, chooseMarket, adoptMarket]);
 
   const toggleTheme = () => {
     const next = theme === "dark" ? "light" : "dark";
@@ -142,15 +178,16 @@ export default function App() {
 
   const openKB = (q) => { setQuery(q); go("kb"); };
   const symbol = tab.startsWith("stock/") ? tab.slice(6) : null;
-  const navTab = symbol ? "watchlist" : tab;
-  const Active = symbol ? Stock : TABS.find((t) => t.id === tab).C;
+  const Active = symbol ? Stock : PAGES[tab];
+  const intro = !symbol && tab !== "today";
+  const sampleRoutes = data?.sample ? SAMPLE_TABS : [];
 
   return (
     <>
       <Field />
       <Loader progress={progress} done={Boolean(data || error)} />
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-lg focus:bg-ink focus:px-3 focus:py-2 focus:text-bg">Skip to content</a>
-      <Header tabs={TABS} active={navTab} onNav={go} sample={data?.sample} livePrices={data?.livePrices} theme={theme} onTheme={toggleTheme} />
+      <Header route={tab} onNav={go} sample={data?.sample} livePrices={data?.livePrices} theme={theme} onTheme={toggleTheme} market={market} sampleRoutes={sampleRoutes} />
       <main id="main" className="relative min-h-[70vh] [view-transition-name:main]">
         {error && (
           <Container className="py-24">
@@ -161,7 +198,13 @@ export default function App() {
             </div>
           </Container>
         )}
-        {data && <Active key={tab} data={data} go={go} query={query} setQuery={setQuery} openKB={openKB} symbol={symbol} live={live} checkNow={checkNow} />}
+        {data && intro && <PageIntro route={tab} market={market} />}
+        {data && (
+          // Under the page's own heading line the page starts closer to the top.
+          <div className={intro ? "[&>*:first-child]:pt-10" : ""}>
+            <Active key={tab} data={base} market={market} go={go} query={query} setQuery={setQuery} openKB={openKB} symbol={symbol} live={live} checkNow={checkNow} />
+          </div>
+        )}
       </main>
       {data && <Footer data={data} />}
       {update && (
@@ -171,7 +214,7 @@ export default function App() {
           <span className="block text-ink-2">Tap here to update</span>
         </button>
       )}
-      <MobileNav tabs={TABS} active={navTab} onNav={go} sampleTabs={data?.sample ? SAMPLE_TABS : []} />
+      <MobileNav route={tab} onNav={go} sampleRoutes={sampleRoutes} />
     </>
   );
 }

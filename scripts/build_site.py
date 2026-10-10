@@ -31,11 +31,16 @@ def main() -> int:
     ap.add_argument("--skip-lint", action="store_true")
     args = ap.parse_args()
 
+    # The other markets' files are linted softly: a market with a problem is left out of the site (manifest derived: null)
+    # instead of stopping the whole build; everything else still fails closed.
+    bad_markets: set[str] = set()
     if not args.skip_lint:
         import lint
-        if lint.Lint().run() != 0:
+        lt = lint.Lint(soft_markets=True)
+        if lt.run() != 0:
             print("build_site: lint failed; not exporting", file=sys.stderr)
             return 1
+        bad_markets = lt.bad_markets
 
     # Each dataset goes live on its own: prices can be real while picks are still samples.
     def pick(has_live: bool) -> str:
@@ -133,6 +138,7 @@ def main() -> int:
                 for sym, cdoc in routines_code.candle_files(charts)[0].items():
                     dump_json(OUT / "market" / "candles" / f"{sym}.json", cdoc, compact=True)
                     candles[sym] = f"market/candles/{sym}.json"
+    markets = export_markets(args.source, price_source, st, checklist, candles, skip=bad_markets)
     kb = {}
     # Curated knowledge (library, observations) is always the real file once it has content.
     def curated(name: str, key: str) -> Path:
@@ -146,7 +152,8 @@ def main() -> int:
             kb[name] = f"kb/{name}.json"
     cfg_docs = ("watchlist", "settings", "sources", "routines", *(("rules",) if (CONFIG / "rules.json").exists() else ()),
                 *(("people",) if people_cfg.exists() else ()), *(("outlook",) if (CONFIG / "outlook.json").exists() else ()),
-                *(("checklist",) if checklist_cfg.exists() else ()))
+                *(("checklist",) if checklist_cfg.exists() else ()), *(("markets",) if (CONFIG / "markets.json").exists() else ()),
+                *(("funds",) if (CONFIG / "funds.json").exists() else ()))
     for name in cfg_docs:
         _copy(CONFIG / f"{name}.json", OUT / "config" / f"{name}.json")
 
@@ -187,11 +194,73 @@ def main() -> int:
         "people_scores": people_scores,
         "checklist": checklist,
         "candles": candles or None,
+        "markets": markets,
         "kb": kb,
         "docs": docs,
     })
     print(f"build_site: picks {source}, prices {price_source} (derived), {len(runs)} runs -> {OUT}")
     return 0
+
+
+def export_markets(source_arg: str, price_source: str, st: dict, checklist: str | None, candles: dict[str, str],
+                   skip: set[str] = frozenset()) -> dict | None:
+    """manifest.markets: {id: {label, name, note, kind, benchmark, benchmark_label, default, sample, derived, checklist,
+    candles: {SYMBOL: path} | None, watchlist}} in config/markets.json order, or None without that file.
+
+    The default market points at the files exported above (market/...). Each other market goes live on its own when
+    data/markets/<id>/derived.json exists, and follows the same rule as the main prices otherwise: sample numbers are
+    computed from the synthetic bars only when the main prices are samples too (never sample numbers next to live
+    prices), so a market with no live data yet has derived: null. A market in `skip` (its published files failed lint)
+    is exported with derived: null too. Its watchlist is copied to config/watchlists/."""
+    from _common import ROOT, market_watchlist, markets_config
+    if not (CONFIG / "markets.json").exists():
+        return None
+    import routines_code
+    mc = markets_config()
+    cfg = routines_code.checklist_config()
+    out: dict = {}
+    for m in mc["markets"]:
+        base = {k: m[k] for k in ("label", "name", "note", "kind", "benchmark", "benchmark_label")}
+        if m["id"] == mc["default"]:
+            out[m["id"]] = {**base, "default": True, "sample": price_source == "sample", "derived": "market/derived.json",
+                            "checklist": checklist, "candles": candles or None, "watchlist": "config/watchlist.json"}
+            continue
+        wl_path = f"config/watchlists/{m['id']}.json"
+        _copy(ROOT / m["watchlist"], OUT / wl_path)
+        live_dir = ROOT / m["data"]
+        src = source_arg if source_arg != "auto" else ("live" if (live_dir / "derived.json").exists() else price_source)
+        entry = {**base, "default": False, "sample": src == "sample", "derived": None, "checklist": None, "candles": None,
+                 "watchlist": wl_path}
+        rel = f"markets/{m['id']}"
+        if m["id"] in skip:
+            print(f"build_site: market {m['id']} left out (its published files failed lint; see the warnings)", file=sys.stderr)
+        elif src == "live" and (live_dir / "derived.json").exists():
+            _copy(live_dir / "derived.json", OUT / rel / "derived.json")
+            entry["derived"] = f"{rel}/derived.json"
+            if (live_dir / "checklist.json").exists():
+                _copy(live_dir / "checklist.json", OUT / rel / "checklist.json")
+                entry["checklist"] = f"{rel}/checklist.json"
+                on_list = {s["symbol"] for s in market_watchlist(m)["symbols"]} | {m["benchmark"]}
+                files = {p.stem: p for p in sorted((live_dir / "candles").glob("*.json")) if p.stem in on_list}
+                for sym, p in files.items():
+                    _copy(p, OUT / rel / "candles" / p.name)
+                entry["candles"] = {sym: f"{rel}/candles/{sym}.json" for sym in files} or None
+        elif src == "sample":
+            try:
+                res = routines_code.compute_market(m, SAMPLES / "prices", st, cfg, sample=True, provider="sample")
+            except SystemExit as exc:  # e.g. sample bars not generated for a new market yet: the market shows no data
+                print(f"build_site: no sample data for market {m['id']}: {exc}", file=sys.stderr)
+            else:
+                dump_json(OUT / rel / "derived.json", res["derived"], compact=True)
+                entry["derived"] = f"{rel}/derived.json"
+                if res["checklist"]:
+                    dump_json(OUT / rel / "checklist.json", res["checklist"], compact=True)
+                    entry["checklist"] = f"{rel}/checklist.json"
+                    for sym, doc in res["candles"].items():
+                        dump_json(OUT / rel / "candles" / f"{sym}.json", doc, compact=True)
+                    entry["candles"] = {sym: f"{rel}/candles/{sym}.json" for sym in res["candles"]} or None
+        out[m["id"]] = entry
+    return out
 
 
 def _copy(src: Path, dst: Path) -> None:

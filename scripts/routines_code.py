@@ -3,7 +3,8 @@
 long-run portfolio statistics, the forward-only paper portfolio, the forward ledger of every rule and the scores of
 the public calls of the people we learn from.
 
-Usage: python3 scripts/routines_code.py derive|score|regime|calibration|longrun|paper|rules|ledger|people|checklist|all
+Usage: python3 scripts/routines_code.py derive|score|regime|calibration|longrun|paper|rules|ledger|people|checklist|markets|all
+`markets` runs in its own Action run (after the markets fetch) and writes data/markets/<id>/ only.
 Each step reads public data, computes with plain arithmetic, validates against its schema,
 and writes under data/kb/. Rules are documented in docs/methodology.md.
 """
@@ -18,7 +19,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _common import CONFIG, DATA, DOCS, KB, MARKET, PRICES, RUNS, Validator, dump_json, load_json, parse_front_matter, settings, watchlist  # noqa: E402
+from _common import CONFIG, DATA, DOCS, KB, MARKET, PRICES, ROOT as ROOT_DIR, RUNS, Validator, dump_json, load_json, parse_front_matter, settings, watchlist  # noqa: E402
 import scoring  # noqa: E402
 
 TODAY = datetime.now(timezone.utc).date().isoformat()
@@ -188,13 +189,14 @@ def _pct(a: float, b: float) -> float:
 RECENT_DAYS = 15  # past day moves kept per context fund (the feed's past market days)
 
 
-def compute_derived(prices_dir: Path, st: dict, wl: dict, sample: bool, provider: str) -> dict:
+def compute_derived(prices_dir: Path, st: dict, wl: dict, sample: bool, provider: str, bench: str | None = None) -> dict:
     """Public, non-redistributive view of the market: returns, distances, risk, setup checks,
-    base rates and market context. No absolute prices leave this function."""
+    base rates and market context. No absolute prices leave this function. `bench` is the market's benchmark
+    (config/markets.json); the default is the main list's (settings scoring.benchmark)."""
     import market as mk
-    bench = st["scoring"]["benchmark"]["symbol"]
+    bench = bench or st["scoring"]["benchmark"]["symbol"]
     spark_n, series_n = st["site"]["sparkline_days"], st["site"]["series_days"]
-    members = [s["symbol"] for s in wl["symbols"]]
+    members = [s["symbol"] for s in wl["symbols"] if s["symbol"] != bench]
     context = wl.get("context", [])
     raw = {sym: _bars(prices_dir, sym) for sym in {*members, bench, *(c["symbol"] for c in context)}}
     bb = raw[bench]
@@ -877,24 +879,25 @@ def forward_problems(fw) -> list[str]:
 
 
 def compute_checklist(prices_dir: Path, st: dict, wl: dict, cfg: dict, sample: bool, provider: str,
-                      prev: dict | None = None) -> dict | None:
+                      prev: dict | None = None, bench: str | None = None) -> dict | None:
     """The technical checklist for every watchlist name and the benchmark at the last close, what flipped since the day
     before, the last `history_days` verdicts, the history base rates and the forward record. Derived numbers only."""
-    return checklist_and_candles(prices_dir, st, wl, cfg, sample, provider, prev)[0]
+    return checklist_and_candles(prices_dir, st, wl, cfg, sample, provider, prev, bench)[0]
 
 
 def checklist_and_candles(prices_dir: Path, st: dict, wl: dict, cfg: dict, sample: bool, provider: str,
-                          prev: dict | None = None) -> tuple[dict | None, dict[str, dict]]:
+                          prev: dict | None = None, bench: str | None = None) -> tuple[dict | None, dict[str, dict]]:
     """compute_checklist's document and, from the same bars on the same run, each checked symbol's indexed candles
-    (market.candles: {symbol, as_of, sample, basis, daily, weekly, overlays}), whose overlays are that day's checklist."""
+    (market.candles: {symbol, as_of, sample, basis, daily, weekly, overlays}), whose overlays are that day's checklist.
+    `bench` as in compute_derived (a market's benchmark; the main list's by default)."""
     import market as mk
     P, house = checklist_params(cfg)
     measure = cfg["measure"]
-    bench = st["scoring"]["benchmark"]["symbol"]
-    members = [s["symbol"] for s in wl["symbols"]]
+    bench = bench or st["scoring"]["benchmark"]["symbol"]
+    members = [s["symbol"] for s in wl["symbols"] if s["symbol"] != bench]
     raw = {s: _bars(prices_dir, s) for s in {*members, bench}}
     if not raw[bench]:
-        return None
+        return None, {}
     series = align_bars_tail({s: b for s, b in raw.items() if b}, [b["date"] for b in raw[bench]])
     warm, hist = mk.checklist_warmup(P), measure["history_days"]
     rows, skipped, preps, charts = [], [], {}, {}
@@ -952,23 +955,39 @@ def write_candles(out_dir: Path, docs: dict[str, dict]) -> None:
         dump_json(out_dir / f"{sym}.json", doc, compact=True)
 
 
-def run_checklist() -> None:
+def published_forward(path: Path) -> dict | None:
+    """The forward record of a published checklist file, or None when there is none yet. The record is append-only: an
+    unreadable one stops the run instead of starting over."""
+    if not path.exists():
+        return None
+    prev = load_json(path).get("forward")
+    bad = forward_problems(prev)
+    if bad:
+        raise SystemExit(f"checklist: the published forward record in {path.name} is unreadable, so it would be lost "
+                         f"(nothing written): {bad[:3]}")
+    return prev
+
+
+def checklist_config() -> dict | None:
+    """config/checklist.json, schema-checked, or None when the file does not exist."""
     cfg_path = CONFIG / "checklist.json"
     if not cfg_path.exists():
-        print("checklist: no config/checklist.json, nothing to compute")
-        return
+        return None
     cfg = load_json(cfg_path)
     errs = Validator().validate(cfg, "checklist_config.schema.json")
     if errs:
         raise SystemExit(f"checklist: config/checklist.json fails its schema (nothing written): {errs[:5]}")
+    return cfg
+
+
+def run_checklist() -> None:
+    cfg = checklist_config()
+    if cfg is None:
+        print("checklist: no config/checklist.json, nothing to compute")
+        return
     st = settings()
     path = MARKET / "checklist.json"
-    prev = None
-    if path.exists():  # the forward record is append-only: an unreadable record stops the run instead of starting over
-        prev = load_json(path).get("forward")
-        bad = forward_problems(prev)
-        if bad:
-            raise SystemExit(f"checklist: the published forward record is unreadable, so it would be lost (nothing written): {bad[:3]}")
+    prev = published_forward(path)
     doc, charts = checklist_and_candles(PRICES, st, watchlist(), cfg, sample=False, provider=st["prices"]["provider"], prev=prev)
     if not doc:
         raise SystemExit("checklist: no benchmark prices in .cache/prices (run fetch_prices first)")
@@ -983,14 +1002,86 @@ def run_checklist() -> None:
           + (f"; history {br['from']}..{br['to']} n={br['all']['n']}" if br else ""))
 
 
+# ------------------------------------------------------- other markets
+
+def compute_market(m: dict, prices_dir: Path, st: dict, cfg: dict | None, sample: bool, provider: str,
+                   prev_forward: dict | None = None, wl: dict | None = None) -> dict:
+    """One non-default market of config/markets.json: the same derived numbers, checklist and candles as the main list,
+    against the market's own benchmark. Returns {"derived", "checklist" (None without config/checklist.json),
+    "candles": {symbol: doc}, "refused": [...]}; raises SystemExit when the market cannot be published today.
+    Every symbol of the list and the benchmark must have bars (the markets fetch writes a market only when all of
+    them passed), so a half-fetched market is never published."""
+    from _common import market_symbols, market_watchlist
+    wl = wl or market_watchlist(m)
+    missing = [s for s in market_symbols(m, wl) if not (prices_dir / f"{s}.json").exists()]
+    if missing:
+        raise SystemExit(f"{m['id']}: no prices for {missing} (its fetch failed or did not run); nothing written")
+    bench = m["benchmark"]
+    derived = compute_derived(prices_dir, st, wl, sample=sample, provider=provider, bench=bench)
+    if not derived["symbols"]:
+        raise SystemExit(f"{m['id']}: too little history for the benchmark {bench}; nothing written")
+    errs = Validator().validate(derived, "derived.schema.json")
+    if errs:
+        raise SystemExit(f"{m['id']}: derived.json fails its schema (nothing written): {errs[:5]}")
+    out = {"derived": derived, "checklist": None, "candles": {}, "refused": []}
+    if cfg is not None:
+        doc, charts = checklist_and_candles(prices_dir, st, wl, cfg, sample=sample, provider=provider, prev=prev_forward, bench=bench)
+        if not doc:
+            raise SystemExit(f"{m['id']}: the checklist could not be computed for the benchmark {bench}; nothing written")
+        errs = Validator().validate(doc, "checklist.schema.json")
+        if errs:
+            raise SystemExit(f"{m['id']}: checklist.json fails its schema (nothing written): {errs[:5]}")
+        if doc["as_of"] != derived["as_of"]:
+            raise SystemExit(f"{m['id']}: checklist as of {doc['as_of']} but derived as of {derived['as_of']}; nothing written")
+        out["checklist"] = doc
+        out["candles"], out["refused"] = candle_files(charts)
+    return out
+
+
+def publish_market(m: dict, prices_dir: Path, st: dict, cfg: dict | None, provider: str) -> dict:
+    """Compute one market in full, then write its files under m["data"] (derived.json, checklist.json, candles/).
+    Nothing is written unless everything computed and passed its schema."""
+    out_dir = ROOT_DIR / m["data"]
+    res = compute_market(m, prices_dir, st, cfg, sample=False, provider=provider,
+                         prev_forward=published_forward(out_dir / "checklist.json") if cfg is not None else None)
+    dump_json(out_dir / "derived.json", res["derived"], compact=True)
+    if res["checklist"] is not None:
+        dump_json(out_dir / "checklist.json", res["checklist"], compact=True)
+        write_candles(out_dir / "candles", res["candles"])
+    return res
+
+
+def run_markets() -> None:
+    """Every non-default market, each on its own: a market that fails is logged and keeps yesterday's files, the others
+    are still published, and the main list's files (data/market/) are never touched. Exit 1 if any market failed."""
+    from _common import other_markets
+    st = settings()
+    cfg = checklist_config()
+    failed = []
+    for m in other_markets():
+        try:
+            res = publish_market(m, PRICES, st, cfg, provider=st["prices"]["provider"])
+        except (SystemExit, Exception) as exc:  # noqa: BLE001  (fail closed per market)
+            failed.append(m["id"])
+            print(f"markets: {m['id']} FAILED, its published files are unchanged: {exc}", file=sys.stderr)
+            continue
+        d, cl = res["derived"], res["checklist"]
+        print(f"markets: {m['id']} vs {m['benchmark']}: {len(d['symbols'])} symbols as of {d['as_of']}, "
+              f"breadth {d['breadth_above_sma50_pct']}% above 50-day"
+              + (f"; checklist {len(cl['symbols'])} symbols, skipped {cl['skipped']}; {len(res['candles'])} candles file(s)" if cl else "")
+              + (f"; candles refused {res['refused']}" if res["refused"] else ""))
+    if failed:
+        raise SystemExit(f"markets: failed {failed} (the others were published)")
+
+
 STEPS = {"derive": run_derive, "score": run_score, "regime": run_regime, "calibration": run_calibration,
          "longrun": run_longrun, "paper": run_paper, "rules": run_rules, "ledger": run_ledger, "people": run_people,
-         "checklist": run_checklist}
+         "checklist": run_checklist, "markets": run_markets}
 
 if __name__ == "__main__":
     which = sys.argv[1] if len(sys.argv) > 1 else "all"
     if which not in (*STEPS, "all"):
         raise SystemExit(f"usage: routines_code.py {'|'.join(STEPS)}|all")
     for name, fn in STEPS.items():
-        if which in (name, "all"):
+        if which == name or (which == "all" and name != "markets"):  # the other markets have their own run
             fn()

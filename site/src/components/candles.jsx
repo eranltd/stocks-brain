@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { loadCandles } from "../lib/data.js";
+import { loadMarketCandles } from "../lib/data.js";
 import { fmtDate } from "../lib/format.js";
 import { useReducedMotion } from "../lib/motion.js";
 import {
@@ -55,12 +55,13 @@ export function CandlesView({ data, symbol, row, cfg }) {
   useEffect(() => {
     let live = true;
     setState({ status: "loading", doc: null });
-    loadCandles(data.manifest, symbol).then(
+    // The market the page's data belongs to (lib/markets.js marketData); the default market's own files otherwise.
+    loadMarketCandles(data.manifest, data.marketId ?? "nasdaq", symbol).then(
       (doc) => live && setState({ status: doc ? "ok" : "none", doc }),
       () => live && setState({ status: "error", doc: null }),
     );
     return () => { live = false; };
-  }, [data.manifest, symbol, attempt]);
+  }, [data.manifest, data.marketId, symbol, attempt]);
   const [range, setRange] = useStoredChoice("sb:candles-range", "3m", RANGE_VALUES);
   const [off, setOff] = useState(readOff);
   const on = useMemo(() => Object.fromEntries(Object.keys(ALL_ON).map((k) => [k, !off.includes(k)])), [off]);

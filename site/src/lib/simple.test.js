@@ -71,6 +71,15 @@ test("the market sentence: the day, our companies and the mood, in words", () =>
   assert.equal(old.more, "It is close to its high for the year, and the mood is steady.");
   assert.equal(marketWords(day({ spx: null, bench: null, counted: 0 }), null, TODAY).main, "Our benchmark's last close was yesterday.");
   assert.match(marketWords(null, null, TODAY).main, /after the next daily run/);
+  // another market: its benchmark in words, its own noun, and its benchmark's distance from the high
+  const tlv = marketWords(day({ spx: null, bench: { label: "Israel stock market (EIS proxy)", pct: 0.8 }, rose: 9, fell: 3, counted: 12 }), null, TODAY, { who: "The Israeli market", noun: "companies", fromHigh: -1 });
+  assert.equal(tlv.main, "The Israeli market rose yesterday, and most of our companies rose.");
+  assert.equal(tlv.more, "It is close to its high for the year.");
+  const funds = marketWords(day({ spx: null, bench: { label: "S&P 500 (SPY proxy)", pct: -0.3 }, rose: 2, fell: 7, counted: 9 }), null, TODAY, { who: "The US market", noun: "funds", fromHigh: -15 });
+  assert.equal(funds.main, "The US market slipped yesterday, and most of our funds fell.");
+  assert.equal(funds.more, "It is well below its high for the year.");
+  assert.equal(marketWords(day({ spx: null, bench: { pct: 0.05 }, rose: 4, fell: 4, counted: 9 }), null, TODAY, { who: "The US market", noun: "funds" }).main, "The US market barely moved yesterday, and our funds were split.");
+  for (const x of [tlv, funds]) { noDigits(x.main); noDigits(x.more); }
   for (const x of [w, agree, flat, old]) { noDigits(x.main); noDigits(x.more); }
 });
 

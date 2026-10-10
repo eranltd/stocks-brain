@@ -59,6 +59,52 @@ def watchlist() -> dict:
     return load_json(CONFIG / "watchlist.json")
 
 
+# ------------------------------------------------------------------ markets
+# config/markets.json: the lists the header switch shows. The default market is the main list (config/watchlist.json,
+# data/market/), read by every routine; the others get derived numbers, the checklist and candles only, under
+# data/markets/<id>/, from their own fetch run (Tiingo's free plan allows 50 requests an hour; docs/decisions.md).
+
+def markets_config() -> dict:
+    return load_json(CONFIG / "markets.json")
+
+
+def other_markets(mc: dict | None = None) -> list[dict]:
+    """Every market but the default, in config order."""
+    mc = mc or markets_config()
+    return [m for m in mc["markets"] if m["id"] != mc["default"]]
+
+
+def market_watchlist(m: dict) -> dict:
+    return load_json(ROOT / m["watchlist"])
+
+
+def market_symbols(m: dict, wl: dict | None = None) -> list[str]:
+    """A market's list and its benchmark, in order, once each."""
+    wl = wl or market_watchlist(m)
+    return list(dict.fromkeys([*(s["symbol"] for s in wl["symbols"]), m["benchmark"]]))
+
+
+def default_fetch_symbols(st: dict, wl: dict) -> list[str]:
+    """The main daily run's fetch: the watchlist, the benchmark and the market-context instruments (fetched, never picked)."""
+    out = [s["symbol"] for s in wl["symbols"]]
+    bench = st["scoring"]["benchmark"]["symbol"]
+    out += [bench] if bench not in out else []
+    return out + [c["symbol"] for c in wl.get("context", []) if c["symbol"] not in out]
+
+
+def fetch_plan(st: dict | None = None, wl: dict | None = None, mc: dict | None = None) -> dict[str, dict[str, list[str]]]:
+    """{scope: {market id: symbols}} for the two fetch runs: "nasdaq" (the default market, with its context instruments)
+    and "markets" (every other market, list plus benchmark). One request per unique symbol in a scope."""
+    st, wl, mc = st or settings(), wl or watchlist(), mc or markets_config()
+    return {"nasdaq": {mc["default"]: default_fetch_symbols(st, wl)},
+            "markets": {m["id"]: market_symbols(m) for m in other_markets(mc)}}
+
+
+def scope_symbols(plan_scope: dict[str, list[str]]) -> list[str]:
+    """The unique symbols of one fetch scope, in first-seen order (shared symbols are fetched once)."""
+    return list(dict.fromkeys(s for syms in plan_scope.values() for s in syms))
+
+
 # --------------------------------------------------------------------------- docs
 
 _FRONT = re.compile(r"\A---\n(.*?)\n---\n", re.S)

@@ -6,6 +6,8 @@ name: daily
 on:
   schedule:
     - cron: "40 23 * * 1-5"   # fetch_prices, score_picks, regime_monitor, ..., score_people, technical_checklist (after the US close)
+    - cron: "40 2 * * 2-6"    # fetch_markets, market_lists: the other markets (TLV, iShares), three hours later so the
+                              # two fetches never share one hour of Tiingo's free-plan cap (50 requests an hour)
     - cron: "0 13 1 * *"      # calibration
   workflow_dispatch:
     inputs:
@@ -13,6 +15,11 @@ on:
         description: "Fetch and validate only; write and commit nothing"
         type: boolean
         default: true
+      scope:
+        description: "nasdaq: the main list and every routine; markets: the other markets (TLV, iShares) only. Leave an hour between the two."
+        type: choice
+        options: [nasdaq, markets]
+        default: nasdaq
 
 permissions:
   contents: write
@@ -28,6 +35,8 @@ jobs:
     env:
       MONTHLY: ${{ github.event.schedule == '0 13 1 * *' }}
       DRY: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+      # The other markets' run touches data/markets/ only; every Nasdaq step below is skipped in it.
+      MARKETS: ${{ github.event.schedule == '40 2 * * 2-6' || (github.event_name == 'workflow_dispatch' && inputs.scope == 'markets') }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -42,68 +51,87 @@ jobs:
 
       - name: Fetch prices (all-or-nothing)
         id: fetch_prices
-        if: env.MONTHLY != 'true'
+        if: env.MONTHLY != 'true' && env.MARKETS != 'true'
         env:
           TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
-        run: python3 scripts/fetch_prices.py ${{ env.DRY == 'true' && '--dry-run' || '' }}
+        run: python3 scripts/fetch_prices.py --scope nasdaq ${{ env.DRY == 'true' && '--dry-run' || '' }}
 
       - name: Derive public market numbers (no raw prices)
         id: derive_market
-        if: env.MONTHLY != 'true' && env.DRY != 'true'
+        if: env.MONTHLY != 'true' && env.MARKETS != 'true' && env.DRY != 'true'
         run: python3 scripts/routines_code.py derive
 
       - name: Score matured picks
         id: score_picks
-        if: env.MONTHLY != 'true' && env.DRY != 'true'
+        if: env.MONTHLY != 'true' && env.MARKETS != 'true' && env.DRY != 'true'
         run: python3 scripts/routines_code.py score
 
       - name: Regime monitor
         id: regime_monitor
-        if: env.MONTHLY != 'true' && env.DRY != 'true'
+        if: env.MONTHLY != 'true' && env.MARKETS != 'true' && env.DRY != 'true'
         run: python3 scripts/routines_code.py regime
 
       - name: Goal check and portfolio rule
         id: portfolio_rule
-        if: env.MONTHLY != 'true' && env.DRY != 'true'
+        if: env.MONTHLY != 'true' && env.MARKETS != 'true' && env.DRY != 'true'
         run: python3 scripts/routines_code.py longrun
 
       - name: Paper portfolio (forward only)
         id: paper_portfolio
-        if: env.MONTHLY != 'true' && env.DRY != 'true'
+        if: env.MONTHLY != 'true' && env.MARKETS != 'true' && env.DRY != 'true'
         run: python3 scripts/routines_code.py paper
 
       - name: Rule backtests (derived numbers only)
         id: rule_backtests
-        if: env.MONTHLY != 'true' && env.DRY != 'true'
+        if: env.MONTHLY != 'true' && env.MARKETS != 'true' && env.DRY != 'true'
         continue-on-error: true  # research step: a failure is logged but must not discard the day's market data
         run: python3 scripts/routines_code.py rules
 
       - name: Forward ledger of every rule
         id: rule_ledger
-        if: env.MONTHLY != 'true' && env.DRY != 'true'
+        if: env.MONTHLY != 'true' && env.MARKETS != 'true' && env.DRY != 'true'
         continue-on-error: true  # research step: a failure is logged but must not discard the day's market data
         run: python3 scripts/routines_code.py ledger
 
       - name: Score people's public calls (derived numbers only)
         id: score_people
-        if: env.MONTHLY != 'true' && env.DRY != 'true'
+        if: env.MONTHLY != 'true' && env.MARKETS != 'true' && env.DRY != 'true'
         continue-on-error: true  # research step: a failure is logged but must not discard the day's market data
         run: python3 scripts/routines_code.py people
 
       - name: Technical checklist (derived numbers only)
         id: technical_checklist
-        if: env.MONTHLY != 'true' && env.DRY != 'true'
+        if: env.MONTHLY != 'true' && env.MARKETS != 'true' && env.DRY != 'true'
         continue-on-error: true  # research step: a failure is logged but must not discard the day's market data
         run: python3 scripts/routines_code.py checklist
 
       - name: Calibration
         id: calibration
-        if: env.DRY != 'true' && (env.MONTHLY == 'true' || github.event_name == 'workflow_dispatch')
+        if: env.DRY != 'true' && env.MARKETS != 'true' && (env.MONTHLY == 'true' || github.event_name == 'workflow_dispatch')
         run: python3 scripts/routines_code.py calibration
 
+      # The other markets (config/markets.json): fail closed per market. The fetch writes only the markets whose every
+      # symbol passed (exit 1 if one failed, logged); the next step publishes each market that has all its prices and
+      # leaves a failed market's files as they were. Neither step reads or writes data/market/.
+      - name: Fetch the other markets' prices (per market)
+        id: fetch_markets
+        if: env.MARKETS == 'true'
+        continue-on-error: true  # a failed market is logged; the markets that passed are still published
+        env:
+          TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
+        run: python3 scripts/fetch_prices.py --scope markets ${{ env.DRY == 'true' && '--dry-run' || '' }}
+
+      - name: Other markets' numbers, checklist and candles (derived only)
+        id: market_lists
+        if: env.MARKETS == 'true' && env.DRY != 'true'
+        continue-on-error: true  # same: one market's failure keeps its old files and never stops the others
+        run: python3 scripts/routines_code.py markets
+
+      # The Nasdaq run never writes data/markets/, so a problem there is a warning in it and cannot discard the day's
+      # main data; the markets run lints everything strictly.
       - name: Lint (fails closed)
         id: lint
-        run: python3 scripts/lint.py
+        run: python3 scripts/lint.py ${{ env.MARKETS != 'true' && '--soft-markets' || '' }}
 
       # Always record the run (even on failure). Only data that passed lint is committed.
       - name: Record run and publish to the data branch
@@ -121,6 +149,8 @@ jobs:
           ROUTINE_SCORE_PEOPLE: ${{ steps.score_people.outcome }}
           ROUTINE_TECHNICAL_CHECKLIST: ${{ steps.technical_checklist.outcome }}
           ROUTINE_CALIBRATION: ${{ steps.calibration.outcome }}
+          ROUTINE_FETCH_MARKETS: ${{ steps.fetch_markets.outcome }}
+          ROUTINE_MARKET_LISTS: ${{ steps.market_lists.outcome }}
           ROUTINE_LINT: ${{ steps.lint.outcome }}
         run: |
           if [ "${{ steps.lint.outcome }}" != "success" ]; then bash scripts/data_branch.sh reset "${{ steps.restore.outputs.base }}"; fi

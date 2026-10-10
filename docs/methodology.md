@@ -1,14 +1,15 @@
 ---
-version: 0.12.0
-updated_at: 2026-10-09
-change_note: Technical checklist (the eight steps from the household's video), computed daily, measured in history and forward; a written risk plan with reward-to-risk of at least 2 before any new paper entry.
+version: 0.13.0
+updated_at: 2026-10-10
+change_note: Markets - two more lists (Israeli companies through their US listings against EIS, iShares index funds against SPY) get the same derived numbers, checklist and candles from their own fetch run; everything else stays Nasdaq-only.
 ---
 # Methodology
 
 ## Daily pipeline
 1. **fetch_prices**: the provider adapter (Tiingo, split/dividend-adjusted end-of-day bars) writes `.cache/prices/<SYMBOL>.json` (git-ignored; raw bars are never committed).
    Each fetch re-pulls the whole kept window, so stored history is adjusted consistently.
-   All symbols must fetch and validate, or nothing is written.
+   All symbols must fetch and validate, or nothing is written. This run (`--scope nasdaq`) fetches the Nasdaq list, its
+   benchmark and the market-context funds; the other markets have their own run (see Markets).
 2. **build_pack**: docs, derived market numbers, people's calls, the outlook cards' dates and recent runs go into one JSON pack. The run stops if the pack exceeds `pack.token_cap`.
 3. **brain** (routine `close_run`): a scheduled Claude Code session on the household's Claude subscription, Tuesday to
    Saturday at 05:23 UTC and again at 11:23 UTC in case the data run was late (after the Monday to Friday closes are
@@ -46,6 +47,34 @@ versions used, and the picks. The git history of the `data` branch is the audit 
 Code is on `main`, which requires pull requests. Everything the routines write (`data/` and `runs/`) is published to the
 `data` branch by `scripts/data_branch.sh`, with full history and no force pushes. Each run restores the published data,
 works on it, and publishes it back only if lint passes; the Pages build overlays it on `main` before exporting the site.
+
+## Markets (code only)
+`config/markets.json` lists the markets the header switch shows. Nasdaq (`config/watchlist.json`, benchmark QQQ) is the
+default and the only market the brain, scoring, the regime monitor, the goal check, the portfolio rule, the paper
+portfolio, the rule backtests and the people's scores read; its files stay in `data/market/`.
+- **TLV** (`config/watchlists/tlv.json`): Israeli companies through their US listings, in dollars, against EIS. Tiingo
+  has no Tel Aviv data, so Tel Aviv-only names (the banks, insurers and property companies among them) are not covered.
+- **iShares** (`config/watchlists/ishares.json`, kind `funds`): broad iShares index funds against SPY. Each fund has a
+  plain category instead of a GICS sector; its card (`config/funds.json`) says what it holds, the index it follows and
+  its yearly cost, from the fund's own page.
+
+For each other market, `routines_code.py markets` writes under `data/markets/<id>/` the same three files as Nasdaq,
+computed by the same functions with the market's list and benchmark as parameters:
+`derived.json` (day moves, returns, distances, setup checks, risk, the move against the market's benchmark, indexed
+lines, breadth and base rates; no market-context block), `checklist.json` (the technical checklist, its history base
+rates and its own forward record) and `candles/<SYMBOL>.json`. The benchmark is shown beside the list, never counted in
+it, and may sit on another market's list (EIS is TLV's benchmark and an iShares fund).
+
+**Fetch budget.** One request per unique symbol. Tiingo's free plan allows 50 requests an hour (`prices.requests_per_hour`).
+The Nasdaq run needs 28 and the other markets 22 (EIS fetched once), so they run three hours apart (23:40 and 02:40
+UTC), each capped at `prices.max_requests_per_run` (40) requests including retries; the run logs how many it used. Lint
+fails if a run's unique symbols exceed the cap, the cap is not below the hourly limit, or the two runs start less than
+two hours apart.
+
+**Fail closed per market.** A market's prices are written only if all its symbols passed; its files only if all of them
+computed and passed their schemas, with `derived.json` and `checklist.json` as of the same day. A failed market keeps
+its previous files and the other markets still publish. The Nasdaq run lints `data/markets/` as warnings only (it
+never writes there), and the site leaves out a market whose files fail lint.
 
 ## Regime (code only)
 Computed daily from benchmark closes; parameters live in `config/settings.json` under `regime`.

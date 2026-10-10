@@ -1,7 +1,7 @@
 {
-  "version": "1.3.0",
-  "updated_at": "2026-10-09",
-  "change_note": "Each card gains a plain one-sentence summary with no numbers, for the simple home page and the one-stock brief; the research itself is unchanged.",
+  "version": "1.4.0",
+  "updated_at": "2026-10-10",
+  "change_note": "Cards for the twelve Israeli companies of the TLV market (US listings), researched on 10 Oct 2026, re-checked by a second reader, written in plain words and linked to each company's filings or newswire releases.",
   "purpose": "What's next for each company on our list: its latest quarter, what it says about the coming one, when it next reports and what is coming up. Context for the household, researched from the companies' own releases and filings.",
   "how_to_read": [
     "What a company says about its future is its own statement, not a forecast we endorse.",
@@ -1447,6 +1447,830 @@
         {
           "item": "Guidance for Q3 adjusted profit per share growth of 6-8% is below Q2's 10%. The Q2 reported operating margin was 27.5%, 0.6 points lower than a year earlier.",
           "source_url": "https://www.sec.gov/Archives/edgar/data/1707925/000165495426007052/lin_ex991.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "TEVA",
+      "name": "Teva Pharmaceutical Industries Ltd.",
+      "as_of": "2026-10-10",
+      "business": "Makes generic (copycat) medicines sold worldwide and a growing group of its own brand drugs: AUSTEDO (movement disorders), AJOVY (migraine prevention) and UZEDY (schizophrenia), plus copies of biotech drugs and new medicines in development.",
+      "plain": "Teva: its newer brand drugs keep growing while old generics shrink; it raised its sales goal for the year and reports again in early November.",
+      "latest": {
+        "period": "Q2 2026 (quarter ended 30 Jun 2026)",
+        "reported_on": "2026-07-29",
+        "revenue": "$4,142 million",
+        "revenue_growth_yoy_pct": -1,
+        "highlights": [
+          "AUSTEDO $696M (+40% in local currency), AJOVY $244M (+56%), UZEDY $77M (+43%). Total sales fell 1% (3% in local currency) as US sales of generic lenalidomide dropped.",
+          "Gross margin 52.0% (50.3% a year earlier). Net loss of $576M ($0.49 a share), after $726M of costs tied to buying Emalex Biosciences.",
+          "Adjusted profit per share, which leaves out some one-off items, was $0.02 against $0.66 a year earlier; it includes a $0.61 a share hit from the Emalex deal."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0000818686/000117184326004974/exh_991.htm"
+      },
+      "guidance": {
+        "given": true,
+        "period": "Full year 2026 (updated 29 Jul 2026)",
+        "text": "Revenue goal raised to $16.5-16.85B. AUSTEDO raised to $2.45-2.60B, AJOVY to $850-870M and UZEDY to $270-290M. Adjusted profit per share of $1.91-2.11 (absorbing $0.66 of Emalex costs) and free cash flow of $2.0-2.4B unchanged.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0000818686/000117184326004974/exh_991.htm"
+      },
+      "next_earnings": {
+        "date": "2026-11-03",
+        "confirmed": true,
+        "note": "Teva announced on 23 Sep 2026 that it will release Q3 results at 7:00 a.m. ET, followed by a call at 8:00 a.m. ET.",
+        "source_url": "https://www.globenewswire.com/news-release/2026/09/23/3367868/0/en/teva-to-host-conference-call-to-discuss-third-quarter-2026-financial-results-on-november-3-2026-at-8-a-m-et.html"
+      },
+      "whats_next": [
+        {
+          "item": "Teva's shares began trading directly on the NYSE under the same TEVA symbol, replacing its American depositary shares one for one.",
+          "when": "14 Sep 2026",
+          "kind": "finance",
+          "status": "done",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000818686/000119312526390562/d503082d8k.htm"
+        },
+        {
+          "item": "Bought Emalex Biosciences for about $700M in cash, gaining ecopipam, a Tourette syndrome drug; Teva asked the FDA to approve it in June 2026.",
+          "when": "Q2 2026",
+          "kind": "deal",
+          "status": "done",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000818686/000117184326004974/exh_991.htm"
+        },
+        {
+          "item": "Plans a US launch of its once-monthly olanzapine shot for schizophrenia if the FDA approves it; Europe's drug regulator accepted the filing in May 2026.",
+          "when": "Q4 2026 (planned)",
+          "kind": "regulatory",
+          "status": "ahead",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000818686/000117184326004974/exh_991.htm"
+        },
+        {
+          "item": "Expects to start a mid-stage (Phase 2) trial of an experimental vitiligo drug, after encouraging early results.",
+          "when": "Q4 2026 (planned)",
+          "kind": "product",
+          "status": "ahead",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000818686/000117184326004974/exh_991.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "AUSTEDO is Teva's biggest brand drug. A lower Medicare price for it, set by the US government after talks with Teva, takes effect on 1 January 2027.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000818686/000119312526323619/d118828d10q.htm"
+        },
+        {
+          "item": "Generic drug sales fell 15% in local currency in Q2, mainly on lower US lenalidomide sales.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000818686/000117184326004974/exh_991.htm"
+        },
+        {
+          "item": "Teva has staff, plants and research sites in Israel. It says the Middle East conflicts have had no material effect so far, but lists the war involving Iran among its risks.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000818686/000119312526323619/d118828d10q.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "NICE",
+      "name": "NICE Ltd. (NiCE)",
+      "as_of": "2026-10-10",
+      "business": "Sells cloud software for customer-service centers (the CXone Mpower platform and Cognigy AI agents), software that fights financial crime and checks compliance (Actimize), and tools for public safety agencies.",
+      "plain": "NiCE: cloud and AI sales keep growing but profit margins slipped; it raised its profit goal for the year and has not yet set its next report date.",
+      "latest": {
+        "period": "Q2 2026 (quarter ended 30 Jun 2026)",
+        "reported_on": "2026-08-05",
+        "revenue": "$782.3 million",
+        "revenue_growth_yoy_pct": 7.6,
+        "highlights": [
+          "Cloud revenue $609.0M, up 12.6% and about 78% of sales. Total revenue beat the top of its own forecast range, and new cloud contracts set a record for a second quarter.",
+          "Yearly subscription revenue from AI products reached $362M, about 15% of cloud revenue, after a record quarter for new AI contracts.",
+          "Adjusted operating margin 25.3% (30.2% a year earlier); reported 13.3% (22.1%). Profit per share $1.40 (from $2.96), or $2.70 adjusted (from $3.01)."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0001003935/000117891326003846/exhibit_99-1.htm"
+      },
+      "guidance": {
+        "given": true,
+        "period": "Q3 2026 and full year 2026 (given 5 Aug 2026)",
+        "text": "Q3: revenue $780-790M and adjusted profit per share $2.73-2.83. Full year: revenue $3,170-3,190M (reiterated), cloud revenue growth of 13-15%, and adjusted profit per share raised to $11.06-11.26.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0001003935/000117891326003846/exhibit_99-1.htm"
+      },
+      "next_earnings": {
+        "date": null,
+        "confirmed": false,
+        "note": "Not yet announced. Last year's Q3 report came on 13 Nov 2025.",
+        "source_url": null
+      },
+      "whats_next": [
+        {
+          "item": "Cognigy, the conversational-AI company NiCE bought in 2025, is now built natively into the CXone platform.",
+          "when": "By Aug 2026",
+          "kind": "product",
+          "status": "done",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001003935/000117891326003846/exhibit_99-1.htm"
+        },
+        {
+          "item": "Webcast its NiCE World 2026 Investor and Analyst Day for investors.",
+          "when": "9 Jun 2026",
+          "kind": "other",
+          "status": "done",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1003935/000117891326003436/exhibit_99-2.htm",
+          "date": "2026-06-09"
+        },
+        {
+          "item": "Spent $311.2M buying back its own shares in the first half of 2026 ($58.0M of it in Q2). It has no debt and $354.7M of cash and short-term investments.",
+          "when": "First half 2026",
+          "kind": "finance",
+          "status": "done",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001003935/000117891326003846/exhibit_99-1.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "Operating margins fell from a year earlier as sales, marketing and admin costs grew faster than revenue (about $294M against $235M). Whether margins recover matters for the raised profit goal.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001003935/000117891326003846/exhibit_99-1.htm"
+        },
+        {
+          "item": "Whether AI products keep growing fast enough to hold cloud growth at the 13-15% the company expects for 2026.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001003935/000117891326003846/exhibit_99-1.htm"
+        },
+        {
+          "item": "NiCE, an Israeli company, lists armed conflicts in the Middle East as a risk. It says their effect on demand for its products is hard to predict.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1003935/000100393526000010/nice-20251231.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "CHKP",
+      "name": "Check Point Software Technologies Ltd.",
+      "as_of": "2026-10-10",
+      "business": "Cybersecurity company selling network firewalls and security gateways, plus subscription security for cloud, email, workplaces and AI use. It protects more than one hundred thousand organizations worldwide.",
+      "plain": "Check Point: security subscriptions grew while firewall sales fell; it is adding salespeople and reports again in early November.",
+      "latest": {
+        "period": "Q2 2026 (quarter ended 30 Jun 2026)",
+        "reported_on": "2026-07-30",
+        "revenue": "$674 million",
+        "revenue_growth_yoy_pct": 1,
+        "highlights": [
+          "Security subscriptions $333M (+12%). Products and licenses $113.4M (from $131.9M a year earlier). Signed contracts not yet counted as revenue reached $2.6B, up 7%.",
+          "Adjusted operating margin 39%. Profit per share $1.87 (+2%), or $2.55 adjusted (+8%). A new Israeli tax incentive for research cut R&D costs by $28M.",
+          "Cash, securities and deposits of $4.2B (from $2.9B a year earlier), mostly from $2B of convertible bonds sold in Dec 2025. Bought back about 2.5M shares for about $325M in the quarter."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1015922/000117891326003696/zk2635799.htm"
+      },
+      "guidance": {
+        "given": false,
+        "period": "",
+        "text": "The results release has no forecast. Check Point gives its outlook only on the earnings call, and we found no written copy from the company to link.",
+        "source_url": null
+      },
+      "next_earnings": {
+        "date": "2026-11-02",
+        "confirmed": true,
+        "note": "Announced 1 Oct 2026: Q3 results come out before the US market opens, followed by a video call at 8:30 a.m. ET.",
+        "source_url": "https://www.prnewswire.com/news-releases/check-point-software-to-announce-2026-third-quarter-financial-results-on-november-2-2026-302895505.html"
+      },
+      "whats_next": [
+        {
+          "item": "Board added $2B to the company's ongoing share buyback program.",
+          "when": "11 May 2026",
+          "kind": "finance",
+          "status": "done",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1015922/000117891326003696/zk2635799.htm"
+        },
+        {
+          "item": "Sold $2B of convertible bonds due 2030 that pay no interest; after costs and related hedging trades it netted about $1.8B.",
+          "when": "Dec 2025",
+          "kind": "finance",
+          "status": "done",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1015922/000117891325004030/zk2534094.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "Product and license sales fell about 14% from a year earlier, so growth now leans on subscriptions.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1015922/000117891326003696/zk2635799.htm"
+        },
+        {
+          "item": "The CEO says the company is significantly expanding its sales force, a cost that comes before any added sales.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1015922/000117891326003696/zk2635799.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "ESLT",
+      "name": "Elbit Systems Ltd.",
+      "as_of": "2026-10-10",
+      "business": "Israeli defense-electronics maker of drones, munitions, rocket artillery (PULS), electronic warfare, command-and-control systems, radios and high-power lasers, sold to Israel's Ministry of Defense, Europe, the US and Asia-Pacific.",
+      "plain": "Elbit: orders from Europe pushed its order book to a record and sales grew fast; renewed fighting with Iran could disrupt work, and it pays a dividend this month.",
+      "latest": {
+        "period": "Q2 2026 (quarter ended 30 Jun 2026)",
+        "reported_on": "2026-08-11",
+        "revenue": "$2,287.1 million",
+        "revenue_growth_yoy_pct": 15.9,
+        "highlights": [
+          "Record backlog (orders signed, not yet delivered) of $32.0B, about 73% from outside Israel; about 42% is due in the rest of 2026 and 2027. The rise came mainly from European orders.",
+          "Operating margin 9.6% (8.0% a year earlier). Profit per share was $3.61, or $4.14 adjusted, up from $2.69 and $3.23.",
+          "Israel was 37% of revenue (34% a year earlier). Land sales rose 32% on munitions for Israel. Aerospace fell 8% on a one-time project mix and lower training-system sales in Europe."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1027664/000102766426000023/esltq220266k.htm"
+      },
+      "guidance": {
+        "given": false,
+        "period": "",
+        "text": "The results release gives no forecast for the year; Elbit's managers talk about the outlook only on the earnings call.",
+        "source_url": null
+      },
+      "next_earnings": {
+        "date": null,
+        "confirmed": false,
+        "note": "The company has not yet announced a Q3 results date. Last year's Q3 report came on 18 Nov 2025, with the date announced in late October.",
+        "source_url": null
+      },
+      "whats_next": [
+        {
+          "item": "Pays a dividend of $1.00 a share (record date 13 Oct); Israeli withholding tax of 16.8% is deducted.",
+          "when": "26 Oct 2026",
+          "kind": "finance",
+          "status": "ahead",
+          "date": "2026-10-26",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1027664/000102766426000023/esltq220266k.htm"
+        },
+        {
+          "item": "Filed a two-year shelf prospectus in Israel, a standing permit to raise debt or equity there later. It says it has not decided on any offering.",
+          "when": "18 Sep 2026",
+          "kind": "finance",
+          "status": "done",
+          "date": "2026-09-18",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1027664/000117891326004544/exhibit_1.htm"
+        },
+        {
+          "item": "Won a contract worth about $750M to supply PULS rocket artillery to Greece's armed forces over four years, working with local Greek industry.",
+          "when": "6 Apr 2026",
+          "kind": "deal",
+          "status": "done",
+          "date": "2026-04-06",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1027664/000117891326002010/exhibit_1.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "Elbit says a June US-Iran understanding collapsed in early July and fighting resumed. Disruptions to shipping, supplies, reserve call-ups and facilities eased after the ceasefires but could return.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1027664/000102766426000023/esltq220266k.htm"
+        },
+        {
+          "item": "The company flags limits some countries place on dealings with Israel as a constraint, while most of its backlog now comes from abroad.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1027664/000102766426000023/esltq220266k.htm"
+        },
+        {
+          "item": "It is spending more on production plants to add capacity, aiming to turn the record backlog into deliveries and cash.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1027664/000102766426000023/esltq220266k.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "TSEM",
+      "name": "Tower Semiconductor Ltd.",
+      "as_of": "2026-10-10",
+      "business": "Israeli contract chipmaker that builds specialty chips designed by other companies, such as chips that move data by light (silicon photonics) for data centers, plus radio, power and sensor chips, in factories in Israel, the US and Japan (and a shared one in Italy).",
+      "plain": "Tower: record sales led by light-based chips for AI data centers; it is adding factory space in Japan and expects another record quarter.",
+      "latest": {
+        "period": "Q2 2026 (quarter ended 30 Jun 2026)",
+        "reported_on": "2026-08-04",
+        "revenue": "$460.1 million",
+        "revenue_growth_yoy_pct": 23.6,
+        "highlights": [
+          "Gross profit $138M (vs $80M a year earlier); net profit $91M, or $0.79 a share (vs $47M and $0.41); cash from operations $177M against about $187M spent on plants and equipment.",
+          "Sales of light-based (silicon photonics) chips reached a $680M yearly pace, up from $180M a year earlier; it plans to pass a $1B yearly pace in Q4 2026.",
+          "Raised its 2028 target to $3.6B of revenue and $1.2B of net profit; the CEO says customers have already claimed the capacity behind it."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0000928876/000117891326003776/exhibit_99-1.htm"
+      },
+      "guidance": {
+        "given": true,
+        "period": "Q3 2026 (given 4 Aug 2026)",
+        "text": "Revenue of about $520M, plus or minus 5%, a company record; the midpoint is 31% above a year earlier and 13% above Q2. Also plans to pass a $1B yearly pace for light-based chip sales in Q4 2026.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0000928876/000117891326003776/exhibit_99-1.htm"
+      },
+      "next_earnings": {
+        "date": null,
+        "confirmed": false,
+        "note": "Not yet announced (no date in filings through 23 Sep 2026). For Q2, Tower announced the date about four weeks ahead (7 Jul for 4 Aug).",
+        "source_url": null
+      },
+      "whats_next": [
+        {
+          "item": "Announced a two-part Japan expansion, about $3B of its own money after $1B of Japanese government grants: converting its Arai site to make light-based chips on larger wafers, and a new factory next to Fab 7.",
+          "when": "Announced 14 Jul 2026; Arai ready Q4 2027",
+          "kind": "product",
+          "status": "ahead",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000928876/000117891326003477/zk2635682.htm"
+        },
+        {
+          "item": "With NewPhotonics, began high-volume shipments of chips with built-in lasers that link AI data-center machines by light; faster versions are due in volume in the first half of 2027.",
+          "when": "17 Sep 2026",
+          "kind": "product",
+          "status": "done",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/928876/000117891326004535/zk2636128.htm"
+        },
+        {
+          "item": "Holds its 2026 Technical Global Symposium in Santa Clara, California, with a CEO keynote on growth and strategy.",
+          "when": "17 Nov 2026",
+          "kind": "other",
+          "status": "ahead",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/928876/000117891326004559/zk2636140.htm"
+        },
+        {
+          "item": "Targets a yearly pace of light-based chip sales above $1B, up from $680M in Q2.",
+          "when": "Q4 2026 (target)",
+          "kind": "finance",
+          "status": "ahead",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000928876/000117891326003776/exhibit_99-1.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "Tower runs a fab in Migdal Haemek, Israel; it warns that hostilities, staff absences for military service and countries restricting business with Israeli firms could hurt operations.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000928876/000117891326003776/exhibit_99-1.htm"
+        },
+        {
+          "item": "Demand runs ahead of capacity; Tower took customer prepayments for light-based chip capacity and warns it may owe compensation, penalties or repayments if it cannot deliver.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000928876/000117891326003776/exhibit_99-1.htm"
+        },
+        {
+          "item": "Open disputes: Intel decided not to set aside agreed factory capacity to make wafers for Tower's customers, and GlobalFoundries is claiming patent infringement.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0000928876/000117891326003776/exhibit_99-1.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "ICL",
+      "name": "ICL Group Ltd.",
+      "as_of": "2026-10-10",
+      "business": "Israeli minerals and specialty-chemicals group: bromine-based industrial products such as flame retardants for electronics, potash and phosphate fertilizers mined at the Dead Sea and elsewhere, specialty plant nutrition and food ingredients.",
+      "plain": "ICL: higher bromine and potash prices lifted profit; it kept its yearly goal, started a cost-cutting plan and has not yet set its next report date.",
+      "latest": {
+        "period": "Q2 2026 (quarter ended 30 Jun 2026)",
+        "reported_on": "2026-08-05",
+        "revenue": "$2,135 million",
+        "revenue_growth_yoy_pct": 16.5,
+        "highlights": [
+          "Industrial Products core profit $130M (+88%) on higher bromine prices and electronics demand; Potash core profit $154M (+34%) on higher sales to China, India and Brazil.",
+          "Adjusted core profit (before interest, tax, depreciation and amortization) $448M versus $351M; net income $137M ($0.11 a share) versus $93M ($0.07); free cash flow $94M, up 34%.",
+          "Phosphate core profit nearly flat at $136M (vs $134M) as price rises offset higher sulfur and raw-material costs; Growing Solutions fell to $50M from $56M."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/941221/000117891326003801/zk2635826.htm"
+      },
+      "guidance": {
+        "given": true,
+        "period": "Full year 2026 (reiterated 5 Aug 2026)",
+        "text": "Adjusted core profit (before interest, tax, depreciation and amortization) of $1.5B to $1.7B and potash sales of 4.5 to 4.7 million metric tons, both kept.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/941221/000117891326003801/zk2635826.htm"
+      },
+      "next_earnings": {
+        "date": null,
+        "confirmed": false,
+        "note": "Not yet announced. ICL usually announces the call date a few weeks ahead; its Q3 2025 report came on 12 Nov 2025.",
+        "source_url": null
+      },
+      "whats_next": [
+        {
+          "item": "Paid a dividend of about 5.81 cents a share (about $75M in all) to holders of record on 2 Sep.",
+          "when": "16 Sep 2026",
+          "kind": "finance",
+          "status": "done",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/941221/000117891326003807/zk2635842.htm",
+          "date": "2026-09-16"
+        },
+        {
+          "item": "Its Elevate cost-cutting program began in Q3 2026; ICL expects more than $350M of yearly savings by the end of 2028, with significant savings starting in early 2027.",
+          "when": "Savings from early 2027",
+          "kind": "finance",
+          "status": "ahead",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/941221/000117891326003801/zk2635826.htm"
+        },
+        {
+          "item": "Switches to four reporting segments: Nutrition Solutions (new), Industrial Products, Growing Solutions and Essential Minerals (potash and phosphate).",
+          "when": "Start of 2027",
+          "kind": "other",
+          "status": "ahead",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/941221/000117891326003801/zk2635826.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "ICL lists its ability to win the new Dead Sea concession in 2030 as a key risk.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/941221/000117891326003801/zk2635826.htm"
+        },
+        {
+          "item": "Sulfur and other raw-material costs rose; in phosphate, higher selling prices only made up for them.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/941221/000117891326003801/zk2635826.htm"
+        },
+        {
+          "item": "ICL booked $15M in Q2 ($32M in the first half) of charges tied to the security situation in Israel, where its main mines and plants sit.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/941221/000117891326003801/zk2635826.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "WIX",
+      "name": "Wix.com Ltd.",
+      "as_of": "2026-10-10",
+      "business": "Website-building platform for small businesses, creators and agencies, earning from paid subscriptions and from payments and commerce tools, plus Base44, an AI tool bought in 2025 that builds apps from plain-language requests.",
+      "plain": "Wix: sales grew while it cut staff and bought back nearly a third of its shares partly with bank loans; it expects slower growth next quarter.",
+      "latest": {
+        "period": "Q2 2026 (quarter ended 30 Jun 2026)",
+        "reported_on": "2026-08-04",
+        "revenue": "$563.1 million",
+        "revenue_growth_yoy_pct": 14.9,
+        "highlights": [
+          "Sales signed in the quarter (bookings) $569.1M (+12%); Creative Subscriptions revenue $398.4M (+15%) and Business Solutions $164.7M (+14%); yearly subscription revenue $1.963B, up 15%.",
+          "Net loss $76.4M ($1.78 a share) after $27.1M of restructuring and $41.1M of acquisition-related costs; adjusted profit was $1.39 a share.",
+          "Free cash flow $52.6M ($61.2M before restructuring costs); Base44 launched Base 1, its own AI model, to control computing costs."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0001576789/000162828026052108/secondquarter2026results.htm"
+      },
+      "guidance": {
+        "given": true,
+        "period": "Q3 2026 and full year 2026 (given 4 Aug 2026)",
+        "text": "Q3 revenue growth at a low-double-digit percentage. Full year kept: revenue growth in the low to mid teens percent, growth in sales signed in the low teens, and free cash flow (before acquisition and restructuring costs) in the high teens as a share of revenue.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0001576789/000162828026052108/secondquarter2026results.htm"
+      },
+      "next_earnings": {
+        "date": null,
+        "confirmed": false,
+        "note": "Not yet announced. Last year Wix reported Q3 on 19 Nov 2025, after announcing the date in late October.",
+        "source_url": null
+      },
+      "whats_next": [
+        {
+          "item": "Bought back about 17.6M of its own shares, roughly 29.7% of all shares, for about $1.617B through an offer to all shareholders.",
+          "when": "3 Apr 2026",
+          "kind": "finance",
+          "status": "done",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1576789/000117891326001986/exhibit_99a-5d.htm"
+        },
+        {
+          "item": "Cut about 20% of staff (about 1,000 people), expecting about $150M of yearly cost savings; it lowered its growth goals for sales signed and revenue, citing a sharper slowdown in its Partners business.",
+          "when": "28 May 2026",
+          "kind": "other",
+          "status": "done",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001576789/000162828026041382/wix-6xkxjunereorganization.htm"
+        },
+        {
+          "item": "Expects Base44's adjusted gross margin to reach about 60%, from near zero entering 2026, and plans more Base44 marketing spend.",
+          "when": "Second half 2026",
+          "kind": "product",
+          "status": "ahead",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001576789/000162828026052108/secondquarter2026results.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "After the buyback, Wix carried $500M of bank loans (due within a year) plus $1.13B of convertible bonds at the end of June.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001576789/000162828026052108/secondquarter2026results.htm"
+        },
+        {
+          "item": "Growth in the Partners (agency) business slowed more than expected in the second half of May and early June, and growth in sales signed is expected to lag revenue.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001576789/000162828026041382/wix-6xkxjunereorganization.htm"
+        },
+        {
+          "item": "Wix lists the wars involving Israel, Hamas, Hezbollah, Iran and the Houthis as risks, and a stronger Israeli shekel is offsetting R&D savings from its reorganization.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001576789/000162828026052108/secondquarter2026results.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "MNDY",
+      "name": "monday.com Ltd.",
+      "as_of": "2026-10-10",
+      "business": "Israeli cloud software company whose platform teams use to plan and track work, run sales (CRM), customer service and software projects; it is refocusing the whole company on AI tools that also do the work.",
+      "plain": "monday.com: sales still grow but more slowly; it cut a fifth of its staff to focus on AI tools and expects slower growth next quarter.",
+      "latest": {
+        "period": "Q2 2026 (quarter ended 30 Jun 2026)",
+        "reported_on": "2026-08-10",
+        "revenue": "$364.6 million",
+        "revenue_growth_yoy_pct": 21.9,
+        "highlights": [
+          "Customers paying over $100K a year rose 37% to 2,019; existing customers spent 9% more than a year earlier; yearly subscription revenue from AI products doubled from Q1.",
+          "Adjusted operating profit $61.1M, a 17% margin (15% a year earlier); reported operating loss $1.5M, including a $21.4M write-down of Israeli office space.",
+          "Bought back about 2.33M shares for about $182M, using up its $870M buyback authorization; cash $853.4M plus $219.4M of marketable securities."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1845338/000117891326003971/exhibit_99-1.htm"
+      },
+      "guidance": {
+        "given": true,
+        "period": "Q3 2026 and full year 2026 (given 10 Aug 2026)",
+        "text": "Q3: revenue $368-370M (16-17% growth), adjusted operating profit $57-59M (about 16% margin). Full year: revenue $1,466-1,474M (19-20%), adjusted operating profit $230-234M (about 16% margin), adjusted free cash flow $280-290M. Assumes currency moves cut margins by 1-2 points.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1845338/000117891326003971/exhibit_99-1.htm"
+      },
+      "next_earnings": {
+        "date": null,
+        "confirmed": false,
+        "note": "Not yet announced. For Q2 the company announced its 10 Aug report date by press release on 20 Jul, about three weeks ahead.",
+        "source_url": null
+      },
+      "whats_next": [
+        {
+          "item": "Started a restructuring cutting about 20% of the workforce to focus on its AI work platform, with about $45-55M of net charges; it raised its yearly adjusted margin goal.",
+          "when": "22 Jul 2026",
+          "kind": "other",
+          "status": "done",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001845338/000117891326003553/zk2635715.htm"
+        },
+        {
+          "item": "Expects most restructuring charges to be booked, and the plan to be substantially complete, in the second half of 2026.",
+          "when": "Second half 2026",
+          "kind": "finance",
+          "status": "ahead",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001845338/000117891326003553/zk2635715.htm"
+        },
+        {
+          "item": "Completed its $870M share buyback program, with about $182M spent in Q2.",
+          "when": "Q2 2026",
+          "kind": "finance",
+          "status": "done",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1845338/000117891326003971/exhibit_99-1.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "Growth is slowing: it expects Q3 revenue growth of 16-17%, below Q2's 22%, which got about 1.1 points of help from currency.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1845338/000117891326003971/exhibit_99-1.htm"
+        },
+        {
+          "item": "Whether AI products keep growing fast enough to restore growth after the deep staff cuts.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1845338/000117891326003971/exhibit_99-1.htm"
+        },
+        {
+          "item": "Based in Tel Aviv, the company lists conflicts in the region and their escalation as a risk; currency moves also cut its Q2 adjusted margin by about 2.1 points.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1845338/000117891326003971/exhibit_99-1.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "GLBE",
+      "name": "Global-e Online Ltd.",
+      "as_of": "2026-10-10",
+      "business": "Israel-based platform that lets brands sell online directly to shoppers in other countries. It acts as the legal seller, with a local checkout, and handles shipping. Its revenue comes from service fees and fulfillment services.",
+      "plain": "Global-e: online sales through its platform kept growing fast, and it raised its yearly forecast after buying a shipping firm; its next report date is not set.",
+      "latest": {
+        "period": "Q2 2026 (three months ended Jun 30, 2026)",
+        "reported_on": "2026-08-12",
+        "revenue": "$299.0 million",
+        "revenue_growth_yoy_pct": 39,
+        "highlights": [
+          "The value of goods sold through its platform rose 44% from a year earlier to $2,089M; adjusted core profit (before interest, tax and depreciation) rose to $62.4M from $38.5M, a 20.9% margin.",
+          "Shopify Managed Markets 2.0 launched in Canada and the UK, its first markets beyond the US; remaining merchants moved off version 1.0.",
+          "Bought back $68M of shares in the quarter, completing the 2025 $200M plan; a new $500M plan was authorized on June 4, 2026."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1835963/000117891326004050/exhibit_99-1.htm"
+      },
+      "guidance": {
+        "given": true,
+        "period": "Q3 2026 and full year 2026",
+        "text": "Q3: goods sold through the platform $1,995-2,045M, revenue $308.5-315.5M, adjusted core profit $58.5-62.5M. Full year raised: goods sold $8,810-9,110M, revenue $1,305-1,355M, adjusted core profit $278-300M. Includes Passport: Q3 revenue $24-26M.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1835963/000117891326004050/exhibit_99-1.htm"
+      },
+      "next_earnings": {
+        "date": null,
+        "confirmed": false,
+        "note": "Not yet announced; its filings through 10 Oct 2026 name no date. Last year's Q3 results came out on 19 Nov 2025.",
+        "source_url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001835963&type=6-K&dateb=&owner=include&count=20"
+      },
+      "whats_next": [
+        {
+          "item": "Closed the acquisition of Passport Global, a US-based cross-border e-commerce logistics company. Total value $350M, paid in roughly equal parts cash and shares, plus up to $75M if Passport meets 2026 financial targets.",
+          "when": "2026-07-01",
+          "kind": "deal",
+          "status": "done",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001835963/000117891326003387/exhibit_99-1.htm"
+        },
+        {
+          "item": "Tomer Gold, head of its small-business and channel division, became chief revenue officer (head of sales), replacing Ran Fridman, who is leaving for a new opportunity.",
+          "when": "2026-10-01",
+          "kind": "other",
+          "status": "done",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1835963/000117891326004687/exhibit_99-1.htm"
+        },
+        {
+          "item": "Q3 2026 results, to be measured against its revenue forecast of $308.5-315.5M, the first full quarter including Passport.",
+          "when": "Date not announced (quarter ended Sep 30, 2026)",
+          "kind": "finance",
+          "status": "ahead",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1835963/000117891326004050/exhibit_99-1.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "The company lists risks from being incorporated and located in Israel, including the ongoing war and related hostilities.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1835963/000117891326004050/exhibit_99-1.htm"
+        },
+        {
+          "item": "Tariffs, trade rules and changes to customs or duty refund rules could affect the business; it also relies on shoppers being allowed to import goods for personal use.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1835963/000117891326004050/exhibit_99-1.htm"
+        },
+        {
+          "item": "Integrating Passport: the deal adds about $55-59M of revenue in the second half of 2026 but only about $3-4M of adjusted core profit.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1835963/000117891326004050/exhibit_99-1.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "NVMI",
+      "name": "Nova Ltd.",
+      "as_of": "2026-10-10",
+      "business": "Israel-based maker of measurement systems that chipmakers use to check and control their production steps, including for advanced logic, memory and advanced packaging chips.",
+      "plain": "Nova: the maker of tools that measure chips during production had a record quarter, expects more growth next quarter and approved a share buyback.",
+      "latest": {
+        "period": "Q2 2026 (three months ended Jun 30, 2026)",
+        "reported_on": "2026-08-06",
+        "revenue": "$255.0M",
+        "revenue_growth_yoy_pct": 16,
+        "highlights": [
+          "Record revenue, up 8% from Q1 2026 (Q2 2025: $220.0M); profit per share $2.20, or $2.51 adjusted.",
+          "Record revenue from advanced logic chips, tied to a new transistor design (Gate-All-Around), and record advanced packaging revenue as customers added logic and memory capacity.",
+          "Gross margin was 56.5%, against 57.7% in Q1 2026 and 57.8% in Q2 2025."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0001109345/000117891326003892/zk2635873.htm"
+      },
+      "guidance": {
+        "given": true,
+        "period": "Q3 2026 (quarter ending Sep 30, 2026)",
+        "text": "Revenue of $277M to $287M; profit per share of $2.46 to $2.61, or $2.70 to $2.85 adjusted.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0001109345/000117891326003892/zk2635873.htm"
+      },
+      "next_earnings": {
+        "date": null,
+        "confirmed": false,
+        "note": "Not yet announced; its latest filing (2 Sep 2026) was the buyback notice. Last year the Q3 date was announced on 15 Oct 2025.",
+        "source_url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001109345&type=6-K&dateb=&owner=include&count=20"
+      },
+      "whats_next": [
+        {
+          "item": "Board authorized repurchases of up to $200M of shares, funded from existing cash; the CEO said investing in the business and acquisitions remain the top priorities.",
+          "when": "2026-09-02",
+          "kind": "finance",
+          "status": "done",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1109345/000117891326004385/zk2636060.htm"
+        },
+        {
+          "item": "Q3 2026 results, to be measured against its revenue forecast of $277-287M.",
+          "when": "Date not announced (quarter ended Sep 30, 2026)",
+          "kind": "finance",
+          "status": "ahead",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001109345/000117891326003892/zk2635873.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "The company lists risks from conditions in Israel, including its conflicts with parties in the region.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001109345/000117891326003892/zk2635873.htm"
+        },
+        {
+          "item": "Export restrictions, sanctions, US trade policy, and doing business with China are named as risks that could restrict operations.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001109345/000117891326003892/zk2635873.htm"
+        },
+        {
+          "item": "Gross margin slipped to 56.5% from 57.7% in Q1 2026, even as revenue hit a record.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001109345/000117891326003892/zk2635873.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "CAMT",
+      "name": "Camtek Ltd.",
+      "as_of": "2026-10-10",
+      "business": "Israel-based maker of machines that inspect and measure chips during production. Its markets include advanced chip packaging, high-bandwidth memory for AI, image sensors and other specialty chips.",
+      "plain": "Camtek: the chip inspection tool maker posted record sales and won large AI-related orders; it expects a much stronger second half and growth next year.",
+      "latest": {
+        "period": "Q2 2026 (three months ended Jun 30, 2026)",
+        "reported_on": "2026-08-10",
+        "revenue": "$133.2M",
+        "revenue_growth_yoy_pct": 8,
+        "highlights": [
+          "Record revenue, up 10% from Q1; gross margin 50.1%; net income $23.3M ($0.46 a share) vs $33.7M ($0.69) a year earlier.",
+          "Orders received year-to-date topped $600M, with a record backlog and deliveries running through 2026 and into 2027.",
+          "Completed the Visual Layer acquisition during the quarter."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0001109138/000117891326003975/zk2635905.htm"
+      },
+      "guidance": {
+        "given": true,
+        "period": "Q3 2026 and second half of 2026",
+        "text": "Q3 2026 revenue of $158M to $160M, about 20% above Q2. Expects second-half 2026 revenue over 30% above the first half, continued growth into 2027, and advanced packaging revenue up about 70% from Q1 to Q4 2026.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0001109138/000117891326003975/zk2635905.htm"
+      },
+      "next_earnings": {
+        "date": null,
+        "confirmed": false,
+        "note": "Not yet announced; its latest filing (10 Aug 2026) was the Q2 release.",
+        "source_url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001109138&type=6-K&dateb=&owner=include&count=20"
+      },
+      "whats_next": [
+        {
+          "item": "Announced over $105M of AI-related orders: $55M from a top chip packaging and testing firm and more than $50M of Hawk systems from a leading maker of high-bandwidth memory, all for delivery in 2027.",
+          "when": "Announced 2026-06-02; deliveries in 2027",
+          "kind": "deal",
+          "status": "ahead",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1109138/000117891326003033/zk2635474.htm"
+        },
+        {
+          "item": "All proposals at the annual general meeting were approved.",
+          "when": "2026-07-29",
+          "kind": "other",
+          "status": "done",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1109138/000117891326003681/zk2635789.htm"
+        },
+        {
+          "item": "Q3 2026 results, to be measured against its revenue forecast of $158-160M.",
+          "when": "Date not announced (quarter ended Sep 30, 2026)",
+          "kind": "finance",
+          "status": "ahead",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001109138/000117891326003975/zk2635905.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "The company names ongoing hostilities in the Middle East and shipping risks around the Strait of Hormuz among its risks.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001109138/000117891326003975/zk2635905.htm"
+        },
+        {
+          "item": "New or revised export, import and sanction rules, the US trade blacklist (entity list) and limits on selling products with US technology are named as risks.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001109138/000117891326003975/zk2635905.htm"
+        },
+        {
+          "item": "The growth outlook depends on continued AI-driven demand, including for high-bandwidth memory and chips built from smaller pieces (chiplets).",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001109138/000117891326003975/zk2635905.htm"
+        }
+      ]
+    },
+    {
+      "ticker": "ORA",
+      "name": "Ormat Technologies, Inc.",
+      "as_of": "2026-10-10",
+      "business": "Geothermal and recovered-energy power company that owns, runs, designs, makes and sells power plants, and is expanding in battery storage and solar. Its main equipment factories and much of its senior management are in Israel.",
+      "plain": "Ormat: the geothermal power company grew sales, led by its battery storage arm, and raised its yearly forecast; it reports again in early November.",
+      "latest": {
+        "period": "Q2 2026 (three months ended Jun 30, 2026)",
+        "reported_on": "2026-08-05",
+        "revenue": "$258.8M",
+        "revenue_growth_yoy_pct": 10.6,
+        "highlights": [
+          "Energy Storage revenue nearly tripled (+195.1%) on market power prices in PJM, a large US grid region, and capacity added over the past year; Electricity rose 5.8%; Product fell 21.6%.",
+          "Net income to stockholders $27.1M ($0.43 a share) vs $28.0M ($0.46), hurt by a $6.6M write-off of dropped storage projects; adjusted core profit up 6.9% to $143.9M.",
+          "Added 155 megawatts of capacity in 2026 so far, including the 10-megawatt Dominica geothermal plant; Product order backlog about $202.8M."
+        ],
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0001296445/000143774926025961/ex_999557.htm"
+      },
+      "guidance": {
+        "given": true,
+        "period": "Full year 2026 (raised)",
+        "text": "Total revenue $1,150-1,200M (Electricity $710-725M, Product $300-320M, Energy Storage $140-155M); adjusted core profit (before interest, tax and depreciation) $630-650M, about $17.0M of it belonging to minority partners. Expects another $0.12 quarterly dividend.",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/0001296445/000143774926025961/ex_999557.htm"
+      },
+      "next_earnings": {
+        "date": "2026-11-04",
+        "confirmed": true,
+        "note": "Q3 2026 results after market close on Wed 4 Nov 2026; conference call Thu 5 Nov at 10:00 a.m. ET (announced 6 Oct 2026).",
+        "source_url": "https://www.globenewswire.com/news-release/2026/10/06/3375439/26372/en/ormat-technologies-inc-to-host-conference-call-announcing-third-quarter-2026-financial-results.html"
+      },
+      "whats_next": [
+        {
+          "item": "The 10-megawatt Dominica geothermal power plant began commercial operation.",
+          "when": "July 2026",
+          "kind": "product",
+          "status": "done",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001296445/000143774926025961/ex_999557.htm"
+        },
+        {
+          "item": "Pilot of enhanced geothermal technology with SLB at Desert Peak, with drilling planned; choosing a contractor was in its final stages.",
+          "when": "Q4 2026",
+          "kind": "product",
+          "status": "ahead",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001296445/000143774926025961/ex_999557.htm"
+        },
+        {
+          "item": "Q3 2026 results release, followed by a call the next morning.",
+          "when": "2026-11-04 after market close",
+          "kind": "finance",
+          "status": "ahead",
+          "source_url": "https://www.globenewswire.com/news-release/2026/10/06/3375439/26372/en/ormat-technologies-inc-to-host-conference-call-announcing-third-quarter-2026-financial-results.html"
+        },
+        {
+          "item": "Decided to build the Denali battery storage project in California (100 megawatts, 400 megawatt-hours) under a 20-year contract with Clean Power Alliance.",
+          "when": "Expected by end of 2028",
+          "kind": "product",
+          "status": "ahead",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001296445/000143774926025961/ex_999557.htm"
+        }
+      ],
+      "watch": [
+        {
+          "item": "Product segment gross margin fell to 9.7% from 27.7% on high costs at a European construction project and currency effects; the company expects improvement in the second half.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001296445/000143774926025961/ex_999557.htm"
+        },
+        {
+          "item": "Storage growth depends partly on market power prices in PJM, and Q2 included a $6.6M write-off of storage projects the company dropped.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/0001296445/000143774926025961/ex_999557.htm"
+        },
+        {
+          "item": "The annual report warns that conditions in and around Israel, where its main Product factories are, could hurt operations and its ability to make and sell products.",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1296445/000129644526000006/ora-20251231.htm"
         }
       ]
     }

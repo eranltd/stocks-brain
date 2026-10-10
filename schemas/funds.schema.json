@@ -1,0 +1,102 @@
+{
+  "$id": "funds.schema.json",
+  "title": "Fund cards (config/funds.json)",
+  "description": "Plain cards for the index funds of a funds market: what each holds, the index it follows and its yearly cost, from the fund's own pages. No prices, no ratings, no forecasts.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "updated_at",
+    "change_note",
+    "how_to_read",
+    "funds"
+  ],
+  "properties": {
+    "version": {
+      "$ref": "common.schema.json#/$defs/semver"
+    },
+    "updated_at": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "change_note": {
+      "$ref": "common.schema.json#/$defs/change_note"
+    },
+    "how_to_read": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {
+        "type": "string",
+        "minLength": 10,
+        "maxLength": 240
+      }
+    },
+    "funds": {
+      "type": "array",
+      "maxItems": 40,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ticker",
+          "name",
+          "as_of",
+          "holds",
+          "plain",
+          "category",
+          "expense_ratio_pct",
+          "index_tracked",
+          "source_url"
+        ],
+        "properties": {
+          "ticker": {
+            "$ref": "common.schema.json#/$defs/ticker"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 80
+          },
+          "as_of": {
+            "$ref": "common.schema.json#/$defs/date"
+          },
+          "holds": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 240,
+            "description": "What the fund owns, in plain words, no digits."
+          },
+          "plain": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 200,
+            "description": "One sentence, no digits."
+          },
+          "category": {
+            "$ref": "watchlist.schema.json#/$defs/fund_category"
+          },
+          "expense_ratio_pct": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 3,
+            "description": "Yearly cost as a percent of the money in the fund, as the fund states it."
+          },
+          "index_tracked": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 120
+          },
+          "top_note": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 240
+          },
+          "source_url": {
+            "type": "string",
+            "pattern": "^https://[^\\s]+$"
+          }
+        }
+      }
+    }
+  }
+}

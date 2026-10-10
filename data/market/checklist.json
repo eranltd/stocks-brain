@@ -3,7 +3,7 @@
 "sample":false,
 "provider":"tiingo",
 "benchmark":"QQQ",
-"config_version":"1.0.0",
+"config_version":"1.1.0",
 "status":"unproven",
 "note":"The eight-step checklist from a trading video the household liked, computed by code from end-of-day bars. Unproven for us: a description of the chart, not a forecast; never the only reason for a pick and never ahead of the index core.",
 "house_rule":{"min_reward_to_risk":2,"target":"tp1"},

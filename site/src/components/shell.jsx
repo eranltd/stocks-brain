@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { menuGroups, pageOf, subjectOf, SUBJECTS } from "../lib/nav.js";
+import { bottomTap, menuGroups, pageOf, subjectOf, SUBJECTS } from "../lib/nav.js";
 import { NASDAQ_ONLY, nasdaqOnlyLine } from "../lib/markets.js";
 import { useReducedMotion } from "../lib/motion.js";
 import { Container } from "./ui.jsx";
@@ -182,7 +182,7 @@ export function MarketSwitch({ market }) {
         onClick={() => setOpen((o) => !o)}
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown") viaKeys.current = true; if (e.key === "ArrowDown" && !open) { e.preventDefault(); setOpen(true); } }}
         className={`inline-flex min-h-[44px] items-center gap-2 rounded-full border px-4 text-[15px] font-semibold transition-colors ${open ? "border-accent bg-accent/15 text-accent" : "border-accent/45 bg-accent/10 text-accent hover:border-accent"}`}>
-        <span className="hidden font-normal text-ink-2 md:inline">Market</span>
+        <span className="font-normal text-ink-2">Market</span>
         {current.label}
         <Caret open={open} />
       </button>

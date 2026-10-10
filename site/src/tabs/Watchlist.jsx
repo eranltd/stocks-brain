@@ -106,8 +106,8 @@ function Row({ r, i, bench = false, go, rule, ck, hasChecklist, group = null }) 
           <span className="text-[22px] font-semibold tracking-[-0.03em]">{r.symbol}</span>
           {bench && <span className="pill hidden py-1 text-[11px] text-ink-3 sm:inline-flex">benchmark</span>}
         </div>
-        <div className="truncate text-[13px] text-ink-3">{bench ? <span className="sm:hidden">Benchmark · </span> : null}{r.name}</div>
-        {group && <div className="truncate text-[12.5px] text-ink-3">{group}</div>}
+        <div className="line-clamp-3 text-[13px] leading-snug text-ink-3 sm:line-clamp-none sm:truncate">{bench ? <span className="sm:hidden">Benchmark · </span> : null}{r.name}</div>
+        {group && <div className="mt-0.5 text-[12.5px] leading-snug text-ink-3 sm:mt-0 sm:truncate">{group}</div>}
       </div>
       <div className="row-span-2 sm:row-span-1">
         {m?.bars?.length > 1 ? <Sparkline bars={m.bars} tone={tone} delay={i * 60} indexed /> : <span className="meta">no data</span>}

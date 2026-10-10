@@ -239,8 +239,9 @@ function SimpleHome({ data, market, go, showDetails }) {
         </p>
         {!isDefault && (
           <p className="mt-3 max-w-[62ch] text-[16px] leading-relaxed text-ink-2">
-            <span className="font-semibold text-ink">Showing {label}:</span> {market.choices.find((c) => c.id === market.id)?.what ?? market.entry?.name}.
-            {words?.note && <> {words.note}</>}
+            <span className="font-semibold text-ink">Showing {label}:</span>{" "}
+            {/* The market's own note already says what the list is (TLV); otherwise its one line from the switch. */}
+            {words?.note ?? `${market.choices.find((c) => c.id === market.id)?.what ?? market.entry?.name}.`}
           </p>
         )}
       </header>

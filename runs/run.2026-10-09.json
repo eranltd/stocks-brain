@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "run_id": "run.2026-10-09",
+  "date": "2026-10-09",
+  "generated_at": "2026-10-10T09:23:29Z",
+  "status": "ok",
+  "sample": false,
+  "model": "Claude Code routine",
+  "cost": {
+    "usd": 0.0,
+    "input_tokens": 11350,
+    "output_tokens": 1275,
+    "cap_usd": 2.5
+  },
+  "duration_minutes": 4.0,
+  "pack": {
+    "hash": "dd3d81d323f4d910a3327743ae058453bb64c82edda439f57dce3616a41a4740",
+    "tokens": 11350,
+    "cap_tokens": 12000
+  },
+  "doc_versions": {
+    "strategy": "0.2.0",
+    "methodology": "0.12.0",
+    "guardrails": "0.1.0",
+    "learnings": "0.1.0"
+  },
+  "repair_retries": 0,
+  "summary": "The household's frozen history test rejected all four stock rules: each beat fewer than three in ten random baskets from this same list, and holding every name equally did better than the core and every rule. Setup checks and past strength have shown no edge here. Neutral, low conviction watch picks only; nothing is expected to beat the index. Paper stage, no money moves.",
+  "picks": [
+    {
+      "id": "2026-10-09:MSFT",
+      "ref_date": "2026-10-09",
+      "pick": {
+        "ticker": "MSFT",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Passes all four setup checks and is not flagged stretched, but it is close to the stretch limit after a very large quarter and trails the benchmark over the last year. It has the deepest drawdown and highest volatility of the rule holdings. The history test found no edge in this kind of strength, and the checklist reward-to-risk is too thin for a new entry. A Pershing Square fund-filing call is bullish and so far ahead of the core, but that investor's matured record is poor and too short to prove anything; context only.",
+        "risks": [
+          "Close to the stretch limit after a big run; a further rise would veto any new entry.",
+          "Earnings are about two and a half weeks away and not confirmed by the company.",
+          "Deepest drawdown and highest volatility among the held names; a satellite loss could be large.",
+          "Reward-to-risk to the first target is far too thin under the house rule."
+        ],
+        "invalidation": "Becomes stretched above its trend, closes below its fifty-day average, or gives back its lead over the benchmark over the last quarter.",
+        "evidence": [
+          "market.msft",
+          "market.msft.setup",
+          "market.msft.risk",
+          "rules_history.verdicts",
+          "base_rates.by_score",
+          "checklist.names.msft",
+          "outlook.next_earnings.msft",
+          "people.calls.msft"
+        ]
+      }
+    },
+    {
+      "id": "2026-10-09:AMGN",
+      "ref_date": "2026-10-09",
+      "pick": {
+        "ticker": "AMGN",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Passes all four setup checks, is ahead of the benchmark over several windows and is not stretched, though it sits only just above its fifty-day average. Its link to the core is low, and several other names are lower still. The history test rejected the rules that pick such names, the base rates for passing all checks are flat, and the checklist leans up with reward-to-risk too thin, so it is no new entry. It is not in the recorded paper holdings. Watch only.",
+        "risks": [
+          "Rejected history test: past strength has not predicted outperformance on this list.",
+          "Reward-to-risk to the first target is too thin for a new entry.",
+          "No earnings date in the pack, so event risk cannot be sized.",
+          "Only just above its fifty-day average after a sharp month, so a small dip trips the invalidation."
+        ],
+        "invalidation": "Falls below its fifty-day average, loses its lead over the benchmark over the last quarter, or drops below three of four setup checks.",
+        "evidence": [
+          "market.amgn",
+          "market.amgn.setup",
+          "market.amgn.risk",
+          "rules_history.verdicts",
+          "rules_history.yardsticks",
+          "base_rates.by_score",
+          "checklist.names.amgn"
+        ]
+      }
+    },
+    {
+      "id": "2026-10-09:GILD",
+      "ref_date": "2026-10-09",
+      "pick": {
+        "ticker": "GILD",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Passes three of four setup checks, with an intact trend and calm volatility, and is not stretched. It fails the half-year relative strength check while passing the quarter one. Its link to the core is very low, which is the only real argument for a satellite place. The checklist is only mixed and reward-to-risk is far too thin, and the history test found no edge in setup checks. A paper holding, not a call to beat the index.",
+        "risks": [
+          "Rejected history test: setup checks showed no edge over random picks.",
+          "Checklist is only mixed and reward-to-risk is far too thin for a new entry.",
+          "Behind the benchmark over the last half year; the lead rests on shorter windows.",
+          "No earnings date in the pack, and a sharp one-day jump may fade."
+        ],
+        "invalidation": "Breaks below its fifty-day average, or the setup gate falls to two checks or fewer at the next review.",
+        "evidence": [
+          "market.gild",
+          "market.gild.setup",
+          "market.gild.risk",
+          "rules_history.verdicts",
+          "base_rates.by_score",
+          "checklist.names.gild",
+          "rule_v1.history"
+        ]
+      }
+    },
+    {
+      "id": "2026-10-09:AAPL",
+      "ref_date": "2026-10-09",
+      "pick": {
+        "ticker": "AAPL",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Passes three of four setup checks and is not stretched, with the mildest one-year drawdown among the technology names. It lags the benchmark over the last month and quarter, volume is weakening, and the checklist reward-to-risk is too thin. The index fund already owns it, so diversification is limited. Hold-only because the rule keeps it on paper; the evidence gives no reason to add or to expect it to beat the index.",
+        "risks": [
+          "Rejected history test: being kept by the rule is not evidence of edge.",
+          "Fails the quarter relative strength check and trails the benchmark recently.",
+          "Earnings are about three weeks away and not confirmed by the company.",
+          "Overlap with the index fund is large, so the extra diversification is small."
+        ],
+        "invalidation": "Loses its long-term trend, falls below its fifty-day average, or the setup gate drops it to two checks or fewer.",
+        "evidence": [
+          "market.aapl",
+          "market.aapl.setup",
+          "market.aapl.risk",
+          "rules_history.verdicts",
+          "checklist.names.aapl",
+          "outlook.next_earnings.aapl"
+        ]
+      }
+    }
+  ]
+}

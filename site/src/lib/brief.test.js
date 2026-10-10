@@ -5,10 +5,10 @@ import { aboutPct, aboutTimes, BRIEF_FOOTER, direction, eightChecks, NO_CHECKLIS
 const cfg = {
   house_rule: { min_reward_to_risk: 2 },
   steps: [
-    { id: "candle", n: 1, name: "Candle pattern", name_he: "תצורת הנר" }, { id: "trend", n: 2, name: "Trend", name_he: "מגמת המניה" },
-    { id: "volume", n: 3, name: "Volume", name_he: "ווליום" }, { id: "ma20", n: 4, name: "Moving average 20", name_he: "ממוצע 20" },
-    { id: "gaps", n: 5, name: "Gaps", name_he: "גאפים" }, { id: "levels", n: 6, name: "Support and resistance", name_he: "תמיכות והתנגדויות" },
-    { id: "rsi", n: 7, name: "RSI", name_he: "RSI" }, { id: "risk_plan", n: 8, name: "Risk management and exit", name_he: "ניהול סיכונים ולקיחת רווחים" },
+    { id: "candle", n: 1, name: "Candle pattern" }, { id: "trend", n: 2, name: "Trend" },
+    { id: "volume", n: 3, name: "Volume" }, { id: "ma20", n: 4, name: "Moving average 20" },
+    { id: "gaps", n: 5, name: "Gaps" }, { id: "levels", n: 6, name: "Support and resistance" },
+    { id: "rsi", n: 7, name: "RSI" }, { id: "risk_plan", n: 8, name: "Risk management and exit" },
   ],
 };
 
@@ -55,7 +55,7 @@ test("the eight checks, each with a mark, plain words and its Hebrew name", () =
     "Last candle: buyers won the day", "Trend: going up", "Volume: supports the move", "Above its 20-day average, which is rising",
     "No open gaps", "Room to rise before resistance", "RSI: not overheated", "Risk plan: worth it",
   ]);
-  assert.equal(rows[0].name_he, "תצורת הנר");
+  assert.equal(rows[0].name_he, undefined);
   assert.equal(rows[7].n, 8);
 });
 

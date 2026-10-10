@@ -1,7 +1,7 @@
 ---
-version: 0.14.0
-updated_at: 2026-10-09
-change_note: The household's video checklist (eight technical steps and a written risk plan) is added to the process at the Paper stage, unproven and measured.
+version: 0.15.0
+updated_at: 2026-10-10
+change_note: A candles view of the checklist, published as percent from the last close.
 ---
 # Decision log
 
@@ -19,6 +19,18 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Second price source**: Tiingo's daily returns show unusually low correlations between these names (for example
   AAPL to QQQ about 0.24 over a year). The diagnostic showed our pipeline reproduces the provider's data exactly, so
   the numbers are faithful to the source; a cross-check against a second source is still pending.
+
+## 2026-10-10
+- **A candles view of the checklist.** The household asked to see the checklist "on a graph with a candles view".
+  Each Stock page's checklist card now has a Checks · Candles switch. It shows daily (three or six months) and weekly
+  candles with the steps drawn on them: the twenty-day average, support and resistance, open gaps, the risk plan's
+  stop and targets, RSI and volume against its average.
+- **Candles are published as percent from the last close, not prices.** The price licence lets the site publish
+  derived numbers only. Each open, high, low and close is its distance from the latest close (which is zero), and
+  volume is only a ratio to its twenty-day average. A reader who knows one real price could rescale the chart; that
+  was already true of the indexed lines published since the start, so this stays within the derived-only choice.
+  Lint refuses a file whose last close is not zero, values outside a sane percent range, or a volume ratio that looks
+  like raw volume, and the overlays must equal that day's checklist.
 
 ## 2026-10-09
 - **The video's eight-step technical checklist joins the process, as an entry-and-exit checklist at the Paper stage.**

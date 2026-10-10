@@ -454,7 +454,7 @@ class ForwardTest(unittest.TestCase):
 class ChecklistLintTest(unittest.TestCase):
     def lint_cfg(self, cfg):
         lint = Lint()
-        lint.check_checklist(CONFIG / "checklist.json", cfg, today="2026-10-09")
+        lint.check_checklist(CONFIG / "checklist.json", cfg, today=max("2026-10-09", CFG["updated_at"]))  # the config's own date is never "future"
         return lint.errors
 
     def test_config_is_valid(self):

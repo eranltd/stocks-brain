@@ -4,12 +4,6 @@ import { Accent, ArrowRight, Container, Empty, Reveal, SectionHead, Segmented, S
 
 const today = () => new Date().toISOString().slice(0, 10);
 
-/** "עברית (English)" -> { he, en }. Titles without a parenthesised part stay as-is. */
-function splitTitle(t) {
-  const m = t.match(/^(.*?)\s*\(([^()]*)\)\s*$/);
-  return m ? { he: m[1], en: m[2] } : { he: t, en: "" };
-}
-
 function youtubeUrl(ref) {
   const [kind, id] = (ref || "").split(":");
   return kind === "youtube" ? `https://www.youtube.com/watch?v=${encodeURIComponent(id)}` : null;
@@ -109,7 +103,6 @@ function SourceCard({ s, n, principles, claims, filtered, delay }) {
   const [open, setOpen] = useState(false);
   const [all, setAll] = useState(false);
   const visible = all || filtered ? principles : principles.slice(0, 2);
-  const { he, en } = splitTitle(s.title);
   const url = youtubeUrl(s.ref);
   const now = today();
   const liveClaims = claims.filter((c) => c.expires >= now).length;
@@ -126,8 +119,7 @@ function SourceCard({ s, n, principles, claims, filtered, delay }) {
             <span>{s.published ? fmtDate(s.published) : s.year}</span>
             <span className="normal-case tracking-[0.04em]">{s.author}</span>
           </div>
-          <h3 className="mt-3 text-[clamp(20px,2.4vw,28px)] leading-snug font-semibold tracking-[-0.02em]">{en || he}</h3>
-          {en && <p dir="rtl" className="mt-1 text-right text-[15px] text-ink-3 md:text-left" style={{ unicodeBidi: "plaintext" }}>{he}</p>}
+          <h3 className="mt-3 text-[clamp(20px,2.4vw,28px)] leading-snug font-semibold tracking-[-0.02em]">{s.title}</h3>
         </div>
         {url && (
           <a href={url} target="_blank" rel="noreferrer" className="btn shrink-0 self-start px-5 py-3 text-[14px]">
@@ -209,7 +201,7 @@ function Themes({ principles, tags }) {
                 <span className="meta">{p.id}</span>
                 <p className="mt-3 text-[16px] leading-relaxed">{p.text}</p>
                 <div className="meta mt-4 truncate border-t border-line pt-3 normal-case tracking-[0.04em]" title={p.source.title}>
-                  {splitTitle(p.source.title).en || p.source.title} · {p.source.published ?? p.source.year}
+                  {p.source.title} · {p.source.published ?? p.source.year}
                 </div>
               </Reveal>
             ))}
@@ -248,7 +240,7 @@ function Claims({ claims, sources }) {
               )}
               <p className="mt-3 text-[15px] leading-relaxed text-ink">{o.text}</p>
               <div className="meta mt-auto flex items-center justify-between gap-3 border-t border-line pt-4 normal-case tracking-[0.04em] [margin-top:max(1.25rem,auto)]">
-                <span className="truncate" title={titles[o.source_id]?.title}>{o.source_id} · {splitTitle(titles[o.source_id]?.title ?? "").en}</span>
+                <span className="truncate" title={titles[o.source_id]?.title}>{o.source_id} · {titles[o.source_id]?.title ?? ""}</span>
                 <span className="num shrink-0">{o.as_of} → {expired ? "expired" : o.expires}</span>
               </div>
             </Reveal>

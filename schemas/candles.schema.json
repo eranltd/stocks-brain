@@ -1,0 +1,380 @@
+{
+  "$id": "candles.schema.json",
+  "title": "Indexed candles for one symbol (data/market/candles/<SYMBOL>.json)",
+  "description": "The bars the technical checklist read, published INDEXED for the Stock page's candles chart: every open, high, low, close and average as percent from the last close (the last close is 0), volume only as a ratio to its average, RSI. Overlays are that day's checklist numbers for the symbol. No prices, no levels, no raw volume (provider licence).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "symbol",
+    "as_of",
+    "sample",
+    "basis",
+    "daily",
+    "weekly",
+    "overlays"
+  ],
+  "properties": {
+    "symbol": {
+      "$ref": "common.schema.json#/$defs/ticker"
+    },
+    "as_of": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "sample": {
+      "type": "boolean"
+    },
+    "basis": {
+      "const": "percent from the last close"
+    },
+    "daily": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dates",
+        "o",
+        "h",
+        "l",
+        "c",
+        "vol_rel",
+        "ma20",
+        "rsi"
+      ],
+      "properties": {
+        "dates": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 130,
+          "items": {
+            "$ref": "common.schema.json#/$defs/date"
+          },
+          "description": "One per trading day, ascending"
+        },
+        "o": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 130,
+          "items": {
+            "type": "number",
+            "minimum": -95,
+            "maximum": 500
+          },
+          "description": "Open, percent from the last close (two decimals)."
+        },
+        "h": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 130,
+          "items": {
+            "type": "number",
+            "minimum": -95,
+            "maximum": 500
+          },
+          "description": "High, percent from the last close; at least max(o, c)."
+        },
+        "l": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 130,
+          "items": {
+            "type": "number",
+            "minimum": -95,
+            "maximum": 500
+          },
+          "description": "Low, percent from the last close; at most min(o, c)."
+        },
+        "c": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 130,
+          "items": {
+            "type": "number",
+            "minimum": -95,
+            "maximum": 500
+          },
+          "description": "Close, percent from the last close; the last one is 0."
+        },
+        "vol_rel": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 130,
+          "items": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 100
+          },
+          "description": "Volume over the mean of the 20 days before it (the checklist's vs_avg20); null in the warm-up."
+        },
+        "ma20": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 130,
+          "items": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": -95,
+            "maximum": 500
+          },
+          "description": "The 20-day average of closes, percent from the last close; null in the warm-up."
+        },
+        "rsi": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 130,
+          "items": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 100
+          },
+          "description": "Wilder's 14-day RSI (one decimal, as the checklist); null in the warm-up."
+        }
+      }
+    },
+    "weekly": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dates",
+        "o",
+        "h",
+        "l",
+        "c",
+        "vol_rel",
+        "ma20",
+        "rsi",
+        "partial"
+      ],
+      "properties": {
+        "dates": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 60,
+          "items": {
+            "$ref": "common.schema.json#/$defs/date"
+          },
+          "description": "One per week, ascending; each the last trading day of its Monday-to-Friday week"
+        },
+        "o": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 60,
+          "items": {
+            "type": "number",
+            "minimum": -95,
+            "maximum": 500
+          },
+          "description": "Open, percent from the last close (two decimals)."
+        },
+        "h": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 60,
+          "items": {
+            "type": "number",
+            "minimum": -95,
+            "maximum": 500
+          },
+          "description": "High, percent from the last close; at least max(o, c)."
+        },
+        "l": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 60,
+          "items": {
+            "type": "number",
+            "minimum": -95,
+            "maximum": 500
+          },
+          "description": "Low, percent from the last close; at most min(o, c)."
+        },
+        "c": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 60,
+          "items": {
+            "type": "number",
+            "minimum": -95,
+            "maximum": 500
+          },
+          "description": "Close, percent from the last close; the last one is 0."
+        },
+        "vol_rel": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 60,
+          "items": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 100
+          },
+          "description": "The week's mean daily volume over the mean of the 20 weeks before it; null in the warm-up."
+        },
+        "ma20": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 60,
+          "items": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": -95,
+            "maximum": 500
+          },
+          "description": "The 20-week average of closes, percent from the last close; null in the warm-up."
+        },
+        "rsi": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 60,
+          "items": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 100
+          },
+          "description": "Wilder's 14-week RSI (one decimal, as the checklist); null in the warm-up."
+        },
+        "partial": {
+          "type": "boolean",
+          "description": "True when the last week is still in progress (the last close is not a Friday), as the checklist's weekly candle."
+        }
+      }
+    },
+    "overlays": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "support",
+        "resistance",
+        "gaps",
+        "stop_pct",
+        "tp1_pct",
+        "tp2_pct",
+        "rr_tp1",
+        "fits_house_rule"
+      ],
+      "properties": {
+        "support": {
+          "type": "array",
+          "maxItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "pct",
+              "touches"
+            ],
+            "properties": {
+              "pct": {
+                "type": "number",
+                "minimum": -95,
+                "maximum": 500,
+                "description": "The zone's distance from the last close (the checklist's dist_pct)."
+              },
+              "touches": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          },
+          "description": "Nearest first, below the close (negative)."
+        },
+        "resistance": {
+          "type": "array",
+          "maxItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "pct",
+              "touches"
+            ],
+            "properties": {
+              "pct": {
+                "type": "number",
+                "minimum": -95,
+                "maximum": 500,
+                "description": "The zone's distance from the last close (the checklist's dist_pct)."
+              },
+              "touches": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          },
+          "description": "Nearest first, above the close (positive)."
+        },
+        "gaps": {
+          "type": "array",
+          "maxItems": 10,
+          "description": "Open (unfilled) gaps as bands, nearest first; the edge nearest the close is the checklist's dist_pct.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "from_pct",
+              "to_pct",
+              "where",
+              "since_date"
+            ],
+            "properties": {
+              "from_pct": {
+                "type": "number",
+                "minimum": -95,
+                "maximum": 500,
+                "description": "Lower edge."
+              },
+              "to_pct": {
+                "type": "number",
+                "minimum": -95,
+                "maximum": 500,
+                "description": "Upper edge."
+              },
+              "where": {
+                "enum": [
+                  "above",
+                  "below"
+                ]
+              },
+              "since_date": {
+                "$ref": "common.schema.json#/$defs/date"
+              }
+            }
+          }
+        },
+        "stop_pct": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Distance of the stop BELOW the last close (positive, as the checklist): draw it at -stop_pct."
+        },
+        "tp1_pct": {
+          "type": "number",
+          "description": "First target above the last close (as the checklist)."
+        },
+        "tp2_pct": {
+          "type": "number",
+          "description": "Second target above the last close (as the checklist)."
+        },
+        "rr_tp1": {
+          "type": "number"
+        },
+        "fits_house_rule": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

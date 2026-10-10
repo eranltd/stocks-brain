@@ -1,3 +1,4 @@
+import { englishTitle } from "./format.js";
 // Loads the exported JSON (see scripts/build_site.py) and derives view models.
 // All numbers shown on the dashboard are computed here or in Python, never by the LLM.
 
@@ -13,6 +14,27 @@ async function get(path) {
 
 /** Just the manifest: the live home page polls it and reloads the data when built_at changes. */
 export const loadManifest = () => get("manifest.json");
+
+/** The indexed candles of one symbol (data/market/candles/<SYMBOL>.json), fetched only when its chart is opened and kept
+ * for the session; not part of loadAll, so the first load stays small. Resolves to null when the manifest lists no file
+ * for the symbol (no live data yet, or the symbol was skipped). Every price-like number in it is percent from the last
+ * close (the last close is 0) and volume is a ratio to its 20-period average: no prices are published. */
+const candleCache = new Map();
+export function loadCandles(manifest, symbol) {
+  const path = manifest?.candles?.[symbol];
+  if (!path) return Promise.resolve(null);
+  // Keyed by the build too: the live page reloads its data in place after a daily run (same path, new day), and a chart
+  // kept from the day before would no longer match the checklist beside it.
+  const key = `${manifest.built_at ?? ""}|${path}`;
+  if (!candleCache.has(key)) {
+    const p = get(path).catch((e) => {
+      candleCache.delete(key); // a failed fetch can be retried
+      throw e;
+    });
+    candleCache.set(key, p);
+  }
+  return candleCache.get(key);
+}
 
 export async function loadAll(onProgress = () => {}) {
   const manifest = await get("manifest.json");
@@ -82,7 +104,9 @@ export function derive(manifest, files) {
   const checklistCfg = doc("checklist") ? files[doc("checklist").file] : null;
   const checklist = manifest.checklist ? files[manifest.checklist] ?? null : null;
   const outcomes = manifest.kb.outcomes ? files[manifest.kb.outcomes].items : [];
-  const library = manifest.kb.library ? files[manifest.kb.library] : null;
+  // Library titles are shown in English only (the stored original stays the citation).
+  const libraryRaw = manifest.kb.library ? files[manifest.kb.library] : null;
+  const library = libraryRaw ? { ...libraryRaw, sources: (libraryRaw.sources ?? []).map((src) => ({ ...src, title: englishTitle(src.title) })) } : null;
   const regime = manifest.kb.regime ? files[manifest.kb.regime] : null;
   const observations = manifest.kb.observations ? files[manifest.kb.observations] : null;
   const opsLog = manifest.ops ? files[manifest.ops] : null;

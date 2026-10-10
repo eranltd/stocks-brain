@@ -460,7 +460,6 @@ function TechChecklist({ data }) {
           <Reveal as="li" key={s.id} delay={(i % 2) * 60} className="card p-5 sm:p-6">
             <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
               <span className="text-[17px] font-semibold"><span className="num mr-2 font-mono text-[13px] font-normal text-ink-3">{s.n}</span>{s.name}</span>
-              <span lang="he" dir="rtl" className="text-[13.5px] text-ink-2">{s.name_he}</span>
             </div>
             <p className="mt-2 text-[14.5px] leading-relaxed text-ink">{s.checks}</p>
             <div className="meta mt-3 mb-1 normal-case tracking-[0.04em]">How we compute it{s.directional ? "" : " · a plan, not a lean"}</div>

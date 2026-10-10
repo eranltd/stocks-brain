@@ -1,6 +1,12 @@
 import { fmtDate, fmtPct } from "../lib/format.js";
 import { baseRateLine, edgeWords, fillNote, forwardWords, LEAN_TONE, riskPlan, rowFor, stepRows, VERDICT } from "../lib/checklist.js";
-import { ArrowRight, Reveal } from "./ui.jsx";
+import { ArrowRight, Reveal, Segmented } from "./ui.jsx";
+import { CandlesView, useStoredChoice } from "./candles.jsx";
+
+/** The card's two views, remembered per device: the eight checks in words, or the same reading on candles. */
+export const CHECKLIST_VIEW_KEY = "sb:checklist-view";
+export const CHECKLIST_VIEWS = ["checks", "candles"];
+export const useChecklistView = () => useStoredChoice(CHECKLIST_VIEW_KEY, "checks", CHECKLIST_VIEWS);
 
 const TONE_TEXT = { accent: "text-accent", down: "text-down", flat: "text-ink-2" };
 const TONE_BG = { accent: "bg-accent", down: "bg-down", flat: "bg-flat" };
@@ -20,7 +26,6 @@ export function VerdictPill({ verdict, className = "" }) {
   );
 }
 
-const He = ({ children }) => (children ? <span lang="he" dir="rtl" className="text-[12px] text-ink-3">{children}</span> : null);
 const Dot = ({ lean }) => <span className={`mt-1.5 inline-block size-2.5 shrink-0 rounded-full ${TONE_BG[LEAN_TONE[lean] ?? "flat"]}`} aria-hidden="true" />;
 
 /** The steps with their Hebrew names, as the video lists them. */
@@ -30,7 +35,7 @@ export function StepNames({ cfg }) {
       {(cfg?.steps ?? []).map((s) => (
         <li key={s.id} className="flex items-baseline gap-2 text-[14.5px]">
           <span className="num w-5 shrink-0 font-mono text-[12px] text-ink-3">{s.n}</span>
-          <span className="text-ink">{s.name}</span> <He>{s.name_he}</He>
+          <span className="text-ink">{s.name}</span>
         </li>
       ))}
     </ol>
@@ -93,8 +98,14 @@ function RiskPlan({ rp }) {
   );
 }
 
-/** The Stock page card: eight rows, the verdict, the paper risk plan, and an honest footer. */
-export function ChecklistCard({ data, symbol, go }) {
+/**
+ * The Stock page card: eight rows, the verdict, the paper risk plan, and an honest footer; or, in the Candles view, the
+ * same day's reading drawn on the symbol's candles. The page passes `view`/`onView` so the brief can open it on candles.
+ */
+export function ChecklistCard({ data, symbol, go, view: viewProp, onView }) {
+  const [ownView, setOwnView] = useChecklistView();
+  const view = viewProp ?? ownView;
+  const setView = onView ?? setOwnView;
   const cfg = data.checklistCfg;
   const ck = data.checklist;
   const row = rowFor(ck, symbol);
@@ -126,10 +137,31 @@ export function ChecklistCard({ data, symbol, go }) {
   const br = ck.base_rates;
   const line = baseRateLine(br, row.score.verdict, data.bench.label);
   const edge = edgeWords(br);
+  const switcher = (
+    <div className="mt-4">
+      <Segmented label="Checklist view" value={view} onChange={setView} options={[{ value: "checks", label: "Checks" }, { value: "candles", label: "Candles" }]} />
+    </div>
+  );
+  if (view === "candles") {
+    return (
+      <Reveal id="checklist" className="card mt-6 scroll-mt-28 p-6 sm:p-8">
+        {head}
+        <p className="mt-1 text-[13.5px] leading-relaxed text-ink-3">The eight steps drawn on end-of-day candles to {fmtDate(row.as_of)}. A description of the chart, not a forecast.</p>
+        {switcher}
+        <div className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 border-y border-line py-2.5">
+          <span className="meta">Verdict · seven steps</span>
+          <span className={`text-[17px] font-semibold tracking-[-0.01em] ${TONE_TEXT[v.tone]}`}>{v.word}</span>
+          <span className="num font-mono text-[13px] text-ink-2">net {row.score.net > 0 ? "+" : ""}{row.score.net} of 7</span>
+        </div>
+        <div className="mt-4"><CandlesView data={data} symbol={symbol} row={row} cfg={cfg} /></div>
+      </Reveal>
+    );
+  }
   return (
     <Reveal id="checklist" className="card mt-6 scroll-mt-28 p-6 sm:p-8">
       {head}
       <p className="mt-1 text-[13.5px] leading-relaxed text-ink-3">Eight steps from a trading video the household liked, read by code from end-of-day bars to {fmtDate(row.as_of)}. A description of the chart, not a forecast.</p>
+      {switcher}
 
       <div className="mt-5 flex flex-wrap items-end justify-between gap-3 rounded-2xl border border-line-2 bg-surface-2 p-4">
         <div className="min-w-0">
@@ -150,7 +182,7 @@ export function ChecklistCard({ data, symbol, go }) {
               {s.lean ? <Dot lean={s.lean} /> : <span className="mt-1.5 inline-block size-2.5 shrink-0 rounded-full border border-ink-3" aria-hidden="true" />}
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-baseline justify-between gap-x-3">
-                  <span className="text-[15px] font-semibold"><span className="num mr-1.5 font-mono text-[12px] font-normal text-ink-3">{s.n}</span>{s.id === "risk_plan" ? "Risk plan (paper)" : s.name} <He>{s.name_he}</He></span>
+                  <span className="text-[15px] font-semibold"><span className="num mr-1.5 font-mono text-[12px] font-normal text-ink-3">{s.n}</span>{s.id === "risk_plan" ? "Risk plan (paper)" : s.name}</span>
                   {s.lean && <span className={`meta normal-case tracking-[0.04em] ${TONE_TEXT[LEAN_TONE[s.lean]]}`}>{LEAN_LABEL[s.lean]}</span>}
                 </div>
                 {s.id === "risk_plan" ? <div className="mt-2"><RiskPlan rp={rp} /></div> : <p className="mt-1 text-[13.5px] leading-relaxed text-ink-2">{s.text}</p>}

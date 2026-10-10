@@ -94,7 +94,7 @@ function riskRow(rp, min) {
   return { mark: "up", text: "Risk plan: worth it", note: `the first target is at least ${min} times as far as the stop` };
 }
 
-/** "The eight checks": [{id, n, name, name_he, mark: up|down|neutral, text, note?}] in the checklist's order. */
+/** "The eight checks": [{id, n, name, mark: up|down|neutral, text, note?}] in the checklist's order. */
 export function eightChecks(row, cfg) {
   const step = (id, i) => cfg?.steps?.find((s) => s.id === id) ?? { id, n: i + 1, name: id };
   const lean = (id) => row?.score?.leans?.[id] ?? row?.[id]?.lean ?? "neutral";
@@ -106,7 +106,7 @@ export function eightChecks(row, cfg) {
   };
   return ["candle", "trend", "volume", "ma20", "gaps", "levels", "rsi", "risk_plan"].map((id, i) => {
     const s = step(id, i);
-    const base = { id, n: s.n ?? i + 1, name: s.name, name_he: s.name_he ?? null };
+    const base = { id, n: s.n ?? i + 1, name: s.name };
     return id === "risk_plan" ? { ...base, ...risk } : { ...base, mark: MARK[lean(id)] ?? "neutral", text: text[id] };
   });
 }

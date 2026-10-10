@@ -1,7 +1,7 @@
 {
-  "version": "0.8.0",
-  "updated_at": "2026-10-09",
-  "change_note": "Technical checklist (technical_checklist): the eight steps from the household's video, computed daily from end-of-day bars and measured.",
+  "version": "0.9.0",
+  "updated_at": "2026-10-10",
+  "change_note": "Technical checklist also publishes each name's indexed candles (percent from the last close, volume as a ratio) for the Stock page's chart.",
   "timezone": "UTC",
   "routines": [
     {
@@ -223,7 +223,8 @@
         "data/market/checklist.json"
       ],
       "outputs": [
-        "data/market/checklist.json"
+        "data/market/checklist.json",
+        "data/market/candles/<SYMBOL>.json"
       ],
       "human_gate": false,
       "why": "The household's eight-step video checklist (candle, trend, volume, twenty-day average, gaps, levels, RSI, risk plan) for every name after each close, what flipped since yesterday, and how it did in history and forward. Unproven for us: measured, never trusted."

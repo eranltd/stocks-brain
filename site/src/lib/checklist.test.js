@@ -4,7 +4,7 @@ import { baseRateLine, edgeWords, fillNote, forwardWords, gapsLine, gateReason, 
 
 const cfg = {
   steps: [
-    { id: "candle", n: 1, name: "Candle pattern", name_he: "תצורת הנר" },
+    { id: "candle", n: 1, name: "Candle pattern" },
     { id: "trend", n: 2, name: "Trend", params: { slope_days: 10 } },
     { id: "volume", n: 3, name: "Volume", params: { avg_days: 20, trend_days: 10 } },
     { id: "ma20", n: 4, name: "Moving average 20", params: { slope_days: 5 } },
@@ -32,7 +32,7 @@ const row = {
 test("eight rows in order, with Hebrew names, leans, and no lean on the risk plan", () => {
   const rows = stepRows(row, cfg);
   assert.deepEqual(rows.map((r) => r.id), ["candle", "trend", "volume", "ma20", "gaps", "levels", "rsi", "risk_plan"]);
-  assert.equal(rows[0].name_he, "תצורת הנר");
+  assert.equal(rows[0].name_he, undefined);
   assert.equal(rows[0].text, "Daily: bullish engulfing, closing near the high (79% up the range). Week so far: up week (partial).");
   assert.equal(rows[6].lean, "neutral");
   assert.equal(rows[7].lean, null);

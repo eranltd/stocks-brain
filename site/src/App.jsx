@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { loadAll, loadManifest } from "./lib/data.js";
+import { newerBundle } from "./lib/appversion.js";
 import { Field, Footer, Header, Loader, MobileNav } from "./components/shell.jsx";
 import { Container } from "./components/ui.jsx";
 import Today from "./tabs/Today.jsx";
@@ -61,13 +62,18 @@ export default function App() {
   const lastCheck = useRef(0);
   const inFlight = useRef(false); // one check at a time (the poll, focus and "Check now" can coincide)
   const failedBuild = useRef(null); // a build that could not be loaded in place: do not refetch everything for it again
+  // A newer version of the site itself (not just new data) is deployed: offer one tap to load it.
+  const [update, setUpdate] = useState(false);
+  const checkVersion = useCallback(() => { newerBundle().then((n) => { if (n) setUpdate(true); }); }, []);
 
   useEffect(() => {
     const t0 = performance.now();
     loadAll(setProgress)
       .then((d) => setTimeout(() => { built.current = d.manifest.built_at; lastCheck.current = Date.now(); setData(d); }, Math.max(0, 700 - (performance.now() - t0))))
       .catch((e) => setError(e));
-  }, []);
+    const v = setTimeout(checkVersion, 3000); // a phone may have opened a saved older copy of the page
+    return () => clearTimeout(v);
+  }, [checkVersion]);
 
   // Re-check the manifest; when built_at moved, load the new data in place (no page reload). If that fails (for example a
   // new site version changed the data's shape), keep what is shown and offer a refresh instead.
@@ -76,6 +82,7 @@ export default function App() {
     inFlight.current = true;
     lastCheck.current = Date.now();
     setLive((l) => ({ ...l, checking: true }));
+    checkVersion();
     try {
       const m = await loadManifest();
       if (m.built_at === built.current || m.built_at === failedBuild.current) {
@@ -97,7 +104,7 @@ export default function App() {
     } finally {
       inFlight.current = false;
     }
-  }, []);
+  }, [checkVersion]);
 
   useEffect(() => {
     const tick = () => { if (document.visibilityState === "visible") checkNow(); };
@@ -157,6 +164,13 @@ export default function App() {
         {data && <Active key={tab} data={data} go={go} query={query} setQuery={setQuery} openKB={openKB} symbol={symbol} live={live} checkNow={checkNow} />}
       </main>
       {data && <Footer data={data} />}
+      {update && (
+        <button type="button" onClick={() => window.location.reload()} role="status"
+          className="fixed inset-x-4 bottom-[calc(env(safe-area-inset-bottom)+92px)] z-50 mx-auto max-w-[420px] rounded-2xl border border-accent/60 bg-surface px-5 py-4 text-left text-[16px] leading-snug text-ink shadow-xl sm:bottom-6">
+          <span className="block font-semibold text-accent">A new version of the app is ready</span>
+          <span className="block text-ink-2">Tap here to update</span>
+        </button>
+      )}
       <MobileNav tabs={TABS} active={navTab} onNav={go} sampleTabs={data?.sample ? SAMPLE_TABS : []} />
     </>
   );

@@ -9,6 +9,9 @@ import { ArrowRight, Reveal, Segmented } from "../components/ui.jsx";
 import { heldAndPicked, todayCall } from "./Details.jsx";
 import { marketDay } from "../lib/marketday.js";
 import { companiesToKnow, marketWords, newsLines, planWords } from "../lib/simple.js";
+import { topStocks } from "../lib/carousel.js";
+import { TopStocks } from "../components/topstocks.jsx";
+import { requestChecklistView } from "../components/checklist.jsx";
 
 const plural = (n, one, many) => (n === 1 ? one : many);
 const noYear = (iso) => fmtDate(iso).replace(/\s\d{4}$/, ""); // "Thu, 22 Oct"
@@ -167,12 +170,18 @@ function SimpleHome({ data, go, showDetails }) {
   const checklist = data.checklist && (!data.checklist.sample || data.sample) ? data.checklist : null;
   const market = marketWords(day, data.regime, todayIso);
   const news = newsLines({ outlook: data.outlook, day, people: data.people, today: todayIso, names: data.names });
-  const companies = companiesToKnow({ held, picked, day, outlook: data.outlook, checklist, names: data.names, bench: data.bench.symbol, today: todayIso });
+  const pick = { held, picked, day, outlook: data.outlook, checklist, names: data.names, bench: data.bench.symbol, today: todayIso };
+  const companies = companiesToKnow(pick);
+  const top = topStocks({ ...pick, candles: data.manifest.candles });
+  // "See the candles": the Stock page opens with its checklist card on the Candles view, as the brief's own link does.
+  const seeCandles = (to) => { requestChecklistView("candles"); openAt(go, to); };
   const plan = planWords({ held, picked, checklist, outlook: data.outlook, names: data.names, stage: call.stage, nextCheck: nextRebalance(call.asOf), today: todayIso, bench: data.bench.symbol });
   const status = call.stale ? "The data is old: the daily update may have failed." : data.sample ? "Sample data, not the market." : "Live: updated after each US close.";
   const statusTone = call.stale ? "var(--down)" : data.sample ? "var(--people)" : "var(--accent)";
   return (
-    <div className="mx-auto w-full max-w-[560px] px-4 pb-24 pt-8">
+    <>
+    {/* As wide as the carousel under it, so the greeting and "Top stocks" line up on a tablet. */}
+    <div className={`mx-auto w-full px-4 pt-8 ${top.length ? "max-w-[1040px]" : "max-w-[560px]"}`}>
       <header>
         <h1 className="display text-[clamp(32px,8.5vw,44px)] leading-[1.05] tracking-[-0.03em]">Hi! It's <span className="text-accent">{weekdayOf(todayIso)}.</span></h1>
         <p className="mt-3 flex items-center gap-2 text-[15px] text-ink-2">
@@ -186,8 +195,12 @@ function SimpleHome({ data, go, showDetails }) {
           Please don't act on anything below until the daily update runs again.
         </p>
       )}
+    </div>
 
-      <div className="mt-8 grid gap-6">
+    <TopStocks items={top} manifest={data.manifest} openTo={(to) => openAt(go, to)} seeCandles={seeCandles} />
+
+    <div className="mx-auto w-full max-w-[560px] px-4 pb-24">
+      <div className="mt-10 grid gap-6">
         <SimpleCard kicker="The market" tone={TONE_VAR[market.tone] ?? "var(--accent)"}>
           <p className="text-[clamp(22px,6vw,27px)] leading-snug font-semibold tracking-[-0.015em] text-ink">{market.main}</p>
           {market.more && <p className="mt-3 text-[17px] leading-relaxed text-ink-2">{market.more}</p>}
@@ -246,6 +259,7 @@ function SimpleHome({ data, go, showDetails }) {
         <p className="meta mt-6 normal-case tracking-[0.04em]">A practice notebook for one household, not financial advice.</p>
       </Reveal>
     </div>
+    </>
   );
 }
 

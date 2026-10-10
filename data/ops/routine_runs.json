@@ -1,7 +1,7 @@
 {
   "version": "0.1.0",
   "updated_at": "2026-10-10",
-  "change_note": "Run 38041208755: success.",
+  "change_note": "Run 38060163370: success.",
   "items": [
     {
       "run_id": "37211858847",
@@ -732,6 +732,73 @@
         }
       ],
       "url": "https://github.com/eranltd/stocks-brain/actions/runs/38041208755"
+    },
+    {
+      "run_id": "38060163370",
+      "workflow": "daily",
+      "trigger": "workflow_dispatch",
+      "started_at": "2026-10-10T14:34:50Z",
+      "finished_at": "2026-10-10T14:35:12Z",
+      "status": "success",
+      "steps": [
+        {
+          "routine": "calibration",
+          "outcome": "skipped"
+        },
+        {
+          "routine": "derive_market",
+          "outcome": "skipped"
+        },
+        {
+          "routine": "fetch_markets",
+          "outcome": "success"
+        },
+        {
+          "routine": "fetch_prices",
+          "outcome": "skipped"
+        },
+        {
+          "routine": "lint",
+          "outcome": "success"
+        },
+        {
+          "routine": "market_lists",
+          "outcome": "success"
+        },
+        {
+          "routine": "paper_portfolio",
+          "outcome": "skipped"
+        },
+        {
+          "routine": "portfolio_rule",
+          "outcome": "skipped"
+        },
+        {
+          "routine": "regime_monitor",
+          "outcome": "skipped"
+        },
+        {
+          "routine": "rule_backtests",
+          "outcome": "skipped"
+        },
+        {
+          "routine": "rule_ledger",
+          "outcome": "skipped"
+        },
+        {
+          "routine": "score_people",
+          "outcome": "skipped"
+        },
+        {
+          "routine": "score_picks",
+          "outcome": "skipped"
+        },
+        {
+          "routine": "technical_checklist",
+          "outcome": "skipped"
+        }
+      ],
+      "url": "https://github.com/eranltd/stocks-brain/actions/runs/38060163370"
     }
   ]
 }

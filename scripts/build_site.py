@@ -108,19 +108,31 @@ def main() -> int:
                 dump_json(OUT / "people" / "scores.json", doc)
                 people_scores = "people/scores.json"
     # Technical checklist (config/checklist.json): same source rule as prices; samples are computed from the synthetic bars.
+    # Its indexed candles (data/market/candles/<SYMBOL>.json, percent from the last close) go with it, one file per
+    # symbol listed in manifest.candles and loaded by the Stock page only when a chart is opened.
     checklist = None
+    candles: dict[str, str] = {}
     checklist_cfg = CONFIG / "checklist.json"
     if checklist_cfg.exists():
+        from _common import watchlist
+        on_list = {s["symbol"] for s in watchlist()["symbols"]} | {st["scoring"]["benchmark"]["symbol"]}
         if price_source == "live" and (MARKET / "checklist.json").exists():
             _copy(MARKET / "checklist.json", OUT / "market" / "checklist.json")
             checklist = "market/checklist.json"
+            for p in sorted((MARKET / "candles").glob("*.json")):
+                if p.stem in on_list:  # a stale file of a name taken off the list is not shown (lint warns about it)
+                    _copy(p, OUT / "market" / "candles" / p.name)
+                    candles[p.stem] = f"market/candles/{p.name}"
         elif price_source == "sample":
             import routines_code
-            from _common import watchlist
-            doc = routines_code.compute_checklist(SAMPLES / "prices", st, watchlist(), load_json(checklist_cfg), sample=True, provider="sample")
+            doc, charts = routines_code.checklist_and_candles(SAMPLES / "prices", st, watchlist(), load_json(checklist_cfg),
+                                                              sample=True, provider="sample")
             if doc:
                 dump_json(OUT / "market" / "checklist.json", doc, compact=True)
                 checklist = "market/checklist.json"
+                for sym, cdoc in routines_code.candle_files(charts)[0].items():
+                    dump_json(OUT / "market" / "candles" / f"{sym}.json", cdoc, compact=True)
+                    candles[sym] = f"market/candles/{sym}.json"
     kb = {}
     # Curated knowledge (library, observations) is always the real file once it has content.
     def curated(name: str, key: str) -> Path:
@@ -174,6 +186,7 @@ def main() -> int:
         "paper": "portfolio/paper.json" if price_source == "live" and paper.exists() else None,
         "people_scores": people_scores,
         "checklist": checklist,
+        "candles": candles or None,
         "kb": kb,
         "docs": docs,
     })

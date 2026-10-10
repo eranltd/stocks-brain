@@ -397,16 +397,19 @@ def _cluster(levels: list[tuple[float, int]], tol_pct: float) -> list[dict]:
 def open_gaps(h: list[float], lo: list[float], x: float, i: int, pg: dict) -> list[dict]:
     """Open gaps of the last `lookback_days` bars up to i, nearest first. A gap up (low above the previous high) sits
     below the price and later lows fill it from the top; a gap down (high below the previous low) sits above the price
-    and later highs fill it from the bottom. dist_pct is from the close x to the unfilled edge nearest to it."""
+    and later highs fill it from the bottom. dist_pct is from the close x to the unfilled edge nearest to it; the internal
+    _far_pct to the gap's other edge (the candles chart draws the unfilled band between the two)."""
     gaps = []
     run_lo, run_hi = INF, -INF  # lowest low and highest high after bar k, up to i
     for k in range(i, max(1, i - pg["lookback_days"] + 1) - 1, -1):
         if lo[k] > h[k - 1] and pct(h[k - 1], lo[k]) >= pg["min_gap_pct"] and run_lo > h[k - 1]:
             gaps.append({"where": "below", "size_pct": round(pct(h[k - 1], lo[k]), 2),
-                         "dist_pct": round(pct(x, min(lo[k], run_lo)), 2), "days_open": i - k, "_k": k})
+                         "dist_pct": round(pct(x, min(lo[k], run_lo)), 2), "days_open": i - k, "_k": k,
+                         "_far_pct": round(pct(x, h[k - 1]), 2)})
         elif h[k] < lo[k - 1] and pct(h[k], lo[k - 1]) >= pg["min_gap_pct"] and run_hi < lo[k - 1]:
             gaps.append({"where": "above", "size_pct": round(pct(h[k], lo[k - 1]), 2),
-                         "dist_pct": round(pct(x, max(h[k], run_hi)), 2), "days_open": i - k, "_k": k})
+                         "dist_pct": round(pct(x, max(h[k], run_hi)), 2), "days_open": i - k, "_k": k,
+                         "_far_pct": round(pct(x, lo[k - 1]), 2)})
         run_lo, run_hi = min(run_lo, lo[k]), max(run_hi, h[k])
     gaps.sort(key=lambda g: abs(g["dist_pct"]))
     return gaps
@@ -509,7 +512,7 @@ def checklist_at(B: dict, pre: dict, i: int, P: dict, house: dict) -> dict:
                    "above": sum(g["where"] == "above" for g in gaps), "below": sum(g["where"] == "below" for g in gaps),
                    "nearest": ({k2: v2 for k2, v2 in near.items() if not k2.startswith("_")} | {"moving_toward": toward}) if near else None,
                    "unfilled": [{k2: v2 for k2, v2 in g.items() if not k2.startswith("_")} for g in gaps[:pg["max_listed"]]],
-                   "_ks": {(g["where"], g["_k"]) for g in gaps}}
+                   "_ks": {(g["where"], g["_k"]) for g in gaps}, "_listed": gaps[:pg["max_listed"]]}
 
     # 6. support and resistance from swing pivots over about a year
     pl = P["levels"]
@@ -712,3 +715,151 @@ def checklist_base_rates(series: dict, bench: str, P: dict, house: dict, br: dic
             "by_score": [{"net": k, **_stats(v)} for k, v in by_s.items()],
             "by_check": [{"check": k, **{ln: _stats(xs) for ln, xs in v.items()}} for k, v in by_c.items()],
             "house_rule": {k: _stats(v) for k, v in rule.items()}}
+
+
+# --------------------------------------------------------------- indexed candles (the Stock page's chart)
+# The same bars the checklist reads, published INDEXED: every open, high, low and close as percent from the last close
+# (so the last close is 0), volume only as a ratio to its own average. Derived numbers only (provider licence).
+
+CANDLES_BASIS = "percent from the last close"
+CANDLE_DAYS, CANDLE_WEEKS = 130, 60  # about six months of days and fourteen months of weeks
+CANDLE_PCT_RANGE = (-95.0, 500.0)  # an indexed candle outside this range is refused (lint and the routine)
+CANDLE_VOL_REL_MAX = 100.0  # a volume ratio above this is refused: raw volume (thousands and up) must never slip through
+
+
+def weekly_bars(B: dict, pre: dict) -> dict:
+    """Weekly candles from daily bars: consecutive days of the same ISO week (Monday to Friday) form one week whose open is
+    its first open, high and low the extremes, close its last close, date its last trading day and vday its mean daily
+    volume (a holiday week or the week so far are not penalised for having fewer days). The same grouping as the
+    checklist's weekly candle (_weeks)."""
+    out: dict = {k: [] for k in ("dates", "o", "h", "l", "c", "vday")}
+    n = len(B["c"])
+    j = 0
+    while j < n:
+        k = j
+        while k + 1 < n and pre["week"][k + 1] == pre["week"][j]:
+            k += 1
+        out["dates"].append(B["dates"][k])
+        out["o"].append(B["o"][j])
+        out["h"].append(max(B["h"][j:k + 1]))
+        out["l"].append(min(B["l"][j:k + 1]))
+        out["c"].append(B["c"][k])
+        out["vday"].append(sum(B["v"][j:k + 1]) / (k + 1 - j))
+        j = k + 1
+    return out
+
+
+def vol_rel_series(v: list[float], n: int) -> list[float | None]:
+    """Each value over the mean of the n values before it (the checklist's vs_avg20); None in the warm-up or on a zero
+    average."""
+    out: list[float | None] = [None] * len(v)
+    for k in range(n, len(v)):
+        avg = sum(v[k - n:k]) / n
+        out[k] = v[k] / avg if avg > 0 else None
+    return out
+
+
+def _indexed(x: float, S: dict, ma: list, rsi: list, vrel: list, last: int) -> dict:
+    """The last `last` bars of S re-based to the close x: o/h/l/c and the average as percent from x (two decimals), RSI to
+    one decimal (as the checklist), the volume ratio to two. High and low are widened to cover the open and close, so a
+    provider rounding slip cannot draw a body outside its wick."""
+    def p(val: float) -> float:
+        return round(pct(x, val), 2) + 0.0  # + 0.0 turns -0.0 into 0.0
+    sl = slice(max(0, len(S["c"]) - last), len(S["c"]))
+    o, h, lo, c = S["o"][sl], S["h"][sl], S["l"][sl], S["c"][sl]
+    return {"dates": S["dates"][sl], "o": [p(a) for a in o],
+            "h": [p(max(a, b, d)) for a, b, d in zip(h, o, c)], "l": [p(min(a, b, d)) for a, b, d in zip(lo, o, c)],
+            "c": [p(a) for a in c], "vol_rel": [None if r is None else round(r, 2) for r in vrel[sl]],
+            "ma20": [None if m is None else p(m) for m in ma[sl]], "rsi": [None if r is None else round(r, 1) for r in rsi[sl]]}
+
+
+def candle_overlays(cl: dict, dates: list[str]) -> dict:
+    """The chart's lines and bands, taken from the checklist at the last close (checklist_at's output with its internal
+    fields), so they are the very numbers the checklist card shows: support and resistance zones, open gaps as bands
+    (from_pct the lower edge, to_pct the upper; the edge nearest the close is the checklist's dist_pct), the stop and the
+    two targets (as the checklist: positive distances, the stop below the close and the targets above), reward-to-risk to
+    TP1 and the house rule. `dates` are the bars the checklist ran on (a gap's since_date is the day that opened it)."""
+    rp = cl["risk_plan"]
+    return {"support": [{"pct": z["dist_pct"], "touches": z["touches"]} for z in cl["levels"]["support"]],
+            "resistance": [{"pct": z["dist_pct"], "touches": z["touches"]} for z in cl["levels"]["resistance"]],
+            "gaps": [{"from_pct": min(g["dist_pct"], g["_far_pct"]), "to_pct": max(g["dist_pct"], g["_far_pct"]),
+                      "where": g["where"], "since_date": dates[g["_k"]]} for g in cl["gaps"]["_listed"]],
+            "stop_pct": rp["stop_pct"], "tp1_pct": rp["tp1_pct"], "tp2_pct": rp["tp2_pct"], "rr_tp1": rp["rr_tp1"],
+            "fits_house_rule": rp["fits_house_rule"]}
+
+
+def candles(B: dict, pre: dict, P: dict, cl: dict, days: int = CANDLE_DAYS, weeks: int = CANDLE_WEEKS) -> dict:
+    """Daily and weekly candles indexed to the last close, with the 20-period average, RSI and the volume ratio, and the
+    checklist's overlays. B and pre are the checklist's own bars and series (prep_checklist) for the symbol and cl its
+    reading at the last bar (checklist_at). Every value at a bar reads only bars up to it; the re-basing to the last close
+    is the one thing that uses the whole window, by design. The last week is `partial` until a Friday close, as in the
+    checklist."""
+    x = B["c"][-1]
+    n_ma, n_rsi, n_vol = P["ma20"]["days"], P["rsi"]["period"], P["volume"]["avg_days"]
+    W = weekly_bars(B, pre)
+    weekly = _indexed(x, W, sma_series(W["c"], n_ma), rsi_series(W["c"], n_rsi), vol_rel_series(W["vday"], n_vol), weeks)
+    weekly["partial"] = not pre["friday"][-1]
+    return {"daily": _indexed(x, B, pre["sma20"], pre["rsi"], vol_rel_series(B["v"], n_vol), days),
+            "weekly": weekly, "overlays": candle_overlays(cl, B["dates"])}
+
+
+def candle_problems(doc: dict) -> list[str]:
+    """What would make a candles file unsafe or unreadable: arrays of unequal length, dates out of order, a last close
+    that is not 0, a candle whose high and low do not hold its body, a number outside CANDLE_PCT_RANGE (a raw price
+    slipping through), a volume ratio outside 0..CANDLE_VOL_REL_MAX (raw volume) or an RSI outside 0..100. The messages
+    name the bar, never the value."""
+    out: list[str] = []
+    lo_ok, hi_ok = CANDLE_PCT_RANGE
+    for part in ("daily", "weekly"):
+        S = doc.get(part)
+        if not isinstance(S, dict) or not isinstance(S.get("dates"), list) or not S["dates"]:
+            out.append(f"{part}: missing or empty")
+            continue
+        n = len(S["dates"])
+        keys = ("o", "h", "l", "c", "vol_rel", "ma20", "rsi")
+        bad = [k for k in keys if not isinstance(S.get(k), list) or len(S[k]) != n]
+        if bad:
+            out.append(f"{part}: {', '.join(bad)} not the same length as dates")
+            continue
+        if S["dates"] != sorted(set(S["dates"])):
+            out.append(f"{part}: dates must be strictly ascending")
+        if S["c"][-1] != 0:
+            out.append(f"{part}: the last close must be 0 (every value is percent from the last close)")
+        for k in range(n):
+            o, h, lo, c = (S[q][k] for q in "ohlc")
+            if not all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in (o, h, lo, c)):
+                out.append(f"{part}[{k}]: o/h/l/c must be numbers")
+                break
+            if not h >= max(o, c) >= min(o, c) >= lo:
+                out.append(f"{part}[{k}] {S['dates'][k]}: high and low must hold the open and close")
+                break
+            if not all(lo_ok <= v <= hi_ok for v in (o, h, lo, c)) or (S["ma20"][k] is not None and not lo_ok <= S["ma20"][k] <= hi_ok):
+                out.append(f"{part}[{k}] {S['dates'][k]}: outside {lo_ok:g}..{hi_ok:g}% of the last close (a raw price?)")
+                break
+            if S["vol_rel"][k] is not None and not 0 <= S["vol_rel"][k] <= CANDLE_VOL_REL_MAX:
+                out.append(f"{part}[{k}] {S['dates'][k]}: volume ratio outside 0..{CANDLE_VOL_REL_MAX:g} (raw volume?)")
+                break
+            if S["rsi"][k] is not None and not 0 <= S["rsi"][k] <= 100:
+                out.append(f"{part}[{k}] {S['dates'][k]}: RSI outside 0..100")
+                break
+        if S["dates"][-1] != doc.get("as_of"):
+            out.append(f"{part}: the last date must be as_of")
+    return out
+
+
+def overlays_from_row(row: dict) -> dict:
+    """The overlays a candles file must carry for a published checklist row (its public numbers only), to check one file
+    against the other. Gap bands are matched by their edge nearest the close (the checklist's dist_pct)."""
+    rp = row["risk_plan"]
+    return {"support": [{"pct": z["dist_pct"], "touches": z["touches"]} for z in row["levels"]["support"]],
+            "resistance": [{"pct": z["dist_pct"], "touches": z["touches"]} for z in row["levels"]["resistance"]],
+            "gaps": [(g["where"], g["dist_pct"]) for g in row["gaps"]["unfilled"]],
+            "stop_pct": rp["stop_pct"], "tp1_pct": rp["tp1_pct"], "tp2_pct": rp["tp2_pct"], "rr_tp1": rp["rr_tp1"],
+            "fits_house_rule": rp["fits_house_rule"]}
+
+
+def overlay_mismatch(ov: dict, row: dict) -> list[str]:
+    """Where a candles file's overlays differ from the checklist row of the same symbol and day."""
+    want = overlays_from_row(row)
+    got = {**ov, "gaps": [(g["where"], g["to_pct"] if g["where"] == "below" else g["from_pct"]) for g in ov.get("gaps", [])]}
+    return [k for k in want if got.get(k) != want[k]]

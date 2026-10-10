@@ -880,6 +880,13 @@ def compute_checklist(prices_dir: Path, st: dict, wl: dict, cfg: dict, sample: b
                       prev: dict | None = None) -> dict | None:
     """The technical checklist for every watchlist name and the benchmark at the last close, what flipped since the day
     before, the last `history_days` verdicts, the history base rates and the forward record. Derived numbers only."""
+    return checklist_and_candles(prices_dir, st, wl, cfg, sample, provider, prev)[0]
+
+
+def checklist_and_candles(prices_dir: Path, st: dict, wl: dict, cfg: dict, sample: bool, provider: str,
+                          prev: dict | None = None) -> tuple[dict | None, dict[str, dict]]:
+    """compute_checklist's document and, from the same bars on the same run, each checked symbol's indexed candles
+    (market.candles: {symbol, as_of, sample, basis, daily, weekly, overlays}), whose overlays are that day's checklist."""
     import market as mk
     P, house = checklist_params(cfg)
     measure = cfg["measure"]
@@ -890,7 +897,7 @@ def compute_checklist(prices_dir: Path, st: dict, wl: dict, cfg: dict, sample: b
         return None
     series = align_bars_tail({s: b for s, b in raw.items() if b}, [b["date"] for b in raw[bench]])
     warm, hist = mk.checklist_warmup(P), measure["history_days"]
-    rows, skipped, preps = [], [], {}
+    rows, skipped, preps, charts = [], [], {}, {}
     for sym in [*members, bench]:
         B = series.get(sym)
         if not B or len(B["c"]) < warm + hist:
@@ -903,17 +910,46 @@ def compute_checklist(prices_dir: Path, st: dict, wl: dict, cfg: dict, sample: b
                     "changes": mk.checklist_changes(days[j], cur)} for j, cur in enumerate(days[1:])]
         rows.append({"symbol": sym, "as_of": B["dates"][-1], **mk.public(days[-1]), "changes": history[-1]["changes"],
                      "history": history})
+        charts[sym] = {"symbol": sym, "as_of": B["dates"][-1], "sample": sample, "basis": mk.CANDLES_BASIS,
+                       **mk.candles(B, pre, P, days[-1])}
     if bench not in preps:
-        return None
+        return None, {}
     full = {s: series[s] for s in preps}
     rates = mk.checklist_base_rates(full, bench, P, house, measure, preps)
-    return {"as_of": series[bench]["dates"][-1], "sample": sample, "provider": provider, "benchmark": bench,
+    return ({"as_of": series[bench]["dates"][-1], "sample": sample, "provider": provider, "benchmark": bench,
             "config_version": cfg["version"], "status": cfg["status"], "note": CHECKLIST_NOTE,
             "house_rule": {"min_reward_to_risk": house["min_reward_to_risk"], "target": cfg["house_rule"]["target"]},
             "lean_threshold": house["lean_threshold"], "symbols": rows, "skipped": skipped,
             "base_rates": {**rates, "note": BASE_RATES_NOTE.format(step=rates["step_days"])}
             if rates["all"]["n"] else None,
-            "forward": checklist_forward(prev, rows, full, bench, measure)}
+            "forward": checklist_forward(prev, rows, full, bench, measure)}, charts)
+
+
+def candle_files(charts: dict[str, dict]) -> tuple[dict[str, dict], list[str]]:
+    """(the candles documents that pass their schema and market.candle_problems, the symbols refused with why). A refused
+    symbol gets no chart today rather than failing the run: its checklist row still stands. The reasons name the field
+    only, never its value: a refused value may be a raw price or volume, and the run's log is public."""
+    import market as mk
+    v = Validator()
+    ok, refused = {}, []
+    for sym, doc in charts.items():
+        bad = [e.split(":", 1)[0] for e in v.validate(doc, "candles.schema.json")] or mk.candle_problems(doc)
+        if bad:
+            refused.append(f"{sym}: {bad[:2]}")
+        else:
+            ok[sym] = doc
+    return ok, refused
+
+
+def write_candles(out_dir: Path, docs: dict[str, dict]) -> None:
+    """One file per symbol in out_dir; files of symbols not in `docs` (off the list, skipped or refused today) are
+    removed, so every chart on the site is from the same day as the checklist."""
+    out_dir.mkdir(parents=True, exist_ok=True)
+    for p in out_dir.glob("*.json"):
+        if p.stem not in docs:
+            p.unlink()
+    for sym, doc in docs.items():
+        dump_json(out_dir / f"{sym}.json", doc, compact=True)
 
 
 def run_checklist() -> None:
@@ -933,10 +969,13 @@ def run_checklist() -> None:
         bad = forward_problems(prev)
         if bad:
             raise SystemExit(f"checklist: the published forward record is unreadable, so it would be lost (nothing written): {bad[:3]}")
-    doc = compute_checklist(PRICES, st, watchlist(), cfg, sample=False, provider=st["prices"]["provider"], prev=prev)
+    doc, charts = checklist_and_candles(PRICES, st, watchlist(), cfg, sample=False, provider=st["prices"]["provider"], prev=prev)
     if not doc:
         raise SystemExit("checklist: no benchmark prices in .cache/prices (run fetch_prices first)")
+    files, refused = candle_files(charts)
     _write(path, doc, "checklist.schema.json", compact=True)
+    write_candles(MARKET / "candles", files)
+    print(f"candles: {len(files)} indexed chart file(s) in data/market/candles/" + (f"; refused {refused}" if refused else ""))
     counts = {v: sum(r["score"]["verdict"] == v for r in doc["symbols"]) for v in ("lean_up", "mixed", "lean_down")}
     br = doc["base_rates"]
     print(f"checklist: {len(doc['symbols'])} symbols as of {doc['as_of']}, verdicts {counts}, skipped {doc['skipped']}; "

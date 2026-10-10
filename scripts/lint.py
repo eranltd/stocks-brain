@@ -574,10 +574,15 @@ class Lint:
             if path.exists():
                 self.schema(path, schema)
         cl_path = DATA / "market" / "checklist.json"
+        cl = None
         if cl_path.exists():
             cl = self.schema(cl_path, "checklist.schema.json")
             if cl:
                 self.check_checklist_data(cl_path, cl)
+        for p in _json_files(DATA / "market" / "candles"):
+            doc = self.schema(p, "candles.schema.json")
+            if doc:
+                self.check_candles_data(p, doc, cl)
         for p in _walk(ROOT):
             rel = p.relative_to(ROOT).as_posix()
             if rel.startswith("data/") and p.suffix == ".json":
@@ -606,6 +611,35 @@ class Lint:
             self.err(path, "forward records must be in strictly ascending date order (append-only)")
         if dates and dates[-1] > cl["as_of"]:
             self.err(path, "a forward record is dated after as_of")
+
+    def check_candles_data(self, path: Path, doc: dict, cl: dict | None) -> None:
+        """A published candles file (data/market/candles/<SYMBOL>.json): named for its symbol, a watchlist name or the
+        benchmark, live (not a sample), every array the same length, the last close 0, high and low holding the body, every
+        value within a sane percent range so nothing that looks like a raw price slips through, volume ratios not negative,
+        and its overlays the very numbers of that day's checklist row for the symbol."""
+        import market as mk
+        if path.stem != doc["symbol"]:
+            self.err(path, f"file name must be the symbol ({doc['symbol']}.json)")
+        try:
+            wl, st = load_json(CONFIG / "watchlist.json"), load_json(CONFIG / "settings.json")
+        except Exception:  # noqa: BLE001  (reported by check_config)
+            return
+        allowed = {s["symbol"] for s in wl["symbols"]} | {st["scoring"]["benchmark"]["symbol"]}
+        if doc["symbol"] not in allowed:  # a warning, as for the checklist: the next run removes it, build_site skips it
+            self.warn(path, f"{doc['symbol']} is not on the watchlist or the benchmark (stale file? the next checklist run removes it)")
+        if doc["sample"]:
+            self.err(path, "data/ holds live data only; sample candles are built on the fly by build_site.py")
+        for p in mk.candle_problems(doc):
+            self.err(path, p)
+        row = next((r for r in cl["symbols"] if r["symbol"] == doc["symbol"]), None) if cl else None
+        if row is None:
+            self.err(path, "no row for this symbol in data/market/checklist.json; its overlays could not be checked")
+        elif row["as_of"] != doc["as_of"]:
+            self.err(path, f"as_of {doc['as_of']} differs from the checklist's {row['as_of']}")
+        else:
+            bad = mk.overlay_mismatch(doc["overlays"], row)
+            if bad:
+                self.err(path, f"overlays differ from the checklist row: {bad}")
 
     def check_ops_and_batches(self) -> None:
         log = DATA / "ops" / "routine_runs.json"

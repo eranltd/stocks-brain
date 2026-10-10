@@ -6,7 +6,7 @@ import { STAGES, trustStage } from "../components/trust.jsx";
 import { STATUS } from "../components/goal.jsx";
 import { cardFor, daysUntil, growthWords, inDays, KIND_LABEL, splitWhatsNext, staleness, todayISO } from "../lib/outlook.js";
 import { gateReason, rowFor } from "../lib/checklist.js";
-import { ChecklistCard, VerdictPill } from "../components/checklist.jsx";
+import { ChecklistCard, useChecklistView, VerdictPill } from "../components/checklist.jsx";
 import { BRIEF_FOOTER, direction, eightChecks, readable, setupState, wherePaper } from "../lib/brief.js";
 import { shortName, whenWords } from "../lib/simple.js";
 
@@ -95,6 +95,8 @@ function stockLessons(row, checks, library) {
 
 export default function Stock({ data, symbol, go }) {
   const { market, bench, names, kb, observations, library, settings, sample, watchlist } = data;
+  // The checklist card's view (Checks or Candles), remembered per device; the brief's "See it on the candles" sets it.
+  const [ckView, setCkView] = useChecklistView();
   const row = market.symbols.find((s) => s.symbol === symbol);
   const benchRow = market.symbols.find((s) => s.symbol === bench.symbol);
   if (!row) {
@@ -121,6 +123,10 @@ export default function Stock({ data, symbol, go }) {
   const idx = others.findIndex((s) => s.symbol === symbol);
   const ckRow = rowFor(data.checklist, symbol);
   const jump = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const seeCandles = () => {
+    setCkView("candles");
+    requestAnimationFrame(() => jump("checklist"));
+  };
 
   return (
     <Container className="pt-14">
@@ -136,7 +142,7 @@ export default function Stock({ data, symbol, go }) {
         )}
       </Reveal>
 
-      {!isBench && <StockBrief data={data} row={row} symbol={symbol} today={today} jump={jump} />}
+      {!isBench && <StockBrief data={data} row={row} symbol={symbol} today={today} jump={jump} seeCandles={data.manifest.candles?.[symbol] ? seeCandles : null} />}
 
       <div className={`flex flex-wrap items-end justify-between gap-6 ${isBench ? "" : "mt-12"}`}>
         <div className="min-w-0">
@@ -164,7 +170,7 @@ export default function Stock({ data, symbol, go }) {
         )}
       </div>
 
-      <ChecklistCard data={data} symbol={symbol} go={go} />
+      <ChecklistCard data={data} symbol={symbol} go={go} view={ckView} onView={setCkView} />
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
         <Reveal className="card p-6 sm:p-8">
@@ -362,7 +368,7 @@ function BriefHead({ children }) {
  * "<Company> in short": the household's eight-step checklist in plain words, whether a new paper entry is within the
  * house rules and the plan in whole percents, and what is happening at the company. Wording: lib/brief.js.
  */
-function StockBrief({ data, row, symbol, today, jump }) {
+function StockBrief({ data, row, symbol, today, jump, seeCandles }) {
   const cfg = data.checklistCfg;
   const ck = data.checklist;
   const ckRow = rowFor(ck, symbol);
@@ -388,6 +394,11 @@ function StockBrief({ data, row, symbol, today, jump }) {
             <div className={`display text-[clamp(40px,11vw,60px)] leading-none ${BRIEF_TONE[dir.tone]}`}>{dir.word}</div>
             {dir.summary && <p className="mt-3 max-w-[60ch] text-[17px] leading-relaxed text-ink-2">{dir.summary}</p>}
             <p className="mt-2 text-[13.5px] text-ink-3">A description of the chart, not a forecast.</p>
+            {seeCandles && (
+              <button type="button" onClick={seeCandles} className="meta mt-2 inline-flex min-h-[40px] items-center gap-1.5 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">
+                See it on the candles <span aria-hidden="true">↓</span>
+              </button>
+            )}
           </>
         ) : (
           <p className="text-[17px] leading-relaxed text-ink-2">{read.why}</p>

@@ -1,6 +1,6 @@
 // stocks·brain service worker: offline shell + last-seen data. No third-party code.
 // Hashed build assets are cache-first; pages and data are network-first with cache fallback.
-const CACHE = "sb-v1";
+const CACHE = "sb-v2";
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(["./", "./index.html", "./manifest.webmanifest", "./icons/icon-192.png"])));
@@ -16,7 +16,9 @@ self.addEventListener("activate", (e) => {
 async function networkFirst(req) {
   const cache = await caches.open(CACHE);
   try {
-    const res = await fetch(req);
+    // Revalidate with the server (no-cache) rather than reuse a copy the browser kept for up to ten minutes, so a new
+    // version shows as soon as it is deployed. A navigation request cannot be re-created with options, so use its URL.
+    const res = await (req.mode === "navigate" ? fetch(req.url, { cache: "no-cache", credentials: "same-origin" }) : fetch(req, { cache: "no-cache" }));
     if (res.ok) cache.put(req, res.clone());
     return res;
   } catch {

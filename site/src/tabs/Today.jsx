@@ -34,21 +34,21 @@ const SOON_DAYS = 14;
  * thing the data knows (market closes, unusual moves, brain runs, company news, people's calls, checklist changes),
  * newest first. Everything is computed or copied from published data; nothing is fetched from elsewhere.
  */
-const VIEW_KEY = "sb:home-view";
-function readView() {
-  try { return window.localStorage.getItem(VIEW_KEY) === "details" ? "details" : "simple"; } catch { return "simple"; }
-}
-function saveView(v) {
-  try { window.localStorage.setItem(VIEW_KEY, v); } catch { /* private mode or blocked storage: the switch still works */ }
+// The home always opens on "Simple": the household asked that a first look is never the numbers view. An older version
+// remembered the last choice on the device; forget it so nobody is left on "Details".
+const OLD_VIEW_KEY = "sb:home-view";
+function forgetOldView() {
+  try { window.localStorage.removeItem(OLD_VIEW_KEY); } catch { /* private mode or blocked storage */ }
 }
 
 /**
- * Home. "Simple" (the default) is four calm cards in words for a reader with no time for numbers; "Details" is the live
- * feed. The choice is remembered on this device.
+ * Home. "Simple" (always the default) is four calm cards in words for a reader with no time for numbers; "Details" is
+ * the live feed, one tap away for this visit only.
  */
 export default function Today(props) {
-  const [view, setView] = useState(readView);
-  const pickView = (v) => { setView(v); saveView(v); window.scrollTo({ top: 0 }); };
+  const [view, setView] = useState("simple");
+  useEffect(forgetOldView, []);
+  const pickView = (v) => { setView(v); window.scrollTo({ top: 0 }); };
   return (
     <>
       <div className="mx-auto flex w-full max-w-[560px] justify-center px-4 pt-6 sm:pt-10">

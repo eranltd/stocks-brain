@@ -2,9 +2,11 @@
 """Generate deterministic SAMPLE data under samples/ so the dashboard renders before live data exists.
 
 Everything is synthetic (seeded random walks) and flagged `"sample": true`. Symbols come from
-config/watchlist.json and the benchmark from config/settings.json. No network, no LLM.
+config/watchlist.json, the benchmark from config/settings.json and the other markets' lists and benchmarks from
+config/markets.json (their own random stream, so adding a market never changes the main list's samples). No network, no LLM.
 
-Usage: python3 scripts/make_sample_data.py [--end YYYY-MM-DD] [--days N] [--runs N]
+Usage: python3 scripts/make_sample_data.py [--end YYYY-MM-DD] [--days N] [--runs N] [--markets-only]
+  --markets-only  write only the other markets' price files that are missing (leaves every other sample as it is)
 """
 from __future__ import annotations
 
@@ -18,7 +20,9 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _common import SAMPLES, doc_versions, dump_json, parse_front_matter, DOCS, settings, watchlist  # noqa: E402
+from _common import (  # noqa: E402
+    SAMPLES, doc_versions, dump_json, market_symbols, market_watchlist, other_markets, parse_front_matter, DOCS, settings, watchlist,
+)
 import scoring  # noqa: E402
 
 DEFAULT_END = "2026-10-02"
@@ -87,6 +91,7 @@ def main() -> int:
     ap.add_argument("--end", default=DEFAULT_END)
     ap.add_argument("--days", type=int, default=1600)
     ap.add_argument("--runs", type=int, default=45)
+    ap.add_argument("--markets-only", action="store_true")
     args = ap.parse_args()
 
     st, wl = settings(), watchlist()
@@ -100,6 +105,11 @@ def main() -> int:
     band = st["scoring"]["flat_band_pct"]
     names = {s["symbol"]: s["name"] for s in wl["symbols"]}
 
+    if args.markets_only:
+        have = {p.stem for p in (SAMPLES / "prices").glob("*.json")}
+        n = write_market_samples(days, fetched_at, have)
+        print(f"samples: {n} new price file(s) for the other markets")
+        return 0
     for sub in ("prices", "runs", "kb", "docs"):
         shutil.rmtree(SAMPLES / sub, ignore_errors=True)
 
@@ -125,6 +135,7 @@ def main() -> int:
             "symbol": c["symbol"], "provider": "sample", "currency": "USD",
             "fetched_at": fetched_at, "sample": True, "bars": series[c["symbol"]]}, compact=True)
 
+    write_market_samples(days, fetched_at, set(series))
     versions = doc_versions()
     method_meta, _ = parse_front_matter((DOCS / "methodology.md").read_text(encoding="utf-8"))
     lookback = 20
@@ -204,6 +215,40 @@ def main() -> int:
     write_sample_library(end)
     print(f"samples: {len(series)} price files, {len(run_days)} runs, {len(outcomes)} scored picks")
     return 0
+
+
+# Typical daily drift and volatility of the other markets' sample walks, by a fund's category (stocks use their own range).
+CATEGORY = {"Bonds": (0.00012, 0.0045), "Sector": (0.0006, 0.019), "Emerging markets": (0.0003, 0.011),
+            "US small companies": (0.0003, 0.013), "Single country": (0.0003, 0.012)}
+
+
+def write_market_samples(days: list[date], fetched_at: str, have: set[str]) -> int:
+    """Synthetic bars for every symbol of the other markets (config/markets.json) not already written, from their own
+    seeded stream so the main list's samples stay exactly as they are. Returns how many files were written."""
+    rng = random.Random(SEED + 2)
+    n = 0
+    for m in other_markets():
+        wl = market_watchlist(m)
+        cat = {s["symbol"]: s.get("category") for s in wl["symbols"]}
+        for sym in market_symbols(m, wl):
+            # Draw for every symbol, written or not, so one market's files never depend on what exists already.
+            start = rng.uniform(15, 400)
+            if sym == m["benchmark"]:
+                drift, vol = 0.0003, 0.010
+            elif m["kind"] == "funds":
+                drift, vol = CATEGORY.get(cat.get(sym), (0.0004, 0.010))
+            else:
+                drift, vol = rng.uniform(-0.0003, 0.0009), rng.uniform(0.014, 0.028)
+            sub = random.Random(f"{SEED}:{m['id']}:{sym}")
+            if sym in have:
+                continue
+            bars = walk(sub, days, start, drift=drift, vol=vol)
+            dump_json(SAMPLES / "prices" / f"{sym}.json", {
+                "symbol": sym, "provider": "sample", "currency": "USD",
+                "fetched_at": fetched_at, "sample": True, "bars": bars}, compact=True)
+            have.add(sym)
+            n += 1
+    return n
 
 
 def write_sample_learnings(end: date, outcomes: list[dict]) -> None:

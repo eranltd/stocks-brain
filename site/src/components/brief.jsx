@@ -55,7 +55,7 @@ export function BriefSections({ data, brief, go }) {
         <Reveal className="card p-6 sm:p-8">
           <div className="flex items-baseline justify-between gap-3">
             <h3 className="text-[22px] font-semibold tracking-[-0.02em]">Lessons in play</h3>
-            <button type="button" onClick={() => go("insights")} className="meta inline-flex items-center gap-1 hover:text-ink">Insights <ArrowRight className="size-3.5" /></button>
+            <button type="button" onClick={() => go("insights")} className="meta inline-flex items-center gap-1 hover:text-ink">Lessons <ArrowRight className="size-3.5" /></button>
           </div>
           <p className="mt-1 text-[14px] text-ink-3">Today's conditions, matched to principles from your library by tag.</p>
           <ol className="mt-6 grid gap-5">

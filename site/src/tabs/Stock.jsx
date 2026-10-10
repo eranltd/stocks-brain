@@ -9,6 +9,10 @@ import { gateReason, rowFor } from "../lib/checklist.js";
 import { ChecklistCard, useChecklistView, VerdictPill } from "../components/checklist.jsx";
 import { BRIEF_FOOTER, direction, eightChecks, readable, setupState, wherePaper } from "../lib/brief.js";
 import { shortName, whenWords } from "../lib/simple.js";
+import { loadMarket } from "../lib/data.js";
+import { candlesOf, costWords, fundCard, NOT_YET, resolveSymbolMarket } from "../lib/markets.js";
+
+const NASDAQ_PLAN_LINE = "The house rules, the practice portfolio and the daily brain follow the Nasdaq list only, so there is no paper plan for this one. It is here to read about, not to act on.";
 
 /** Plain-language summary, assembled by code from the computed numbers (no model). */
 function plainWords(row, checks, benchSymbol, benchLabel, liveClaims, settings, baseRate) {
@@ -93,8 +97,52 @@ function stockLessons(row, checks, library) {
   }).filter(Boolean).slice(0, 3);
 }
 
-export default function Stock({ data, symbol, go }) {
+/**
+ * A stock (or fund) page for a symbol of any market. The chosen market's data is used when it has the symbol; otherwise
+ * the page finds the market that lists it (lib/markets.js resolveSymbolMarket) and moves the header switch there, so
+ * stock/TEVA opens in TLV and stock/IVV in iShares from any link.
+ */
+export default function StockPage({ data, market, symbol, go }) {
+  const md = !market || market.isDefault ? data : market.state === "ready" ? market.data : null;
+  const has = Boolean(md?.market?.symbols?.some((s) => s.symbol === symbol));
+  const [found, setFound] = useState({ symbol: null, id: undefined });
+  const busy = market && market.state === "loading";
+  const look = !has && !busy && found.symbol !== symbol;
+  useEffect(() => {
+    if (!look) return;
+    let live = true;
+    Promise.all((data.markets ?? []).map((m) => loadMarket(data.manifest, m.id, data).catch(() => null)))
+      .then((views) => {
+        if (!live) return;
+        const id = resolveSymbolMarket(views.filter(Boolean), symbol, market?.id ?? null);
+        setFound({ symbol, id });
+        if (id && market && id !== market.id) market.adopt(id);
+      });
+    return () => { live = false; };
+  }, [look, symbol]);
+
+  if (has) return <Stock data={md} symbol={symbol} go={go} market={market} />;
+  const label = market?.entry?.label ?? "this market";
+  const waiting = busy || look || (found.id && market && found.id !== market.id);
+  return (
+    <Container className="pt-20">
+      {waiting ? <p role="status" className="text-[18px] text-ink-2">Opening {symbol}…</p>
+        : market?.state === "error" ? (
+          <Empty title={`${label} could not load just now`}>
+            <button type="button" onClick={market.retry} className="btn mt-2 min-h-[52px] justify-center">Try again</button>
+          </Empty>
+        )
+        : found.id && found.id === market?.id ? <Empty title={`${symbol} · ${label}`}>{market.state === "none" ? NOT_YET : "Its numbers appear after the next nightly run."}</Empty>
+        : <Empty title={`${symbol} is not on any of our lists`}>It would need to be added to one of the lists first; it then appears here after the next nightly run.</Empty>}
+    </Container>
+  );
+}
+
+function Stock({ data, symbol, go, market: mk }) {
   const { market, bench, names, kb, observations, library, settings, sample, watchlist } = data;
+  const isDefault = !mk || mk.isDefault;
+  const entry = data.marketEntry ?? mk?.entry ?? null;
+  const fund = entry?.kind === "funds" ? fundCard(data.funds, symbol) ?? {} : null;
   // The checklist card's view (Checks or Candles), remembered per device; the brief's "See it on the candles" sets it.
   const [ckView, setCkView] = useChecklistView();
   const row = market.symbols.find((s) => s.symbol === symbol);
@@ -109,7 +157,7 @@ export default function Stock({ data, symbol, go }) {
   const isBench = symbol === bench.symbol;
   const checks = setupChecks(row, bench.symbol, settings);
   const passed = checks.filter((c) => c.pass).length;
-  const aliases = [symbol, ...(watchlist.symbols.find((s) => s.symbol === symbol)?.aliases ?? [])];
+  const aliases = [symbol, ...((watchlist.symbols ?? []).find((s) => s.symbol === symbol)?.aliases ?? [])];
   const today = todayISO();
   const claims = (observations?.items ?? []).filter((o) => o.tickers.some((t) => aliases.includes(t))).sort((a, b) => b.as_of.localeCompare(a.as_of));
   const liveClaims = claims.filter((c) => c.expires >= today);
@@ -117,7 +165,7 @@ export default function Stock({ data, symbol, go }) {
   const lessons = stockLessons(row, checks, library);
   const others = market.symbols.filter((s) => s.symbol !== bench.symbol);
   const words = plainWords(row, checks, bench.symbol, bench.label, liveClaims.length, settings, market.base_rates);
-  const gate = isBench ? null : actGate(data, row, checks);
+  const gate = isBench || !isDefault ? null : actGate(data, row, checks);
   const long = data.longrun?.members.find((m) => m.symbol === symbol);
   const goal = settings.goal.annual_return_pct;
   const idx = others.findIndex((s) => s.symbol === symbol);
@@ -132,7 +180,7 @@ export default function Stock({ data, symbol, go }) {
     <Container className="pt-14">
       <Reveal className="mb-8 flex flex-wrap items-center gap-3">
         <button type="button" onClick={() => go("watchlist")} className="meta inline-flex items-center gap-2 hover:text-ink">
-          <ArrowRight className="size-3.5 rotate-180" /> Watchlist
+          <ArrowRight className="size-3.5 rotate-180" /> {isDefault ? "Stocks" : `${entry?.label ?? "Stocks"} list`}
         </button>
         {!isBench && idx >= 0 && (
           <span className="ml-auto flex gap-2">
@@ -142,7 +190,7 @@ export default function Stock({ data, symbol, go }) {
         )}
       </Reveal>
 
-      {!isBench && <StockBrief data={data} row={row} symbol={symbol} today={today} jump={jump} seeCandles={data.manifest.candles?.[symbol] ? seeCandles : null} />}
+      {!isBench && <StockBrief data={data} row={row} symbol={symbol} today={today} jump={jump} seeCandles={candlesOf(data)[symbol] ? seeCandles : null} isDefault={isDefault} fund={fund} />}
 
       <div className={`flex flex-wrap items-end justify-between gap-6 ${isBench ? "" : "mt-12"}`}>
         <div className="min-w-0">
@@ -155,8 +203,8 @@ export default function Stock({ data, symbol, go }) {
               </button>
             )}
             {!isBench && (
-              <button type="button" onClick={() => jump("whats-next")} className="pill min-h-[40px] max-w-full text-ink hover:border-ink-3">
-                What's next <span aria-hidden="true">↓</span>
+              <button type="button" onClick={() => jump(fund ? "whats-inside" : "whats-next")} className="pill min-h-[40px] max-w-full text-ink hover:border-ink-3">
+                {fund ? "What's inside" : "What's next"} <span aria-hidden="true">↓</span>
               </button>
             )}
           </div>
@@ -193,6 +241,13 @@ export default function Stock({ data, symbol, go }) {
             <button type="button" onClick={() => go("admin")} className="meta mt-5 inline-flex items-center gap-1 hover:text-ink">House rules <ArrowRight className="size-3.5" /></button>
           </Reveal>
         )}
+        {!isDefault && !isBench && (
+          <Reveal delay={100} className="card p-6 sm:p-8">
+            <div className="eyebrow mb-4">Can we act on this?</div>
+            <div className="display text-[clamp(30px,4vw,42px)] text-ink-2">Not part of our plan.</div>
+            <p className="mt-4 text-[16px] leading-relaxed text-ink-2">{NASDAQ_PLAN_LINE}</p>
+          </Reveal>
+        )}
       </div>
 
       <div className="mt-6">
@@ -213,7 +268,7 @@ export default function Stock({ data, symbol, go }) {
         <StockChart row={row} bench={isBench ? null : benchRow} benchSymbol={bench.symbol} picks={sample ? [] : picks} />
       </Reveal>
 
-      {!isBench && <WhatsNext card={cardFor(data.outlook, symbol)} symbol={symbol} today={today} hasFile={Boolean(data.outlook)} />}
+      {!isBench && (fund ? <WhatsInside fund={fund} symbol={symbol} /> : <WhatsNext card={cardFor(data.outlook, symbol)} symbol={symbol} today={today} hasFile={Boolean(data.outlook)} />)}
 
       {long && (
         <Reveal className="card mt-6 p-6 sm:p-8">
@@ -264,7 +319,7 @@ export default function Stock({ data, symbol, go }) {
         <Reveal delay={80} className="card p-6 sm:p-8">
           <div className="flex items-baseline justify-between gap-3">
             <h3 className="text-[22px] font-semibold tracking-[-0.02em]">Lessons in play</h3>
-            <button type="button" onClick={() => go("insights")} className="meta inline-flex items-center gap-1 hover:text-ink">Insights <ArrowRight className="size-3.5" /></button>
+            <button type="button" onClick={() => go("insights")} className="meta inline-flex items-center gap-1 hover:text-ink">Lessons <ArrowRight className="size-3.5" /></button>
           </div>
           <p className="mt-1 text-[14px] text-ink-3">Matched to this stock's condition from your library.</p>
           <ol className="mt-5 grid gap-5">
@@ -280,7 +335,7 @@ export default function Stock({ data, symbol, go }) {
         </Reveal>
       </div>
 
-      {!isBench && (
+      {!isBench && isDefault && (
         <section className="pt-20">
           <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
             <div>
@@ -368,7 +423,7 @@ function BriefHead({ children }) {
  * "<Company> in short": the household's eight-step checklist in plain words, whether a new paper entry is within the
  * house rules and the plan in whole percents, and what is happening at the company. Wording: lib/brief.js.
  */
-function StockBrief({ data, row, symbol, today, jump, seeCandles }) {
+function StockBrief({ data, row, symbol, today, jump, seeCandles, isDefault = true, fund = null }) {
   const cfg = data.checklistCfg;
   const ck = data.checklist;
   const ckRow = rowFor(ck, symbol);
@@ -376,7 +431,7 @@ function StockBrief({ data, row, symbol, today, jump, seeCandles }) {
   const reading = read.ok ? ckRow : null;
   const dir = direction(reading);
   const checks = reading ? eightChecks(reading, cfg) : null;
-  const where = wherePaper({ row: reading, setup: setupState(row, data.settings.setup.stretch_pct), read, min: cfg?.house_rule?.min_reward_to_risk ?? 2, benchLabel: `the ${data.bench.label.replace(/\s*\(.*\)$/, "")}` });
+  const where = !isDefault ? null : wherePaper({ row: reading, setup: setupState(row, data.settings.setup.stretch_pct), read, min: cfg?.house_rule?.min_reward_to_risk ?? 2, benchLabel: `the ${data.bench.label.replace(/\s*\(.*\)$/, "")}` });
   const card = cardFor(data.outlook, symbol);
   const name = shortName(symbol, data.outlook, data.names);
   const ne = card?.next_earnings;
@@ -436,6 +491,12 @@ function StockBrief({ data, row, symbol, today, jump, seeCandles }) {
         )}
       </div>
 
+      {!isDefault ? (
+        <div className="mt-8 rounded-2xl border border-line-2 p-5">
+          <BriefHead>Where to invest (on paper)</BriefHead>
+          <p className="text-[16px] leading-relaxed text-ink-2">{NASDAQ_PLAN_LINE}</p>
+        </div>
+      ) : (
       <div className={`mt-8 rounded-2xl border p-5 ${where.ok ? "border-accent/50" : "border-people/40"}`}>
         <BriefHead>Where to invest (on paper)</BriefHead>
         <div className={`text-[20px] leading-snug font-semibold tracking-[-0.01em] ${where.ok ? "text-accent" : "text-people"}`}>{where.head}.</div>
@@ -451,7 +512,15 @@ function StockBrief({ data, row, symbol, today, jump, seeCandles }) {
         )}
         <p className="mt-3 text-[13.5px] leading-relaxed text-ink-3">The house rule: three of the four setup checks pass, the stock is not stretched, and the first target is at least {where.min} times as far as the stop. A paper entry only; the monthly portfolio rule decides what the practice portfolio holds.</p>
       </div>
+      )}
 
+      {fund ? (
+        <div className="mt-8">
+          <BriefHead>What's inside</BriefHead>
+          <p className="max-w-[62ch] text-[17px] leading-relaxed text-ink">{fund.plain ?? "Its fund card appears with the next update."}</p>
+          <button type="button" onClick={() => jump("whats-inside")} className="meta mt-3 inline-flex min-h-[44px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">What's inside <span aria-hidden="true">↓</span></button>
+        </div>
+      ) : (
       <div className="mt-8">
         <BriefHead>What's happening at the company</BriefHead>
         {card ? (
@@ -462,6 +531,7 @@ function StockBrief({ data, row, symbol, today, jump, seeCandles }) {
         ) : <p className="text-[16px] leading-relaxed text-ink-2">No company card yet; it is researched after each earnings season.</p>}
         <button type="button" onClick={() => jump("whats-next")} className="meta mt-3 inline-flex min-h-[44px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">What's next <span aria-hidden="true">↓</span></button>
       </div>
+      )}
 
       <p className="mt-6 border-t border-line pt-4 text-[14px] leading-relaxed text-ink-2">{BRIEF_FOOTER}</p>
     </Reveal>
@@ -505,6 +575,40 @@ function NextList({ label, items }) {
         ))}
       </ul>
     </div>
+  );
+}
+
+/** A fund's card (config/funds.json): what it holds, the index it follows, its yearly cost and a note, with its source. */
+function WhatsInside({ fund, symbol }) {
+  const cost = costWords(fund.expense_ratio_pct);
+  return (
+    <Reveal id="whats-inside" className="card mt-6 scroll-mt-28 p-6 sm:p-8">
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
+        <h3 className="text-[22px] font-semibold tracking-[-0.02em]">What's inside</h3>
+        {fund.as_of && <span className="meta normal-case tracking-[0.04em]">checked {dayOnly(fund.as_of)}</span>}
+      </div>
+      {fund.plain ? <p className="mt-4 max-w-[62ch] text-[18px] leading-relaxed text-ink">{fund.plain}</p>
+        : <p className="mt-4 max-w-[62ch] text-[15px] leading-relaxed text-ink-2">No fund card for {symbol} yet. Cards come from each fund's own page: what it holds, the index it follows and its yearly cost.</p>}
+      {fund.ticker && (
+        <dl className="mt-6 grid gap-5 md:grid-cols-3 md:gap-8">
+          <div className="min-w-0">
+            <dt className="meta mb-1.5 text-accent">It holds</dt>
+            <dd className="text-[15.5px] leading-relaxed text-ink">{fund.holds}</dd>
+          </div>
+          <div className="min-w-0">
+            <dt className="meta mb-1.5 text-accent">The index it follows</dt>
+            <dd className="text-[15.5px] leading-relaxed text-ink">{fund.index_tracked}{fund.category ? <span className="block text-[14px] text-ink-3">{fund.category}</span> : null}</dd>
+          </div>
+          <div className="min-w-0">
+            <dt className="meta mb-1.5 text-accent">Yearly cost</dt>
+            <dd className="text-[15.5px] leading-relaxed text-ink">{cost ?? "Not listed"}<span className="block text-[14px] leading-snug text-ink-3">The share of the money the fund keeps each year to run itself; lower is better.</span></dd>
+          </div>
+        </dl>
+      )}
+      {fund.top_note && <p className="mt-6 rounded-2xl border border-line-2 bg-surface-2 px-4 py-3 text-[15px] leading-relaxed text-ink-2">{fund.top_note}</p>}
+      {fund.source_url && <p className="mt-4 text-[14.5px] text-ink-2">From the fund's own page<Src url={fund.source_url} /></p>}
+      <p className="meta mt-6 normal-case tracking-[0.04em]">A fund card describes the fund. It is not a forecast and not a reason to buy or sell.</p>
+    </Reveal>
   );
 }
 

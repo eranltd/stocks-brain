@@ -1,0 +1,120 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-10-10",
+  "change_note": "Cards for the nine iShares funds, from each fund's official page, re-checked by a second reader.",
+  "how_to_read": [
+    "Each card says in plain words what the fund holds and which index it follows.",
+    "The yearly cost is the share of the money in the fund that it keeps each year to run itself; lower is better.",
+    "A fund card describes the fund. It is not a forecast and not a reason to buy or sell."
+  ],
+  "funds": [
+    {
+      "ticker": "IVV",
+      "name": "iShares Core S&P 500 ETF",
+      "as_of": "2026-10-10",
+      "holds": "Shares of about five hundred large US companies chosen by S&P, each weighted by its market size, so the largest tech firms carry the most weight.",
+      "plain": "A low-cost way to own a slice of the big US companies that make up the best-known US stock market index.",
+      "category": "US large companies",
+      "expense_ratio_pct": 0.03,
+      "index_tracked": "S&P 500 Index",
+      "top_note": "Tilted to technology: as of Oct 8, 2026 the tech sector was about 40% of the fund and the top ten holdings about 39%, led by NVIDIA, Apple and Microsoft.",
+      "source_url": "https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf"
+    },
+    {
+      "ticker": "ACWI",
+      "name": "iShares MSCI ACWI ETF",
+      "as_of": "2026-10-10",
+      "holds": "Large and mid-sized companies from both rich and emerging countries around the world, weighted by market size; the US makes up most of it.",
+      "plain": "One fund that spreads money across stock markets all over the world, in both developed and emerging countries.",
+      "category": "World",
+      "expense_ratio_pct": 0.32,
+      "index_tracked": "MSCI All Country World Index (Net)",
+      "top_note": "Despite the global label, the United States was about 65% of the fund as of Oct 8, 2026, and technology about a third.",
+      "source_url": "https://www.ishares.com/us/products/239600/ishares-msci-acwi-etf"
+    },
+    {
+      "ticker": "EFA",
+      "name": "iShares MSCI EAFE ETF",
+      "as_of": "2026-10-10",
+      "holds": "Large and mid-sized companies in developed countries outside the US and Canada, led by Japan, Britain, France, Switzerland and Germany.",
+      "plain": "A way to own big companies in rich countries other than the US and Canada, to spread money beyond the American market.",
+      "category": "Developed markets outside the US",
+      "expense_ratio_pct": 0.32,
+      "index_tracked": "MSCI EAFE Index (Net)",
+      "top_note": "Japan was the largest country at about 25% as of Oct 8, 2026, followed by the United Kingdom at about 14%. The fund is exposed to currency moves against the dollar.",
+      "source_url": "https://www.ishares.com/us/products/239623/ishares-msci-eafe-etf"
+    },
+    {
+      "ticker": "IEMG",
+      "name": "iShares Core MSCI Emerging Markets ETF",
+      "as_of": "2026-10-10",
+      "holds": "Large, mid-sized and small companies in emerging-market countries such as Taiwan, South Korea, China, India and Brazil.",
+      "plain": "A low-cost way to own a broad mix of companies in developing economies, from big names down to smaller firms.",
+      "category": "Emerging markets",
+      "expense_ratio_pct": 0.09,
+      "index_tracked": "MSCI Emerging Markets Investable Market Index (USD) (Net)",
+      "top_note": "Concentrated in Asian chipmakers: Taiwan Semiconductor alone was about 14% of the fund as of Oct 8, 2026, and Taiwan plus South Korea together were about half.",
+      "source_url": "https://www.ishares.com/us/products/244050/ishares-core-msci-emerging-markets-etf"
+    },
+    {
+      "ticker": "EIS",
+      "name": "iShares MSCI Israel ETF",
+      "as_of": "2026-10-10",
+      "holds": "Israeli company shares of all sizes, with banks and other financial firms the largest group, followed by technology, health care and industrial firms.",
+      "plain": "A single fund for owning a broad set of Israeli companies, most of them traded on the Tel Aviv stock exchange.",
+      "category": "Single country",
+      "expense_ratio_pct": 0.59,
+      "index_tracked": "MSCI Israel Capped Investable Market Index (Net)",
+      "top_note": "Concentrated: the top ten holdings were about 55% as of Oct 8, 2026, led by Teva at about 11%, with Bank Leumi and Bank Hapoalim next. Financials were about 35%.",
+      "source_url": "https://www.ishares.com/us/products/239663/ishares-msci-israel-capped-etf"
+    },
+    {
+      "ticker": "IJR",
+      "name": "iShares Core S&P Small-Cap ETF",
+      "as_of": "2026-10-10",
+      "holds": "Shares of several hundred smaller US companies chosen by S&P, weighted by market size; since all are small, no single company is a big part of the fund.",
+      "plain": "A low-cost way to own many smaller US companies, which can behave differently from the giants that dominate the main index.",
+      "category": "US small companies",
+      "expense_ratio_pct": 0.06,
+      "index_tracked": "S&P SmallCap 600 Index",
+      "top_note": "Widely spread: no single holding was much above half a percent of the fund as of Oct 8, 2026.",
+      "source_url": "https://www.ishares.com/us/products/239774/ishares-core-sp-smallcap-etf"
+    },
+    {
+      "ticker": "SOXX",
+      "name": "iShares Semiconductor ETF",
+      "as_of": "2026-10-10",
+      "holds": "About thirty US-listed chip companies, some of them based abroad, that design or make computer chips or the machines used to make them.",
+      "plain": "A way to own the chip industry as a whole instead of a single chip company; it rises and falls with that one industry.",
+      "category": "Sector",
+      "expense_ratio_pct": 0.33,
+      "index_tracked": "NYSE Semiconductor Index",
+      "top_note": "Narrow and concentrated: about thirty stocks, with the top ten about 61% as of Oct 8, 2026, led by AMD, Intel, Micron, NVIDIA and Broadcom. iShares lists a planned share split with a record date of Nov 3, 2026.",
+      "source_url": "https://www.ishares.com/us/products/239705/ishares-phlx-semiconductor-etf"
+    },
+    {
+      "ticker": "AGG",
+      "name": "iShares Core U.S. Aggregate Bond ETF",
+      "as_of": "2026-10-10",
+      "holds": "Thousands of investment-grade bonds priced in US dollars, mostly US Treasury bonds, home-mortgage bonds and bonds from large companies.",
+      "plain": "A low-cost way to own the broad US investment-grade bond market in one fund.",
+      "category": "Bonds",
+      "expense_ratio_pct": 0.03,
+      "index_tracked": "Bloomberg US Aggregate Bond Index",
+      "top_note": "About 47% Treasuries and 23% mortgage pass-through bonds as of Oct 8, 2026. Effective duration is about 5.7 years, so the fund's value falls when interest rates rise.",
+      "source_url": "https://www.ishares.com/us/products/239458/ishares-core-total-us-bond-market-etf"
+    },
+    {
+      "ticker": "TLT",
+      "name": "iShares 20+ Year Treasury Bond ETF",
+      "as_of": "2026-10-10",
+      "holds": "US government Treasury bonds that have more than twenty years left before they are paid back.",
+      "plain": "A way to own long-dated US government bonds, whose value moves a lot when interest rates change.",
+      "category": "Bonds",
+      "expense_ratio_pct": 0.15,
+      "index_tracked": "ICE US Treasury 20+ Year Bond Index",
+      "top_note": "Very sensitive to interest rates: effective duration was about 14.7 years as of Oct 8, 2026, across about 47 bond issues.",
+      "source_url": "https://www.ishares.com/us/products/239454/ishares-20-year-treasury-bond-etf"
+    }
+  ]
+}

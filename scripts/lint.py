@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """Repo lint: schemas, doc headers, guardrails, hygiene, size caps. Exits non-zero on any error.
 
-Usage: python3 scripts/lint.py
+Usage: python3 scripts/lint.py [--soft-markets]
+  --soft-markets  problems in the other markets' published files (data/markets/) are warnings, not errors: the main
+                  daily run uses it, since it never writes those files and a market's problem must not discard the
+                  main list's data (each market fails closed on its own; its own run lints them strictly)
 """
 from __future__ import annotations
 
@@ -66,6 +69,8 @@ OUTLOOK_SOURCE_HOSTS = (
     "t-mobile.com", "diamondbackenergy.com", "linde.com",
 )
 OUTLOOK_STALE_DAYS = 98  # no next date and the latest report a quarter and a week old: newer results are probably out
+FUND_SOURCE_HOSTS = ("ishares.com", "blackrock.com", "sec.gov")  # a fund card links to the fund's own page or a filing
+MIN_FETCH_GAP_MINUTES = 120  # the two fetch runs start this far apart, so their requests never share one hour
 PRICE_LIKE = re.compile(r"(\$|USD\s?|US\$)\s?\d|\d[\d,.]*\s?(dollars|per share)\b", re.I)
 
 
@@ -78,10 +83,21 @@ BRAIN_WORKFLOW = ".claude/workflows/brain.js"  # the saved workflow a claude_rou
 
 
 class Lint:
-    def __init__(self) -> None:
+    def __init__(self, soft_markets: bool = False) -> None:
         self.errors: list[str] = []
         self.warnings: list[str] = []
         self.v = Validator()
+        self.soft_markets = soft_markets
+        self.bad_markets: set[str] = set()  # markets whose published files have a problem (build_site leaves them out)
+
+    def market_err(self, where: Path | str, msg: str) -> None:
+        """A problem in another market's published files: an error, or a warning in --soft-markets mode."""
+        if m := re.search(r"data/markets/([a-z][a-z0-9_]*)", _rel(where)):
+            self.bad_markets.add(m.group(1))
+        if self.soft_markets:
+            self.warn(where, f"{msg} (other market's file: an error in its own run)")
+        else:
+            self.err(where, msg)
 
     def err(self, where: Path | str, msg: str) -> None:
         self.errors.append(f"{_rel(where)}: {msg}")
@@ -142,11 +158,17 @@ class Lint:
             pc = self.schema(people_path, "people.schema.json")
             if pc:
                 self.check_people(people_path, pc, src)
+        self.markets = self.check_markets_config(st, wl) if wl else None
         outlook_path = CONFIG / "outlook.json"
         if outlook_path.exists():
             oc = self.schema(outlook_path, "outlook.schema.json")
             if oc and wl:
-                self.check_outlook(outlook_path, oc, wl)
+                self.check_outlook(outlook_path, oc, wl, extra=self.all_market_symbols(include_bench=False))
+        funds_path = CONFIG / "funds.json"
+        if funds_path.exists():
+            fc = self.schema(funds_path, "funds.schema.json")
+            if fc:
+                self.check_funds(funds_path, fc)
         checklist_path = CONFIG / "checklist.json"
         if checklist_path.exists():
             cc = self.schema(checklist_path, "checklist_config.schema.json")
@@ -229,11 +251,12 @@ class Lint:
             if src and p["x_handle"] and p["x_handle"].lower() not in follow:
                 self.warn(path, f"{p['id']}: X handle {p['x_handle']} is not in config/sources.json x_accounts.follow")
 
-    def check_outlook(self, path: Path, oc: dict, wl: dict, today: str | None = None) -> None:
-        """Company outlook cards: one per watchlist name, dated (never in the future), linked over https (the site shows
-        these as links only; nothing is fetched), paraphrased and free of prices, price targets and ratings."""
+    def check_outlook(self, path: Path, oc: dict, wl: dict, today: str | None = None, extra: set | None = None) -> None:
+        """Company outlook cards: one per name on any market's list (`extra`: the other markets' lists), dated (never in
+        the future), linked over https (the site shows these as links only; nothing is fetched), paraphrased and free of
+        prices, price targets and ratings."""
         today = today or date.today().isoformat()
-        on_list = {s["symbol"] for s in wl["symbols"]}
+        on_list = {s["symbol"] for s in wl["symbols"]} | (extra or set())
         tickers = [c["ticker"] for c in oc["companies"]]
         if len(tickers) != len(set(tickers)):
             self.err(path, "duplicate tickers")
@@ -242,7 +265,7 @@ class Lint:
         for c in oc["companies"]:
             t, lt, ne = c["ticker"], c["latest"], c["next_earnings"]
             if t not in on_list:
-                self.err(path, f"{t}: not on the watchlist")
+                self.err(path, f"{t}: not on any market's list")
             if c["as_of"] > today:
                 self.err(path, f"{t}: as_of {c['as_of']} is in the future")
             if lt["reported_on"] > today:
@@ -298,6 +321,141 @@ class Lint:
                     self.err(path, f"{t} {where}: looks like a quotation; paraphrase in our own words")
                 if m := OUTLOOK_JARGON.search(text):
                     self.warn(path, f"{t} {where}: {m.group(0)!r} is jargon; say it in plain words")
+
+    # ------------------------------------------------------------------ markets
+    def check_markets_config(self, st: dict | None, wl: dict, root: Path = ROOT) -> dict | None:
+        """config/markets.json and each market's list: the default is the main list (config/watchlist.json, data/market,
+        the settings benchmark); every other market publishes under data/markets/<id>; ids, labels and list symbols are
+        unique; a benchmark is not in its own list (it may be on another market's list: EIS is TLV's benchmark and an
+        iShares fund); a stocks market lists GICS sectors and a funds market fund categories. Then the request budget.
+        Returns {"config": ..., "lists": {id: watchlist}} or None."""
+        path = root / "config" / "markets.json"
+        if not path.exists():
+            return None
+        mc = self.schema(path, "markets.schema.json")
+        if not mc:
+            return None
+        ids = [m["id"] for m in mc["markets"]]
+        for key in ("id", "label"):
+            vals = [m[key] for m in mc["markets"]]
+            if len(vals) != len(set(vals)):
+                self.err(path, f"duplicate market {key}s")
+        if mc["default"] not in ids:
+            self.err(path, f"default {mc['default']!r} is not a market")
+            return None
+        lists: dict[str, dict] = {}
+        for m in mc["markets"]:
+            mid = m["id"]
+            if mid == mc["default"]:
+                if m["watchlist"] != "config/watchlist.json" or m["data"] != "data/market":
+                    self.err(path, f"{mid}: the default market is the main list (config/watchlist.json, data/market)")
+                if st and m["benchmark"] != st["scoring"]["benchmark"]["symbol"]:
+                    self.err(path, f"{mid}: benchmark {m['benchmark']} differs from settings scoring.benchmark "
+                                   f"{st['scoring']['benchmark']['symbol']}")
+                lists[mid] = wl
+            else:
+                if m["data"] != f"data/markets/{mid}" or m["watchlist"] != f"config/watchlists/{mid}.json":
+                    self.err(path, f"{mid}: publishes under data/markets/{mid} with its list in config/watchlists/{mid}.json")
+                wl_path = root / m["watchlist"]
+                if not wl_path.exists():
+                    self.err(path, f"{mid}: list {m['watchlist']} does not exist")
+                    continue
+                mwl = self.schema(wl_path, "watchlist.schema.json")
+                if not mwl:
+                    continue
+                if mwl.get("core") or mwl.get("context"):
+                    self.err(wl_path, "core and context belong to the main list only")
+                lists[mid] = mwl
+            where = root / m["watchlist"]
+            syms = [s["symbol"] for s in lists[mid]["symbols"]]
+            if len(syms) != len(set(syms)):
+                self.err(where, "duplicate symbols")
+            if m["benchmark"] in syms:
+                self.err(where, f"the benchmark {m['benchmark']} is on its own list (compare a list with something outside it)")
+            for s in lists[mid]["symbols"]:
+                if "sector" in s and "category" in s:
+                    self.err(where, f"{s['symbol']}: a sector or a category, not both")
+                elif m["kind"] == "funds" and "category" not in s:
+                    self.err(where, f"{s['symbol']}: a funds market lists a fund category")
+                elif m["kind"] == "stocks" and "sector" not in s:
+                    self.err(where, f"{s['symbol']}: a stocks market lists a GICS sector")
+        if st and lists.keys() == set(ids):
+            self.check_fetch_budget(st, mc, lists, root)
+        return {"config": mc, "lists": lists}
+
+    def check_fetch_budget(self, st: dict, mc: dict, lists: dict[str, dict], root: Path = ROOT) -> None:
+        """One request per unique symbol per fetch run: each run's count within prices.max_requests_per_run, that below
+        the plan's prices.requests_per_hour, and the two runs' schedules far enough apart not to share an hour."""
+        from _common import default_fetch_symbols, market_symbols, scope_symbols
+        where = root / "config" / "settings.json"
+        cap, hourly = st["prices"]["max_requests_per_run"], st["prices"]["requests_per_hour"]
+        if cap >= hourly:
+            self.err(where, f"prices.max_requests_per_run {cap} must stay below the plan's requests_per_hour {hourly} (room for retries)")
+        plan = {"nasdaq": {mc["default"]: default_fetch_symbols(st, lists[mc["default"]])},
+                "markets": {m["id"]: market_symbols(m, lists[m["id"]]) for m in mc["markets"] if m["id"] != mc["default"]}}
+        for scope, groups in plan.items():
+            n = len(scope_symbols(groups))
+            if n > cap:
+                self.err(where, f"the {scope} fetch needs {n} requests, over prices.max_requests_per_run {cap}")
+        rt_path = root / "config" / "routines.json"
+        if not rt_path.exists():
+            return
+        crons = {r["id"]: r["cron"] for r in load_json(rt_path)["routines"] if r["id"] in ("fetch_prices", "fetch_markets")}
+        if plan["markets"] and "fetch_markets" not in crons:
+            self.err(rt_path, "other markets are configured but there is no fetch_markets routine")
+        elif len(crons) == 2:
+            gap = _cron_gap_minutes(crons["fetch_prices"], crons["fetch_markets"])
+            if gap is None or gap < MIN_FETCH_GAP_MINUTES:
+                self.err(rt_path, f"fetch_prices and fetch_markets must start at least {MIN_FETCH_GAP_MINUTES} minutes apart "
+                                  f"(one hour's requests must hold one run only)")
+
+    def all_market_symbols(self, include_bench: bool = True) -> set:
+        """Every symbol on any market's list (and their benchmarks)."""
+        if not getattr(self, "markets", None):
+            return set()
+        out = {s["symbol"] for wl in self.markets["lists"].values() for s in wl["symbols"]}
+        if include_bench:
+            out |= {m["benchmark"] for m in self.markets["config"]["markets"]}
+        return out
+
+    def check_funds(self, path: Path, fc: dict, today: str | None = None) -> None:
+        """Fund cards: one per fund on a funds market's list, dated (never in the future), holds and plain in words (no
+        digits), paraphrased, linked to the fund's own page or a filing, free of prices, ratings and forecasts."""
+        today = today or date.today().isoformat()
+        markets = getattr(self, "markets", None)
+        funds_lists = ({s["symbol"] for m in markets["config"]["markets"] if m["kind"] == "funds"
+                        for s in markets["lists"].get(m["id"], {"symbols": []})["symbols"]} if markets else None)
+        tickers = [f["ticker"] for f in fc["funds"]]
+        if len(tickers) != len(set(tickers)):
+            self.err(path, "duplicate tickers")
+        if fc["updated_at"] > today:
+            self.err(path, f"updated_at {fc['updated_at']} is in the future")
+        for line in fc["how_to_read"]:
+            if re.search(r"\d", line):
+                self.err(path, "how_to_read: digits; say it in words")
+        for f in fc["funds"]:
+            t = f["ticker"]
+            if funds_lists is not None and t not in funds_lists:
+                self.err(path, f"{t}: not on a funds market's list")
+            if f["as_of"] > today:
+                self.err(path, f"{t}: as_of {f['as_of']} is in the future")
+            for key in ("holds", "plain"):
+                if re.search(r"\d", f[key]):
+                    self.err(path, f"{t} {key}: digits; say it in words, with no numbers")
+            host = (urlsplit(f["source_url"]).hostname or "").lower()
+            if not any(host == h or host.endswith("." + h) for h in FUND_SOURCE_HOSTS):
+                self.warn(path, f"{t}: source {host} is not the fund's own page or a filing")
+            texts = [(k, f[k]) for k in ("name", "holds", "plain", "index_tracked", "top_note") if f.get(k)]
+            for where, text in texts:
+                low = text.lower()
+                for b in OUTLOOK_BANNED:
+                    if b in low:
+                        self.err(path, f"{t} {where}: {b!r}; the cards carry no price targets or ratings")
+                if OUTLOOK_OPINION.search(text) or PRICE_TARGET_PT.search(text) or STOCK_PRICE.search(text) or STOCK_MOVE.search(text) \
+                        or PRICE_LIKE.search(text):
+                    self.err(path, f"{t} {where}: looks like a price, a rating or a market move; describe the fund")
+                if sum(text.count(q) for q in QUOTE_MARKS) >= 2 or SINGLE_QUOTED.search(text):
+                    self.err(path, f"{t} {where}: looks like a quotation; paraphrase in our own words")
 
     def check_checklist(self, path: Path, cc: dict, today: str | None = None) -> None:
         """The technical checklist: the eight steps once each, in order, with every parameter the code reads and sane
@@ -495,8 +653,8 @@ class Lint:
                 if obj:
                     if p.stem != obj["symbol"]:
                         self.err(p, f"filename does not match symbol {obj['symbol']}")
-                    if obj["symbol"] not in on_list | ctx | {bench}:
-                        self.warn(p, f"{obj['symbol']} is not on the watchlist, the context list or the benchmark")
+                    if obj["symbol"] not in on_list | ctx | {bench} | self.all_market_symbols():
+                        self.warn(p, f"{obj['symbol']} is not on any market's list, the context list or a benchmark")
                     dates = [b["date"] for b in obj["bars"]]
                     if dates != sorted(set(dates)):
                         self.err(p, "bars must be strictly ascending by date")
@@ -583,6 +741,7 @@ class Lint:
             doc = self.schema(p, "candles.schema.json")
             if doc:
                 self.check_candles_data(p, doc, cl)
+        self.check_markets_data()
         for p in _walk(ROOT):
             rel = p.relative_to(ROOT).as_posix()
             if rel.startswith("data/") and p.suffix == ".json":
@@ -593,17 +752,67 @@ class Lint:
                 if isinstance(obj, dict) and "bars" in obj and not obj.get("sample"):
                     self.err(p, "raw provider bars must not be committed (licence); publish derived numbers only")
 
-    def check_checklist_data(self, path: Path, cl: dict) -> None:
-        """Published checklist: only watchlist names and the benchmark, a live file is not a sample, and the forward record
-        is in date order with one record per date (it is append-only)."""
-        try:
-            wl, st = load_json(CONFIG / "watchlist.json"), load_json(CONFIG / "settings.json")
-        except Exception:  # noqa: BLE001  (reported by check_config)
+    def check_markets_data(self, data: Path = DATA) -> None:
+        """The other markets' published files (data/markets/<id>/): each directory is a configured market, its derived,
+        checklist and candles pass their schemas and the same checks as the main list's, name only that market's list and
+        benchmark, are live, and are as of one day (derived and checklist agree). Errors go through market_err."""
+        base = data / "markets"
+        if not base.exists():
             return
-        allowed = {s["symbol"] for s in wl["symbols"]} | {st["scoring"]["benchmark"]["symbol"]}
+        mk = getattr(self, "markets", None)
+        conf = {m["id"]: m for m in mk["config"]["markets"]} if mk else {}
+        default = mk["config"]["default"] if mk else None
+        for d in sorted(p for p in base.iterdir() if p.is_dir()):
+            m = conf.get(d.name)
+            if not m or d.name == default:
+                self.market_err(d, "not a configured market (config/markets.json); remove it")
+                continue
+            wl = mk["lists"].get(d.name)
+            allowed = ({s["symbol"] for s in wl["symbols"]} if wl else set()) | {m["benchmark"]}
+            soft = Lint(soft_markets=self.soft_markets)  # collect, then route through market_err
+            soft.markets = mk
+            der = soft.schema(d / "derived.json", "derived.schema.json") if (d / "derived.json").exists() else None
+            if not (d / "derived.json").exists():
+                soft.err(d / "derived.json", "missing (the market's files are written together)")
+            cl = None
+            if (d / "checklist.json").exists():
+                cl = soft.schema(d / "checklist.json", "checklist.schema.json")
+                if cl:
+                    soft.check_checklist_data(d / "checklist.json", cl, allowed=allowed, bench=m["benchmark"])
+            for p in _json_files(d / "candles"):
+                doc = soft.schema(p, "candles.schema.json")
+                if doc:
+                    soft.check_candles_data(p, doc, cl, allowed=allowed, checklist_name=f"data/markets/{d.name}/checklist.json")
+            if der:
+                if der["sample"]:
+                    soft.err(d / "derived.json", "data/ holds live data only; sample markets are built on the fly by build_site.py")
+                if der["benchmark"] != m["benchmark"]:
+                    soft.err(d / "derived.json", f"benchmark {der['benchmark']} is not the market's {m['benchmark']}")
+                for r in der["symbols"]:
+                    if r["symbol"] not in allowed:
+                        soft.warn(d / "derived.json", f"{r['symbol']} is not on the market's list or its benchmark (stale file?)")
+                if cl and cl["as_of"] != der["as_of"]:
+                    soft.err(d / "checklist.json", f"as_of {cl['as_of']} differs from derived.json's {der['as_of']} (written together)")
+            self.warnings += soft.warnings
+            for e in soft.errors:
+                where, _, msg = e.partition(": ")
+                self.market_err(where, msg)
+
+    def check_checklist_data(self, path: Path, cl: dict, allowed: set | None = None, bench: str | None = None) -> None:
+        """Published checklist: only the list's names and the benchmark (the main list's by default; `allowed` and
+        `bench` for another market), a live file is not a sample, and the forward record is in date order with one
+        record per date (it is append-only)."""
+        if allowed is None:
+            try:
+                wl, st = load_json(CONFIG / "watchlist.json"), load_json(CONFIG / "settings.json")
+            except Exception:  # noqa: BLE001  (reported by check_config)
+                return
+            allowed = {s["symbol"] for s in wl["symbols"]} | {st["scoring"]["benchmark"]["symbol"]}
         for r in cl["symbols"]:
             if r["symbol"] not in allowed:  # a warning: a stale file after a watchlist change must not discard the day's data
                 self.warn(path, f"{r['symbol']} is not on the watchlist or the benchmark (stale file? the next checklist run drops it)")
+        if bench and cl["benchmark"] != bench:
+            self.err(path, f"benchmark {cl['benchmark']} is not the market's {bench}")
         if cl["sample"]:
             self.err(path, "data/ holds live data only; sample checklists are built on the fly by build_site.py")
         dates = [r["date"] for r in cl["forward"]["records"]]
@@ -612,7 +821,8 @@ class Lint:
         if dates and dates[-1] > cl["as_of"]:
             self.err(path, "a forward record is dated after as_of")
 
-    def check_candles_data(self, path: Path, doc: dict, cl: dict | None) -> None:
+    def check_candles_data(self, path: Path, doc: dict, cl: dict | None, allowed: set | None = None,
+                           checklist_name: str = "data/market/checklist.json") -> None:
         """A published candles file (data/market/candles/<SYMBOL>.json): named for its symbol, a watchlist name or the
         benchmark, live (not a sample), every array the same length, the last close 0, high and low holding the body, every
         value within a sane percent range so nothing that looks like a raw price slips through, volume ratios not negative,
@@ -620,11 +830,12 @@ class Lint:
         import market as mk
         if path.stem != doc["symbol"]:
             self.err(path, f"file name must be the symbol ({doc['symbol']}.json)")
-        try:
-            wl, st = load_json(CONFIG / "watchlist.json"), load_json(CONFIG / "settings.json")
-        except Exception:  # noqa: BLE001  (reported by check_config)
-            return
-        allowed = {s["symbol"] for s in wl["symbols"]} | {st["scoring"]["benchmark"]["symbol"]}
+        if allowed is None:
+            try:
+                wl, st = load_json(CONFIG / "watchlist.json"), load_json(CONFIG / "settings.json")
+            except Exception:  # noqa: BLE001  (reported by check_config)
+                return
+            allowed = {s["symbol"] for s in wl["symbols"]} | {st["scoring"]["benchmark"]["symbol"]}
         if doc["symbol"] not in allowed:  # a warning, as for the checklist: the next run removes it, build_site skips it
             self.warn(path, f"{doc['symbol']} is not on the watchlist or the benchmark (stale file? the next checklist run removes it)")
         if doc["sample"]:
@@ -633,7 +844,7 @@ class Lint:
             self.err(path, p)
         row = next((r for r in cl["symbols"] if r["symbol"] == doc["symbol"]), None) if cl else None
         if row is None:
-            self.err(path, "no row for this symbol in data/market/checklist.json; its overlays could not be checked")
+            self.err(path, f"no row for this symbol in {checklist_name}; its overlays could not be checked")
         elif row["as_of"] != doc["as_of"]:
             self.err(path, f"as_of {doc['as_of']} differs from the checklist's {row['as_of']}")
         else:
@@ -665,6 +876,7 @@ class Lint:
         literals = {s["symbol"] for s in [*wl["symbols"], *wl.get("context", [])]} if wl else set()
         if st:
             literals.add(st["scoring"]["benchmark"]["symbol"])
+        literals |= self.all_market_symbols()
         lit_re = re.compile(r"[\"'`](" + "|".join(map(re.escape, sorted(literals))) + r")[\"'`]") if literals else None
 
         data_bytes = 0
@@ -774,5 +986,18 @@ def _keys(obj) -> set:
     return out
 
 
+def _cron_gap_minutes(a: str, b: str) -> int | None:
+    """Shortest gap in minutes between two daily crons' start times ("M H * * dow", single minute and hour), around the
+    clock; None when either is not that simple form (then lint cannot prove the gap and asks for it)."""
+    def at(c: str) -> int | None:
+        f = c.split()
+        return int(f[1]) * 60 + int(f[0]) if len(f) == 5 and f[0].isdigit() and f[1].isdigit() else None
+    x, y = at(a), at(b)
+    if x is None or y is None:
+        return None
+    d = abs(x - y) % 1440
+    return min(d, 1440 - d)
+
+
 if __name__ == "__main__":
-    sys.exit(Lint().run())
+    sys.exit(Lint(soft_markets="--soft-markets" in sys.argv[1:]).run())

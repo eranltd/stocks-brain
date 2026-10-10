@@ -293,7 +293,9 @@
       "additionalProperties": false,
       "required": [
         "provider",
-        "keep_days"
+        "keep_days",
+        "requests_per_hour",
+        "max_requests_per_run"
       ],
       "properties": {
         "provider": {
@@ -306,6 +308,18 @@
           "type": "integer",
           "minimum": 20,
           "maximum": 3000
+        },
+        "requests_per_hour": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000,
+          "description": "The provider plan's hourly request cap (Tiingo's free plan: 50, from its pricing page)."
+        },
+        "max_requests_per_run": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000,
+          "description": "Most HTTP requests one fetch run may make, retries included; lint keeps each run's unique symbols within it and it below requests_per_hour."
         }
       }
     },

@@ -26,11 +26,14 @@ docs/        strategy.md, methodology.md (front matter: version, updated_at, cha
 config/      watchlist.json, settings.json, sources.json (connectors), routines.json (schedule),
              people.json (people we learn from, the research on following them, their dated public calls),
              outlook.json (company outlook cards: latest quarter, guidance, next results date, what's next; linked),
-             checklist.json (the eight-step technical checklist from the household's video: steps, parameters, house rule)
+             checklist.json (the eight-step technical checklist from the household's video: steps, parameters, house rule),
+             markets.json (the markets the header switch shows) with watchlists/tlv.json and watchlists/ishares.json,
+             funds.json (plain cards for the iShares funds)
 schemas/     JSON Schemas for every file above, plus pick, run, outcome, prices, library
 data/        market/derived.json + longrun.json (returns only, no prices), market/checklist.json (the technical
              checklist per name: percent distances, ratios and labels), portfolio/paper.json (forward record),
-             kb/outcomes.json, kb/library.json, people/scores.json, ops/routine_runs.json
+             kb/outcomes.json, kb/library.json, people/scores.json, ops/routine_runs.json,
+             markets/<id>/ (derived.json, checklist.json, candles/ for each other market)
              (raw bars stay in git-ignored .cache/)
 runs/        run.<date>.json, one per run
 samples/     deterministic synthetic data so the dashboard renders before live data exists
@@ -89,6 +92,8 @@ It has no third-party runtime scripts or fonts: everything is bundled and served
 | regime_monitor | Mon–Fri 23:40 | `data/kb/regime.json` |
 | score_people | Mon–Fri 23:40 | `data/people/scores.json` |
 | technical_checklist | Mon–Fri 23:40 | `data/market/checklist.json` |
+| fetch_markets (Tiingo, per market) | Tue–Sat 02:40 | `.cache/prices/` (TLV and iShares lists and benchmarks) |
+| market_lists | Tue–Sat 02:40 | `data/markets/<id>/` |
 | calibration | 1st of month 13:00 | `data/kb/calibration.json` |
 
 It lints, commits the data to `main` and redeploys Pages. Lint fails if a GitHub Actions routine marked `active` in
@@ -97,9 +102,23 @@ It lints, commits the data to `main` and redeploys Pages. Lint fails if a GitHub
 (Actions → daily → Run workflow). It defaults to a dry run.
 
 ```bash
-python3 scripts/fetch_prices.py --dry-run     # fetch + validate, write nothing
+python3 scripts/fetch_prices.py --dry-run     # fetch + validate, write nothing (Nasdaq scope)
+python3 scripts/fetch_prices.py --scope markets --dry-run   # the other markets (leave an hour after the Nasdaq run)
+python3 scripts/routines_code.py markets      # derived numbers, checklist and candles for TLV and iShares
 python3 scripts/routines_code.py all          # score, regime, calibration
 ```
+
+## Markets: Nasdaq, TLV and iShares
+
+The header switch shows three markets (`config/markets.json`). **Nasdaq** (the 21-name list against QQQ) is the default
+and the only one the brain, the rules, the paper portfolio, the long-run goal check and the people's scores use.
+**TLV** is twelve Israeli companies through their US listings, against EIS: Tiingo has no Tel Aviv data, so Tel
+Aviv-only names such as the banks are not covered. **iShares** is a menu of nine iShares index funds (the S&P 500, the
+world, developed and emerging markets, Israel, US small companies, chip makers, US bonds, long Treasuries) against SPY.
+Each other market gets the same derived numbers, checklist and candles under `data/markets/<id>/`, from its own fetch
+run three hours after the Nasdaq one: Tiingo's free plan allows 50 requests an hour and the two runs need 28 and 22.
+A failed market keeps its old files and never touches Nasdaq. See `docs/decisions.md` (2026-10-10) and the Markets
+section of `docs/methodology.md`.
 
 ## The daily brain (Claude routine)
 

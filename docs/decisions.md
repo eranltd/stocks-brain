@@ -1,7 +1,7 @@
 ---
-version: 0.15.0
+version: 0.16.0
 updated_at: 2026-10-10
-change_note: A candles view of the checklist, published as percent from the last close.
+change_note: Two more markets for the header switch (Israeli companies through their US listings, and iShares index funds), with their own fetch run so each hour's requests stay within Tiingo's free plan.
 ---
 # Decision log
 
@@ -21,6 +21,43 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   the numbers are faithful to the source; a cross-check against a second source is still pending.
 
 ## 2026-10-10
+- **Two more markets the header switch can show: TLV and iShares.** The household asked for more than the one Nasdaq
+  list. `config/markets.json` now lists three markets; Nasdaq stays the default.
+  - **TLV: Israeli companies through their US listings**, measured against EIS (the iShares MSCI Israel fund): Teva,
+    NICE, Check Point, Elbit Systems, Tower Semiconductor, ICL, Wix, monday.com, Global-e, Nova, Camtek and Ormat
+    (`config/watchlists/tlv.json`). Sectors are the GICS sectors in iShares' own holdings files of 2026-10-08 (EIS;
+    the S&P mid-cap fund for Ormat, which EIS does not hold). Global-e is filed there under Consumer Discretionary,
+    not Industrials or IT, so that is what the list says.
+  - **Why US listings only.** Our price provider, Tiingo, has no Tel Aviv exchange data. So the market shows the
+    Israeli companies that also trade in the US, in dollars, and says so on the site. What is missing: every Tel
+    Aviv-only name, including the big banks (Leumi, Hapoalim, Discount, Mizrahi), the insurers and the property
+    companies. In iShares' EIS holdings file of 2026-10-08 the names on our list are about a third of the fund by weight
+    and banks and insurers alone another third, so the list and its benchmark can move apart. CyberArk and Sapiens were on the first list but stopped trading
+    after their acquisitions, so they are out.
+  - **iShares: a menu of index funds**, each measured against SPY (the S&P 500): IVV (the S&P 500 itself), ACWI (the
+    world), EFA (developed markets outside the US), IEMG (emerging markets), EIS (Israel), IJR (US small companies),
+    SOXX (chip makers), AGG (US bonds) and TLT (long US government bonds) (`config/watchlists/ishares.json`). Funds
+    carry a plain category instead of a sector. Plain fund cards (what each holds, the index it follows, its yearly
+    cost, from the fund's own page) go in `config/funds.json`, which starts empty; the researched cards arrive
+    separately and lint keeps them free of digits in the plain text, prices, ratings and quotations.
+  - **What each new market gets**: the same derived numbers as Nasdaq (day moves, returns, distances, setup checks,
+    risk, the move against its own benchmark, indexed lines, breadth), the same technical checklist and the same
+    candles, under `data/markets/<id>/`, computed by the same code with the market as a parameter.
+  - **What stays Nasdaq-only**: the brain and its picks, scoring, the regime monitor, the goal check and portfolio
+    rule, the paper portfolio, the rule backtests and ledger, and the people's scores. The Nasdaq files stay exactly
+    where they were.
+- **A second fetch run, three hours after the first, because of Tiingo's hourly cap.** Tiingo's pricing page gives
+  the free plan 50 requests an hour (and 1,000 a day, 500 different symbols a month). The fetch makes one request per
+  symbol. Nasdaq needs 28 (21 names, QQQ and six market-context funds); the two new markets need 22 (13 and 10, EIS
+  counted once). Both in one run would be 49 of 50, with no room for a single retry. So the daily workflow fetches
+  Nasdaq at 23:40 UTC as before and the other markets at 02:40 UTC (`fetch_markets`, `market_lists`). Each run may
+  make at most 40 requests, retries included (`prices.max_requests_per_run`), logs how many it used, and lint fails if
+  a run's symbols exceed that cap or the two runs are scheduled less than two hours apart. A run by hand should leave
+  an hour between the two.
+- **Fail closed per market.** A market is written only when every one of its symbols fetched and passed; a failed
+  market keeps yesterday's files and the other still publishes. The Nasdaq run never writes `data/markets/` and lints
+  those files as warnings only, so a TLV or iShares problem can never stop or reset the Nasdaq data. The site build
+  leaves out a market whose files fail lint instead of failing the whole site.
 - **A candles view of the checklist.** The household asked to see the checklist "on a graph with a candles view".
   Each Stock page's checklist card now has a Checks · Candles switch. It shows daily (three or six months) and weekly
   candles with the steps drawn on them: the twenty-day average, support and resistance, open gaps, the risk plan's

@@ -28,8 +28,7 @@
         "additionalProperties": false,
         "required": [
           "symbol",
-          "name",
-          "sector"
+          "name"
         ],
         "properties": {
           "symbol": {
@@ -64,8 +63,24 @@
               "Real Estate"
             ],
             "description": "GICS sector, used for the portfolio diversification rule (max names per sector)."
+          },
+          "category": {
+            "$ref": "#/$defs/fund_category"
           }
-        }
+        },
+        "anyOf": [
+          {
+            "required": [
+              "sector"
+            ]
+          },
+          {
+            "required": [
+              "category"
+            ]
+          }
+        ],
+        "description": "A company has a GICS sector; an index fund (a market of kind funds) has a category instead. Lint checks which one per market."
       }
     },
     "core": {
@@ -119,6 +134,23 @@
           }
         }
       }
+    }
+  },
+  "$defs": {
+    "fund_category": {
+      "enum": [
+        "US large companies",
+        "US mid-size companies",
+        "US small companies",
+        "World",
+        "Developed markets outside the US",
+        "Emerging markets",
+        "Single country",
+        "Sector",
+        "Bonds",
+        "Cash"
+      ],
+      "description": "Plain category of an index fund (a funds market's list has a category instead of a GICS sector)."
     }
   }
 }

@@ -12,6 +12,7 @@ import { companiesToKnow, marketWords, newsLines, planWords } from "../lib/simpl
 import { topStocks } from "../lib/carousel.js";
 import { TopStocks } from "../components/topstocks.jsx";
 import { requestChecklistView } from "../components/checklist.jsx";
+import { candlesOf, fundCard, MARKET_WHO, marketNote, nasdaqOnlyLine, NOT_YET, nounsFor } from "../lib/markets.js";
 
 const plural = (n, one, many) => (n === 1 ? one : many);
 const noYear = (iso) => fmtDate(iso).replace(/\s\d{4}$/, ""); // "Thu, 22 Oct"
@@ -60,7 +61,7 @@ export default function Today(props) {
   );
 }
 
-function LiveFeed({ data, go, live, checkNow }) {
+function LiveFeed({ data, market, go, live, checkNow }) {
   const call = todayCall(data);
   const brief = marketBrief(data);
   const run = data.sample ? null : data.lastOk;
@@ -81,6 +82,9 @@ function LiveFeed({ data, go, live, checkNow }) {
   return (
     <div className="mx-auto w-full max-w-[560px] px-4 pb-24 pt-6">
       <PostHeader data={data} todayIso={todayIso} live={live} checkNow={checkNow} stale={call.stale} age={call.age} />
+      {market && !market.isDefault && (
+        <p role="note" className="mt-4 rounded-2xl border border-line-2 bg-surface px-4 py-3 text-[15px] leading-relaxed text-ink-2">{nasdaqOnlyLine(market.entry?.label ?? market.id)}</p>
+      )}
       <div className="mt-5 grid gap-4">
         <TodayCard data={data} call={call} run={run} todayIso={todayIso} go={go} />
         <ComingStrip data={data} ahead={feed.ahead} todayIso={todayIso} go={go} />
@@ -88,7 +92,7 @@ function LiveFeed({ data, go, live, checkNow }) {
       </div>
       <Feed feed={feed} filter={filter} pick={pick} shown={shown} setShown={setShown} open={open} data={data} feedTop={feedTop} />
       <Reveal className="mt-10 grid gap-3 text-center">
-        <button type="button" onClick={() => go("details")} className="btn btn-primary justify-center">See the full dashboard <ArrowRight /></button>
+        <button type="button" onClick={() => go("details")} className="btn btn-primary justify-center">Market details <ArrowRight /></button>
         <button type="button" onClick={() => go("portfolio")} className="btn justify-center">The portfolio <ArrowRight /></button>
         <p className="meta mt-6 normal-case tracking-[0.04em]">A research notebook for one household, not financial advice. Every number here is computed by code from public market data.</p>
       </Reveal>
@@ -158,26 +162,71 @@ function TapLine({ onClick, children, tone }) {
 }
 
 /**
- * The simple home: the market, the news, companies to know and our plan, in words. No figures: every sentence comes
- * from lib/simple.js, which turns the same published data into words (dates as weekdays or month words).
+ * The market-dependent part of the simple home, in words: the carousel's names, the market sentence, the news and the
+ * companies (or funds) to know. The default market adds what we hold on paper and the brain's names; another market
+ * has neither (they read Nasdaq only) and leads with its own benchmark ("The Israeli market").
  */
-function SimpleHome({ data, go, showDetails }) {
+function homeWords(md, { isDefault, held = [], picked = [], todayIso, funds }) {
+  const id = md.marketId;
+  const entry = md.marketEntry ?? null;
+  const nouns = nounsFor(entry);
+  const day = marketDay(md.market, md.watchlist, md.bench);
+  // A checklist from sample prices on a live site is not a reading of the market: no chips or reasons from it.
+  const checklist = md.checklist && (!md.checklist.sample || md.sample) ? md.checklist : null;
+  const benchRow = (md.market?.symbols ?? []).find((r) => r.symbol === md.bench.symbol);
+  const market = isDefault
+    ? marketWords(day, md.regime, todayIso)
+    : marketWords(day, null, todayIso, { who: MARKET_WHO[id] ?? "Our benchmark", noun: nouns.many, fromHigh: benchRow?.from_high_pct });
+  const news = newsLines({ outlook: md.outlook, day, people: isDefault ? md.people : null, today: todayIso, names: md.names });
+  const pick = { held, picked, day, outlook: md.outlook, checklist, names: md.names, bench: md.bench.symbol, today: todayIso };
+  // A fund has no company card: its plain sentence comes from config/funds.json.
+  const withFund = (c) => ({ ...c, plain: fundCard(funds, c.ticker)?.plain ?? c.plain ?? null });
+  const companies = companiesToKnow(pick).map(withFund);
+  const top = topStocks({ ...pick, candles: candlesOf(md) }).map(withFund);
+  return { nouns, checklist, market, news, companies, top, note: marketNote(entry) };
+}
+
+/** Where the market's words go while another market loads, fails or has no numbers yet. */
+function MarketWait({ market }) {
+  const label = market.entry?.label ?? market.id;
+  return (
+    <div className="mx-auto w-full max-w-[560px] px-4 pt-8">
+      <div className="card p-6 sm:p-7" role={market.state === "loading" ? "status" : undefined}>
+        {market.state === "loading" && <p className="text-[18px] leading-relaxed text-ink-2">Loading {label}…</p>}
+        {market.state === "none" && <p className="text-[19px] leading-relaxed text-ink">{NOT_YET}</p>}
+        {market.state === "error" && (
+          <>
+            <p className="text-[18px] leading-relaxed text-ink">{label} could not load just now.</p>
+            <button type="button" onClick={market.retry} className="btn mt-4 min-h-[52px] justify-center">Try again</button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * The simple home: the market, the news, companies to know and our plan, in words. No figures: every sentence comes
+ * from lib/simple.js, which turns the same published data into words (dates as weekdays or month words). The header's
+ * market switch changes the top stocks, the market, the news and the companies; our plan always reads Nasdaq.
+ */
+function SimpleHome({ data, market, go, showDetails }) {
   const call = todayCall(data);
   const todayIso = todayISO();
   const { held, picked } = heldAndPicked(data);
-  const day = marketDay(data.market, data.watchlist, data.bench);
-  // A checklist from sample prices on a live site is not a reading of the market: no chips or reasons from it.
-  const checklist = data.checklist && (!data.checklist.sample || data.sample) ? data.checklist : null;
-  const market = marketWords(day, data.regime, todayIso);
-  const news = newsLines({ outlook: data.outlook, day, people: data.people, today: todayIso, names: data.names });
-  const pick = { held, picked, day, outlook: data.outlook, checklist, names: data.names, bench: data.bench.symbol, today: todayIso };
-  const companies = companiesToKnow(pick);
-  const top = topStocks({ ...pick, candles: data.manifest.candles });
+  const isDefault = !market || market.isDefault;
+  const md = isDefault ? data : market.state === "ready" ? market.data : null;
+  const words = md ? homeWords(md, { isDefault, held: isDefault ? held : [], picked: isDefault ? picked : [], todayIso, funds: data.funds }) : null;
+  const nouns = nounsFor(market?.entry);
+  const nasdaqChecklist = data.checklist && (!data.checklist.sample || data.sample) ? data.checklist : null;
   // "See the candles": the Stock page opens with its checklist card on the Candles view, as the brief's own link does.
   const seeCandles = (to) => { requestChecklistView("candles"); openAt(go, to); };
-  const plan = planWords({ held, picked, checklist, outlook: data.outlook, names: data.names, stage: call.stage, nextCheck: nextRebalance(call.asOf), today: todayIso, bench: data.bench.symbol });
-  const status = call.stale ? "The data is old: the daily update may have failed." : data.sample ? "Sample data, not the market." : "Live: updated after each US close.";
-  const statusTone = call.stale ? "var(--down)" : data.sample ? "var(--people)" : "var(--accent)";
+  const plan = planWords({ held, picked, checklist: nasdaqChecklist, outlook: data.outlook, names: data.names, stage: call.stage, nextCheck: nextRebalance(call.asOf), today: todayIso, bench: data.bench.symbol });
+  const sample = md ? md.sample || (!isDefault && !md.livePrices) : data.sample;
+  const status = call.stale ? "The data is old: the daily update may have failed." : sample ? "Sample data, not the market." : "Live: updated after each US close.";
+  const statusTone = call.stale ? "var(--down)" : sample ? "var(--people)" : "var(--accent)";
+  const label = market?.entry?.label ?? "Nasdaq";
+  const top = words?.top ?? [];
   return (
     <>
     {/* As wide as the carousel under it, so the greeting and "Top stocks" line up on a tablet. */}
@@ -188,6 +237,13 @@ function SimpleHome({ data, go, showDetails }) {
           <span className="inline-block size-2 shrink-0 rounded-full" style={{ background: statusTone }} aria-hidden="true" />
           <span style={{ color: call.stale ? statusTone : undefined }}>{status}</span>
         </p>
+        {!isDefault && (
+          <p className="mt-3 max-w-[62ch] text-[16px] leading-relaxed text-ink-2">
+            <span className="font-semibold text-ink">Showing {label}:</span>{" "}
+            {/* The market's own note already says what the list is (TLV); otherwise its one line from the switch. */}
+            {words?.note ?? `${market.choices.find((c) => c.id === market.id)?.what ?? market.entry?.name}.`}
+          </p>
+        )}
       </header>
 
       {call.stale && (
@@ -197,49 +253,62 @@ function SimpleHome({ data, go, showDetails }) {
       )}
     </div>
 
-    <TopStocks items={top} manifest={data.manifest} openTo={(to) => openAt(go, to)} seeCandles={seeCandles} />
+    {!words && <MarketWait market={market} />}
+    {words && (
+      <TopStocks key={md.marketId ?? market?.id} items={top} manifest={data.manifest} marketId={md.marketId ?? market?.id} title={nouns.many === "funds" ? "Top funds" : "Top stocks"} one={nouns.one}
+        fallback={nouns.many === "funds" ? "Its fund card appears with the next update." : undefined}
+        openTo={(to) => openAt(go, to)} seeCandles={seeCandles} />
+    )}
 
     <div className="mx-auto w-full max-w-[560px] px-4 pb-24">
       <div className="mt-10 grid gap-6">
-        <SimpleCard kicker="The market" tone={TONE_VAR[market.tone] ?? "var(--accent)"}>
-          <p className="text-[clamp(22px,6vw,27px)] leading-snug font-semibold tracking-[-0.015em] text-ink">{market.main}</p>
-          {market.more && <p className="mt-3 text-[17px] leading-relaxed text-ink-2">{market.more}</p>}
-          <button type="button" onClick={() => openAt(go, "details#market-today")} className="meta mt-5 inline-flex min-h-[44px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">What the market did <ArrowRight className="size-3.5" /></button>
-        </SimpleCard>
+        {words && (
+          <>
+            <SimpleCard kicker="The market" tone={TONE_VAR[words.market.tone] ?? "var(--accent)"}>
+              <p className="text-[clamp(22px,6vw,27px)] leading-snug font-semibold tracking-[-0.015em] text-ink">{words.market.main}</p>
+              {words.market.more && <p className="mt-3 text-[17px] leading-relaxed text-ink-2">{words.market.more}</p>}
+              {isDefault
+                ? <button type="button" onClick={() => openAt(go, "details#market-today")} className="meta mt-5 inline-flex min-h-[44px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">What the market did <ArrowRight className="size-3.5" /></button>
+                : <button type="button" onClick={() => go("watchlist")} className="meta mt-5 inline-flex min-h-[44px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">The whole {label} list <ArrowRight className="size-3.5" /></button>}
+            </SimpleCard>
 
-        <SimpleCard kicker="In the news" tone="var(--ink-2)">
-          {news.length ? (
-            <ul className="grid gap-2.5">
-              {news.map((n) => <li key={n.id}><TapLine onClick={() => openAt(go, n.to)} tone={n.tone}>{n.text}</TapLine></li>)}
-            </ul>
-          ) : <p className="text-[17px] leading-relaxed text-ink-2">Nothing new about our companies this week.</p>}
-        </SimpleCard>
+            <SimpleCard kicker="In the news" tone="var(--ink-2)">
+              {words.news.length ? (
+                <ul className="grid gap-2.5">
+                  {words.news.map((n) => <li key={n.id}><TapLine onClick={() => openAt(go, n.to)} tone={n.tone}>{n.text}</TapLine></li>)}
+                </ul>
+              ) : <p className="text-[17px] leading-relaxed text-ink-2">Nothing new about our {words.nouns.many} this week.</p>}
+            </SimpleCard>
 
-        <SimpleCard kicker="Companies to know" tone="var(--people)">
-          <ul className="grid gap-3">
-            {companies.map((c) => (
-              <li key={c.ticker}>
-                <button type="button" onClick={() => openAt(go, c.to)}
-                  className="block min-h-[52px] w-full rounded-2xl border border-line bg-surface p-4 text-left transition hover:border-ink-3">
-                  <span className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-                    <span className="text-[20px] font-semibold tracking-[-0.01em] text-ink">{c.name}</span>
-                    {c.chip && (
-                      <span className={`pill py-0.5 text-[12px] normal-case tracking-[0.02em] ${CHIP[c.chip.tone]}`}>
-                        <span aria-hidden="true" className="text-[9px]">{CHIP_MARK[c.chip.tone]}</span>{c.chip.word}
+            <SimpleCard kicker={words.nouns.many === "funds" ? "Funds to know" : "Companies to know"} tone="var(--people)">
+              <ul className="grid gap-3">
+                {words.companies.map((c) => (
+                  <li key={c.ticker}>
+                    <button type="button" onClick={() => openAt(go, c.to)}
+                      className="block min-h-[52px] w-full rounded-2xl border border-line bg-surface p-4 text-left transition hover:border-ink-3">
+                      <span className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                        <span className="text-[20px] font-semibold tracking-[-0.01em] text-ink">{c.name}</span>
+                        {c.chip && (
+                          <span className={`pill py-0.5 text-[12px] normal-case tracking-[0.02em] ${CHIP[c.chip.tone]}`}>
+                            <span aria-hidden="true" className="text-[9px]">{CHIP_MARK[c.chip.tone]}</span>{c.chip.word}
+                          </span>
+                        )}
                       </span>
-                    )}
-                  </span>
-                  <span className="meta mt-1 block normal-case tracking-[0.04em]">{c.tag}</span>
-                  <span className="mt-2 block text-[16px] leading-relaxed text-ink-2">{c.plain ?? "Its short summary appears with the next company update."}</span>
-                  <span className="mt-3 inline-flex items-center gap-1 text-[14px] text-ink">In short <ArrowRight className="size-3.5" /></span>
-                </button>
-              </li>
-            ))}
-          </ul>
-          {!checklist && <p className="mt-4 text-[14.5px] leading-relaxed text-ink-3">The going up or down chips appear after the next daily run.</p>}
-        </SimpleCard>
+                      <span className="meta mt-1 block normal-case tracking-[0.04em]">{c.tag}</span>
+                      <span className="mt-2 block text-[16px] leading-relaxed text-ink-2">{c.plain ?? (words.nouns.many === "funds" ? "Its fund card appears with the next update." : "Its short summary appears with the next company update.")}</span>
+                      <span className="mt-3 inline-flex items-center gap-1 text-[14px] text-ink">In short <ArrowRight className="size-3.5" /></span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              {!words.companies.length && <p className="text-[17px] leading-relaxed text-ink-2">No {words.nouns.many} stand out today.</p>}
+              {!words.checklist && <p className="mt-4 text-[14.5px] leading-relaxed text-ink-3">The going up or down chips appear after the next daily run.</p>}
+            </SimpleCard>
+          </>
+        )}
 
         <SimpleCard kicker="Our plan: one, two, three" tone="var(--accent)">
+          {!isDefault && <p className="mb-4 text-[15.5px] leading-relaxed text-ink-2">Our plan always follows the Nasdaq list; {label} is for looking, not part of it.</p>}
           <ol className="grid gap-4">
             {plan.steps.map((s, i) => (
               <li key={STEP_WORD[i]} className="flex gap-4">
@@ -374,7 +443,7 @@ function TodayCard({ data, call, run, todayIso, go }) {
         <div className="mt-4 rounded-2xl border border-line-2 bg-surface-2 p-4 text-[14px] leading-relaxed text-ink-2">
           <span className="text-ink">In short:</span> keep the savings in the index fund. Anything else is a practice run on paper.
         </div>
-        <button type="button" onClick={() => go("details")} className="meta mt-4 inline-flex min-h-[40px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">The full dashboard <ArrowRight className="size-3.5" /></button>
+        <button type="button" onClick={() => go("details")} className="meta mt-4 inline-flex min-h-[40px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">Market details <ArrowRight className="size-3.5" /></button>
       </div>
     </PinnedCard>
   );

@@ -36,6 +36,85 @@ export function loadCandles(manifest, symbol) {
   return candleCache.get(key);
 }
 
+// ---------------------------------------------------------------- markets
+// config/markets.json lists the markets the header switch can show; manifest.markets (scripts/build_site.py) adds each
+// one's exported files: {id: {label, name, note, kind, benchmark, benchmark_label, default, sample, derived, checklist,
+// candles: {SYMBOL: path} | null, watchlist}}. The default market (Nasdaq) is the one loadAll already loads; every other
+// market's derived numbers, checklist and list are fetched only when it is opened (loadMarket). A market whose files
+// are not published yet has derived: null (the site says "no data yet"; never sample numbers next to live ones).
+
+/** The markets in config order, each its config entry merged with its manifest entry; `available` is true when its
+ * derived numbers exist. A build from before markets existed gives one default market built from the manifest. */
+export function marketsFrom(manifest, config = null) {
+  const exported = manifest?.markets;
+  if (!exported) {
+    return [{
+      id: "nasdaq", label: "Nasdaq", name: "US leaders", note: null, kind: "stocks", benchmark: null, benchmark_label: null,
+      default: true, sample: manifest?.price_source === "sample", derived: manifest?.market ?? null,
+      checklist: manifest?.checklist ?? null, candles: manifest?.candles ?? null, watchlist: "config/watchlist.json",
+      available: Boolean(manifest?.market),
+    }];
+  }
+  const order = config?.markets?.map((m) => m.id) ?? Object.keys(exported);
+  const cfg = Object.fromEntries((config?.markets ?? []).map((m) => [m.id, m]));
+  return order
+    .filter((id) => exported[id])
+    .map((id) => {
+      const { watchlist: _wl, data: _data, ...fromConfig } = cfg[id] ?? {};
+      const entry = { ...fromConfig, ...exported[id], id };
+      return { ...entry, available: Boolean(entry.derived) };
+    });
+}
+
+/** The market the site opens on (config default, else the first). */
+export const defaultMarket = (markets) => markets.find((m) => m.default) ?? markets[0] ?? null;
+
+function marketView(entry, derived, checklist, watchlist) {
+  const names = Object.fromEntries((watchlist?.symbols ?? []).map((s) => [s.symbol, s.name]));
+  if (entry.benchmark) names[entry.benchmark] ??= entry.benchmark_label ?? entry.benchmark;
+  // A stocks market's list has GICS sectors, a funds market's a category (watchlist.schema.json).
+  const groups = Object.fromEntries((watchlist?.symbols ?? []).map((s) => [s.symbol, s.sector ?? s.category ?? null]));
+  const prices = derived
+    ? Object.fromEntries(derived.symbols.map((s) => [s.symbol, { ...s, bars: s.spark.map((p) => ({ date: p.date, close: p.v })) }]))
+    : {};
+  return {
+    id: entry.id, entry, market: derived, checklist, watchlist, names, groups, prices,
+    benchmark: derived?.benchmark ?? entry.benchmark, asOf: derived?.as_of ?? null,
+    sample: Boolean(derived?.sample ?? entry.sample), available: Boolean(derived),
+  };
+}
+
+/** One market's view: {id, entry, market (its derived.json, or null before its first run), checklist, watchlist, names,
+ * groups (symbol -> sector or fund category), prices (indexed sparklines as in loadAll), benchmark, asOf, sample,
+ * available}. The default market comes from `data` (the loadAll result) when it is given, so nothing is fetched twice;
+ * any other market is fetched on first use and kept for the session, keyed by the build like loadCandles. Rejects for a
+ * market the manifest does not list. */
+const marketCache = new Map();
+export function loadMarket(manifest, id, data = null) {
+  const entry = marketsFrom(manifest, data?.marketsConfig ?? null).find((m) => m.id === id);
+  if (!entry) return Promise.reject(new Error(`market ${id}: not in the manifest`));
+  if (entry.default && data) return Promise.resolve(marketView(entry, data.market, data.checklist, data.watchlist));
+  const key = `${manifest.built_at ?? ""}|${id}`;
+  if (!marketCache.has(key)) {
+    const opt = (path) => (path ? get(path) : Promise.resolve(null));
+    const p = Promise.all([opt(entry.derived), opt(entry.checklist), opt(entry.watchlist)])
+      .then(([derived, checklist, watchlist]) => marketView(entry, derived, checklist, watchlist))
+      .catch((e) => {
+        marketCache.delete(key); // a failed fetch can be retried
+        throw e;
+      });
+    marketCache.set(key, p);
+  }
+  return marketCache.get(key);
+}
+
+/** loadCandles for another market's symbol: its files are listed under manifest.markets[id].candles. */
+export function loadMarketCandles(manifest, id, symbol) {
+  const m = manifest?.markets?.[id];
+  if (!m || m.default) return loadCandles(manifest, symbol);
+  return loadCandles({ built_at: manifest.built_at, candles: m.candles }, symbol);
+}
+
 export async function loadAll(onProgress = () => {}) {
   const manifest = await get("manifest.json");
   const paths = [
@@ -103,6 +182,11 @@ export function derive(manifest, files) {
   // The eight-step technical checklist: its steps and house rule (config/checklist.json) and code's daily reading of it.
   const checklistCfg = doc("checklist") ? files[doc("checklist").file] : null;
   const checklist = manifest.checklist ? files[manifest.checklist] ?? null : null;
+  // Markets the header switch can show (config/markets.json + manifest.markets; see marketsFrom and loadMarket) and the
+  // fund cards of the funds market (config/funds.json; may hold no funds yet).
+  const marketsConfig = doc("markets") ? files[doc("markets").file] : null;
+  const markets = marketsFrom(manifest, marketsConfig);
+  const funds = doc("funds") ? files[doc("funds").file] : null;
   const outcomes = manifest.kb.outcomes ? files[manifest.kb.outcomes].items : [];
   // Library titles are shown in English only (the stored original stays the citation).
   const libraryRaw = manifest.kb.library ? files[manifest.kb.library] : null;
@@ -149,6 +233,7 @@ export function derive(manifest, files) {
   return {
     market, manifest, runs, shownRuns, latest, lastOk, prices, watchlist, settings, learnings, guardrails,
     outcomes, library, sources, routines, names, bench, kb, docs, regime, calibration, observations, opsLog, longrun, paper, sectors, core, rulebook, rulesResult, ledger, people, peopleScores, outlook, checklist, checklistCfg,
+    markets, marketsConfig, funds,
     sample: manifest.source === "sample", livePrices: manifest.price_source === "live",
   };
 }

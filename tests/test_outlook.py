@@ -80,6 +80,11 @@ class OutlookConfigTest(unittest.TestCase):
         cls.wl = watchlist()
         cls.syms = [s["symbol"] for s in cls.wl["symbols"]]
         cls.v = Validator()
+        # a card may name any market's list (the TLV companies are not on the main list), as scripts/lint.py checks it
+        markets = Lint()
+        markets.markets = markets.check_markets_config(settings(), cls.wl)
+        cls.extra = markets.all_market_symbols(include_bench=False)
+        cls.other = sorted(cls.extra - set(cls.syms))
 
     def doc(self, *cards):
         d = copy.deepcopy(self.cfg)
@@ -87,9 +92,9 @@ class OutlookConfigTest(unittest.TestCase):
         d["updated_at"] = "2026-10-01"  # the fixtures' day, before TODAY: the repo file's own date may be later
         return d
 
-    def lint(self, doc, today=TODAY):
+    def lint(self, doc, today=TODAY, extra=None):
         lint = Lint()
-        lint.check_outlook(CONFIG / "outlook.json", doc, self.wl, today=today)
+        lint.check_outlook(CONFIG / "outlook.json", doc, self.wl, today=today, extra=self.extra if extra is None else extra)
         return lint.errors, lint.warnings
 
     def test_repo_file_is_valid_and_clean(self):
@@ -124,7 +129,7 @@ class OutlookConfigTest(unittest.TestCase):
     def test_lint_rules(self):
         a, b = self.syms[0], self.syms[1]
         cases = {
-            "off the list": (card("ZZZZ"), "not on the watchlist"),
+            "off the list": (card("ZZZZ"), "not on any market's list"),
             "future as_of": (card(a, as_of="2026-10-09"), "as_of 2026-10-09 is in the future"),
             "future report": (card(a, as_of=TODAY, latest={"reported_on": "2026-10-09"}), "reported_on 2026-10-09 is in the future"),
             "reported after research": (card(a, latest={"reported_on": "2026-10-05"}), "after the card was researched"),
@@ -162,6 +167,11 @@ class OutlookConfigTest(unittest.TestCase):
         errors, _ = self.lint({**self.doc(), "updated_at": "2026-12-01"})
         self.assertTrue(any("updated_at" in e for e in errors))
         self.assertEqual(self.lint(self.doc(card(b)))[0], [])
+        # a name on another market's list (TEVA on TLV) passes; checked against the main list alone it is off every list
+        self.assertTrue(self.other, "the other markets add names to the main list")
+        self.assertEqual(self.lint(self.doc(card(self.other[0])))[0], [])
+        errors, _ = self.lint(self.doc(card(self.other[0])), extra=set())
+        self.assertTrue(any("not on any market's list" in e for e in errors), errors)
         # company results in dollars are fine: they are the company's figures, not its share price
         ok = card(b, latest={"revenue": "$46.7 billion", "highlights": ["Data-center revenue rose to $41.1 billion."]})
         self.assertEqual(self.lint(self.doc(ok))[0], [])
@@ -196,10 +206,17 @@ class OutlookConfigTest(unittest.TestCase):
         self.assertEqual(self.lint(self.doc(card(a, plain="Some Company: Apple's rival can't keep up; investors' cash went elsewhere.")))[0], [])
 
     def test_every_repo_card_has_a_plain_summary_that_starts_with_its_name(self):
+        """'Global-e: ...', on every market's cards: the short name (part of the card's name) and a colon come first."""
         for c in self.cfg["companies"]:
-            self.assertIn("plain", c, c["ticker"])
-            self.assertNotRegex(c["plain"], r"\d", c["ticker"])
-            self.assertTrue(c["plain"].split(":")[0] and ":" in c["plain"], c["ticker"])
+            t = c["ticker"]
+            self.assertIn("plain", c, t)
+            self.assertNotRegex(c["plain"], r"\d", t)
+            self.assertIn(":", c["plain"], t)
+            short = c["plain"].split(":", 1)[0]
+            self.assertTrue(short.strip() and short == short.strip(), f"{t}: {short!r}")
+            self.assertLessEqual(len(short.split()), 4, f"{t}: {short!r} is not a short name")
+            self.assertIn(short.lower(), c["name"].lower(), f"{t}: {short!r} is not part of {c['name']!r}")
+        self.assertTrue({c["ticker"] for c in self.cfg["companies"]} & set(self.other), "the check covers the other markets' cards")
 
     def test_lint_warnings(self):
         a = self.syms[0]

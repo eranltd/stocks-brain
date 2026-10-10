@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { loadCandles } from "../lib/data.js";
+import { loadMarketCandles } from "../lib/data.js";
 import { useReducedMotion } from "../lib/motion.js";
 import { dotIndex, miniGeometry, miniSummary, miniWindow, nearCards, snapStops, stepStop } from "../lib/carousel.js";
 import { ArrowRight, Chevron } from "./ui.jsx";
@@ -31,7 +31,7 @@ const GAP = 16;
 const RETRY_MS = 20000;
 
 /** The carousel. `items` from topStocks() (lib/carousel.js); `openTo(route)` opens a page and its section. */
-export function TopStocks({ items, manifest, openTo, seeCandles }) {
+export function TopStocks({ items, manifest, marketId = "nasdaq", title = "Top stocks", one = "company", fallback = "Its short summary appears with the next company update.", openTo, seeCandles }) {
   const reduced = useReducedMotion();
   const rail = useRef(null);
   const [geo, setGeo] = useState({ step: 0, stops: [0], left: 0, width: 0 });
@@ -50,7 +50,7 @@ export function TopStocks({ items, manifest, openTo, seeCandles }) {
       asked.current.add(it.ticker);
       if (!it.hasChart) { setCharts((m) => ({ ...m, [it.ticker]: { state: "missing" } })); continue; }
       setCharts((m) => ({ ...m, [it.ticker]: { state: "loading" } }));
-      loadCandles(manifest, it.ticker)
+      loadMarketCandles(manifest, marketId, it.ticker)
         .then((doc) => {
           const win = miniWindow(doc);
           setCharts((m) => ({ ...m, [it.ticker]: win ? { state: "ok", win } : { state: "missing" } }));
@@ -61,7 +61,7 @@ export function TopStocks({ items, manifest, openTo, seeCandles }) {
           setCharts((m) => ({ ...m, [it.ticker]: { state: "error" } }));
         });
     }
-  }, [items, manifest]);
+  }, [items, manifest, marketId]);
 
   // The first two at once; the rest as they come near.
   useEffect(() => { load(0, 1); }, [load]);
@@ -120,7 +120,7 @@ export function TopStocks({ items, manifest, openTo, seeCandles }) {
   return (
     <section aria-labelledby="top-stocks-title" className="mx-auto w-full max-w-[1040px] px-4 pt-7">
       <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-1">
-        <h2 id="top-stocks-title" className="text-[clamp(24px,6.4vw,30px)] leading-tight font-semibold tracking-[-0.02em] text-ink">Top stocks</h2>
+        <h2 id="top-stocks-title" className="text-[clamp(24px,6.4vw,30px)] leading-tight font-semibold tracking-[-0.02em] text-ink">{title}</h2>
         <p className={`flex items-center gap-2 text-[16px] text-ink-2 transition-opacity duration-500 ${swiped ? "invisible opacity-0" : ""}`} aria-hidden={swiped}>
           <span>Swipe<span className="hidden md:inline"> or use the arrows</span> to see more</span>
           <ArrowRight className="size-4 shrink-0 text-ink" />
@@ -134,27 +134,27 @@ export function TopStocks({ items, manifest, openTo, seeCandles }) {
         tabIndex={0}
         role="region"
         aria-roledescription="carousel"
-        aria-label="Top stocks. Use the left and right arrow keys to move between companies."
+        aria-label={`${title}. Use the left and right arrow keys to move between them.`}
         className="no-scrollbar -mx-4 mt-4 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto overscroll-x-contain px-4 pb-1"
       >
         {items.map((it, i) => (
-          <StockCard key={it.ticker} it={it} i={i} n={count} chart={charts[it.ticker]} openTo={openTo} seeCandles={seeCandles} />
+          <StockCard key={it.ticker} it={it} i={i} n={count} chart={charts[it.ticker]} openTo={openTo} seeCandles={seeCandles} fallback={fallback} />
         ))}
       </div>
 
       <div className="mt-4 flex items-center justify-center gap-3">
-        <RoundButton label="Previous company" dir="left" onClick={() => step(-1)} disabled={atStart} />
+        <RoundButton label={`Previous ${one}`} dir="left" onClick={() => step(-1)} disabled={atStart} />
         {geo.stops.length > 1 && (
-          <div className="flex flex-wrap items-center justify-center" role="group" aria-label="Choose a company">
+          <div className="flex flex-wrap items-center justify-center" role="group" aria-label={`Choose a ${one}`}>
             {geo.stops.map((s, k) => (
-              <button key={k} type="button" onClick={() => goTo(s)} aria-label={`Show ${items[cardAt(s)]?.name ?? "company"}`} aria-current={k === active ? "true" : undefined}
+              <button key={k} type="button" onClick={() => goTo(s)} aria-label={`Show ${items[cardAt(s)]?.name ?? one}`} aria-current={k === active ? "true" : undefined}
                 className="grid size-11 place-items-center rounded-full">
                 <span className={`block h-2.5 rounded-full transition-all duration-300 motion-reduce:transition-none ${k === active ? "w-7 bg-ink" : "w-2.5 bg-ink-3/70"}`} />
               </button>
             ))}
           </div>
         )}
-        <RoundButton label="Next company" dir="right" onClick={() => step(1)} disabled={atEnd} />
+        <RoundButton label={`Next ${one}`} dir="right" onClick={() => step(1)} disabled={atEnd} />
       </div>
     </section>
   );
@@ -169,7 +169,7 @@ function RoundButton({ label, dir, onClick, disabled }) {
   );
 }
 
-function StockCard({ it, i, n, chart, openTo, seeCandles }) {
+function StockCard({ it, i, n, chart, openTo, seeCandles, fallback }) {
   const canCandles = it.hasChart && it.chip;
   return (
     <article role="group" aria-roledescription="slide" aria-label={`${it.name}, ${i + 1} of ${n}`}
@@ -182,7 +182,7 @@ function StockCard({ it, i, n, chart, openTo, seeCandles }) {
         </p>
       )}
       <div className="mt-5"><MiniCandles name={it.name} ticker={it.ticker} chart={chart} /></div>
-      <p className="mt-4 text-[17px] leading-relaxed text-ink">{it.plain ?? "Its short summary appears with the next company update."}</p>
+      <p className="mt-4 text-[17px] leading-relaxed text-ink">{it.plain ?? fallback}</p>
       <div className="mt-auto pt-5">
         <button type="button" onClick={() => openTo(it.to)} className="btn btn-primary min-h-[56px] w-full justify-center py-3 text-[18px]">
           See more <ArrowRight />

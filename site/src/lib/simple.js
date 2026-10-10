@@ -57,13 +57,14 @@ export function sizeWord(pct, kind = "index") {
 
 /**
  * "The market": {main, more, tone}. `day` is marketDay() (lib/marketday.js), `regime` data/kb/regime.json, `today` the
- * New York date. The S&P 500 leads; older data has only the benchmark. Words only.
+ * New York date. The S&P 500 leads; older data has only the benchmark. Words only. Another market passes `who` (its
+ * benchmark in words, "The Israeli market"), `noun` ("funds") and `fromHigh` (its benchmark's distance from the high).
  */
-export function marketWords(day, regime, today) {
+export function marketWords(day, regime, today, { who: whoWords = null, noun = "companies", fromHigh: benchHigh = null } = {}) {
   if (!day) return { main: "The market's last close appears after the next daily run.", more: "", tone: "flat" };
   const spx = num(day.spx?.pct), bench = num(day.bench?.pct);
   const lead = spx ?? bench;
-  const who = spx != null ? "The market" : "Our benchmark"; // its label has digits (Nasdaq-100)
+  const who = whoWords ?? (spx != null ? "The market" : "Our benchmark"); // its label has digits (Nasdaq-100)
   const when = whenWords(day.date, today);
   const size = sizeWord(lead, "index");
   let main = size ? `${who} ${size} ${when}` : `${who}'s last close was ${when}`;
@@ -71,11 +72,11 @@ export function marketWords(day, regime, today) {
   if (day.counted) {
     const most = day.rose > day.counted / 2 ? "rose" : day.fell > day.counted / 2 ? "fell" : null;
     const agree = !size || size === "barely moved" || (most === "rose" && up) || (most === "fell" && down);
-    main += most ? `, ${agree ? "and" : "but"} most of our companies ${most}` : ", and our companies were split";
+    main += most ? `, ${agree ? "and" : "but"} most of our ${noun} ${most}` : `, and our ${noun} were split`;
   }
   main += ".";
   const parts = [];
-  const fromHigh = num(day.spx?.fromHigh) ?? (spx == null ? num(regime?.metrics?.drawdown_pct) : null);
+  const fromHigh = num(day.spx?.fromHigh) ?? (spx == null ? num(regime?.metrics?.drawdown_pct) ?? num(benchHigh) : null);
   if (fromHigh != null) parts.push(fromHigh > -2 ? "It is close to its high for the year" : fromHigh > -10 ? "It is a little below its high for the year" : "It is well below its high for the year");
   const mood = { calm: "the mood is calm", normal: "the mood is steady", stressed: "the mood is nervous: bigger swings than usual" }[regime?.state];
   if (mood) parts.push(parts.length ? mood : mood.charAt(0).toUpperCase() + mood.slice(1));

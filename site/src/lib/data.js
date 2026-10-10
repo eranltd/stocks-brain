@@ -1,3 +1,4 @@
+import { englishTitle } from "./format.js";
 // Loads the exported JSON (see scripts/build_site.py) and derives view models.
 // All numbers shown on the dashboard are computed here or in Python, never by the LLM.
 
@@ -103,7 +104,9 @@ export function derive(manifest, files) {
   const checklistCfg = doc("checklist") ? files[doc("checklist").file] : null;
   const checklist = manifest.checklist ? files[manifest.checklist] ?? null : null;
   const outcomes = manifest.kb.outcomes ? files[manifest.kb.outcomes].items : [];
-  const library = manifest.kb.library ? files[manifest.kb.library] : null;
+  // Library titles are shown in English only (the stored original stays the citation).
+  const libraryRaw = manifest.kb.library ? files[manifest.kb.library] : null;
+  const library = libraryRaw ? { ...libraryRaw, sources: (libraryRaw.sources ?? []).map((src) => ({ ...src, title: englishTitle(src.title) })) } : null;
   const regime = manifest.kb.regime ? files[manifest.kb.regime] : null;
   const observations = manifest.kb.observations ? files[manifest.kb.observations] : null;
   const opsLog = manifest.ops ? files[manifest.ops] : null;

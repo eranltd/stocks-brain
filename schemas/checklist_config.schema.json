@@ -4,26 +4,98 @@
   "description": "The eight-step technical checklist from a trading video the household liked: what each step checks, how code computes it and its parameters, the house reward-to-risk rule and how it is measured. Unproven for us; never a signal that beats the index.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["version", "updated_at", "change_note", "purpose", "source", "status", "how_to_read", "steps", "verdict", "house_rule", "measure", "notes"],
+  "required": [
+    "version",
+    "updated_at",
+    "change_note",
+    "purpose",
+    "source",
+    "status",
+    "how_to_read",
+    "steps",
+    "verdict",
+    "house_rule",
+    "measure",
+    "notes"
+  ],
   "properties": {
-    "version": {"$ref": "common.schema.json#/$defs/semver"},
-    "updated_at": {"$ref": "common.schema.json#/$defs/date"},
-    "change_note": {"$ref": "common.schema.json#/$defs/change_note"},
-    "purpose": {"type": "string", "minLength": 20, "maxLength": 400},
+    "version": {
+      "$ref": "common.schema.json#/$defs/semver"
+    },
+    "updated_at": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "change_note": {
+      "$ref": "common.schema.json#/$defs/change_note"
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 400
+    },
     "source": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["kind", "title", "description", "url", "added"],
+      "required": [
+        "kind",
+        "title",
+        "description",
+        "url",
+        "added"
+      ],
       "properties": {
-        "kind": {"enum": ["video", "book", "course", "article"]},
-        "title": {"type": "string", "minLength": 3, "maxLength": 120},
-        "description": {"type": "string", "minLength": 10, "maxLength": 500},
-        "url": {"anyOf": [{"type": "null"}, {"type": "string", "pattern": "^https://"}]},
-        "added": {"$ref": "common.schema.json#/$defs/date"}
+        "kind": {
+          "enum": [
+            "video",
+            "book",
+            "course",
+            "article"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 120
+        },
+        "description": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 500
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^https://"
+            }
+          ]
+        },
+        "added": {
+          "$ref": "common.schema.json#/$defs/date"
+        }
       }
     },
-    "status": {"enum": ["unproven", "supported", "rejected"], "description": "unproven until the forward record (not the in-sample history) says otherwise; a change is a decision in docs/decisions.md"},
-    "how_to_read": {"type": "array", "minItems": 1, "maxItems": 8, "items": {"type": "string", "minLength": 10, "maxLength": 260}},
+    "status": {
+      "enum": [
+        "unproven",
+        "supported",
+        "rejected"
+      ],
+      "description": "unproven until the forward record (not the in-sample history) says otherwise; a change is a decision in docs/decisions.md"
+    },
+    "how_to_read": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {
+        "type": "string",
+        "minLength": 10,
+        "maxLength": 260
+      }
+    },
     "steps": {
       "type": "array",
       "minItems": 8,
@@ -31,50 +103,150 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "n", "name", "name_he", "checks", "computes", "directional", "params"],
+        "required": [
+          "id",
+          "n",
+          "name",
+          "checks",
+          "computes",
+          "directional",
+          "params"
+        ],
         "properties": {
-          "id": {"enum": ["candle", "trend", "volume", "ma20", "gaps", "levels", "rsi", "risk_plan"]},
-          "n": {"type": "integer", "minimum": 1, "maximum": 8},
-          "name": {"type": "string", "minLength": 2, "maxLength": 60},
-          "name_he": {"type": "string", "minLength": 2, "maxLength": 60},
-          "checks": {"type": "string", "minLength": 10, "maxLength": 300},
-          "computes": {"type": "string", "minLength": 20, "maxLength": 700},
-          "directional": {"type": "boolean"},
-          "params": {"type": "object", "additionalProperties": {"type": "number", "minimum": 0}}
+          "id": {
+            "enum": [
+              "candle",
+              "trend",
+              "volume",
+              "ma20",
+              "gaps",
+              "levels",
+              "rsi",
+              "risk_plan"
+            ]
+          },
+          "n": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 8
+          },
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 60
+          },
+          "checks": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 300
+          },
+          "computes": {
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 700
+          },
+          "directional": {
+            "type": "boolean"
+          },
+          "params": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
         }
       }
     },
     "verdict": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["lean_threshold", "text"],
+      "required": [
+        "lean_threshold",
+        "text"
+      ],
       "properties": {
-        "lean_threshold": {"type": "integer", "minimum": 1, "maximum": 7},
-        "text": {"type": "string", "minLength": 10, "maxLength": 300}
+        "lean_threshold": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 7
+        },
+        "text": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 300
+        }
       }
     },
     "house_rule": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["min_reward_to_risk", "target", "text"],
+      "required": [
+        "min_reward_to_risk",
+        "target",
+        "text"
+      ],
       "properties": {
-        "min_reward_to_risk": {"type": "number", "minimum": 1, "maximum": 10},
-        "target": {"const": "tp1"},
-        "text": {"type": "string", "minLength": 10, "maxLength": 400}
+        "min_reward_to_risk": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "target": {
+          "const": "tp1"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 400
+        }
       }
     },
     "measure": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["from", "horizon_days", "step_days", "history_days", "text"],
+      "required": [
+        "from",
+        "horizon_days",
+        "step_days",
+        "history_days",
+        "text"
+      ],
       "properties": {
-        "from": {"$ref": "common.schema.json#/$defs/date"},
-        "horizon_days": {"type": "integer", "minimum": 5, "maximum": 260},
-        "step_days": {"type": "integer", "minimum": 1, "maximum": 260},
-        "history_days": {"type": "integer", "minimum": 2, "maximum": 30},
-        "text": {"type": "string", "minLength": 10, "maxLength": 500}
+        "from": {
+          "$ref": "common.schema.json#/$defs/date"
+        },
+        "horizon_days": {
+          "type": "integer",
+          "minimum": 5,
+          "maximum": 260
+        },
+        "step_days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 260
+        },
+        "history_days": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 30
+        },
+        "text": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 500
+        }
       }
     },
-    "notes": {"type": "array", "minItems": 1, "maxItems": 8, "items": {"type": "string", "minLength": 10, "maxLength": 300}}
+    "notes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {
+        "type": "string",
+        "minLength": 10,
+        "maxLength": 300
+      }
+    }
   }
 }

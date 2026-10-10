@@ -106,7 +106,7 @@ export function CandlesView({ data, symbol, row, cfg }) {
         {win ? <CandleChart win={win} doc={doc} on={on} pattern={pattern} symbol={symbol} rsiCfg={step("rsi").params} /> : <p className="text-[14px] text-ink-3">No candles for this window.</p>}
       </div>
 
-      <p className="mt-4 text-[12.5px] leading-relaxed text-ink-3">Steps 1 and 2, the candle pattern <span lang="he" dir="rtl">{step("candle").name_he}</span> and the trend <span lang="he" dir="rtl">{step("trend").name_he}</span>, are the candles themselves. Tap a chip to show or hide a step:</p>
+      <p className="mt-4 text-[12.5px] leading-relaxed text-ink-3">Steps 1 and 2, the candle pattern and the trend, are the candles themselves. Tap a chip to show or hide a step:</p>
       <div className="mt-2 grid grid-cols-2 gap-1.5 sm:grid-cols-3">
         {OVERLAYS.map((o) => {
           const s = step(o.step);
@@ -117,7 +117,6 @@ export function CandlesView({ data, symbol, row, cfg }) {
               <Key id={o.id} />
               <span className="min-w-0">
                 <span className="block text-[12.5px] leading-tight text-ink"><span className="num mr-1 font-mono text-[11px] text-ink-3">{s.n}</span>{o.step === "risk_plan" ? "Risk plan" : s.name}</span>
-                {s.name_he && <span lang="he" dir="rtl" className="mt-0.5 block text-left text-[11px] leading-tight text-ink-3">{s.name_he}</span>}
               </span>
             </button>
           );

@@ -26,7 +26,6 @@ export function VerdictPill({ verdict, className = "" }) {
   );
 }
 
-const He = ({ children }) => (children ? <span lang="he" dir="rtl" className="text-[12px] text-ink-3">{children}</span> : null);
 const Dot = ({ lean }) => <span className={`mt-1.5 inline-block size-2.5 shrink-0 rounded-full ${TONE_BG[LEAN_TONE[lean] ?? "flat"]}`} aria-hidden="true" />;
 
 /** The steps with their Hebrew names, as the video lists them. */
@@ -36,7 +35,7 @@ export function StepNames({ cfg }) {
       {(cfg?.steps ?? []).map((s) => (
         <li key={s.id} className="flex items-baseline gap-2 text-[14.5px]">
           <span className="num w-5 shrink-0 font-mono text-[12px] text-ink-3">{s.n}</span>
-          <span className="text-ink">{s.name}</span> <He>{s.name_he}</He>
+          <span className="text-ink">{s.name}</span>
         </li>
       ))}
     </ol>
@@ -183,7 +182,7 @@ export function ChecklistCard({ data, symbol, go, view: viewProp, onView }) {
               {s.lean ? <Dot lean={s.lean} /> : <span className="mt-1.5 inline-block size-2.5 shrink-0 rounded-full border border-ink-3" aria-hidden="true" />}
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-baseline justify-between gap-x-3">
-                  <span className="text-[15px] font-semibold"><span className="num mr-1.5 font-mono text-[12px] font-normal text-ink-3">{s.n}</span>{s.id === "risk_plan" ? "Risk plan (paper)" : s.name} <He>{s.name_he}</He></span>
+                  <span className="text-[15px] font-semibold"><span className="num mr-1.5 font-mono text-[12px] font-normal text-ink-3">{s.n}</span>{s.id === "risk_plan" ? "Risk plan (paper)" : s.name}</span>
                   {s.lean && <span className={`meta normal-case tracking-[0.04em] ${TONE_TEXT[LEAN_TONE[s.lean]]}`}>{LEAN_LABEL[s.lean]}</span>}
                 </div>
                 {s.id === "risk_plan" ? <div className="mt-2"><RiskPlan rp={rp} /></div> : <p className="mt-1 text-[13.5px] leading-relaxed text-ink-2">{s.text}</p>}

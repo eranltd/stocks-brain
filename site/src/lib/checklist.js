@@ -122,7 +122,7 @@ export function riskPlan(rp, cfg) {
   };
 }
 
-/** The eight rows of the card: {id, n, name, name_he, lean, text}. The risk plan has no lean. */
+/** The eight rows of the card: {id, n, name, lean, text}. The risk plan has no lean. */
 export function stepRows(row, cfg) {
   const step = (id) => cfg?.steps?.find((s) => s.id === id) ?? { id, name: id };
   const text = {
@@ -130,7 +130,7 @@ export function stepRows(row, cfg) {
     gaps: gapsLine(row.gaps, cfg), levels: levelsLine(row.levels), rsi: rsiLine(row.rsi, cfg), risk_plan: riskPlan(row.risk_plan, cfg)?.text ?? "",
   };
   return STEP_IDS.map((id, i) => ({
-    id, n: step(id).n ?? i + 1, name: step(id).name, name_he: step(id).name_he ?? null,
+    id, n: step(id).n ?? i + 1, name: step(id).name,
     lean: id === "risk_plan" ? null : row.score?.leans?.[id] ?? row[id]?.lean ?? "neutral",
     text: text[id],
   }));

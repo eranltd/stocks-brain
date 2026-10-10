@@ -419,7 +419,6 @@ function StockBrief({ data, row, symbol, today, jump, seeCandles }) {
                     <span className="min-w-0 flex-1">
                       <span className="block text-[16px] leading-snug text-ink">{c.text}</span>
                       {c.note && <span className="mt-0.5 block text-[13px] leading-snug text-ink-3">{c.note}</span>}
-                      <span lang="he" dir="rtl" className="mt-0.5 block text-left text-[12px] text-ink-3">{c.name_he}</span>
                     </span>
                     <span className="shrink-0 text-ink-3" aria-hidden="true">↓</span>
                   </button>
@@ -431,7 +430,7 @@ function StockBrief({ data, row, symbol, today, jump, seeCandles }) {
           <>
             <p className="text-[16px] leading-relaxed text-ink-2">{read.why} The eight checks it reads:</p>
             <ol className="mt-3 grid gap-1.5 text-[15px] text-ink-2">
-              {(cfg?.steps ?? []).map((s) => <li key={s.id}>{s.name} <span lang="he" dir="rtl" className="text-[12px] text-ink-3">{s.name_he}</span></li>)}
+              {(cfg?.steps ?? []).map((s) => <li key={s.id}>{s.name}</li>)}
             </ol>
           </>
         )}

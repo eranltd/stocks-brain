@@ -1,7 +1,7 @@
 {
-  "version": "0.4.0",
-  "updated_at": "2026-10-07",
-  "change_note": "People we learn from: the people list and its call ledger (manual), a planned 13F source (not connected), and the confirmed X handles to follow.",
+  "version": "0.5.0",
+  "updated_at": "2026-10-13",
+  "change_note": "Company filings are connected: SEC XBRL company facts (sec_xbrl), and a second price source for a weekly cross-check (prices_check).",
   "sources": [
     {
       "id": "prices",
@@ -17,6 +17,20 @@
       "secret_env": "TIINGO_API_KEY",
       "follow": [],
       "note": "Split/dividend-adjusted EOD bars. Key only in the TIINGO_API_KEY Actions secret. Raw bars are never committed or published (licence); the site shows derived returns and indexed lines."
+    },
+    {
+      "id": "prices_check",
+      "kind": "prices",
+      "label": "Second price source (cross-check)",
+      "status": "active",
+      "provider": "polygon",
+      "cadence": "Fridays 23:40 UTC",
+      "feeds": [
+        "data/market/price_check.json"
+      ],
+      "secret_env": "POLYGON_API_KEY",
+      "follow": [],
+      "note": "Polygon.io free plan (five requests a minute), adjusted daily bars. Used only to check Tiingo: agreement statistics are published, never a price. Skipped until the POLYGON_API_KEY Actions secret exists."
     },
     {
       "id": "x_accounts",
@@ -54,18 +68,19 @@
       "note": "Headlines and links only; summaries are computed, not copied."
     },
     {
-      "id": "filings",
+      "id": "sec_xbrl",
       "kind": "filings",
-      "label": "Company filings",
-      "status": "planned",
-      "provider": null,
-      "cadence": "daily",
+      "label": "Company numbers (SEC XBRL)",
+      "status": "active",
+      "provider": "sec",
+      "cadence": "Mon–Fri 23:40 UTC",
       "feeds": [
+        "data/market/fundamentals.json",
         "pack"
       ],
-      "secret_env": null,
+      "secret_env": "SEC_USER_AGENT",
       "follow": [],
-      "note": "Public filings metadata for watchlist names."
+      "note": "The SEC's free, public-domain company facts. No key: the SEC asks for a User-Agent naming the client with a contact email, kept in the SEC_USER_AGENT Actions secret. Trailing-twelve-month figures, point in time."
     },
     {
       "id": "library",

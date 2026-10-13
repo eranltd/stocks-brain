@@ -173,6 +173,13 @@ def main() -> int:
         docs.append({"name": name, "file": f"config/{name}.json", "path": f"config/{name}.json",
                      **{k: obj[k] for k in ("version", "updated_at", "change_note")}})
 
+    # Company numbers from SEC filings and the second-source price check: live files only (no sample stand-ins).
+    extra = {}
+    for key, rel in (("fundamentals", "market/fundamentals.json"), ("price_check", "market/price_check.json")):
+        if (DATA / rel).exists():
+            _copy(DATA / rel, OUT / rel)
+            extra[key] = rel
+
     ops = DATA / "ops" / "routine_runs.json"
     if ops.exists():
         _copy(ops, OUT / "ops" / "routine_runs.json")
@@ -192,6 +199,8 @@ def main() -> int:
         "paper_rules": "portfolio/paper_rules.json" if price_source == "live" and ledger.exists() else None,
         "paper": "portfolio/paper.json" if price_source == "live" and paper.exists() else None,
         "people_scores": people_scores,
+        "fundamentals": extra.get("fundamentals"),
+        "price_check": extra.get("price_check"),
         "checklist": checklist,
         "candles": candles or None,
         "markets": markets,

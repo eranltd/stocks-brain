@@ -4,6 +4,7 @@ import { useInView } from "../lib/motion.js";
 import { Accent, ArrowRight, Chip, Container, Conviction, Empty, Headline, Reveal, Segmented, Strip } from "../components/ui.jsx";
 import { STAGES, trustStage } from "../components/trust.jsx";
 import { STATUS } from "../components/goal.jsx";
+import { companyNumbers, fundamentalsWords } from "../lib/fundamentals.js";
 import { cardFor, daysUntil, growthWords, inDays, KIND_LABEL, splitWhatsNext, staleness, todayISO } from "../lib/outlook.js";
 import { gateReason, rowFor } from "../lib/checklist.js";
 import { ChecklistCard, useChecklistView, VerdictPill } from "../components/checklist.jsx";
@@ -269,6 +270,7 @@ function Stock({ data, symbol, go, market: mk }) {
       </Reveal>
 
       {!isBench && (fund ? <WhatsInside fund={fund} symbol={symbol} /> : <WhatsNext card={cardFor(data.outlook, symbol)} symbol={symbol} today={today} hasFile={Boolean(data.outlook)} />)}
+      {!isBench && !fund && <CompanyNumbers c={companyNumbers(data.fundamentals, symbol)} />}
 
       {long && (
         <Reveal className="card mt-6 p-6 sm:p-8">
@@ -613,6 +615,34 @@ function WhatsInside({ fund, symbol }) {
 }
 
 /** The company's own story: the latest quarter, its guidance, what is coming up and what could change it. Paraphrased and linked. */
+const NUM_TONE = { accent: "var(--accent)", down: "var(--down)" };
+
+/** What the company itself reported to the SEC, in plain sentences (data/market/fundamentals.json). Hidden until the
+ *  first SEC run has numbers for this name. It describes the business, not the stock. */
+function CompanyNumbers({ c }) {
+  const w = fundamentalsWords(c);
+  if (!w || !w.lines.length) return null;
+  return (
+    <Reveal id="company-numbers" className="card mt-6 scroll-mt-28 p-6 sm:p-8">
+      <h3 className="text-[22px] font-semibold tracking-[-0.02em]">By its own numbers</h3>
+      <p className="mt-1 text-[14px] text-ink-3">{w.period}</p>
+      {w.stale && <p className="mt-4 rounded-2xl border border-dashed border-people/60 px-4 py-3 text-[14px] text-people">These are old: no newer filing was found.</p>}
+      <ul className="mt-5 grid gap-4">
+        {w.lines.map((l) => (
+          <li key={l.label} className="flex gap-3">
+            <span className="mt-2 size-2.5 shrink-0 rounded-full" style={{ background: NUM_TONE[l.tone] }} aria-hidden="true" />
+            <span className="min-w-0">
+              <span className="meta block">{l.label}</span>
+              <span className="mt-1 block text-[16px] leading-relaxed text-ink">{l.text}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-5 text-[14px] leading-relaxed text-ink-3">This describes the business, not the stock: a great company can still be a poor buy at the wrong price.</p>
+    </Reveal>
+  );
+}
+
 function WhatsNext({ card, symbol, today, hasFile }) {
   if (!card) {
     return (

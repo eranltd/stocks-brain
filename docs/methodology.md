@@ -1,7 +1,7 @@
 ---
-version: 0.14.0
+version: 0.15.0
 updated_at: 2026-10-13
-change_note: The pack carries the brain's own track record (recent calls per name, settled scores, calibration) and leaves out anything published after the close the picks are referenced to.
+change_note: Company numbers from SEC filings (twelve months, point in time) in the pack and on Stock pages; a weekly second-source price cross-check.
 ---
 # Methodology
 
@@ -10,11 +10,24 @@ change_note: The pack carries the brain's own track record (recent calls per nam
    Each fetch re-pulls the whole kept window, so stored history is adjusted consistently.
    All symbols must fetch and validate, or nothing is written. This run (`--scope nasdaq`) fetches the Nasdaq list, its
    benchmark and the market-context funds; the other markets have their own run (see Markets).
+   Then **sec_fundamentals** writes `data/market/fundamentals.json` (see Company numbers below), and on Fridays
+   **price_crosscheck** fetches the same symbols from a second provider (Polygon) and publishes how well the two
+   sources' daily returns agree (`data/market/price_check.json`: return correlation, median difference, days more than
+   half a point apart, each source's correlation with the benchmark), never a price. A symbol agrees when its return
+   correlation is at least 0.99 and at most 2% of shared days differ by more than half a point.
 2. **build_pack**: docs, derived market numbers, people's calls, the outlook cards' dates and the brain's track record go into one JSON pack. The run stops if the pack exceeds `pack.token_cap`.
    - **Point in time.** Picks are referenced to the close of `meta.as_of`, so nothing dated after that close enters the
      pack: claims (`as_of`) and people's calls (the day they became public) dated later are left out, and the track
      record counts only runs before that day and outcomes scored on or before it. News published overnight would
      otherwise flatter the scores of a call made "at" the earlier close.
+   - **Company numbers** (`fundamentals`, from `scripts/fundamentals.py`): for each main-list company, twelve months to
+     its newest quarter filed by the day: revenue growth against the twelve months before (`growth`), the newest
+     quarter against the same quarter a year earlier (`q_growth`), operating and net margin, and free cash flow as a
+     share of revenue (operating cash flow minus capital spending). From the SEC's XBRL company facts (us-gaap):
+     three-month facts are quarters; a year-to-date fact minus the one before it with the same start is the quarter
+     between them (how cash flows and the fourth quarter are found). Each metric uses the newest of a few standard tags
+     whose run of quarters ends with revenue's. A company whose newest filing used is dated after `meta.as_of` waits for
+     the next run. These describe the business, not the stock; none of it has shown an edge here.
    - **Track record** (`track_record`, the brain's memory): for each name, what the last `pack.recent_runs` runs said
      (stance/conviction, newest first), up to three settled calls with their verdict and signed excess, and how many are
      still pending; plus the conviction calibration once it is live. All by code, no model-written reflections. The brain

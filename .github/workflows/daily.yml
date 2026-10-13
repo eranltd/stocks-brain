@@ -61,6 +61,24 @@ jobs:
         if: env.MONTHLY != 'true' && env.MARKETS != 'true' && env.DRY != 'true'
         run: python3 scripts/routines_code.py derive
 
+      - name: Company numbers from SEC filings (derived, public domain)
+        id: sec_fundamentals
+        if: env.MONTHLY != 'true' && env.MARKETS != 'true' && env.DRY != 'true'
+        continue-on-error: true  # a failure keeps the last good file and must not discard the day's market data
+        env:
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+        run: python3 scripts/fundamentals.py
+
+      - name: Second-source price cross-check (Fridays; agreement statistics only)
+        id: price_crosscheck
+        if: env.MONTHLY != 'true' && env.MARKETS != 'true' && env.DRY != 'true'
+        continue-on-error: true  # a check of the data: a failure is logged but must not discard the day's market data
+        env:
+          POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
+        run: |
+          if [ "$(date -u +%u)" != "5" ] && [ "${{ github.event_name }}" != "workflow_dispatch" ]; then echo "not Friday: skipped"; exit 0; fi
+          python3 scripts/price_crosscheck.py
+
       - name: Score matured picks
         id: score_picks
         if: env.MONTHLY != 'true' && env.MARKETS != 'true' && env.DRY != 'true'
@@ -140,6 +158,8 @@ jobs:
         env:
           ROUTINE_FETCH_PRICES: ${{ steps.fetch_prices.outcome }}
           ROUTINE_DERIVE_MARKET: ${{ steps.derive_market.outcome }}
+          ROUTINE_SEC_FUNDAMENTALS: ${{ steps.sec_fundamentals.outcome }}
+          ROUTINE_PRICE_CROSSCHECK: ${{ steps.price_crosscheck.outcome }}
           ROUTINE_SCORE_PICKS: ${{ steps.score_picks.outcome }}
           ROUTINE_REGIME_MONITOR: ${{ steps.regime_monitor.outcome }}
           ROUTINE_PORTFOLIO_RULE: ${{ steps.portfolio_rule.outcome }}

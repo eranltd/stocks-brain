@@ -1,9 +1,9 @@
 {
-  "version": "0.7.0",
-  "updated_at": "2026-10-10",
-  "change_note": "Price request budget: Tiingo's free plan allows 50 requests an hour, so each fetch run (Nasdaq, then the other markets hours later) may use at most 40.",
+  "version": "0.8.0",
+  "updated_at": "2026-10-13",
+  "change_note": "Pack cap 14000 tokens: the pack now carries company numbers from SEC filings and the brain's track record; the old cap left no room.",
   "pack": {
-    "token_cap": 12000,
+    "token_cap": 14000,
     "recent_runs": 5,
     "price_lookback_days": 60,
     "library_principles_max": 40

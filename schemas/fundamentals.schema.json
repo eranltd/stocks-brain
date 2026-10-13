@@ -1,0 +1,37 @@
+{
+  "$id": "fundamentals.schema.json",
+  "title": "Company numbers from SEC XBRL (data/market/fundamentals.json)",
+  "description": "Written by scripts/fundamentals.py only, from the SEC's public company facts. No LLM. Trailing twelve months, point in time (facts filed on or before as_of).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["as_of", "sample", "source", "companies"],
+  "properties": {
+    "as_of": {"$ref": "common.schema.json#/$defs/date"},
+    "sample": {"type": "boolean"},
+    "source": {"type": "string", "minLength": 3, "maxLength": 120},
+    "companies": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["symbol", "cik", "name", "status"],
+        "properties": {
+          "symbol": {"$ref": "common.schema.json#/$defs/ticker"},
+          "cik": {"type": "integer", "minimum": 1},
+          "name": {"type": "string", "minLength": 1, "maxLength": 160},
+          "status": {"enum": ["ok", "stale", "no_data"]},
+          "period_end": {"$ref": "common.schema.json#/$defs/date"},
+          "filed": {"$ref": "common.schema.json#/$defs/date"},
+          "revenue_concept": {"type": "string", "maxLength": 120},
+          "revenue_ttm": {"type": "number"},
+          "revenue_growth_yoy_pct": {"type": ["number", "null"]},
+          "quarter_revenue_growth_yoy_pct": {"type": ["number", "null"]},
+          "operating_margin_pct": {"type": ["number", "null"]},
+          "net_margin_pct": {"type": ["number", "null"]},
+          "free_cash_flow_ttm": {"type": ["number", "null"]},
+          "fcf_margin_pct": {"type": ["number", "null"]},
+          "missing": {"type": "array", "items": {"enum": ["revenue", "operating_income", "net_income", "operating_cash_flow", "capex"]}}
+        }
+      }
+    }
+  }
+}

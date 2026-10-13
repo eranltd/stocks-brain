@@ -165,6 +165,29 @@ def checklist_block(doc: dict | None, on_list: set[str]) -> dict:
     return out
 
 
+FUNDAMENTALS_NOTE = ("what each company filed with the SEC, by code: trailing twelve months to period_end; growth is "
+                     "revenue against the twelve months before, q_growth the latest quarter against the same quarter a year "
+                     "earlier; margins are shares of revenue; fcf is operating cash flow minus capital spending. Describes the "
+                     "business, not the stock: a good business can be a poor buy, and none of this has shown an edge here yet")
+
+
+def fundamentals_block(doc: dict | None, on_list: set[str], as_of: str) -> dict:
+    """Compact view of data/market/fundamentals.json, citable as fundamentals.<ticker>. Point in time: a company whose
+    newest filing used is dated after `as_of` is left out until the next run."""
+    if not doc or doc.get("sample"):
+        return {}
+    names = {}
+    for c in doc["companies"]:
+        if c["symbol"] not in on_list or c["status"] == "no_data" or c["filed"] > as_of:
+            continue
+        row = {"period_end": c["period_end"], "growth": c.get("revenue_growth_yoy_pct"), "q_growth": c.get("quarter_revenue_growth_yoy_pct"),
+               "op_margin": c.get("operating_margin_pct"), "net_margin": c.get("net_margin_pct"), "fcf_margin": c.get("fcf_margin_pct")}
+        if c["status"] == "stale":
+            row["stale"] = True
+        names[c["symbol"].lower()] = {k: v for k, v in row.items() if v is not None}
+    return {"note": FUNDAMENTALS_NOTE, "names": names} if names else {}
+
+
 TRACK_NOTE = ("the brain's own record, by code: recent stance/conviction per name (newest first) and settled picks scored "
               "against the benchmark after the horizon (signed excess: above zero means the call was right). calibration says "
               "whether conviction has carried information. Context for consistency and humility, never evidence of an edge")
@@ -271,6 +294,8 @@ def build(data_dir: Path = DATA, runs_dir: Path = RUNS, today: str | None = None
                                  set(names), today),
         "checklist": checklist_block(load_json(data_dir / "market" / "checklist.json") if (data_dir / "market" / "checklist.json").exists() else None,
                                      set(names)),
+        "fundamentals": fundamentals_block(load_json(data_dir / "market" / "fundamentals.json")
+                                           if (data_dir / "market" / "fundamentals.json").exists() else None, set(names), as_of),
         "track_record": track_record_block(runs, outcomes, calib, as_of),
     }
     return pack

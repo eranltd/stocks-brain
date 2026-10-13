@@ -1,7 +1,7 @@
 ---
-version: 0.17.0
+version: 0.18.0
 updated_at: 2026-10-13
-change_note: Borrowed from TradingAgents - the brain reads its own track record, and the pack is point in time.
+change_note: Company numbers from SEC filings, a second price source to cross-check Tiingo, and the brain's verdicts in plain words.
 ---
 # Decision log
 
@@ -10,17 +10,37 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 ## Open items (waiting on the owner)
 - **Author of sources S-001 to S-005**: confirm they are the same channel (Micha) as the later batches.
 - **Paid connectors** (news, X, options data for implied moves): parked until the owner wants to spend.
-- **SEC XBRL financials**: a free, official feed that could fill the outlook cards' numbers by code. Not connected
-  until the household decides (see 2026-10-08).
+- **Two secrets to add** (Settings → Secrets and variables → Actions): `SEC_USER_AGENT` (a name and a contact email,
+  which the SEC requires; until it exists the company-numbers step fails softly and the brain reads no fundamentals)
+  and `POLYGON_API_KEY` (a free polygon.io key; until it exists the weekly price cross-check is skipped).
 - **Satellite size**: `docs/household.md` proposes 10% of savings (2% per slot). The owner sets it.
 - **Market file size**: `derived.json` is written one line per symbol (compact) and is about 330 KB with 21 names.
   Past roughly 35 names it would hit lint's 512 KB cap and the daily run would fail closed; before that, move the
   per-point dates into one shared array.
-- **Second price source**: Tiingo's daily returns show unusually low correlations between these names (for example
-  AAPL to QQQ about 0.24 over a year). The diagnostic showed our pipeline reproduces the provider's data exactly, so
-  the numbers are faithful to the source; a cross-check against a second source is still pending.
 
 ## 2026-10-13
+- **Company numbers from SEC filings** (`scripts/fundamentals.py`, routine `sec_fundamentals`). The household chose
+  the SEC's free XBRL company facts over paid data and social feeds. Each daily run turns every main-list company's
+  10-Q and 10-K facts into twelve-month revenue growth, the latest quarter's growth, operating and net margin and free
+  cash flow (operating cash flow minus capital spending), into `data/market/fundamentals.json`. Quarters come from
+  three-month facts, or from one year-to-date figure minus the one before it (cash flows and the fourth quarter);
+  twelve-, thirteen- and sixteen-week quarters all count (Costco, PepsiCo). Point in time: only facts filed by the day
+  count, and a restated period takes the newest filing up to then. The brain reads a compact `fundamentals` block and
+  is told it describes the business, not the stock; each Stock page has a plain card, "By its own numbers". The SEC
+  asks every client for a User-Agent with a contact email, so the step needs the `SEC_USER_AGENT` secret; a failure
+  keeps the last good file and never stops the day's market data.
+- **A second price source to check Tiingo** (`scripts/price_crosscheck.py`, routine `price_crosscheck`, Polygon's
+  free plan). On Fridays the daily run fetches the main list from Polygon too and compares daily returns; only
+  agreement statistics are published (`data/market/price_check.json`), never a price. A one-off check the same day
+  against a third source answered the open question already: AAPL to QQQ correlated about 0.21 there against Tiingo's
+  0.24 over the past year (MSFT 0.33 against 0.34, NVDA 0.68 against 0.69), so the low correlations are the market's,
+  not a data fault. The weekly check keeps it that way.
+- **The pack cap is 14000 tokens** (was 12000): with the track record and the company numbers the pack came to about
+  12000. Fail closed above it, as before.
+- **The brain's verdict in plain words.** The household asked for a core section with the verdict of each brain run.
+  Home has a card with the newest run: one line on what to do, what changed since the run before, and for each name
+  its stance in words (just watching, leaning up, leaning down), how sure, one reason and what would prove it wrong;
+  the brain's own summary is one tap away. A new page, Our plan → Brain's verdicts, lists every run that way.
 - **What we borrowed from Tauric Research's TradingAgents** (a multi-agent LLM trading framework; read from its public
   README, not its code).
   - **Memory of its own calls.** TradingAgents appends each decision to a log and, once the holding period ends, scores

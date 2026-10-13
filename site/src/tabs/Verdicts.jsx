@@ -1,14 +1,13 @@
-import { Accent, Container, SectionHead } from "../components/ui.jsx";
-import { VerdictHistory } from "../components/verdict.jsx";
+import { Container } from "../components/ui.jsx";
+import { VerdictPage } from "../components/verdict.jsx";
 
-/** Every daily brain run in plain words: what it decided, and what changed since the run before. */
-export default function Verdicts({ data }) {
+/** The brain's verdicts: what the super-smart machine decided, told like to a five-year-old. */
+export default function Verdicts({ data, go }) {
   return (
-    <Container className="max-w-[760px] pt-20 pb-24">
-      <SectionHead eyebrow="The brain's verdicts" size="md"
-        title={<>Every run, <Accent>in plain words.</Accent></>}
-        lede="The brain reads the market every morning after a US close and makes its own call. Each run is below, newest first: what it decided, what changed since the run before, and for each name why, and what would prove it wrong. All of it is on paper only." />
-      <VerdictHistory data={data} />
+    <Container className="max-w-[720px] pt-6 pb-24 sm:pt-8">
+      <h1 className="display mb-2 text-[clamp(34px,9vw,52px)] leading-[1.02] tracking-[-0.03em]">What the <span style={{ color: "var(--ai)" }}>brain</span> says</h1>
+      <p className="mb-8 max-w-[56ch] text-[17px] leading-relaxed text-ink-2">Every morning a smart computer program reads the whole market and makes up its mind about our stocks. Here is what it decided, told simply.</p>
+      <VerdictPage data={data} go={go} />
     </Container>
   );
 }

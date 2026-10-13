@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
     inputs:
       picks:
-        description: 'Brain output JSON: {"summary": "...", "picks": [...]}'
+        description: 'Brain output JSON: {"summary": "...", "eli5": "...", "picks": [...]} (eli5 optional)'
         required: true
         type: string
       as_of:

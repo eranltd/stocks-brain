@@ -103,6 +103,23 @@ class BrainPipelineTest(unittest.TestCase):
             mutate(out)
             self.assertTrue(record_run.check_picks(out, self.pack, self.guard, self.on_list), f"{name} was not caught")
 
+    def test_eli5_is_optional_and_checked_like_the_rest(self):
+        out = self.good()
+        out["eli5"] = "The brain likes this one a little, like a sunny morning, but it is only playing pretend money."
+        out["picks"][0]["eli5"] = "This company is doing well and is not running too fast, so the brain keeps an eye on it."
+        self.assertEqual(record_run.check_picks(out, self.pack, self.guard, self.on_list), [])
+        run = record_run.make_run(out, self.packfile, "Claude Code session", 5, 0.0, None, None)
+        self.assertEqual(run["eli5"], out["eli5"])
+        self.assertEqual(Validator().validate(run, "run.schema.json"), [])
+        for bad in ({"eli5": "It went up 12 times, so buy."}, {"eli5": "short"}):
+            o = self.good()
+            o.update(bad)
+            self.assertTrue(record_run.check_picks(o, self.pack, self.guard, self.on_list), bad)
+        o = self.good()
+        o["picks"][0]["eli5"] = "A sure thing for anyone, like candy, really really nice."
+        self.assertTrue(record_run.check_picks(o, self.pack, self.guard, self.on_list))
+        self.assertNotIn("eli5", record_run.make_run(self.good(), self.packfile, "m", 1, 0.0, None, None))
+
     def test_zero_picks_is_valid(self):
         out = {"summary": "Nothing clears the bar today; holding back is a valid answer.", "picks": []}
         self.assertEqual(record_run.check_picks(out, self.pack, self.guard, self.on_list), [])

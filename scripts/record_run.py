@@ -26,23 +26,27 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _common import DOCS, RUNS, Validator, doc_versions, dump_json, load_json, settings, watchlist  # noqa: E402
 from build_pack import estimate_tokens, evidence_keys  # noqa: E402
 
-PROSE = ("thesis", "invalidation")
+PROSE = ("thesis", "invalidation", "eli5")
 
 
 def check_picks(out: dict, pack: dict, guard: dict, on_list: set[str]) -> list[str]:
     errs = []
     v = Validator()
-    if not isinstance(out, dict) or set(out) != {"summary", "picks"}:
-        return ["brain output must be exactly {summary, picks}"]
+    if not isinstance(out, dict) or not {"summary", "picks"} <= set(out) <= {"summary", "eli5", "picks"}:
+        return ["brain output must be {summary, picks} with an optional eli5"]
     if not isinstance(out["summary"], str) or not 10 <= len(out["summary"]) <= 600:
         errs.append("summary must be 10 to 600 characters")
+    if "eli5" in out and (not isinstance(out["eli5"], str) or not 20 <= len(out["eli5"]) <= 400):
+        errs.append("eli5 must be 20 to 400 characters")
+    elif "eli5" in out and guard["no_digits_in_pick_text"] and re.search(r"\d", out["eli5"]):
+        errs.append("digits in eli5 (write words, as for a five-year-old)")
     picks = out["picks"]
     if len(picks) > guard["max_picks"]:
         errs.append(f"{len(picks)} picks > max_picks {guard['max_picks']}")
     keys = evidence_keys(pack)
     seen = set()
     banned = [b.lower() for b in guard["banned_phrases"]]
-    texts = [out["summary"]]
+    texts = [out["summary"], out.get("eli5", "")]
     for i, p in enumerate(picks):
         errs += [f"pick {i}: {e}" for e in v.validate(p, "pick.schema.json")]
         t = p.get("ticker")
@@ -55,7 +59,7 @@ def check_picks(out: dict, pack: dict, guard: dict, on_list: set[str]) -> list[s
             errs.append(f"pick {i}: stance {p.get('stance')!r} not allowed")
         prose = [p.get(k, "") for k in PROSE] + list(p.get("risks", []))
         if guard["no_digits_in_pick_text"] and any(re.search(r"\d", x) for x in prose):
-            errs.append(f"pick {i}: digits in thesis, risks or invalidation (code attaches numbers)")
+            errs.append(f"pick {i}: digits in thesis, risks, invalidation or eli5 (code attaches numbers)")
         texts += prose
         for e in p.get("evidence", []):
             if e not in keys:
@@ -79,6 +83,7 @@ def make_run(out: dict, packfile: dict, model: str, minutes: float, usd: float, 
         "duration_minutes": minutes,
         "pack": {"hash": packfile["hash"], "tokens": packfile["tokens"], "cap_tokens": packfile["cap_tokens"]},
         "doc_versions": doc_versions(), "repair_retries": 0, "summary": out["summary"],
+        **({"eli5": out["eli5"]} if out.get("eli5") else {}),
         "picks": [{"id": f"{day}:{p['ticker']}", "ref_date": day, "pick": p} for p in out["picks"]],
     }
 

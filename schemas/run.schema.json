@@ -47,6 +47,7 @@
     },
     "repair_retries": {"type": "integer", "minimum": 0, "maximum": 1},
     "summary": {"type": "string", "maxLength": 600},
+    "eli5": {"type": "string", "minLength": 20, "maxLength": 400, "description": "The run's verdict explained like to a five-year-old (model words, no digits). Optional: older runs have none."},
     "picks": {
       "type": "array", "maxItems": 10,
       "items": {

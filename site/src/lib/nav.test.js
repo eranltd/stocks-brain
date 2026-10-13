@@ -7,7 +7,7 @@ const OLD = ["today", "details", "portfolio", "playbook", "people", "watchlist",
 const NEW = ["verdicts"];
 
 test("three subjects hold every old route exactly once, each page with a label and a one-line what's this", () => {
-  assert.deepEqual(SUBJECTS.map((s) => s.label), ["Today", "Our plan", "Learn"]);
+  assert.deepEqual(SUBJECTS.map((s) => s.label), ["Today", "Brain's verdicts", "Our plan", "Learn"]);
   assert.deepEqual([...ROUTES].sort(), [...OLD, ...NEW].sort());
   assert.equal(new Set(ROUTES).size, ROUTES.length);
   for (const s of SUBJECTS) {
@@ -25,7 +25,7 @@ test("menu grouping: Learn ends with a small Behind the scenes group, the others
   assert.deepEqual(menuGroups("today").map((g) => [g.id, g.label, g.pages.map((p) => p.label)]), [
     ["main", null, ["Home", "Stocks", "Market details", "People we learn from"]],
   ]);
-  assert.deepEqual(menuGroups("plan")[0].pages.map((p) => p.route), ["verdicts", "portfolio", "playbook", "track"]);
+  assert.deepEqual(menuGroups("plan")[0].pages.map((p) => p.route), ["portfolio", "playbook", "track"]);
   const learn = menuGroups("learn");
   assert.deepEqual(learn.map((g) => g.label), [null, GROUP_LABEL.behind]);
   assert.deepEqual(learn[0].pages.map((p) => p.label), ["Lessons", "Library", "What we learned", "How it works"]);
@@ -51,6 +51,9 @@ test("phone bottom bar: Today is one tap Home from elsewhere; inside Today, and 
   assert.deepEqual(bottomTap("today", "stock/NVDA"), { sheet: "today" });
   assert.deepEqual(bottomTap("plan", "today"), { sheet: "plan" });
   assert.deepEqual(bottomTap("learn", "runs"), { sheet: "learn" });
+  assert.deepEqual(bottomTap("verdicts", "today"), { go: "verdicts" }); // its own tab: always one tap
+  assert.deepEqual(bottomTap("verdicts", "verdicts"), { go: "verdicts" });
+  assert.equal(subjectOf("verdicts"), "verdicts");
 });
 
 test("hash: old links, stock pages and a market in the hash; anything unknown opens Home", () => {

@@ -713,13 +713,15 @@ class Lint:
                 self.err(path, f"{pick['ticker']} is not on the watchlist")
             if pick["stance"] not in guard["allowed_stances"]:
                 self.err(path, f"stance {pick['stance']} not allowed")
-            text = " ".join([pick["thesis"], pick["invalidation"], *pick["risks"]]).lower()
+            text = " ".join([pick["thesis"], pick["invalidation"], *pick["risks"], pick.get("eli5", "")]).lower()
             for b in banned:
                 if b in text:
                     self.err(path, f"banned phrase {b!r} in {item['id']}")
             if guard["no_digits_in_pick_text"] and re.search(r"\d", text):
                 self.err(path, f"digits in pick text of {item['id']}; numbers come from code")
-        if any(b in run["summary"].lower() for b in banned):
+        if guard["no_digits_in_pick_text"] and re.search(r"\d", run.get("eli5", "")):
+            self.err(path, "digits in the run's eli5; numbers come from code")
+        if any(b in (run["summary"] + " " + run.get("eli5", "")).lower() for b in banned):
             self.err(path, "banned phrase in summary")
 
     def check_market(self) -> None:

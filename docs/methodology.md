@@ -1,7 +1,7 @@
 ---
-version: 0.13.0
-updated_at: 2026-10-10
-change_note: Markets - two more lists (Israeli companies through their US listings against EIS, iShares index funds against SPY) get the same derived numbers, checklist and candles from their own fetch run; everything else stays Nasdaq-only.
+version: 0.14.0
+updated_at: 2026-10-13
+change_note: The pack carries the brain's own track record (recent calls per name, settled scores, calibration) and leaves out anything published after the close the picks are referenced to.
 ---
 # Methodology
 
@@ -10,7 +10,17 @@ change_note: Markets - two more lists (Israeli companies through their US listin
    Each fetch re-pulls the whole kept window, so stored history is adjusted consistently.
    All symbols must fetch and validate, or nothing is written. This run (`--scope nasdaq`) fetches the Nasdaq list, its
    benchmark and the market-context funds; the other markets have their own run (see Markets).
-2. **build_pack**: docs, derived market numbers, people's calls, the outlook cards' dates and recent runs go into one JSON pack. The run stops if the pack exceeds `pack.token_cap`.
+2. **build_pack**: docs, derived market numbers, people's calls, the outlook cards' dates and the brain's track record go into one JSON pack. The run stops if the pack exceeds `pack.token_cap`.
+   - **Point in time.** Picks are referenced to the close of `meta.as_of`, so nothing dated after that close enters the
+     pack: claims (`as_of`) and people's calls (the day they became public) dated later are left out, and the track
+     record counts only runs before that day and outcomes scored on or before it. News published overnight would
+     otherwise flatter the scores of a call made "at" the earlier close.
+   - **Track record** (`track_record`, the brain's memory): for each name, what the last `pack.recent_runs` runs said
+     (stance/conviction, newest first), up to three settled calls with their verdict and signed excess, and how many are
+     still pending; plus the conviction calibration once it is live. All by code, no model-written reflections. The brain
+     must say what changed in the data when it changes a name's call, and keeps conviction low until calibration says
+     conviction is informative. The idea follows the reflection loop in Tauric Research's TradingAgents, minus the
+     model-written lessons: lessons still reach `docs/learnings.json` only by a person's hand.
 3. **brain** (routine `close_run`): a scheduled Claude Code session on the household's Claude subscription, Tuesday to
    Saturday at 05:23 UTC and again at 11:23 UTC in case the data run was late (after the Monday to Friday closes are
    published), follows `prompts/daily_brain_routine.md`. It

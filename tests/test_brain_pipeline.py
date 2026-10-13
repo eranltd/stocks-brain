@@ -110,3 +110,73 @@ class BrainPipelineTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TrackRecordAndPointInTimeTest(unittest.TestCase):
+    """The brain's memory (track_record) and the point-in-time guard: nothing dated after the close reaches the pack."""
+
+    @staticmethod
+    def run_doc(day, *calls):
+        return {"date": day, "status": "ok",
+                "picks": [{"id": f"{day}:{t}", "pick": {"ticker": t, "stance": s, "conviction": c}} for t, s, c in calls]}
+
+    @staticmethod
+    def outcome(day, t, stance, verdict, excess, scored):
+        return {"pick_id": f"{day}:{t}", "run_date": day, "ticker": t, "stance": stance, "conviction": "low",
+                "verdict": verdict, "excess_pct": excess, "scored_date": scored}
+
+    def test_memory_is_newest_first_and_counts_pending(self):
+        runs = [self.run_doc("2026-09-01", ("AAA", "bullish", "medium")), self.run_doc("2026-10-01", ("AAA", "neutral", "low"), ("BBB", "bearish", "low"))]
+        outs = [self.outcome("2026-09-01", "AAA", "bullish", "miss", -3.21, "2026-09-29")]
+        tr = build_pack.track_record_block(runs, outs, None, "2026-10-02")
+        aaa = tr["names"]["aaa"]
+        self.assertEqual(aaa["recent"], ["2026-10-01 neutral/low", "2026-09-01 bullish/medium"])
+        self.assertEqual(aaa["settled"], [{"run_date": "2026-09-01", "call": "bullish/low", "verdict": "miss", "signed_excess": -3.2}])
+        self.assertEqual((aaa["pending"], tr["names"]["bbb"]["pending"]), (1, 1))
+        self.assertEqual(tr["settled_total"], 1)
+        self.assertNotIn("calibration", tr)
+
+    def test_memory_ignores_anything_after_the_close(self):
+        runs = [self.run_doc("2026-10-02", ("AAA", "bullish", "high"))]  # a run on the pack's own day (a rerun) is not memory
+        outs = [self.outcome("2026-09-01", "AAA", "bearish", "hit", -2.0, "2026-10-03")]  # scored after the close
+        tr = build_pack.track_record_block(runs, outs, None, "2026-10-02")
+        self.assertEqual(tr["names"], {})
+        self.assertEqual(tr["settled_total"], 0)
+
+    def test_settled_calls_are_capped_per_name_and_signed(self):
+        outs = [self.outcome(f"2026-0{m}-01", "AAA", "bearish", "hit", -1.0, f"2026-0{m}-28") for m in range(1, 7)]
+        tr = build_pack.track_record_block([], outs, None, "2026-10-02")
+        settled = tr["names"]["aaa"]["settled"]
+        self.assertEqual(len(settled), build_pack.TRACK_SETTLED_PER_NAME)
+        self.assertEqual(settled[0]["run_date"], "2026-06-01")
+        self.assertEqual(settled[0]["signed_excess"], 1.0)  # a bearish call on a laggard was right
+
+    def test_calibration_shows_only_on_live_data(self):
+        cal = routines_code.compute_calibration([self.outcome("2026-09-01", "AAA", "bullish", "hit", 2.0, "2026-09-29")], "2026-10-02", False, 10)
+        tr = build_pack.track_record_block([], [], cal, "2026-10-02")
+        self.assertEqual(tr["calibration"]["conviction_verdict"], "insufficient_data")
+        self.assertEqual(tr["calibration"]["by_stance"], {"bullish": {"n": 1, "hit_pct": 100.0, "signed_excess": 2.0}})
+        self.assertNotIn("calibration", build_pack.track_record_block([], [], {**cal, "sample": True}, "2026-10-02"))
+
+    def test_people_calls_made_public_after_the_close_are_left_out(self):
+        call = {"id": "c1", "ticker": "AAA", "via": "Some Fund LLC", "person": "p", "stance": "bullish", "weeks_since": 0, "so_far": None}
+        scores = {"sample": False, "as_of": "2026-10-03", "min_matured": 3, "people": [], "vias": [],
+                  "calls": [{**call, "date": "2026-10-02"}, {**call, "id": "c2", "date": "2026-10-03"}]}
+        calls = build_pack.people_block(scores, {"AAA"}, None, "2026-10-02")["calls"]["aaa"]
+        self.assertEqual([c["date"] for c in calls], ["2026-10-02"])
+
+    def test_pack_holds_track_record_and_no_claim_after_the_close(self):
+        tmp = Path(tempfile.mkdtemp())
+        try:
+            data = live_like_data(tmp)
+            as_of = load_json(data / "market" / "derived.json")["as_of"]
+            sym = sorted(s["symbol"] for s in watchlist()["symbols"])[0]
+            dump_json(data / "kb" / "observations.json", {"version": "0.1.0", "updated_at": as_of, "change_note": "test", "items": [
+                {"id": "O-1", "text": "before the close", "tickers": [sym], "as_of": as_of, "expires": "2099-06-01"},
+                {"id": "O-2", "text": "after the close", "tickers": [sym], "as_of": "2099-01-01", "expires": "2099-12-31"}]})
+            pack = build_pack.build(data, tmp / "runs", today="2099-01-02")
+            self.assertEqual(sorted(pack["claims"]), ["o-1"])
+            self.assertIn("track_record", pack)
+            self.assertNotIn("recent_runs", pack)
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)

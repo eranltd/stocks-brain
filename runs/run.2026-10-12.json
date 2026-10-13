@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "run_id": "run.2026-10-12",
+  "date": "2026-10-12",
+  "generated_at": "2026-10-13T08:25:46Z",
+  "status": "ok",
+  "sample": false,
+  "model": "Claude Code routine",
+  "cost": {
+    "usd": 0.0,
+    "input_tokens": 11390,
+    "output_tokens": 1230,
+    "cap_usd": 2.5
+  },
+  "duration_minutes": 6.0,
+  "pack": {
+    "hash": "dc6a0cdcd382d9be3fd5ed38a8b75f2e5ccbfd4b67e281a15ab9930b855878f9",
+    "tokens": 11390,
+    "cap_tokens": 12000
+  },
+  "doc_versions": {
+    "strategy": "0.2.0",
+    "methodology": "0.13.0",
+    "guardrails": "0.1.0",
+    "learnings": "0.1.0"
+  },
+  "repair_retries": 0,
+  "summary": "The frozen history test rejected all four pre-registered stock rules: each beat only a small share of random baskets from this same list, and holding every name equally did better than the index fund, so picking showed no edge over random picks or over owning the whole list. Setup passers have averaged no excess return either. So only neutral, low-conviction notes on rule-held names; nothing here is expected to beat the index. Paper stage, no money moves.",
+  "picks": [
+    {
+      "id": "2026-10-12:MSFT",
+      "ref_date": "2026-10-12",
+      "pick": {
+        "ticker": "MSFT",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Passes every setup check, is not flagged stretched and is kept by the rule, but it sits just inside the stretch line after a very strong quarter, lagged the benchmark over the last year, and the frozen history test found no edge in this kind of strength. A rule-held name to watch, not a call to beat the index. Pershing Square's disclosed bullish book agrees; that record has too few matured calls to count.",
+        "risks": [
+          "Earnings are due in about two weeks and the company has not confirmed the date.",
+          "One more strong day could flag it stretched; a pullback toward its trend is normal after such a run.",
+          "Deepest one-year drawdown among the kept names and fairly high volatility.",
+          "Chart checklist reward-to-risk to the first target is far too thin for the house rule."
+        ],
+        "invalidation": "A close clearly below its fifty-day average, a stretched flag, or the rule dropping it at the next monthly review.",
+        "evidence": [
+          "market.msft",
+          "market.msft.setup",
+          "market.msft.risk",
+          "checklist.names.msft",
+          "outlook.next_earnings.msft",
+          "people.calls.msft",
+          "rules_history.verdicts",
+          "base_rates.gate"
+        ]
+      }
+    },
+    {
+      "id": "2026-10-12:AMGN",
+      "ref_date": "2026-10-12",
+      "pick": {
+        "ticker": "AMGN",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Passes every setup check, is ahead of the benchmark over each window and is not stretched, but that describes past strength, which the frozen history test rejected as an edge, and setup passers have not beaten the rest. It is kept by the rule yet absent from the paper book, and it moves with Gilead, so it adds little beyond that name.",
+        "risks": [
+          "Sharp gain over the last month makes a pullback toward its average plausible.",
+          "Chart checklist reward-to-risk to the first target is too thin for any new entry.",
+          "Fairly close link to Gilead in the same sector, so two health slots are nearly one idea.",
+          "No dated earnings in the pack, so event risk is unknown rather than absent."
+        ],
+        "invalidation": "Loses its trend line, falls behind the benchmark over the last quarter, or is dropped by the rule at the monthly review.",
+        "evidence": [
+          "market.amgn",
+          "market.amgn.setup",
+          "market.amgn.risk",
+          "checklist.names.amgn",
+          "base_rates.by_score",
+          "rules_history.verdicts",
+          "rules_history.yardsticks",
+          "rule_v1.history"
+        ]
+      }
+    },
+    {
+      "id": "2026-10-12:GILD",
+      "ref_date": "2026-10-12",
+      "pick": {
+        "ticker": "GILD",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Passes most setup checks, is not stretched and has a very low link to the benchmark, which helps diversification inside a small satellite. But it trails the benchmark over the last month and half year, the chart checklist is only mixed with weakening volume, its record includes many losing stretches, and the history test gave no proven edge. A diversifier at most, not a return bet.",
+        "risks": [
+          "Relative strength over the half year fails and the last month trails, so it may lag a tech-led rally.",
+          "Long-run share of losing twelve-month windows is about twice the core's; it is not a defensive name.",
+          "Chart checklist reward-to-risk is too thin for a new entry.",
+          "No earnings date in the pack, so event risk is unknown."
+        ],
+        "invalidation": "Falls below its fifty-day average, passes fewer setup checks at the monthly review, or is dropped by the rule.",
+        "evidence": [
+          "market.gild",
+          "market.gild.setup",
+          "market.gild.risk",
+          "checklist.names.gild",
+          "base_rates.gate",
+          "rules_history.verdicts",
+          "rule_v1.history"
+        ]
+      }
+    },
+    {
+      "id": "2026-10-12:AAPL",
+      "ref_date": "2026-10-12",
+      "pick": {
+        "ticker": "AAPL",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Kept by the rule and in the paper book, with a modest link to the benchmark and the other held names, so it diversifies. It passes most setup checks and is not stretched, but its last month and quarter trail the benchmark, it sits at its yearly high, and passing the gate has shown no edge. It earns a slot in the record only, not a claim to beat the index.",
+        "risks": [
+          "Short-window relative strength is negative; the case rests on the half-year and year.",
+          "Earnings are about three weeks out and unconfirmed; a run-up into the report can reverse.",
+          "Chart checklist reward-to-risk to the first target is far too thin for a new entry.",
+          "Shares the technology sector with Microsoft, so two slots lean on one theme."
+        ],
+        "invalidation": "Loses its trend average, fails the setup gate at the monthly review, or is dropped by the rule.",
+        "evidence": [
+          "market.aapl",
+          "market.aapl.setup",
+          "market.aapl.risk",
+          "checklist.names.aapl",
+          "outlook.next_earnings.aapl",
+          "base_rates.by_score",
+          "rules_history.verdicts"
+        ]
+      }
+    }
+  ]
+}

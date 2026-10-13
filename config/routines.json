@@ -1,7 +1,7 @@
 {
-  "version": "0.10.0",
-  "updated_at": "2026-10-10",
-  "change_note": "Other markets (TLV, iShares): their own fetch run three hours after the Nasdaq one, so each hour's requests stay within Tiingo's free plan; derived numbers, the checklist and candles per market.",
+  "version": "0.11.0",
+  "updated_at": "2026-10-13",
+  "change_note": "Company numbers from SEC filings (sec_fundamentals) and a weekly second-source price cross-check (price_crosscheck).",
   "timezone": "UTC",
   "routines": [
     {
@@ -44,6 +44,46 @@
       ],
       "human_gate": false,
       "why": "End-of-day bars for the watchlist and benchmark, fetched after the close. Raw bars stay inside the run (provider licence); only derived returns, distances and indexed lines are published. One failed symbol fails the run."
+    },
+    {
+      "id": "sec_fundamentals",
+      "name": "Company numbers from SEC filings",
+      "cadence": "daily",
+      "cron": "40 23 * * 1-5",
+      "runner": "github_actions",
+      "status": "active",
+      "milestone": "M4",
+      "uses_llm": false,
+      "max_cost_usd": 0,
+      "inputs": [
+        "sec_xbrl"
+      ],
+      "outputs": [
+        "data/market/fundamentals.json"
+      ],
+      "human_gate": false,
+      "why": "What the companies themselves filed, by code: twelve-month revenue growth, margins and free cash flow from the SEC's free XBRL company facts, point in time. Gives the brain something besides past price moves. A failure keeps the last good file."
+    },
+    {
+      "id": "price_crosscheck",
+      "name": "Second-source price cross-check",
+      "cadence": "weekly",
+      "cron": "40 23 * * 1-5",
+      "runner": "github_actions",
+      "status": "active",
+      "milestone": "M4",
+      "uses_llm": false,
+      "max_cost_usd": 0,
+      "inputs": [
+        "prices",
+        ".cache/prices (the same run's Tiingo bars, never published)",
+        "prices_check"
+      ],
+      "outputs": [
+        "data/market/price_check.json"
+      ],
+      "human_gate": false,
+      "why": "Every number rests on one price source. On Fridays, inside the daily run, the same symbols come from a second provider (Polygon) and their daily returns are compared; only agreement statistics are published. Skipped until POLYGON_API_KEY is set."
     },
     {
       "id": "close_run",

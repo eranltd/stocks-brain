@@ -130,6 +130,9 @@ export async function loadAll(onProgress = () => {}) {
     ...(manifest.people_scores ? [manifest.people_scores] : []),
     // Technical checklist (data/market/checklist.json): null until the first daily run that computes it.
     ...(manifest.checklist ? [manifest.checklist] : []),
+    // Company numbers from SEC filings and the second-source price check: absent until their first run.
+    ...(manifest.fundamentals ? [manifest.fundamentals] : []),
+    ...(manifest.price_check ? [manifest.price_check] : []),
   ];
   let done = 0;
   const entries = await Promise.all(
@@ -177,6 +180,8 @@ export function derive(manifest, files) {
   // People we learn from (config/people.json) and code's scores of their dated public calls (data/people/scores.json).
   const people = doc("people") ? files[doc("people").file] : null;
   const peopleScores = manifest.people_scores ? files[manifest.people_scores] : null;
+  const fundamentals = manifest.fundamentals ? files[manifest.fundamentals] : null;
+  const priceCheck = manifest.price_check ? files[manifest.price_check] : null;
   // Company outlook cards (config/outlook.json): researched, paraphrased and linked; may hold no companies yet.
   const outlook = doc("outlook") ? files[doc("outlook").file] : null;
   // The eight-step technical checklist: its steps and house rule (config/checklist.json) and code's daily reading of it.
@@ -232,7 +237,7 @@ export function derive(manifest, files) {
 
   return {
     market, manifest, runs, shownRuns, latest, lastOk, prices, watchlist, settings, learnings, guardrails,
-    outcomes, library, sources, routines, names, bench, kb, docs, regime, calibration, observations, opsLog, longrun, paper, sectors, core, rulebook, rulesResult, ledger, people, peopleScores, outlook, checklist, checklistCfg,
+    outcomes, library, sources, routines, names, bench, kb, docs, regime, calibration, observations, opsLog, longrun, paper, sectors, core, rulebook, rulesResult, ledger, people, peopleScores, fundamentals, priceCheck, outlook, checklist, checklistCfg,
     markets, marketsConfig, funds,
     sample: manifest.source === "sample", livePrices: manifest.price_source === "live",
   };

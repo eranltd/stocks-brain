@@ -2,12 +2,13 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { bottomTap, GROUP_LABEL, hashFor, isRoute, menuGroups, pageOf, parseHash, ROUTES, subjectOf, SUBJECTS } from "./nav.js";
 
-// Every route the site had before the three-subject menu; old links must keep opening the right page.
+// Every route the site had before the three-subject menu; old links must keep opening the right page. NEW: added since.
 const OLD = ["today", "details", "portfolio", "playbook", "people", "watchlist", "track", "kb", "insights", "learnings", "runs", "routines", "how", "admin"];
+const NEW = ["verdicts"];
 
 test("three subjects hold every old route exactly once, each page with a label and a one-line what's this", () => {
   assert.deepEqual(SUBJECTS.map((s) => s.label), ["Today", "Our plan", "Learn"]);
-  assert.deepEqual([...ROUTES].sort(), [...OLD].sort());
+  assert.deepEqual([...ROUTES].sort(), [...OLD, ...NEW].sort());
   assert.equal(new Set(ROUTES).size, ROUTES.length);
   for (const s of SUBJECTS) {
     assert.ok(s.what.length > 10 && s.what.endsWith("."), s.id);
@@ -24,7 +25,7 @@ test("menu grouping: Learn ends with a small Behind the scenes group, the others
   assert.deepEqual(menuGroups("today").map((g) => [g.id, g.label, g.pages.map((p) => p.label)]), [
     ["main", null, ["Home", "Stocks", "Market details", "People we learn from"]],
   ]);
-  assert.deepEqual(menuGroups("plan")[0].pages.map((p) => p.route), ["portfolio", "playbook", "track"]);
+  assert.deepEqual(menuGroups("plan")[0].pages.map((p) => p.route), ["verdicts", "portfolio", "playbook", "track"]);
   const learn = menuGroups("learn");
   assert.deepEqual(learn.map((g) => g.label), [null, GROUP_LABEL.behind]);
   assert.deepEqual(learn[0].pages.map((p) => p.label), ["Lessons", "Library", "What we learned", "How it works"]);

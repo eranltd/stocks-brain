@@ -12,6 +12,7 @@ import { companiesToKnow, marketWords, newsLines, planWords } from "../lib/simpl
 import { topStocks } from "../lib/carousel.js";
 import { TopStocks } from "../components/topstocks.jsx";
 import { requestChecklistView } from "../components/checklist.jsx";
+import { LatestVerdict } from "../components/verdict.jsx";
 import { candlesOf, fundCard, MARKET_WHO, marketNote, nasdaqOnlyLine, NOT_YET, nounsFor } from "../lib/markets.js";
 
 const plural = (n, one, many) => (n === 1 ? one : many);
@@ -306,6 +307,8 @@ function SimpleHome({ data, market, go, showDetails }) {
             </SimpleCard>
           </>
         )}
+
+        <LatestVerdict data={data} go={go} />
 
         <SimpleCard kicker="Our plan: one, two, three" tone="var(--accent)">
           {!isDefault && <p className="mb-4 text-[15.5px] leading-relaxed text-ink-2">Our plan always follows the Nasdaq list; {label} is for looking, not part of it.</p>}

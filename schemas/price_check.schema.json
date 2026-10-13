@@ -1,0 +1,41 @@
+{
+  "$id": "price_check.schema.json",
+  "title": "Second-source price cross-check (data/market/price_check.json)",
+  "description": "Written by scripts/price_crosscheck.py only. Agreement statistics between two price providers; never a price.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["as_of", "sample", "primary", "second", "benchmark", "thresholds", "counts", "symbols", "errors"],
+  "properties": {
+    "as_of": {"$ref": "common.schema.json#/$defs/date"},
+    "sample": {"type": "boolean"},
+    "primary": {"type": "string", "maxLength": 40},
+    "second": {"type": "string", "maxLength": 40},
+    "benchmark": {"$ref": "common.schema.json#/$defs/ticker"},
+    "thresholds": {
+      "type": "object", "additionalProperties": false,
+      "required": ["min_days", "agree_corr", "big_diff_pct", "max_big_share_pct"],
+      "properties": {"min_days": {"type": "integer"}, "agree_corr": {"type": "number"}, "big_diff_pct": {"type": "number"},
+                     "max_big_share_pct": {"type": "number"}}
+    },
+    "counts": {
+      "type": "object", "additionalProperties": false, "required": ["agree", "differ", "thin", "missing"],
+      "properties": {"agree": {"type": "integer"}, "differ": {"type": "integer"}, "thin": {"type": "integer"}, "missing": {"type": "integer"}}
+    },
+    "symbols": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["symbol", "days", "verdict"],
+        "properties": {
+          "symbol": {"$ref": "common.schema.json#/$defs/ticker"},
+          "days": {"type": "integer", "minimum": 0},
+          "verdict": {"enum": ["agree", "differ", "thin", "missing"]},
+          "return_corr": {"type": ["number", "null"]},
+          "median_diff_bp": {"type": "number", "minimum": 0},
+          "big_diff_days": {"type": "integer", "minimum": 0},
+          "bench_corr": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": ["number", "null"]}}
+        }
+      }
+    },
+    "errors": {"type": "array", "maxItems": 20, "items": {"type": "string", "maxLength": 200}}
+  }
+}

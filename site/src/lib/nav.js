@@ -20,6 +20,7 @@ export const SUBJECTS = [
     label: "Our plan",
     what: "What we hold on paper, the rules we follow and how it has gone.",
     pages: [
+      { route: "verdicts", label: "Brain's verdicts", what: "What the daily brain decided each run, in plain words." },
       { route: "portfolio", label: "Portfolio", what: "The practice portfolio on paper: what it holds and why." },
       { route: "playbook", label: "Our rules", what: "The house rules and plans, each tested on past prices." },
       { route: "track", label: "Track record", what: "How the daily brain's calls turned out, scored by code." },

@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from importlib import import_module
 
-REGISTRY = {"tiingo": "providers.tiingo", "stooq": "providers.stooq"}
+REGISTRY = {"tiingo": "providers.tiingo", "stooq": "providers.stooq", "polygon": "providers.polygon"}
 
 
 def get(name: str | None):

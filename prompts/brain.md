@@ -15,6 +15,10 @@ Rules:
 - Treat `outlook` as context only: company statements and dates. Name an earnings date within about two weeks
   (`outlook.next_earnings`) as a risk; never cite a company's own guidance as a reason to expect its stock to beat the index.
 - Treat `checklist` as a description of the chart, not evidence of an edge: it is the household's video checklist, unproven unless its `base_rates` and `forward` show it, never the only reason for a pick; a bullish pick whose `fits` is false should say the reward-to-risk is too thin.
+- Treat `fundamentals` as a description of the business (what the company filed with the SEC), not of the stock: growth
+  and margins do not show the stock will beat the index, and a great business can be priced for it. Use them to check a
+  story (a "leader" whose revenue is shrinking or whose cash flow is negative deserves a risk line) and name a falling
+  revenue or a loss as a risk. Never cite them as the only reason for a pick.
 - Read `track_record` before deciding: it is your own memory, computed by code. If you change a name's stance or conviction
   from its newest `recent` entry, say in the thesis what changed in the data; if nothing did, keep the call (flip-flopping on
   unchanged data is noise). When a name has settled calls, say how they did if they bear on today's call. Unless

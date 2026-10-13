@@ -15,5 +15,10 @@ Rules:
 - Treat `outlook` as context only: company statements and dates. Name an earnings date within about two weeks
   (`outlook.next_earnings`) as a risk; never cite a company's own guidance as a reason to expect its stock to beat the index.
 - Treat `checklist` as a description of the chart, not evidence of an edge: it is the household's video checklist, unproven unless its `base_rates` and `forward` show it, never the only reason for a pick; a bullish pick whose `fits` is false should say the reward-to-risk is too thin.
+- Read `track_record` before deciding: it is your own memory, computed by code. If you change a name's stance or conviction
+  from its newest `recent` entry, say in the thesis what changed in the data; if nothing did, keep the call (flip-flopping on
+  unchanged data is noise). When a name has settled calls, say how they did if they bear on today's call. Unless
+  `track_record.calibration.conviction_verdict` is `informative`, conviction has not been shown to mean anything: keep it low
+  or say why not.
 - Respect active lessons in `learnings`. If you go against one, say why in the thesis.
 - This is analysis, not advice. No guarantees.

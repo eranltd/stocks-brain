@@ -88,7 +88,7 @@ def _rec(p: dict) -> dict:
             "median_signed_excess_26w": r1(p["median_signed_excess_26w"]), "enough": p["enough"]}
 
 
-def people_block(scores: dict | None, on_list: set[str], cfg: dict | None = None) -> dict:
+def people_block(scores: dict | None, on_list: set[str], cfg: dict | None = None, as_of: str | None = None) -> dict:
     """Compact view of data/people/scores.json. Keys stay citable: people.record.<person id>, people.fund.<fund>,
     people.calls.<ticker>. A call the config marks as the firm's own (credit_person false) carries no person."""
     if not scores or scores.get("sample"):
@@ -99,6 +99,8 @@ def people_block(scores: dict | None, on_list: set[str], cfg: dict | None = None
     fund = {fund_key(v["via"]): {"name": v["via"], "persons": v["persons"], **_rec(v)} for v in scores["vias"]}
     calls: dict[str, list] = {}
     for c in sorted(scores["calls"], key=lambda c: c["date"], reverse=True):
+        if as_of and c["date"] > as_of:  # made public after the close the picks are referenced to
+            continue
         if c["ticker"] in on_list and len(calls.get(c["ticker"].lower(), [])) < PEOPLE_CALLS_PER_NAME:
             row = {"via": c["via"], "fund": fund_key(c["via"])}
             if c.get("credit_person", True):
@@ -163,6 +165,44 @@ def checklist_block(doc: dict | None, on_list: set[str]) -> dict:
     return out
 
 
+TRACK_NOTE = ("the brain's own record, by code: recent stance/conviction per name (newest first) and settled picks scored "
+              "against the benchmark after the horizon (signed excess: above zero means the call was right). calibration says "
+              "whether conviction has carried information. Context for consistency and humility, never evidence of an edge")
+TRACK_SETTLED_PER_NAME = 3
+
+
+def track_record_block(runs: list[dict], outcomes: list[dict], calibration: dict | None, as_of: str) -> dict:
+    """The brain's memory, after TradingAgents' reflection loop but computed by code: what it said about each name in
+    recent runs and how its settled calls scored. Only runs before `as_of` and outcomes scored on or before it count,
+    so the block never carries information from after the close the picks are referenced to."""
+    from routines_code import signed_excess  # one definition of signed excess, shared with calibration
+    names: dict[str, dict] = {}
+    for r in sorted((r for r in runs if r["date"] < as_of and r["status"] == "ok"), key=lambda r: r["date"], reverse=True):
+        for x in r["picks"]:
+            row = names.setdefault(x["pick"]["ticker"].lower(), {"recent": [], "settled": [], "pending": 0})
+            row["recent"].append(f"{r['date']} {x['pick']['stance']}/{x['pick']['conviction']}")
+    done = [o for o in outcomes if o["scored_date"] <= as_of]
+    for o in sorted(done, key=lambda o: o["run_date"], reverse=True):
+        row = names.setdefault(o["ticker"].lower(), {"recent": [], "settled": [], "pending": 0})
+        if len(row["settled"]) < TRACK_SETTLED_PER_NAME:
+            row["settled"].append({"run_date": o["run_date"], "call": f"{o['stance']}/{o['conviction']}", "verdict": o["verdict"],
+                                   "signed_excess": r1(signed_excess(o))})
+    scored_ids = {o["pick_id"] for o in done}
+    for r in runs:
+        if r["date"] < as_of and r["status"] == "ok":
+            for x in r["picks"]:
+                if x["id"] not in scored_ids:
+                    names[x["pick"]["ticker"].lower()]["pending"] += 1
+    out = {"note": TRACK_NOTE, "settled_total": len(done), "names": names}
+    if calibration and not calibration.get("sample"):
+        out["calibration"] = {"conviction_verdict": calibration["conviction_verdict"], "min_n": calibration["min_n"],
+                              "by_stance": {x["stance"]: {"n": x["n"], "hit_pct": x["hit_rate_pct"], "signed_excess": r1(x["avg_signed_excess_pct"])}
+                                            for x in calibration["by_stance"] if x["n"]},
+                              "by_conviction": {x["conviction"]: {"n": x["n"], "hit_pct": x["hit_rate_pct"], "signed_excess": r1(x["avg_signed_excess_pct"])}
+                                                for x in calibration["by_conviction"] if x["n"]}}
+    return out
+
+
 def build(data_dir: Path = DATA, runs_dir: Path = RUNS, today: str | None = None, outlook: dict | None = None) -> dict:
     st, wl = settings(), watchlist()
     kb = data_dir / "kb"
@@ -180,8 +220,9 @@ def build(data_dir: Path = DATA, runs_dir: Path = RUNS, today: str | None = None
     names = {s["symbol"]: s for s in wl["symbols"]}
     aliases = {a: s["symbol"] for s in wl["symbols"] for a in [s["symbol"], *s.get("aliases", [])]}
     obs = load_json(kb / "observations.json") if (kb / "observations.json").exists() else {"items": []}
+    as_of = derived["as_of"]  # picks are referenced to this close: nothing published after it may reach the brain
     live = [o for o in sorted(obs["items"], key=lambda o: o["as_of"], reverse=True)
-            if o["expires"] >= today and any(t in aliases for t in o["tickers"])][:12]
+            if o["as_of"] <= as_of and o["expires"] >= today and any(t in aliases for t in o["tickers"])][:12]
     claims = {o["id"].lower(): {"text": o["text"], "tickers": o["tickers"], "as_of": o["as_of"], "expires": o["expires"],
                                 "status": o.get("status", "unverified")} for o in live}
 
@@ -200,11 +241,9 @@ def build(data_dir: Path = DATA, runs_dir: Path = RUNS, today: str | None = None
         }
     _, strategy = parse_front_matter((DOCS / "strategy.md").read_text(encoding="utf-8"))
     learn = load_json(DOCS / "learnings.json")
-    recent = []
-    for p in sorted(runs_dir.glob("run.*.json"))[-st["pack"]["recent_runs"]:]:
-        r = load_json(p)
-        recent.append({"date": r["date"], "status": r["status"],
-                       "picks": [{"ticker": x["pick"]["ticker"], "stance": x["pick"]["stance"], "conviction": x["pick"]["conviction"]} for x in r["picks"]]})
+    runs = [load_json(p) for p in sorted(runs_dir.glob("run.*.json"))[-st["pack"]["recent_runs"]:]]
+    outcomes = load_json(kb / "outcomes.json")["items"] if (kb / "outcomes.json").exists() else []
+    calib = load_json(kb / "calibration.json") if (kb / "calibration.json").exists() else None
     pack = {
         "meta": {"pack_version": 1, "as_of": derived["as_of"], "built": today, "benchmark": bench,
                  "core": (wl.get("core") or {}).get("symbol"), "horizon_days": st["scoring"]["horizon_days"],
@@ -227,12 +266,12 @@ def build(data_dir: Path = DATA, runs_dir: Path = RUNS, today: str | None = None
         "learnings": {x["id"].lower(): x for x in learn["items"] if x.get("status") == "active"},
         "claims": claims,
         "people": people_block(load_json(data_dir / "people" / "scores.json") if (data_dir / "people" / "scores.json").exists() else None, set(names),
-                               load_json(CONFIG / "people.json") if (CONFIG / "people.json").exists() else None),
+                               load_json(CONFIG / "people.json") if (CONFIG / "people.json").exists() else None, as_of),
         "outlook": outlook_block(outlook if outlook is not None else (load_json(CONFIG / "outlook.json") if (CONFIG / "outlook.json").exists() else None),
                                  set(names), today),
         "checklist": checklist_block(load_json(data_dir / "market" / "checklist.json") if (data_dir / "market" / "checklist.json").exists() else None,
                                      set(names)),
-        "recent_runs": recent,
+        "track_record": track_record_block(runs, outcomes, calib, as_of),
     }
     return pack
 

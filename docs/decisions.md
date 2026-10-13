@@ -1,7 +1,7 @@
 ---
-version: 0.16.0
-updated_at: 2026-10-10
-change_note: Two more markets for the header switch (Israeli companies through their US listings, and iShares index funds), with their own fetch run so each hour's requests stay within Tiingo's free plan.
+version: 0.17.0
+updated_at: 2026-10-13
+change_note: Borrowed from TradingAgents - the brain reads its own track record, and the pack is point in time.
 ---
 # Decision log
 
@@ -19,6 +19,22 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Second price source**: Tiingo's daily returns show unusually low correlations between these names (for example
   AAPL to QQQ about 0.24 over a year). The diagnostic showed our pipeline reproduces the provider's data exactly, so
   the numbers are faithful to the source; a cross-check against a second source is still pending.
+
+## 2026-10-13
+- **What we borrowed from Tauric Research's TradingAgents** (a multi-agent LLM trading framework; read from its public
+  README, not its code).
+  - **Memory of its own calls.** TradingAgents appends each decision to a log and, once the holding period ends, scores
+    it against the benchmark and has a model write a reflection the next run reads. The pack now carries
+    `track_record`: the last runs' call per name, settled scores and the conviction calibration, all by code. We did
+    not copy the model-written reflections: lessons stay human-approved (`docs/learnings.json`), and numbers stay code's.
+  - **Point in time.** TradingAgents only shows a past run data that was public then. Our picks are referenced to the
+    close of `meta.as_of` but the brain runs the next morning, so claims and people's calls dated after that close are
+    now kept out of the pack. Overnight news would otherwise leak into calls scored from the earlier close.
+  - **Consistency.** Its authors note that runs vary even at a fixed temperature. The brain must now say what changed
+    in the data when it changes a name's stance or conviction; the skeptics and the reviewer check it.
+  - **Not taken:** the live order step (house rules are paper only), social-media sentiment feeds (noise, licence and
+    quality risk, and our history test found no edge in signals like these), and a separate bull-versus-bear debate
+    (each skeptic already lists bull and bear points and argues against the analysts).
 
 ## 2026-10-10
 - **Two more markets the header switch can show: TLV and iShares.** The household asked for more than the one Nasdaq

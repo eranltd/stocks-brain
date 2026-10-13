@@ -1,107 +1,183 @@
 import { useState } from "react";
-import { numWord } from "../lib/format.js";
 import { todayISO } from "../lib/outlook.js";
-import { steadyRuns, verdictHistory } from "../lib/verdict.js";
+import { scorecard, steadyRuns, verdictHistory, whatToDo } from "../lib/verdict.js";
+import { trustStage } from "./trust.jsx";
 import { ArrowRight, Reveal } from "./ui.jsx";
 
 const TONE = { accent: "var(--accent)", down: "var(--down)", flat: "var(--ink-2)" };
-const MARK = { accent: "▲", down: "▼", flat: "◆" };
 const longDate = (iso) => new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" });
+const COUNT = ["No", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"];
 
 function opts(data) {
   return { outlook: data.outlook, names: data.names, today: todayISO() };
 }
 
-/** One run's verdict: the headline, what changed, a row per name and, folded, the brain's own summary. */
-function VerdictBody({ v, big = true, withHeadline = true }) {
+/** A stock's mood as a big, calm badge: thumbs up, thumbs down or just watching, and how sure. */
+function Mood({ r }) {
+  return (
+    <span className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[14px] font-medium"
+      style={{ color: TONE[r.tone], borderColor: "var(--line-2)" }}>
+      <span aria-hidden="true" className="text-[10px]">{r.mark}</span>{r.mood}
+      <span className="font-normal text-ink-3">· {r.sure}</span>
+    </span>
+  );
+}
+
+/** One stock: its mood, the five-year-old words, and (on a tap) the grown-up reason and what would change its mind. */
+function StockCard({ r, go }) {
   const [open, setOpen] = useState(false);
   return (
-    <>
-      {withHeadline && <p className={`${big ? "text-[clamp(22px,6vw,27px)]" : "text-[20px]"} mb-3 leading-snug font-semibold tracking-[-0.015em] text-ink`}>{v.headline}</p>}
-      <p className="text-[16.5px] leading-relaxed text-ink-2">{v.changes.line}</p>
-      {v.rows.length > 0 && (
-        <ul className="mt-5 grid gap-3">
-          {v.rows.map((r) => (
-            <li key={r.ticker} className="rounded-2xl border border-line bg-surface p-4">
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-                <span className="text-[18px] font-semibold tracking-[-0.01em] text-ink">{r.name}</span>
-                <span className="pill py-0.5 text-[12px] normal-case tracking-[0.02em]" style={{ color: TONE[r.tone], borderColor: "var(--line-2)" }}>
-                  <span aria-hidden="true" className="text-[9px]">{MARK[r.tone]}</span>{r.stance}, {r.sure}
-                </span>
-              </div>
-              <p className="mt-2 text-[15.5px] leading-relaxed text-ink-2">{r.why}</p>
-              <p className="mt-2 text-[14.5px] leading-relaxed text-ink-3"><span className="text-ink-2">It would be wrong if:</span> {r.wrongIf}</p>
-            </li>
-          ))}
-        </ul>
-      )}
-      {v.summary && (
-        <div className="mt-4">
-          <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open}
-            className="meta inline-flex min-h-[44px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">
-            {open ? "Hide" : "Read"} the brain's own summary <ArrowRight className={`size-3.5 transition-transform ${open ? "rotate-90" : ""}`} />
-          </button>
-          {open && <p className="mt-2 rounded-2xl border border-line-2 bg-surface-2 p-4 text-[15px] leading-relaxed text-ink-2">{v.summary}</p>}
+    <li className="card overflow-hidden">
+      <div className="h-1" style={{ background: TONE[r.tone] }} />
+      <div className="p-5 sm:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+          <button type="button" onClick={() => go(`stock/${r.ticker}`)} className="text-left text-[22px] font-semibold tracking-[-0.02em] text-ink hover:underline">{r.name}</button>
+          <Mood r={r} />
         </div>
-      )}
-    </>
+        <p className="mt-4 text-[18px] leading-relaxed text-ink">{r.eli5}</p>
+        {!r.byBrain && r.why && <p className="mt-3 text-[15.5px] leading-relaxed text-ink-2"><span className="text-ink-3">In the brain's words:</span> {r.why}</p>}
+        <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open}
+          className="meta mt-4 inline-flex min-h-[44px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">
+          {open ? "Hide" : "Show"} the grown-up reason <ArrowRight className={`size-3.5 transition-transform ${open ? "rotate-90" : ""}`} />
+        </button>
+        {open && (
+          <div className="mt-2 grid gap-3 rounded-2xl border border-line-2 bg-surface-2 p-4 text-[15px] leading-relaxed text-ink-2">
+            <p>{r.thesis}</p>
+            {r.risks.length > 0 && (
+              <div>
+                <div className="meta mb-1">What could go wrong</div>
+                <ul className="grid gap-1">{r.risks.map((x) => <li key={x}>• {x}</li>)}</ul>
+              </div>
+            )}
+            <p><span className="text-ink">It changes its mind if:</span> {r.wrongIf}</p>
+          </div>
+        )}
+      </div>
+    </li>
   );
 }
 
 /**
- * The newest brain run in plain words, for the home page. Each run is its own call: the headline says what to do, the
- * next line what changed since the run before, and each name gets its stance, how sure, one reason and what would
- * prove it wrong. Shown only on live picks (sample runs are not the brain).
+ * The newest brain run, short, for the home page: what it decided, in five-year-old words, and whether to do anything.
+ * Shown only on live picks (sample runs are not the brain).
  */
 export function LatestVerdict({ data, go }) {
   if (data.sample) return null;
-  const history = verdictHistory(data.runs, opts(data));
-  const v = history[0];
+  const v = verdictHistory(data.runs, opts(data))[0];
   if (!v) return null;
-  const steady = steadyRuns(data.runs);
+  const todo = whatToDo(data.lastOk, trustStage(data).stage);
   return (
     <Reveal as="article" id="brain-verdict" className="card overflow-hidden">
       <div className="h-1" style={{ background: "var(--ai)" }} />
       <div className="p-6 sm:p-7">
         <h2 className="meta mb-4" style={{ color: "var(--ai)" }}>The brain's verdict · {v.when || longDate(v.date)}</h2>
-        <VerdictBody v={v} />
-        {steady > 1 && <p className="mt-4 text-[15px] leading-relaxed text-ink-3">{numWord(steady)} runs in a row with the same calls.</p>}
-        <p className="mt-4 text-[14.5px] leading-relaxed text-ink-3">On paper only: no money moves until the plan has earned trust.</p>
-        <button type="button" onClick={() => go("verdicts")} className="meta mt-3 inline-flex min-h-[44px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">
-          Every run, in plain words <ArrowRight className="size-3.5" />
-        </button>
+        <p className="text-[clamp(22px,6vw,27px)] leading-snug font-semibold tracking-[-0.015em] text-ink">{v.headline}</p>
+        <p className="mt-3 text-[17px] leading-relaxed text-ink-2">{v.eli5}</p>
+        <p className="mt-4 text-[16px] text-ink"><span className="font-semibold">Do I need to do anything?</span> {todo.answer}</p>
+        <button type="button" onClick={() => go("verdicts")} className="btn btn-primary mt-5 justify-center">See what it thinks of each stock <ArrowRight /></button>
       </div>
     </Reveal>
   );
 }
 
-/** Every brain run, newest first, each in plain words and compared with the run before it. */
-export function VerdictHistory({ data }) {
+/**
+ * The Brain's verdicts page: the most valuable page for a plain reader. The newest answer told like to a five-year-old,
+ * a straight "do I need to do anything?", a card per stock, what changed, whether the brain has been right so far,
+ * and every earlier answer below.
+ */
+export function VerdictPage({ data, go }) {
   const history = data.sample ? [] : verdictHistory(data.runs, opts(data));
-  const [open, setOpen] = useState(() => new Set(history.slice(0, 1).map((v) => v.date)));
-  const toggle = (d) => setOpen((s) => { const n = new Set(s); if (n.has(d)) n.delete(d); else n.add(d); return n; });
+  const [openPast, setOpenPast] = useState(() => new Set());
   if (!history.length) {
-    return <p className="card p-6 text-[17px] leading-relaxed text-ink-2">The brain's runs appear here once it has made its first live call.</p>;
+    return <p className="card p-6 text-[18px] leading-relaxed text-ink-2">The brain's answers appear here once it has made its first real call.</p>;
   }
+  const v = history[0];
+  const todo = whatToDo(data.lastOk, trustStage(data).stage);
+  const steady = steadyRuns(data.runs);
+  const score = scorecard(data.runs, data.outcomes ?? [], data.settings.scoring.horizon_days, todayISO());
+  const togglePast = (d) => setOpenPast((s) => { const n = new Set(s); if (n.has(d)) n.delete(d); else n.add(d); return n; });
   return (
-    <ol className="grid gap-4">
-      {history.map((v) => {
-        const isOpen = open.has(v.date);
-        return (
-          <li key={v.date} className="card overflow-hidden">
-            <button type="button" onClick={() => toggle(v.date)} aria-expanded={isOpen}
-              className="flex w-full min-h-[56px] items-center justify-between gap-3 px-5 py-4 text-left sm:px-6">
-              <span className="min-w-0">
-                <span className="meta block" style={{ color: "var(--ai)" }}>{longDate(v.date)}</span>
-                <span className="mt-1 block text-[17px] leading-snug text-ink">{v.headline}</span>
-                {!isOpen && <span className="mt-1 block text-[14.5px] text-ink-3">{v.changes.same ? "No change from the run before." : "Something changed: open to see what."}</span>}
-              </span>
-              <ArrowRight className={`size-4 shrink-0 text-ink-3 transition-transform ${isOpen ? "rotate-90" : ""}`} />
-            </button>
-            {isOpen && <div className="border-t border-line px-5 pb-6 pt-4 sm:px-6"><VerdictBody v={v} big={false} withHeadline={false} /></div>}
-          </li>
-        );
-      })}
-    </ol>
+    <div className="grid gap-6">
+      {/* The answer */}
+      <Reveal as="section" className="card overflow-hidden">
+        <div className="h-1.5" style={{ background: "var(--ai)" }} />
+        <div className="p-6 sm:p-8">
+          <p className="meta" style={{ color: "var(--ai)" }}>The newest answer · {longDate(v.date)}{v.when ? ` (${v.when})` : ""}</p>
+          <h2 className="display mt-3 text-[clamp(30px,8vw,46px)] leading-[1.05] tracking-[-0.03em] text-ink">{v.headline}</h2>
+          <p className="mt-5 text-[19px] leading-relaxed text-ink">{v.eli5}</p>
+          {steady > 1 && <p className="mt-4 text-[15.5px] text-ink-3">{COUNT[steady] ?? steady} answers in a row have been the same.</p>}
+        </div>
+      </Reveal>
+
+      <Reveal as="section" className="card p-6 sm:p-8">
+        <h3 className="text-[15px] font-semibold uppercase tracking-[0.12em] text-ink-2">Do I need to do anything?</h3>
+        <p className="mt-2 text-[30px] font-semibold tracking-[-0.02em] text-accent">{todo.answer}</p>
+        <p className="mt-2 text-[17px] leading-relaxed text-ink-2">{todo.why}</p>
+      </Reveal>
+
+      {v.rows.length > 0 && (
+        <section>
+          <h3 className="mb-3 px-1 text-[22px] font-semibold tracking-[-0.02em]">What it thinks of each stock</h3>
+          <ul className="grid gap-4">{v.rows.map((r) => <StockCard key={r.ticker} r={r} go={go} />)}</ul>
+        </section>
+      )}
+
+      <Reveal as="section" className="card p-6 sm:p-8">
+        <h3 className="text-[15px] font-semibold uppercase tracking-[0.12em] text-ink-2">What changed since last time?</h3>
+        <p className="mt-2 text-[18px] leading-relaxed text-ink">{v.changes.line}</p>
+      </Reveal>
+
+      <Reveal as="section" className="card p-6 sm:p-8">
+        <h3 className="text-[15px] font-semibold uppercase tracking-[0.12em] text-ink-2">Has the brain been right?</h3>
+        <p className="mt-2 text-[18px] leading-relaxed text-ink">{score.line}</p>
+        <p className="mt-3 text-[15px] leading-relaxed text-ink-3">The brain is a careful machine, not a fortune teller. On past prices, its rules did not beat picking at random, so it stays humble and mostly watches.</p>
+        <button type="button" onClick={() => go("track")} className="meta mt-3 inline-flex min-h-[44px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">Every scored guess <ArrowRight className="size-3.5" /></button>
+      </Reveal>
+
+      {v.summary && (
+        <details className="card p-6 sm:p-8">
+          <summary className="cursor-pointer text-[16px] font-semibold text-ink">The brain's grown-up summary</summary>
+          <p className="mt-3 text-[15.5px] leading-relaxed text-ink-2">{v.summary}</p>
+        </details>
+      )}
+
+      {history.length > 1 && (
+        <section>
+          <h3 className="mb-3 mt-4 px-1 text-[22px] font-semibold tracking-[-0.02em]">Earlier answers</h3>
+          <ol className="grid gap-3">
+            {history.slice(1).map((p) => {
+              const isOpen = openPast.has(p.date);
+              return (
+                <li key={p.date} className="card overflow-hidden">
+                  <button type="button" onClick={() => togglePast(p.date)} aria-expanded={isOpen}
+                    className="flex w-full min-h-[56px] items-center justify-between gap-3 px-5 py-4 text-left sm:px-6">
+                    <span className="min-w-0">
+                      <span className="meta block" style={{ color: "var(--ai)" }}>{longDate(p.date)}</span>
+                      <span className="mt-1 block text-[17px] leading-snug text-ink">{p.headline}</span>
+                      {!isOpen && <span className="mt-1 block text-[14.5px] text-ink-3">{p.changes.same ? "Same as the answer before." : "Something changed: open to see."}</span>}
+                    </span>
+                    <ArrowRight className={`size-4 shrink-0 text-ink-3 transition-transform ${isOpen ? "rotate-90" : ""}`} />
+                  </button>
+                  {isOpen && (
+                    <div className="grid gap-3 border-t border-line px-5 pb-6 pt-4 sm:px-6">
+                      <p className="text-[16.5px] leading-relaxed text-ink">{p.eli5}</p>
+                      <p className="text-[15px] leading-relaxed text-ink-2">{p.changes.line}</p>
+                      <ul className="grid gap-2">
+                        {p.rows.map((r) => (
+                          <li key={r.ticker} className="flex flex-wrap items-center gap-2 text-[15px] text-ink">
+                            <span className="font-semibold">{r.name}</span><Mood r={r} />
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+        </section>
+      )}
+      <p className="meta mt-2 normal-case tracking-[0.04em]">A practice notebook for one household, not financial advice. The brain's guesses use pretend money.</p>
+    </div>
   );
 }

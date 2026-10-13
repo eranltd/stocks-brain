@@ -37,6 +37,14 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   not a data fault. The weekly check keeps it that way.
 - **The pack cap is 14000 tokens** (was 12000): with the track record and the company numbers the pack came to about
   12000. Fail closed above it, as before.
+- **Brain's verdicts is its own tab, told like to a five-year-old.** The household called it the most valuable page:
+  a plain reader taps it to hear what the machine decided. It sits in the main bar on every screen (phones: "Brain",
+  between Today and Our plan) and opens in one tap. The page leads with the newest answer, "Do I need to do anything?",
+  a card per stock (thumbs up, thumbs down or just watching, and how sure), what changed, and an honest "Has the brain
+  been right?" (too early until the first calls are scored), then every earlier answer. The brain now writes `eli5`
+  for the whole run and for each pick (optional in the schema, checked like the rest: no digits, no banned phrases);
+  older runs show one honest line by code plus the brain's own first sentence. Keyword-spotting the grown-up reason
+  was tried and dropped: it read "not stretched" as "stretched".
 - **The brain's verdict in plain words.** The household asked for a core section with the verdict of each brain run.
   Home has a card with the newest run: one line on what to do, what changed since the run before, and for each name
   its stance in words (just watching, leaning up, leaning down), how sure, one reason and what would prove it wrong;

@@ -1,4 +1,4 @@
-// The site's menu: three subjects (Today, Our plan, Learn), each opening into its pages, and the hash routes behind
+// The site's menu: Today, the Brain's verdicts (one page, always one tap), Our plan and Learn, each opening into its pages, and the hash routes behind
 // them. Pure functions, no React; tested in nav.test.js. Every old route keeps working (#insights still opens Lessons),
 // and a market other than the default rides along in the hash (#today?m=tlv) so a link opens the same view.
 
@@ -16,11 +16,21 @@ export const SUBJECTS = [
     ],
   },
   {
+    // One page, always one tap: what the daily brain decided, told simply. The bar shows it as its own tab.
+    id: "verdicts",
+    label: "Brain's verdicts",
+    short: "Brain",
+    direct: "verdicts",
+    what: "What the daily brain decided, told simply.",
+    pages: [
+      { route: "verdicts", label: "Brain's verdicts", what: "What the daily brain decided, told simply." },
+    ],
+  },
+  {
     id: "plan",
     label: "Our plan",
     what: "What we hold on paper, the rules we follow and how it has gone.",
     pages: [
-      { route: "verdicts", label: "Brain's verdicts", what: "What the daily brain decided each run, in plain words." },
       { route: "portfolio", label: "Portfolio", what: "The practice portfolio on paper: what it holds and why." },
       { route: "playbook", label: "Our rules", what: "The house rules and plans, each tested on past prices." },
       { route: "track", label: "Track record", what: "How the daily brain's calls turned out, scored by code." },
@@ -85,6 +95,8 @@ export function menuGroups(subjectId) {
  * tapping the subject you are already in, or Our plan or Learn, opens its sheet.
  */
 export function bottomTap(subjectId, route) {
+  const direct = SUBJECTS.find((s) => s.id === subjectId)?.direct;
+  if (direct) return { go: direct };
   if (subjectId === "today" && subjectOf(route) !== "today") return { go: "today" };
   return { sheet: subjectId };
 }

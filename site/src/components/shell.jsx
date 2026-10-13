@@ -298,7 +298,12 @@ export function Header({ route, onNav, sample, livePrices, theme, onTheme, marke
         <MarketSwitch market={market} />
 
         <nav aria-label="Sections" className="order-3 hidden w-full justify-center gap-2 sm:flex lg:order-none lg:w-auto lg:flex-1">
-          {SUBJECTS.map((s) => (
+          {SUBJECTS.map((s) => s.direct ? (
+            <button key={s.id} type="button" onClick={() => onNav(s.direct)} aria-current={subject === s.id ? "page" : undefined}
+              className={`inline-flex min-h-[48px] items-center gap-2 rounded-full border px-5 text-[16px] font-semibold tracking-[-0.01em] transition-colors duration-300 ${subject === s.id ? "border-transparent bg-ink text-bg" : "border-[color:var(--ai)] text-ink hover:bg-ink/5"}`}>
+              <span className="size-2 rounded-full" style={{ background: "var(--ai)" }} aria-hidden="true" />{s.label}
+            </button>
+          ) : (
             <SubjectMenu key={s.id} subject={s} current={subject === s.id} open={openSubject === s.id} setOpen={setOpenSubject}
               route={route} onNav={onNav} sampleRoutes={sampleRoutes} />
           ))}
@@ -336,7 +341,7 @@ export function Header({ route, onNav, sample, livePrices, theme, onTheme, marke
  */
 export function PageIntro({ route, market }) {
   const page = pageOf(route);
-  if (!page || route === "today" || route.startsWith("stock/")) return null;
+  if (!page || route === "today" || route === "verdicts" || route.startsWith("stock/")) return null;
   const subject = SUBJECTS.find((s) => s.id === page.subject);
   const other = market && !market.isDefault && NASDAQ_ONLY.includes(route);
   return (
@@ -385,6 +390,7 @@ export function Footer({ data }) {
 const ICONS = {
   today: <path d="M4 12.5 12 5l8 7.5M6.5 10.5V19h11v-8.5" />,
   plan: <><path d="M5 4.5h11a3 3 0 0 1 3 3V20H8a3 3 0 0 1-3-3V4.5Z" /><path d="M8.5 9h7M8.5 12.5h7M8.5 16h4" /></>,
+  verdicts: <><path d="M12 3.5 14 8.5l5.2.4-4 3.4 1.3 5.1L12 14.6l-4.5 2.8 1.3-5.1-4-3.4 5.2-.4Z" /></>,
   learn: <><path d="M9 18h6M10 21h4" /><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3Z" /></>,
 };
 
@@ -415,7 +421,7 @@ export function MobileNav({ route, onNav, sampleRoutes = [] }) {
   return (
     <>
       <nav aria-label="Sections" className="fixed inset-x-0 bottom-0 z-50 border-t border-line bg-bg/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl sm:hidden">
-        <div className="grid grid-cols-3">
+        <div className="grid grid-cols-4">
           {SUBJECTS.map((s) => {
             const on = sheet ? sheet === s.id : subject === s.id;
             return (
@@ -424,7 +430,7 @@ export function MobileNav({ route, onNav, sampleRoutes = [] }) {
                 <span className={`grid h-8 w-14 place-items-center rounded-full transition-colors duration-300 ${on ? "bg-ink text-bg" : ""}`}>
                   <svg viewBox="0 0 24 24" className="size-[20px]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{ICONS[s.id]}</svg>
                 </span>
-                {s.label}
+                {s.short ?? s.label}
               </button>
             );
           })}

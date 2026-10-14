@@ -3,6 +3,7 @@ import { loadMarketCandles } from "../lib/data.js";
 import { useReducedMotion } from "../lib/motion.js";
 import { dotIndex, miniGeometry, miniSummary, miniWindow, nearCards, snapStops, stepStop } from "../lib/carousel.js";
 import { lastCandle } from "../lib/spotlight.js";
+import { CandleZoom } from "./zoom.jsx";
 import { ArrowRight, Chevron } from "./ui.jsx";
 
 /*
@@ -38,6 +39,7 @@ export function TopStocks({ items, manifest, marketId = "nasdaq", title = "Top s
   const [geo, setGeo] = useState({ step: 0, stops: [0], left: 0, width: 0 });
   const [swiped, setSwiped] = useState(readSwiped);
   const [charts, setCharts] = useState({}); // ticker -> {state: "loading" | "ok" | "missing" | "error", win}
+  const [zoom, setZoom] = useState(null); // the card whose chart is open up close
   const asked = useRef(new Set());
   const failedAt = useRef({}); // ticker -> time of the last failed fetch
   const raf = useRef(0);
@@ -142,7 +144,7 @@ export function TopStocks({ items, manifest, marketId = "nasdaq", title = "Top s
         className="no-scrollbar -mx-4 mt-4 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto overscroll-x-contain px-4 pb-1"
       >
         {items.map((it, i) => (
-          <StockCard key={it.ticker} it={it} i={i} n={count} chart={charts[it.ticker]} openTo={openTo} seeCandles={seeCandles} fallback={fallback} />
+          <StockCard key={it.ticker} it={it} i={i} n={count} chart={charts[it.ticker]} openTo={openTo} seeCandles={seeCandles} fallback={fallback} onZoom={() => setZoom(it)} />
         ))}
       </div>
 
@@ -160,6 +162,7 @@ export function TopStocks({ items, manifest, marketId = "nasdaq", title = "Top s
         )}
         <RoundButton label={`Next ${one}`} dir="right" onClick={() => step(1)} disabled={atEnd} />
       </div>
+      {zoom && <CandleZoom it={zoom} manifest={manifest} marketId={marketId} onClose={() => setZoom(null)} openTo={zoom.hasChart ? seeCandles : null} />}
     </section>
   );
 }
@@ -173,7 +176,7 @@ function RoundButton({ label, dir, onClick, disabled }) {
   );
 }
 
-function StockCard({ it, i, n, chart, openTo, seeCandles, fallback }) {
+function StockCard({ it, i, n, chart, openTo, seeCandles, fallback, onZoom }) {
   const canCandles = it.hasChart && it.chip;
   return (
     <article role="group" aria-roledescription="slide" aria-label={`${it.name}, ${i + 1} of ${n}`}
@@ -185,7 +188,13 @@ function StockCard({ it, i, n, chart, openTo, seeCandles, fallback }) {
           <span aria-hidden="true" className="text-[13px]">{CHIP_MARK[it.chip.tone]}</span>{it.chip.word}
         </p>
       )}
-      <div className="mt-5"><MiniCandles name={it.name} ticker={it.ticker} chart={chart} /></div>
+      <div className={`mt-5 ${chart?.state === "ok" ? "cursor-zoom-in" : ""}`} onClick={chart?.state === "ok" ? onZoom : undefined}><MiniCandles name={it.name} ticker={it.ticker} chart={chart} /></div>
+      {chart?.state === "ok" && (
+        <button type="button" onClick={onZoom} className="mt-3 inline-flex min-h-[48px] items-center justify-center gap-2 rounded-2xl border border-line-2 bg-surface-2 px-4 text-[16px] font-semibold text-ink transition hover:border-ink-3 active:scale-[0.98]">
+          <svg viewBox="0 0 20 20" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" /><path d="M13 13l4.5 4.5M8.5 6v5M6 8.5h5" strokeLinecap="round" /></svg>
+          Zoom in: candles to notice
+        </button>
+      )}
       <p className="mt-4 text-[17px] leading-relaxed text-ink">{it.plain ?? fallback}</p>
       <div className="mt-auto pt-5">
         <button type="button" onClick={() => openTo(it.to)} className="btn btn-primary min-h-[56px] w-full justify-center py-3 text-[18px]">

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { bottomTap, menuGroups, pageOf, subjectOf, SUBJECTS } from "../lib/nav.js";
-import { NASDAQ_ONLY, nasdaqOnlyLine } from "../lib/markets.js";
+import { NASDAQ_ONLY } from "../lib/markets.js";
 import { useReducedMotion } from "../lib/motion.js";
 import { Container } from "./ui.jsx";
 
@@ -161,7 +161,7 @@ function useFocusOnOpen(open, panel, viaKeys) {
  * The market switch: a clear button with the market's name; tapping it opens a small menu of the markets, each with
  * one line. The choice applies to this visit (and rides in the link); the site always opens on the default.
  */
-export function MarketSwitch({ market }) {
+export function MarketSwitch({ market, locked = false }) {
   const [open, setOpen] = useState(false);
   const btn = useRef(null);
   const panel = useRef(null);
@@ -173,6 +173,15 @@ export function MarketSwitch({ market }) {
   const choices = market?.choices ?? [];
   if (!choices.length) return null;
   const current = choices.find((c) => c.id === market.id) ?? choices[0];
+  // A page that only ever shows the main list says so in the switch itself (the choice is kept for the other pages).
+  if (locked) {
+    const main = choices.find((c) => c.id === market.defaultId) ?? choices[0];
+    return (
+      <span className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-line-2 px-4 text-[15px] font-semibold text-ink-2" title="This page always shows the main list">
+        <span className="font-normal text-ink-3">Market</span>{main.label}
+      </span>
+    );
+  }
   const pick = (id) => { setOpen(false); btn.current?.focus(); if (id !== market.id) market.choose(id); };
   return (
     <div className="sm:relative">
@@ -295,7 +304,7 @@ export function Header({ route, onNav, sample, livePrices, theme, onTheme, marke
           <Logo />
           <span className="hidden text-[20px] font-semibold tracking-[-0.03em] min-[420px]:inline">stocks·brain</span>
         </a>
-        <MarketSwitch market={market} />
+        <MarketSwitch market={market} locked={NASDAQ_ONLY.includes(route)} />
 
         <nav aria-label="Sections" className="order-3 hidden w-full justify-center gap-2 sm:flex lg:order-none lg:w-auto lg:flex-1">
           {SUBJECTS.map((s) => s.direct ? (
@@ -336,24 +345,17 @@ export function Header({ route, onNav, sample, livePrices, theme, onTheme, marke
 }
 
 /**
- * Under the header on every page but Home and a stock page: where you are and a one-line "what's this", and, when
- * another market is chosen on a page that reads Nasdaq only, one calm line that says so.
+ * Under the header on every page but Home and a stock page: where you are and a one-line "what's this". A page that
+ * reads Nasdaq only shows Nasdaq in the header's switch instead of a notice.
  */
 export function PageIntro({ route, market }) {
   const page = pageOf(route);
   if (!page || route === "today" || route === "verdicts" || route.startsWith("stock/")) return null;
   const subject = SUBJECTS.find((s) => s.id === page.subject);
-  const other = market && !market.isDefault && NASDAQ_ONLY.includes(route);
   return (
     <Container className="pt-8 sm:pt-10">
       <p className="meta normal-case tracking-[0.06em]"><span className="uppercase tracking-[0.16em]">{subject.label}</span> · {page.label}</p>
       <p className="mt-1.5 max-w-[60ch] text-[16px] leading-snug text-ink-2">{page.what}</p>
-      {other && (
-        <p role="note" className="mt-4 flex max-w-[72ch] flex-wrap items-center gap-x-3 gap-y-2 rounded-2xl border border-line-2 bg-surface px-4 py-3 text-[15px] leading-relaxed text-ink-2">
-          <span className="min-w-0 flex-1 basis-[28ch]">{nasdaqOnlyLine(market.entry?.label ?? market.id)}</span>
-          <button type="button" onClick={() => market.choose(market.defaultId)} className="min-h-[44px] shrink-0 rounded-full border border-line-2 px-4 text-[15px] font-medium text-ink hover:border-ink-3">Show Nasdaq</button>
-        </p>
-      )}
     </Container>
   );
 }

@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-13",
+  "as_of": "2026-10-14",
   "sample": false,
   "source": "SEC XBRL company facts (us-gaap), trailing twelve months",
   "companies": [
@@ -193,7 +193,7 @@
     {
       "symbol": "PEP",
       "cik": 77476,
-      "name": "PepsiCo, Inc.",
+      "name": "PEPSICO INC",
       "status": "ok",
       "period_end": "2026-09-05",
       "filed": "2026-10-08",

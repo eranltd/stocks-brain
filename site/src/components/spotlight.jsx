@@ -33,7 +33,7 @@ function Spotlight({ id, data, openTo, seeCandles }) {
   const items = spotlightItems(view, data.manifest?.markets?.[id]?.candles ?? {});
   return (
     <div className="pt-4">
-      <TopStocks items={items} manifest={data.manifest} marketId={id} title={title} headingId={`top-${id}-title`}
+      <TopStocks items={items} manifest={data.manifest} marketId={id} news={data.secNews} title={title} headingId={`top-${id}-title`}
         subtitle="Ranked by how much they rose over the past year."
         fallback="Its year in words appears after the next nightly run." openTo={openTo} seeCandles={seeCandles} />
     </div>

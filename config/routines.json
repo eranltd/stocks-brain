@@ -1,7 +1,7 @@
 {
-  "version": "0.11.0",
-  "updated_at": "2026-10-13",
-  "change_note": "Company numbers from SEC filings (sec_fundamentals) and a weekly second-source price cross-check (price_crosscheck).",
+  "version": "0.12.0",
+  "updated_at": "2026-10-14",
+  "change_note": "Official company news from SEC filings (sec_news), and company numbers (sec_fundamentals) for every stock list, not only the main one.",
   "timezone": "UTC",
   "routines": [
     {
@@ -62,7 +62,26 @@
         "data/market/fundamentals.json"
       ],
       "human_gate": false,
-      "why": "What the companies themselves filed, by code: twelve-month revenue growth, margins and free cash flow from the SEC's free XBRL company facts, point in time. Gives the brain something besides past price moves. A failure keeps the last good file."
+      "why": "What the companies themselves filed, by code: revenue growth, margins and free cash flow from the SEC's free XBRL company facts, point in time, for every stock list (yearly figures for yearly filers). Gives the brain more than past price moves. A failure keeps the last good file."
+    },
+    {
+      "id": "sec_news",
+      "name": "Official company news from SEC filings",
+      "cadence": "daily",
+      "cron": "40 23 * * 1-5",
+      "runner": "github_actions",
+      "status": "active",
+      "milestone": "M4",
+      "uses_llm": false,
+      "max_cost_usd": 0,
+      "inputs": [
+        "sec_filings"
+      ],
+      "outputs": [
+        "data/market/sec_news.json"
+      ],
+      "human_gate": false,
+      "why": "Each company's recent official announcements (results, leadership changes, major deals, updates) from the SEC's free filings index, in fixed plain titles per 8-K item code, with a link to the filing. Nothing is copied from the filings. A failure keeps the last good file."
     },
     {
       "id": "price_crosscheck",

@@ -18,7 +18,7 @@ export function fundamentalsWords(c) {
   if (g != null) {
     const q = num(c.quarter_revenue_growth_yoy_pct);
     lines.push({ label: "Sales", tone: g >= 0 ? "accent" : "down",
-      text: `${g >= 0 ? "Grew" : "Shrank"} ${Math.abs(g).toFixed(0)}% over the last twelve months` +
+      text: `${g >= 0 ? "Grew" : "Shrank"} ${Math.abs(g).toFixed(0)}% over ${c.basis === "annual" ? "its latest year" : "the last twelve months"}` +
         (q != null ? `; the latest quarter was ${q >= 0 ? "up" : "down"} ${Math.abs(q).toFixed(0)}% on a year before.` : ".") });
   }
   const op = num(c.operating_margin_pct);
@@ -31,6 +31,9 @@ export function fundamentalsWords(c) {
   if (fcf != null) lines.push({ label: "Cash after investing", tone: fcf >= 0 ? "accent" : "down",
     text: fcf >= 0 ? `Brought in ${cents(fcf)} of spare cash per dollar of sales after paying for new buildings and equipment.` :
       `Spent ${cents(fcf)} more per dollar of sales than it brought in, after paying for new buildings and equipment.` });
-  return { lines, period: `Twelve months to ${monthYear(c.period_end)}, from the company's filings with the SEC (filed ${c.filed}).`,
+  const period = c.basis === "annual"
+    ? `Its latest full year, to ${monthYear(c.period_end)}, from its yearly report to the SEC (filed ${c.filed}). It reports yearly, so there are no quarterly numbers.`
+    : `Twelve months to ${monthYear(c.period_end)}, from the company's filings with the SEC (filed ${c.filed}).`;
+  return { lines, period,
     stale: c.status === "stale", missing: c.missing ?? [] };
 }

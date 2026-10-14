@@ -78,6 +78,16 @@ def market_watchlist(m: dict) -> dict:
     return load_json(ROOT / m["watchlist"])
 
 
+def all_stock_symbols() -> list[str]:
+    """Every company on every stock list (the main list first, then each other stocks market in config order), once
+    each. Fund lists are left out: funds file no company reports. Benchmarks are funds too and are left out."""
+    out = [s["symbol"] for s in watchlist()["symbols"]]
+    for m in other_markets():
+        if m.get("kind") == "stocks":
+            out += [s["symbol"] for s in market_watchlist(m)["symbols"]]
+    return list(dict.fromkeys(out))
+
+
 def market_symbols(m: dict, wl: dict | None = None) -> list[str]:
     """A market's list and its benchmark, in order, once each."""
     wl = wl or market_watchlist(m)

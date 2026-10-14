@@ -732,6 +732,7 @@ class Lint:
                              (DATA / "portfolio" / "paper.json", "paper.schema.json"),
                              (DATA / "people" / "scores.json", "people_scores.schema.json"),
                              (DATA / "market" / "fundamentals.json", "fundamentals.schema.json"),
+                             (DATA / "market" / "sec_news.json", "sec_news.schema.json"),
                              (DATA / "market" / "price_check.json", "price_check.schema.json")):
             if path.exists():
                 self.schema(path, schema)

@@ -173,9 +173,9 @@ def main() -> int:
         docs.append({"name": name, "file": f"config/{name}.json", "path": f"config/{name}.json",
                      **{k: obj[k] for k in ("version", "updated_at", "change_note")}})
 
-    # Company numbers from SEC filings and the second-source price check: live files only (no sample stand-ins).
+    # Company numbers and official news from SEC filings and the second-source price check: live files only (no sample stand-ins).
     extra = {}
-    for key, rel in (("fundamentals", "market/fundamentals.json"), ("price_check", "market/price_check.json")):
+    for key, rel in (("fundamentals", "market/fundamentals.json"), ("price_check", "market/price_check.json"), ("sec_news", "market/sec_news.json")):
         if (DATA / rel).exists():
             _copy(DATA / rel, OUT / rel)
             extra[key] = rel
@@ -201,6 +201,7 @@ def main() -> int:
         "people_scores": people_scores,
         "fundamentals": extra.get("fundamentals"),
         "price_check": extra.get("price_check"),
+        "sec_news": extra.get("sec_news"),
         "checklist": checklist,
         "candles": candles or None,
         "markets": markets,

@@ -5,6 +5,8 @@ import { Accent, ArrowRight, Chip, Container, Conviction, Empty, Headline, Revea
 import { STAGES, trustStage } from "../components/trust.jsx";
 import { STATUS } from "../components/goal.jsx";
 import { companyNumbers, fundamentalsWords } from "../lib/fundamentals.js";
+import { newsRows } from "../lib/secnews.js";
+import { CandleZoom } from "../components/zoom.jsx";
 import { cardFor, daysUntil, growthWords, inDays, KIND_LABEL, splitWhatsNext, staleness, todayISO } from "../lib/outlook.js";
 import { gateReason, rowFor } from "../lib/checklist.js";
 import { ChecklistCard, useChecklistView, VerdictPill } from "../components/checklist.jsx";
@@ -150,6 +152,7 @@ function Stock({ data, symbol, go, market: mk }) {
   const fund = entry?.kind === "funds" ? fundCard(data.funds, symbol) ?? {} : null;
   // The checklist card's view (Checks or Candles), remembered per device; the brief's "See it on the candles" sets it.
   const [ckView, setCkView] = useChecklistView();
+  const [zoom, setZoom] = useState(false);
   const row = market.symbols.find((s) => s.symbol === symbol);
   const benchRow = market.symbols.find((s) => s.symbol === bench.symbol);
   if (!row) {
@@ -196,6 +199,22 @@ function Stock({ data, symbol, go, market: mk }) {
       </Reveal>
 
       {!isBench && <StockBrief data={data} row={row} symbol={symbol} today={today} jump={jump} seeCandles={candlesOf(data)[symbol] ? seeCandles : null} isDefault={isDefault} fund={fund} />}
+
+      {candlesOf(data)[symbol] && (
+        <button type="button" onClick={() => setZoom(true)}
+          className="mt-6 flex w-full items-center gap-4 rounded-3xl border border-line-2 bg-surface p-5 text-left transition hover:border-ink-3 active:scale-[0.99] sm:p-6">
+          <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-accent/12 text-accent" aria-hidden="true">
+            <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M6 3v18M12 6v12M18 4v14" /><rect x="4.5" y="7" width="3" height="7" rx="1" fill="currentColor" /><rect x="10.5" y="9" width="3" height="5" rx="1" /><rect x="16.5" y="6" width="3" height="8" rx="1" fill="currentColor" /></svg>
+          </span>
+          <span className="min-w-0">
+            <span className="block text-[19px] font-bold tracking-[-0.01em] text-ink">Candles up close</span>
+            <span className="block text-[15px] text-ink-2">Zoom in and see which days are worth noticing, and why.</span>
+          </span>
+          <ArrowRight className="ml-auto size-5 shrink-0 text-ink-2" />
+        </button>
+      )}
+      {zoom && <CandleZoom it={{ ticker: symbol, name: names?.[symbol] ?? symbol, candlesTo: `stock/${symbol}#checklist` }} manifest={data.manifest} marketId={data.marketId ?? "nasdaq"}
+        onClose={() => setZoom(false)} openTo={() => seeCandles()} />}
 
       <div className={`flex flex-wrap items-end justify-between gap-6 ${isBench ? "" : "mt-12"}`}>
         <div className="min-w-0">
@@ -276,6 +295,7 @@ function Stock({ data, symbol, go, market: mk }) {
 
       {!isBench && (fund ? <WhatsInside fund={fund} symbol={symbol} /> : <WhatsNext card={cardFor(data.outlook, symbol)} symbol={symbol} today={today} hasFile={Boolean(data.outlook)} />)}
       {!isBench && !fund && <CompanyNumbers c={companyNumbers(data.fundamentals, symbol)} />}
+      {!isBench && !fund && <OfficialNews rows={newsRows(data.secNews, symbol)} />}
 
       {long && (
         <Reveal className="card mt-6 p-6 sm:p-8">
@@ -645,6 +665,33 @@ function CompanyNumbers({ c }) {
         ))}
       </ul>
       <p className="mt-5 text-[14px] leading-relaxed text-ink-3">This is about the business, not the stock. A great bakery can still be a bad deal if you pay far too much for it.</p>
+    </Reveal>
+  );
+}
+
+const KIND_COLOR = { accent: "var(--accent)", down: "var(--down)", people: "var(--people)", ai: "var(--ai)", flat: "var(--ink-3)" };
+
+/** What the company itself announced lately, from its SEC filings (data/market/sec_news.json): date, plain title, link. */
+function OfficialNews({ rows }) {
+  if (!rows.length) return null;
+  return (
+    <Reveal id="official-news" className="card mt-6 scroll-mt-28 p-6 sm:p-8">
+      <h3 className="text-[22px] font-semibold tracking-[-0.02em]">Official news from the company</h3>
+      <p className="mt-1 text-[14px] leading-relaxed text-ink-3">What it told regulators lately (its SEC filings). Straight from the company, not rumours: tap one to read the filing itself.</p>
+      <ul className="mt-5 grid gap-2">
+        {rows.map((r) => (
+          <li key={r.url}>
+            <a href={r.url} target="_blank" rel="noreferrer" className="flex items-start gap-3 rounded-2xl border border-line-2 p-4 transition hover:border-ink-3">
+              <span className="mt-0.5 shrink-0 rounded-full border px-2.5 py-0.5 text-[12.5px] font-semibold" style={{ color: KIND_COLOR[r.tone], borderColor: "var(--line-2)" }}>{r.word}</span>
+              <span className="min-w-0">
+                <span className="block text-[16px] leading-snug text-ink">{r.title}</span>
+                <span className="mt-1 block text-[13.5px] text-ink-3">{r.day} · form {r.form} ↗</span>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-4 text-[14px] leading-relaxed text-ink-3">News explains a move after it happens; it is not a reason to buy or sell on its own.</p>
     </Reveal>
   );
 }

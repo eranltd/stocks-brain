@@ -1,7 +1,7 @@
 ---
-version: 0.18.0
-updated_at: 2026-10-13
-change_note: Company numbers from SEC filings, a second price source to cross-check Tiingo, and the brain's verdicts in plain words.
+version: 0.19.0
+updated_at: 2026-10-14
+change_note: Chip makers, tech giants and energy companies as their own lists on the home page, and each card's newest candle as a green or red day.
 ---
 # Decision log
 
@@ -17,6 +17,18 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Market file size**: `derived.json` is written one line per symbol (compact) and is about 330 KB with 21 names.
   Past roughly 35 names it would hit lint's 512 KB cap and the daily run would fail closed; before that, move the
   per-point dates into one shared array.
+
+## 2026-10-14
+- **Chip makers, tech giants and energy as their own lists.** The household asked for the top semiconductor, high-tech
+  and energy companies on the home page. They are three more markets in `config/markets.json` (chips against SOXX,
+  tech against QQQ, energy against XLE), so they get the same derived numbers, checklist and candles as TLV and
+  iShares, and the header switch shows them. The home shows each as a bold carousel ranked by the past year's rise
+  (`lib/spotlight.js`), said in words with "a past rise does not promise the next one". Like the other markets they
+  are for looking: the brain, rules and paper still read Nasdaq only. The markets fetch is now 42 symbols, so
+  `prices.max_requests_per_run` went from 40 to 45 (the plan allows 50 an hour; the Nasdaq run is hours apart).
+- **The newest candle, green or red.** Every carousel card says plainly whether the last day closed above its open
+  (green) or below (red). It describes the day; it is not a signal. Our prices are end of day only, so the site cannot
+  see moves inside a trading day, and candle readings did not beat chance in our own tests.
 
 ## 2026-10-13
 - **No 4-5 stock plan; real money follows the honest action.** The household said the stocks plan is not how it wants

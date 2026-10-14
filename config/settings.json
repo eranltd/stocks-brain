@@ -1,7 +1,7 @@
 {
-  "version": "0.8.0",
-  "updated_at": "2026-10-13",
-  "change_note": "Pack cap 14000 tokens: the pack now carries company numbers from SEC filings and the brain's track record; the old cap left no room.",
+  "version": "0.9.0",
+  "updated_at": "2026-10-14",
+  "change_note": "Markets fetch cap 45 requests (plan limit 50 an hour): the other markets now include chip makers, tech giants and energy companies (42 symbols).",
   "pack": {
     "token_cap": 14000,
     "recent_runs": 5,
@@ -31,7 +31,7 @@
     "provider": "tiingo",
     "keep_days": 2600,
     "requests_per_hour": 50,
-    "max_requests_per_run": 40
+    "max_requests_per_run": 45
   },
   "lint": {
     "max_file_kb": 512,

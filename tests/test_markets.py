@@ -41,7 +41,7 @@ class MarketsConfigTest(unittest.TestCase):
         mc = markets_config()
         self.assertEqual(v.validate(mc, "markets.schema.json"), [])
         self.assertEqual(mc["default"], "nasdaq")
-        self.assertEqual([m["id"] for m in mc["markets"]], ["nasdaq", "tlv", "ishares"])
+        self.assertEqual([m["id"] for m in mc["markets"]], ["nasdaq", "tlv", "ishares", "chips", "tech", "energy"])
         for m in mc["markets"]:
             self.assertEqual(v.validate(market_watchlist(m), "watchlist.schema.json"), [], m["id"])
         lt = lint_with_markets()
@@ -130,8 +130,8 @@ class FetchBudgetTest(unittest.TestCase):
         plan = fetch_plan()
         nas, oth = scope_symbols(plan["nasdaq"]), scope_symbols(plan["markets"])
         self.assertEqual(len(nas), 28)  # 21 names, QQQ and six context funds
-        self.assertEqual(len(oth), 22)  # 12 + EIS, 9 funds + SPY (EIS once)
-        self.assertEqual(len(set(nas) | set(oth)), 49)  # both in one hour would leave no room for one retry
+        self.assertEqual(len(oth), 42)  # 12 + EIS, 9 funds + SPY (EIS once), 7 chip makers + SOXX, 8 tech (2 shared) + QQQ, 5 energy + XLE
+        self.assertEqual(len(set(nas) | set(oth)), 61)  # both in one hour would go over the plan: they run hours apart
         self.assertEqual(st["prices"]["requests_per_hour"], 50)
         self.assertLessEqual(max(len(nas), len(oth)), st["prices"]["max_requests_per_run"])
         self.assertLess(st["prices"]["max_requests_per_run"], st["prices"]["requests_per_hour"])
@@ -205,7 +205,7 @@ class FetchPerMarketTest(unittest.TestCase):
             (self.fx / f"{s}.json").write_text(json.dumps(rows(self.days)))
         rc, out, err, cache = self.run_fetch()
         self.assertEqual(rc, 0, err)
-        self.assertIn("22 symbols for 2 market(s)", out)
+        self.assertIn("42 symbols for 5 market(s)", out)
         self.assertEqual(sorted(p.stem for p in cache.glob("*.json")), sorted(fetch_prices.symbols("markets")))
         self.assertNotIn("123.98", out + err)
 
@@ -219,8 +219,8 @@ class FetchPerMarketTest(unittest.TestCase):
         self.assertIn("market tlv FAILED", err)
         self.assertNotIn("market ishares FAILED", err)
         written = {p.stem for p in cache.glob("*.json")}
-        bench_and_funds = set(market_symbols(other_markets()[1]))
-        self.assertEqual(written, bench_and_funds)  # EIS is written: iShares holds it and passed
+        passed = {s for m in other_markets()[1:] for s in market_symbols(m)}
+        self.assertEqual(written, passed)  # EIS is written: iShares holds it and passed
         self.assertNotIn("TEVA", written)
         self.assertNotIn("123.98", out + err)
 
@@ -385,7 +385,7 @@ class SiteExportTest(unittest.TestCase):
             self.assertEqual(build_site.main(), 0)
         man = load_json(out / "manifest.json")
         ms = man["markets"]
-        self.assertEqual(list(ms), ["nasdaq", "tlv", "ishares"])
+        self.assertEqual(list(ms), ["nasdaq", "tlv", "ishares", "chips", "tech", "energy"])
         keys = {"label", "name", "note", "kind", "benchmark", "benchmark_label", "default", "sample", "derived", "checklist",
                 "candles", "watchlist"}
         for mid, e in ms.items():

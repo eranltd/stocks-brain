@@ -1,0 +1,42 @@
+{
+ "version": "1.0.0",
+ "updated_at": "2026-10-14",
+ "change_note": "Seven of the largest US-listed chip makers by market value (October 2026), all GICS Information Technology.",
+ "symbols": [
+  {
+   "symbol": "NVDA",
+   "name": "NVIDIA",
+   "sector": "Information Technology"
+  },
+  {
+   "symbol": "AVGO",
+   "name": "Broadcom",
+   "sector": "Information Technology"
+  },
+  {
+   "symbol": "TSM",
+   "name": "Taiwan Semiconductor (TSMC)",
+   "sector": "Information Technology"
+  },
+  {
+   "symbol": "AMD",
+   "name": "AMD",
+   "sector": "Information Technology"
+  },
+  {
+   "symbol": "ASML",
+   "name": "ASML",
+   "sector": "Information Technology"
+  },
+  {
+   "symbol": "QCOM",
+   "name": "Qualcomm",
+   "sector": "Information Technology"
+  },
+  {
+   "symbol": "MU",
+   "name": "Micron",
+   "sector": "Information Technology"
+  }
+ ]
+}

@@ -1,0 +1,2557 @@
+{
+  "as_of": "2026-10-14",
+  "sample": false,
+  "source": "SEC EDGAR filings index (company submissions)",
+  "window_days": 120,
+  "companies": [
+    {
+      "symbol": "AAPL",
+      "cik": 320193,
+      "name": "Apple Inc.",
+      "filings": [
+        {
+          "date": "2026-09-01",
+          "form": "8-K/A",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "Correction to an earlier filing: a leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000114036126035325/ef20081427_8ka.htm"
+        },
+        {
+          "date": "2026-07-31",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm"
+        },
+        {
+          "date": "2026-07-30",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000018/aapl-20260730.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "MSFT",
+      "cik": 789019,
+      "name": "MICROSOFT CORP",
+      "filings": [
+        {
+          "date": "2026-09-02",
+          "form": "8-K",
+          "items": [
+            "7.01"
+          ],
+          "titles": [
+            "Shared an update with investors"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965d8k.htm"
+        },
+        {
+          "date": "2026-07-29",
+          "form": "10-K",
+          "items": [],
+          "titles": [
+            "Yearly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm"
+        },
+        {
+          "date": "2026-07-29",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323632/msft-20260729.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "NVDA",
+      "cik": 1045810,
+      "name": "NVIDIA CORP",
+      "filings": [
+        {
+          "date": "2026-09-03",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000078/nvda-20260902.htm"
+        },
+        {
+          "date": "2026-08-26",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm"
+        },
+        {
+          "date": "2026-08-26",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/nvda-20260826.htm"
+        },
+        {
+          "date": "2026-08-17",
+          "form": "8-K",
+          "items": [
+            "1.01",
+            "2.03",
+            "7.01"
+          ],
+          "titles": [
+            "Signed a major agreement",
+            "Took on new debt",
+            "Shared an update with investors"
+          ],
+          "kind": "deal",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000069/nvda-20260817.htm"
+        },
+        {
+          "date": "2026-07-02",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000060/nvda-20260628.htm"
+        },
+        {
+          "date": "2026-06-30",
+          "form": "8-K",
+          "items": [
+            "5.07"
+          ],
+          "titles": [
+            "Shareholder vote results"
+          ],
+          "kind": "other",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000056/nvda-20260624.htm"
+        },
+        {
+          "date": "2026-06-18",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000119312526275783/d48176d8k.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "AMZN",
+      "cik": 1018724,
+      "name": "AMAZON COM INC",
+      "filings": [
+        {
+          "date": "2026-09-14",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926107526/tm2624614d5_8k.htm"
+        },
+        {
+          "date": "2026-09-09",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000036/amzn-20260908.htm"
+        },
+        {
+          "date": "2026-07-31",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/amzn-20260630.htm"
+        },
+        {
+          "date": "2026-07-30",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000024/amzn-20260730.htm"
+        },
+        {
+          "date": "2026-07-09",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926082293/tm2619352d4_8k.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "GOOGL",
+      "cik": 1652044,
+      "name": "Alphabet Inc.",
+      "filings": [
+        {
+          "date": "2026-08-10",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526342390/d171253d8k.htm"
+        },
+        {
+          "date": "2026-07-23",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm"
+        },
+        {
+          "date": "2026-07-22",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000066/goog-20260722.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "META",
+      "cik": 1326801,
+      "name": "Meta Platforms, Inc.",
+      "filings": [
+        {
+          "date": "2026-07-30",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/meta-20260630.htm"
+        },
+        {
+          "date": "2026-07-29",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050596/meta-20260729.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "AVGO",
+      "cik": 1730168,
+      "name": "Broadcom Inc.",
+      "filings": [
+        {
+          "date": "2026-09-10",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000080/avgo-20260802.htm"
+        },
+        {
+          "date": "2026-09-02",
+          "form": "8-K",
+          "items": [
+            "2.02",
+            "8.01"
+          ],
+          "titles": [
+            "Quarterly results",
+            "Other company news"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000076/avgo-20260902.htm"
+        },
+        {
+          "date": "2026-07-06",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000119312526295589/d84378d8k.htm"
+        },
+        {
+          "date": "2026-06-18",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000119312526275077/d149683d8k.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "COST",
+      "cik": 909832,
+      "name": "COSTCO WHOLESALE CORP /NEW",
+      "filings": [
+        {
+          "date": "2026-10-07",
+          "form": "10-K",
+          "items": [],
+          "titles": [
+            "Yearly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/909832/000090983226000093/cost-20260830.htm"
+        },
+        {
+          "date": "2026-09-24",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/909832/000090983226000084/cost-20260924.htm"
+        },
+        {
+          "date": "2026-07-08",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/909832/000090983226000060/cost-20260707.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "AMGN",
+      "cik": 318154,
+      "name": "AMGEN INC",
+      "filings": [
+        {
+          "date": "2026-08-05",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/318154/000031815426000126/amgn-20260630.htm"
+        },
+        {
+          "date": "2026-08-04",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/318154/000031815426000124/amgn-20260804.htm"
+        },
+        {
+          "date": "2026-07-31",
+          "form": "8-K",
+          "items": [
+            "1.05"
+          ],
+          "titles": [
+            "A cybersecurity incident"
+          ],
+          "kind": "warning",
+          "url": "https://www.sec.gov/Archives/edgar/data/318154/000031815426000119/amgn-20260729.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "ISRG",
+      "cik": 1035267,
+      "name": "INTUITIVE SURGICAL INC",
+      "filings": [
+        {
+          "date": "2026-07-27",
+          "form": "8-K",
+          "items": [
+            "5.03"
+          ],
+          "titles": [
+            "Changed its bylaws or fiscal year"
+          ],
+          "kind": "other",
+          "url": "https://www.sec.gov/Archives/edgar/data/1035267/000103526726000063/isrg-20260723.htm"
+        },
+        {
+          "date": "2026-07-21",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1035267/000103526726000058/isrg-20260630.htm"
+        },
+        {
+          "date": "2026-07-16",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1035267/000103526726000047/isrg-20260716.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "GILD",
+      "cik": 882095,
+      "name": "GILEAD SCIENCES, INC.",
+      "filings": [
+        {
+          "date": "2026-08-06",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/882095/000088209526000031/gild-20260630.htm"
+        },
+        {
+          "date": "2026-08-04",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/882095/000088209526000028/gild-20260804.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "PEP",
+      "cik": 77476,
+      "name": "PEPSICO INC",
+      "filings": [
+        {
+          "date": "2026-10-08",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000050/pep-20261008.htm"
+        },
+        {
+          "date": "2026-10-08",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000048/pep-20260905.htm"
+        },
+        {
+          "date": "2026-09-17",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000042/pep-20260917.htm"
+        },
+        {
+          "date": "2026-07-09",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000037/pep-20260709.htm"
+        },
+        {
+          "date": "2026-07-09",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000035/pep-20260613.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "MNST",
+      "cik": 865752,
+      "name": "Monster Beverage Corp",
+      "filings": [
+        {
+          "date": "2026-09-25",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/865752/000110465926110965/tm2626151d1_8k.htm"
+        },
+        {
+          "date": "2026-09-04",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/865752/000110465926105498/tm2624805d1_8k.htm"
+        },
+        {
+          "date": "2026-08-07",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/865752/000110465926092193/mnst-20260630x10q.htm"
+        },
+        {
+          "date": "2026-08-06",
+          "form": "8-K",
+          "items": [
+            "2.02",
+            "7.01"
+          ],
+          "titles": [
+            "Quarterly results",
+            "Shared an update with investors"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/865752/000110465926092046/tm2622396d1_8k.htm"
+        },
+        {
+          "date": "2026-07-08",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/865752/000110465926081842/tm2619964d1_8k.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "AEP",
+      "cik": 4904,
+      "name": "AMERICAN ELECTRIC POWER CO INC",
+      "filings": [
+        {
+          "date": "2026-09-30",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/4904/000000490426000063/aep-20260929.htm"
+        },
+        {
+          "date": "2026-07-30",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/4904/000000490426000059/aep-20260630.htm"
+        },
+        {
+          "date": "2026-07-30",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/4904/000000490426000055/aep-20260730.htm"
+        },
+        {
+          "date": "2026-07-21",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/4904/000000490426000048/aep-20260720.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "XEL",
+      "cik": 72903,
+      "name": "XCEL ENERGY INC",
+      "filings": [
+        {
+          "date": "2026-10-09",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/72903/000007290326000175/xel-20261009.htm"
+        },
+        {
+          "date": "2026-08-20",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/72903/000007290326000160/xel-20260819.htm"
+        },
+        {
+          "date": "2026-07-30",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/72903/000007290326000154/xel-20260630.htm"
+        },
+        {
+          "date": "2026-07-30",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/72903/000007290326000149/xel-20260730.htm"
+        },
+        {
+          "date": "2026-07-29",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/72903/000007290326000147/xel-20260729.htm"
+        },
+        {
+          "date": "2026-07-14",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/72903/000007290326000144/xel-20260713.htm"
+        },
+        {
+          "date": "2026-06-23",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/72903/000007290326000109/xel-20260622.htm"
+        },
+        {
+          "date": "2026-06-22",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/72903/000007290326000107/xel-20260618.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "CTAS",
+      "cik": 723254,
+      "name": "CINTAS CORP",
+      "filings": [
+        {
+          "date": "2026-10-07",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/723254/000072325426000047/ctas-20260831.htm"
+        },
+        {
+          "date": "2026-10-06",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/723254/000095010326015293/dp254677_8k.htm"
+        },
+        {
+          "date": "2026-09-23",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/723254/000072325426000044/ctas-20260923.htm"
+        },
+        {
+          "date": "2026-08-27",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/723254/000095010326013001/dp252376_8k.htm"
+        },
+        {
+          "date": "2026-08-03",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/723254/000095010326011666/dp251069_8k.htm"
+        },
+        {
+          "date": "2026-07-29",
+          "form": "10-K",
+          "items": [],
+          "titles": [
+            "Yearly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/723254/000072325426000028/ctas-20260531.htm"
+        },
+        {
+          "date": "2026-07-15",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/723254/000072325426000025/ctas-20260715.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "PCAR",
+      "cik": 75362,
+      "name": "PACCAR INC",
+      "filings": [
+        {
+          "date": "2026-07-29",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/75362/000119312526323642/pcar-20260630.htm"
+        },
+        {
+          "date": "2026-07-28",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/75362/000119312526318918/pcar-20260728.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "CME",
+      "cik": 1156375,
+      "name": "CME GROUP INC.",
+      "filings": [
+        {
+          "date": "2026-09-25",
+          "form": "8-K",
+          "items": [
+            "5.03"
+          ],
+          "titles": [
+            "Changed its bylaws or fiscal year"
+          ],
+          "kind": "other",
+          "url": "https://www.sec.gov/Archives/edgar/data/1156375/000115637526000060/cme-20260924.htm"
+        },
+        {
+          "date": "2026-09-09",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/1156375/000119312526386091/d157844d8k.htm"
+        },
+        {
+          "date": "2026-08-11",
+          "form": "8-K",
+          "items": [
+            "7.01"
+          ],
+          "titles": [
+            "Shared an update with investors"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1156375/000115637526000051/cme-20260811.htm"
+        },
+        {
+          "date": "2026-07-24",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1156375/000115637526000047/cme-20260630.htm"
+        },
+        {
+          "date": "2026-07-22",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1156375/000115637526000042/cme-20260722.htm"
+        },
+        {
+          "date": "2026-06-17",
+          "form": "8-K",
+          "items": [
+            "5.02",
+            "7.01"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)",
+            "Shared an update with investors"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/1156375/000119312526273442/d129556d8k.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "TMUS",
+      "cik": 1283699,
+      "name": "T-Mobile US, Inc.",
+      "filings": [
+        {
+          "date": "2026-09-03",
+          "form": "8-K",
+          "items": [
+            "5.02",
+            "7.01"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)",
+            "Shared an update with investors"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/1283699/000119312526381901/d155079d8k.htm"
+        },
+        {
+          "date": "2026-07-23",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1283699/000128369926000101/tmus-20260630.htm"
+        },
+        {
+          "date": "2026-07-23",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1283699/000128369926000100/tmus-20260723.htm"
+        },
+        {
+          "date": "2026-07-07",
+          "form": "8-K",
+          "items": [
+            "5.02",
+            "7.01"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)",
+            "Shared an update with investors"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/1283699/000119312526297534/d170112d8k.htm"
+        },
+        {
+          "date": "2026-06-18",
+          "form": "8-K",
+          "items": [
+            "5.07"
+          ],
+          "titles": [
+            "Shareholder vote results"
+          ],
+          "kind": "other",
+          "url": "https://www.sec.gov/Archives/edgar/data/1283699/000119312526275787/d167113d8k.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "FANG",
+      "cik": 1539838,
+      "name": "Diamondback Energy, Inc.",
+      "filings": [
+        {
+          "date": "2026-10-08",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1539838/000153983826000177/fang-20261008.htm"
+        },
+        {
+          "date": "2026-09-30",
+          "form": "8-K",
+          "items": [
+            "5.02",
+            "1.01"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)",
+            "Signed a major agreement"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/1539838/000110465926112325/tm2626600d1_8k.htm"
+        },
+        {
+          "date": "2026-08-05",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1539838/000153983826000142/fang-20260630.htm"
+        },
+        {
+          "date": "2026-08-03",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1539838/000153983826000137/fang-20260803.htm"
+        },
+        {
+          "date": "2026-07-13",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1539838/000153983826000134/fang-20260713.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "LIN",
+      "cik": 1707925,
+      "name": "LINDE PLC",
+      "filings": [
+        {
+          "date": "2026-07-31",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1707925/000162828026051289/lin-20260630.htm"
+        },
+        {
+          "date": "2026-07-31",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1707925/000165495426007052/lin_8k.htm"
+        },
+        {
+          "date": "2026-07-30",
+          "form": "8-K",
+          "items": [
+            "5.07"
+          ],
+          "titles": [
+            "Shareholder vote results"
+          ],
+          "kind": "other",
+          "url": "https://www.sec.gov/Archives/edgar/data/1707925/000119312526325127/lin-20260728.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "TEVA",
+      "cik": 818686,
+      "name": "TEVA PHARMACEUTICAL INDUSTRIES LTD",
+      "filings": [
+        {
+          "date": "2026-09-16",
+          "form": "8-K",
+          "items": [
+            "1.01",
+            "2.03"
+          ],
+          "titles": [
+            "Signed a major agreement",
+            "Took on new debt"
+          ],
+          "kind": "deal",
+          "url": "https://www.sec.gov/Archives/edgar/data/818686/000119312526393116/d155511d8k.htm"
+        },
+        {
+          "date": "2026-09-14",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/818686/000119312526390562/d503082d8k.htm"
+        },
+        {
+          "date": "2026-09-11",
+          "form": "8-K",
+          "items": [
+            "7.01",
+            "8.01"
+          ],
+          "titles": [
+            "Shared an update with investors",
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/818686/000119312526389264/d81245d8k.htm"
+        },
+        {
+          "date": "2026-09-03",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/818686/000119312526381899/d153033d8k.htm"
+        },
+        {
+          "date": "2026-09-03",
+          "form": "8-K",
+          "items": [
+            "3.03"
+          ],
+          "titles": [
+            "Changed shareholders' rights"
+          ],
+          "kind": "other",
+          "url": "https://www.sec.gov/Archives/edgar/data/818686/000119312526381879/d174614d8k.htm"
+        },
+        {
+          "date": "2026-07-29",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/818686/000119312526323619/d118828d10q.htm"
+        },
+        {
+          "date": "2026-07-29",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/818686/000117184326004974/f8k_072926.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "NICE",
+      "cik": 1003935,
+      "name": "NICE Ltd.",
+      "filings": [
+        {
+          "date": "2026-10-07",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1003935/000117891326004729/zk2636205.htm"
+        },
+        {
+          "date": "2026-09-09",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1003935/000117891326004444/zk2636086.htm"
+        },
+        {
+          "date": "2026-08-06",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1003935/000117891326003887/zk2635874.htm"
+        },
+        {
+          "date": "2026-08-05",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1003935/000117891326003846/zk2635855.htm"
+        },
+        {
+          "date": "2026-07-08",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1003935/000117891326003436/zk2635655.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "CHKP",
+      "cik": 1015922,
+      "name": "CHECK POINT SOFTWARE TECHNOLOGIES LTD",
+      "filings": [
+        {
+          "date": "2026-09-14",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1015922/000117891326004498/zk2636110.htm"
+        },
+        {
+          "date": "2026-09-02",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1015922/000117891326004398/zk2636069.htm"
+        },
+        {
+          "date": "2026-07-30",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1015922/000117891326003696/zk2635799.htm"
+        },
+        {
+          "date": "2026-07-22",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1015922/000117891326003557/zk2635717.htm"
+        },
+        {
+          "date": "2026-07-09",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1015922/000117891326003452/zk2635667.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "ESLT",
+      "cik": 1027664,
+      "name": "ELBIT SYSTEMS LTD",
+      "filings": [
+        {
+          "date": "2026-09-18",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1027664/000117891326004544/zk2636132.htm"
+        },
+        {
+          "date": "2026-09-01",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1027664/000117891326004362/zk2636055.htm"
+        },
+        {
+          "date": "2026-08-11",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1027664/000102766426000023/coveresltq220266k.htm"
+        },
+        {
+          "date": "2026-08-06",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1027664/000117891326003875/zk2635877.htm"
+        },
+        {
+          "date": "2026-07-20",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1027664/000117891326003522/zk2635700.htm"
+        },
+        {
+          "date": "2026-07-13",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1027664/000117891326003459/zk2635672.htm"
+        },
+        {
+          "date": "2026-07-01",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1027664/000102766426000021/cover6k20260701.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "TSEM",
+      "cik": 928876,
+      "name": "TOWER SEMICONDUCTOR LTD",
+      "filings": [
+        {
+          "date": "2026-10-13",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/928876/000117891326004761/zk2636219.htm"
+        },
+        {
+          "date": "2026-10-13",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/928876/000117891326004755/zk2636218.htm"
+        },
+        {
+          "date": "2026-10-13",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/928876/000117891326004752/zk2636221.htm"
+        },
+        {
+          "date": "2026-09-23",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/928876/000117891326004559/zk2636140.htm"
+        },
+        {
+          "date": "2026-09-17",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/928876/000117891326004535/zk2636128.htm"
+        },
+        {
+          "date": "2026-09-15",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/928876/000117891326004500/zk2636113.htm"
+        },
+        {
+          "date": "2026-08-17",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/928876/000117891326004158/zk2635857.htm"
+        },
+        {
+          "date": "2026-08-12",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/928876/000117891326004045/zk2635939.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "ICL",
+      "cik": 941221,
+      "name": "ICL Group Ltd.",
+      "filings": [
+        {
+          "date": "2026-09-17",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/941221/000117891326004540/zk2636131.htm"
+        },
+        {
+          "date": "2026-09-01",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/941221/000117891326004375/zk2636061.htm"
+        },
+        {
+          "date": "2026-08-05",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/941221/000117891326003814/zk2635843.htm"
+        },
+        {
+          "date": "2026-08-05",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/941221/000117891326003810/zk2635840.htm"
+        },
+        {
+          "date": "2026-08-05",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/941221/000117891326003807/zk2635842.htm"
+        },
+        {
+          "date": "2026-08-05",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/941221/000117891326003801/zk2635826.htm"
+        },
+        {
+          "date": "2026-07-30",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/941221/000117891326003707/zk2635802.htm"
+        },
+        {
+          "date": "2026-06-30",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/941221/000117891326003372/zk2635628.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "WIX",
+      "cik": 1576789,
+      "name": "Wix.com Ltd.",
+      "filings": [
+        {
+          "date": "2026-08-04",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1576789/000162828026052108/wix-6xkxsecondquarter2026.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "MNDY",
+      "cik": 1845338,
+      "name": "monday.com Ltd.",
+      "filings": [
+        {
+          "date": "2026-08-10",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1845338/000117891326003971/zk2635817.htm"
+        },
+        {
+          "date": "2026-08-06",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1845338/000117891326003915/zk2635889.htm"
+        },
+        {
+          "date": "2026-07-22",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1845338/000117891326003553/zk2635715.htm"
+        },
+        {
+          "date": "2026-07-17",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1845338/000117891326003514/zk2635696.htm"
+        },
+        {
+          "date": "2026-07-02",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1845338/000117891326003403/zk2635639.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "GLBE",
+      "cik": 1835963,
+      "name": "Global-E Online Ltd.",
+      "filings": [
+        {
+          "date": "2026-10-01",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1835963/000117891326004687/zk2636180.htm"
+        },
+        {
+          "date": "2026-08-12",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1835963/000117891326004050/zk2635930.htm"
+        },
+        {
+          "date": "2026-07-01",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1835963/000117891326003387/zk2635631.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "NVMI",
+      "cik": 1109345,
+      "name": "NOVA LTD.",
+      "filings": [
+        {
+          "date": "2026-09-02",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1109345/000117891326004385/zk2636060.htm"
+        },
+        {
+          "date": "2026-08-11",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1109345/000117891326004024/zk2635904.htm"
+        },
+        {
+          "date": "2026-08-06",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1109345/000117891326003892/zk2635873.htm"
+        },
+        {
+          "date": "2026-07-06",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1109345/000117891326003411/zk2635645.htm"
+        },
+        {
+          "date": "2026-07-02",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1109345/000117891326003393/zk2635640.htm"
+        },
+        {
+          "date": "2026-06-22",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1109345/000117891326003271/zk2635584.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "CAMT",
+      "cik": 1109138,
+      "name": "CAMTEK LTD",
+      "filings": [
+        {
+          "date": "2026-08-10",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1109138/000117891326003975/zk2635905.htm"
+        },
+        {
+          "date": "2026-07-29",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1109138/000117891326003681/zk2635789.htm"
+        },
+        {
+          "date": "2026-06-24",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1109138/000117891326003316/zk2635600.htm"
+        },
+        {
+          "date": "2026-06-24",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1109138/000117891326003310/zk2635599.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "ORA",
+      "cik": 1296445,
+      "name": "ORMAT TECHNOLOGIES, INC.",
+      "filings": [
+        {
+          "date": "2026-08-06",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1296445/000129644526000014/ora-20260630.htm"
+        },
+        {
+          "date": "2026-08-05",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1296445/000143774926025961/ora20260805_8k.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "TSM",
+      "cik": 1046179,
+      "name": "TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+      "filings": [
+        {
+          "date": "2026-10-08",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000680/tsm-revenue20261008.htm"
+        },
+        {
+          "date": "2026-09-24",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000660/tsm-monthend6kx20260924.htm"
+        },
+        {
+          "date": "2026-09-10",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000658/tsm-revenue20260910.htm"
+        },
+        {
+          "date": "2026-09-01",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000552/tsm-dividendadjustmentx202.htm"
+        },
+        {
+          "date": "2026-08-25",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000545/tsm-monthend6kx20260825.htm"
+        },
+        {
+          "date": "2026-08-14",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000541/tsm-fsx20260814x6k.htm"
+        },
+        {
+          "date": "2026-08-11",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000539/sonysemiconductorsolutions.htm"
+        },
+        {
+          "date": "2026-08-11",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000536/tsm-boardx20260811.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "AMD",
+      "cik": 2488,
+      "name": "ADVANCED MICRO DEVICES INC",
+      "filings": [
+        {
+          "date": "2026-09-28",
+          "form": "8-K",
+          "items": [
+            "3.02"
+          ],
+          "titles": [
+            "Sold new shares"
+          ],
+          "kind": "money",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000182/amd-20260926.htm"
+        },
+        {
+          "date": "2026-08-19",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000163/amd-20260817.htm"
+        },
+        {
+          "date": "2026-08-17",
+          "form": "8-K",
+          "items": [
+            "1.01",
+            "2.03"
+          ],
+          "titles": [
+            "Signed a major agreement",
+            "Took on new debt"
+          ],
+          "kind": "deal",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000119312526354029/d142696d8k.htm"
+        },
+        {
+          "date": "2026-08-05",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000123/amd-20260627.htm"
+        },
+        {
+          "date": "2026-08-04",
+          "form": "8-K",
+          "items": [
+            "2.02",
+            "7.01"
+          ],
+          "titles": [
+            "Quarterly results",
+            "Shared an update with investors"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000121/amd-20260804.htm"
+        },
+        {
+          "date": "2026-07-01",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000115/amd-20260626.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "ASML",
+      "cik": 937966,
+      "name": "ASML HOLDING NV",
+      "filings": [
+        {
+          "date": "2026-07-15",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/937966/000162828026048235/form6-kquarterlyfilings.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "QCOM",
+      "cik": 804328,
+      "name": "QUALCOMM INC/DE",
+      "filings": [
+        {
+          "date": "2026-09-08",
+          "form": "8-K",
+          "items": [
+            "3.02"
+          ],
+          "titles": [
+            "Sold new shares"
+          ],
+          "kind": "money",
+          "url": "https://www.sec.gov/Archives/edgar/data/804328/000110465926105718/tm2623289d1_8k.htm"
+        },
+        {
+          "date": "2026-07-31",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/804328/000110465926089234/tm2621612d2_8k.htm"
+        },
+        {
+          "date": "2026-07-29",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/804328/000080432826000086/qcom-20260628.htm"
+        },
+        {
+          "date": "2026-07-29",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/804328/000080432826000085/qcom-20260729.htm"
+        },
+        {
+          "date": "2026-06-24",
+          "form": "8-K",
+          "items": [
+            "3.02"
+          ],
+          "titles": [
+            "Sold new shares"
+          ],
+          "kind": "money",
+          "url": "https://www.sec.gov/Archives/edgar/data/804328/000110465926077071/tm2618522d1_8k.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "MU",
+      "cik": 723125,
+      "name": "MICRON TECHNOLOGY INC",
+      "filings": [
+        {
+          "date": "2026-10-09",
+          "form": "10-K",
+          "items": [],
+          "titles": [
+            "Yearly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000023/mu-20260903.htm"
+        },
+        {
+          "date": "2026-09-30",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000018/mu-20260930.htm"
+        },
+        {
+          "date": "2026-08-26",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/723125/000110465926101067/tm2624017d1_8k.htm"
+        },
+        {
+          "date": "2026-06-25",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000015/mu-20260528.htm"
+        },
+        {
+          "date": "2026-06-24",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000013/mu-20260624.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "ORCL",
+      "cik": 1341439,
+      "name": "ORACLE CORP",
+      "filings": [
+        {
+          "date": "2026-09-14",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526389753/d20034d8k.htm"
+        },
+        {
+          "date": "2026-09-11",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526389274/orcl-20260831.htm"
+        },
+        {
+          "date": "2026-09-10",
+          "form": "8-K",
+          "items": [
+            "2.02",
+            "8.01"
+          ],
+          "titles": [
+            "Quarterly results",
+            "Other company news"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526387905/orcl-20260910.htm"
+        },
+        {
+          "date": "2026-06-22",
+          "form": "10-K",
+          "items": [],
+          "titles": [
+            "Yearly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526277521/orcl-20260531.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "XOM",
+      "cik": 2115436,
+      "name": "ExxonMobil Holdings Corp",
+      "filings": [
+        {
+          "date": "2026-09-25",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/2115436/000119312526402986/d15072d8k.htm"
+        },
+        {
+          "date": "2026-08-28",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/2115436/000119312526373026/d82162d8k.htm"
+        },
+        {
+          "date": "2026-08-03",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/2115436/000003408826000093/xom-20260630.htm"
+        },
+        {
+          "date": "2026-07-31",
+          "form": "8-K",
+          "items": [
+            "2.02",
+            "7.01"
+          ],
+          "titles": [
+            "Quarterly results",
+            "Shared an update with investors"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/2115436/000211543626000006/xom-20260731.htm"
+        },
+        {
+          "date": "2026-07-07",
+          "form": "8-K",
+          "items": [
+            "7.01"
+          ],
+          "titles": [
+            "Shared an update with investors"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/2115436/000211543626000003/xom-20260707.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "CVX",
+      "cik": 93410,
+      "name": "CHEVRON CORP",
+      "filings": [
+        {
+          "date": "2026-10-06",
+          "form": "8-K",
+          "items": [
+            "7.01",
+            "8.01"
+          ],
+          "titles": [
+            "Shared an update with investors",
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/93410/000009341026000192/cvx-20261006.htm"
+        },
+        {
+          "date": "2026-10-05",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/93410/000009341026000188/cvx-20260930.htm"
+        },
+        {
+          "date": "2026-08-06",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/93410/000009341026000167/cvx-20260630.htm"
+        },
+        {
+          "date": "2026-07-31",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/93410/000009341026000162/cvx-20260731.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "COP",
+      "cik": 1163165,
+      "name": "CONOCOPHILLIPS",
+      "filings": [
+        {
+          "date": "2026-08-11",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/1163165/000110465926094062/tm2622739d1_8k.htm"
+        },
+        {
+          "date": "2026-08-06",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1163165/000116316526000032/cop-20260630.htm"
+        },
+        {
+          "date": "2026-08-06",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1163165/000116316526000030/cop-20260806.htm"
+        },
+        {
+          "date": "2026-06-23",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/1163165/000110465926076836/tm2618585d1_8k.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "EOG",
+      "cik": 821189,
+      "name": "EOG RESOURCES INC",
+      "filings": [
+        {
+          "date": "2026-10-08",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/821189/000082118926000202/eog-20261008.htm"
+        },
+        {
+          "date": "2026-09-24",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/821189/000119312526400333/d40889d8k.htm"
+        },
+        {
+          "date": "2026-08-04",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/821189/000082118926000149/eog-20260630.htm"
+        },
+        {
+          "date": "2026-08-04",
+          "form": "8-K",
+          "items": [
+            "2.02",
+            "7.01"
+          ],
+          "titles": [
+            "Quarterly results",
+            "Shared an update with investors"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/821189/000082118926000147/eog-20260804.htm"
+        },
+        {
+          "date": "2026-07-09",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/821189/000082118926000140/eog-20260709.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "SLB",
+      "cik": 87347,
+      "name": "SLB LIMITED/NV",
+      "filings": [
+        {
+          "date": "2026-10-06",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/87347/000119312526415617/d184262d8k.htm"
+        },
+        {
+          "date": "2026-08-31",
+          "form": "8-K",
+          "items": [
+            "7.01"
+          ],
+          "titles": [
+            "Shared an update with investors"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/87347/000119312526375358/d106278d8k.htm"
+        },
+        {
+          "date": "2026-07-29",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/87347/000119312526322595/slb-20260630.htm"
+        },
+        {
+          "date": "2026-07-24",
+          "form": "8-K",
+          "items": [
+            "2.02",
+            "7.01"
+          ],
+          "titles": [
+            "Quarterly results",
+            "Shared an update with investors"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/87347/000119312526315068/d122193d8k.htm"
+        }
+      ]
+    }
+  ],
+  "missing": []
+}

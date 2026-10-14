@@ -1,7 +1,7 @@
 ---
-version: 0.19.0
+version: 0.20.0
 updated_at: 2026-10-14
-change_note: Chip makers, tech giants and energy companies as their own lists on the home page, and each card's newest candle as a green or red day.
+change_note: Official company news from SEC filings and SEC company numbers for every company on every list; candles up close on every stock page.
 ---
 # Decision log
 
@@ -19,6 +19,17 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   per-point dates into one shared array.
 
 ## 2026-10-14
+- **Official company news from the SEC, for every company.** The household asked for every company to be backed by
+  public results or news. The SEC's free filings index is the most trustworthy source there is: what the company itself
+  had to tell regulators. `scripts/sec_news.py` (routine sec_news, daily) lists each company's recent 8-K, 6-K, 10-Q,
+  10-K and 20-F filings with fixed plain titles per 8-K item code (2.02 results, 5.02 leadership change, 1.01 major
+  agreement...) and a link; nothing is copied from the filings, and no new key is needed (same SEC_USER_AGENT).
+  Google News was rejected: no official API, and it mixes rumour with fact. Shown on every Stock page and as a line
+  on the home's cards. Not yet in the brain's pack (its token cap); a later change can add a compact form.
+- **SEC company numbers for every stock list.** `scripts/fundamentals.py` now covers every company on every stock list
+  (44), and companies that file only yearly (20-F, often IFRS and a home currency) get their latest fiscal year
+  (basis "annual"). The brain's pack still reads the main list only.
+- **Candles up close on every stock page**, not only on the home's cards.
 - **Chip makers, tech giants and energy as their own lists.** The household asked for the top semiconductor, high-tech
   and energy companies on the home page. They are three more markets in `config/markets.json` (chips against SOXX,
   tech against QQQ, energy against XLE), so they get the same derived numbers, checklist and candles as TLV and

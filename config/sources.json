@@ -1,7 +1,7 @@
 {
-  "version": "0.5.0",
-  "updated_at": "2026-10-13",
-  "change_note": "Company filings are connected: SEC XBRL company facts (sec_xbrl), and a second price source for a weekly cross-check (prices_check).",
+  "version": "0.6.0",
+  "updated_at": "2026-10-14",
+  "change_note": "Official company news: the SEC's filings index (sec_filings) for every company on every stock list; company numbers (sec_xbrl) now cover every stock list too.",
   "sources": [
     {
       "id": "prices",
@@ -81,6 +81,20 @@
       "secret_env": "SEC_USER_AGENT",
       "follow": [],
       "note": "The SEC's free, public-domain company facts. No key: the SEC asks for a User-Agent naming the client with a contact email, kept in the SEC_USER_AGENT Actions secret. Trailing-twelve-month figures, point in time."
+    },
+    {
+      "id": "sec_filings",
+      "kind": "filings",
+      "label": "Official company news (SEC filings)",
+      "status": "active",
+      "provider": "sec",
+      "cadence": "Mon–Fri 23:40 UTC",
+      "feeds": [
+        "data/market/sec_news.json"
+      ],
+      "secret_env": "SEC_USER_AGENT",
+      "follow": [],
+      "note": "The SEC's free, public-domain filings index: each company's recent 8-K (with item codes), 6-K, 10-Q, 10-K and 20-F filings, as dated links with fixed plain titles. Same SEC_USER_AGENT secret as the company numbers; no key."
     },
     {
       "id": "library",

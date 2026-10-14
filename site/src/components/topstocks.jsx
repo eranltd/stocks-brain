@@ -3,6 +3,7 @@ import { loadMarketCandles } from "../lib/data.js";
 import { useReducedMotion } from "../lib/motion.js";
 import { dotIndex, miniGeometry, miniSummary, miniWindow, nearCards, snapStops, stepStop } from "../lib/carousel.js";
 import { lastCandle } from "../lib/spotlight.js";
+import { headlineFor } from "../lib/secnews.js";
 import { CandleZoom } from "./zoom.jsx";
 import { ArrowRight, Chevron } from "./ui.jsx";
 
@@ -33,7 +34,7 @@ const GAP = 16;
 const RETRY_MS = 20000;
 
 /** The carousel. `items` from topStocks() (lib/carousel.js); `openTo(route)` opens a page and its section. */
-export function TopStocks({ items, manifest, marketId = "nasdaq", title = "Top stocks", subtitle = null, headingId = "top-stocks-title", one = "company", fallback = "Its short summary appears with the next company update.", openTo, seeCandles }) {
+export function TopStocks({ items, manifest, marketId = "nasdaq", title = "Top stocks", subtitle = null, headingId = "top-stocks-title", news = null, one = "company", fallback = "Its short summary appears with the next company update.", openTo, seeCandles }) {
   const reduced = useReducedMotion();
   const rail = useRef(null);
   const [geo, setGeo] = useState({ step: 0, stops: [0], left: 0, width: 0 });
@@ -144,7 +145,7 @@ export function TopStocks({ items, manifest, marketId = "nasdaq", title = "Top s
         className="no-scrollbar -mx-4 mt-4 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto overscroll-x-contain px-4 pb-1"
       >
         {items.map((it, i) => (
-          <StockCard key={it.ticker} it={it} i={i} n={count} chart={charts[it.ticker]} openTo={openTo} seeCandles={seeCandles} fallback={fallback} onZoom={() => setZoom(it)} />
+          <StockCard key={it.ticker} it={it} i={i} n={count} chart={charts[it.ticker]} openTo={openTo} seeCandles={seeCandles} fallback={fallback} onZoom={() => setZoom(it)} headline={headlineFor(news, it.ticker)} />
         ))}
       </div>
 
@@ -176,7 +177,7 @@ function RoundButton({ label, dir, onClick, disabled }) {
   );
 }
 
-function StockCard({ it, i, n, chart, openTo, seeCandles, fallback, onZoom }) {
+function StockCard({ it, i, n, chart, openTo, seeCandles, fallback, onZoom, headline }) {
   const canCandles = it.hasChart && it.chip;
   return (
     <article role="group" aria-roledescription="slide" aria-label={`${it.name}, ${i + 1} of ${n}`}
@@ -196,6 +197,12 @@ function StockCard({ it, i, n, chart, openTo, seeCandles, fallback, onZoom }) {
         </button>
       )}
       <p className="mt-4 text-[17px] leading-relaxed text-ink">{it.plain ?? fallback}</p>
+      {headline && (
+        <a href={headline.url} target="_blank" rel="noreferrer" className="mt-4 block rounded-2xl border border-line-2 px-4 py-3 transition hover:border-ink-3">
+          <span className="meta block normal-case tracking-[0.04em]">Official news · {headline.day}</span>
+          <span className="mt-1 block text-[16px] font-semibold leading-snug text-ink">{headline.title} <span className="font-normal text-ink-3">↗</span></span>
+        </a>
+      )}
       <div className="mt-auto pt-5">
         <button type="button" onClick={() => openTo(it.to)} className="btn btn-primary min-h-[56px] w-full justify-center py-3 text-[18px]">
           See more <ArrowRight />

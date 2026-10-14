@@ -133,6 +133,7 @@ export async function loadAll(onProgress = () => {}) {
     // Company numbers from SEC filings and the second-source price check: absent until their first run.
     ...(manifest.fundamentals ? [manifest.fundamentals] : []),
     ...(manifest.price_check ? [manifest.price_check] : []),
+    ...(manifest.sec_news ? [manifest.sec_news] : []),
   ];
   let done = 0;
   const entries = await Promise.all(
@@ -182,6 +183,8 @@ export function derive(manifest, files) {
   const peopleScores = manifest.people_scores ? files[manifest.people_scores] : null;
   const fundamentals = manifest.fundamentals ? files[manifest.fundamentals] : null;
   const priceCheck = manifest.price_check ? files[manifest.price_check] : null;
+  // Official company news from SEC filings (data/market/sec_news.json): every company on every stock list.
+  const secNews = manifest.sec_news ? files[manifest.sec_news] : null;
   // Company outlook cards (config/outlook.json): researched, paraphrased and linked; may hold no companies yet.
   const outlook = doc("outlook") ? files[doc("outlook").file] : null;
   // The eight-step technical checklist: its steps and house rule (config/checklist.json) and code's daily reading of it.
@@ -237,7 +240,7 @@ export function derive(manifest, files) {
 
   return {
     market, manifest, runs, shownRuns, latest, lastOk, prices, watchlist, settings, learnings, guardrails,
-    outcomes, library, sources, routines, names, bench, kb, docs, regime, calibration, observations, opsLog, longrun, paper, sectors, core, rulebook, rulesResult, ledger, people, peopleScores, fundamentals, priceCheck, outlook, checklist, checklistCfg,
+    outcomes, library, sources, routines, names, bench, kb, docs, regime, calibration, observations, opsLog, longrun, paper, sectors, core, rulebook, rulesResult, ledger, people, peopleScores, fundamentals, priceCheck, secNews, outlook, checklist, checklistCfg,
     markets, marketsConfig, funds,
     sample: manifest.source === "sample", livePrices: manifest.price_source === "live",
   };

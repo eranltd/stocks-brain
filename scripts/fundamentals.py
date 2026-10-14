@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Company numbers from the SEC's XBRL company facts (free, official, public domain): trailing-twelve-month revenue
-and its growth, operating and net margin, and free cash flow, per name on the main list. No model involved.
+and its growth, operating and net margin, and free cash flow, per company on every stock list (the main list first,
+then the other markets' stock lists; fund lists have no company filings). No model involved.
 
 Data: https://data.sec.gov/api/xbrl/companyfacts/CIK##########.json and the SEC's ticker-to-CIK map. The SEC asks every
 client to send a User-Agent naming who it is with a contact email; it comes from the SEC_USER_AGENT environment
@@ -11,8 +12,11 @@ so a past run sees what was public that day. Quarters come from 10-Q and 10-K fa
 months is a quarter; a year-to-date fact minus the one before it (same start) is the quarter between them, which is how
 cash flows (reported year to date) and the fourth quarter (the 10-K year minus nine months) are found.
 
+Companies that file only yearly reports (foreign companies' 20-F, often in their home currency and IFRS terms) get
+their latest fiscal year instead (basis "annual"): growth and margins are ratios, so the currency does not matter.
+
 Writes data/market/fundamentals.json (schemas/fundamentals.schema.json). Fail closed: if the map or any company
-cannot be fetched, nothing is written and the previous file stays.
+cannot be fetched, nothing is written and the previous file stays. A name the SEC does not list is a no_data row.
 
 Usage: python3 scripts/fundamentals.py [--as-of YYYY-MM-DD] [--fixtures DIR] [--dry-run]
   --fixtures DIR  read <DIR>/company_tickers.json and <DIR>/<SYMBOL>.json instead of the network
@@ -30,7 +34,7 @@ from datetime import date, timedelta
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _common import MARKET, Validator, dump_json, watchlist  # noqa: E402
+from _common import MARKET, Validator, all_stock_symbols, dump_json  # noqa: E402
 
 TICKERS_URL = "https://www.sec.gov/files/company_tickers.json"
 FACTS_URL = "https://data.sec.gov/api/xbrl/companyfacts/CIK{cik:010d}.json"
@@ -49,6 +53,18 @@ CONCEPTS = {
     "capex": ["PaymentsToAcquirePropertyPlantAndEquipment", "PaymentsToAcquireProductiveAssets",
               "PurchasesOfPropertyAndEquipmentAndIntangibleAssets", "PaymentsForCapitalImprovements",
               "PaymentsToExploreAndDevelopOilAndGasProperties"],
+}
+
+
+# The yearly fallback: the same metrics under us-gaap or IFRS names, from annual reports in any currency.
+ANNUAL_FORMS = {"10-K", "10-K/A", "20-F", "20-F/A", "40-F", "40-F/A"}
+YEAR = (350, 380)
+ANNUAL_CONCEPTS = {
+    "revenue": CONCEPTS["revenue"] + ["Revenue", "RevenueFromContractsWithCustomers"],
+    "operating_income": CONCEPTS["operating_income"] + ["ProfitLossFromOperatingActivities"],
+    "net_income": CONCEPTS["net_income"] + ["ProfitLossAttributableToOwnersOfParent"],
+    "operating_cash_flow": CONCEPTS["operating_cash_flow"] + ["CashFlowsFromUsedInOperatingActivities"],
+    "capex": CONCEPTS["capex"] + ["PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities", "PurchaseOfPropertyPlantAndEquipment"],
 }
 
 
@@ -119,6 +135,60 @@ def pick_chain(gaap: dict, names: list[str], as_of: str, n: int, end: str | None
     return best
 
 
+def years(facts_doc: dict, names: list[str], as_of: str, currency: str | None = None) -> tuple[str | None, str | None, dict[str, dict]]:
+    """Fiscal years {end: {start, end, val, filed}} of the first concept (in `names` order, us-gaap then IFRS) that has
+    any, from annual reports filed on or before `as_of` (the newest filing wins for a restated year). Returns
+    (concept, currency, years); a given `currency` must match (so revenue and profit share one)."""
+    best: tuple[str | None, str | None, dict] = (None, None, {})
+    for tax in ("us-gaap", "ifrs-full"):
+        node = facts_doc.get("facts", {}).get(tax, {})
+        for c in names:
+            for unit, facts in node.get(c, {}).get("units", {}).items():
+                if unit in ("shares", "pure") or (currency and unit != currency):
+                    continue
+                out: dict[str, dict] = {}
+                for f in facts:
+                    if f.get("form") not in ANNUAL_FORMS or not f.get("start") or f["filed"] > as_of:
+                        continue
+                    if not YEAR[0] <= (_d(f["end"]) - _d(f["start"])).days <= YEAR[1]:
+                        continue
+                    if f["end"] not in out or f["filed"] > out[f["end"]]["filed"]:
+                        out[f["end"]] = {"start": f["start"], "end": f["end"], "val": float(f["val"]), "filed": f["filed"]}
+                if out and (not best[2] or max(out) > max(best[2])):
+                    best = (c, unit, out)
+    return best
+
+
+def annual_view(row: dict, facts_doc: dict, as_of: str) -> dict:
+    """The latest fiscal year's growth and margins, for a company with no run of quarterly filings."""
+    concept, cur, rev = years(facts_doc, ANNUAL_CONCEPTS["revenue"], as_of)
+    if not rev:
+        return {**row, "status": "no_data", "missing": ["revenue"]}
+    end = max(rev)
+    this = rev[end]
+    prev = next((v for k, v in rev.items() if 350 <= (_d(end) - _d(k)).days <= 380), None)
+    got, missing = {}, []
+    for m in ("operating_income", "net_income", "operating_cash_flow", "capex"):
+        _, _, ys = years(facts_doc, ANNUAL_CONCEPTS[m], as_of, cur)
+        if end in ys:
+            got[m] = ys[end]["val"]
+        else:
+            missing.append(m)
+    r = this["val"]
+    fcf = got["operating_cash_flow"] - got["capex"] if "operating_cash_flow" in got and "capex" in got else None
+    return {
+        **row, "status": "stale" if (_d(as_of) - _d(end)).days > STALE_DAYS + 365 else "ok", "basis": "annual", "currency": cur,
+        "period_end": end, "filed": this["filed"], "revenue_concept": concept, "revenue_ttm": round(r),
+        "revenue_growth_yoy_pct": _pct(r - prev["val"], prev["val"]) if prev else None,
+        "quarter_revenue_growth_yoy_pct": None,
+        "operating_margin_pct": _pct(got.get("operating_income"), r),
+        "net_margin_pct": _pct(got.get("net_income"), r),
+        "free_cash_flow_ttm": None if fcf is None else round(fcf),
+        "fcf_margin_pct": _pct(fcf, r),
+        "missing": missing,
+    }
+
+
 def _pct(a: float | None, b: float | None) -> float | None:
     return None if a is None or b in (None, 0) else round(a / b * 100, 1)
 
@@ -129,7 +199,7 @@ def company_view(symbol: str, cik: int, facts_doc: dict, as_of: str) -> dict:
     row: dict = {"symbol": symbol, "cik": cik, "name": facts_doc.get("entityName", symbol)}
     concept, rev4 = pick_chain(gaap, CONCEPTS["revenue"], as_of, 4)
     if not rev4:
-        return {**row, "status": "no_data", "missing": ["revenue"]}
+        return annual_view(row, facts_doc, as_of)
     end = rev4[0]["end"]
     _, rev8 = pick_chain(gaap, [concept], as_of, 8, end)
     ttm = {"revenue": sum(q["val"] for q in rev4)}
@@ -143,7 +213,7 @@ def company_view(symbol: str, cik: int, facts_doc: dict, as_of: str) -> dict:
     fcf = ttm["operating_cash_flow"] - ttm["capex"] if "operating_cash_flow" in ttm and "capex" in ttm else None
     prev = sum(q["val"] for q in rev8[4:]) if rev8 else None
     row.update({
-        "status": "stale" if (_d(as_of) - _d(end)).days > STALE_DAYS else "ok",
+        "status": "stale" if (_d(as_of) - _d(end)).days > STALE_DAYS else "ok", "basis": "ttm",
         "period_end": end, "filed": max(q["filed"] for q in rev4), "revenue_concept": concept,
         "revenue_ttm": round(ttm["revenue"]),
         "revenue_growth_yoy_pct": _pct(ttm["revenue"] - prev, prev) if prev else None,
@@ -187,12 +257,13 @@ def build(symbols: list[str], as_of: str, fixtures: Path | None = None) -> dict:
     for s in symbols:
         code = s.replace(".", "-")
         if code not in cik:
-            raise SecError(f"{s}: not in the SEC ticker map")
+            rows.append({"symbol": s, "cik": 1, "name": s, "status": "no_data", "missing": ["revenue"]})
+            continue
         doc = load(f"{s}.json") if load else _get(FACTS_URL.format(cik=cik[code]), ua)
         if not load:
             time.sleep(0.25)  # well under the SEC's ten requests a second
         rows.append(company_view(s, cik[code], doc, as_of))
-    return {"as_of": as_of, "sample": False, "source": "SEC XBRL company facts (us-gaap), trailing twelve months",
+    return {"as_of": as_of, "sample": False, "source": "SEC XBRL company facts: trailing twelve months, or the latest year for yearly filers",
             "companies": rows}
 
 
@@ -202,7 +273,7 @@ def main() -> int:
     ap.add_argument("--fixtures")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
-    syms = [s["symbol"] for s in watchlist()["symbols"]]
+    syms = all_stock_symbols()
     try:
         doc = build(syms, args.as_of, Path(args.fixtures) if args.fixtures else None)
     except SecError as exc:

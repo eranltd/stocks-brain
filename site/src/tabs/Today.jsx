@@ -254,7 +254,7 @@ function SimpleHome({ data, market, go, showDetails }) {
 
     {!words && <MarketWait market={market} />}
     {words && (
-      <TopStocks key={md.marketId ?? market?.id} items={top} manifest={data.manifest} marketId={md.marketId ?? market?.id} title={nouns.many === "funds" ? "Top funds" : "Top stocks"} one={nouns.one}
+      <TopStocks key={md.marketId ?? market?.id} items={top} manifest={data.manifest} news={data.secNews} marketId={md.marketId ?? market?.id} title={nouns.many === "funds" ? "Top funds" : "Top stocks"} one={nouns.one}
         fallback={nouns.many === "funds" ? "Its fund card appears with the next update." : undefined}
         openTo={(to) => openAt(go, to)} seeCandles={seeCandles} />
     )}

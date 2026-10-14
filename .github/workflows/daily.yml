@@ -69,6 +69,14 @@ jobs:
           SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
         run: python3 scripts/fundamentals.py
 
+      - name: Official company news from SEC filings (dates, item codes and links only)
+        id: sec_news
+        if: env.MONTHLY != 'true' && env.MARKETS != 'true' && env.DRY != 'true'
+        continue-on-error: true  # a failure keeps the last good file and must not discard the day's market data
+        env:
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+        run: python3 scripts/sec_news.py
+
       - name: Second-source price cross-check (Fridays; agreement statistics only)
         id: price_crosscheck
         if: env.MONTHLY != 'true' && env.MARKETS != 'true' && env.DRY != 'true'
@@ -159,6 +167,7 @@ jobs:
           ROUTINE_FETCH_PRICES: ${{ steps.fetch_prices.outcome }}
           ROUTINE_DERIVE_MARKET: ${{ steps.derive_market.outcome }}
           ROUTINE_SEC_FUNDAMENTALS: ${{ steps.sec_fundamentals.outcome }}
+          ROUTINE_SEC_NEWS: ${{ steps.sec_news.outcome }}
           ROUTINE_PRICE_CROSSCHECK: ${{ steps.price_crosscheck.outcome }}
           ROUTINE_SCORE_PICKS: ${{ steps.score_picks.outcome }}
           ROUTINE_REGIME_MONITOR: ${{ steps.regime_monitor.outcome }}

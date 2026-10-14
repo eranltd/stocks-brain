@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { topSpots, SPOT_CAVEAT } from "../lib/spots.js";
+import { SpotList, SPOT_TONE } from "./zoom.jsx";
 import { loadMarketCandles } from "../lib/data.js";
 import { fmtDate } from "../lib/format.js";
 import { useReducedMotion } from "../lib/motion.js";
@@ -71,6 +73,10 @@ export function CandlesView({ data, symbol, row, cfg }) {
     try { window.localStorage.setItem(OVERLAY_KEY, JSON.stringify(next)); } catch { /* storage unavailable */ }
   };
   const step = (id) => cfg?.steps?.find((s) => s.id === id) ?? { id, name: id };
+  // The numbered "candle to notice" being pointed at (its index in the window), cleared when the window changes.
+  const [sel, setSel] = useState(null);
+  useEffect(() => setSel(null), [range, symbol]);
+  const pickSpot = (sp) => setSel((cur) => (cur === sp.i ? null : sp.i));
 
   if (state.status !== "ok") {
     return (
@@ -97,6 +103,7 @@ export function CandlesView({ data, symbol, row, cfg }) {
   const doc = state.doc;
   const win = windowOf(doc, range);
   const pattern = win?.weekly ? row?.candle?.weekly : row?.candle?.daily;
+  const spots = win ? topSpots(win, 5) : [];
   return (
     <div>
       <Segmented label="Candles window" value={range} onChange={setRange} options={RANGES.map((r) => ({ value: r.value, label: r.label }))} />
@@ -104,8 +111,18 @@ export function CandlesView({ data, symbol, row, cfg }) {
         <p className="mt-3 text-[13px] text-people">These candles are from the {fmtDate(doc.as_of)} close; the checklist is from {fmtDate(row.as_of)}.</p>
       )}
       <div className="mt-4">
-        {win ? <CandleChart win={win} doc={doc} on={on} pattern={pattern} symbol={symbol} rsiCfg={step("rsi").params} /> : <p className="text-[14px] text-ink-3">No candles for this window.</p>}
+        {win ? <CandleChart key={range} win={win} doc={doc} on={on} pattern={pattern} symbol={symbol} rsiCfg={step("rsi").params} spots={spots} sel={sel} onSpot={pickSpot} /> : <p className="text-[14px] text-ink-3">No candles for this window.</p>}
       </div>
+
+      {win && (
+        <section className="mt-5">
+          <h4 className="text-[18px] font-bold tracking-[-0.01em] text-ink">Candles to notice, in simple words</h4>
+          {spots.length ? <p className="mt-1 text-[14.5px] text-ink-2">The numbers on the chart. Tap one to point at it.</p>
+            : <p className="mt-1 text-[15px] text-ink-2">Nothing stands out in this stretch: calm, ordinary days.</p>}
+          <SpotList spots={spots} focus={sel} onPick={pickSpot} reduced={false} />
+          {spots.length > 0 && <p className="mt-3 text-[13.5px] leading-relaxed text-ink-3">{SPOT_CAVEAT}</p>}
+        </section>
+      )}
 
       <p className="mt-4 text-[12.5px] leading-relaxed text-ink-3">Steps 1 and 2, the candle pattern and the trend, are the candles themselves. Tap a chip to show or hide a step:</p>
       <div className="mt-2 grid grid-cols-2 gap-1.5 sm:grid-cols-3">
@@ -133,7 +150,7 @@ export function CandlesView({ data, symbol, row, cfg }) {
 
 /* ----------------------------------------------------------------- the chart */
 
-function CandleChart({ win, doc, on, pattern, symbol, rsiCfg }) {
+function CandleChart({ win, doc, on, pattern, symbol, rsiCfg, spots = [], sel = null, onSpot = () => {} }) {
   const box = useRef(null);
   const svg = useRef(null);
   const [W, setW] = useState(340);
@@ -156,6 +173,7 @@ function CandleChart({ win, doc, on, pattern, symbol, rsiCfg }) {
     return () => cancelAnimationFrame(r);
   }, [reduced]);
   useEffect(() => setHi(null), [win.range]);
+  useEffect(() => { if (sel != null) setHi(sel); }, [sel]);
 
   const narrow = W < 560;
   const L = 2, R = narrow ? 46 : 56, T = 26;
@@ -288,6 +306,23 @@ function CandleChart({ win, doc, on, pattern, symbol, rsiCfg }) {
             <text x={L + 4} y={nm.y} dominantBaseline="central" className="fill-ink-2 text-[10.5px]">{nm.name}</text>
           </g>
         ))}
+        {/* the numbered candles to notice (listed in simple words under the chart) */}
+        {spots.map((sp) => {
+          const g = geoms[sp.i];
+          if (!g) return null;
+          const cy = Math.max(10, g.wickTop - 13);
+          const col = SPOT_TONE[sp.tone];
+          const on1 = sel === sp.i;
+          return (
+            <g key={`spot${sp.i}`} className="cursor-pointer" role="button" aria-label={`${sp.n}: ${sp.title}`}
+              onPointerDown={(e) => { e.stopPropagation(); onSpot(sp); }}>
+              {!reduced && <circle cx={g.cx} cy={cy} r="9" fill={col} className="zoom-ping" style={{ animationDelay: `${400 + sp.n * 150}ms` }} />}
+              <circle cx={g.cx} cy={cy} r={on1 ? 10.5 : 9} fill={col} stroke={on1 ? "var(--ink)" : "var(--surface)"} strokeWidth="2" className="zoom-pop" style={{ animationDelay: reduced ? "0ms" : `${300 + sp.n * 120}ms` }} />
+              <text x={g.cx} y={cy + 4} textAnchor="middle" fontSize="11.5" fontWeight="700" fill="var(--bg)" className="zoom-pop pointer-events-none" style={{ animationDelay: reduced ? "0ms" : `${300 + sp.n * 120}ms` }}>{sp.n}</text>
+            </g>
+          );
+        })}
+
         {/* value tags in the gutter, with a short leader when a tag had to move */}
         {tags.map((g) => (
           <g key={g.id}>

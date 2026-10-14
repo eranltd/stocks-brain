@@ -9,6 +9,7 @@ import { marketDay } from "../lib/marketday.js";
 import { companiesToKnow, marketWords, newsLines } from "../lib/simple.js";
 import { topStocks } from "../lib/carousel.js";
 import { TopStocks } from "../components/topstocks.jsx";
+import { SectorSpotlights } from "../components/spotlight.jsx";
 import { requestChecklistView } from "../components/checklist.jsx";
 import { LatestVerdict } from "../components/verdict.jsx";
 import { MoneyAction } from "../components/money.jsx";
@@ -257,6 +258,8 @@ function SimpleHome({ data, market, go, showDetails }) {
         fallback={nouns.many === "funds" ? "Its fund card appears with the next update." : undefined}
         openTo={(to) => openAt(go, to)} seeCandles={seeCandles} />
     )}
+
+    {isDefault && <SectorSpotlights data={data} openTo={(to) => openAt(go, to)} seeCandles={seeCandles} />}
 
     <div className="mx-auto w-full max-w-[560px] px-4 pb-24">
       <div className="mt-10 grid gap-6">

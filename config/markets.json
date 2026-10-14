@@ -1,7 +1,7 @@
 {
-  "version": "1.0.0",
-  "updated_at": "2026-10-10",
-  "change_note": "Two more markets for the header switch: Israeli companies through their US listings (against EIS) and a menu of iShares index funds (against SPY). Nasdaq stays the default and the only market the brain, rules, paper and people read.",
+  "version": "1.1.0",
+  "updated_at": "2026-10-14",
+  "change_note": "Three more lists for the header switch and the home page: the biggest chip makers (against SOXX), tech giants (against QQQ) and energy companies (against XLE). Nasdaq stays the default and the only market the brain, rules, paper and people read.",
   "default": "nasdaq",
   "markets": [
     {
@@ -36,6 +36,39 @@
       "benchmark_label": "S&P 500 (SPY proxy)",
       "data": "data/markets/ishares",
       "note": "A menu of broad iShares index funds, each measured against the S&P 500."
+    },
+    {
+      "id": "chips",
+      "label": "Chips",
+      "name": "Top chip makers",
+      "kind": "stocks",
+      "watchlist": "config/watchlists/chips.json",
+      "benchmark": "SOXX",
+      "benchmark_label": "Chip makers as a group (SOXX proxy)",
+      "data": "data/markets/chips",
+      "note": "The biggest US-listed chip makers (semiconductors), each measured against the whole chip industry."
+    },
+    {
+      "id": "tech",
+      "label": "Big Tech",
+      "name": "Top tech giants",
+      "kind": "stocks",
+      "watchlist": "config/watchlists/tech.json",
+      "benchmark": "QQQ",
+      "benchmark_label": "Nasdaq-100 (QQQ proxy)",
+      "data": "data/markets/tech",
+      "note": "The biggest US technology companies, each measured against the Nasdaq-100."
+    },
+    {
+      "id": "energy",
+      "label": "Energy",
+      "name": "Top energy companies",
+      "kind": "stocks",
+      "watchlist": "config/watchlists/energy.json",
+      "benchmark": "XLE",
+      "benchmark_label": "Energy companies as a group (XLE proxy)",
+      "data": "data/markets/energy",
+      "note": "The biggest US oil and gas companies, each measured against the whole energy sector."
     }
   ]
 }

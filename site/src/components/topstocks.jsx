@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { loadMarketCandles } from "../lib/data.js";
 import { useReducedMotion } from "../lib/motion.js";
 import { dotIndex, miniGeometry, miniSummary, miniWindow, nearCards, snapStops, stepStop } from "../lib/carousel.js";
+import { lastCandle } from "../lib/spotlight.js";
 import { ArrowRight, Chevron } from "./ui.jsx";
 
 /*
@@ -31,7 +32,7 @@ const GAP = 16;
 const RETRY_MS = 20000;
 
 /** The carousel. `items` from topStocks() (lib/carousel.js); `openTo(route)` opens a page and its section. */
-export function TopStocks({ items, manifest, marketId = "nasdaq", title = "Top stocks", one = "company", fallback = "Its short summary appears with the next company update.", openTo, seeCandles }) {
+export function TopStocks({ items, manifest, marketId = "nasdaq", title = "Top stocks", subtitle = null, headingId = "top-stocks-title", one = "company", fallback = "Its short summary appears with the next company update.", openTo, seeCandles }) {
   const reduced = useReducedMotion();
   const rail = useRef(null);
   const [geo, setGeo] = useState({ step: 0, stops: [0], left: 0, width: 0 });
@@ -118,9 +119,12 @@ export function TopStocks({ items, manifest, marketId = "nasdaq", title = "Top s
   if (!count) return null;
 
   return (
-    <section aria-labelledby="top-stocks-title" className="mx-auto w-full max-w-[1040px] px-4 pt-7">
+    <section aria-labelledby={headingId} className="mx-auto w-full max-w-[1040px] px-4 pt-7">
       <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-1">
-        <h2 id="top-stocks-title" className="text-[clamp(24px,6.4vw,30px)] leading-tight font-semibold tracking-[-0.02em] text-ink">{title}</h2>
+        <div className="min-w-0">
+          <h2 id={headingId} className="text-[clamp(26px,7vw,34px)] leading-tight font-bold tracking-[-0.025em] text-ink">{title}</h2>
+          {subtitle && <p className="mt-1 text-[16px] leading-relaxed text-ink-2">{subtitle}</p>}
+        </div>
         <p className={`flex items-center gap-2 text-[16px] text-ink-2 transition-opacity duration-500 ${swiped ? "invisible opacity-0" : ""}`} aria-hidden={swiped}>
           <span>Swipe<span className="hidden md:inline"> or use the arrows</span> to see more</span>
           <ArrowRight className="size-4 shrink-0 text-ink" />
@@ -266,19 +270,33 @@ function MiniCandles({ name, ticker, chart }) {
   }
   return (
     <figure>
+      {win && <LastDay win={win} />}
       <div ref={ref} style={{ height: CHART_H }}>{body}</div>
       <figcaption className="mt-2.5">
         {chart?.state !== "missing" && chart?.state !== "error" && <span className="block text-[15px] text-ink-2">Last month: one candle a day.</span>}
         {win && (
           <span className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-[15px] text-ink-2" aria-hidden="true">
-            <KeyItem mark="up">Up day</KeyItem>
-            <KeyItem mark="down">Down day</KeyItem>
+            <KeyItem mark="up">Green: up day</KeyItem>
+            <KeyItem mark="down">Red: down day</KeyItem>
             <KeyItem mark="avg">Twenty-day average</KeyItem>
             <KeyItem mark="last">Newest day</KeyItem>
           </span>
         )}
       </figcaption>
     </figure>
+  );
+}
+
+/** The newest candle, big and plain: a green day (it closed higher than it opened) or a red one. */
+function LastDay({ win }) {
+  const day = lastCandle(win);
+  if (!day) return null;
+  const green = day === "green";
+  return (
+    <p className={`mb-3 rounded-2xl border px-4 py-2.5 text-[16.5px] leading-snug ${green ? CHIP.accent : CHIP.down}`}>
+      <span className="font-bold"><span aria-hidden="true" className="mr-1.5 text-[12px]">{green ? "▲" : "▼"}</span>{green ? "Green day." : "Red day."}</span>{" "}
+      The last day closed {green ? "higher" : "lower"} than it opened.
+    </p>
   );
 }
 

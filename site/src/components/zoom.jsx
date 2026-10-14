@@ -117,24 +117,7 @@ export function CandleZoom({ it, manifest, marketId, onClose, openTo }) {
           <section className="mt-6">
             <h3 className="text-[20px] font-bold tracking-[-0.01em] text-ink">Candles to notice</h3>
             {!spots.length && <p className="mt-2 text-[16.5px] leading-relaxed text-ink-2">Nothing stands out in this stretch: calm, ordinary days.</p>}
-            <ol className="mt-3 grid gap-2.5">
-              {spots.map((s, k) => {
-                const on = focus === s.i;
-                return (
-                  <li key={s.i} className="motion-safe:animate-[rise_420ms_ease-out_both]" style={{ animationDelay: reduced ? undefined : `${250 + k * 90}ms` }}>
-                    <button type="button" onClick={() => setFocus(on ? null : s.i)} aria-pressed={on}
-                      className={`flex w-full gap-3 rounded-2xl border p-4 text-left transition-colors ${on ? "border-accent/60 bg-accent/10" : "border-line-2 hover:border-ink-3"}`}>
-                      <span className="grid size-8 shrink-0 place-items-center rounded-full text-[15px] font-bold text-bg" style={{ background: TONE[s.tone] }}>{s.n}</span>
-                      <span className="min-w-0">
-                        <span className="block text-[17px] font-semibold text-ink">{s.title} <span className="font-normal text-ink-3">· {dayWords(s.date)}</span></span>
-                        <span className="mt-1 block text-[15.5px] leading-relaxed text-ink-2">{s.why}</span>
-                        <span className="mt-1.5 block text-[14px] font-medium text-accent">{on ? "Zoomed in · tap to go back" : "Tap to zoom in"}</span>
-                      </span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ol>
+            <SpotList spots={spots} focus={focus} onPick={(s) => setFocus(focus === s.i ? null : s.i)} reduced={reduced} zoomWords />
             <p className="mt-4 text-[14.5px] leading-relaxed text-ink-3">{SPOT_CAVEAT} Our prices arrive once a day after the close, so this cannot see moves inside a trading day.</p>
             {openTo && (
               <button type="button" onClick={() => { onClose(); openTo(it.candlesTo); }} className="btn mt-4 min-h-[48px] justify-center">The full chart with numbers →</button>
@@ -146,6 +129,32 @@ export function CandleZoom({ it, manifest, marketId, onClose, openTo }) {
     document.body,
   );
 }
+
+/** The numbered "candles to notice", each with its plain reason; tapping one calls onPick (zoom in, or point at it). */
+export function SpotList({ spots, focus, onPick, reduced, zoomWords = false }) {
+  return (
+    <ol className="mt-3 grid gap-2.5">
+      {spots.map((s, k) => {
+        const on = focus === s.i;
+        return (
+          <li key={s.i} className="motion-safe:animate-[rise_420ms_ease-out_both]" style={{ animationDelay: reduced ? undefined : `${250 + k * 90}ms` }}>
+            <button type="button" onClick={() => onPick(s)} aria-pressed={on}
+              className={`flex w-full gap-3 rounded-2xl border p-4 text-left transition-colors ${on ? "border-accent/60 bg-accent/10" : "border-line-2 hover:border-ink-3"}`}>
+              <span className="grid size-8 shrink-0 place-items-center rounded-full text-[15px] font-bold text-bg" style={{ background: TONE[s.tone] }}>{s.n}</span>
+              <span className="min-w-0">
+                <span className="block text-[17px] font-semibold text-ink">{s.title} <span className="font-normal text-ink-3">· {dayWords(s.date)}</span></span>
+                <span className="mt-1 block text-[15.5px] leading-relaxed text-ink-2">{s.why}</span>
+                <span className="mt-1.5 block text-[14px] font-medium text-accent">{zoomWords ? (on ? "Zoomed in · tap to go back" : "Tap to zoom in") : (on ? "Shown on the chart · tap to clear" : "Tap to see it on the chart")}</span>
+              </span>
+            </button>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
+export const SPOT_TONE = TONE;
 
 const dayWords = (iso) => new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
 

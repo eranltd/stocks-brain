@@ -13,7 +13,7 @@ export function requestChecklistView(v) {
   if (CHECKLIST_VIEWS.includes(v)) pendingView = v;
 }
 export function useChecklistView() {
-  const [view, setView] = useStoredChoice(CHECKLIST_VIEW_KEY, "checks", CHECKLIST_VIEWS);
+  const [view, setView] = useStoredChoice(CHECKLIST_VIEW_KEY, "candles", CHECKLIST_VIEWS);
   // Read during render, so the page and its card (both mount in one pass) each see the request.
   const [asked] = useState(() => pendingView);
   useEffect(() => {
@@ -155,7 +155,7 @@ export function ChecklistCard({ data, symbol, go, view: viewProp, onView }) {
   const edge = edgeWords(br);
   const switcher = (
     <div className="mt-4">
-      <Segmented label="Checklist view" value={view} onChange={setView} options={[{ value: "checks", label: "Checks" }, { value: "candles", label: "Candles" }]} />
+      <Segmented label="Checklist view" value={view} onChange={setView} options={[{ value: "candles", label: "Candles" }, { value: "checks", label: "Checks" }]} />
     </div>
   );
   if (view === "candles") {

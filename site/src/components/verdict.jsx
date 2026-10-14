@@ -7,6 +7,10 @@ import { ArrowRight, Reveal } from "./ui.jsx";
 
 const TONE = { accent: "var(--accent)", down: "var(--down)", flat: "var(--ink-2)" };
 const longDate = (iso) => new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" });
+const RANK = { accent: 0, flat: 1, down: 2 };
+const SURE_RANK = { "very sure": 0, "fairly sure": 1, "not very sure": 2 };
+/** Strongest idea first: thumbs up before just watching before thumbs down, and surer before less sure. */
+const rankRows = (rows) => [...rows].sort((a, b) => (RANK[a.tone] ?? 1) - (RANK[b.tone] ?? 1) || (SURE_RANK[a.sure] ?? 3) - (SURE_RANK[b.sure] ?? 3));
 const COUNT = ["No", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"];
 
 function opts(data) {
@@ -122,9 +126,9 @@ export function VerdictPage({ data, go }) {
 
       {v.rows.length > 0 && (
         <section>
-          <h3 className="mb-1 px-1 text-[22px] font-semibold tracking-[-0.02em]">What it thinks of our stocks</h3>
-          <p className="mb-4 px-1 text-[15.5px] leading-relaxed text-ink-2">For learning, not for buying: the brain studies these companies every day, but none has earned a place for real money. Your money follows the answer above.</p>
-          <ul className="grid gap-4">{v.rows.map((r) => <StockCard key={r.ticker} r={r} go={go} />)}</ul>
+          <h3 className="mb-1 px-1 text-[22px] font-semibold tracking-[-0.02em]">Top stocks to hold this year</h3>
+          <p className="mb-4 px-1 text-[15.5px] leading-relaxed text-ink-2">The brain's best ideas, strongest first. It tests them with pretend money before trusting them: none has beaten the whole market yet, so keep your main money in the answer above.</p>
+          <ul className="grid gap-4">{rankRows(v.rows).map((r) => <StockCard key={r.ticker} r={r} go={go} />)}</ul>
         </section>
       )}
 

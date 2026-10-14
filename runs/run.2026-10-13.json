@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "run_id": "run.2026-10-13",
+  "date": "2026-10-13",
+  "generated_at": "2026-10-14T05:35:16Z",
+  "status": "ok",
+  "sample": false,
+  "model": "Claude Code routine",
+  "cost": {
+    "usd": 0.0,
+    "input_tokens": 12062,
+    "output_tokens": 1609,
+    "cap_usd": 2.5
+  },
+  "duration_minutes": 10.0,
+  "pack": {
+    "hash": "7d298e3dabf86a9694aaff41600823cad3cb9434de1236ea9c88681887b8171a",
+    "tokens": 12062,
+    "cap_tokens": 14000
+  },
+  "doc_versions": {
+    "strategy": "0.2.0",
+    "methodology": "0.15.0",
+    "guardrails": "0.1.0",
+    "learnings": "0.1.0"
+  },
+  "repair_retries": 0,
+  "summary": "The history test was read and frozen: every pre-registered stock rule was rejected against random baskets from this same list, and simply holding every name equally did better than any rule and the core. Setup checks and past strength have shown no edge here. Today's four calls are all neutral and low, unchanged from recent runs, and nothing here is expected to beat the index. All of it is pretend money; the household's real money stays in the whole-market plan.",
+  "eli5": "The brain tested its stock-picking rules on old races, and stocks picked out of a hat did as well or better. So today it only looks at four stocks with pretend money, like a kid looking at toys in a shop window. The real money stays in one big basket that holds a bit of every company.",
+  "picks": [
+    {
+      "id": "2026-10-13:MSFT",
+      "ref_date": "2026-10-13",
+      "pick": {
+        "ticker": "MSFT",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Microsoft passes three setup checks and beat the benchmark over the last quarter and half year, but it is stretched above its fifty day average with an overbought reading and still lags over the year. The history test rejected every rule built on these checks, so the house rule against chasing a stretched name decides it. Pershing Square's disclosed book holds it bullish; the fund's matured record is too thin to prove anything, and this call neither follows nor fights it. Unchanged from the last runs.",
+        "risks": [
+          "Earnings are expected in about two weeks and not yet confirmed, inside the scoring horizon.",
+          "Stretched above its trend after a fast run, so a pullback toward its average is common.",
+          "Deepest drop over the past year among the paper names, with swings well above the benchmark's.",
+          "Checklist reward-to-risk to the first target is far too thin under the house rule."
+        ],
+        "invalidation": "A large move ahead of or behind the benchmark beyond the flat band over the horizon, most likely around the report, would show this neutral call was wrong.",
+        "evidence": [
+          "rules_history.verdicts",
+          "market.msft.setup",
+          "market.msft.risk",
+          "checklist.names.msft",
+          "outlook.next_earnings.msft",
+          "people.fund.pershing-square-capital-management",
+          "track_record.names.msft"
+        ],
+        "eli5": "Microsoft ran up very fast, like a ball thrown high, and it gets its report card soon. Balls often come down a bit, so the brain just watches with pretend money and does not buy."
+      }
+    },
+    {
+      "id": "2026-10-13:AMGN",
+      "ref_date": "2026-10-13",
+      "pick": {
+        "ticker": "AMGN",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Amgen is the only name passing all four setup checks without being stretched, and it leads the benchmark on every window. But full-score names did no better than the benchmark in the base rates, gate passers did slightly worse than names failing it, and the history test rejected every rule built on these checks. It is not in the forward paper book, and the checklist reward-to-risk is too thin for a new entry. Unchanged from the last runs.",
+        "risks": [
+          "The pack holds no earnings date for it, so a report may land inside the horizon unseen.",
+          "Its own swings are larger than the benchmark's even though it moves little with it.",
+          "Volume is weakening and the checklist reward-to-risk to the first target is too thin.",
+          "It moves partly with Gilead, so one health care shock would hit both."
+        ],
+        "invalidation": "A large move away from the benchmark in either direction over the horizon, or the trend check failing, would show this neutral call was wrong.",
+        "evidence": [
+          "rules_history.verdicts",
+          "base_rates.by_score",
+          "base_rates.gate",
+          "market.amgn.setup",
+          "market.amgn.risk",
+          "checklist.names.amgn",
+          "track_record.names.amgn"
+        ],
+        "eli5": "Amgen gets top marks on the brain's chart test. But kids with top marks on this test did not win more races before. So the brain says it does not know, and only watches with pretend money."
+      }
+    },
+    {
+      "id": "2026-10-13:AAPL",
+      "ref_date": "2026-10-13",
+      "pick": {
+        "ticker": "AAPL",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Apple sits at its high for the year, passes three setup checks and is not stretched, and it led the benchmark over the half year and the year. Yet it lagged over the last month and quarter and sits far above its long average, the zone the library calls extended. The history test found no edge in these checks, and the checklist reward-to-risk to the first target is too thin. Unchanged from the last runs.",
+        "risks": [
+          "Earnings are expected in under three weeks and not confirmed, inside the scoring horizon.",
+          "Lagging the benchmark over the last month and quarter.",
+          "Far above its long average, so a pullback toward it would not be unusual.",
+          "Checklist reward-to-risk to the first target is too thin under the house rule."
+        ],
+        "invalidation": "A large gap against or ahead of the benchmark over the horizon, or a close below its fifty day average, would show this neutral call was wrong.",
+        "evidence": [
+          "rules_history.verdicts",
+          "market.aapl",
+          "market.aapl.setup",
+          "library.s-050:p08",
+          "checklist.names.aapl",
+          "outlook.next_earnings.aapl",
+          "track_record.names.aapl"
+        ],
+        "eli5": "Apple has climbed to its highest spot this year, like a kite way up. Kites that high can dip in a gust. The brain does not guess the wind, so it just watches with pretend money."
+      }
+    },
+    {
+      "id": "2026-10-13:GILD",
+      "ref_date": "2026-10-13",
+      "pick": {
+        "ticker": "GILD",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Gilead passes three setup checks and is not stretched, but it fails the half year strength check, slipped below its twenty day average and lagged the benchmark over the last month. Its filing shows an operating and net loss over the trailing year despite strong free cash flow and growing revenue; the pack does not say why. Three checks carried no edge in the base rates and the rules were rejected in history. Unchanged from the last runs.",
+        "risks": [
+          "A trailing year loss whose cause is not in the pack.",
+          "The pack holds no earnings date for it, so a report may land inside the horizon unseen.",
+          "Volume is weakening and the checklist reward-to-risk to the first target is too thin.",
+          "It moves partly with Amgen, so the health care names share one risk."
+        ],
+        "invalidation": "A large move away from the benchmark in either direction over the horizon, or the trend check failing, would show this neutral call was wrong.",
+        "evidence": [
+          "rules_history.verdicts",
+          "rules_history.yardsticks",
+          "market.gild.setup",
+          "fundamentals.names.gild",
+          "checklist.names.gild",
+          "track_record.names.gild"
+        ],
+        "eli5": "Gilead is like a shop that sells more and keeps cash coming in, but its books still show a loss this year. The brain is not sure what that means, so it waits and watches with pretend money."
+      }
+    }
+  ]
+}

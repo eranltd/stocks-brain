@@ -1,18 +1,17 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { fmtDate, fmtNum, numWord, relDays } from "../lib/format.js";
 import { marketBrief } from "../components/brief.jsx";
-import { STAGES } from "../components/trust.jsx";
-import { nextRebalance } from "../components/goal.jsx";
 import { comingUp, inDays, todayISO } from "../lib/outlook.js";
 import { ago, buildFeed, byDay, filterFeed, KIND_LABEL, KINDS } from "../lib/feed.js";
 import { ArrowRight, Reveal, Segmented } from "../components/ui.jsx";
 import { heldAndPicked, todayCall } from "./Details.jsx";
 import { marketDay } from "../lib/marketday.js";
-import { companiesToKnow, marketWords, newsLines, planWords } from "../lib/simple.js";
+import { companiesToKnow, marketWords, newsLines } from "../lib/simple.js";
 import { topStocks } from "../lib/carousel.js";
 import { TopStocks } from "../components/topstocks.jsx";
 import { requestChecklistView } from "../components/checklist.jsx";
 import { LatestVerdict } from "../components/verdict.jsx";
+import { MoneyAction } from "../components/money.jsx";
 import { candlesOf, fundCard, MARKET_WHO, marketNote, nasdaqOnlyLine, NOT_YET, nounsFor } from "../lib/markets.js";
 
 const plural = (n, one, many) => (n === 1 ? one : many);
@@ -219,10 +218,8 @@ function SimpleHome({ data, market, go, showDetails }) {
   const md = isDefault ? data : market.state === "ready" ? market.data : null;
   const words = md ? homeWords(md, { isDefault, held: isDefault ? held : [], picked: isDefault ? picked : [], todayIso, funds: data.funds }) : null;
   const nouns = nounsFor(market?.entry);
-  const nasdaqChecklist = data.checklist && (!data.checklist.sample || data.sample) ? data.checklist : null;
   // "See the candles": the Stock page opens with its checklist card on the Candles view, as the brief's own link does.
   const seeCandles = (to) => { requestChecklistView("candles"); openAt(go, to); };
-  const plan = planWords({ held, picked, checklist: nasdaqChecklist, outlook: data.outlook, names: data.names, stage: call.stage, nextCheck: nextRebalance(call.asOf), today: todayIso, bench: data.bench.symbol });
   const sample = md ? md.sample || (!isDefault && !md.livePrices) : data.sample;
   const status = call.stale ? "The data is old: the daily update may have failed." : sample ? "Sample data, not the market." : "Live: updated after each US close.";
   const statusTone = call.stale ? "var(--down)" : sample ? "var(--people)" : "var(--accent)";
@@ -310,25 +307,12 @@ function SimpleHome({ data, market, go, showDetails }) {
 
         <LatestVerdict data={data} go={go} />
 
-        <SimpleCard kicker="Our plan: one, two, three" tone="var(--accent)">
-          {!isDefault && <p className="mb-4 text-[15.5px] leading-relaxed text-ink-2">Our plan always follows the Nasdaq list; {label} is for looking, not part of it.</p>}
-          <ol className="grid gap-4">
-            {plan.steps.map((s, i) => (
-              <li key={STEP_WORD[i]} className="flex gap-4">
-                <span className="meta w-14 shrink-0 pt-1 text-accent">{STEP_WORD[i]}</span>
-                <span className="min-w-0 text-[18px] leading-snug text-ink">{s}</span>
-              </li>
-            ))}
-          </ol>
-          {plan.next && <p className="mt-5 border-t border-line pt-4 text-[17px] text-ink">{plan.next}</p>}
-          <p className="mt-3 text-[15px] leading-relaxed text-ink-2">{plan.honest}</p>
-          <button type="button" onClick={() => go("portfolio")} className="meta mt-4 inline-flex min-h-[44px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">The practice portfolio <ArrowRight className="size-3.5" /></button>
-        </SimpleCard>
+        <MoneyAction data={data} compact />
       </div>
 
       <Reveal className="mt-10 grid gap-3 text-center">
         <button type="button" onClick={showDetails} className="btn btn-primary justify-center">Show the details <ArrowRight /></button>
-        <p className="meta mt-6 normal-case tracking-[0.04em]">A practice notebook for one household, not financial advice.</p>
+        <p className="meta mt-6 normal-case tracking-[0.04em]">A notebook for one household, not personal financial advice.</p>
       </Reveal>
     </div>
     </>
@@ -414,39 +398,23 @@ function Fact({ label, value, note }) {
 
 /** Hello and what to do, in one pinned card. */
 function TodayCard({ data, call, run, todayIso, go }) {
-  const { stage, small, met, held, corePct, rec, lr, asOf, head, accent, stale } = call;
+  const { asOf, stale } = call;
   const tone = stale ? "var(--down)" : "var(--accent)";
   const lastRun = data.latest?.date ?? null;
-  const hasRule = Boolean(lr || rec);
   return (
     <PinnedCard kicker="Today" tone={tone}>
       <h2 className="display text-[clamp(28px,7.4vw,36px)] leading-[1.05] tracking-[-0.03em]">Hi! Today is <span className="text-accent">{noYear(todayIso)}.</span></h2>
       <div className="mt-4">
         <Fact label="Last market close we have" value={noYear(asOf)} note={stale ? `${call.age} days old: the daily update may have failed` : relDays(asOf)} />
         <Fact label="Last time the brain ran" value={lastRun ? noYear(lastRun) : "Not yet"} note={lastRun ? relDays(lastRun) : null} />
-        {run && <Fact label="What it flagged" value={`${numWord(run.picks.length).toLowerCase()} ${plural(run.picks.length, "name", "names")}`} note="in the feed below" />}
+        {run && <Fact label="Stocks it looked at closely" value={`${numWord(run.picks.length).toLowerCase()} ${plural(run.picks.length, "stock", "stocks")}`} note="in the feed below" />}
       </div>
       <div className="mt-5 border-t border-line pt-5">
-        <div className="meta mb-2" style={{ color: tone }}>What should we do?</div>
-        <div className="text-[22px] leading-snug font-semibold tracking-[-0.02em]">{head} <span style={{ color: tone }}>{accent}</span></div>
-        {stale && <Para className="mt-3 text-down">The data is stale. Please don't act on anything below until the daily update runs again.</Para>}
-        {!stale && (
-          <Para className="mt-3">
-            {hasRule && (
-              <>
-                The practice portfolio holds <Ink>{held.length ? held.join(", ") : "no single stocks"}</Ink>
-                {corePct > 0 ? <> and <Ink>{fmtNum(corePct, 0)}%</Ink> in a plain index fund</> : null}. It takes its next look on <Ink>{fmtDate(nextRebalance(asOf))}</Ink>.{" "}
-              </>
-            )}
-            {stage >= 2
-              ? <>We are at trust stage {stage}: {STAGES[stage].money.toLowerCase()}, within the house limits.</>
-              : <>No real money moves yet: <Ink>{met} of {small.length}</Ink> conditions to trust the plan are met so far.</>}
-          </Para>
-        )}
-        <div className="mt-4 rounded-2xl border border-line-2 bg-surface-2 p-4 text-[14px] leading-relaxed text-ink-2">
-          <span className="text-ink">In short:</span> keep the savings in the index fund. Anything else is a practice run on paper.
-        </div>
-        <button type="button" onClick={() => go("details")} className="meta mt-4 inline-flex min-h-[40px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">Market details <ArrowRight className="size-3.5" /></button>
+        <div className="meta mb-2" style={{ color: tone }}>What should I do with my money?</div>
+        {stale
+          ? <Para className="text-down">The data is old. Please don't act on anything below until the daily update runs again.</Para>
+          : <Para>The brain's page answers it in simple words, based on when you might need the money. Most of the time the answer is the same calm one: own the whole market and leave it alone.</Para>}
+        <button type="button" onClick={() => go("verdicts")} className="btn btn-primary mt-4 justify-center">The brain's answer <ArrowRight /></button>
       </div>
     </PinnedCard>
   );
@@ -490,7 +458,7 @@ function ComingStrip({ data, ahead, todayIso, go }) {
           ))}.
         </p>
       )}
-      <p className="meta mt-3 normal-case tracking-[0.04em]">A results day can move a stock a lot either way: event risk, not a signal.</p>
+      <p className="meta mt-3 normal-case tracking-[0.04em]">A results day is like a report card: the stock can jump a lot either way. It is not a sign to buy or sell.</p>
     </PinnedCard>
   );
 }
@@ -508,8 +476,8 @@ function Learned({ data, call, brief }) {
         {edge ? <>Our checks <span className="text-people">helped.</span></> : better ? <>A hint of help, <span className="text-people">nothing proven.</span></> : <>Our checks haven't <span className="text-people">beaten luck.</span></>}
       </div>
       <Para className="mt-3">
-        {call.v1res && <>On past prices, our stock-picking rule beat only <Ink>{fmtNum(call.v1res.percentile, 0)}%</Ink> of random picks from the same list. </>}
-        {br && (edge ? "Names that passed the checks did measurably better than the index afterwards." : better ? "Names that passed the checks did slightly better than the rest, but not by enough to trust." : "Names that passed the checks did no better than the ones that failed.")}
+        {call.v1res && <>We tested our stock-picking rule on years of past prices. It beat only <Ink>{fmtNum(call.v1res.percentile, 0)} out of every 100</Ink> baskets of stocks picked at random; plain luck would beat about half. </>}
+        {br && (edge ? "Stocks that passed our checks did better than the whole market afterwards." : better ? "Stocks that passed our checks did a tiny bit better than the others, not enough to trust." : "Stocks that passed our checks did no better than the ones that failed.")}
       </Para>
       {lesson && (
         <figure className="mt-4 rounded-2xl border border-line-2 bg-surface-2 p-4">
@@ -544,7 +512,7 @@ function Feed({ feed, filter, pick, shown, setShown, open, data, feedTop }) {
         <h2 className="text-[22px] font-semibold tracking-[-0.02em]">The feed</h2>
         <span className="meta normal-case tracking-[0.04em]">newest first</span>
       </div>
-      <p className="mt-1 text-[13.5px] leading-relaxed text-ink-3">Every dated thing in our data: market closes, unusual moves, the brain's runs, company news, people's calls and checklist changes. Tap one to open it.</p>
+      <p className="mt-1 text-[13.5px] leading-relaxed text-ink-3">Everything that happened, newest first, like a diary: how the market closed, big jumps, what the brain said, company news and what famous investors said. Tap one to open it.</p>
       <div className="mt-4">
         <Segmented label="Show" value={filter} onChange={pick}
           options={["all", ...KINDS].map((k) => ({ value: k, label: KIND_LABEL[k], count: counts[k] }))} />

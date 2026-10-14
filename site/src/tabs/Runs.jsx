@@ -14,27 +14,30 @@ export default function Runs({ data }) {
   return (
     <Container className="pt-20">
       <SectionHead
-        eyebrow="Runs"
-        title={<>Every call, <Accent>on the record.</Accent></>}
-        lede={`One brain run per market day, started by itself each morning. Each run records its cost, minutes, pack hash and the doc versions it read. If the pack is over the token cap, the run stops before the brain reads it; runs on the Claude subscription record $0.`}
-        right={<span className="meta">{runs.length} logged</span>}
+        eyebrow="Runs · behind the scenes"
+        title={<>Every morning, <Accent>on the record.</Accent></>}
+        lede={<>
+          <span className="block text-ink">In simple words: this is the brain's time sheet. Each market morning it works once, and here we write down what that cost and how long it took, so nothing runs up a bill unseen.</span>
+          <span className="mt-3 block">Each run also notes a fingerprint of the data pack it read and which rule versions it used. If the pack is too big for the AI to read (over the size cap), the run stops before the AI starts. Runs on the household's Claude subscription show $0.</span>
+        </>}
+        right={<span className="meta">{runs.length} mornings logged</span>}
       />
       <Strip
         cells={[
-          { value: fmtUsd(avg), label: "avg per run", tone: avg > settings.cost.target_usd ? "people" : "accent", desc: `Target under ${fmtUsd(settings.cost.target_usd)}.` },
-          { value: fmtUsd(total), label: `last ${runs.length} runs`, tone: "flat", desc: `${over} ${over === 1 ? "run" : "runs"} above the ${fmtUsd(settings.cost.warn_usd)} warning.` },
-          { value: fmtNum(mins, 1), label: "avg minutes", tone: "flat", desc: "Wall time from pack to record." },
-          { value: failed, label: "failed closed", tone: failed ? "down" : "accent", desc: "Stopped on a cap or a schema check, by design." },
+          { value: fmtUsd(avg), label: "average cost per morning", tone: avg > settings.cost.target_usd ? "people" : "accent", desc: `We aim to stay under ${fmtUsd(settings.cost.target_usd)}.` },
+          { value: fmtUsd(total), label: `last ${runs.length} runs`, tone: "flat", desc: `${over} ${over === 1 ? "run" : "runs"} cost more than the ${fmtUsd(settings.cost.warn_usd)} warning line.` },
+          { value: fmtNum(mins, 1), label: "average minutes", tone: "flat", desc: "Clock time from packing the data to saving the result." },
+          { value: failed, label: "stopped safely", tone: failed ? "down" : "accent", desc: "Stopped on purpose because a size limit or a form check failed, so nothing bad got saved." },
         ]}
       />
 
       <Reveal className="card mt-6 p-6 sm:p-8">
         <div className="mb-6 flex flex-wrap items-baseline justify-between gap-3">
-          <h3 className="text-[19px] font-semibold tracking-[-0.02em]">Cost per run</h3>
+          <h3 className="text-[19px] font-semibold tracking-[-0.02em]">What each morning cost</h3>
           <div className="flex flex-wrap gap-4 text-[12.5px] text-ink-2">
-            <span className="inline-flex items-center gap-1.5"><i className="size-2.5 rounded-sm bg-ink-3" />within warning</span>
-            <span className="inline-flex items-center gap-1.5"><i className="size-2.5 rounded-sm bg-people" />over warning</span>
-            <span className="inline-flex items-center gap-1.5"><i className="size-2.5 rounded-sm bg-down" />failed</span>
+            <span className="inline-flex items-center gap-1.5"><i className="size-2.5 rounded-sm bg-ink-3" />under the warning line</span>
+            <span className="inline-flex items-center gap-1.5"><i className="size-2.5 rounded-sm bg-people" />over the warning line</span>
+            <span className="inline-flex items-center gap-1.5"><i className="size-2.5 rounded-sm bg-down" />stopped</span>
           </div>
         </div>
         <CostChart runs={runs} cost={settings.cost} />
@@ -45,7 +48,7 @@ export default function Runs({ data }) {
           <table className="w-full min-w-[880px] text-[13.5px]">
             <thead>
               <tr className="meta border-b border-line text-left">
-                {["Run", "Status", "Cost", "Minutes", "Pack", "Picks", "Docs", "Hash"].map((h, i) => (
+                {["Morning", "Result", "Cost", "Minutes", "Pack size", "Guesses", "Rule versions", "Fingerprint"].map((h, i) => (
                   <th key={h} className={`px-5 py-4 font-medium ${[2, 3, 5].includes(i) ? "text-right" : ""}`}>{h}</th>
                 ))}
               </tr>

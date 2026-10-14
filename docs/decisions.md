@@ -19,6 +19,17 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   per-point dates into one shared array.
 
 ## 2026-10-13
+- **No 4-5 stock plan; real money follows the honest action.** The household said the stocks plan is not how it wants
+  to invest: it reads the brain and acts. The honest answer the evidence supports is not a stock list. The Brain's
+  verdicts page (and Home) now ask "When might you need this money?" (kept on the device only) and give one plain
+  action: five years or more, the whole-market fund every month; one to five, part safe and part fund; within a year,
+  safe only; with today's cash rate and the fund's past growth and biggest drop from the data. A stock would join only
+  when a tested rule passes history and the trust ladder reaches Small money (`lib/money.js` `stocksEarned`); none
+  does. "Our plan" in the menu became "Experiments" (pretend portfolio, rules we test, the brain's score).
+  `docs/household.md` 0.4.0 and the brain's house facts say the same.
+- **The whole site in simple words (ELI5).** Every page leads with plain words: menu descriptions, page intros and
+  each technical card's "In simple words" line; jargon is explained on first sight (the whole market, biggest drop,
+  how sure). Numbers stay where code computes them.
 - **Company numbers from SEC filings** (`scripts/fundamentals.py`, routine `sec_fundamentals`). The household chose
   the SEC's free XBRL company facts over paid data and social feeds. Each daily run turns every main-list company's
   10-Q and 10-K facts into twelve-month revenue growth, the latest quarter's growth, operating and net margin and free

@@ -67,9 +67,9 @@ test("the market sentence: the day, our companies and the mood, in words", () =>
   assert.equal(flat.more, "It is a little below its high for the year, and the mood is steady.");
   // older data without the S&P 500: the benchmark leads, the regime's drawdown stands in for the high
   const old = marketWords(day({ spx: null, bench: { label: "Nasdaq-100", pct: -2 } }), { state: "normal", metrics: { drawdown_pct: -1 } }, TODAY);
-  assert.equal(old.main, "Our benchmark fell sharply yesterday, but most of our companies rose.");
+  assert.equal(old.main, "The whole market fell sharply yesterday, but most of our companies rose.");
   assert.equal(old.more, "It is close to its high for the year, and the mood is steady.");
-  assert.equal(marketWords(day({ spx: null, bench: null, counted: 0 }), null, TODAY).main, "Our benchmark's last close was yesterday.");
+  assert.equal(marketWords(day({ spx: null, bench: null, counted: 0 }), null, TODAY).main, "The whole market's last close was yesterday.");
   assert.match(marketWords(null, null, TODAY).main, /after the next daily run/);
   // another market: its benchmark in words, its own noun, and its benchmark's distance from the high
   const tlv = marketWords(day({ spx: null, bench: { label: "Israel stock market (EIS proxy)", pct: 0.8 }, rose: 9, fell: 3, counted: 12 }), null, TODAY, { who: "The Israeli market", noun: "companies", fromHigh: -1 });
@@ -111,7 +111,7 @@ test("companies to know: held, then picked, then the day's movers; three to five
   const checklist = { symbols: [ck("AAA", "lean_up"), ck("CCC", "lean_down"), ck("BBB", "mixed")] };
   const list = companiesToKnow({ held: ["AAA", "EEE"], picked: ["AAA", "CCC"], day: day(), outlook, checklist, names, bench: "IDX" });
   assert.deepEqual(list.map((c) => c.ticker), ["AAA", "EEE", "CCC", "FFF"]);
-  assert.deepEqual(list.map((c) => c.tag), ["on paper", "on paper", "the brain is watching", "one of the day's big risers"]);
+  assert.deepEqual(list.map((c) => c.tag), ["in our pretend portfolio", "in our pretend portfolio", "the brain is watching", "one of the day's big risers"]);
   // with today's date, a mover's tag is the day's move in words, so a "Going up" chip beside a fall reads as the chart
   const dated = companiesToKnow({ held: [], picked: [], day: day(), outlook, checklist, names, bench: "IDX", today: TODAY });
   assert.deepEqual(dated.map((c) => c.tag), ["fell sharply yesterday", "rose yesterday"]);

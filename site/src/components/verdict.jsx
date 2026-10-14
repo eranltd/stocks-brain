@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { todayISO } from "../lib/outlook.js";
-import { scorecard, steadyRuns, verdictHistory, whatToDo } from "../lib/verdict.js";
-import { trustStage } from "./trust.jsx";
+import { scorecard, steadyRuns, verdictHistory } from "../lib/verdict.js";
+import { MoneyAction, useHorizon } from "./money.jsx";
+import { HORIZONS, honestAction, moneyFacts } from "../lib/money.js";
 import { ArrowRight, Reveal } from "./ui.jsx";
 
 const TONE = { accent: "var(--accent)", down: "var(--down)", flat: "var(--ink-2)" };
@@ -65,7 +66,13 @@ export function LatestVerdict({ data, go }) {
   if (data.sample) return null;
   const v = verdictHistory(data.runs, opts(data))[0];
   if (!v) return null;
-  const todo = whatToDo(data.lastOk, trustStage(data).stage);
+  return <LatestCard data={data} go={go} v={v} />;
+}
+
+function LatestCard({ data, go, v }) {
+  const [horizon] = useHorizon();
+  const act = horizon ? honestAction(horizon, moneyFacts(data)) : null;
+  const h = HORIZONS.find((x) => x.id === horizon);
   return (
     <Reveal as="article" id="brain-verdict" className="card overflow-hidden">
       <div className="h-1" style={{ background: "var(--ai)" }} />
@@ -73,8 +80,11 @@ export function LatestVerdict({ data, go }) {
         <h2 className="meta mb-4" style={{ color: "var(--ai)" }}>The brain's verdict · {v.when || longDate(v.date)}</h2>
         <p className="text-[clamp(22px,6vw,27px)] leading-snug font-semibold tracking-[-0.015em] text-ink">{v.headline}</p>
         <p className="mt-3 text-[17px] leading-relaxed text-ink-2">{v.eli5}</p>
-        <p className="mt-4 text-[16px] text-ink"><span className="font-semibold">Do I need to do anything?</span> {todo.answer}</p>
-        <button type="button" onClick={() => go("verdicts")} className="btn btn-primary mt-5 justify-center">See what it thinks of each stock <ArrowRight /></button>
+        <p className="mt-4 text-[16.5px] leading-relaxed text-ink">
+          <span className="font-semibold">What to do with your money:</span>{" "}
+          {act ? <>{act.title} <span className="text-ink-3">(for money you need {h.short.toLowerCase()} from now)</span></> : "tap below and say when you might need it."}
+        </p>
+        <button type="button" onClick={() => go("verdicts")} className="btn btn-primary mt-5 justify-center">Open the brain's full answer <ArrowRight /></button>
       </div>
     </Reveal>
   );
@@ -92,7 +102,6 @@ export function VerdictPage({ data, go }) {
     return <p className="card p-6 text-[18px] leading-relaxed text-ink-2">The brain's answers appear here once it has made its first real call.</p>;
   }
   const v = history[0];
-  const todo = whatToDo(data.lastOk, trustStage(data).stage);
   const steady = steadyRuns(data.runs);
   const score = scorecard(data.runs, data.outcomes ?? [], data.settings.scoring.horizon_days, todayISO());
   const togglePast = (d) => setOpenPast((s) => { const n = new Set(s); if (n.has(d)) n.delete(d); else n.add(d); return n; });
@@ -109,15 +118,12 @@ export function VerdictPage({ data, go }) {
         </div>
       </Reveal>
 
-      <Reveal as="section" className="card p-6 sm:p-8">
-        <h3 className="text-[15px] font-semibold uppercase tracking-[0.12em] text-ink-2">Do I need to do anything?</h3>
-        <p className="mt-2 text-[30px] font-semibold tracking-[-0.02em] text-accent">{todo.answer}</p>
-        <p className="mt-2 text-[17px] leading-relaxed text-ink-2">{todo.why}</p>
-      </Reveal>
+      <MoneyAction data={data} />
 
       {v.rows.length > 0 && (
         <section>
-          <h3 className="mb-3 px-1 text-[22px] font-semibold tracking-[-0.02em]">What it thinks of each stock</h3>
+          <h3 className="mb-1 px-1 text-[22px] font-semibold tracking-[-0.02em]">What it thinks of our stocks</h3>
+          <p className="mb-4 px-1 text-[15.5px] leading-relaxed text-ink-2">For learning, not for buying: the brain studies these companies every day, but none has earned a place for real money. Your money follows the answer above.</p>
           <ul className="grid gap-4">{v.rows.map((r) => <StockCard key={r.ticker} r={r} go={go} />)}</ul>
         </section>
       )}
@@ -177,7 +183,7 @@ export function VerdictPage({ data, go }) {
           </ol>
         </section>
       )}
-      <p className="meta mt-2 normal-case tracking-[0.04em]">A practice notebook for one household, not financial advice. The brain's guesses use pretend money.</p>
+      <p className="meta mt-2 normal-case tracking-[0.04em]">A notebook for one household, not personal financial advice. The brain's stock guesses use pretend money.</p>
     </div>
   );
 }

@@ -42,7 +42,7 @@ export default function Details({ data, go }) {
         {run && run.picks.length > 0 && (
           <section id="picks" className="scroll-mt-28 pt-24">
             <SectionHead eyebrow={`The brain · ${fmtDate(run.date)}`} title={<>What the brain <Accent>flagged.</Accent></>}
-              lede="The brain runs by itself every market morning. Each pick is a stance, a thesis and the condition that would prove it wrong. Code scores it after the horizon." size="md" />
+              lede="The brain runs by itself every market morning. Each pick is a guess (up or down), the reason for it, and what would prove it wrong. Later, code checks whether the guess came true. These are ideas to learn from, not things to buy." size="md" />
             <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
               {run.picks.map((p, i) => <PickCard key={p.id} item={p} i={i} name={data.names[p.pick.ticker]} horizon={data.settings.scoring.horizon_days} />)}
             </div>
@@ -95,28 +95,28 @@ function MarketDay({ data, go }) {
     <section id="market-today" className="scroll-mt-28 pt-16 sm:pt-24">
       <SectionHead eyebrow={`${data.livePrices ? "What the market did" : "Sample prices, not the market"} · ${fmtDate(d.date)}`} size="md"
         title={verb ? <>{who} <span className={verbTone}>{verb}.</span></> : <>The last <Accent>close.</Accent></>}
-        lede={<>{d.counted ? <>Of our {d.names} names, <span className="text-ink">{d.rose} rose</span> and <span className="text-ink">{d.fell} fell</span>{d.flat ? `, ${d.flat} unchanged` : ""}.</> : <>Day moves of our names appear after the next daily run.</>} Day moves are percent changes from the close before; tap a name to open it.</>} />
+        lede={<>{d.counted ? <>Of the {d.names} companies we follow, <span className="text-ink">{d.rose} went up</span> and <span className="text-ink">{d.fell} went down</span>{d.flat ? `, ${d.flat} stayed the same` : ""}.</> : <>How the companies we follow moved shows up after the next daily run.</>} Each number is how much the price changed since the day before. Tap a company to see more.</>} />
       <Strip dense cells={[
-        { value: pctOr(d.spx?.pct), label: d.spx?.name ?? "S&P 500", tone: tone(d.spx?.pct), desc: d.spx?.pct == null ? "Its day move appears after the next daily run." : "The broad US market, by size." },
-        { value: pctOr(d.bench?.pct), label: d.bench ? `Nasdaq-100 (${d.bench.symbol})` : "Nasdaq-100", tone: tone(d.bench?.pct), desc: "Our benchmark: the hundred largest Nasdaq companies." },
-        { value: d.counted ? `${d.rose}/${d.fell}` : "–", label: "our names up/down", tone: "flat", desc: `${d.counted} of ${d.names} names on our list.` },
-        { value: d.breadth == null ? "–" : `${fmtNum(d.breadth, 0)}%`, label: "above 50-day avg", tone: "flat", desc: "Share of our names above their fifty-day average: a slow read of breadth." },
+        { value: pctOr(d.spx?.pct), label: d.spx?.name ?? "S&P 500", tone: tone(d.spx?.pct), desc: d.spx?.pct == null ? "Its move for the day shows up after the next daily run." : "The whole US market: about 500 big companies in one number." },
+        { value: pctOr(d.bench?.pct), label: d.bench ? `Nasdaq-100 (${d.bench.symbol})` : "Nasdaq-100", tone: tone(d.bench?.pct), desc: "The yardstick we compare against: the 100 biggest Nasdaq companies, mostly tech." },
+        { value: d.counted ? `${d.rose}/${d.fell}` : "–", label: "our companies up/down", tone: "flat", desc: `${d.counted} of the ${d.names} companies we follow.` },
+        { value: d.breadth == null ? "–" : `${fmtNum(d.breadth, 0)}%`, label: "above their usual level", tone: "flat", desc: "How many of our companies trade above their average price of the last 50 days. More means more companies are joining in." },
       ]} />
       {(d.risers.length > 0 || d.fallers.length > 0) && (
         <Reveal className="card mt-4 p-5 sm:p-6">
           <div className="grid grid-cols-2 gap-3 sm:gap-6">
             <div className="min-w-0">
-              <div className="meta mb-2 text-accent">Biggest risers</div>
+              <div className="meta mb-2 text-accent">Went up the most</div>
               <ul className="grid gap-2">{d.risers.map((m) => <Mover key={m.symbol} m={m} name={data.names[m.symbol]} go={go} />)}{!d.risers.length && <li className="text-[13px] text-ink-3">None rose.</li>}</ul>
             </div>
             <div className="min-w-0">
-              <div className="meta mb-2 text-down">Biggest fallers</div>
+              <div className="meta mb-2 text-down">Went down the most</div>
               <ul className="grid gap-2">{d.fallers.map((m) => <Mover key={m.symbol} m={m} name={data.names[m.symbol]} go={go} />)}{!d.fallers.length && <li className="text-[13px] text-ink-3">None fell.</li>}</ul>
             </div>
           </div>
           {d.sectors.length > 0 && (
             <p className="mt-5 text-[13.5px] leading-relaxed text-ink-2">
-              <span className="meta mr-2">By sector</span>
+              <span className="meta mr-2">By industry</span>
               {d.sectors.map((x, i) => (
                 <Fragment key={x.sector}>{i ? " · " : ""}<span className="whitespace-nowrap">{shortSector(x.sector)} <span className={`num font-mono ${upDown(x.avg)}`}>{fmtPct(x.avg, 1)}</span></span></Fragment>
               ))}
@@ -125,12 +125,12 @@ function MarketDay({ data, go }) {
         </Reveal>
       )}
       <p className="mt-4 text-[14px] leading-relaxed text-ink-2">
-        {d.spx && d.spx.pct == null && <>The {d.spx.name}'s day move appears after the next daily run. </>}
-        {d.spx?.fromHigh != null && <>The {d.spx.name} is {d.spx.fromHigh > -0.05 ? "at" : `${Math.abs(d.spx.fromHigh).toFixed(1)}% below`} its one-year high. </>}
-        {d.breadth != null && <>{fmtNum(d.breadth, 0)}% of our names are above their fifty-day average. </>}
+        {d.spx && d.spx.pct == null && <>The {d.spx.name}'s move for the day shows up after the next daily run. </>}
+        {d.spx?.fromHigh != null && <>The {d.spx.name} is {d.spx.fromHigh > -0.05 ? "at" : `${Math.abs(d.spx.fromHigh).toFixed(1)}% below`} its highest point of the past year. </>}
+        {d.breadth != null && <>{fmtNum(d.breadth, 0)}% of our companies trade above their average price of the last 50 days. </>}
       </p>
       <p className="meta mt-3 normal-case tracking-[0.04em]">
-        Why it moved is not connected yet: news feeds cost money, so this shows what moved, not why. The US market closes at 4 pm New York time (20:00 UTC; 21:00 in winter) and our data arrives after the nightly run, so this updates overnight.
+        This shows what moved, not why: news feeds cost money, so they are not connected yet. The US market closes at 4 pm New York time (20:00 UTC; 21:00 in winter) and our data arrives after the nightly run, so this updates overnight.
       </p>
     </section>
   );
@@ -146,11 +146,11 @@ function ComingUp({ data, go }) {
   const { ahead, undated } = comingUp(data.outlook, today, 30, [...held, ...picked]);
   if (!ahead.length && !undated.length) return null;
   const tag = (t) => (held.includes(t) ? "held" : "picked");
-  const groups = [["Names we hold or picked", ahead.filter((r) => r.first)], ["Others on our list", ahead.filter((r) => !r.first)]].filter(([, rows]) => rows.length);
+  const groups = [["In the pretend portfolio or picked by the brain", ahead.filter((r) => r.first)], ["Others we follow", ahead.filter((r) => !r.first)]].filter(([, rows]) => rows.length);
   return (
     <Reveal className="card mt-6 p-5 sm:p-6">
       <div className="flex items-baseline justify-between gap-3">
-        <div className="meta text-accent">Coming up · earnings</div>
+        <div className="meta text-accent">Coming up · report days</div>
         <span className="meta normal-case tracking-[0.04em]">next 30 days</span>
       </div>
       {groups.map(([label, rows]) => (
@@ -183,7 +183,7 @@ function ComingUp({ data, go }) {
           ))}
         </p>
       )}
-      <p className="mt-3 text-[12.5px] leading-relaxed text-ink-3">A results day can move a stock a lot either way: event risk, not a signal. Dates from each company's outlook card; "expected" means the company has not confirmed it yet.</p>
+      <p className="mt-3 text-[12.5px] leading-relaxed text-ink-3">In simple words: a few times a year each company tells everyone how much it earned. On that day the price can jump or drop a lot, either way. It is a bumpy day, not a sign to do anything. "Expected" means the company has not confirmed the date yet.</p>
     </Reveal>
   );
 }
@@ -201,10 +201,10 @@ function PeopleNote({ data, go }) {
       <div className="min-w-0">
         <div className="meta mb-2 text-people">People we learn from</div>
         <p className="text-[15px] leading-relaxed text-ink-2">
-          {touching.length === 1 ? "A logged public call touches" : `${touching.length} logged public calls touch`} names held or picked here:{" "}
+          {touching.length === 1 ? "A well-known investor said something public about" : `${touching.length} public opinions from well-known investors are about`} companies in the pretend portfolio or picked by the brain:{" "}
           {touching.map((c, i) => (
-            <span key={c.id}>{i ? "; " : ""}<span className="font-mono text-ink">{c.ticker}</span> {c.stance} by {shortVia(c.via)} ({c.source_kind === "13f" ? "13F filed" : "public"} {fmtDate(c.date).replace(/^\w+, /, "")}): {statusPhrase(c, judge)}</span>
-          ))}. Context only: each is scored against the core.
+            <span key={c.id}>{i ? "; " : ""}<span className="font-mono text-ink">{c.ticker}</span> {c.stance} by {shortVia(c.via)} ({c.source_kind === "13f" ? "from a required holdings filing" : "public"} {fmtDate(c.date).replace(/^\w+, /, "")}): {statusPhrase(c, judge)}</span>
+          ))}. Just for background: each opinion is checked later against the whole-market fund.
         </p>
       </div>
       <button type="button" onClick={() => go("people")} className="btn shrink-0 self-start sm:self-center">Their calls <ArrowRight /></button>
@@ -212,7 +212,7 @@ function PeopleNote({ data, go }) {
   );
 }
 
-const VERDICT_WORD = { passes_history: "passes history", candidate: "candidate", inconclusive: "inconclusive", rejected: "rejected" };
+const VERDICT_WORD = { passes_history: "passed the test on past prices", candidate: "promising, not proven", inconclusive: "unclear", rejected: "failed" };
 
 /** What to do today, computed once for both the Today post and the full dashboard's verdict. */
 export function todayCall(data) {
@@ -231,9 +231,9 @@ export function todayCall(data) {
   const v1res = data.rulesResult?.satellite?.rules?.find((r) => r.id === "baseline_portfolio_v1"); // the frozen history verdict
 
   let head, accent;
-  if (stale) [head, accent] = ["Data is stale.", "Don't act on it."];
-  else if (rebalanceToday) [head, accent] = ["Rebalance day.", "Follow the rule, nothing more."];
-  else [head, accent] = ["Nothing to do today.", stage >= 2 ? "Hold the portfolio." : "The core plan stands."];
+  if (stale) [head, accent] = ["The numbers are old.", "Don't act on them."];
+  else if (rebalanceToday) [head, accent] = ["Monthly swap day.", "Only the rule's list changes."];
+  else [head, accent] = ["Nothing to do today.", stage >= 2 ? "Leave everything as it is." : "Stick with the whole-market fund."];
   return { stage, small, asOf, age, stale, lr, rec, held, corePct, met, rebalanceToday, v1res, head, accent };
 }
 
@@ -253,11 +253,12 @@ function Verdict({ data, go }) {
       <Headline size="xl" className="max-w-[15ch]">{head} <Accent>{accent}</Accent></Headline>
       <Reveal delay={350} as="p" className="mx-auto mt-8 max-w-[58ch] text-[clamp(17px,1.8vw,21px)] leading-relaxed text-ink-2">
         {stale ? (
-          <>The newest market close in the data is {fmtDate(asOf)}. The daily routine may have failed; check Routines before reading anything else.</>
+          <>The newest market close in the data is {fmtDate(asOf)}. The daily job that fetches prices may have failed; check Routines before reading anything else.</>
         ) : (
           <>
-            {lr || rec ? <>{rec ? "The rule's paper portfolio holds" : "The rule would hold"} <span className="text-ink">{held.length ? held.join(", ") : "no stocks"}</span>{corePct > 0 ? <> and {fmtNum(corePct, 0)}% index fund</> : null}; it next looks on {fmtDate(nextRebalance(asOf))}. {v1res ? <>On past prices its Playbook test reads <span className="text-ink">{VERDICT_WORD[v1res.verdict] ?? v1res.verdict}</span>: it beat {fmtNum(v1res.percentile, 0)}% of random picks from the same list. </> : null}</> : null}
-            {stage >= 2 ? <>Trust stage {stage}: {STAGES[stage].money.toLowerCase()}, within the house limits.</> : <>No money moves until trust stage 2: <span className="text-ink">{met} of {small.length}</span> conditions met.</>}
+            Real money follows the Brain's honest action, usually a fund that holds the whole market, bought a little at a time.{" "}
+            {lr || rec ? <>Separately, the rule plays a game with pretend money to learn if picking stocks works. {rec ? "Its pretend portfolio holds" : "It would hold"} <span className="text-ink">{held.length ? held.join(", ") : "no stocks"}</span>{corePct > 0 ? <> and {fmtNum(corePct, 0)}% in the whole-market fund</> : null}; it looks again on {fmtDate(nextRebalance(asOf))}. {v1res ? <>Tested on past prices, the result is <span className="text-ink">{VERDICT_WORD[v1res.verdict] ?? v1res.verdict}</span>: it did better than {fmtNum(v1res.percentile, 0)}% of random picks from the same list. </> : null}</> : null}
+            {stage >= 2 ? <>Trust stage {stage}: {STAGES[stage].money.toLowerCase()}, within the house limits.</> : <>No real money follows the rule until trust stage 2: <span className="text-ink">{met} of {small.length}</span> conditions met.</>}
           </>
         )}
       </Reveal>
@@ -266,11 +267,11 @@ function Verdict({ data, go }) {
           <button type="button" onClick={() => go("routines")} className="btn btn-primary">Open routines <ArrowRight /></button>
         ) : (
           <a href="#goal" className="btn btn-primary">
-            The +{data.settings.goal.annual_return_pct}% goal check
+            Is +{data.settings.goal.annual_return_pct}% a year realistic?
             <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M6 13l6 6 6-6" /></svg>
           </a>
         )}
-        <button type="button" onClick={() => go("portfolio")} className="btn">The portfolio <ArrowRight /></button>
+        <button type="button" onClick={() => go("portfolio")} className="btn">The pretend portfolio <ArrowRight /></button>
       </Reveal>
       <Reveal delay={600}>
         <a href="#market-today" onClick={jumpToMarket}
@@ -358,18 +359,18 @@ export function PickCard({ item, i, name, horizon }) {
       <div className="p-7">
         <div className="flex items-center justify-between gap-3">
           <Chip kind={pick.stance} />
-          <span className="meta">+{horizon} trading days</span>
+          <span className="meta">checked in {horizon} market days</span>
         </div>
         <p className="mt-5 text-[16px] leading-relaxed text-ink">{pick.thesis}</p>
         <div className="mt-6 grid gap-4 text-[14px]">
           <div>
-            <div className="meta mb-2">Risks</div>
+            <div className="meta mb-2">What could go wrong</div>
             <ul className="grid gap-1 text-ink-2">
               {pick.risks.map((r) => <li key={r} className="relative pl-4 before:absolute before:left-0 before:top-[0.7em] before:h-px before:w-2 before:bg-ink-3">{r}</li>)}
             </ul>
           </div>
           <div>
-            <div className="meta mb-2">Wrong if</div>
+            <div className="meta mb-2">Proven wrong if</div>
             <p className="text-ink-2">{pick.invalidation}</p>
           </div>
         </div>
@@ -377,7 +378,7 @@ export function PickCard({ item, i, name, horizon }) {
           {pick.evidence.map((e) => <span key={e} className="rounded-full border border-line-2 px-2.5 py-1 font-mono text-[11.5px] text-ink-2">{e}</span>)}
         </div>
         <div className="meta mt-6 flex items-center justify-between border-t border-line pt-5">
-          <span className="text-ink">{item.ref_price != null ? <>ref <span className="num">{fmtNum(item.ref_price)}</span></> : "from the close of"}</span>
+          <span className="text-ink">{item.ref_price != null ? <>price then <span className="num">{fmtNum(item.ref_price)}</span></> : "from the close of"}</span>
           <span className="num">{item.ref_date} → {addTradingDays(item.ref_date, horizon)}</span>
         </div>
       </div>

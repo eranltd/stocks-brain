@@ -64,7 +64,7 @@ export function marketWords(day, regime, today, { who: whoWords = null, noun = "
   if (!day) return { main: "The market's last close appears after the next daily run.", more: "", tone: "flat" };
   const spx = num(day.spx?.pct), bench = num(day.bench?.pct);
   const lead = spx ?? bench;
-  const who = whoWords ?? (spx != null ? "The market" : "Our benchmark"); // its label has digits (Nasdaq-100)
+  const who = whoWords ?? (spx != null ? "The market" : "The whole market"); // its label has digits (Nasdaq-100)
   const when = whenWords(day.date, today);
   const size = sizeWord(lead, "index");
   let main = size ? `${who} ${size} ${when}` : `${who}'s last close was ${when}`;
@@ -149,7 +149,7 @@ export function companiesToKnow({ held = [], picked = [], day, outlook, checklis
   const order = [];
   const tag = {};
   const add = (t, why) => { if (t && t !== bench && !order.includes(t)) { order.push(t); tag[t] = why; } };
-  held.forEach((t) => add(t, "on paper"));
+  held.forEach((t) => add(t, "in our pretend portfolio"));
   picked.forEach((t) => add(t, "the brain is watching"));
   const movers = [...(day?.risers ?? []), ...(day?.fallers ?? [])].sort((a, b) => Math.abs(b.pct) - Math.abs(a.pct) || a.symbol.localeCompare(b.symbol));
   let added = 0; // up to two movers, more only to reach `min`

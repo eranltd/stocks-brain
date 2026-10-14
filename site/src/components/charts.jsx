@@ -168,13 +168,13 @@ export function ExcessChart({ outcomes }) {
       label={(o) => fmtShort(o.run_date)}
       format={(v) => `${v > 0 ? "+" : ""}${v}%`}
       colorOf={(o) => (o.verdict === "hit" ? "var(--accent)" : o.verdict === "miss" ? "var(--down)" : "var(--flat)")}
-      ariaLabel="Excess return versus benchmark for each scored pick, oldest first"
+      ariaLabel="How far each marked guess beat or trailed the whole market, oldest first"
       tooltip={(o) => (
         <>
           <div className="mb-1 flex items-center justify-between gap-3"><b className="font-mono">{o.ticker}</b><span className="meta">{o.stance}</span></div>
           <div className="text-ink-3">{fmtShort(o.run_date)} → {fmtShort(o.scored_date)}</div>
-          <div className="mt-1 num font-mono">excess <b>{fmtPct(o.excess_pct)}</b></div>
-          <div className="num font-mono text-ink-3">pick {fmtPct(o.return_pct)} · bench {fmtPct(o.benchmark_return_pct)}</div>
+          <div className="mt-1 num font-mono">difference <b>{fmtPct(o.excess_pct)}</b></div>
+          <div className="num font-mono text-ink-3">stock {fmtPct(o.return_pct)} · market {fmtPct(o.benchmark_return_pct)}</div>
           <div className="mt-1 meta">{o.verdict}</div>
         </>
       )}
@@ -194,13 +194,13 @@ export function CostChart({ runs, cost }) {
         { value: cost.warn_usd, label: `warn ${fmtUsd(cost.warn_usd)}`, color: "var(--people)" },
       ]}
       colorOf={(r) => (r.status === "failed" ? "var(--down)" : r.cost.usd > cost.warn_usd ? "var(--people)" : "var(--ink-3)")}
-      ariaLabel="Cost per run in US dollars with target and warning lines"
+      ariaLabel="What each run cost in US dollars, with the target line and the warning line"
       tooltip={(r) => (
         <>
           <div className="mb-1 flex items-center justify-between gap-3"><b className="font-mono">{fmtDate(r.date)}</b></div>
           <div className="num font-mono">{fmtUsd(r.cost.usd)} · {fmtNum(r.duration_minutes, 1)} min</div>
           <div className="num font-mono text-ink-3">pack {fmtK(r.pack.tokens)} / {fmtK(r.pack.cap_tokens)} tokens</div>
-          <div className="mt-1 meta">{r.status}{r.cost.usd > cost.warn_usd ? " · over warn" : ""}</div>
+          <div className="mt-1 meta">{r.status}{r.cost.usd > cost.warn_usd ? " · over the warning line" : ""}</div>
         </>
       )}
     />

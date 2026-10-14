@@ -13,32 +13,32 @@ const LOOP = "M540,410 H400 Q380,410 380,390 V170";
 // kind: data | code | ai | people. `on` = which path the station sits on.
 const STATIONS = [
   { id: "watchlist", label: "Watchlist", kind: "data", x: 70, y: 150, lx: 0, ly: -30, glyph: "≡", file: "config/watchlist.json", m: "M1",
-    text: "Which names to watch, plus the benchmark. No script hard-codes a ticker; lint fails if one does." },
+    text: "The shopping list: which companies to watch, plus the whole market to compare them with (the benchmark). The list lives in one file, and an automatic checker complains if any code sneaks in a company of its own." },
   { id: "fetch", label: "Fetch", kind: "code", x: 210, y: 150, lx: 0, ly: -30, glyph: "↓", file: "scripts/fetch_prices.py", m: "M2",
-    text: "A provider adapter writes daily bars to data/prices/. The provider sits behind one interface so it can be swapped." },
-  { id: "library", label: "Library", kind: "data", x: 200, y: 310, lx: 0, ly: 40, glyph: "▤", branch: "library", file: "data/kb/library.json", m: "M1",
-    text: "Principles from books and lectures, in our own words with a citation. Only the ones whose tags match the day enter the pack." },
+    text: "After the market closes, a small program collects each day's prices and saves them. Like a plug adapter, the part that talks to the price company can be swapped for another one." },
+  { id: "library", label: "Lessons", kind: "data", x: 200, y: 310, lx: 0, ly: 40, glyph: "▤", branch: "library", file: "data/kb/library.json", m: "M1",
+    text: "Lessons from videos and books, in our own words, each saying where it came from. Only the lessons that fit the day go into the brain's lunchbox." },
   { id: "packer", label: "Packer", kind: "code", x: 380, y: 150, lx: -18, ly: -30, glyph: "◫", file: "scripts/build_pack.py", m: "M3",
-    text: "Docs, derived returns and risk numbers (no prices), recent runs, matching principles, the scored calls of the people we learn from, the companies' next results dates and the technical checklist's reading (context only, unproven) go into one JSON. Over the token cap, the run stops before any model call." },
+    text: "Packs the brain's lunchbox: one file with the rules, how much each stock went up or down and how bumpy it was (no prices), recent mornings, matching lessons, the checked calls of famous investors, when each company reports next, and the chart checklist (background only, not proven). If the box is too big for the AI to read, the run stops before the AI is asked anything." },
   { id: "brain", label: "Brain · AI", kind: "ai", x: 540, y: 150, lx: 0, ly: 42, glyph: "✦", file: "prompts/brain.md", m: "M3",
-    text: "Runs by itself every market morning as a scheduled Claude session, with a second try later that morning in case the data was late: three analysts, a skeptic for each name, a builder and a reviewer read the pack. Picks must match pick.schema.json or nothing is recorded." },
+    text: "The only AI step. Every market morning it wakes up by itself (with a second try later that morning in case the data was late) and reads the lunchbox. Inside, it acts like a small team: three analysts, a doubter for each company, a builder and a reviewer. It writes down its guesses. They are guesses with no proven record yet, and they must follow a set form or nothing is saved." },
   { id: "checker", label: "Checker", kind: "code", x: 690, y: 150, lx: 0, ly: 42, glyph: "✓", file: "schemas/ + scripts/lint.py", m: "M1",
-    text: "Schema and guardrails: tickers must be on the watchlist, no digits in pick prose, no banned phrases, size caps, no secrets." },
+    text: "Plain code, like a teacher with a checklist: every company must be on the watchlist, no numbers in the written reasons, no forbidden words, no file too big, no passwords. If something fails, the guess is not saved." },
   { id: "runs", label: "Run record", kind: "data", x: 840, y: 150, lx: 0, ly: 42, glyph: "◉", file: "runs/run.<date>.json", m: "M1",
-    text: "Cost, minutes, pack hash, the doc versions read, and the picks. Git is the audit log." },
-  { id: "dashboard", label: "Dashboard", kind: "code", x: 840, y: 48, lx: 26, ly: 5, anchor: "start", glyph: "▣", branch: "dashboard", file: "site/", m: "M1",
-    text: "This page. Rebuilt and published to GitHub Pages on every push to main." },
+    text: "A receipt for each morning: what it cost, how many minutes it took, a fingerprint of the lunchbox, which rule versions it read, and the guesses. Every change is kept in the project's history, so nothing can be quietly changed later." },
+  { id: "dashboard", label: "This site", kind: "code", x: 840, y: 48, lx: 26, ly: 5, anchor: "start", glyph: "▣", branch: "dashboard", file: "site/", m: "M1",
+    text: "The site you are reading. It is rebuilt and put online by itself every time the project changes." },
   { id: "scorer", label: "Scorer", kind: "code", x: 940, y: 290, lx: -28, ly: 5, anchor: "end", glyph: "±", file: "scripts/score_picks.py", m: "M4",
-    text: "After the horizon, each pick is compared with the benchmark. The verdict is arithmetic, not opinion." },
-  { id: "kb", label: "KB", kind: "data", x: 700, y: 410, lx: 0, ly: 42, glyph: "◎", file: "data/kb/outcomes.json", m: "M4",
-    text: "Every scored pick, kept forever. The packer feeds a recent slice back into the next run." },
+    text: "About a month later, code keeps score: did each guess do better or worse than the whole market? It is plain arithmetic, like a referee reading the scoreboard, not anyone's opinion." },
+  { id: "kb", label: "Library", kind: "data", x: 700, y: 410, lx: 0, ly: 42, glyph: "◎", file: "data/kb/outcomes.json", m: "M4",
+    text: "The brain's diary: every checked guess, kept forever, the bad ones too. The most recent pages go back into the lunchbox for the next morning." },
   { id: "you", label: "You", kind: "people", x: 540, y: 410, lx: 0, ly: 42, glyph: "☺", file: "pull request", m: "you",
-    text: "People read the record and write lessons, with evidence, through a pull request. The model never edits its own rules." },
+    text: "People read the scores and write lessons, each with proof, as a proposed change someone reviews (a pull request). The AI never changes its own rules, just as a player does not rewrite the rule book." },
   { id: "rulebook", label: "Rule book", kind: "data", x: 380, y: 290, lx: 28, ly: 6, anchor: "start", glyph: "❏", file: "docs/", m: "M1",
-    text: "Strategy, guardrails, methodology, learnings. Versioned files the packer reads next time. The loop closes here." },
+    text: "The rules: the plan, the safety rails, how we measure, and what we learned. Each change gets a version number, and the next lunchbox includes them. The circle closes here and starts again tomorrow." },
 ];
 const KIND = {
-  data: { label: "Data", stroke: "var(--accent)", fill: "color-mix(in srgb, var(--accent) 14%, var(--bg))", tone: "accent" },
+  data: { label: "Saved data", stroke: "var(--accent)", fill: "color-mix(in srgb, var(--accent) 14%, var(--bg))", tone: "accent" },
   code: { label: "Plain code", stroke: "var(--ink-3)", fill: "var(--bg)", tone: "flat" },
   ai: { label: "AI", stroke: "var(--ai)", fill: "color-mix(in srgb, var(--ai) 16%, var(--bg))", tone: "ai" },
   people: { label: "People", stroke: "var(--people)", fill: "var(--bg)", tone: "people", dashed: true },
@@ -49,12 +49,52 @@ export default function HowItWorks({ data }) {
   return (
     <>
       <Container className="pt-16">
+        <Story />
+      </Container>
+      <Container className="pt-20">
         <MapShowcase />
       </Container>
       <Container className="pt-32">
         <RunIt data={data} />
       </Container>
     </>
+  );
+}
+
+const STORY = [
+  ["Data comes in", "After the market closes each day, a small program collects the day's prices, like picking up the newspaper from the doorstep."],
+  ["The brain reads it", "Next morning, the brain, an AI, reads a tidy pack of that data plus its rules and old lessons, and makes a call: a guess about which stocks might do better or worse than the whole market."],
+  ["Code checks the call", "Plain code checks that the guess follows the rules. Then, about a month later, it keeps score: did the guess beat the whole market or not? Plain arithmetic, no opinions."],
+  ["The site shows it", "This site shows every guess and every score, the misses too, so anyone can see how the brain is really doing."],
+  ["People learn", "People read the scores and write down lessons. The brain reads them next time. The AI never changes its own rules."],
+];
+
+/** The whole system in five plain steps, before the detailed map. */
+function Story() {
+  return (
+    <div>
+      <SectionHead
+        eyebrow="How it works"
+        title={<>The whole thing, <Accent>in five steps.</Accent></>}
+        lede={<>
+          <span className="block text-ink">In simple words: a computer guesses about stocks every morning, and plain code checks later whether it was right. This page shows how, step by step.</span>
+          <span className="mt-3 block">Think of a weather forecaster who writes tomorrow's forecast in a notebook, and a friend who checks it a month later. Until the notebook shows many good forecasts, nobody plans a picnic on it.</span>
+        </>}
+      />
+      <Reveal className="card px-2 py-1 sm:p-4">
+        <ol className="grid">
+          {STORY.map(([head, body], i) => (
+            <li key={head} className="flex gap-3 border-b border-line px-2 py-3 last:border-0">
+              <span className="num shrink-0 font-mono text-[12.5px] leading-[22px] text-accent">{pad2(i + 1)}</span>
+              <span className="text-[15px] leading-snug"><span className="font-semibold text-ink">{head}.</span> <span className="text-ink-2">{body}</span></span>
+            </li>
+          ))}
+        </ol>
+      </Reveal>
+      <Reveal className="card mt-3 border-people/40 p-4 text-[15px] leading-relaxed text-ink-2 sm:p-5">
+        <span className="text-people">What about real money?</span> The brain's stock calls are guesses with no proven record yet. So the household's real money does not follow them. It follows the honest action on the Brain's verdicts page, which is usually a low-cost fund that holds the whole market, bought a little at a time on a regular schedule. That stays the plan unless the scores ever show, over a long time, that something else does better. Analysis only, not financial advice.
+      </Reveal>
+    </div>
   );
 }
 
@@ -132,15 +172,15 @@ function MapShowcase() {
   return (
     <div ref={wrapRef} className="card brackets overflow-hidden">
       <div className="flex items-center justify-between border-b border-line px-6 py-5 sm:px-10">
-        <span className="meta flex items-center gap-2"><Dot /> stocks·brain / <span className="text-ink">the whole map</span></span>
+        <span className="meta flex items-center gap-2"><Dot /> stocks·brain / <span className="text-ink">the whole map, step by step</span></span>
         <span className="meta">{STATIONS.length} stops</span>
       </div>
       <div className="grid gap-10 p-6 sm:p-10 xl:grid-cols-[minmax(0,5fr)_minmax(0,8fr)]">
         <div className="flex flex-col justify-center">
-          <div className="eyebrow mb-6 flex items-center gap-2"><Dot /> How a pick gets made</div>
-          <Headline size="md">Every pick makes the next one <Accent>smarter.</Accent></Headline>
+          <div className="eyebrow mb-6 flex items-center gap-2"><Dot /> How a guess gets made and checked</div>
+          <Headline size="md">Every checked guess teaches <Accent>the next one.</Accent></Headline>
           <p className="mt-6 max-w-[46ch] text-[17px] leading-relaxed text-ink-2">
-            <span className="text-ink">Data in</span>, <span className="text-ink">one AI call</span>, plain-code checks, <span className="text-ink">people decide</span>. {STATIONS.length} stops, one loop.
+            <span className="text-ink">Data comes in</span>, <span className="text-ink">the AI makes one guess</span>, plain code checks it, <span className="text-ink">people decide</span>. {STATIONS.length} stops in one circle. Tap a stop, or press Replay to watch it go round.
           </p>
           <div className="mt-8 inline-flex w-fit flex-wrap gap-x-5 gap-y-2 rounded-3xl border border-line px-6 py-3">
             {counts.map(({ k, n }) => (
@@ -160,7 +200,7 @@ function MapShowcase() {
 
         <div className="min-w-0">
           <div className="no-scrollbar -mx-6 overflow-x-auto px-6 sm:mx-0 sm:px-0">
-            <svg viewBox="0 0 1000 470" className="block h-auto w-full min-w-[680px] md:min-w-0" role="img" aria-label="Pipeline map from watchlist to rule book, as a loop">
+            <svg viewBox="0 0 1000 470" className="block h-auto w-full min-w-[680px] md:min-w-0" role="img" aria-label="Map of the daily circle, from the watchlist to the rule book and back">
               <defs>
                 <pattern id="dotgrid" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="var(--line)" /></pattern>
                 <radialGradient id="mapglow" cx="50%" cy="40%" r="60%"><stop offset="0" stopColor="var(--glow)" /><stop offset="1" stopColor="transparent" /></radialGradient>
@@ -247,11 +287,11 @@ function MapShowcase() {
 }
 
 const MILESTONES = [
-  { id: "M1", label: "Scaffold", desc: "Schemas, docs, lint, dashboard on sample data." },
-  { id: "M2", label: "Prices", desc: "fetch_prices adapter + scheduled Action." },
-  { id: "M3", label: "Brain", desc: "build_pack, the brain, then record_run checks it." },
-  { id: "M4", label: "Scoring", desc: "score_picks: pick vs benchmark after N days." },
-  { id: "M5", label: "Routine", desc: "Scheduled routines run the loop. The brain already runs by itself every market morning." },
+  { id: "M1", label: "Scaffold", desc: "The frame: rules, forms, the checker and this site, on made-up sample data." },
+  { id: "M2", label: "Prices", desc: "Real daily prices, collected by themselves after each close." },
+  { id: "M3", label: "Brain", desc: "Pack the lunchbox, let the AI guess, then code checks and saves it." },
+  { id: "M4", label: "Scoring", desc: "About a month later, each guess is compared with the whole market." },
+  { id: "M5", label: "Routine", desc: "Timers run the whole circle by themselves. The brain already runs by itself every market morning." },
 ];
 
 function RunIt({ data }) {
@@ -260,22 +300,22 @@ function RunIt({ data }) {
     <div className="grid gap-12 xl:grid-cols-[minmax(0,7fr)_minmax(0,4fr)]">
       <div>
         <SectionHead
-          eyebrow="Run it"
+          eyebrow="For the builder"
           title={<>Run the next <Accent>step.</Accent></>}
-          lede="Everything runs from the repo with plain Python and one npm build. The model does one step. You merge, and you decide."
+          lede="This part is for whoever looks after the code. Everything runs from the project folder with a few plain commands. The AI does one step only; a person approves every change and makes every decision."
         />
         <Strip
           cells={[
-            { value: MILESTONES.length, label: "milestones", desc: "From scaffold to a daily routine." },
-            { value: done, label: "shipped", desc: "The dashboard, daily prices, the brain and scoring. Next: the other scheduled routines." },
-            { value: "You", label: "choose providers", tone: "people", dashed: true, desc: "No data source or dependency without your yes." },
+            { value: MILESTONES.length, label: "milestones", desc: "Building steps, from the bare frame to a circle that runs by itself every day." },
+            { value: done, label: "done", desc: "This site, daily prices, the brain and the scorekeeping. Next: the other timed jobs." },
+            { value: "You", label: "choose the data companies", tone: "people", dashed: true, desc: "No new data source or add-on without your yes." },
           ]}
         />
         <div className="mt-10 grid gap-6">
-          <CodeBlock label="Regenerate the sample data" cmd="python3 scripts/make_sample_data.py" />
-          <CodeBlock label="Lint: schemas, guardrails, secrets, size caps" cmd="python3 scripts/lint.py" />
-          <CodeBlock label="Export data for the dashboard" cmd="python3 scripts/build_site.py" />
-          <CodeBlock label="Run the dashboard locally" cmd="cd site && npm ci && npm run dev" />
+          <CodeBlock label="Make the made-up sample data again" cmd="python3 scripts/make_sample_data.py" />
+          <CodeBlock label="Run the checker: forms, rules, no passwords, no oversized files" cmd="python3 scripts/lint.py" />
+          <CodeBlock label="Copy the data over for this site" cmd="python3 scripts/build_site.py" />
+          <CodeBlock label="Open this site on your own computer" cmd="cd site && npm ci && npm run dev" />
         </div>
         <p className="meta mt-8 normal-case tracking-[0.04em]">Repo: {data.manifest.repo}</p>
       </div>

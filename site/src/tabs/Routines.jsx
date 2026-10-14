@@ -7,7 +7,7 @@ const CADENCE = [
   { id: "daily", label: "Every trading day" },
   { id: "weekly", label: "Every week" },
   { id: "monthly", label: "Every month" },
-  { id: "on_demand", label: "On demand" },
+  { id: "on_demand", label: "Only when asked" },
 ];
 const DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 // Who starts a routine: a GitHub Actions schedule in the repo, or a scheduled Claude Code session (a Claude routine).
@@ -92,9 +92,12 @@ export default function Routines({ data }) {
   return (
     <Container className="pt-20">
       <SectionHead
-        eyebrow={`Routines · v${routines.version}`}
-        title={<>Every routine, <Accent>in the open.</Accent></>}
-        lede="What runs, when, who starts it, what it may spend and what it writes. Each run records its outcome in the repo, failures included, and that log is shown below. Routines that would change rules or the watchlist open a pull request for you instead of acting."
+        eyebrow={`Routines · behind the scenes · v${routines.version}`}
+        title={<>Every timed job, <Accent>in the open.</Accent></>}
+        lede={<>
+          <span className="block text-ink">In simple words: these are the jobs that run by themselves on a timer, like an alarm clock that also makes the coffee. This page shows each one, so nothing happens in secret.</span>
+          <span className="mt-3 block">For each job: what it does, when, who starts it, what it may spend and what it saves. Every run is logged below, failures too. A job that would change the rules or the watchlist never acts alone; it asks a person first with a proposed change (a pull request).</span>
+        </>}
         right={
           <div className="flex flex-wrap gap-2">
             <a className="btn px-5 py-3 text-[14px]" href={`${repo}/blob/main/config/routines.json`} target="_blank" rel="noreferrer">routines.json <ArrowRight className="size-4 -rotate-45" /></a>
@@ -104,10 +107,10 @@ export default function Routines({ data }) {
       />
       <Strip
         cells={[
-          { value: `${active.length}/${all.length}`, label: "active", desc: "The rest are planned and switch on milestone by milestone." },
+          { value: `${active.length}/${all.length}`, label: "switched on", desc: "The rest are planned and get switched on one building step at a time." },
           { value: next ? relTime(next.at) : "—", label: next ? `next: ${next.r.name}` : "nothing scheduled", tone: "flat", desc: next ? `${next.at.toUTCString().replace(":00 GMT", " UTC")}` : "" },
-          { value: last ? last.status : "none yet", label: "last run", tone: !last ? "flat" : last.status === "success" ? "accent" : last.status === "partial" ? "people" : "down", desc: last ? `${fmtDate(last.finished_at.slice(0, 10))} · ${last.trigger}` : "The first scheduled run needs the Tiingo key and main as the default branch." },
-          { value: llm.length, label: "use the model", tone: "ai", desc: llmDesc(llm) },
+          { value: last ? last.status : "none yet", label: "last run", tone: !last ? "flat" : last.status === "success" ? "accent" : last.status === "partial" ? "people" : "down", desc: last ? `${fmtDate(last.finished_at.slice(0, 10))} · ${last.trigger}` : "The first timed run needs the price company's key (Tiingo) and main set as the default branch." },
+          { value: llm.length, label: "use the AI", tone: "ai", desc: llmDesc(llm) },
         ]}
       />
 
@@ -138,9 +141,9 @@ export default function Routines({ data }) {
                 ? <p className="mt-3 border-l-2 border-ai/50 pl-3 text-[14.5px] leading-relaxed text-ink">{NOTE[r.id]}</p>
                 : <p className="mt-3 text-[14.5px] leading-relaxed text-ink-2">{r.why}</p>}
               <dl className="mt-5 grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1.5 border-t border-line pt-4 text-[13px]">
-                <dt className="meta">milestone</dt><dd>{r.milestone}</dd>
+                <dt className="meta">building step</dt><dd>{r.milestone}</dd>
                 <dt className="meta">reads</dt><dd className="truncate font-mono text-[12px]">{r.inputs.join(", ") || "its own outputs"}</dd>
-                <dt className="meta">writes</dt><dd className="truncate font-mono text-[12px]" title={r.outputs.join(", ")}>{r.outputs.join(", ")}</dd>
+                <dt className="meta">saves</dt><dd className="truncate font-mono text-[12px]" title={r.outputs.join(", ")}>{r.outputs.join(", ")}</dd>
                 {at && (<><dt className="meta">next</dt><dd>{relTime(at)}</dd></>)}
                 <dt className="meta">last</dt>
                 <dd>{lr ? <a href={lr.url} target="_blank" rel="noreferrer" className={`hover:underline ${lr.outcome === "success" ? "text-accent" : "text-down"}`}>{lr.outcome} · {lr.at.slice(0, 10)}</a> : <span className="text-ink-3">never ran</span>}</dd>
@@ -161,19 +164,19 @@ export default function Routines({ data }) {
         <SectionHead
           eyebrow="Run history"
           title={<>What actually <Accent>ran.</Accent></>}
-          lede="One row per workflow run, appended by the workflow itself to data/ops/routine_runs.json. Failed steps stay visible; data from a failed run is never committed."
+          lede="One row each time a job ran. The job writes its own row (into data/ops/routine_runs.json). Failed steps stay visible, and data from a failed run is never saved."
           size="md"
           right={<span className="meta">{runs.length} runs logged</span>}
         />
         {!runs.length ? (
-          <Empty title="No runs yet">The daily routine starts once the Tiingo key is added and main is the default branch. Each run will appear here.</Empty>
+          <Empty title="No runs yet">The daily job starts once the price company's key (Tiingo) is added and main is the default branch. Each run will show up here.</Empty>
         ) : (
           <Reveal className="card overflow-hidden">
             <div className="no-scrollbar overflow-x-auto">
               <table className="w-full min-w-[760px] text-[13.5px]">
                 <thead>
                   <tr className="meta border-b border-line text-left">
-                    {["Finished", "Workflow", "Trigger", "Status", "Steps", "Log"].map((h) => <th key={h} className="px-5 py-4 font-medium">{h}</th>)}
+                    {["Finished", "Job", "Started by", "Result", "Steps", "Log"].map((h) => <th key={h} className="px-5 py-4 font-medium">{h}</th>)}
                   </tr>
                 </thead>
                 <tbody>

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { addTradingDays, changes, headline, pickEli5, runEli5, scorecard, steadyRuns, verdictHistory, verdictOf, whatToDo } from "./verdict.js";
+import { addTradingDays, changes, headline, pickEli5, runEli5, scorecard, steadyRuns, verdictHistory, verdictOf } from "./verdict.js";
 
 const pick = (ticker, stance = "neutral", conviction = "low", eli5) => ({
   id: `x:${ticker}`, pick: { ticker, stance, conviction, thesis: `${ticker} first reason. Second reason.`, invalidation: "A close below its trend.", risks: ["r"], evidence: [], ...(eli5 ? { eli5 } : {}) },
@@ -41,12 +41,6 @@ test("steadyRuns counts the unchanged streak ending with the newest run", () => 
   const r = (d, s = "neutral") => run(d, pick("AAA", s));
   assert.equal(steadyRuns([r("2026-10-09"), r("2026-10-06", "bullish"), r("2026-10-07"), r("2026-10-08")]), 3);
   assert.equal(steadyRuns([]), 0);
-});
-
-test("whatToDo: no money moves before the trust ladder allows it", () => {
-  assert.equal(whatToDo(run("2026-10-12", pick("AAA", "bullish")), 0).answer, "No.");
-  assert.equal(whatToDo(run("2026-10-12", pick("AAA", "bullish")), 2).answer, "Only what the plan says.");
-  assert.equal(whatToDo(run("2026-10-12", pick("AAA")), 2).answer, "No.");
 });
 
 test("scorecard: too early before any score, then right out of checked", () => {

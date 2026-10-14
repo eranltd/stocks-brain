@@ -60,20 +60,20 @@ function List({ data, go }) {
     <Container className="pt-20">
       <SectionHead
         eyebrow={`${entry?.label ?? "Nasdaq"} · ${market.as_of ? fmtDate(market.as_of) : "no prices yet"} · ${livePrices ? `live · ${market.provider}` : "sample prices"}`}
-        title={<>{numWord(rows.length)} {nouns.many === "funds" ? "funds" : "names"}, <Accent>one benchmark.</Accent></>}
-        lede={`${note ? `${note} ` : ""}${up} of ${rows.length} closed higher on the day. Lines show the last ${days} trading days indexed to 100. The site publishes returns, not raw prices (provider licence).`}
+        title={<>{numWord(rows.length)} {nouns.many === "funds" ? "funds" : "names"}, <Accent>one whole market to compare with.</Accent></>}
+        lede={`In simple words: these are the companies we keep an eye on, and how each did lately. ${note ? `${note} ` : ""}${up} of ${rows.length} ended the day higher. Each small line shows the last ${days} trading days, starting at 100 so they are easy to compare. We only watch and learn here with pretend money; this is not a shopping list. The site shows how much things went up or down, not raw prices (the price provider's rule).`}
         right={
           <Segmented
             label="Sort"
             value={sort}
             onChange={setSort}
-            options={[{ value: "list", label: "List order" }, { value: "gainers", label: "Gainers" }, { value: "losers", label: "Losers" }, { value: "checks", label: "Checks" }, ...(checklist ? [{ value: "checklist", label: "Checklist" }] : []), { value: "symbol", label: "A–Z" }]}
+            options={[{ value: "list", label: "List order" }, { value: "gainers", label: "Gainers" }, { value: "losers", label: "Losers" }, { value: "checks", label: "Quick checks" }, ...(checklist ? [{ value: "checklist", label: "Checklist" }] : []), { value: "symbol", label: "A–Z" }]}
           />
         }
       />
       {regime && <Regime regime={regime} above={rows.filter((r) => r.m?.above_sma50).length} total={rows.length} />}
       <div className="meta mb-3 hidden grid-cols-[minmax(150px,1.1fr)_minmax(140px,2fr)_minmax(100px,.8fr)_minmax(130px,.9fr)] gap-6 px-7 sm:grid">
-        <span>{nouns.many === "funds" ? "Fund · category" : "Name · sector"}</span><span>{days} days, indexed</span><span className="text-right">Checks · checklist · rule</span><span className="text-right">Today</span>
+        <span>{nouns.many === "funds" ? "Fund · category" : "Name · sector"}</span><span>{days} days, indexed</span><span className="text-right">Quick checks · chart checklist · rule</span><span className="text-right">Today</span>
       </div>
       <div className="grid gap-3">
         <Row r={bm} i={0} bench go={go} />
@@ -81,8 +81,8 @@ function List({ data, go }) {
       </div>
       <p className="meta mt-6 normal-case tracking-[0.04em]">
         {checklist
-          ? `Checklist: the eight-step technical checklist from the video, read by code${checklist.sample ? " from sample prices" : ""}. Unproven for us: a description of the chart, not a forecast. Open a name for its eight steps and risk plan.`
-          : "Checklist verdicts (lean up, mixed, lean down) appear after the next daily run."}
+          ? `Quick checks: four yes-or-no questions, like a report card (out of 4). Chart checklist: eight steps from a trading video, read by a program${checklist.sample ? " from sample prices" : ""}. Unproven for us: it describes the chart, it does not predict. Rule: what our pretend-money practice rule does with it. Open a name to see more.`
+          : "Quick checks: four yes-or-no questions, like a report card (out of 4). Chart checklist leans (up, mixed, down) appear after the next daily update."}
       </p>
     </Container>
   );
@@ -104,19 +104,19 @@ function Row({ r, i, bench = false, go, rule, ck, hasChecklist, group = null }) 
       <div className="row-span-2 min-w-0 sm:row-span-1">
         <div className="flex items-center gap-2">
           <span className="text-[22px] font-semibold tracking-[-0.03em]">{r.symbol}</span>
-          {bench && <span className="pill hidden py-1 text-[11px] text-ink-3 sm:inline-flex">benchmark</span>}
+          {bench && <span className="pill hidden py-1 text-[11px] text-ink-3 sm:inline-flex">whole market</span>}
         </div>
-        <div className="line-clamp-3 text-[13px] leading-snug text-ink-3 sm:line-clamp-none sm:truncate">{bench ? <span className="sm:hidden">Benchmark · </span> : null}{r.name}</div>
+        <div className="line-clamp-3 text-[13px] leading-snug text-ink-3 sm:line-clamp-none sm:truncate">{bench ? <span className="sm:hidden">Whole market · </span> : null}{r.name}</div>
         {group && <div className="mt-0.5 text-[12.5px] leading-snug text-ink-3 sm:mt-0 sm:truncate">{group}</div>}
       </div>
       <div className="row-span-2 sm:row-span-1">
         {m?.bars?.length > 1 ? <Sparkline bars={m.bars} tone={tone} delay={i * 60} indexed /> : <span className="meta">no data</span>}
       </div>
-      <div className="order-last text-right text-[13px] sm:order-none" title={m?.setup ? `${m.setup.passed} of 4 setup checks` : ""}>
-        {bench ? <span className="num font-mono text-ink-2 sm:text-[16px]">{m ? fmtPct(m.ret_20d_pct, 1) : "—"}<span className="ml-1 text-[11px] text-ink-3">20d</span></span> : (
+      <div className="order-last text-right text-[13px] sm:order-none" title={m?.setup ? `${m.setup.passed} of 4 quick checks pass` : ""}>
+        {bench ? <span className="num font-mono text-ink-2 sm:text-[16px]">{m ? fmtPct(m.ret_20d_pct, 1) : "—"}<span className="ml-1 text-[11px] text-ink-3">20 days</span></span> : (
           <>
             <span className="num font-mono sm:text-[16px]">{m?.setup ? `${m.setup.passed}/4` : "—"}</span>
-            {m?.setup?.stretched && <span className="ml-1.5 text-[11px] text-people">stretched</span>}
+            {m?.setup?.stretched && <span className="ml-1.5 text-[11px] text-people" title="It ran up too fast">ran up fast</span>}
             {hasChecklist && <div className="mt-1"><VerdictPill verdict={ck?.verdict} /></div>}
             {rule && <div className={`hidden truncate text-[11.5px] sm:block ${STATUS[rule].tone}`}>{STATUS[rule].label}</div>}
           </>
@@ -144,11 +144,11 @@ function Regime({ regime, above, total }) {
       <Strip
         dense
         cells={[
-          { value: regime.state, label: `regime · ${regime.benchmark}`, tone: STATE_TONE[regime.state], desc: `As of ${fmtDate(regime.as_of)}. Computed by code from benchmark closes; the brain reads it as context.` },
-          { value: regime.trend, label: `${regime.params.trend_sma_days}-day trend`, tone: TREND_TONE[regime.trend], desc: `${fmtPct(m.dist_sma_pct, 1)} vs its ${regime.params.trend_sma_days}-day average, which is ${m.sma_slope_pct >= 0 ? "rising" : "falling"} ${fmtPct(m.sma_slope_pct)} over ${regime.params.slope_days} days.` },
-          { value: `${fmtNum(m.vol_ann_pct, 1)}%`, label: "annualised vol", tone: "flat", desc: `${regime.params.vol_days}-day realised volatility of daily returns.` },
-          { value: fmtPct(m.drawdown_pct, 1), label: "from 1y high", tone: m.drawdown_pct < -10 ? "down" : "flat", desc: `Distance from the highest close in ${regime.params.drawdown_days} trading days.` },
-          ...(total ? [{ value: `${above} of ${total}`, label: "above 50-day", tone: "flat", desc: "Watchlist names above their 50-day average. Only our names: real market breadth is on Today (equal-weight vs cap-weight funds)." }] : []),
+          { value: regime.state, label: `market mood · ${regime.benchmark}`, tone: STATE_TONE[regime.state], desc: `Like a weather report for the whole market (${regime.benchmark}): calm, normal or stormy. As of ${fmtDate(regime.as_of)}, worked out by a program from the whole market's closing values.` },
+          { value: regime.trend, label: `direction · ${regime.params.trend_sma_days} days`, tone: TREND_TONE[regime.trend], desc: `The whole market is ${fmtPct(m.dist_sma_pct, 1)} from its usual level lately (its ${regime.params.trend_sma_days}-day average), and that level is ${m.sma_slope_pct >= 0 ? "rising" : "falling"} ${fmtPct(m.sma_slope_pct)} over ${regime.params.slope_days} days.` },
+          { value: `${fmtNum(m.vol_ann_pct, 1)}%`, label: "how much it jumps around", tone: "flat", desc: `How bumpy the whole market's daily moves were over the last ${regime.params.vol_days} days, scaled to a year (its volatility). Higher means a bumpier ride.` },
+          { value: fmtPct(m.drawdown_pct, 1), label: "from its high", tone: m.drawdown_pct < -10 ? "down" : "flat", desc: `How far the whole market is below its highest close of the last ${regime.params.drawdown_days} trading days.` },
+          ...(total ? [{ value: `${above} of ${total}`, label: "above their usual level", tone: "flat", desc: "How many of our names sit above their usual level lately (their 50-day average). Only our names: the wider picture is on Today." }] : []),
         ]}
       />
     </div>

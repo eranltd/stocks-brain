@@ -3,10 +3,10 @@ import { fmtNum, fmtPct } from "../lib/format.js";
 import { Accent, ArrowRight, Reveal } from "./ui.jsx";
 
 export const STAGES = [
-  { id: 0, name: "Observe", money: "No money moves", blurb: "The rule is not on record yet. Read and learn." },
-  { id: 1, name: "Paper", money: "No money moves", blurb: "The rule holds a paper portfolio, recorded forward and never edited." },
-  { id: 2, name: "Small money", money: "Small satellite positions", blurb: "The paper record and the history both cleared the bar. Act within the house limits." },
-  { id: 3, name: "Trusted", money: "Satellite within limits", blurb: "A full year of forward record, still ahead of the core." },
+  { id: 0, name: "Observe", money: "No money moves", blurb: "Level one, like a new player: the stock rule has no record yet. Watch and learn." },
+  { id: 1, name: "Paper", money: "No money moves", blurb: "Level two: the stock rule plays with pretend money, written down every month and never changed afterwards." },
+  { id: 2, name: "Small money", money: "A small side bet", blurb: "Level three, unlocked only by proof: the pretend record and years of history both beat the whole market. Then a small side bet, within the house limits." },
+  { id: 3, name: "Trusted", money: "A small side bet, within limits", blurb: "Level four: a full year of pretend record, still ahead of the whole market." },
 ];
 
 /**

@@ -1,7 +1,7 @@
 ---
-version: 0.3.0
-updated_at: 2026-10-09
-change_note: Before any new paper entry, read the technical checklist and write a risk plan (stop, TP1, TP2) with reward-to-risk of at least 2 to TP1.
+version: 0.4.0
+updated_at: 2026-10-13
+change_note: The household dropped the 4-5 stock plan. Real money follows the honest action by time horizon (whole-market fund, safe savings, or a split); stock rules and the paper portfolio are pretend-money experiments.
 ---
 # House rules
 
@@ -9,23 +9,29 @@ This site exists to help our household invest calmly and with evidence. It is a 
 These rules decide when, and how much, we act on anything it shows.
 
 ## Our goal
-- Hold a **diverse portfolio of 4 to 5 stocks**, chosen and reviewed by a written rule (methodology, "Portfolio rule v1").
-- Aim for **+20% a year** (`goal` in settings).
-- Reality check, computed on the Today page from real prices: the broad US market's long-run return is near 10% a year.
-  +20% a year doubles money every 3.8 years. Few investors sustain it, and every path to it in our data came with deep
-  drops. A 4-5 stock portfolio is concentrated: the library (S-028) notes that about 15 holdings capture most of the
-  benefit of diversification.
-- So the 4-5 stocks are the **satellite**. They do not replace the core.
+- **Real money follows the honest action**, shown on the Brain's verdicts page and decided first by when the money may
+  be needed:
+  - **5 years or more**: a low-cost fund that holds the whole market (an S&P 500 fund), the same amount every month,
+    left alone through the drops.
+  - **1 to 5 years**: part safe (T-bills or a savings account), part the whole-market fund; the sooner the money is
+    needed, the bigger the safe part.
+  - **Within a year**: safe only. Stocks can drop a lot in a few months.
+- **No 4-5 stock plan with real money** (household decision, 2026-10-13). Picking a few stocks was the old satellite;
+  on years of past prices every pre-registered stock rule did no better than stocks picked at random, so it is not
+  where the household's money goes.
+- Reality check: the broad US market's long-run return is near 10% a year, with deep drops on the way. +20% a year
+  (`goal` in settings) is a stretch target for the experiments, not a promise; few investors sustain it.
 
-## Core first
-- Most long-term savings belong in a broad, low-fee index fund. Check that the fund actually tracks its index and that
-  fees are low (S-017). Buying at all-time highs is normal for an index; highs cluster (S-007).
-- Proposed limits (owner sets): satellite at most **10%** of investable savings, so each of 5 equal slots is **2%**.
-  Note: +20% on a 10% satellite adds about 1 point a year to the household total compared with the core alone.
-  Raising the satellite raises both the upside and the size of the drops; that choice is the owner's, in writing here.
+## The experiments (pretend money)
+- The stock rules (`config/rules.json`), the rule's paper portfolio and the brain's daily stock calls are experiments
+  with pretend money. They exist to learn whether picking stocks can beat owning the whole market.
+- A stock would join the honest action only when a tested rule passes its history test AND the trust ladder below
+  reaches Small money. Then at most **10%** of investable savings, in equal slots of **2%**. Today none qualifies.
+- Core first, always: most long-term savings belong in a broad, low-fee index fund. Check that it tracks its index and
+  that fees are low (S-017). Buying at all-time highs is normal for an index; highs cluster (S-007).
 
 ## The trust ladder
-We act only as far as the record allows. The site computes the stage (methodology, "Trust statistics").
+For the experiments only: a stock rule earns real money only as far as its record allows. The site computes the stage (methodology, "Trust statistics").
 1. **Observe**: the rule has no forward record yet. Read, learn, act on nothing.
 2. **Paper**: the rule holds a paper portfolio, written down once a month and never edited. No money moves.
 3. **Small money**: after at least 6 months of paper record, ahead of the core; the rule beat holding every name over
@@ -34,7 +40,7 @@ We act only as far as the record allows. The site computes the stage (methodolog
 
 If the numbers fall back below a threshold, we step back down.
 
-## Before acting
+## Before acting (only once a stock rule has earned real money)
 1. Act only on the rule's monthly date, and only on what the rule holds. No discretionary adds from a video, a tip or
    a headline. Dated claims are unverified.
 2. A new name needs 3 of the 4 setup checks and must **not be stretched** above its trend (S-010, S-019).

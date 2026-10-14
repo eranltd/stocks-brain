@@ -5,10 +5,10 @@ import { Accent, ArrowRight, Chip, Container, Conviction, Empty, Reveal, Section
 
 const VERDICTS = [
   { value: "all", label: "All" },
-  { value: "hit", label: "Hit", dot: <Dot tone="accent" /> },
-  { value: "miss", label: "Miss", dot: <Dot tone="down" /> },
-  { value: "flat", label: "Flat", dot: <Dot tone="flat" /> },
-  { value: "pending", label: "Pending", dot: <Dot tone="people" dashed /> },
+  { value: "hit", label: "Right", dot: <Dot tone="accent" /> },
+  { value: "miss", label: "Wrong", dot: <Dot tone="down" /> },
+  { value: "flat", label: "About even", dot: <Dot tone="flat" /> },
+  { value: "pending", label: "Waiting", dot: <Dot tone="people" dashed /> },
 ];
 
 export default function KB({ data, query, setQuery, go }) {
@@ -35,9 +35,12 @@ export default function KB({ data, query, setQuery, go }) {
   return (
     <Container className="pt-20">
       <SectionHead
-        eyebrow="The KB"
-        title={<>The whole <Accent>memory.</Accent></>}
-        lede="Every pick the brain has made: what it argued, what would prove it wrong, and how it ended. The packer feeds a recent slice of this into each run."
+        eyebrow="Library"
+        title={<>Every guess, <Accent>kept.</Accent></>}
+        lede={<>
+          <span className="block text-ink">In simple words: this is the brain's diary. Every stock guess it ever made is kept here, with the reason, what would prove it wrong, and how it turned out.</span>
+          <span className="mt-3 block">Like a school report, nothing gets erased, the bad marks too. About a month after each guess, code checks it: did the stock do better or worse than the whole market? Each morning the brain rereads its most recent pages before it guesses again. These guesses have no proven record yet, so they are for learning, not for real money.</span>
+        </>}
       />
 
       <Reveal className="grid gap-3 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
@@ -47,32 +50,32 @@ export default function KB({ data, query, setQuery, go }) {
             type="search"
             value={query}
             onChange={(e) => { setQuery(e.target.value); setLimit(24); }}
-            placeholder="Search ticker, thesis, evidence, pick id"
+            placeholder="Search a stock code, a reason, or a guess number"
             className="w-full bg-transparent text-[15px] outline-none placeholder:text-ink-3"
-            aria-label="Search the KB"
+            aria-label="Search the library"
           />
         </label>
         <label className="flex items-center gap-3 rounded-full border border-line-2 bg-surface px-5 py-3.5">
-          <span className="meta">Stance</span>
-          <select value={stance} onChange={(e) => setStance(e.target.value)} className="w-full bg-transparent text-[15px] outline-none" aria-label="Filter by stance">
-            <option value="all">All stances</option>
-            <option value="bullish">Bullish</option>
-            <option value="bearish">Bearish</option>
-            <option value="neutral">Neutral</option>
+          <span className="meta">Direction</span>
+          <select value={stance} onChange={(e) => setStance(e.target.value)} className="w-full bg-transparent text-[15px] outline-none" aria-label="Filter by direction">
+            <option value="all">All directions</option>
+            <option value="bullish">Bullish (expects it to beat the market)</option>
+            <option value="bearish">Bearish (expects it to trail the market)</option>
+            <option value="neutral">Neutral (no strong view)</option>
           </select>
         </label>
       </Reveal>
 
       <Reveal delay={100} className="mt-4 flex flex-wrap items-center gap-3">
-        <Segmented label="Verdict" value={verdict} onChange={setVerdict} options={VERDICTS.map((v) => ({ ...v, count: filtered.counts[v.value] }))} />
-        <Segmented label="Sort" value={sort} onChange={setSort} options={[{ value: "newest", label: "Newest" }, { value: "excess", label: "Best excess" }, { value: "hits", label: "Hits first" }]} />
-        <span className="meta ml-auto">{filtered.list.length} of {kb.length}</span>
+        <Segmented label="Result" value={verdict} onChange={setVerdict} options={VERDICTS.map((v) => ({ ...v, count: filtered.counts[v.value] }))} />
+        <Segmented label="Sort" value={sort} onChange={setSort} options={[{ value: "newest", label: "Newest" }, { value: "excess", label: "Most ahead of market" }, { value: "hits", label: "Right first" }]} />
+        <span className="meta ml-auto">{filtered.list.length} of {kb.length} guesses</span>
       </Reveal>
 
       <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         {filtered.list.slice(0, limit).map((k, i) => <KBCard key={k.id} k={k} i={i % 12} horizon={settings.scoring.horizon_days} />)}
       </div>
-      {!filtered.list.length && <Empty title="Nothing matches">Try a ticker, or clear the filters.</Empty>}
+      {!filtered.list.length && <Empty title="Nothing matches">Try a stock code or another word, or set the filters back to "All".</Empty>}
       {filtered.list.length > limit && (
         <div className="mt-8 flex justify-center">
           <button type="button" className="btn" onClick={() => setLimit(limit + 24)}>Show more</button>
@@ -81,8 +84,8 @@ export default function KB({ data, query, setQuery, go }) {
 
       <Reveal className="mt-24 flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-line p-7">
         <div>
-          <div className="eyebrow mb-2">Library and claims</div>
-          <p className="text-ink-2">Lessons from books and videos, plus dated claims, now live in Insights.</p>
+          <div className="eyebrow mb-2">Lessons from videos</div>
+          <p className="text-ink-2">Lessons from videos and books, plus dated guesses from them, live on the Lessons page.</p>
         </div>
         <button type="button" onClick={() => go("insights")} className="btn">Open Lessons <ArrowRight /></button>
       </Reveal>

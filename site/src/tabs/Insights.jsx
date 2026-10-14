@@ -47,27 +47,30 @@ export default function Insights({ data }) {
   return (
     <Container className="pt-20">
       <SectionHead
-        eyebrow={`Insights · library v${data.library?.version ?? "–"}`}
-        title={<>What the sources <Accent>taught.</Accent></>}
-        lede="Every video you fed in, distilled. Principles are lasting lessons in our own words, each with its source. Claims are dated readings and setups that expire and stay unverified until code checks them against prices. The brain reads the principles that match the day, plus only unexpired claims."
+        eyebrow={`Lessons · library v${data.library?.version ?? "–"}`}
+        title={<>What the videos <Accent>taught us.</Accent></>}
+        lede={<>
+          <span className="block text-ink">In simple words: this is our notebook of lessons from the videos we watched, written in our own words, so the brain can reread them every morning.</span>
+          <span className="mt-3 block">There are two kinds of notes. A <span className="text-ink">principle</span> is a lasting lesson, like "do not put all your eggs in one basket". A <span className="text-ink">claim</span> is a guess about one moment, like a weather forecast: it has a date, it runs out, and nobody knows if it was right until code checks it against real prices later. The brain reads the principles that fit the day, and only the claims that have not run out.</span>
+        </>}
       />
       <Strip
         cells={[
-          { value: sources.length, label: "sources", desc: "Videos so far. Books and lectures land here too." },
-          { value: principles.length, label: "principles", desc: "Lasting lessons, paraphrased, at most 280 characters each." },
-          { value: live, label: "live claims", tone: "people", dashed: true, desc: `${claims.length - live} more have expired and are kept for scoring sources.` },
-          { value: tags.length, label: "themes", tone: "flat", desc: `Most common: ${tags.slice(0, 3).map(([t]) => t.replaceAll("_", " ")).join(", ")}.` },
+          { value: sources.length, label: "sources", desc: "Videos so far. Books and talks would go here too." },
+          { value: principles.length, label: "principles", desc: "Lasting lessons in our own words, each a sentence or two (at most 280 characters)." },
+          { value: live, label: "live claims", tone: "people", dashed: true, desc: `Guesses still in date. ${claims.length - live} more have run out; we keep them to check later which videos guessed well.` },
+          { value: tags.length, label: "themes", tone: "flat", desc: `Topics the lessons are about. Most common: ${tags.slice(0, 3).map(([t]) => t.replaceAll("_", " ")).join(", ")}.` },
         ]}
       />
 
       <Reveal className="mt-10 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto]">
         <label className="flex items-center gap-3 rounded-full border border-line-2 bg-surface px-5 py-3.5 focus-within:border-accent">
           <svg viewBox="0 0 24 24" className="size-[18px] text-ink-3" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="11" cy="11" r="6.5" /><path d="m20 20-4.2-4.2" /></svg>
-          <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search lessons, claims, tickers, themes"
-            aria-label="Search insights" className="w-full bg-transparent text-[15px] outline-none placeholder:text-ink-3" />
+          <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search lessons, guesses, stock codes, topics"
+            aria-label="Search lessons" className="w-full bg-transparent text-[15px] outline-none placeholder:text-ink-3" />
         </label>
         <Segmented label="View" value={view} onChange={setView}
-          options={[{ value: "sources", label: "By source", count: sources.length }, { value: "themes", label: "By theme", count: tags.length }, { value: "claims", label: "Claims", count: claims.length }]} />
+          options={[{ value: "sources", label: "By source", count: sources.length }, { value: "themes", label: "By theme", count: tags.length }, { value: "claims", label: "Dated guesses", count: claims.length }]} />
       </Reveal>
 
       <Reveal delay={80} className="no-scrollbar mt-4 flex gap-2 overflow-x-auto pb-1">
@@ -90,7 +93,7 @@ export default function Insights({ data }) {
                   claims={(claimsBySource[s.id] ?? []).filter(matchC)} filtered={Boolean(needle || tag)} />
               ))}
             </div>
-          ) : <Empty title="Nothing matches">Try another word or clear the theme.</Empty>
+          ) : <Empty title="Nothing matches">Try another word, or tap "all themes" to clear the topic.</Empty>
         )}
         {view === "themes" && <Themes principles={principles.filter(matchP)} tags={tag ? [[tag]] : tags} />}
         {view === "claims" && <Claims claims={claims.filter(matchC)} sources={library} />}
@@ -142,7 +145,7 @@ function SourceCard({ s, n, principles, claims, filtered, delay }) {
                 </div>
               </li>
             ))}
-            {!principles.length && <li className="text-ink-3">No principles match the filter.</li>}
+            {!principles.length && <li className="text-ink-3">No lessons from this video match your search.</li>}
           </ol>
           {visible.length < principles.length && (
             <button type="button" onClick={() => setAll(true)} className="btn mt-5 px-5 py-3 text-[14px]">Show all {principles.length} principles</button>
@@ -150,10 +153,10 @@ function SourceCard({ s, n, principles, claims, filtered, delay }) {
         </div>
         <div className="border-t border-line p-6 sm:p-8 lg:border-t-0 lg:border-l">
           <button type="button" onClick={() => setOpen(!open)} className="meta flex min-h-[44px] w-full items-center justify-between gap-3 text-left hover:text-ink" aria-expanded={open}>
-            <span>Claims · {claims.length} <span className="text-people">({liveClaims} live)</span></span>
+            <span>Dated guesses · {claims.length} <span className="text-people">({liveClaims} still in date)</span></span>
             <span className={`transition-transform duration-500 ${open ? "rotate-90" : ""}`}><ArrowRight className="size-4" /></span>
           </button>
-          {!claims.length && <p className="mt-4 text-[14px] text-ink-3">No dated claims in this source.</p>}
+          {!claims.length && <p className="mt-4 text-[14px] text-ink-3">This video made no dated guesses.</p>}
           {open && (
             <ul className="mt-4 grid animate-rise gap-3">
               {claims.map((c) => <ClaimRow key={c.id} c={c} />)}
@@ -186,7 +189,7 @@ function Themes({ principles, tags }) {
     .map(([t]) => [t, principles.filter((p) => p.tags.includes(t))])
     .filter(([, list]) => list.length)
     .slice(0, 24);
-  if (!groups.length) return <Empty title="Nothing matches">Try another word or clear the theme.</Empty>;
+  if (!groups.length) return <Empty title="Nothing matches">Try another word, or tap "all themes" to clear the topic.</Empty>;
   return (
     <div className="grid gap-12">
       {groups.map(([t, list]) => (
@@ -222,10 +225,10 @@ function Claims({ claims, sources }) {
     <>
       <div className="mb-6 flex flex-wrap items-center gap-3">
         <Segmented label="Show" value={showExpired ? "all" : "live"} onChange={(v) => setShowExpired(v === "all")}
-          options={[{ value: "live", label: "Live", count: live.length }, { value: "all", label: "Include expired", count: claims.length }]} />
-        <span className="meta">Unverified until code checks them against prices</span>
+          options={[{ value: "live", label: "Still in date", count: live.length }, { value: "all", label: "Include run out", count: claims.length }]} />
+        <span className="meta">Not proven until code checks them against real prices</span>
       </div>
-      {!shown.length && <Empty title="No live claims">Include expired to see the history.</Empty>}
+      {!shown.length && <Empty title="No guesses still in date">Tap "Include run out" to see the older ones.</Empty>}
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {shown.map((o, i) => {
           const expired = o.expires < now;

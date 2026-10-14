@@ -50,14 +50,14 @@ export function BriefSections({ data, brief, go }) {
   const titleOf = (s) => (s.title.match(/\(([^()]*)\)\s*$/) || [, s.title])[1];
   return (
     <section id="brief" className="scroll-mt-28 pt-24">
-      <div className="eyebrow mb-5">From your library · matched by code, not generated</div>
+      <div className="eyebrow mb-5">From our library · picked by code, not made up</div>
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
         <Reveal className="card p-6 sm:p-8">
           <div className="flex items-baseline justify-between gap-3">
-            <h3 className="text-[22px] font-semibold tracking-[-0.02em]">Lessons in play</h3>
+            <h3 className="text-[22px] font-semibold tracking-[-0.02em]">Lessons that fit today</h3>
             <button type="button" onClick={() => go("insights")} className="meta inline-flex items-center gap-1 hover:text-ink">Lessons <ArrowRight className="size-3.5" /></button>
           </div>
-          <p className="mt-1 text-[14px] text-ink-3">Today's conditions, matched to principles from your library by tag.</p>
+          <p className="mt-1 text-[14px] text-ink-3">In simple words: what the market looks like today, and a lesson from our books and videos that fits it.</p>
           <ol className="mt-6 grid gap-5">
             {brief.lessons.map(({ why, p }) => (
               <li key={p.id} className="border-t border-line pt-5 first:border-0 first:pt-0">
@@ -71,10 +71,10 @@ export function BriefSections({ data, brief, go }) {
         </Reveal>
         <Reveal delay={80} className="card p-6 sm:p-8">
           <div className="flex items-baseline justify-between gap-3">
-            <h3 className="text-[22px] font-semibold tracking-[-0.02em]">Claims on your names</h3>
+            <h3 className="text-[22px] font-semibold tracking-[-0.02em]">What others said about our companies</h3>
             <span className="meta">{brief.claims.length} unexpired</span>
           </div>
-          <p className="mt-1 text-[14px] text-ink-3">What sources said, dated and unverified. Never a reason to act on its own.</p>
+          <p className="mt-1 text-[14px] text-ink-3">In simple words: things people said, like a weather forecast with a date. Nobody has checked them, so never act on one alone.</p>
           <ul className="mt-5 grid gap-4">
             {brief.claims.map((c) => (
               <li key={c.id} className="border-t border-line pt-4 first:border-0 first:pt-0">

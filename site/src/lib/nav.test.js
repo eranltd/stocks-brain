@@ -7,7 +7,7 @@ const OLD = ["today", "details", "portfolio", "playbook", "people", "watchlist",
 const NEW = ["verdicts"];
 
 test("three subjects hold every old route exactly once, each page with a label and a one-line what's this", () => {
-  assert.deepEqual(SUBJECTS.map((s) => s.label), ["Today", "Brain's verdicts", "Our plan", "Learn"]);
+  assert.deepEqual(SUBJECTS.map((s) => s.label), ["Today", "Brain's verdicts", "Experiments", "Learn"]);
   assert.deepEqual([...ROUTES].sort(), [...OLD, ...NEW].sort());
   assert.equal(new Set(ROUTES).size, ROUTES.length);
   for (const s of SUBJECTS) {

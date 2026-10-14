@@ -86,15 +86,6 @@ export function steadyRuns(runs) {
   return ok.length ? n : 0;
 }
 
-/** The straight answer a reader wants first: do I need to do anything? Paper only until the trust ladder allows money. */
-export function whatToDo(run, stage = 0) {
-  const acts = (run?.picks ?? []).some((p) => p.pick.stance !== "neutral");
-  if (stage < 2) return { answer: "No.", why: "The brain is still practising with pretend money. Real money waits until it has shown, over months, that its guesses are good." };
-  return acts
-    ? { answer: "Only what the plan says.", why: "Follow the house rules on the next check day; never more than the small slot they allow." }
-    : { answer: "No.", why: "Nothing to change today. The plan stays as it is." };
-}
-
 /** Add `n` trading days (weekdays) to an ISO date. */
 export function addTradingDays(iso, n) {
   const d = new Date(`${iso}T00:00:00Z`);

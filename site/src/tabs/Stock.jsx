@@ -13,28 +13,28 @@ import { shortName, whenWords } from "../lib/simple.js";
 import { loadMarket } from "../lib/data.js";
 import { candlesOf, costWords, fundCard, NOT_YET, resolveSymbolMarket } from "../lib/markets.js";
 
-const NASDAQ_PLAN_LINE = "The house rules, the practice portfolio and the daily brain follow the Nasdaq list only, so there is no paper plan for this one. It is here to read about, not to act on.";
+const NASDAQ_PLAN_LINE = "Our house rules, our pretend-money practice portfolio and the daily brain only follow the Nasdaq list. So there is no pretend-money plan for this one. It is here to read about and learn from, not to act on.";
 
 /** Plain-language summary, assembled by code from the computed numbers (no model). */
 function plainWords(row, checks, benchSymbol, benchLabel, liveClaims, settings, baseRate) {
   const out = [];
   const pct = (v) => `${Math.abs(v).toFixed(1)}%`;
   if (row.vs_bench_20d_pct != null) {
-    out.push(`Over the last month ${row.symbol} ${row.ret_20d_pct >= 0 ? "rose" : "fell"} ${pct(row.ret_20d_pct)}, ${row.vs_bench_20d_pct >= 0 ? "beating" : "trailing"} the ${benchLabel} by ${Math.abs(row.vs_bench_20d_pct).toFixed(1)} points.`);
+    out.push(`Over the last month ${row.symbol} went ${row.ret_20d_pct >= 0 ? "up" : "down"} ${pct(row.ret_20d_pct)}. That is ${Math.abs(row.vs_bench_20d_pct).toFixed(1)} points ${row.vs_bench_20d_pct >= 0 ? "better" : "worse"} than the whole market (the ${benchLabel}).`);
   } else {
-    out.push(`Over the last month ${row.symbol} ${row.ret_20d_pct >= 0 ? "rose" : "fell"} ${pct(row.ret_20d_pct)}.`);
+    out.push(`Over the last month ${row.symbol} went ${row.ret_20d_pct >= 0 ? "up" : "down"} ${pct(row.ret_20d_pct)}.`);
   }
-  out.push(row.dist_sma50_pct > 0 ? "It trades above its 50-day average, so the trend is up." : "It trades below its 50-day average, so the trend is weak.");
-  if (row.dist_sma50_pct >= settings.setup.stretch_pct) out.push(`It is stretched ${pct(row.dist_sma50_pct)} above that average. Buying this far from the trend often means buying just before a pullback.`);
-  else if (row.from_high_pct != null && row.from_high_pct > -2) out.push("It is close to its 1-year high. That alone is not a reason to sell, or to buy.");
-  else if (row.from_high_pct != null && row.from_high_pct < -20) out.push(`It sits ${pct(row.from_high_pct)} below its 1-year high. A big fall alone is not a reason to buy.`);
+  out.push(row.dist_sma50_pct > 0 ? "It sits above its usual level lately (its average over the last 50 days), so the trend is up." : "It sits below its usual level lately (its average over the last 50 days), so the trend is weak.");
+  if (row.dist_sma50_pct >= settings.setup.stretch_pct) out.push(`It ran up too fast: it is ${pct(row.dist_sma50_pct)} above that usual level. Like a ball thrown up high, a stock that sprints often slips back for a while, so getting in now often means getting in just before a dip.`);
+  else if (row.from_high_pct != null && row.from_high_pct > -2) out.push("It is close to its highest point of the past year. That alone is not a reason to sell, or to buy.");
+  else if (row.from_high_pct != null && row.from_high_pct < -20) out.push(`It sits ${pct(row.from_high_pct)} below its highest point of the past year. A big fall alone is not a reason to buy: cheap things can get cheaper.`);
   if (row.symbol !== benchSymbol) {
     const n = checks.filter((c) => c.pass).length;
-    out.push(n === 4 ? "All four setup checks pass: a healthy setup, but not a buy signal on its own." : n === 3 ? "Three of four setup checks pass." : n === 2 ? "Only two of four setup checks pass: mixed." : "Most setup checks fail: a name to watch, not to add to.");
+    out.push(n === 4 ? "All four quick checks pass. Think of a good report card: nice to see, but not a reason to buy on its own." : n === 3 ? "Three of the four quick checks pass." : n === 2 ? "Only two of the four quick checks pass: a mixed picture." : "Most quick checks fail: one to watch and learn from, nothing more.");
     const rate = baseRate?.by_score.find((r) => r.passed === n);
-    if (rate?.n) out.push(`In ${baseRate.from.slice(0, 4)}–${baseRate.to.slice(0, 4)}, names with ${n} of 4 went on to ${rate.mean >= 0 ? "beat" : "trail"} the benchmark by ${Math.abs(rate.mean).toFixed(1)} points over the next ${baseRate.horizon_days} days on average (${rate.n} cases).`);
+    if (rate?.n) out.push(`Looking back at ${baseRate.from.slice(0, 4)}–${baseRate.to.slice(0, 4)}, stocks with ${n} of 4 went on to do ${Math.abs(rate.mean).toFixed(1)} points ${rate.mean >= 0 ? "better" : "worse"} than the whole market over the next ${baseRate.horizon_days} days, on average (${rate.n} cases). The past is a hint, not a promise.`);
   }
-  if (liveClaims) out.push(`${liveClaims} live ${liveClaims === 1 ? "claim" : "claims"} from your sources mention it (unverified, see below).`);
+  if (liveClaims) out.push(`${liveClaims} recent ${liveClaims === 1 ? "claim" : "claims"} from the people we learn from ${liveClaims === 1 ? "mentions" : "mention"} it (not checked yet, see below).`);
   return out;
 }
 
@@ -46,14 +46,18 @@ function actGate(data, row, checks) {
   const held = st && (st.status === "kept" || st.status === "added");
   const stretched = row.setup?.stretched ?? !checks.find((c) => c.id === "calm").pass;
   const reasons = [
-    { ok: stage >= 2, text: stage >= 2 ? `Trust stage ${stage} (${STAGES[stage].name}) allows small positions` : `Trust stage ${stage} (${STAGES[stage].name}): no money moves yet` },
-    { ok: Boolean(held), text: st ? (held ? "The portfolio rule holds it" : `The portfolio rule leaves it out: ${STATUS[st.status].label.toLowerCase()}`) : "The portfolio rule has not run yet" },
-    { ok: passed >= 3 && !stretched, text: stretched ? "Stretched above its trend: no new buys" : `${passed} of 4 setup checks pass (need 3)` },
+    { ok: stage >= 2, text: stage >= 2 ? `Trust stage ${stage} (${STAGES[stage].name}): the brain has earned some trust, but we still only watch and learn here` : `Trust stage ${stage} (${STAGES[stage].name}): the brain has not earned trust yet, so pretend money only` },
+    { ok: Boolean(held), text: st ? (held ? "Our pretend-money portfolio rule holds it" : `Our pretend-money portfolio rule leaves it out: ${STATUS[st.status].label.toLowerCase()}`) : "Our pretend-money portfolio rule has not run yet" },
+    { ok: passed >= 3 && !stretched, text: stretched ? "It ran up too fast: the rules say no new pretend buys" : `${passed} of 4 quick checks pass (the rules need 3)` },
     // House rules, Before acting step 4: the checklist read and a written risk plan with reward-to-risk to TP1 of at least 2.
     gateReason(data.checklist, rowFor(data.checklist, row.symbol), data.checklistCfg, row.last_date),
   ];
   return { ok: reasons.every((r) => r.ok), reasons };
 }
+
+// The brain's lean and how sure it is, in everyday words (the data keeps bullish/bearish and low/medium/high).
+const STANCE_WORD = { bullish: "Leans up", bearish: "Leans down", neutral: "No lean" };
+const SURE_WORD = { low: "not very sure", medium: "fairly sure", high: "quite sure" };
 
 const RANGES = [
   { value: 21, label: "1M" },
@@ -70,22 +74,22 @@ export function setupChecks(row, bench, settings) {
     trend: row.dist_sma50_pct > 0, rs_3m: (row.vs_bench_60d_pct ?? 0) > 0, rs_6m: (row.vs_bench_120d_pct ?? 0) > 0, calm: row.dist_sma50_pct < s.stretch_pct,
   };
   return [
-    { id: "trend", label: "Trend", pass: c.trend, detail: st ? `${fmtPct(st.dist_sma50_pct, 1)} vs its 50-day, ${fmtPct(st.dist_long_pct, 1)} vs its ${s.trend_long_days}-day average` : `${fmtPct(row.dist_sma50_pct, 1)} vs its 50-day average` },
-    { id: "rs_3m", label: `Beats ${bench} · 3 months`, pass: c.rs_3m, detail: `${fmtPct(st?.vs_bench_short_pct ?? row.vs_bench_60d_pct ?? 0, 1)} over ${s.rs_short_days} days` },
-    { id: "rs_6m", label: `Beats ${bench} · 6 months`, pass: c.rs_6m, detail: `${fmtPct(st?.vs_bench_long_pct ?? row.vs_bench_120d_pct ?? 0, 1)} over ${s.rs_long_days} days` },
-    { id: "calm", label: "Not stretched", pass: c.calm, detail: `${fmtPct(row.dist_sma50_pct, 1)} above the 50-day (limit +${s.stretch_pct}%)${s.veto_stretched ? ". Failing this blocks new buys" : ""}` },
+    { id: "trend", label: "Heading up (above its usual level lately)", pass: c.trend, detail: st ? `${fmtPct(st.dist_sma50_pct, 1)} vs its 50-day average, ${fmtPct(st.dist_long_pct, 1)} vs its ${s.trend_long_days}-day average` : `${fmtPct(row.dist_sma50_pct, 1)} vs its 50-day average` },
+    { id: "rs_3m", label: `Doing better than the whole market (${bench}) · 3 months`, pass: c.rs_3m, detail: `${fmtPct(st?.vs_bench_short_pct ?? row.vs_bench_60d_pct ?? 0, 1)} over ${s.rs_short_days} days` },
+    { id: "rs_6m", label: `Doing better than the whole market (${bench}) · 6 months`, pass: c.rs_6m, detail: `${fmtPct(st?.vs_bench_long_pct ?? row.vs_bench_120d_pct ?? 0, 1)} over ${s.rs_long_days} days` },
+    { id: "calm", label: "Has not run up too fast", pass: c.calm, detail: `${fmtPct(row.dist_sma50_pct, 1)} above its 50-day average (limit +${s.stretch_pct}%)${s.veto_stretched ? ". Failing this blocks new pretend buys" : ""}` },
   ];
 }
 
 /** Library principles matched to this stock's condition (same tag mechanism as the market brief). */
 function stockLessons(row, checks, library) {
   const conds = [
-    !checks.find((c) => c.id === "calm").pass && { why: "Stretched above its trend", tags: ["overextension", "mean_reversion"] },
-    !checks.find((c) => c.id === "trend").pass && { why: "Below its 50-day average", tags: ["invalidation", "reversal", "breakouts"] },
-    checks.find((c) => c.id === "rs_6m").pass && { why: "Leading the benchmark over 6 months", tags: ["momentum", "relative_strength"] },
-    !checks.find((c) => c.id === "rs_6m").pass && { why: "Lagging the benchmark over 6 months", tags: ["relative_strength", "stance", "breadth"] },
-    row.from_high_pct != null && row.from_high_pct > -2 && { why: "At a 1-year high", tags: ["all_time_highs"] },
-    row.from_high_pct != null && row.from_high_pct < -20 && { why: "Far below its high", tags: ["bottoms", "valuation"] },
+    !checks.find((c) => c.id === "calm").pass && { why: "Ran up too fast", tags: ["overextension", "mean_reversion"] },
+    !checks.find((c) => c.id === "trend").pass && { why: "Below its usual level lately", tags: ["invalidation", "reversal", "breakouts"] },
+    checks.find((c) => c.id === "rs_6m").pass && { why: "Doing better than the whole market over 6 months", tags: ["momentum", "relative_strength"] },
+    !checks.find((c) => c.id === "rs_6m").pass && { why: "Doing worse than the whole market over 6 months", tags: ["relative_strength", "stance", "breadth"] },
+    row.from_high_pct != null && row.from_high_pct > -2 && { why: "At its highest point of the past year", tags: ["all_time_highs"] },
+    row.from_high_pct != null && row.from_high_pct < -20 && { why: "Far below its high point", tags: ["bottoms", "valuation"] },
   ].filter(Boolean);
   const all = (library?.sources ?? []).flatMap((s) => s.principles.map((p) => ({ ...p, source: s })));
   const used = new Set();
@@ -134,7 +138,7 @@ export default function StockPage({ data, market, symbol, go }) {
           </Empty>
         )
         : found.id && found.id === market?.id ? <Empty title={`${symbol} · ${label}`}>{market.state === "none" ? NOT_YET : "Its numbers appear after the next nightly run."}</Empty>
-        : <Empty title={`${symbol} is not on any of our lists`}>It would need to be added to one of the lists first; it then appears here after the next nightly run.</Empty>}
+        : <Empty title={`${symbol} is not on any of our lists`}>We only show stocks on our lists. Once it is added to one, it shows up here the morning after.</Empty>}
     </Container>
   );
 }
@@ -151,7 +155,7 @@ function Stock({ data, symbol, go, market: mk }) {
   if (!row) {
     return (
       <Container className="pt-20">
-        <Empty title={`${symbol} is not on the watchlist`}>Add it to config/watchlist.json and it will appear here after the next daily run.</Empty>
+        <Empty title={`${symbol} is not on our list`}>We only show stocks on our list. Once it is added (in config/watchlist.json), it shows up here after the next daily update.</Empty>
       </Container>
     );
   }
@@ -212,9 +216,9 @@ function Stock({ data, symbol, go, market: mk }) {
         </div>
         {!isBench && (
           <Reveal delay={200} className="card px-6 py-5 text-right">
-            <div className="meta">Setup checks</div>
+            <div className="meta">Quick checks passed</div>
             <div className="display num mt-1 text-[48px] leading-none">{passed}<span className="text-ink-3">/4</span></div>
-            <div className="meta mt-2 normal-case tracking-[0.04em]">code, not advice</div>
+            <div className="meta mt-2 normal-case tracking-[0.04em]">a report card, not advice</div>
           </Reveal>
         )}
       </div>
@@ -225,12 +229,13 @@ function Stock({ data, symbol, go, market: mk }) {
         <Reveal className="card p-6 sm:p-8">
           <div className="eyebrow mb-4">In plain words</div>
           <p className="text-[clamp(17px,1.7vw,20px)] leading-relaxed">{words.join(" ")}</p>
-          <p className="meta mt-4 normal-case tracking-[0.04em]">Written by code from the numbers below. No model involved.</p>
+          <p className="meta mt-4 normal-case tracking-[0.04em]">Written by a simple program from the numbers below, not by an AI. It describes; it does not predict.</p>
         </Reveal>
         {gate && (
           <Reveal delay={100} className={`card p-6 sm:p-8 ${gate.ok ? "border-accent/50" : "border-people/40"}`}>
-            <div className="eyebrow mb-4">Can we act on this?</div>
-            <div className={`display text-[clamp(34px,4vw,48px)] ${gate.ok ? "text-accent" : "text-people"}`}>{gate.ok ? "Within house rules." : "Not yet."}</div>
+            <div className="eyebrow mb-4">Would our rules allow it? (pretend money)</div>
+            <div className={`display text-[clamp(34px,4vw,48px)] ${gate.ok ? "text-accent" : "text-people"}`}>{gate.ok ? "On paper, yes." : "Not yet."}</div>
+            <p className="mt-3 text-[14.5px] leading-relaxed text-ink-2">We only watch and learn with pretend money here. Our real money follows the Brain's verdicts page, usually one fund that holds the whole market.</p>
             <ul className="mt-5 grid gap-2.5 text-[14.5px]">
               {gate.reasons.map((r) => (
                 <li key={r.text} className="flex gap-3">
@@ -244,7 +249,7 @@ function Stock({ data, symbol, go, market: mk }) {
         )}
         {!isDefault && !isBench && (
           <Reveal delay={100} className="card p-6 sm:p-8">
-            <div className="eyebrow mb-4">Can we act on this?</div>
+            <div className="eyebrow mb-4">Would our rules allow it?</div>
             <div className="display text-[clamp(30px,4vw,42px)] text-ink-2">Not part of our plan.</div>
             <p className="mt-4 text-[16px] leading-relaxed text-ink-2">{NASDAQ_PLAN_LINE}</p>
           </Reveal>
@@ -255,12 +260,12 @@ function Stock({ data, symbol, go, market: mk }) {
         <Strip
           dense
           cells={[
-            { value: fmtPct(row.ret_20d_pct, 1), label: "20 days", tone: row.ret_20d_pct >= 0 ? "accent" : "down" },
-            ...(isBench ? [] : [{ value: fmtPct(row.vs_bench_20d_pct ?? 0, 1), label: `vs ${bench.symbol}`, tone: (row.vs_bench_20d_pct ?? 0) >= 0 ? "accent" : "down" }]),
-            { value: fmtPct(row.ret_60d_pct, 1), label: "60 days", tone: row.ret_60d_pct >= 0 ? "accent" : "down" },
-            ...(row.risk ? [{ value: fmtPct(row.risk.max_dd_1y_pct, 0), label: "deepest drop, 1y", tone: "down" }] : []),
-            { value: row.from_high_pct != null ? fmtPct(row.from_high_pct, 1) : "—", label: "from 1y high", tone: "flat" },
-            ...(row.vol20_pct != null ? [{ value: `${fmtNum(row.vol20_pct, 0)}%`, label: "volatility (ann.)", tone: "flat" }] : []),
+            { value: fmtPct(row.ret_20d_pct, 1), label: "last 20 days", tone: row.ret_20d_pct >= 0 ? "accent" : "down" },
+            ...(isBench ? [] : [{ value: fmtPct(row.vs_bench_20d_pct ?? 0, 1), label: `vs the whole market (${bench.symbol})`, tone: (row.vs_bench_20d_pct ?? 0) >= 0 ? "accent" : "down" }]),
+            { value: fmtPct(row.ret_60d_pct, 1), label: "last 60 days", tone: row.ret_60d_pct >= 0 ? "accent" : "down" },
+            ...(row.risk ? [{ value: fmtPct(row.risk.max_dd_1y_pct, 0), label: "its biggest drop, past year", tone: "down" }] : []),
+            { value: row.from_high_pct != null ? fmtPct(row.from_high_pct, 1) : "—", label: "from its high of the past year", tone: "flat" },
+            ...(row.vol20_pct != null ? [{ value: `${fmtNum(row.vol20_pct, 0)}%`, label: "how much it jumps around (a year)", tone: "flat" }] : []),
           ]}
         />
       </div>
@@ -275,17 +280,18 @@ function Stock({ data, symbol, go, market: mk }) {
       {long && (
         <Reveal className="card mt-6 p-6 sm:p-8">
           <div className="flex flex-wrap items-baseline justify-between gap-3">
-            <h3 className="text-[22px] font-semibold tracking-[-0.02em]">Against the +{goal}% goal</h3>
-            <span className="meta">{fmtDate(data.longrun.from)} to {fmtDate(data.longrun.to)} · hindsight applies</span>
+            <h3 className="text-[22px] font-semibold tracking-[-0.02em]">Against the +{goal}% a year goal</h3>
+            <span className="meta">{fmtDate(data.longrun.from)} to {fmtDate(data.longrun.to)} · looking back is easy</span>
           </div>
+          <p className="mt-2 text-[14px] leading-relaxed text-ink-3">In simple words: how this stock did in the past, year by year. Like old weather records, it tells you what has happened, not what will.</p>
           <div className="mt-5 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-6">
             {[
-              [fmtPct(long.cagr_pct, 1), "a year", long.cagr_pct >= goal ? "text-accent" : ""],
-              [`${fmtNum(long.hit_goal_12m_pct, 0)}%`, `of 12-month windows at +${goal}% or more`, ""],
-              [`${fmtNum(long.loss_12m_pct, 0)}%`, "of 12-month windows lost money", ""],
+              [fmtPct(long.cagr_pct, 1), "a year, on average", long.cagr_pct >= goal ? "text-accent" : ""],
+              [`${fmtNum(long.hit_goal_12m_pct, 0)}%`, `of 12-month stretches made +${goal}% or more`, ""],
+              [`${fmtNum(long.loss_12m_pct, 0)}%`, "of 12-month stretches lost money", ""],
               [fmtPct(long.worst_12m_pct, 0), "worst 12 months", "text-down"],
-              [fmtPct(long.max_dd_pct, 0), "deepest drop from a peak", "text-down"],
-              [`${fmtNum(long.held_pct, 0)}%`, "of months held by the rule", ""],
+              [fmtPct(long.max_dd_pct, 0), "its biggest drop from a high point", "text-down"],
+              [`${fmtNum(long.held_pct, 0)}%`, "of months our pretend-money rule held it", ""],
             ].map(([v, l, tone]) => (
               <div key={l}>
                 <div className={`display num text-[clamp(26px,3vw,36px)] leading-none ${tone}`}>{v}</div>
@@ -293,7 +299,7 @@ function Stock({ data, symbol, go, market: mk }) {
               </div>
             ))}
           </div>
-          {row.risk && <p className="mt-5 text-[14px] leading-relaxed text-ink-2">Over the last year it swung {fmtNum(row.risk.vol_1y_pct, 0)}% a year (beta {row.risk.beta_1y ?? "–"} to {bench.symbol}). In a bad month, 1 in 20, a position could lose about <span className="text-down">{fmtPct(row.risk.loss_95_20d_pct, 0)}</span>. Size it so that loss is acceptable.</p>}
+          {row.risk && <p className="mt-5 text-[14px] leading-relaxed text-ink-2">How much it jumps around: about {fmtNum(row.risk.vol_1y_pct, 0)}% a year over the last year. When the whole market ({bench.symbol}) moves 1%, this one has tended to move about {row.risk.beta_1y ?? "–"}% (its beta). In a bad month, the kind that comes about 1 in 20 months, it could lose about <span className="text-down">{fmtPct(row.risk.loss_95_20d_pct, 0)}</span>. That is why we only practise with pretend money.</p>}
         </Reveal>
       )}
 
@@ -301,10 +307,10 @@ function Stock({ data, symbol, go, market: mk }) {
         {!isBench && (
           <Reveal className="card p-6 sm:p-8">
             <div className="flex items-baseline justify-between gap-3">
-              <h3 className="text-[22px] font-semibold tracking-[-0.02em]">Setup checks</h3>
+              <h3 className="text-[22px] font-semibold tracking-[-0.02em]">Quick checks</h3>
               <span className="meta">{passed} of 4 pass</span>
             </div>
-            <p className="mt-1 text-[14px] text-ink-3">Plain rules from the methodology. They describe the setup; they do not make a call.</p>
+            <p className="mt-1 text-[14px] text-ink-3">Four simple yes-or-no questions, like a report card. They describe how the stock looks today; they do not tell you what to do.</p>
             <ul className="mt-5 grid gap-3">
               {checks.map((c) => (
                 <li key={c.id} className="flex items-center gap-4 rounded-2xl border border-line px-4 py-3.5">
@@ -323,7 +329,7 @@ function Stock({ data, symbol, go, market: mk }) {
             <h3 className="text-[22px] font-semibold tracking-[-0.02em]">Lessons in play</h3>
             <button type="button" onClick={() => go("insights")} className="meta inline-flex items-center gap-1 hover:text-ink">Lessons <ArrowRight className="size-3.5" /></button>
           </div>
-          <p className="mt-1 text-[14px] text-ink-3">Matched to this stock's condition from your library.</p>
+          <p className="mt-1 text-[14px] text-ink-3">Ideas from the books and people we learn from that fit how this stock looks right now.</p>
           <ol className="mt-5 grid gap-5">
             {lessons.map(({ why, p }) => (
               <li key={p.id} className="border-t border-line pt-5 first:border-0 first:pt-0">
@@ -332,7 +338,7 @@ function Stock({ data, symbol, go, market: mk }) {
                 <div className="meta mt-2 truncate normal-case tracking-[0.04em]" title={p.source.title}>{p.id} · {(p.source.title.match(/\(([^()]*)\)\s*$/) || [, p.source.title])[1]}</div>
               </li>
             ))}
-            {!lessons.length && <li className="text-ink-3">No lesson matches this setup yet.</li>}
+            {!lessons.length && <li className="text-ink-3">No lesson fits how this stock looks right now.</li>}
           </ol>
         </Reveal>
       </div>
@@ -341,15 +347,15 @@ function Stock({ data, symbol, go, market: mk }) {
         <section className="pt-20">
           <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
             <div>
-              <div className="eyebrow mb-3">The brain's call</div>
-              <h2 className="display text-[clamp(30px,4.4vw,52px)]">{sample ? <>Calls start with <Accent>M3.</Accent></> : picks.length ? <>{cap(picks[0].stance)}, <Accent>{picks[0].conviction} conviction.</Accent></> : <>No call <Accent>yet.</Accent></>}</h2>
+              <div className="eyebrow mb-3">The brain's guess</div>
+              <h2 className="display text-[clamp(30px,4.4vw,52px)]">{sample ? <>Guesses start with <Accent>M3.</Accent></> : picks.length ? <>{STANCE_WORD[picks[0].stance] ?? cap(picks[0].stance)}, <Accent>{SURE_WORD[picks[0].conviction] ?? `${picks[0].conviction} conviction`}.</Accent></> : <>No guess <Accent>yet.</Accent></>}</h2>
             </div>
             {sample && <span className="pill border-dashed border-people/60 text-people">sample history below</span>}
           </div>
           {sample && (
             <p className="mb-6 max-w-[64ch] text-ink-2">
-              The brain is not running yet. When it does, its latest call on {symbol} goes here: stance, thesis, risks and the condition that would prove it wrong, scored by code after {settings.scoring.horizon_days} trading days.
-              The history below is <span className="text-ink">sample data</span> so you can see the format.
+              The brain is not running yet. When it does, its latest guess on {symbol} goes here: which way it leans, why, what could go wrong, and what would prove it wrong. After {settings.scoring.horizon_days} trading days a program marks it right or wrong, like a teacher marking homework.
+              The history below is <span className="text-ink">made-up sample data</span> so you can see what it will look like.
             </p>
           )}
           {picks.length ? (
@@ -365,12 +371,12 @@ function Stock({ data, symbol, go, market: mk }) {
                     <Chip kind={k.verdict}>{k.verdict === "pending" ? "pending" : `${k.verdict} ${fmtPct(k.outcome.excess_pct, 1)}`}</Chip>
                   </div>
                   <p className="mt-4 text-[15px] leading-relaxed">{k.thesis}</p>
-                  <div className="mt-4 text-[14px] text-ink-2"><span className="meta mr-2">Wrong if</span>{k.invalidation}</div>
+                  <div className="mt-4 text-[14px] text-ink-2"><span className="meta mr-2">Proved wrong if</span>{k.invalidation}</div>
                 </Reveal>
               ))}
             </div>
           ) : (
-            <Empty title="No calls on this name">The brain has not flagged it yet.</Empty>
+            <Empty title="No guesses on this one">The brain has not said anything about it yet.</Empty>
           )}
         </section>
       )}
@@ -378,10 +384,10 @@ function Stock({ data, symbol, go, market: mk }) {
       <section className="pt-20">
         <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
           <div>
-            <div className="eyebrow mb-3">From your sources</div>
+            <div className="eyebrow mb-3">From the people we learn from</div>
             <h2 className="display text-[clamp(30px,4.4vw,52px)]">What was said <Accent>about {symbol}.</Accent></h2>
           </div>
-          <span className="meta">{liveClaims.length} live · {claims.length - liveClaims.length} expired</span>
+          <span className="meta">{liveClaims.length} recent · {claims.length - liveClaims.length} too old to count</span>
         </div>
         {claims.length ? (
           <ul className="grid gap-4 md:grid-cols-2">
@@ -391,7 +397,7 @@ function Stock({ data, symbol, go, market: mk }) {
                 <li key={c.id} className={`card p-6 ${expired ? "border-dashed opacity-60" : ""}`}>
                   <div className="flex items-center justify-between gap-3">
                     <span className="meta">{c.id} · {c.as_of}</span>
-                    <span className={`pill py-1 text-[11px] ${expired ? "text-ink-3" : "border-dashed border-people/60 text-people"}`}>{expired ? "expired" : c.status}</span>
+                    <span className={`pill py-1 text-[11px] ${expired ? "text-ink-3" : "border-dashed border-people/60 text-people"}`}>{expired ? "too old" : c.status}</span>
                   </div>
                   <p className="mt-3 text-[15px] leading-relaxed">{c.text}</p>
                 </li>
@@ -399,11 +405,11 @@ function Stock({ data, symbol, go, market: mk }) {
             })}
           </ul>
         ) : (
-          <Empty title="Nothing yet">No source has made a dated claim about {symbol}.</Empty>
+          <Empty title="Nothing yet">None of the people we learn from has said something about {symbol} that we could check later.</Empty>
         )}
       </section>
 
-      <p className="meta mt-16 normal-case tracking-[0.04em]">Analysis only, not financial advice. Lines are indexed to 100; the site publishes returns, not raw prices.</p>
+      <p className="meta mt-16 normal-case tracking-[0.04em]">Analysis only, not financial advice. We only watch and learn here. Lines start at 100 so you can compare them; the site shows how much things went up or down, not raw prices.</p>
     </Container>
   );
 }
@@ -441,7 +447,7 @@ function StockBrief({ data, row, symbol, today, jump, seeCandles, isDefault = tr
     : `Next results: ${whenWords(ne.date, today)}${ne.confirmed ? "" : " (expected)"}.`;
   return (
     <Reveal as="section" id="brief" aria-label={`${name} in short`} className="card scroll-mt-28 p-6 sm:p-8">
-      <div className="eyebrow mb-3">{symbol} · the household's eight-step checklist</div>
+      <div className="eyebrow mb-3">{symbol} · our eight-step chart checklist</div>
       <h2 className="display text-[clamp(32px,7.5vw,52px)] leading-[1.02]">{name} <Accent>in short.</Accent></h2>
 
       <div className="mt-7">
@@ -450,7 +456,7 @@ function StockBrief({ data, row, symbol, today, jump, seeCandles, isDefault = tr
           <>
             <div className={`display text-[clamp(40px,11vw,60px)] leading-none ${BRIEF_TONE[dir.tone]}`}>{dir.word}</div>
             {dir.summary && <p className="mt-3 max-w-[60ch] text-[17px] leading-relaxed text-ink-2">{dir.summary}</p>}
-            <p className="mt-2 text-[13.5px] text-ink-3">A description of the chart, not a forecast.</p>
+            <p className="mt-2 text-[13.5px] text-ink-3">This describes the chart so far, like saying it rained this week. It is not a forecast.</p>
             {seeCandles && (
               <button type="button" onClick={seeCandles} className="meta mt-2 inline-flex min-h-[40px] items-center gap-1.5 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">
                 See it on the candles <span aria-hidden="true">↓</span>
@@ -463,7 +469,7 @@ function StockBrief({ data, row, symbol, today, jump, seeCandles, isDefault = tr
       </div>
 
       <div className="mt-8">
-        <BriefHead>The eight checks</BriefHead>
+        <BriefHead>The eight checks (unproven)</BriefHead>
         {checks ? (
           <ol className="grid gap-2">
             {checks.map((c) => {
@@ -485,7 +491,7 @@ function StockBrief({ data, row, symbol, today, jump, seeCandles, isDefault = tr
           </ol>
         ) : (
           <>
-            <p className="text-[16px] leading-relaxed text-ink-2">{read.why} The eight checks it reads:</p>
+            <p className="text-[16px] leading-relaxed text-ink-2">{read.why} The eight things it looks at:</p>
             <ol className="mt-3 grid gap-1.5 text-[15px] text-ink-2">
               {(cfg?.steps ?? []).map((s) => <li key={s.id}>{s.name}</li>)}
             </ol>
@@ -495,12 +501,12 @@ function StockBrief({ data, row, symbol, today, jump, seeCandles, isDefault = tr
 
       {!isDefault ? (
         <div className="mt-8 rounded-2xl border border-line-2 p-5">
-          <BriefHead>Where to invest (on paper)</BriefHead>
+          <BriefHead>Pretend money only</BriefHead>
           <p className="text-[16px] leading-relaxed text-ink-2">{NASDAQ_PLAN_LINE}</p>
         </div>
       ) : (
       <div className={`mt-8 rounded-2xl border p-5 ${where.ok ? "border-accent/50" : "border-people/40"}`}>
-        <BriefHead>Where to invest (on paper)</BriefHead>
+        <BriefHead>Would our rules allow a pretend buy?</BriefHead>
         <div className={`text-[20px] leading-snug font-semibold tracking-[-0.01em] ${where.ok ? "text-accent" : "text-people"}`}>{where.head}.</div>
         {where.ok ? (
           <ul className="mt-3 grid gap-2 text-[16px] leading-relaxed text-ink">
@@ -512,14 +518,14 @@ function StockBrief({ data, row, symbol, today, jump, seeCandles, isDefault = tr
             {where.wait.length > 0 && <p className="text-ink-2"><span className="text-ink">What would change it:</span> {where.wait.join("; ")}.</p>}
           </div>
         )}
-        <p className="mt-3 text-[13.5px] leading-relaxed text-ink-3">The house rule: three of the four setup checks pass, the stock is not stretched, and the first target is at least {where.min} times as far as the stop. A paper entry only; the monthly portfolio rule decides what the practice portfolio holds.</p>
+        <p className="mt-3 text-[13.5px] leading-relaxed text-ink-3">The house rule: three of the four quick checks pass, the stock has not run up too fast, and what you might win is at least {where.min} times what you might lose (the first target is {where.min} times as far away as the safety exit). Pretend money only: we only watch and learn. A monthly rule decides what the pretend practice portfolio holds; our real money follows the Brain's verdicts page.</p>
       </div>
       )}
 
       {fund ? (
         <div className="mt-8">
           <BriefHead>What's inside</BriefHead>
-          <p className="max-w-[62ch] text-[17px] leading-relaxed text-ink">{fund.plain ?? "Its fund card appears with the next update."}</p>
+          <p className="max-w-[62ch] text-[17px] leading-relaxed text-ink">{fund.plain ?? "Its short description appears with the next update."}</p>
           <button type="button" onClick={() => jump("whats-inside")} className="meta mt-3 inline-flex min-h-[44px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">What's inside <span aria-hidden="true">↓</span></button>
         </div>
       ) : (
@@ -530,7 +536,7 @@ function StockBrief({ data, row, symbol, today, jump, seeCandles, isDefault = tr
             <p className="max-w-[62ch] text-[17px] leading-relaxed text-ink">{card.plain ?? card.business}</p>
             {next && <p className="mt-2 text-[15.5px] text-ink-2">{next}</p>}
           </>
-        ) : <p className="text-[16px] leading-relaxed text-ink-2">No company card yet; it is researched after each earnings season.</p>}
+        ) : <p className="text-[16px] leading-relaxed text-ink-2">No company card yet. We write one after each round of company results (every three months).</p>}
         <button type="button" onClick={() => jump("whats-next")} className="meta mt-3 inline-flex min-h-[44px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">What's next <span aria-hidden="true">↓</span></button>
       </div>
       )}
@@ -590,7 +596,7 @@ function WhatsInside({ fund, symbol }) {
         {fund.as_of && <span className="meta normal-case tracking-[0.04em]">checked {dayOnly(fund.as_of)}</span>}
       </div>
       {fund.plain ? <p className="mt-4 max-w-[62ch] text-[18px] leading-relaxed text-ink">{fund.plain}</p>
-        : <p className="mt-4 max-w-[62ch] text-[15px] leading-relaxed text-ink-2">No fund card for {symbol} yet. Cards come from each fund's own page: what it holds, the index it follows and its yearly cost.</p>}
+        : <p className="mt-4 max-w-[62ch] text-[15px] leading-relaxed text-ink-2">No fund card for {symbol} yet. A fund is one basket holding many companies. Cards come from each fund's own page: what is in the basket, the list it copies and what it costs each year.</p>}
       {fund.ticker && (
         <dl className="mt-6 grid gap-5 md:grid-cols-3 md:gap-8">
           <div className="min-w-0">
@@ -598,7 +604,7 @@ function WhatsInside({ fund, symbol }) {
             <dd className="text-[15.5px] leading-relaxed text-ink">{fund.holds}</dd>
           </div>
           <div className="min-w-0">
-            <dt className="meta mb-1.5 text-accent">The index it follows</dt>
+            <dt className="meta mb-1.5 text-accent">The list it copies (its index)</dt>
             <dd className="text-[15.5px] leading-relaxed text-ink">{fund.index_tracked}{fund.category ? <span className="block text-[14px] text-ink-3">{fund.category}</span> : null}</dd>
           </div>
           <div className="min-w-0">
@@ -609,7 +615,7 @@ function WhatsInside({ fund, symbol }) {
       )}
       {fund.top_note && <p className="mt-6 rounded-2xl border border-line-2 bg-surface-2 px-4 py-3 text-[15px] leading-relaxed text-ink-2">{fund.top_note}</p>}
       {fund.source_url && <p className="mt-4 text-[14.5px] text-ink-2">From the fund's own page<Src url={fund.source_url} /></p>}
-      <p className="meta mt-6 normal-case tracking-[0.04em]">A fund card describes the fund. It is not a forecast and not a reason to buy or sell.</p>
+      <p className="meta mt-6 normal-case tracking-[0.04em]">A fund card describes the fund, like the label on a food packet. It is not a forecast and not a reason to buy or sell.</p>
     </Reveal>
   );
 }
@@ -624,7 +630,7 @@ function CompanyNumbers({ c }) {
   if (!w || !w.lines.length) return null;
   return (
     <Reveal id="company-numbers" className="card mt-6 scroll-mt-28 p-6 sm:p-8">
-      <h3 className="text-[22px] font-semibold tracking-[-0.02em]">By its own numbers</h3>
+      <h3 className="text-[22px] font-semibold tracking-[-0.02em]">How the business is doing, by its own numbers</h3>
       <p className="mt-1 text-[14px] text-ink-3">{w.period}</p>
       {w.stale && <p className="mt-4 rounded-2xl border border-dashed border-people/60 px-4 py-3 text-[14px] text-people">These are old: no newer filing was found.</p>}
       <ul className="mt-5 grid gap-4">
@@ -638,7 +644,7 @@ function CompanyNumbers({ c }) {
           </li>
         ))}
       </ul>
-      <p className="mt-5 text-[14px] leading-relaxed text-ink-3">This describes the business, not the stock: a great company can still be a poor buy at the wrong price.</p>
+      <p className="mt-5 text-[14px] leading-relaxed text-ink-3">This is about the business, not the stock. A great bakery can still be a bad deal if you pay far too much for it.</p>
     </Reveal>
   );
 }
@@ -649,7 +655,7 @@ function WhatsNext({ card, symbol, today, hasFile }) {
       <Reveal id="whats-next" className="card mt-6 scroll-mt-28 p-6 sm:p-8">
         <h3 className="text-[22px] font-semibold tracking-[-0.02em]">What's next</h3>
         <p className="mt-3 max-w-[62ch] text-[15px] leading-relaxed text-ink-2">
-          {hasFile ? `No outlook card for ${symbol} yet.` : "No outlook file yet."} Cards are researched after each earnings season from the company's own releases and filings: the latest quarter, what the company says about the next one, its next results date and what is coming up, each with a link.
+          {hasFile ? `No card for ${symbol} yet.` : "No cards yet."} We write them after each round of company results (every three months), from what the company itself published: its last three months, what it expects next, when its next results come out and what is coming up, each with a link.
         </p>
       </Reveal>
     );
@@ -672,8 +678,8 @@ function WhatsNext({ card, symbol, today, hasFile }) {
 
       <div className="mt-6 grid gap-6 lg:grid-cols-3 lg:gap-8">
         <div className="min-w-0">
-          <SubHead>Finance · {lt.period}</SubHead>
-          <div className="text-[17px] font-semibold leading-snug">Revenue {lt.revenue}</div>
+          <SubHead>Money · {lt.period}</SubHead>
+          <div className="text-[17px] font-semibold leading-snug">Sales (revenue) {lt.revenue}</div>
           <div className="mt-1 text-[13.5px] text-ink-3">{growth ? `${growth} · ` : ""}reported {dayOnly(lt.reported_on)}<Src url={lt.source_url} /></div>
           <ul className="mt-3 grid gap-1.5 text-[14.5px] leading-relaxed text-ink-2">
             {lt.highlights.map((h) => <li key={h} className="relative pl-4 before:absolute before:left-0 before:top-[0.75em] before:h-px before:w-2 before:bg-ink-3">{h}</li>)}
@@ -704,15 +710,15 @@ function WhatsNext({ card, symbol, today, hasFile }) {
         </div>
 
         <div className="min-w-0">
-          <SubHead>What could change the story</SubHead>
+          <SubHead>What could change the picture</SubHead>
           {card.watch.length ? (
             <ul className="grid gap-3">
               {card.watch.map((w) => <li key={w.item} className="text-[14.5px] leading-relaxed text-ink-2">{w.item}<Src url={w.source_url} /></li>)}
             </ul>
-          ) : <p className="text-[14px] text-ink-3">No risks noted from the company's own filings yet.</p>}
+          ) : <p className="text-[14px] text-ink-3">No risks noted from the company's own reports yet.</p>}
         </div>
       </div>
-      <p className="meta mt-6 normal-case tracking-[0.04em]">The company's own statements, paraphrased with links; not a forecast we endorse. No prices, price targets or ratings. A results day can move a stock a lot either way; it is not a signal.</p>
+      <p className="meta mt-6 normal-case tracking-[0.04em]">What the company says about itself, in our words, with links. We do not vouch for it and it is not a forecast. No prices, price targets or ratings. On a results day a stock can jump a lot either way, like weather on a stormy day; that is not a signal.</p>
     </Reveal>
   );
 }
@@ -772,11 +778,12 @@ function StockChart({ row, bench, benchSymbol, picks }) {
 
   return (
     <div ref={ref}>
+      <p className="mb-4 text-[14px] leading-relaxed text-ink-3">In simple words: every line starts at 100 on the left, like runners on one start line. A line ending at 110 went up 10%.{bench ? " The dashed line is the whole market, so you can see who is ahead." : ""}</p>
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap gap-4 text-[13px] text-ink-2">
           <span className="inline-flex items-center gap-2"><i className="h-[3px] w-5 rounded" style={{ background: color }} />{row.symbol}</span>
-          {bench && <span className="inline-flex items-center gap-2"><i className="w-5 border-t-2 border-dashed border-ink-3" />{benchSymbol}</span>}
-          <span className="inline-flex items-center gap-2"><i className="h-px w-5 bg-ink-2" />50-day avg</span>
+          {bench && <span className="inline-flex items-center gap-2"><i className="w-5 border-t-2 border-dashed border-ink-3" />whole market ({benchSymbol})</span>}
+          <span className="inline-flex items-center gap-2"><i className="h-px w-5 bg-ink-2" />usual level lately (50-day average)</span>
         </div>
         <Segmented label="Range" value={range} onChange={setRange} options={RANGES.filter((r) => r.value <= Math.max(21, maxRange)).map((r) => ({ ...r }))} />
       </div>
@@ -824,7 +831,7 @@ function StockChart({ row, bench, benchSymbol, picks }) {
           </div>
         )}
       </div>
-      {!row.series && <p className="meta mt-3 normal-case tracking-[0.04em]">Showing the last {full.length} days; the full year appears after the next daily run.</p>}
+      {!row.series && <p className="meta mt-3 normal-case tracking-[0.04em]">Showing the last {full.length} days; the full year appears after the next daily update.</p>}
     </div>
   );
 }

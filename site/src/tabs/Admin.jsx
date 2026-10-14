@@ -5,18 +5,18 @@ import { Accent, ArrowRight, Chip, Container, Reveal, SectionHead } from "../com
 
 const ORDER = ["household", "shelf", "strategy", "guardrails", "methodology", "learnings", "watchlist", "settings", "sources", "people", "outlook", "checklist", "routines", "library", "decisions"];
 const ABOUT = {
-  strategy: "What a pick is, and what the brain looks for.",
-  guardrails: "The lines a pick never crosses.",
-  methodology: "How a run flows and how picks are scored.",
-  learnings: "What scored picks taught, with evidence.",
-  watchlist: "The names the brain may pick from.",
-  settings: "Caps, costs, horizon and benchmark.",
-  sources: "Where data comes from: the connectors.",
+  strategy: "What a guess is, and what the brain looks for.",
+  guardrails: "The safety rails: lines a guess may never cross.",
+  methodology: "How a morning run works and how guesses are scored.",
+  learnings: "What checked guesses taught us, with proof.",
+  watchlist: "The companies the brain may talk about.",
+  settings: "Limits, costs, how long before a guess is checked, and what counts as the whole market.",
+  sources: "Where the data comes from.",
   people: "People we learn from, the research on following them, and their dated public calls.",
   outlook: "What's next for each company: latest quarter, its own guidance, next results date. Linked and dated.",
-  checklist: "The eight-step technical checklist from the video: how each step is computed, the risk-plan rule, how it is measured. Unproven.",
-  routines: "The schedule: what runs when, and what it may spend.",
-  library: "Principles from books and lectures.",
+  checklist: "The eight-step chart checklist from the video: how each step is worked out, the risk rule, how it is measured. Not proven.",
+  routines: "The timetable: which job runs when, and what it may spend.",
+  library: "Lessons from books and talks.",
   decisions: "Every decision and why, plus what is still open.",
   household: "When and how much the household acts on anything here.",
   shelf: "What a 119-book library supports, disputes and rejects.",
@@ -64,9 +64,12 @@ export default function Admin({ data }) {
   return (
     <Container className="pt-20">
       <SectionHead
-        eyebrow="Admin"
-        title={<>Edit the <Accent>rule book.</Accent></>}
-        lede="Everything the brain reads lives in versioned files. Open a doc to read it, or edit it on GitHub. Every edit is a pull request: lint checks it, and git keeps the old version so any change can be undone."
+        eyebrow="Admin · behind the scenes"
+        title={<>The rule <Accent>book.</Accent></>}
+        lede={<>
+          <span className="block text-ink">In simple words: these are the rule papers the brain reads every morning. Anyone can read them here; changing one takes a person's approval.</span>
+          <span className="mt-3 block">Each file has a version number. Open one to read it, or edit it on GitHub. Every edit is a proposed change (a pull request): an automatic checker reads it, and the old version is kept, like the undo button, so any change can be taken back.</span>
+        </>}
       />
       <Reveal className="card flex items-center gap-5 overflow-hidden p-6 sm:p-7">
         <span aria-hidden="true" className="absolute inset-y-0 left-0 w-[3px] bg-accent" />
@@ -74,14 +77,14 @@ export default function Admin({ data }) {
           <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 5 5 9-10" /></svg>
         </span>
         <div>
-          <div className="meta text-ink">Edit mode · pull requests</div>
-          <p className="mt-1 text-[15px] text-ink-2">This page is public and read-only. Edits go through {repo} on GitHub; no secrets, keys or holdings ever live in the repo.</p>
+          <div className="meta text-ink">How changes happen · pull requests</div>
+          <p className="mt-1 text-[15px] text-ink-2">This page is public and read-only. Changes go through {repo} on GitHub. No passwords, keys or details of what the household owns are ever kept in the project.</p>
         </div>
       </Reveal>
 
       <div className="mt-16 mb-6 flex items-baseline justify-between gap-4">
         <h3 className="text-[24px] font-semibold tracking-[-0.03em]">The docs <span className="num ml-1 font-mono text-[13px] font-normal text-ink-3">{pad2(docs.length)}</span></h3>
-        <span className="meta hidden sm:inline">What the brain reads</span>
+        <span className="meta hidden sm:inline">What the brain reads each morning</span>
       </div>
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         {docs.map((d, i) => (
@@ -119,9 +122,9 @@ function Connectors({ sources, editUrl }) {
   return (
     <section className="pt-32">
       <SectionHead
-        eyebrow="Connectors"
+        eyebrow="Data feeds"
         title={<>Where the data <Accent>comes from.</Accent></>}
-        lede="Every source is declared in config/sources.json. A connector names the secret it needs by environment variable only. Values live in GitHub Actions secrets, never in this public repo."
+        lede="Every data source is listed in config/sources.json. A feed that needs a password only names where to find it; the password itself is kept locked away in GitHub's secret store, never in this public project."
         size="md"
         right={<a href={editUrl} target="_blank" rel="noreferrer" className="btn">Edit sources <ArrowRight /></a>}
       />
@@ -135,10 +138,10 @@ function Connectors({ sources, editUrl }) {
             <h4 className="mt-5 text-[20px] font-semibold tracking-[-0.02em]">{s.label}</h4>
             <p className="mt-2 text-[14px] leading-relaxed text-ink-2">{s.note}</p>
             <dl className="mt-5 grid grid-cols-[auto_minmax(0,1fr)] gap-x-5 gap-y-2 border-t border-line pt-5 text-[13px]">
-              <dt className="meta">provider</dt><dd className={s.provider ? "font-mono" : "text-people"}>{s.provider ?? "not chosen yet"}</dd>
-              <dt className="meta">cadence</dt><dd>{s.cadence}</dd>
+              <dt className="meta">company</dt><dd className={s.provider ? "font-mono" : "text-people"}>{s.provider ?? "not chosen yet"}</dd>
+              <dt className="meta">how often</dt><dd>{s.cadence}</dd>
               <dt className="meta">feeds</dt><dd className="truncate font-mono text-[12px]">{s.feeds.join(", ")}</dd>
-              <dt className="meta">secret</dt><dd className="font-mono text-[12px]">{s.secret_env ?? "none"}</dd>
+              <dt className="meta">password name</dt><dd className="font-mono text-[12px]">{s.secret_env ?? "none"}</dd>
               {s.kind === "social" && (<><dt className="meta">following</dt><dd>{s.follow.length ? s.follow.join(" ") : "nobody yet"}</dd></>)}
             </dl>
           </Reveal>

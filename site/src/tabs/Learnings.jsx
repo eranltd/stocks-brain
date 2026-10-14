@@ -11,20 +11,23 @@ export default function Learnings({ data, openKB }) {
   return (
     <Container className="pt-20">
       <SectionHead
-        eyebrow={`Learnings · v${learnings.version}`}
-        title={<>What the record <Accent>taught.</Accent></>}
-        lede="Lessons come from scored outcomes, never from the model's own opinion. A person adds them through a pull request, each with evidence. The brain reads only the active ones."
+        eyebrow={`What we learned · v${learnings.version}`}
+        title={<>What the scores <Accent>taught us.</Accent></>}
+        lede={<>
+          <span className="block text-ink">In simple words: these are the lessons we took from the brain's checked guesses, so it does not make the same mistake twice.</span>
+          <span className="mt-3 block">A lesson only counts if the scores show it, not because the AI thinks so. Like a coach who watches the game tape, a person writes each lesson and points to the guesses that prove it. The brain rereads the lessons still in use every morning.</span>
+        </>}
       />
       <Strip
         cells={[
           { value: items.length, label: "lessons", desc: `Updated ${fmtDate(learnings.updated_at)}.` },
-          { value: active.length, label: "active", desc: "Fed to the packer on every run." },
-          { value: items.length - active.length, label: "retired", tone: "flat", desc: "Kept for history and never read by the brain." },
-          { value: "You", label: "write them", tone: "people", dashed: true, desc: "The model proposes nothing here. People decide." },
+          { value: active.length, label: "in use", desc: "Given to the brain every morning." },
+          { value: items.length - active.length, label: "retired", tone: "flat", desc: "No longer true or useful. Kept for history; the brain does not read them." },
+          { value: "You", label: "write them", tone: "people", dashed: true, desc: "The AI does not add lessons here. People decide." },
         ]}
       />
       <div className="mt-10 grid gap-5">
-        {items.length === 0 && <Empty title="No lessons yet">Lessons are added once enough picks have been scored to show a pattern.</Empty>}
+        {items.length === 0 && <Empty title="No lessons yet">A lesson gets added once enough guesses have been checked to show a pattern. One or two results could just be luck.</Empty>}
         {items.map((l, i) => (
           <Reveal key={l.id} delay={i * 80} as="article" className={`card grid gap-6 p-7 sm:p-9 md:grid-cols-[180px_minmax(0,1fr)] ${l.status === "retired" ? "border-dashed opacity-70" : "card-hover"}`}>
             <div>
@@ -35,7 +38,7 @@ export default function Learnings({ data, openKB }) {
               <Chip kind={l.status} icon={false}>{l.status}</Chip>
               <p className="mt-4 text-[clamp(18px,2vw,23px)] leading-snug font-medium tracking-[-0.02em]">{l.lesson}</p>
               <div className="mt-6 border-t border-line pt-5">
-                <div className="meta mb-3">Evidence · {l.evidence.length} {l.evidence.length === 1 ? "pick" : "picks"}</div>
+                <div className="meta mb-3">Proof · {l.evidence.length} {l.evidence.length === 1 ? "checked guess" : "checked guesses"} (tap to open)</div>
                 <div className="flex flex-wrap gap-2">
                   {l.evidence.map((id) => {
                     const o = byId[id];

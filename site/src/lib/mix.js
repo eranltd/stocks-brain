@@ -70,8 +70,8 @@ export function searchMixes(prep, sectorOf, { k, cap = null, every = 4 }) {
 }
 
 export const MEASURES = {
-  profit: { label: "Most profit", pick: (m) => m.cagr },
-  calm: { label: "Profit for the risk", pick: (m) => (m.vol > 0 ? m.cagr / m.vol : 0) },
+  profit: { label: "Most growth", pick: (m) => m.cagr },
+  calm: { label: "Growth for the bumps", pick: (m) => (m.vol > 0 ? m.cagr / m.vol : 0) },
   smooth: { label: "Smallest drop", pick: (m) => m.dd },
 };
 

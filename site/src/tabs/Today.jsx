@@ -13,7 +13,7 @@ import { SectorSpotlights } from "../components/spotlight.jsx";
 import { requestChecklistView } from "../components/checklist.jsx";
 import { LatestVerdict } from "../components/verdict.jsx";
 import { MoneyAction } from "../components/money.jsx";
-import { candlesOf, fundCard, MARKET_WHO, marketNote, nasdaqOnlyLine, NOT_YET, nounsFor } from "../lib/markets.js";
+import { candlesOf, fundCard, MARKET_WHO, marketNote, NOT_YET, nounsFor } from "../lib/markets.js";
 
 const plural = (n, one, many) => (n === 1 ? one : many);
 const noYear = (iso) => fmtDate(iso).replace(/\s\d{4}$/, ""); // "Thu, 22 Oct"
@@ -63,6 +63,8 @@ export default function Today(props) {
 }
 
 function LiveFeed({ data, market, go, live, checkNow }) {
+  // The details feed reads the main list only: show that list in the header's switch rather than a notice.
+  useEffect(() => { if (market && !market.isDefault) market.choose(market.defaultId); }, [market?.id]); // eslint-disable-line react-hooks/exhaustive-deps
   const call = todayCall(data);
   const brief = marketBrief(data);
   const run = data.sample ? null : data.lastOk;
@@ -83,9 +85,6 @@ function LiveFeed({ data, market, go, live, checkNow }) {
   return (
     <div className="mx-auto w-full max-w-[560px] px-4 pb-24 pt-6">
       <PostHeader data={data} todayIso={todayIso} live={live} checkNow={checkNow} stale={call.stale} age={call.age} />
-      {market && !market.isDefault && (
-        <p role="note" className="mt-4 rounded-2xl border border-line-2 bg-surface px-4 py-3 text-[15px] leading-relaxed text-ink-2">{nasdaqOnlyLine(market.entry?.label ?? market.id)}</p>
-      )}
       <div className="mt-5 grid gap-4">
         <TodayCard data={data} call={call} run={run} todayIso={todayIso} go={go} />
         <ComingStrip data={data} ahead={feed.ahead} todayIso={todayIso} go={go} />

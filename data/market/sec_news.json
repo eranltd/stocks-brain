@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-14",
+  "as_of": "2026-10-15",
   "sample": false,
   "source": "SEC EDGAR filings index (company submissions)",
   "window_days": 120,
@@ -374,6 +374,18 @@
       "cik": 909832,
       "name": "COSTCO WHOLESALE CORP /NEW",
       "filings": [
+        {
+          "date": "2026-10-14",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/909832/000090983226000096/cost-20261014.htm"
+        },
         {
           "date": "2026-10-07",
           "form": "10-K",
@@ -1819,6 +1831,26 @@
       "name": "CAMTEK LTD",
       "filings": [
         {
+          "date": "2026-10-14",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1109138/000117891326004769/zk2636226.htm"
+        },
+        {
+          "date": "2026-10-14",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1109138/000117891326004767/zk2636225.htm"
+        },
+        {
           "date": "2026-08-10",
           "form": "6-K",
           "items": [],
@@ -2062,6 +2094,16 @@
       "cik": 937966,
       "name": "ASML HOLDING NV",
       "filings": [
+        {
+          "date": "2026-10-14",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/937966/000162828026065813/form6-kquarterlyfilings.htm"
+        },
         {
           "date": "2026-07-15",
           "form": "6-K",

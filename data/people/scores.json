@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-13",
+  "as_of": "2026-10-14",
   "sample": false,
   "core": "SPY",
   "config_version": "1.0.0",
@@ -26,11 +26,11 @@
       "weeks_since": 70,
       "so_far": {
         "weeks": 70,
-        "end_date": "2026-10-13",
-        "name_pct": 2.45,
-        "core_pct": 33.1,
-        "excess_pct": -23.03,
-        "signed_excess_pct": 23.03,
+        "end_date": "2026-10-14",
+        "name_pct": 4.03,
+        "core_pct": 31.66,
+        "excess_pct": -20.99,
+        "signed_excess_pct": 20.99,
         "right": true
       },
       "w13": {
@@ -74,11 +74,11 @@
       "weeks_since": 58,
       "so_far": {
         "weeks": 58,
-        "end_date": "2026-10-13",
-        "name_pct": -37.78,
-        "core_pct": 22.55,
-        "excess_pct": -49.23,
-        "signed_excess_pct": 49.23,
+        "end_date": "2026-10-14",
+        "name_pct": -36.14,
+        "core_pct": 21.23,
+        "excess_pct": -47.32,
+        "signed_excess_pct": 47.32,
         "right": true
       },
       "w13": {
@@ -122,11 +122,11 @@
       "weeks_since": 58,
       "so_far": {
         "weeks": 58,
-        "end_date": "2026-10-13",
-        "name_pct": 11.92,
-        "core_pct": 22.55,
-        "excess_pct": -8.67,
-        "signed_excess_pct": -8.67,
+        "end_date": "2026-10-14",
+        "name_pct": 9.98,
+        "core_pct": 21.23,
+        "excess_pct": -9.28,
+        "signed_excess_pct": -9.28,
         "right": false
       },
       "w13": {
@@ -170,11 +170,11 @@
       "weeks_since": 45,
       "so_far": {
         "weeks": 45,
-        "end_date": "2026-10-13",
-        "name_pct": 24.45,
-        "core_pct": 18.14,
-        "excess_pct": 5.34,
-        "signed_excess_pct": 5.34,
+        "end_date": "2026-10-14",
+        "name_pct": 22.29,
+        "core_pct": 16.86,
+        "excess_pct": 4.65,
+        "signed_excess_pct": 4.65,
         "right": true
       },
       "w13": {
@@ -207,14 +207,14 @@
       "credit_person": true,
       "scored": true,
       "start_date": "2026-02-18",
-      "weeks_since": 32,
+      "weeks_since": 33,
       "so_far": {
-        "weeks": 32,
-        "end_date": "2026-10-13",
-        "name_pct": 18.83,
-        "core_pct": 14.25,
-        "excess_pct": 4.01,
-        "signed_excess_pct": 4.01,
+        "weeks": 33,
+        "end_date": "2026-10-14",
+        "name_pct": 14.94,
+        "core_pct": 13.02,
+        "excess_pct": 1.7,
+        "signed_excess_pct": 1.7,
         "right": true
       },
       "w13": {
@@ -250,11 +250,11 @@
       "weeks_since": 21,
       "so_far": {
         "weeks": 21,
-        "end_date": "2026-10-13",
-        "name_pct": -13.97,
-        "core_pct": 5.34,
-        "excess_pct": -18.33,
-        "signed_excess_pct": -18.33,
+        "end_date": "2026-10-14",
+        "name_pct": -16.64,
+        "core_pct": 4.2,
+        "excess_pct": -20.0,
+        "signed_excess_pct": -20.0,
         "right": false
       },
       "w13": {
@@ -282,11 +282,11 @@
       "weeks_since": 20,
       "so_far": {
         "weeks": 20,
-        "end_date": "2026-10-13",
-        "name_pct": -2.37,
-        "core_pct": 5.86,
-        "excess_pct": -7.77,
-        "signed_excess_pct": 7.77,
+        "end_date": "2026-10-14",
+        "name_pct": -4.07,
+        "core_pct": 4.71,
+        "excess_pct": -8.39,
+        "signed_excess_pct": 8.39,
         "right": true
       },
       "w13": {
@@ -314,11 +314,11 @@
       "weeks_since": 20,
       "so_far": {
         "weeks": 20,
-        "end_date": "2026-10-13",
-        "name_pct": 28.83,
-        "core_pct": 5.86,
-        "excess_pct": 21.7,
-        "signed_excess_pct": 21.7,
+        "end_date": "2026-10-14",
+        "name_pct": 26.52,
+        "core_pct": 4.71,
+        "excess_pct": 20.82,
+        "signed_excess_pct": 20.82,
         "right": true
       },
       "w13": {
@@ -347,7 +347,7 @@
       "right_26w_pct": 0.0,
       "median_signed_excess_26w": -2.31,
       "right_so_far_pct": 100.0,
-      "median_signed_excess_so_far": 23.03,
+      "median_signed_excess_so_far": 20.99,
       "enough": false
     },
     {
@@ -362,7 +362,7 @@
       "right_26w_pct": 0.0,
       "median_signed_excess_26w": -18.79,
       "right_so_far_pct": 66.7,
-      "median_signed_excess_so_far": 4.01,
+      "median_signed_excess_so_far": 1.7,
       "enough": false
     },
     {
@@ -377,7 +377,7 @@
       "right_26w_pct": null,
       "median_signed_excess_26w": null,
       "right_so_far_pct": 0.0,
-      "median_signed_excess_so_far": -18.33,
+      "median_signed_excess_so_far": -20.0,
       "enough": false
     }
   ],
@@ -393,7 +393,7 @@
       "right_26w_pct": null,
       "median_signed_excess_26w": null,
       "right_so_far_pct": 0.0,
-      "median_signed_excess_so_far": -18.33,
+      "median_signed_excess_so_far": -20.0,
       "enough": false
     },
     {
@@ -405,7 +405,7 @@
       "right_26w_pct": 100.0,
       "median_signed_excess_26w": 19.41,
       "right_so_far_pct": 100.0,
-      "median_signed_excess_so_far": 7.77,
+      "median_signed_excess_so_far": 8.39,
       "enough": false
     },
     {
@@ -419,7 +419,7 @@
       "right_26w_pct": 0.0,
       "median_signed_excess_26w": -2.31,
       "right_so_far_pct": 100.0,
-      "median_signed_excess_so_far": 23.03,
+      "median_signed_excess_so_far": 20.99,
       "enough": false
     },
     {
@@ -433,7 +433,7 @@
       "right_26w_pct": 0.0,
       "median_signed_excess_26w": -18.79,
       "right_so_far_pct": 66.7,
-      "median_signed_excess_so_far": 4.01,
+      "median_signed_excess_so_far": 1.7,
       "enough": false
     }
   ]

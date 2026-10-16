@@ -37,7 +37,7 @@ export function MoneyAction({ data, compact = false }) {
   const [horizon, setHorizon] = useHorizon();
   const a = horizon ? honestAction(horizon, moneyFacts(data)) : null;
   return (
-    <Reveal as="section" id="money-action" className="card overflow-hidden">
+    <Reveal as="section" id="money-action" className="card scroll-mt-28 overflow-hidden">
       <div className="h-1.5" style={{ background: "var(--accent)" }} />
       <div className="p-6 sm:p-8">
         <h2 className="text-[15px] font-semibold uppercase tracking-[0.12em] text-accent">What should I do with my money?</h2>

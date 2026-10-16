@@ -1,4 +1,5 @@
 import { WeeklyGame } from "../components/weekly.jsx";
+import { QuickRead, RabbitHoles } from "../components/explore.jsx";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { fmtDate, fmtNum, numWord, relDays } from "../lib/format.js";
 import { marketBrief } from "../components/brief.jsx";
@@ -250,6 +251,7 @@ function SimpleHome({ data, market, go, showDetails }) {
           Please don't act on anything below until the daily update runs again.
         </p>
       )}
+      {isDefault && <div className="mt-6"><QuickRead data={data} market={words?.market?.main ?? null} go={go} /></div>}
     </div>
 
     {!words && <MarketWait market={market} />}
@@ -312,6 +314,8 @@ function SimpleHome({ data, market, go, showDetails }) {
 
         <MoneyAction data={data} compact />
         <WeeklyGame data={data} go={go} />
+
+        <div className="mt-6"><RabbitHoles data={data} go={go} /></div>
       </div>
 
       <Reveal className="mt-10 grid gap-3 text-center">

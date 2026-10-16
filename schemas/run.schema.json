@@ -1,7 +1,7 @@
 {
   "$id": "run.schema.json",
   "title": "Run record",
-  "description": "One per run, written by code. Only `summary` and each `picks[].pick` come from the model.",
+  "description": "One per run, written by code. Only `summary`, `eli5`, `letter`, `bets` and each `picks[].pick` come from the model.",
   "type": "object",
   "additionalProperties": false,
   "required": ["schema_version", "run_id", "date", "generated_at", "status", "sample", "model", "cost",
@@ -49,6 +49,15 @@
     "summary": {"type": "string", "maxLength": 600},
     "eli5": {"type": "string", "minLength": 20, "maxLength": 400, "description": "The run's verdict explained like to a five-year-old (model words, no digits). Optional: older runs have none."},
     "letter": {"type": "string", "minLength": 200, "maxLength": 1400, "description": "The brain's letter to the family: what to do this week, in plain words, in the spirit of a patient long-term owner's letter (model words, no digits). Optional: older runs have none."},
+    "bets": {
+      "type": "object", "additionalProperties": false, "required": ["best", "worst", "why"],
+      "description": "The weekly bet for the pretend game (model words): the three names the brain expects to do best and the three it expects to do worst against each other. The first run of each week counts; the site scores it at the next week's bet. Optional: older runs have none.",
+      "properties": {
+        "best": {"type": "array", "minItems": 3, "maxItems": 3, "uniqueItems": true, "items": {"type": "string", "pattern": "^[A-Z][A-Z0-9.\\-]{0,9}$"}},
+        "worst": {"type": "array", "minItems": 3, "maxItems": 3, "uniqueItems": true, "items": {"type": "string", "pattern": "^[A-Z][A-Z0-9.\\-]{0,9}$"}},
+        "why": {"type": "string", "minLength": 20, "maxLength": 300}
+      }
+    },
     "picks": {
       "type": "array", "maxItems": 10,
       "items": {

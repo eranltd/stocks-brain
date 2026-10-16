@@ -8,8 +8,8 @@ const pick = (ticker, stance = "neutral", conviction = "low", eli5) => ({
 const run = (date, ...picks) => ({ date, status: "ok", summary: "In its own words.", picks });
 
 test("headline says what the brain decided, short", () => {
-  assert.equal(headline(run("2026-10-12", pick("AAA"), pick("BBB"))), "Wait and watch. Nothing to buy or sell.");
-  assert.equal(headline(run("2026-10-12")), "Nothing looks good enough. Do nothing.");
+  assert.equal(headline(run("2026-10-12", pick("AAA"), pick("BBB"))), "Do your weekly buy of the whole market. No single stock stands out.");
+  assert.equal(headline(run("2026-10-12")), "Do your weekly buy of the whole market. No single stock stands out.");
   assert.match(headline(run("2026-10-12", pick("AAA", "bullish"))), /likes one stock/);
   assert.match(headline(run("2026-10-12", pick("AAA", "bullish"), pick("BBB", "bearish"))), /likes some/);
   assert.match(headline({ date: "2026-10-12", status: "failed", picks: [] }), /did not finish/);
@@ -17,9 +17,9 @@ test("headline says what the brain decided, short", () => {
 
 test("eli5: the brain's own words first, simple fallback words otherwise", () => {
   assert.equal(runEli5({ ...run("2026-10-12", pick("AAA")), eli5: "Own words for the run." }), "Own words for the run.");
-  assert.match(runEli5(run("2026-10-12", pick("AAA"), pick("BBB")), (t) => t.toLowerCase()), /aaa and bbb.*green/);
+  assert.match(runEli5(run("2026-10-12", pick("AAA"), pick("BBB")), (t) => t.toLowerCase()), /aaa and bbb.*which runner wins/);
   assert.equal(pickEli5(pick("AAA", "neutral", "low", "Kid words.").pick, "Alpha"), "Kid words.");
-  assert.match(pickEli5(pick("AAA").pick, "Alpha"), /^Alpha: no strong reason to buy or sell/);
+  assert.match(pickEli5(pick("AAA").pick, "Alpha"), /^Alpha: the brain cannot tell if it will beat the whole market/);
 
   for (const s of ["bullish", "bearish", "neutral"]) assert.doesNotMatch(pickEli5(pick("AAA", s).pick, "Alpha"), /\d/);
 });
@@ -31,7 +31,7 @@ test("changes says what is new, gone and different", () => {
   assert.equal(c.same, false);
   assert.match(c.line, /started watching DDD/);
   assert.match(c.line, /stopped talking about CCC/);
-  assert.match(c.line, /changed its mind on AAA: from just watching to thumbs up/);
+  assert.match(c.line, /changed its mind on AAA: from can't tell to thumbs up/);
   assert.match(c.line, /now fairly sure about BBB \(it was not very sure\)/);
   assert.equal(changes(a, a).same, true);
   assert.match(changes(a, null).line, /first answer/);
@@ -57,7 +57,7 @@ test("verdictOf and verdictHistory: kid words first, grown-up reason kept, newes
   assert.equal(v.when, "yesterday");
   assert.equal(v.rows[0].eli5, "Kid words.");
   assert.equal(v.rows[0].byBrain, true);
-  assert.equal(v.rows[0].mood, "Just watching");
+  assert.equal(v.rows[0].mood, "Can't tell");
   assert.equal(v.rows[0].thesis, "AAA first reason. Second reason.");
   assert.equal(v.letter, null);
   assert.equal(verdictOf({ ...run("2026-10-12"), letter: "Dear family." }, null).letter, "Dear family.");

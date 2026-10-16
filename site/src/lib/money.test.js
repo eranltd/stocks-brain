@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { HORIZONS, honestAction, moneyFacts, stocksEarned } from "./money.js";
+import { HORIZONS, honestAction, moneyFacts, stocksEarned, lumpSum } from "./money.js";
 
 const facts = { fundName: "the whole-market fund", cashName: "T-bills", cashYield: 3.65, cagr: 16.78, years: 7, maxDrop: -33.7, worstYear: -19.73 };
 
@@ -40,4 +40,16 @@ test("moneyFacts reads the data, names from config", () => {
   assert.match(f.cashName, /like CSH/);
   assert.equal(f.cashYield, 3.5);
   assert.equal(moneyFacts({}).cagr, null);
+});
+
+test("the lump-sum guide uses the savings history test when it exists", () => {
+  const rulesResult = { savings: { horizons: [{ weeks: 52, rows: [
+    { id: "windfall_lump_sum", windows: 103, worst_vs_paid_median_pct: -8.25 },
+    { id: "windfall_spread_26w", windows: 103, vs_baseline_better_pct: 24.3, worst_vs_paid_median_pct: -4.04 },
+  ] }] } };
+  const g = lumpSum(rulesResult);
+  assert.equal(g.steps.length, 5);
+  assert.match(g.steps[2], /103 start dates.*76 times in 100.*4% down instead of 8%/);
+  assert.match(lumpSum(null).steps[2], /usually beat spreading/);
+  assert.equal(g.before.length, 3);
 });

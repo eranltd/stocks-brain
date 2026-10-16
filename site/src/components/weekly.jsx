@@ -14,7 +14,7 @@ export function WeeklyGame({ data, go }) {
   const buy = nextBuyDay(today);
   const ledger = data.ledger && !data.ledger.sample ? data.ledger : null;
   return (
-    <Reveal as="section" id="this-week" className="card overflow-hidden">
+    <Reveal as="section" id="this-week" className="card scroll-mt-28 overflow-hidden">
       <div className="h-1.5" style={{ background: "var(--people)" }} />
       <div className="p-6 sm:p-8">
         <h2 className="text-[15px] font-semibold uppercase tracking-[0.12em]" style={{ color: "var(--people)" }}>This week</h2>

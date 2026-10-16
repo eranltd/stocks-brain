@@ -1,3 +1,4 @@
+import { KeepExploring } from "./components/explore.jsx";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { loadAll, loadManifest, loadMarket } from "./lib/data.js";
@@ -206,6 +207,7 @@ export default function App() {
             <Active key={tab} data={base} market={market} go={go} query={query} setQuery={setQuery} openKB={openKB} symbol={symbol} live={live} checkNow={checkNow} />
           </div>
         )}
+        {data && tab !== "today" && <KeepExploring key={`ke-${tab}`} data={base} route={tab} go={go} />}
       </main>
       {data && <Footer data={data} />}
       {update && (

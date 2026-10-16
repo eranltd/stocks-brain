@@ -19,6 +19,12 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   per-point dates into one shared array.
 
 ## 2026-10-16
+- **Two ways to read the site.** The household wants busy readers informed in a couple of minutes and curious readers
+  to stay around twenty. Home now opens with "The two-minute read" (the brain's answer, this week's money action, the
+  market; then "that is all you need today"), ends with "Got more time? Go down a rabbit hole" (ten real questions the
+  site answers, each with a reading time, about forty-five minutes in all, `lib/explore.js`), and every other page ends
+  with "Keep exploring": three next questions, never from the page you are on, changing day by day. Curiosity, not
+  tricks: no endless feed, streaks or alarms.
 - **The brain writes a letter to the family.** The household asked for the brain to advise them "like Warren Buffett".
   Each run now adds a `letter` (200 to 1400 characters, no digits): what to do with real money this week, what the
   pretend-money calls and the weekly game honestly show, one lesson, and what would change our minds. Buffett's

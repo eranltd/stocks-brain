@@ -2,8 +2,7 @@ import { WeeklyGame } from "./weekly.jsx";
 import { useState } from "react";
 import { todayISO } from "../lib/outlook.js";
 import { scorecard, steadyRuns, verdictHistory } from "../lib/verdict.js";
-import { MoneyAction, useHorizon } from "./money.jsx";
-import { HORIZONS, honestAction, moneyFacts } from "../lib/money.js";
+import { MoneyAction } from "./money.jsx";
 import { ArrowRight, Reveal } from "./ui.jsx";
 
 const TONE = { accent: "var(--accent)", down: "var(--down)", flat: "var(--ink-2)" };
@@ -94,9 +93,6 @@ export function LatestVerdict({ data, go }) {
 }
 
 function LatestCard({ data, go, v }) {
-  const [horizon] = useHorizon();
-  const act = horizon ? honestAction(horizon, moneyFacts(data)) : null;
-  const h = HORIZONS.find((x) => x.id === horizon);
   return (
     <Reveal as="article" id="brain-verdict" className="card overflow-hidden">
       <div className="h-1" style={{ background: "var(--ai)" }} />
@@ -104,10 +100,6 @@ function LatestCard({ data, go, v }) {
         <h2 className="meta mb-4" style={{ color: "var(--ai)" }}>The brain's verdict · {v.when || longDate(v.date)}</h2>
         <p className="text-[clamp(22px,6vw,27px)] leading-snug font-semibold tracking-[-0.015em] text-ink">{v.headline}</p>
         <p className="mt-3 text-[17px] leading-relaxed text-ink-2">{v.eli5}</p>
-        <p className="mt-4 text-[16.5px] leading-relaxed text-ink">
-          <span className="font-semibold">What to do with your money:</span>{" "}
-          {act ? <>{act.title} <span className="text-ink-3">(for money you need {h.short.toLowerCase()} from now)</span></> : "tap below and say when you might need it."}
-        </p>
         {v.letter && <p className="mt-4 text-[16px] leading-relaxed text-ink-2"><span className="font-semibold text-ink">This week's letter:</span> {v.letter.split(/(?<=[.!?])\s/)[0]}</p>}
         <button type="button" onClick={() => go("verdicts")} className="btn btn-primary mt-5 justify-center">{v.letter ? "Read the brain's letter" : "Open the brain's full answer"} <ArrowRight /></button>
       </div>

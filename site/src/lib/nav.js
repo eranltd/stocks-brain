@@ -42,6 +42,7 @@ export const SUBJECTS = [
     what: "Lessons about money, and how this site works.",
     pages: [
       { route: "insights", label: "Lessons", what: "Simple lessons about investing from videos and books we read, each with its source." },
+      { route: "quiz", label: "Guess the candle", what: "A game: guess what a real candle means and what happened next." },
       { route: "kb", label: "Library", what: "Every guess the brain has made, and how each one ended." },
       { route: "learnings", label: "What we learned", what: "What our own results taught us, with the proof." },
       { route: "how", label: "How it works", what: "How the site works, from the market's numbers to the brain's answer." },

@@ -16,7 +16,7 @@ const H = 300, PAD_X = 10, PAD_TOP = 34, PAD_BOT = 26;
 const TONE = { up: "var(--accent)", down: "var(--down)", flat: "var(--ai)" };
 const UP = "var(--accent)", DOWN = "var(--down)";
 
-function slice(s, from, to) {
+export function slice(s, from, to) {
   const keys = ["dates", "o", "h", "l", "c", "vol_rel", "ma20"];
   const w = Object.fromEntries(keys.map((k) => [k, (s[k] ?? []).slice(from, to)]));
   w.n = w.dates.length;
@@ -158,7 +158,7 @@ export const SPOT_TONE = TONE;
 
 const dayWords = (iso) => new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
 
-function BigChart({ view, spots, chosen, reduced, onSpot, name }) {
+export function BigChart({ view, spots, chosen, reduced, onSpot, name }) {
   const [ref, w] = useWidth();
   const g = useMemo(() => {
     if (!w) return null;

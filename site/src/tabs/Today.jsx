@@ -14,7 +14,6 @@ import { TopStocks } from "../components/topstocks.jsx";
 import { SectorSpotlights } from "../components/spotlight.jsx";
 import { requestChecklistView } from "../components/checklist.jsx";
 import { LatestVerdict } from "../components/verdict.jsx";
-import { MoneyAction } from "../components/money.jsx";
 import { candlesOf, fundCard, MARKET_WHO, marketNote, NOT_YET, nounsFor } from "../lib/markets.js";
 
 const plural = (n, one, many) => (n === 1 ? one : many);
@@ -131,13 +130,6 @@ function useNow(ms = 60000) {
 
 /* ------------------------------------------------------------------ simple */
 
-const CHIP = {
-  accent: "border-accent/40 bg-accent/12 text-accent",
-  down: "border-down/40 bg-down/12 text-down",
-  flat: "border-line-2 bg-surface-2 text-ink-2",
-};
-const CHIP_MARK = { accent: "▲", down: "▼", flat: "◆" };
-const STEP_WORD = ["One", "Two", "Three"];
 const weekdayOf = (iso) => new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", { weekday: "long", timeZone: "UTC" });
 
 function SimpleCard({ kicker, tone = "var(--accent)", children, id }) {
@@ -267,13 +259,16 @@ function SimpleHome({ data, market, go, showDetails }) {
       <div className="mt-10 grid gap-6">
         {words && (
           <>
-            <SimpleCard kicker="The market" tone={TONE_VAR[words.market.tone] ?? "var(--accent)"}>
-              <p className="text-[clamp(22px,6vw,27px)] leading-snug font-semibold tracking-[-0.015em] text-ink">{words.market.main}</p>
-              {words.market.more && <p className="mt-3 text-[17px] leading-relaxed text-ink-2">{words.market.more}</p>}
-              {isDefault
-                ? <button type="button" onClick={() => openAt(go, "details#market-today")} className="meta mt-5 inline-flex min-h-[44px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">What the market did <ArrowRight className="size-3.5" /></button>
-                : <button type="button" onClick={() => go("watchlist")} className="meta mt-5 inline-flex min-h-[44px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">The whole {label} list <ArrowRight className="size-3.5" /></button>}
-            </SimpleCard>
+            {/* The default market's line is in the two-minute read; another market keeps its own card. */}
+            {!isDefault && (
+              <SimpleCard kicker="The market" tone={TONE_VAR[words.market.tone] ?? "var(--accent)"}>
+                <p className="text-[clamp(22px,6vw,27px)] leading-snug font-semibold tracking-[-0.015em] text-ink">{words.market.main}</p>
+                {words.market.more && <p className="mt-3 text-[17px] leading-relaxed text-ink-2">{words.market.more}</p>}
+                {isDefault
+                  ? <button type="button" onClick={() => openAt(go, "details#market-today")} className="meta mt-5 inline-flex min-h-[44px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">What the market did <ArrowRight className="size-3.5" /></button>
+                  : <button type="button" onClick={() => go("watchlist")} className="meta mt-5 inline-flex min-h-[44px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">The whole {label} list <ArrowRight className="size-3.5" /></button>}
+              </SimpleCard>
+            )}
 
             <SimpleCard kicker="In the news" tone="var(--ink-2)">
               {words.news.length ? (
@@ -283,37 +278,12 @@ function SimpleHome({ data, market, go, showDetails }) {
               ) : <p className="text-[17px] leading-relaxed text-ink-2">Nothing new about our {words.nouns.many} this week.</p>}
             </SimpleCard>
 
-            <SimpleCard kicker={words.nouns.many === "funds" ? "Funds to know" : "Companies to know"} tone="var(--people)">
-              <ul className="grid gap-3">
-                {words.companies.map((c) => (
-                  <li key={c.ticker}>
-                    <button type="button" onClick={() => openAt(go, c.to)}
-                      className="block min-h-[52px] w-full rounded-2xl border border-line bg-surface p-4 text-left transition hover:border-ink-3">
-                      <span className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-                        <span className="text-[20px] font-semibold tracking-[-0.01em] text-ink">{c.name}</span>
-                        {c.chip && (
-                          <span className={`pill py-0.5 text-[12px] normal-case tracking-[0.02em] ${CHIP[c.chip.tone]}`}>
-                            <span aria-hidden="true" className="text-[9px]">{CHIP_MARK[c.chip.tone]}</span>{c.chip.word}
-                          </span>
-                        )}
-                      </span>
-                      <span className="meta mt-1 block normal-case tracking-[0.04em]">{c.tag}</span>
-                      <span className="mt-2 block text-[16px] leading-relaxed text-ink-2">{c.plain ?? (words.nouns.many === "funds" ? "Its fund card appears with the next update." : "Its short summary appears with the next company update.")}</span>
-                      <span className="mt-3 inline-flex items-center gap-1 text-[14px] text-ink">In short <ArrowRight className="size-3.5" /></span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-              {!words.companies.length && <p className="text-[17px] leading-relaxed text-ink-2">No {words.nouns.many} stand out today.</p>}
-              {!words.checklist && <p className="mt-4 text-[14.5px] leading-relaxed text-ink-3">The going up or down chips appear after the next daily run.</p>}
-            </SimpleCard>
           </>
         )}
 
         <LatestVerdict data={data} go={go} />
 
-        <MoneyAction data={data} compact />
-        <WeeklyGame data={data} go={go} />
+        <WeeklyGame data={data} go={go} compact />
 
         <div className="mt-6"><RabbitHoles data={data} go={go} /></div>
       </div>

@@ -4,7 +4,7 @@ import { bottomTap, GROUP_LABEL, hashFor, isRoute, menuGroups, pageOf, parseHash
 
 // Every route the site had before the three-subject menu; old links must keep opening the right page. NEW: added since.
 const OLD = ["today", "details", "portfolio", "playbook", "people", "watchlist", "track", "kb", "insights", "learnings", "runs", "routines", "how", "admin"];
-const NEW = ["verdicts"];
+const NEW = ["verdicts", "quiz"];
 
 test("three subjects hold every old route exactly once, each page with a label and a one-line what's this", () => {
   assert.deepEqual(SUBJECTS.map((s) => s.label), ["Today", "Brain's verdicts", "Experiments", "Learn"]);
@@ -28,14 +28,14 @@ test("menu grouping: Learn ends with a small Behind the scenes group, the others
   assert.deepEqual(menuGroups("plan")[0].pages.map((p) => p.route), ["portfolio", "playbook", "track"]);
   const learn = menuGroups("learn");
   assert.deepEqual(learn.map((g) => g.label), [null, GROUP_LABEL.behind]);
-  assert.deepEqual(learn[0].pages.map((p) => p.label), ["Lessons", "Library", "What we learned", "How it works"]);
+  assert.deepEqual(learn[0].pages.map((p) => p.label), ["Lessons", "Guess the candle", "Library", "What we learned", "How it works"]);
   assert.deepEqual(learn[1].pages.map((p) => p.route), ["runs", "routines", "admin"]);
   assert.deepEqual(menuGroups("nope"), []);
 });
 
 test("route to subject: every page, a stock page under Today (Stocks), unknown routes Home", () => {
   const want = { today: "today", watchlist: "today", details: "today", people: "today", portfolio: "plan", playbook: "plan", track: "plan",
-    insights: "learn", kb: "learn", learnings: "learn", how: "learn", runs: "learn", routines: "learn", admin: "learn" };
+    insights: "learn", quiz: "learn", kb: "learn", learnings: "learn", how: "learn", runs: "learn", routines: "learn", admin: "learn" };
   for (const [r, s] of Object.entries(want)) assert.equal(subjectOf(r), s, r);
   assert.equal(subjectOf("stock/TEVA"), "today");
   assert.equal(pageOf("stock/TEVA").route, "watchlist");

@@ -63,6 +63,25 @@ function StockCard({ r, go }) {
   );
 }
 
+/** The brain's letter to the family: what to do this week, in plain words. Paragraphs split on blank lines or sentences
+ *  grouped in twos when the brain wrote one block. */
+function Letter({ text, date }) {
+  const parts = text.includes("\n") ? text.split(/\n+/).filter(Boolean)
+    : (text.match(/[^.!?]+[.!?]+(\s|$)/g) ?? [text]).reduce((acc, s, i) => { if (i % 2 === 0) acc.push(s.trim()); else acc[acc.length - 1] += ` ${s.trim()}`; return acc; }, []);
+  return (
+    <Reveal as="section" id="letter" className="card overflow-hidden">
+      <div className="h-1.5" style={{ background: "var(--ai)" }} />
+      <div className="p-6 sm:p-8">
+        <p className="meta" style={{ color: "var(--ai)" }}>The brain's letter to the family · {longDate(date)}</p>
+        <div className="mt-4 grid gap-3 font-serif text-[18.5px] leading-[1.7] text-ink">
+          {parts.map((p, i) => <p key={i}>{p}</p>)}
+        </div>
+        <p className="mt-5 text-[14px] leading-relaxed text-ink-3">Written by the brain in the spirit of a patient long-term owner's letter. It is not Warren Buffett and does not speak for him. General guidance from evidence, not personal financial advice.</p>
+      </div>
+    </Reveal>
+  );
+}
+
 /**
  * The newest brain run, short, for the home page: what it decided, in five-year-old words, and whether to do anything.
  * Shown only on live picks (sample runs are not the brain).
@@ -89,7 +108,8 @@ function LatestCard({ data, go, v }) {
           <span className="font-semibold">What to do with your money:</span>{" "}
           {act ? <>{act.title} <span className="text-ink-3">(for money you need {h.short.toLowerCase()} from now)</span></> : "tap below and say when you might need it."}
         </p>
-        <button type="button" onClick={() => go("verdicts")} className="btn btn-primary mt-5 justify-center">Open the brain's full answer <ArrowRight /></button>
+        {v.letter && <p className="mt-4 text-[16px] leading-relaxed text-ink-2"><span className="font-semibold text-ink">This week's letter:</span> {v.letter.split(/(?<=[.!?])\s/)[0]}</p>}
+        <button type="button" onClick={() => go("verdicts")} className="btn btn-primary mt-5 justify-center">{v.letter ? "Read the brain's letter" : "Open the brain's full answer"} <ArrowRight /></button>
       </div>
     </Reveal>
   );
@@ -122,6 +142,8 @@ export function VerdictPage({ data, go }) {
           {steady > 1 && <p className="mt-4 text-[15.5px] text-ink-3">{COUNT[steady] ?? steady} answers in a row have been the same.</p>}
         </div>
       </Reveal>
+
+      {v.letter && <Letter text={v.letter} date={v.date} />}
 
       <MoneyAction data={data} />
       <WeeklyGame data={data} go={go} />

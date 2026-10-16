@@ -46,7 +46,7 @@ export function honestAction(horizon, facts = {}) {
       title: "Split it: part safe, part whole market.",
       steps: [
         `Put part in ${cash}.${cashPays}`,
-        `Put the rest in ${fund}.`,
+        `Put the rest in ${fund}, a little every week.`,
         "The sooner you need the money, the bigger the safe part: about half and half at five years, mostly safe when it is a year or two away.",
       ],
       why: `The safe part is there when you need it; the market part can grow.${history}`,
@@ -54,10 +54,10 @@ export function honestAction(horizon, facts = {}) {
     };
   }
   return {
-    title: "Buy the whole market, a little every month, and leave it alone.",
+    title: "Buy the whole market, a little every week, and leave it alone.",
     steps: [
       `Put it in ${fund}.`,
-      "Add a little every month, the same amount, whatever the news says.",
+      "Add a little every week, the same amount, whatever the news says. In our test, weekly did a bit better than monthly if the broker's fee per order is tiny.",
       "Do not sell when it drops. Look at it rarely.",
     ],
     why: `Owning the whole market is like planting an orchard instead of betting on one tree.${history} That has beaten almost everyone who tries to pick stocks.`,

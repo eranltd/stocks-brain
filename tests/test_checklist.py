@@ -518,12 +518,18 @@ class WiringTest(unittest.TestCase):
         self.assertEqual(Validator().validate(rt, "routines.schema.json"), [])
 
     def test_registry_and_rule_settings_are_untouched(self):
-        """The checklist must not start a new freeze: nothing it reads is part of the registry hash."""
+        """The checklist must not start a new freeze: nothing it reads is part of the registry hash. A registry change
+        is allowed only as a counted new try."""
         import subprocess
         out = subprocess.run(["git", "diff", "--name-only", "origin/main", "--", "config/rules.json"], cwd=ROOT,
                              capture_output=True, text=True)
-        if out.returncode == 0:
-            self.assertEqual(out.stdout.strip(), "")
+        if out.returncode == 0 and out.stdout.strip():
+            # A deliberate registry change is allowed only as a new try (docs/decisions.md): tries_counted must rise.
+            old = subprocess.run(["git", "show", "origin/main:config/rules.json"], cwd=ROOT, capture_output=True, text=True)
+            if old.returncode == 0:
+                was = json.loads(old.stdout)["tries_counted"]
+                now = json.loads((ROOT / "config" / "rules.json").read_text())["tries_counted"]
+                self.assertGreater(now, was, "config/rules.json changed without raising tries_counted")
         self.assertNotIn("checklist", json.dumps(settings()))
 
 

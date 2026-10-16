@@ -1,3 +1,4 @@
+import { WeeklyGame } from "../components/weekly.jsx";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { fmtDate, fmtNum, numWord, relDays } from "../lib/format.js";
 import { marketBrief } from "../components/brief.jsx";
@@ -310,6 +311,7 @@ function SimpleHome({ data, market, go, showDetails }) {
         <LatestVerdict data={data} go={go} />
 
         <MoneyAction data={data} compact />
+        <WeeklyGame data={data} go={go} />
       </div>
 
       <Reveal className="mt-10 grid gap-3 text-center">

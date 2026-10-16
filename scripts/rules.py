@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import math
 import random
+from datetime import date
 
 import market as mk
 import portfolio as pf
@@ -92,6 +93,26 @@ def gap_report(M: dict) -> list[str]:
     return out
 
 
+def _iso_week(d: str) -> tuple[int, int]:
+    y, w, _ = date.fromisoformat(d).isocalendar()
+    return y, w
+
+
+def new_period(prev: str, cur: str, rebalance: str = "monthly") -> bool:
+    """Whether `cur` opens a new decision period after `prev`: a new ISO week (weekly), a new month (monthly), or a
+    new month that starts a quarter, January, April, July or October (quarterly)."""
+    if rebalance == "weekly":
+        return _iso_week(prev) != _iso_week(cur)
+    if cur[:7] == prev[:7]:
+        return False
+    return rebalance != "quarterly" or int(cur[5:7]) in (1, 4, 7, 10)
+
+
+def is_decision(dates: list[str], k: int, start: int, rebalance: str = "monthly") -> bool:
+    """A rebalance decision day: the first test day, then the first trading day of each period."""
+    return k == start or new_period(dates[k - 1], dates[k], rebalance)
+
+
 def trend_flags(c: list[float]) -> list[bool]:
     """core_on[k]: the close is above its ~10-month average, using data up to k only."""
     on = [False] * len(c)
@@ -140,6 +161,7 @@ FILTERS = {
 RANKS = {
     "rs_6m": lambda c, b, i, st: _rs(c, b, i, 120),
     "rs_12_1": lambda c, b, i, st: _rs_12_1(c, b, i),
+    "rs_1m": lambda c, b, i, st: _rs(c, b, i, 21),
     "low_vol": lambda c, b, i, st: -mk.vol_ann(c, 60, i),
 }
 
@@ -253,11 +275,11 @@ def _atr(M: dict, s: str, i: int, n: int) -> float:
 def run_sleeve(cfg: dict, M: dict, st: dict, start: int, lag: int = 1, cost_bps: float = 10.0, seed: int = 0,
                end: int | None = None) -> dict:
     """Simulate one satellite sleeve from `start`. Decisions at the close of day d (rebalance days: first
-    trading day of the month, or quarter) fill at the close of day d + lag. Stops are checked daily on closes
+    trading day of the week, month, or quarter) fill at the close of day d + lag. Stops are checked daily on closes
     and move the name's value to the core at the next fill. Returns daily values indexed to 100."""
     n = M["n"] if end is None else end
     dates, core = M["dates"], M["core"]
-    quarterly = cfg.get("rebalance", "monthly") == "quarterly"
+    rebalance = cfg.get("rebalance", "monthly")
     ex = cfg.get("exit", {"kind": "none"})
     scripted = cfg["selection"]["picks"] if cfg["selection"]["method"] == "scripted" else None
     rng = random.Random(seed)
@@ -313,7 +335,7 @@ def run_sleeve(cfg: dict, M: dict, st: dict, start: int, lag: int = 1, cost_bps:
         if scripted is not None:  # replay of recorded decisions: decide exactly on the recorded days
             decide = k in scripted
         else:
-            decide = (k == start or dates[k][:7] != dates[k - 1][:7]) and (k == start or not quarterly or int(dates[k][5:7]) in (1, 4, 7, 10))
+            decide = is_decision(dates, k, start, rebalance)
         if decide:
             held = [s for s in pos if s != CORE]
             picked = pick_names(cfg, M, st, k, held, rng)
@@ -359,12 +381,14 @@ def turnover_per_year(rebs: list[dict], years: float, stops: list[dict] | None =
     return traded / 2 / max(years, 1e-9)
 
 
-def decision_days(M: dict, start: int, lag: int, quarterly: bool = False) -> tuple[list[int], list[int]]:
-    """Rebalance decision days (first trading day of the month or quarter, plus the first day) and their fill days."""
+def decision_days(M: dict, start: int, lag: int, rebalance: str = "monthly") -> tuple[list[int], list[int]]:
+    """Rebalance decision days (first trading day of the week, month or quarter, plus the first day) and their fill days."""
     n, dates = M["n"], M["dates"]
-    dec = [k for k in range(start, n)
-           if (k == start or dates[k][:7] != dates[k - 1][:7]) and (k == start or not quarterly or int(dates[k][5:7]) in (1, 4, 7, 10))
-           and k + lag < n]
+    if rebalance is True:  # older callers passed quarterly=True
+        rebalance = "quarterly"
+    elif rebalance is False:
+        rebalance = "monthly"
+    dec = [k for k in range(start, n) if is_decision(dates, k, start, rebalance) and k + lag < n]
     return dec, [k + lag for k in dec]
 
 
@@ -405,9 +429,8 @@ def matched_null(M: dict, st: dict, start: int, rebs: list[dict], cfg: dict, run
     exits use the closed-form period simulator (tested equal to the daily engine); others replay each random draw
     through the daily engine. Returns per-run (cagr, cagr_first_half, cagr_second_half) plus q."""
     n = M["n"]
-    quarterly = cfg.get("rebalance", "monthly") == "quarterly"
     if days is None:
-        dec, fills = decision_days(M, start, lag, quarterly)
+        dec, fills = decision_days(M, start, lag, cfg.get("rebalance", "monthly"))
     else:  # recorded decision days (the forward ledger records on the first run of a month, not always day one)
         dec = [d for d in days if d + lag < n]
         fills = [d + lag for d in dec]

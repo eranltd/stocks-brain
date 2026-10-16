@@ -2,7 +2,7 @@ import { WeeklyGame } from "./weekly.jsx";
 import { useState } from "react";
 import { todayISO } from "../lib/outlook.js";
 import { scorecard, steadyRuns, verdictHistory } from "../lib/verdict.js";
-import { MoneyAction } from "./money.jsx";
+import { LumpSum, MoneyAction } from "./money.jsx";
 import { ArrowRight, Reveal } from "./ui.jsx";
 
 const TONE = { accent: "var(--accent)", down: "var(--down)", flat: "var(--ink-2)" };
@@ -138,6 +138,7 @@ export function VerdictPage({ data, go }) {
       {v.letter && <Letter text={v.letter} date={v.date} />}
 
       <MoneyAction data={data} />
+      <LumpSum data={data} />
       <WeeklyGame data={data} go={go} />
 
       {v.rows.length > 0 && (
@@ -156,7 +157,7 @@ export function VerdictPage({ data, go }) {
       <Reveal as="section" className="card p-6 sm:p-8">
         <h3 className="text-[15px] font-semibold uppercase tracking-[0.12em] text-ink-2">Has the brain been right?</h3>
         <p className="mt-2 text-[18px] leading-relaxed text-ink">{score.line}</p>
-        <p className="mt-3 text-[15px] leading-relaxed text-ink-3">The brain is a careful machine, not a fortune teller. On past prices, its rules did not beat picking at random, so it stays humble and mostly watches.</p>
+        <p className="mt-3 text-[15px] leading-relaxed text-ink-3">The brain is a careful machine, not a fortune teller. On past prices, its rules did not beat picking at random, so it never asks for real money on a single stock. Its weekly bet, above, is how we find out if its ranking has any skill.</p>
         <button type="button" onClick={() => go("track")} className="meta mt-3 inline-flex min-h-[44px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">Every scored guess <ArrowRight className="size-3.5" /></button>
       </Reveal>
 

@@ -226,6 +226,46 @@ def track_record_block(runs: list[dict], outcomes: list[dict], calibration: dict
     return out
 
 
+def _iso_week(day: str) -> tuple[int, int]:
+    return date.fromisoformat(day).isocalendar()[:2]
+
+
+def bets_block(runs: list[dict], rows: dict, bench: str, as_of: str) -> dict:
+    """The brain's weekly bets so far (the first run of each ISO week counts, as on the site in site/src/lib/bets.js),
+    each scored from its run's close to the next bet's run (or to `as_of` while open) on the published indexed series.
+    spread is the average move of the three best minus that of the three worst; won means the spread was above zero.
+    this_week holds the bet already placed this week, which later runs in the same week keep."""
+    def at(sym: str, day: str):
+        ser = {p["date"]: p["v"] for p in rows.get(sym, {}).get("series", [])}
+        return ser.get(day)
+
+    def move(sym: str, a: str, b: str):
+        x, y = at(sym, a), at(sym, b)
+        return (y / x - 1) * 100 if x and y else None
+
+    weekly, seen = [], set()
+    for r in sorted((r for r in runs if r["date"] < as_of and r["status"] == "ok" and r.get("bets")), key=lambda r: r["date"]):
+        wk = _iso_week(r["date"])
+        if wk not in seen:
+            seen.add(wk)
+            weekly.append(r)
+    out = []
+    for k, r in enumerate(weekly):
+        end = weekly[k + 1]["date"] if k + 1 < len(weekly) else as_of
+        best = [move(t, r["date"], end) for t in r["bets"]["best"]]
+        worst = [move(t, r["date"], end) for t in r["bets"]["worst"]]
+        ok = all(v is not None for v in best + worst)
+        spread = sum(best) / len(best) - sum(worst) / len(worst) if ok else None
+        out.append({"date": r["date"], "best": r["bets"]["best"], "worst": r["bets"]["worst"], "open": k + 1 == len(weekly),
+                    "spread": r1(spread), "won": None if spread is None else spread > 0,
+                    "best_vs_benchmark": r1(sum(best) / len(best) - (move(bench, r["date"], end) or 0)) if ok else None})
+    done = [b for b in out if not b["open"] and b["won"] is not None]
+    this = next((b for b in out if b["open"] and _iso_week(b["date"]) == _iso_week(as_of)), None)
+    return {"note": "the weekly bet game: luck alone wins about half the weeks; a few weeks prove nothing",
+            "weeks_scored": len(done), "weeks_won": sum(b["won"] for b in done), "recent": out[::-1][:6],
+            **({"this_week": {"best": this["best"], "worst": this["worst"]}} if this else {})}
+
+
 def build(data_dir: Path = DATA, runs_dir: Path = RUNS, today: str | None = None, outlook: dict | None = None) -> dict:
     st, wl = settings(), watchlist()
     kb = data_dir / "kb"
@@ -297,6 +337,7 @@ def build(data_dir: Path = DATA, runs_dir: Path = RUNS, today: str | None = None
         "fundamentals": fundamentals_block(load_json(data_dir / "market" / "fundamentals.json")
                                            if (data_dir / "market" / "fundamentals.json").exists() else None, set(names), as_of),
         "track_record": track_record_block(runs, outcomes, calib, as_of),
+        "bets": bets_block([load_json(p) for p in sorted(runs_dir.glob("run.*.json"))], rows, bench, as_of),
     }
     return pack
 

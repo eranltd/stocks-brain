@@ -2,9 +2,10 @@
 """Record one brain run (M3): validate the brain's picks against the pack and the rules, then write
 runs/run.<date>.json. Fails closed: nothing is written unless every check passes.
 
-The brain returns `{"summary": "...", "picks": [...]}` (prompts/brain.md). Code then:
+The brain returns `{"summary": "...", "picks": [...], "bets": {...}}` (prompts/brain.md). Code then:
   - checks each pick against schemas/pick.schema.json and docs/guardrails.json (watchlist only, no digits in prose,
     no banned phrases, at most max_picks, unique tickers)
+  - checks the weekly bet, if any: exactly three best and three worst names, all on the watchlist, none in both
   - checks every evidence key resolves to a key in the pack the brain was given (any section, outlook.* included)
   - attaches the reference DATE (the pack's market close); returns are computed by code at scoring time from the
     adjusted series, so no raw price is ever published (provider licence)
@@ -27,13 +28,35 @@ from _common import DOCS, RUNS, Validator, doc_versions, dump_json, load_json, s
 from build_pack import estimate_tokens, evidence_keys  # noqa: E402
 
 PROSE = ("thesis", "invalidation", "eli5")
+BET_SIZE = 3  # the weekly bet: the brain's three best and three worst names on the list (site/src/lib/bets.js scores it)
+
+
+def check_bets(b, on_list: set[str], no_digits: bool) -> list[str]:
+    """The weekly bet is a forced ranking for the pretend game, not a pick: it must take sides even when every pick is
+    neutral, so the household can see over the weeks whether the brain's ranking beats luck."""
+    if not isinstance(b, dict) or set(b) != {"best", "worst", "why"}:
+        return ["bets must be {best, worst, why}"]
+    errs = []
+    for side in ("best", "worst"):
+        xs = b[side]
+        if not isinstance(xs, list) or len(xs) != BET_SIZE or len(set(xs)) != BET_SIZE:
+            errs.append(f"bets.{side} must be {BET_SIZE} different tickers")
+            continue
+        errs += [f"bets.{side}: {t} is not on the watchlist" for t in xs if t not in on_list]
+    if isinstance(b["best"], list) and isinstance(b["worst"], list) and set(b["best"]) & set(b["worst"]):
+        errs.append("bets: a name cannot be in both best and worst")
+    if not isinstance(b["why"], str) or not 20 <= len(b["why"]) <= 300:
+        errs.append("bets.why must be 20 to 300 characters")
+    elif no_digits and re.search(r"\d", b["why"]):
+        errs.append("digits in bets.why (write words)")
+    return errs
 
 
 def check_picks(out: dict, pack: dict, guard: dict, on_list: set[str]) -> list[str]:
     errs = []
     v = Validator()
-    if not isinstance(out, dict) or not {"summary", "picks"} <= set(out) <= {"summary", "eli5", "letter", "picks"}:
-        return ["brain output must be {summary, picks} with an optional eli5 and letter"]
+    if not isinstance(out, dict) or not {"summary", "picks"} <= set(out) <= {"summary", "eli5", "letter", "picks", "bets"}:
+        return ["brain output must be {summary, picks} with an optional eli5, letter and bets"]
     if not isinstance(out["summary"], str) or not 10 <= len(out["summary"]) <= 600:
         errs.append("summary must be 10 to 600 characters")
     if "eli5" in out and (not isinstance(out["eli5"], str) or not 20 <= len(out["eli5"]) <= 400):
@@ -44,13 +67,15 @@ def check_picks(out: dict, pack: dict, guard: dict, on_list: set[str]) -> list[s
         errs.append("letter must be 200 to 1400 characters")
     elif "letter" in out and guard["no_digits_in_pick_text"] and re.search(r"\d", out["letter"]):
         errs.append("digits in the letter (write words; numbers come from code)")
+    if "bets" in out:
+        errs += check_bets(out["bets"], on_list, guard["no_digits_in_pick_text"])
     picks = out["picks"]
     if len(picks) > guard["max_picks"]:
         errs.append(f"{len(picks)} picks > max_picks {guard['max_picks']}")
     keys = evidence_keys(pack)
     seen = set()
     banned = [b.lower() for b in guard["banned_phrases"]]
-    texts = [out["summary"], out.get("eli5", ""), out.get("letter", "")]
+    texts = [out["summary"], out.get("eli5", ""), out.get("letter", ""), (out.get("bets") or {}).get("why", "") if isinstance(out.get("bets"), dict) else ""]
     for i, p in enumerate(picks):
         errs += [f"pick {i}: {e}" for e in v.validate(p, "pick.schema.json")]
         t = p.get("ticker")
@@ -89,6 +114,7 @@ def make_run(out: dict, packfile: dict, model: str, minutes: float, usd: float, 
         "doc_versions": doc_versions(), "repair_retries": 0, "summary": out["summary"],
         **({"eli5": out["eli5"]} if out.get("eli5") else {}),
         **({"letter": out["letter"]} if out.get("letter") else {}),
+        **({"bets": out["bets"]} if out.get("bets") else {}),
         "picks": [{"id": f"{day}:{p['ticker']}", "ref_date": day, "pick": p} for p in out["picks"]],
     }
 

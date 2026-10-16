@@ -1,7 +1,7 @@
 ---
-version: 0.21.0
+version: 0.22.0
 updated_at: 2026-10-16
-change_note: The household acts weekly: weekly buying of the whole-market fund, and a weekly pretend-money trading game with two new weekly rules.
+change_note: The brain takes sides every week (a best-three and worst-three bet scored against luck); "neutral" now reads as "do your weekly buy"; a lump-sum guide.
 ---
 # Decision log
 
@@ -19,6 +19,21 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   per-point dates into one shared array.
 
 ## 2026-10-16
+- **The brain's weekly bet.** The household read a row of neutral calls as "the brain always says wait". Neutral is
+  the honest call (every stock rule lost to random picks), but it teaches nothing. So each run now also returns
+  `bets`: the three names the brain expects to do best over the coming week and the three it expects to do worst.
+  The first run of each ISO week counts; later runs that week repeat it (`pack.bets.this_week`). The site scores it
+  from that run's close to the next week's bet on the published indexed series (`site/src/lib/bets.js`; the brain sees
+  the same scores in `pack.bets`): it wins the week if its best three beat its worst three. The record is shown against
+  a coin: under twelve weeks it says "too early"; after that, how often luck would do as well. Best-minus-worst was
+  chosen over best-against-the-market because the market's own drift would flatter a long-only bet. A bet is never a
+  real-money instruction; it joins the trust ladder only like any rule would, by beating luck for months.
+- **"Neutral" reads as the plan, not "wait".** The run headline for all-neutral runs is now "Do your weekly buy of
+  the whole market. No single stock stands out." and the neutral mood word is "Can't tell".
+- **Got a lump sum?** A five-step guide on the Brain page for money already in hand (emergency reserve first, money
+  needed within five years stays out, the rest in one purchase per `windfall_lump_sum`, spreading over half a year
+  only as a price of comfort), with the history test's numbers and the questions to settle before a big move
+  (account type, the fund's country of registration, currency and fees).
 - **Guess the candle, a simpler Home, and three brain checks a morning.** A quiz page (Learn, `quiz`): a real chart
   from our stocks with one notable candle marked; guess its kind, then whether the next week ended higher or lower;
   the score is kept on the device next to what luck would score. Home drops the time-horizon money card (it stays on

@@ -59,6 +59,8 @@ test("verdictOf and verdictHistory: kid words first, grown-up reason kept, newes
   assert.equal(v.rows[0].byBrain, true);
   assert.equal(v.rows[0].mood, "Just watching");
   assert.equal(v.rows[0].thesis, "AAA first reason. Second reason.");
+  assert.equal(v.letter, null);
+  assert.equal(verdictOf({ ...run("2026-10-12"), letter: "Dear family." }, null).letter, "Dear family.");
   const h = verdictHistory([run("2026-10-09", pick("AAA")), { date: "2026-10-10", status: "failed", picks: [] }, run("2026-10-12", pick("AAA"))]);
   assert.deepEqual(h.map((x) => x.date), ["2026-10-12", "2026-10-09"]);
   assert.equal(h[0].changes.same, true);

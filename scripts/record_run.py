@@ -32,21 +32,25 @@ PROSE = ("thesis", "invalidation", "eli5")
 def check_picks(out: dict, pack: dict, guard: dict, on_list: set[str]) -> list[str]:
     errs = []
     v = Validator()
-    if not isinstance(out, dict) or not {"summary", "picks"} <= set(out) <= {"summary", "eli5", "picks"}:
-        return ["brain output must be {summary, picks} with an optional eli5"]
+    if not isinstance(out, dict) or not {"summary", "picks"} <= set(out) <= {"summary", "eli5", "letter", "picks"}:
+        return ["brain output must be {summary, picks} with an optional eli5 and letter"]
     if not isinstance(out["summary"], str) or not 10 <= len(out["summary"]) <= 600:
         errs.append("summary must be 10 to 600 characters")
     if "eli5" in out and (not isinstance(out["eli5"], str) or not 20 <= len(out["eli5"]) <= 400):
         errs.append("eli5 must be 20 to 400 characters")
     elif "eli5" in out and guard["no_digits_in_pick_text"] and re.search(r"\d", out["eli5"]):
         errs.append("digits in eli5 (write words, as for a five-year-old)")
+    if "letter" in out and (not isinstance(out["letter"], str) or not 200 <= len(out["letter"]) <= 1400):
+        errs.append("letter must be 200 to 1400 characters")
+    elif "letter" in out and guard["no_digits_in_pick_text"] and re.search(r"\d", out["letter"]):
+        errs.append("digits in the letter (write words; numbers come from code)")
     picks = out["picks"]
     if len(picks) > guard["max_picks"]:
         errs.append(f"{len(picks)} picks > max_picks {guard['max_picks']}")
     keys = evidence_keys(pack)
     seen = set()
     banned = [b.lower() for b in guard["banned_phrases"]]
-    texts = [out["summary"], out.get("eli5", "")]
+    texts = [out["summary"], out.get("eli5", ""), out.get("letter", "")]
     for i, p in enumerate(picks):
         errs += [f"pick {i}: {e}" for e in v.validate(p, "pick.schema.json")]
         t = p.get("ticker")
@@ -84,6 +88,7 @@ def make_run(out: dict, packfile: dict, model: str, minutes: float, usd: float, 
         "pack": {"hash": packfile["hash"], "tokens": packfile["tokens"], "cap_tokens": packfile["cap_tokens"]},
         "doc_versions": doc_versions(), "repair_retries": 0, "summary": out["summary"],
         **({"eli5": out["eli5"]} if out.get("eli5") else {}),
+        **({"letter": out["letter"]} if out.get("letter") else {}),
         "picks": [{"id": f"{day}:{p['ticker']}", "ref_date": day, "pick": p} for p in out["picks"]],
     }
 

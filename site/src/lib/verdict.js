@@ -130,6 +130,7 @@ export function verdictOf(run, prev, { outlook, names = {}, today } = {}) {
     byBrain: Boolean(run.eli5),
     changes: changes(run, prev, nameOf),
     summary: run.summary ?? "",
+    letter: run.letter ?? null,
     rows: (run.picks ?? []).map(({ pick }) => {
       const name = nameOf(pick.ticker);
       const m = MOOD[pick.stance] ?? MOOD.neutral;

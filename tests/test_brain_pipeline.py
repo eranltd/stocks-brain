@@ -120,6 +120,23 @@ class BrainPipelineTest(unittest.TestCase):
         self.assertTrue(record_run.check_picks(o, self.pack, self.guard, self.on_list))
         self.assertNotIn("eli5", record_run.make_run(self.good(), self.packfile, "m", 1, 0.0, None, None))
 
+    def test_letter_is_optional_and_checked_like_the_rest(self):
+        letter = ("Dear family, this week we do the same quiet thing we always do: the weekly buy of the fund that holds "
+                  "the whole market, and money we need soon stays safe. The pretend-money game is still young and has shown "
+                  "no edge over picking from a hat. The lesson: a tree grows while you sleep, not while you dig it up. We "
+                  "would change our minds only if a tested rule beat chance for many months.")
+        out = self.good()
+        out["letter"] = letter
+        self.assertEqual(record_run.check_picks(out, self.pack, self.guard, self.on_list), [])
+        run = record_run.make_run(out, self.packfile, "Claude Code session", 5, 0.0, None, None)
+        self.assertEqual(run["letter"], letter)
+        self.assertEqual(Validator().validate(run, "run.schema.json"), [])
+        for bad in ({"letter": letter + " It rose 12 times."}, {"letter": "Too short."}, {"letter": letter + " A sure thing for anyone."}):
+            o = self.good()
+            o.update(bad)
+            self.assertTrue(record_run.check_picks(o, self.pack, self.guard, self.on_list), bad)
+        self.assertNotIn("letter", record_run.make_run(self.good(), self.packfile, "m", 1, 0.0, None, None))
+
     def test_zero_picks_is_valid(self):
         out = {"summary": "Nothing clears the bar today; holding back is a valid answer.", "picks": []}
         self.assertEqual(record_run.check_picks(out, self.pack, self.guard, self.on_list), [])

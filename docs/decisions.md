@@ -19,6 +19,12 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   per-point dates into one shared array.
 
 ## 2026-10-16
+- **The brain writes a letter to the family.** The household asked for the brain to advise them "like Warren Buffett".
+  Each run now adds a `letter` (200 to 1400 characters, no digits): what to do with real money this week, what the
+  pretend-money calls and the weekly game honestly show, one lesson, and what would change our minds. Buffett's
+  shareholder letters set the tone only (plain, patient, candid); the letter never claims to be him or quotes him, and
+  the site says so under it. It is checked like the rest (banned phrases, no digits) and follows the house rules: real
+  money only in the weekly whole-market buy or safe savings.
 - **We act weekly.** The household said "we are weekly traders". Two parts:
   - **Real money**: the core standing order moves from monthly to weekly. Our own savings-cadence test
     (`savings_weekly` against the monthly baseline) rated weekly "better": about +0.6 points a year, ahead in about

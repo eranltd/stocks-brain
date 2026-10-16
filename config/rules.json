@@ -1,8 +1,8 @@
 {
- "version": "1.0.0",
- "updated_at": "2026-10-05",
- "change_note": "Pre-registered rule set 1.0.0: monthly index autopilot and lump sum as the core plan; Five Leaders (three forms) as the testable satellite; v1, random baskets and all-21 as yardsticks; fixed numbers (10 bps, seed 20261005, 17 tries, 182 paper days); planned checks marked not computed.",
- "trader": "We are savers first. Once a month, on the first trading day after pay arrives, a standing order buys a broad index fund (our core), whatever the news. We never pause it and never sell the core in a crash. Money we already have, such as a bonus (a windfall), goes in all at once. Today that is the only real action.\n\nA small stock pot (at most a tenth of our savings, 2% per stock) opens only after a rule passes two main checks: first on past prices, then on a written paper record (no real money) kept at least half a year. The pot is a separate holding; only its own parked index money is traded, on review days. The rule we will test is Five Leaders. Each month it ranks our 21 companies by their rise over the past year, ignoring the latest month, and holds up to five, one per sector. A newcomer must be above a rising 200-day average price and not over 8% above its 50-day average. A holding leaves if it falls below the 200-day average or is no longer picked. Empty slots wait in the index fund. Past-price tests reset holdings to equal each month; in real life names start equal, are never topped up, and winners may drift.\n\nWe will NOT: buy on tips, headlines or AI picks; add money to a falling stock; use stop orders or trade stocks between review days; borrow or use options; change a rule after a loss; grow the pot to chase +20% a year. Real money follows a stock rule only if every money condition in the acceptance text is met, including beating random picks and the index fund after costs. Nothing here promises any return. If no rule earns a place, the pot stays in the index fund.",
+ "version": "1.1.0",
+ "updated_at": "2026-10-16",
+ "change_note": "Two weekly pretend-money rules for a household that trades weekly: Five Leaders reviewed weekly and Weekly Swing (last month's strongest, swapped weekly). Both get the same random-basket test; tries counted 17 to 19.",
+ "trader": "We are savers first and act weekly. Each week a standing order buys a broad index fund (our core), whatever the news. We never pause it and never sell the core in a crash. Money we already have, such as a bonus (a windfall), goes in all at once. Today that is the only real action.\n\nA small stock pot (at most a tenth of our savings, 2% per stock) opens only after a rule passes two main checks: first on past prices, then on a written paper record (no real money) kept at least half a year. The pot is a separate holding; only its own parked index money is traded, on review days. We test Five Leaders (also weekly) and Weekly Swing on paper. Each month it ranks our 21 companies by their rise over the past year, ignoring the latest month, and holds up to five, one per sector. A newcomer must be above a rising 200-day average price and not over 8% above its 50-day average. A holding leaves if it falls below the 200-day average or is no longer picked. Empty slots wait in the index fund. Past-price tests reset holdings to equal each month; in real life names start equal, are never topped up, and winners may drift.\n\nWe will NOT: buy on tips, headlines or AI picks; add money to a falling stock; use stop orders or trade stocks between review days; borrow or use options; change a rule after a loss; grow the pot to chase +20% a year. Real money follows a stock rule only if every money condition in the acceptance text is met, including beating random picks and the index fund after costs. Nothing here promises any return. If no rule earns a place, the pot stays in the index fund.",
  "rules": [
   {
    "id": "savings_monthly_autopilot",
@@ -423,8 +423,8 @@
     },
     {
      "name": "tries",
-     "value": "1 of the 17 counted",
-     "why": "Adjusted p = p times 17, the same bar as the basic version."
+     "value": "1 of the 19 counted",
+     "why": "Adjusted p = p times 19, the same bar as the basic version."
     },
     {
      "name": "provenance of the numbers",
@@ -515,7 +515,7 @@
     },
     {
      "name": "tries",
-     "value": "1 of the 17 counted",
+     "value": "1 of the 19 counted",
      "why": "Needs adjusted p <= 0.05: at most 4 of 2000 random baskets at or above it (about the 99.8th percentile)."
     },
     {
@@ -588,8 +588,8 @@
     },
     {
      "name": "tries",
-     "value": "1 of the 17 counted",
-     "why": "Adjusted p = p times 17, the same bar as monthly."
+     "value": "1 of the 19 counted",
+     "why": "Adjusted p = p times 19, the same bar as monthly."
     }
    ],
    "library_refs": [
@@ -629,6 +629,135 @@
        }
       ]
      }
+    }
+   }
+  },
+  {
+   "id": "five_leaders_weekly",
+   "family": "entry",
+   "name": "Five Leaders: reviewed every week (pretend money)",
+   "status": "testable_now",
+   "evidence": "untested",
+   "plain": "The same as Five Leaders, but we look every week, on the first trading day of each week. The household trades weekly, so this tests whether a weekly look adds anything. Pretend money only; we do not know yet whether it helps or hurts.",
+   "definition": "The same as Five Leaders with the 200-day line (ranking, top-10 retention, stretch veto, 1 per sector, 5 equal slots, 200-day entry and exit checks, 10 bps, next-close fills), but decided at the close of the first trading day of each ISO week, and once on the first test day, using closes up to that day. Between reviews nothing is bought or sold. Names still need 253 trading days of unbroken history. Unfilled slots stay in the index fund. The random baskets are decided on the same days.",
+   "params": [
+    {
+     "name": "review days",
+     "value": "first trading day of each week",
+     "why": "The household's own rhythm. Fixed, not tuned. Evidence untested."
+    },
+    {
+     "name": "everything else",
+     "value": "identical to Five Leaders",
+     "why": "Only the review calendar differs, so any gap comes from timing alone."
+    },
+    {
+     "name": "known cost",
+     "value": "more trades",
+     "why": "Trading more is the best-documented harm to owners (S-021.P05, S-026.P05); the 10 bps per trade is charged on every weekly change."
+    },
+    {
+     "name": "tries",
+     "value": "1 of the 19 counted",
+     "why": "Adjusted p = p times 19, the same bar as the others."
+    }
+   ],
+   "library_refs": [
+    "S-021.P05",
+    "S-026.P05"
+   ],
+   "why_included": "The household asked to trade weekly. A weekly look may react faster but trades more, and costs grow with every trade. Costing it as a counted arm shows what a weekly calendar gives or takes, before any real money.",
+   "adopt_if": "Verdict passes_history like the others, and it then beats its own random baskets on the forward paper record for at least six months. Paper only, no money, until the trust ladder says otherwise.",
+   "reject_if": "Verdict rejected (under the 50th percentile of its own random baskets), or its turnover costs eat the edge: then the monthly version stays the reference.",
+   "engine": {
+    "kind": "satellite_select",
+    "slots": 5,
+    "max_per_sector": 1,
+    "max_pair_corr": 1.0,
+    "rebalance": "weekly",
+    "selection": {
+     "method": "filters",
+     "rank": "rs_12_1",
+     "filters": [
+      {
+       "f": "trend_long",
+       "n": 200,
+       "rising_days": 21
+      },
+      {
+       "f": "not_stretched",
+       "pct": 8
+      }
+     ],
+     "keep": {
+      "mode": "rank_top",
+      "n": 10,
+      "filters": [
+       {
+        "f": "above_sma",
+        "n": 200
+       }
+      ]
+     }
+    }
+   }
+  },
+  {
+   "id": "weekly_swing",
+   "family": "entry",
+   "name": "Weekly Swing: last month's strongest, swapped weekly (pretend money)",
+   "status": "testable_now",
+   "evidence": "untested",
+   "plain": "Every week, hold the five names that beat the benchmark most over the last month, if they are above their 50-day average and not stretched. Swap them each week. A short-term trading rule, tested on pretend money only.",
+   "definition": "At the close of the first trading day of each ISO week (and on the first test day), rank eligible names by their one-month (21 trading days) return minus the benchmark's. Keep names above their 50-day average and less than 8% above it. Hold up to 5, 1 per sector, equal slots, 10 bps per trade, next-close fills. Names need 253 trading days of history. Unfilled slots stay in the index fund. Random baskets are decided on the same days.",
+   "params": [
+    {
+     "name": "strength window",
+     "value": "one month (21 trading days) vs the benchmark",
+     "why": "A common short-term choice. Fixed, not tuned."
+    },
+    {
+     "name": "filters",
+     "value": "above the 50-day average, under 8% above it",
+     "why": "Same stretch veto as Five Leaders, with a short trend check."
+    },
+    {
+     "name": "holding",
+     "value": "up to 5 names, swapped weekly",
+     "why": "The household's weekly rhythm."
+    },
+    {
+     "name": "tries",
+     "value": "1 of the 19 counted",
+     "why": "Adjusted p = p times 19."
+    }
+   ],
+   "library_refs": [
+    "S-021.P05",
+    "S-026.P05"
+   ],
+   "why_included": "The household asked for weekly trading. Short-term strength is the most common weekly trading idea, so it is the fair one to test against chance and costs before any real money.",
+   "adopt_if": "Verdict passes_history (at or above the 95th percentile of its own random baskets, adjusted for every try), and then a forward paper record that keeps beating its random baskets for at least six months.",
+   "reject_if": "Verdict rejected, or its turnover costs take away whatever edge it shows.",
+   "engine": {
+    "kind": "satellite_select",
+    "slots": 5,
+    "max_per_sector": 1,
+    "max_pair_corr": 1.0,
+    "rebalance": "weekly",
+    "selection": {
+     "method": "filters",
+     "rank": "rs_1m",
+     "filters": [
+      {
+       "f": "above_sma",
+       "n": 50
+      },
+      {
+       "f": "not_stretched",
+       "pct": 8
+      }
+     ]
     }
    }
   },
@@ -1571,7 +1700,9 @@
     "five_leaders",
     "five_leaders_quarterly",
     "precommit_no_override",
-    "control_random_basket"
+    "control_random_basket",
+    "five_leaders_weekly",
+    "weekly_swing"
    ],
    "metrics": [
     "percentile among random baskets, each cadence",
@@ -1826,7 +1957,7 @@
    ]
   }
  },
- "tries_counted": 17,
+ "tries_counted": 19,
  "not_supported": [
   {
    "name": "Pause savings while the core is weak (left-out gate 1)",

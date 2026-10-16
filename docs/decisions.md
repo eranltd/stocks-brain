@@ -1,7 +1,7 @@
 ---
-version: 0.20.0
-updated_at: 2026-10-14
-change_note: Official company news from SEC filings and SEC company numbers for every company on every list; candles up close on every stock page.
+version: 0.21.0
+updated_at: 2026-10-16
+change_note: The household acts weekly: weekly buying of the whole-market fund, and a weekly pretend-money trading game with two new weekly rules.
 ---
 # Decision log
 
@@ -17,6 +17,20 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Market file size**: `derived.json` is written one line per symbol (compact) and is about 330 KB with 21 names.
   Past roughly 35 names it would hit lint's 512 KB cap and the daily run would fail closed; before that, move the
   per-point dates into one shared array.
+
+## 2026-10-16
+- **We act weekly.** The household said "we are weekly traders". Two parts:
+  - **Real money**: the core standing order moves from monthly to weekly. Our own savings-cadence test
+    (`savings_weekly` against the monthly baseline) rated weekly "better": about +0.6 points a year, ahead in about
+    four of five one-year windows, provided the broker's fee per order stays under the break-even fee the test prints.
+  - **Pretend money**: a weekly trading game. Two weekly satellite rules join the registry (1.1.0):
+    `five_leaders_weekly` (Five Leaders reviewed weekly) and `weekly_swing` (last month's strongest five, above their
+    50-day average and not stretched, swapped weekly). The engine gained a weekly decision calendar (first trading day
+    of each ISO week) for the backtest, the random baskets and the forward ledger. Both count as tries: 17 to 19, so
+    every rule's adjusted p rises, and the history test is frozen anew. Real money in weekly stock trades only if a
+    weekly rule passes history and then its paper record, exactly like every other rule.
+  - The site shows a "This week" card on Home and the Brain's verdicts page: the weekly buy day, then each weekly
+    rule's names this week, its score against the market and its history-test result in words.
 
 ## 2026-10-14
 - **Official company news from the SEC, for every company.** The household asked for every company to be backed by

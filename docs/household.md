@@ -1,7 +1,7 @@
 ---
-version: 0.4.0
-updated_at: 2026-10-13
-change_note: The household dropped the 4-5 stock plan. Real money follows the honest action by time horizon (whole-market fund, safe savings, or a split); stock rules and the paper portfolio are pretend-money experiments.
+version: 0.5.0
+updated_at: 2026-10-16
+change_note: The household acts weekly. Real money buys the whole-market fund every week; a weekly pretend-money game (two weekly rules) is scored every week against the market and against random picks.
 ---
 # House rules
 
@@ -11,8 +11,8 @@ These rules decide when, and how much, we act on anything it shows.
 ## Our goal
 - **Real money follows the honest action**, shown on the Brain's verdicts page and decided first by when the money may
   be needed:
-  - **5 years or more**: a low-cost fund that holds the whole market (an S&P 500 fund), the same amount every month,
-    left alone through the drops.
+  - **5 years or more**: a low-cost fund that holds the whole market (an S&P 500 fund), the same amount every week
+    (the household acts weekly), left alone through the drops.
   - **1 to 5 years**: part safe (T-bills or a savings account), part the whole-market fund; the sooner the money is
     needed, the bigger the safe part.
   - **Within a year**: safe only. Stocks can drop a lot in a few months.
@@ -23,6 +23,10 @@ These rules decide when, and how much, we act on anything it shows.
   (`goal` in settings) is a stretch target for the experiments, not a promise; few investors sustain it.
 
 ## The experiments (pretend money)
+- **The weekly game** (household decision, 2026-10-16: "we are weekly traders"). Two weekly rules in
+  `config/rules.json` (`five_leaders_weekly`, `weekly_swing`) pick their names on the first trading day of each week
+  and are recorded forward in the rules ledger, never edited. They face the same test as every rule: beat random picks
+  on past prices, then on paper for at least six months. Until then the weekly trading is pretend money only.
 - The stock rules (`config/rules.json`), the rule's paper portfolio and the brain's daily stock calls are experiments
   with pretend money. They exist to learn whether picking stocks can beat owning the whole market.
 - A stock would join the honest action only when a tested rule passes its history test AND the trust ladder below

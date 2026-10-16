@@ -1,3 +1,4 @@
+import { WeeklyGame } from "./weekly.jsx";
 import { useState } from "react";
 import { todayISO } from "../lib/outlook.js";
 import { scorecard, steadyRuns, verdictHistory } from "../lib/verdict.js";
@@ -123,6 +124,7 @@ export function VerdictPage({ data, go }) {
       </Reveal>
 
       <MoneyAction data={data} />
+      <WeeklyGame data={data} go={go} />
 
       {v.rows.length > 0 && (
         <section>

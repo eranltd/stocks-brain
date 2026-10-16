@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-15",
+  "as_of": "2026-10-16",
   "sample": false,
   "source": "SEC EDGAR filings index (company submissions)",
   "window_days": 120,
@@ -995,20 +995,6 @@
           ],
           "kind": "results",
           "url": "https://www.sec.gov/Archives/edgar/data/1156375/000115637526000042/cme-20260722.htm"
-        },
-        {
-          "date": "2026-06-17",
-          "form": "8-K",
-          "items": [
-            "5.02",
-            "7.01"
-          ],
-          "titles": [
-            "A leadership change (an executive or board member)",
-            "Shared an update with investors"
-          ],
-          "kind": "people",
-          "url": "https://www.sec.gov/Archives/edgar/data/1156375/000119312526273442/d129556d8k.htm"
         }
       ]
     },
@@ -1764,6 +1750,16 @@
       "name": "NOVA LTD.",
       "filings": [
         {
+          "date": "2026-10-15",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1109345/000117891326004775/zk2636227.htm"
+        },
+        {
           "date": "2026-09-02",
           "form": "6-K",
           "items": [],
@@ -1927,6 +1923,16 @@
       "name": "TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
       "filings": [
         {
+          "date": "2026-10-15",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000726/tsm-20261015x6k.htm"
+        },
+        {
           "date": "2026-10-08",
           "form": "6-K",
           "items": [],
@@ -1995,16 +2001,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000539/sonysemiconductorsolutions.htm"
-        },
-        {
-          "date": "2026-08-11",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000536/tsm-boardx20260811.htm"
         }
       ]
     },

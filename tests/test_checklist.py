@@ -2,6 +2,7 @@
 no look-ahead, the published file's shape and licence, the forward record, lint, the routine wiring and the pack."""
 import copy
 import json
+import math
 import random
 import shutil
 import sys
@@ -231,10 +232,21 @@ class VolumeAndRiskTest(unittest.TestCase):
             self.assertAlmostEqual(rp["rr_tp1"], rp["tp1_pct"] / rp["stop_pct"], delta=0.02)
             self.assertGreater(rp["tp2_pct"], rp["tp1_pct"])
             self.assertEqual(rp["fits_house_rule"], rp["rr_tp1"] >= HOUSE["min_reward_to_risk"])
-            if not cl["levels"]["resistance"]:
-                self.assertEqual((rp["tp1_basis"], rp["rr_tp1"]), ("risk_multiple", P["risk_plan"]["risk_multiple"]))
+            self.assertGreater(rp["tp1_pct"], 0)  # a target is always above the close (checklist.schema.json)
+            above = [z for z in cl["levels"]["resistance"] if z["dist_pct"] >= 0.01]
+            if not above:
+                self.assertEqual(rp["tp1_basis"], "risk_multiple")
             else:
-                self.assertEqual(rp["tp1_pct"], cl["levels"]["resistance"][0]["dist_pct"])
+                self.assertEqual(rp["tp1_pct"], above[0]["dist_pct"])
+
+    def test_a_resistance_on_the_close_is_not_a_target(self):
+        """A level sitting on the close rounds to a 0% target, which the schema refuses (TLV, 2026-10-16)."""
+        c = [100 + 10 * math.sin(k / 9) for k in range(400)]
+        peak = max(c[300:390])
+        c += [peak - 3, peak - 2, peak - 1, peak]  # back exactly to the old high
+        B = self.ranged(c)
+        rp = self.cl(B)["risk_plan"]
+        self.assertGreater(rp["tp1_pct"], 0)
 
     @staticmethod
     def ranged(c):

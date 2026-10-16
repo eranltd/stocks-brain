@@ -9,6 +9,7 @@ import { Field, Footer, Header, Loader, MobileNav, PageIntro } from "./component
 import { Container } from "./components/ui.jsx";
 import Today from "./tabs/Today.jsx";
 import Details from "./tabs/Details.jsx";
+import Quiz from "./tabs/Quiz.jsx";
 import Portfolio from "./tabs/Portfolio.jsx";
 import Playbook from "./tabs/Playbook.jsx";
 import People from "./tabs/People.jsx";
@@ -28,7 +29,7 @@ import Stock from "./tabs/Stock.jsx";
 // old links (#insights, #playbook) still open the right page. Routes: a page id, or "stock/<SYMBOL>" for a stock page,
 // with "?m=<market>" when a market other than the default is chosen (#today?m=tlv).
 const PAGES = {
-  today: Today, details: Details, portfolio: Portfolio, playbook: Playbook, people: People, watchlist: Watchlist, track: TrackRecord,
+  today: Today, details: Details, quiz: Quiz, portfolio: Portfolio, playbook: Playbook, people: People, watchlist: Watchlist, track: TrackRecord,
   kb: KB, insights: Insights, learnings: Learnings, runs: Runs, verdicts: Verdicts, routines: Routines, how: HowItWorks, admin: Admin,
 };
 // Pages that show synthetic data until the brain (M3) produces real picks.

@@ -10,6 +10,7 @@ export const HOLES = [
   { id: "people", q: "Did famous investors beat the market with the calls we followed?", to: "people", minutes: 5 },
   { id: "weekly", q: "Who is winning the weekly game this week?", to: "verdicts#this-week", minutes: 2 },
   { id: "right", q: "Has the brain been right so far?", to: "track", minutes: 3 },
+  { id: "quiz", q: "Play Guess the candle: what kind is it, and what happened next?", to: "quiz", minutes: 5 },
   { id: "candles", q: "Can you spot a hammer or a shooting star? Zoom into a real chart.", to: "stock#checklist", minutes: 4 },
   { id: "news", q: "What did one of our companies tell regulators lately?", to: "stock#official-news", minutes: 3 },
   { id: "rules", q: "Does buying every week beat buying every month? See the test.", to: "playbook", minutes: 6 },

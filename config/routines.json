@@ -1,7 +1,7 @@
 {
-  "version": "0.12.0",
-  "updated_at": "2026-10-14",
-  "change_note": "Official company news from SEC filings (sec_news), and company numbers (sec_fundamentals) for every stock list, not only the main one.",
+  "version": "0.13.0",
+  "updated_at": "2026-10-16",
+  "change_note": "The brain checks three times each market morning (05:23, 08:23 and 11:23 UTC), so a late data run waits at most three hours.",
   "timezone": "UTC",
   "routines": [
     {
@@ -108,7 +108,7 @@
       "id": "close_run",
       "name": "Daily brain run",
       "cadence": "daily",
-      "cron": "23 5,11 * * 2-6",
+      "cron": "23 5,8,11 * * 2-6",
       "runner": "claude_routine",
       "status": "active",
       "milestone": "M3",
@@ -123,7 +123,7 @@
         "runs/run.<date>.json (recorded by brain.yml)"
       ],
       "human_gate": false,
-      "why": "The core loop, run by itself each market morning as a scheduled Claude Code session on the household's Claude subscription: build the pack, run the brain, then brain.yml re-checks and records it or writes nothing. A second firing catches a late data run; a day already recorded is skipped.",
+      "why": "The core loop, run by itself each market morning as a scheduled Claude Code session on the household's Claude subscription: build the pack, run the brain, then brain.yml re-checks and records it or writes nothing. Two more firings, three hours apart, catch a late data run; a day already recorded is skipped.",
       "prompt": "prompts/daily_brain_routine.md"
     },
     {

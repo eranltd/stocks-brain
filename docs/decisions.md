@@ -19,6 +19,12 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   per-point dates into one shared array.
 
 ## 2026-10-16
+- **Guess the candle, a simpler Home, and three brain checks a morning.** A quiz page (Learn, `quiz`): a real chart
+  from our stocks with one notable candle marked; guess its kind, then whether the next week ended higher or lower;
+  the score is kept on the device next to what luck would score. Home drops the time-horizon money card (it stays on
+  the Brain's verdicts page), the market card and the companies card (both repeated other sections), and the candle
+  cards lose their legend. The brain routine now checks at 05:23, 08:23 and 11:23 UTC, so a late data run waits at most
+  three hours; the Routines page shows every time in the reader's own time zone too.
 - **Two ways to read the site.** The household wants busy readers informed in a couple of minutes and curious readers
   to stay around twenty. Home now opens with "The two-minute read" (the brain's answer, this week's money action, the
   market; then "that is all you need today"), ends with "Got more time? Go down a rabbit hole" (ten real questions the

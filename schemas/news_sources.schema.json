@@ -1,0 +1,74 @@
+{
+  "$id": "news_sources.schema.json",
+  "title": "Why-it-moved allow-list (config/news_sources.json)",
+  "description": "The only web hosts a why-it-moved note may link to (scripts/record_why.py and lint check every source URL). A host matches itself and its subdomains. Owner-editable.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "updated_at",
+    "change_note",
+    "rules",
+    "sources"
+  ],
+  "properties": {
+    "version": {
+      "$ref": "common.schema.json#/$defs/semver"
+    },
+    "updated_at": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "change_note": {
+      "$ref": "common.schema.json#/$defs/change_note"
+    },
+    "rules": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 12,
+      "items": {
+        "type": "string",
+        "minLength": 10,
+        "maxLength": 240
+      },
+      "description": "Plain rules for the researcher, shown on the site with the list."
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 120,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "host",
+          "publisher",
+          "kind"
+        ],
+        "properties": {
+          "host": {
+            "type": "string",
+            "pattern": "^(?!www\\.)[a-z0-9-]+(\\.[a-z0-9-]+)+$",
+            "maxLength": 80,
+            "description": "Registrable host without www.; subdomains match (investor.example.com matches example.com)."
+          },
+          "publisher": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 60
+          },
+          "kind": {
+            "enum": [
+              "regulator",
+              "exchange",
+              "company",
+              "newswire",
+              "outlet",
+              "trade"
+            ],
+            "description": "regulator, exchange, company and newswire are official sources; outlet and trade are reputable news outlets and trade publications."
+          }
+        }
+      }
+    }
+  }
+}

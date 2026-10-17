@@ -36,3 +36,21 @@ export function headlineFor(doc, symbol) {
 export function newsRows(doc, symbol, max = 6) {
   return newsFor(doc, symbol).slice(0, max).map((f) => ({ ...f, title: f.titles.join(" · "), day: shortDay(f.date), ...NEWS_KIND[f.kind] }));
 }
+
+/**
+ * Current reports (8-K, or 6-K for a company abroad) filed by the given names within `days` of `today`, newest first,
+ * one per company (its newest): {symbol, date, form, title, titles, kind, url}. Quarterly and yearly reports are left
+ * out: they are on each Stock page. Filings dated after `today` (a clock behind the data) are kept.
+ */
+export function recentFilings(doc, { symbols = null, today, days = 3, max = 2 } = {}) {
+  if (!doc || !today) return [];
+  const keep = symbols ? new Set(symbols) : null;
+  const from = Date.parse(`${today}T00:00:00Z`) - days * 864e5;
+  const out = [];
+  for (const c of doc.companies ?? []) {
+    if (keep && !keep.has(c.symbol)) continue;
+    const f = (c.filings ?? []).find((x) => /^(8|6)-K/.test(x.form ?? "") && x.date && Date.parse(`${x.date}T00:00:00Z`) >= from && x.titles?.length);
+    if (f) out.push({ symbol: c.symbol, date: f.date, form: f.form, title: f.titles[0], titles: f.titles, kind: f.kind, url: f.url });
+  }
+  return out.sort((a, b) => b.date.localeCompare(a.date) || a.symbol.localeCompare(b.symbol)).slice(0, max);
+}

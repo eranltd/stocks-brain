@@ -5,8 +5,9 @@ Everything is synthetic (seeded random walks) and flagged `"sample": true`. Symb
 config/watchlist.json, the benchmark from config/settings.json and the other markets' lists and benchmarks from
 config/markets.json (their own random stream, so adding a market never changes the main list's samples). No network, no LLM.
 
-Usage: python3 scripts/make_sample_data.py [--end YYYY-MM-DD] [--days N] [--runs N] [--markets-only]
+Usage: python3 scripts/make_sample_data.py [--end YYYY-MM-DD] [--days N] [--runs N] [--markets-only] [--why-only]
   --markets-only  write only the other markets' price files that are missing (leaves every other sample as it is)
+  --why-only      write only the sample why-it-moved notes (samples/market/why.json) from the sample prices
 """
 from __future__ import annotations
 
@@ -21,7 +22,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _common import (  # noqa: E402
-    SAMPLES, doc_versions, dump_json, market_symbols, market_watchlist, other_markets, parse_front_matter, DOCS, settings, watchlist,
+    SAMPLES, doc_versions, dump_json, market_symbols, market_watchlist, markets_config, other_markets, parse_front_matter, DOCS,
+    settings, watchlist,
 )
 import scoring  # noqa: E402
 
@@ -92,6 +94,7 @@ def main() -> int:
     ap.add_argument("--days", type=int, default=1600)
     ap.add_argument("--runs", type=int, default=45)
     ap.add_argument("--markets-only", action="store_true")
+    ap.add_argument("--why-only", action="store_true")
     args = ap.parse_args()
 
     st, wl = settings(), watchlist()
@@ -105,6 +108,10 @@ def main() -> int:
     band = st["scoring"]["flat_band_pct"]
     names = {s["symbol"]: s["name"] for s in wl["symbols"]}
 
+    if args.why_only:
+        n = write_sample_why(st, wl)
+        print(f"samples: {n} sample why-it-moved note(s)")
+        return 0
     if args.markets_only:
         have = {p.stem for p in (SAMPLES / "prices").glob("*.json")}
         n = write_market_samples(days, fetched_at, have)
@@ -213,6 +220,7 @@ def main() -> int:
               routines_code.compute_calibration(outcomes, end.isoformat(), True, st["scoring"]["calibration_min_n"]))
     write_sample_learnings(end, outcomes)
     write_sample_library(end)
+    write_sample_why(st, wl)
     print(f"samples: {len(series)} price files, {len(run_days)} runs, {len(outcomes)} scored picks")
     return 0
 
@@ -249,6 +257,36 @@ def write_market_samples(days: list[date], fetched_at: str, have: set[str]) -> i
             have.add(sym)
             n += 1
     return n
+
+
+def write_sample_why(st: dict, wl: dict) -> int:
+    """Sample why-it-moved notes (samples/market/why.json, sample: true) so the Home, the market day and the Stock pages
+    render before the first real note: the two biggest movers of the sample's last close, their move and symbols from the
+    sample numbers (as scripts/record_why.py fills them), one note marked likely and one unclear. Made-up text, flagged
+    as sample; the site never shows it next to live prices."""
+    import routines_code
+    der = routines_code.compute_derived(SAMPLES / "prices", st, wl, sample=True, provider="sample")
+    on_list = {s["symbol"] for s in wl["symbols"]}
+    rows = sorted((r for r in der["symbols"] if r["symbol"] in on_list),
+                  key=lambda r: (-abs(r["change_1d_pct"]), r["symbol"]))[:2]
+    day = der["as_of"]
+    at = f"{day}T07:05:00Z"
+    texts = [
+        ("likely", "Sample note: made-up company news for a made-up move",
+         "This is sample text so the page can be seen before the first real note. A real note says in our own words what "
+         "happened and why it mattered for this name, with dated links to official sources or reputable outlets.",
+         [{"url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent", "publisher": "U.S. Securities and Exchange Commission", "published": day},
+          {"url": "https://www.reuters.com/markets/", "publisher": "Reuters", "published": day}]),
+        ("unclear", "Sample note: no clear cause found for this made-up move",
+         "This is sample text. When no source on our allow-list explains a move, the note says plainly that no clear "
+         "cause was found, rather than guessing.",
+         [{"url": "https://www.reuters.com/markets/", "publisher": "Reuters", "published": day}]),
+    ]
+    notes = [{"market_date": day, "key": r["symbol"], "kind": "stock", "market": markets_config()["default"], "headline": h, "why": w,
+              "confidence": c, "sources": src, "move_pct": round(r["change_1d_pct"], 2), "symbols": [r["symbol"]],
+              "researched_at": at} for r, (c, h, w, src) in zip(rows, texts)]
+    dump_json(SAMPLES / "market" / "why.json", {"version": 1, "as_of": day, "sample": True, "notes": notes})
+    return len(notes)
 
 
 def write_sample_learnings(end: date, outcomes: list[dict]) -> None:

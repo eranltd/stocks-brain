@@ -6,6 +6,8 @@ import { STAGES, trustStage } from "../components/trust.jsx";
 import { STATUS } from "../components/goal.jsx";
 import { companyNumbers, fundamentalsWords } from "../lib/fundamentals.js";
 import { newsRows } from "../lib/secnews.js";
+import { notesForSymbol, noteView, usableWhy } from "../lib/why.js";
+import { WhyFooter, WhyNote } from "../components/why.jsx";
 import { CandleZoom } from "../components/zoom.jsx";
 import { cardFor, daysUntil, growthWords, inDays, KIND_LABEL, splitWhatsNext, staleness, todayISO } from "../lib/outlook.js";
 import { gateReason, rowFor } from "../lib/checklist.js";
@@ -307,6 +309,7 @@ function Stock({ data, symbol, go, market: mk }) {
 
       {!isBench && (fund ? <WhatsInside fund={fund} symbol={symbol} /> : <WhatsNext card={cardFor(data.outlook, symbol)} symbol={symbol} today={today} hasFile={Boolean(data.outlook)} />)}
       {!isBench && !fund && <CompanyNumbers c={companyNumbers(data.fundamentals, symbol)} />}
+      <WhyItMoved notes={notesForSymbol(usableWhy(data.why, Boolean(data.livePrices)), symbol, { today })} names={names} />
       {!isBench && !fund && <OfficialNews rows={newsRows(data.secNews, symbol)} />}
 
       {long && (
@@ -704,6 +707,22 @@ function OfficialNews({ rows }) {
         ))}
       </ul>
       <p className="mt-4 text-[14px] leading-relaxed text-ink-3">News explains a move after it happens; it is not a reason to buy or sell on its own.</p>
+    </Reveal>
+  );
+}
+
+/** Why this name moved on its unusual days of the last month (data/market/why.json via lib/why.js), newest first. Hidden
+ *  when there is no note. */
+function WhyItMoved({ notes, names }) {
+  if (!notes.length) return null;
+  return (
+    <Reveal id="why-it-moved" className="card mt-6 scroll-mt-28 p-6 sm:p-8">
+      <h3 className="text-[22px] font-semibold tracking-[-0.02em]">Why it moved</h3>
+      <p className="mt-1 text-[14px] leading-relaxed text-ink-3">Its unusual days of the last month, and what trusted sources said caused them. The size of each move is from our own data.</p>
+      <ul className="mt-5 grid gap-3">
+        {notes.map((n) => { const v = noteView(n, { names }); return <WhyNote key={v.key} v={v} lead={dayOnly(v.date)} />; })}
+      </ul>
+      <WhyFooter className="mt-4" />
     </Reveal>
   );
 }

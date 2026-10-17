@@ -138,6 +138,7 @@ class RoutineRunnerTest(unittest.TestCase):
         rt = load_json(Path(__file__).resolve().parent.parent / "config" / "routines.json")
         runners = {r["id"]: r["runner"] for r in rt["routines"]}
         self.assertEqual(runners.pop("close_run"), "claude_routine")
+        self.assertEqual(runners.pop("why_notes"), "claude_routine")  # the why-it-moved notes: a separate session, never the brain
         self.assertEqual(set(runners.values()), {"github_actions"})
         self.assertEqual(Validator().validate(rt, "routines.schema.json"), [])
 

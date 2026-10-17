@@ -107,6 +107,39 @@ test("news: an unconfirmed date says expected; old calls and tiny moves stay out
   assert.deepEqual(meta.map((l) => l.text), ["Meta: ad sales grew strongly, but costs grew even faster."]);
 });
 
+test("news: why it moved rides on the mover line; other notes and recent filings join; nothing stale", () => {
+  const src = [{ url: "https://github.com/example/a", publisher: "Wire One", published: "2026-10-08" }];
+  const why = { as_of: "2026-10-08", sample: false, notes: [
+    { key: "k1", kind: "stock", market: "main", market_date: "2026-10-08", symbols: ["CCC"], move_pct: -4.2, headline: "A rival agreed to buy airwaves that could make it a competitor.", why: "w", confidence: "clear", sources: src },
+    { key: "k2", kind: "stock", market: "main", market_date: "2026-10-08", symbols: ["EEE"], move_pct: 3.4, headline: "It showed a new phone", why: "", confidence: "likely", sources: src },
+    { key: "k3", kind: "sector", market: "main", market_date: "2026-10-08", symbols: ["AAA", "BBB"], move_pct: -2.8, headline: "Unclear", why: "", confidence: "unclear", sources: [] },
+    { key: "k4", kind: "stock", market: "other", market_date: "2026-10-08", symbols: ["ZZZ"], move_pct: 9, headline: "Not ours", why: "", confidence: "clear", sources: src },
+    { key: "k5", kind: "sector", market: "other", market_date: "2026-10-08", symbols: ["ZZZ"], move_pct: 9, headline: "Not our list", why: "", confidence: "clear", sources: src },
+  ] };
+  const secNews = { companies: [
+    { symbol: "AAA", filings: [{ date: "2026-10-07", form: "8-K", items: ["5.02"], titles: ["A leadership change (an executive or board member)"], kind: "people", url: "https://www.sec.gov/Archives/edgar/data/1/2" }] },
+    { symbol: "ZZZ", filings: [{ date: "2026-10-08", form: "8-K", items: ["8.01"], titles: ["Other company news"], kind: "update", url: "u" }] },
+  ] };
+  const groups = { AAA: "Information Technology", BBB: "Information Technology", CCC: "Communication Services", EEE: "Information Technology" };
+  const members = ["AAA", "BBB", "CCC", "EEE", "FFF"];
+  const lines = newsLines({ outlook: null, day: day(), people: null, today: TODAY, names, why, secNews, members, groups, market: "main", max: 6 });
+  assert.deepEqual(lines.map((l) => l.text), [
+    "Meta Platforms fell sharply yesterday — why: A rival agreed to buy airwaves that could make it a competitor.",
+    "Apple rose yesterday — likely why: It showed a new phone.",
+    "Our Tech companies fell yesterday — we looked for why and found no clear cause yet.",
+    "Official news from Microsoft on Wednesday: a leadership change (an executive or board member).",
+  ]);
+  assert.deepEqual(lines.map((l) => l.to), ["stock/CCC#why-it-moved", "stock/EEE#why-it-moved", "details#market-today", "stock/AAA#official-news"]);
+  assert.equal(lines[0].why.sources[0].publisher, "Wire One");
+  assert.equal(lines[2].why.unclear, true);
+  assert.equal(lines[3].filing.form, "8-K");
+  for (const l of lines) noDigits(l.text);
+  // a note from an older day never explains a newer move
+  const later = newsLines({ outlook: null, day: day({ date: "2026-10-09" }), people: null, today: TODAY, names, why, members, market: "main" });
+  assert.deepEqual(later.map((l) => l.text), ["Meta Platforms fell sharply today."]);
+  assert.equal(later[0].why, null);
+});
+
 test("companies to know: held, then picked, then the day's movers; three to five; chips from the checklist", () => {
   const checklist = { symbols: [ck("AAA", "lean_up"), ck("CCC", "lean_down"), ck("BBB", "mixed")] };
   const list = companiesToKnow({ held: ["AAA", "EEE"], picked: ["AAA", "CCC"], day: day(), outlook, checklist, names, bench: "IDX" });

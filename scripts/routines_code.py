@@ -3,8 +3,8 @@
 long-run portfolio statistics, the forward-only paper portfolio, the forward ledger of every rule and the scores of
 the public calls of the people we learn from.
 
-Usage: python3 scripts/routines_code.py derive|score|regime|calibration|longrun|paper|rules|ledger|buywindow|people|checklist|markets|all
-`markets` runs in its own Action run (after the markets fetch) and writes data/markets/<id>/ only.
+Usage: python3 scripts/routines_code.py derive|score|regime|calibration|longrun|paper|rules|ledger|buywindow|people|checklist|markets|sectors|all
+`markets` and `sectors` run in their own Action runs (after their fetches) and write data/markets/<id>/ only.
 Each step reads public data, computes with plain arithmetic, validates against its schema,
 and writes under data/kb/. Rules are documented in docs/methodology.md.
 """
@@ -1120,14 +1120,15 @@ def publish_market(m: dict, prices_dir: Path, st: dict, cfg: dict | None, provid
     return res
 
 
-def run_markets() -> None:
-    """Every non-default market, each on its own: a market that fails is logged and keeps yesterday's files, the others
-    are still published, and the main list's files (data/market/) are never touched. Exit 1 if any market failed."""
-    from _common import other_markets
+def run_markets(run: str = "markets") -> None:
+    """Every non-default market of one fetch run ("markets" or "sectors", config/markets.json fetch_run), each on its
+    own: a market that fails is logged and keeps yesterday's files, the others are still published, and the main list's
+    files (data/market/) are never touched. Exit 1 if any market failed."""
+    from _common import fetch_run, other_markets
     st = settings()
     cfg = checklist_config()
     failed = []
-    for m in other_markets():
+    for m in (m for m in other_markets() if fetch_run(m) == run):
         try:
             res = publish_market(m, PRICES, st, cfg, provider=st["prices"]["provider"])
         except (SystemExit, Exception) as exc:  # noqa: BLE001  (fail closed per market)
@@ -1146,12 +1147,12 @@ def run_markets() -> None:
 STEPS = {"derive": run_derive, "score": run_score, "regime": run_regime, "calibration": run_calibration,
          "longrun": run_longrun, "paper": run_paper, "rules": run_rules, "ledger": run_ledger, "buywindow": run_buy_window,
          "people": run_people,
-         "checklist": run_checklist, "markets": run_markets}
+         "checklist": run_checklist, "markets": run_markets, "sectors": lambda: run_markets("sectors")}
 
 if __name__ == "__main__":
     which = sys.argv[1] if len(sys.argv) > 1 else "all"
     if which not in (*STEPS, "all"):
         raise SystemExit(f"usage: routines_code.py {'|'.join(STEPS)}|all")
     for name, fn in STEPS.items():
-        if which == name or (which == "all" and name != "markets"):  # the other markets have their own run
+        if which == name or (which == "all" and name not in ("markets", "sectors")):  # the other markets have their own runs
             fn()

@@ -1,5 +1,5 @@
 {
-"as_of":"2026-10-15",
+"as_of":"2026-10-16",
 "sample":false,
 "note":"Forward only: each rule's holdings are written on the first run of the month with that day's data and never edited. Values indexed to 100 at each rule's start; core and benchmark from the earliest start.",
 "dates":[
@@ -12,7 +12,8 @@
 "2026-10-12",
 "2026-10-13",
 "2026-10-14",
-"2026-10-15"
+"2026-10-15",
+"2026-10-16"
 ],
 "core":[
 100.0,
@@ -24,7 +25,8 @@
 101.099,
 101.088,
 99.995,
-100.279
+100.279,
+99.17
 ],
 "bench":[
 100.0,
@@ -36,8 +38,9 @@
 99.528,
 99.198,
 97.248,
-97.121
+97.121,
+94.693
 ],
-"rules":{"five_leaders":{"started":"2026-10-02","rebalances":[{"date":"2026-10-02","holdings":["AMGN","FANG","GOOGL","MNST","AAPL"]}],"values":[100.0,99.9,99.974,100.603,101.567,101.947,102.781,102.752,103.502,104.236],"decisions":1,"engine_hash":"5e8536cf438bfae1"},"five_leaders_m1":{"started":"2026-10-02","rebalances":[{"date":"2026-10-02","holdings":["AMGN","FANG","GOOGL","MNST","PCAR"]}],"values":[100.0,99.9,99.922,99.92,101.17,101.481,102.071,101.997,102.752,103.954],"decisions":1,"engine_hash":"0a3131128820fb6f"},"five_leaders_quarterly":{"started":"2026-10-02","rebalances":[{"date":"2026-10-02","holdings":["AMGN","FANG","GOOGL","MNST","AAPL"]}],"values":[100.0,99.9,99.974,100.603,101.567,101.947,102.781,102.752,103.502,104.236],"decisions":1,"engine_hash":"cf2668536ddeded4"},"baseline_portfolio_v1":{"started":"2026-10-02","rebalances":[{"date":"2026-10-02","holdings":["MSFT","AAPL","GILD"]}],"values":[100.0,99.9,100.266,100.731,100.549,101.598,101.962,101.717,101.789,102.592],"decisions":1,"engine_hash":"0b6963018e2f8469"}},
+"rules":{"five_leaders":{"started":"2026-10-02","rebalances":[{"date":"2026-10-02","holdings":["AMGN","FANG","GOOGL","MNST","AAPL"]}],"values":[100.0,99.9,99.974,100.603,101.567,101.947,102.781,102.752,103.502,104.236,104.835],"decisions":1,"engine_hash":"5e8536cf438bfae1"},"five_leaders_m1":{"started":"2026-10-02","rebalances":[{"date":"2026-10-02","holdings":["AMGN","FANG","GOOGL","MNST","PCAR"]}],"values":[100.0,99.9,99.922,99.92,101.17,101.481,102.071,101.997,102.752,103.954,104.467],"decisions":1,"engine_hash":"0a3131128820fb6f"},"five_leaders_quarterly":{"started":"2026-10-02","rebalances":[{"date":"2026-10-02","holdings":["AMGN","FANG","GOOGL","MNST","AAPL"]}],"values":[100.0,99.9,99.974,100.603,101.567,101.947,102.781,102.752,103.502,104.236,104.835],"decisions":1,"engine_hash":"cf2668536ddeded4"},"five_leaders_weekly":{"started":"2026-10-16","rebalances":[{"date":"2026-10-16","holdings":["FANG","GOOGL","AAPL","AMGN","MNST"]}],"values":[100.0],"decisions":1,"engine_hash":"de0d6a086e64adc0"},"weekly_swing":{"started":"2026-10-16","rebalances":[{"date":"2026-10-16","holdings":["AMGN","COST","LIN","CME","CTAS"]}],"values":[100.0],"decisions":1,"engine_hash":"8a780db09625ae4c"},"baseline_portfolio_v1":{"started":"2026-10-02","rebalances":[{"date":"2026-10-02","holdings":["MSFT","AAPL","GILD"]}],"values":[100.0,99.9,100.266,100.731,100.549,101.598,101.962,101.717,101.789,102.592,101.681],"decisions":1,"engine_hash":"0b6963018e2f8469"}},
 "retired":{}
 }

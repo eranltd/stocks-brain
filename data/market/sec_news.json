@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-16",
+  "as_of": "2026-10-17",
   "sample": false,
   "source": "SEC EDGAR filings index (company submissions)",
   "window_days": 120,
@@ -164,18 +164,6 @@
           ],
           "kind": "other",
           "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000056/nvda-20260624.htm"
-        },
-        {
-          "date": "2026-06-18",
-          "form": "8-K",
-          "items": [
-            "8.01"
-          ],
-          "titles": [
-            "Other company news"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000119312526275783/d48176d8k.htm"
         }
       ]
     },
@@ -354,18 +342,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/1730168/000119312526295589/d84378d8k.htm"
-        },
-        {
-          "date": "2026-06-18",
-          "form": "8-K",
-          "items": [
-            "8.01"
-          ],
-          "titles": [
-            "Other company news"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000119312526275077/d149683d8k.htm"
         }
       ]
     },
@@ -374,6 +350,18 @@
       "cik": 909832,
       "name": "COSTCO WHOLESALE CORP /NEW",
       "filings": [
+        {
+          "date": "2026-10-16",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/909832/000090983226000100/cost-20261013.htm"
+        },
         {
           "date": "2026-10-14",
           "form": "8-K",
@@ -538,6 +526,18 @@
       "cik": 77476,
       "name": "PEPSICO INC",
       "filings": [
+        {
+          "date": "2026-10-16",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/77476/000110465926116626/tm2627433d2_8k.htm"
+        },
         {
           "date": "2026-10-08",
           "form": "8-K",
@@ -1052,18 +1052,6 @@
           ],
           "kind": "people",
           "url": "https://www.sec.gov/Archives/edgar/data/1283699/000119312526297534/d170112d8k.htm"
-        },
-        {
-          "date": "2026-06-18",
-          "form": "8-K",
-          "items": [
-            "5.07"
-          ],
-          "titles": [
-            "Shareholder vote results"
-          ],
-          "kind": "other",
-          "url": "https://www.sec.gov/Archives/edgar/data/1283699/000119312526275787/d167113d8k.htm"
         }
       ]
     },
@@ -2298,6 +2286,18 @@
       "cik": 2115436,
       "name": "ExxonMobil Holdings Corp",
       "filings": [
+        {
+          "date": "2026-10-16",
+          "form": "8-K",
+          "items": [
+            "7.01"
+          ],
+          "titles": [
+            "Shared an update with investors"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/2115436/000211543626000013/xom-20261016.htm"
+        },
         {
           "date": "2026-09-25",
           "form": "8-K",

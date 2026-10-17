@@ -1,7 +1,7 @@
 {
   "version": "0.14.0",
   "updated_at": "2026-10-17",
-  "change_note": "When could we buy it? (buy_window): what our stock rules would hold if today were their review day, the reasons each other name is out, and the next review dates. The brain checks three times each market morning (05:23, 08:23 and 11:23 UTC).",
+  "change_note": "When could we buy it? (buy_window): what each of our stock rules (weekly first) would hold if today were its decision day, the reasons each other name is out, the next dates and the next weekly buy. The brain checks three times each market morning (05:23, 08:23 and 11:23 UTC).",
   "timezone": "UTC",
   "routines": [
     {
@@ -265,7 +265,7 @@
         "data/market/buy_window.json"
       ],
       "human_gate": false,
-      "why": "Answers 'when could we buy it?' from our own rule, not the brain: the Five Leaders engine runs as if today were its review day, from its latest paper names; each name gets the checks it passes or fails and the next review date. Ranks, yes/no and percents only. Pretend money: never a buy for real money."
+      "why": "Answers 'when could we buy it?' from our own rules, not the brain: each stock rule's engine (weekly game first, then Five Leaders monthly and quarterly) runs as if today were its decision day, from its latest paper names; each name's checks, each rule's next date, the next weekly buy. Ranks, yes/no, percents only."
     },
     {
       "id": "score_people",

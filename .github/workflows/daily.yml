@@ -119,7 +119,7 @@ jobs:
         continue-on-error: true  # research step: a failure is logged but must not discard the day's market data
         run: python3 scripts/routines_code.py ledger
 
-      - name: When could we buy it? (the rule as if today were its review day; derived numbers only)
+      - name: When could we buy it? (each stock rule as if today were its decision day; derived numbers only)
         id: buy_window
         if: env.MONTHLY != 'true' && env.MARKETS != 'true' && env.DRY != 'true'
         continue-on-error: true  # research step: a failure is logged but must not discard the day's market data

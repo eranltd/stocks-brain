@@ -15,7 +15,7 @@ import { SectorSpotlights } from "../components/spotlight.jsx";
 import { requestChecklistView } from "../components/checklist.jsx";
 import { LatestVerdict } from "../components/verdict.jsx";
 import { candlesOf, fundCard, MARKET_WHO, marketNote, NOT_YET, nounsFor } from "../lib/markets.js";
-import { buyLine, buyWindowFor, mainListOf } from "../lib/buywindow.js";
+import { buyLine, buyWindowFor, mainListOf, mainWatchlistOf, sp500Of } from "../lib/buywindow.js";
 import { stocksEarned } from "../lib/money.js";
 import { trustStage } from "../components/trust.jsx";
 
@@ -187,7 +187,7 @@ function homeWords(md, { isDefault, held = [], picked = [], todayIso, funds, ear
   };
   const withBuy = (c) => ({
     ...c,
-    buy: buyLine(buyWindowFor(c.ticker, { ...bwCtx, fund: isFunds ? fundCard(funds, c.ticker) ?? {} : null }), todayIso),
+    buy: buyLine(buyWindowFor(c.ticker, { ...bwCtx, fund: isFunds ? fundCard(funds, c.ticker) ?? {} : null, sp500: sp500Of(c.ticker, md.watchlist, mainWatchlistOf(md)) }), todayIso),
     buyTo: `stock/${c.ticker}#buy-window`,
   });
   const top = topStocks({ ...pick, candles: candlesOf(md) }).map(withFund).map(withBuy);

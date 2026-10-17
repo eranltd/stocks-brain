@@ -14,7 +14,7 @@ import { BRIEF_FOOTER, direction, eightChecks, readable, setupState, wherePaper 
 import { shortName, whenWords } from "../lib/simple.js";
 import { loadMarket } from "../lib/data.js";
 import { candlesOf, costWords, fundCard, NOT_YET, resolveSymbolMarket } from "../lib/markets.js";
-import { buyWindowFor, mainListOf } from "../lib/buywindow.js";
+import { buyWindowFor, mainListOf, mainWatchlistOf, sp500Of } from "../lib/buywindow.js";
 import { stocksEarned } from "../lib/money.js";
 import { BuyWindowCard } from "../components/buywindow.jsx";
 
@@ -181,11 +181,12 @@ function Stock({ data, symbol, go, market: mk }) {
   const goal = settings.goal.annual_return_pct;
   const idx = others.findIndex((s) => s.symbol === symbol);
   const ckRow = rowFor(data.checklist, symbol);
-  // "When could we buy it?": our house rules' answer for this name (lib/buywindow.js). The rule's look covers the main
+  // "When could we buy it?": our house rules' answer for this name (lib/buywindow.js). The rules' look covers the main
   // list only; a main-list name opened from another list still gets it.
   const buy = isBench ? null : buyWindowFor(symbol, {
     today, derived: market, checklist: data.checklist, bw: data.buyWindow, mainList: mainListOf(data), fund,
     stocksEarned: stocksEarned(data.rulesResult, trustStage(data).stage), rulesResult: data.rulesResult, names, siteSample: Boolean(market.sample),
+    sp500: sp500Of(symbol, watchlist, mainWatchlistOf(data)),
     minRR: data.checklistCfg?.house_rule?.min_reward_to_risk ?? 2, stretchPct: settings.setup.stretch_pct,
   });
   const jump = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });

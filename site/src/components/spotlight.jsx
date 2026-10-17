@@ -3,7 +3,7 @@ import { loadMarket } from "../lib/data.js";
 import { NOT_YET } from "../lib/markets.js";
 import { SPOTLIGHTS, spotlightItems } from "../lib/spotlight.js";
 import { TopStocks } from "./topstocks.jsx";
-import { buyLine, buyWindowFor, mainListOf } from "../lib/buywindow.js";
+import { buyLine, buyWindowFor, mainListOf, mainWatchlistOf, sp500Of } from "../lib/buywindow.js";
 import { todayISO } from "../lib/outlook.js";
 
 /**
@@ -32,14 +32,14 @@ function Spotlight({ id, data, earned, openTo, seeCandles }) {
       </section>
     );
   }
-  // "When to buy": one short line per card (lib/buywindow.js). A name also on the main list gets the rule's look.
+  // "When to buy": one short line per card (lib/buywindow.js). A name also on the main list gets the rules' look.
   const today = todayISO();
   const ctx = {
     today, derived: view.market, checklist: view.checklist, bw: data.buyWindow, mainList: mainListOf(data), stocksEarned: earned, rulesResult: data.rulesResult, names: view.names,
     siteSample: Boolean(view.market?.sample), minRR: data.checklistCfg?.house_rule?.min_reward_to_risk ?? 2, stretchPct: data.settings?.setup?.stretch_pct ?? 8,
   };
   const items = spotlightItems(view, data.manifest?.markets?.[id]?.candles ?? {})
-    .map((it) => ({ ...it, buy: buyLine(buyWindowFor(it.ticker, ctx), today), buyTo: `stock/${it.ticker}#buy-window` }));
+    .map((it) => ({ ...it, buy: buyLine(buyWindowFor(it.ticker, { ...ctx, sp500: sp500Of(it.ticker, view.watchlist, mainWatchlistOf(data)) }), today), buyTo: `stock/${it.ticker}#buy-window` }));
   return (
     <div className="pt-4">
       <TopStocks items={items} manifest={data.manifest} marketId={id} news={data.secNews} title={title} headingId={`top-${id}-title`}

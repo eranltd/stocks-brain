@@ -1,67 +1,79 @@
 {
-  "version": "1.0.0",
-  "updated_at": "2026-10-10",
-  "change_note": "Twelve Israeli companies through their US listings (Tiingo has no Tel Aviv data). GICS sectors from iShares holdings files of Oct 8, 2026 (EIS; IJH for Ormat).",
+  "version": "1.1.0",
+  "updated_at": "2026-10-17",
+  "change_note": "Each company says whether it is in the S&P 500 (checked by hand): none of these is, so the buy card never says the weekly whole-market buy holds a piece of them.",
   "symbols": [
     {
       "symbol": "TEVA",
       "name": "Teva Pharmaceutical",
-      "sector": "Health Care"
+      "sector": "Health Care",
+      "sp500": false
     },
     {
       "symbol": "NICE",
       "name": "NICE",
-      "sector": "Information Technology"
+      "sector": "Information Technology",
+      "sp500": false
     },
     {
       "symbol": "CHKP",
       "name": "Check Point Software",
-      "sector": "Information Technology"
+      "sector": "Information Technology",
+      "sp500": false
     },
     {
       "symbol": "ESLT",
       "name": "Elbit Systems",
-      "sector": "Industrials"
+      "sector": "Industrials",
+      "sp500": false
     },
     {
       "symbol": "TSEM",
       "name": "Tower Semiconductor",
-      "sector": "Information Technology"
+      "sector": "Information Technology",
+      "sp500": false
     },
     {
       "symbol": "ICL",
       "name": "ICL Group",
-      "sector": "Materials"
+      "sector": "Materials",
+      "sp500": false
     },
     {
       "symbol": "WIX",
       "name": "Wix.com",
-      "sector": "Information Technology"
+      "sector": "Information Technology",
+      "sp500": false
     },
     {
       "symbol": "MNDY",
       "name": "monday.com",
-      "sector": "Information Technology"
+      "sector": "Information Technology",
+      "sp500": false
     },
     {
       "symbol": "GLBE",
       "name": "Global-e Online",
-      "sector": "Consumer Discretionary"
+      "sector": "Consumer Discretionary",
+      "sp500": false
     },
     {
       "symbol": "NVMI",
       "name": "Nova",
-      "sector": "Information Technology"
+      "sector": "Information Technology",
+      "sp500": false
     },
     {
       "symbol": "CAMT",
       "name": "Camtek",
-      "sector": "Information Technology"
+      "sector": "Information Technology",
+      "sp500": false
     },
     {
       "symbol": "ORA",
       "name": "Ormat Technologies",
-      "sector": "Utilities"
+      "sector": "Utilities",
+      "sp500": false
     }
   ]
 }

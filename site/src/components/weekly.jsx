@@ -1,5 +1,5 @@
 import { todayISO } from "../lib/outlook.js";
-import { gameRow, historyWords, nextBuyDay, scoreLine, WEEKLY_RULES } from "../lib/weekly.js";
+import { gameRow, historyWords, scoreLine, weeklyBuyDay, WEEKLY_RULES } from "../lib/weekly.js";
 import { betRecord, scoreBets } from "../lib/bets.js";
 import { Reveal } from "./ui.jsx";
 
@@ -48,7 +48,7 @@ const dayLong = (iso) => new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US"
  */
 export function WeeklyGame({ data, go, compact = false }) {
   const today = todayISO();
-  const buy = nextBuyDay(today);
+  const buy = weeklyBuyDay(today, data.buyWindow, data.sample);
   const ledger = data.ledger && !data.ledger.sample ? data.ledger : null;
   return (
     <Reveal as="section" id="this-week" className="card scroll-mt-28 overflow-hidden">

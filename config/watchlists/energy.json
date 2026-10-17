@@ -1,32 +1,37 @@
 {
- "version": "1.0.0",
- "updated_at": "2026-10-14",
- "change_note": "Five of the largest US energy companies by market value (October 2026), all GICS Energy.",
+ "version": "1.1.0",
+ "updated_at": "2026-10-17",
+ "change_note": "Each company says whether it is in the S&P 500 (checked by hand), so the buy card says the weekly whole-market buy holds a piece of it only where true.",
  "symbols": [
   {
    "symbol": "XOM",
    "name": "ExxonMobil",
-   "sector": "Energy"
+   "sector": "Energy",
+   "sp500": true
   },
   {
    "symbol": "CVX",
    "name": "Chevron",
-   "sector": "Energy"
+   "sector": "Energy",
+   "sp500": true
   },
   {
    "symbol": "COP",
    "name": "ConocoPhillips",
-   "sector": "Energy"
+   "sector": "Energy",
+   "sp500": true
   },
   {
    "symbol": "EOG",
    "name": "EOG Resources",
-   "sector": "Energy"
+   "sector": "Energy",
+   "sp500": true
   },
   {
    "symbol": "SLB",
    "name": "SLB (Schlumberger)",
-   "sector": "Energy"
+   "sector": "Energy",
+   "sp500": true
   }
  ]
 }

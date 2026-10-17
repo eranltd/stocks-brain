@@ -5,7 +5,7 @@ name: daily
 # Data is published to the `data` branch (data/ and runs/ only; scripts/data_branch.sh), so main can require PRs.
 on:
   schedule:
-    - cron: "40 23 * * 1-5"   # fetch_prices, score_picks, regime_monitor, ..., score_people, technical_checklist (after the US close)
+    - cron: "40 23 * * 1-5"   # fetch_prices, score_picks, regime_monitor, ..., buy_window, score_people, technical_checklist (after the US close)
     - cron: "40 2 * * 2-6"    # fetch_markets, market_lists: the other markets (TLV, iShares), three hours later so the
                               # two fetches never share one hour of Tiingo's free-plan cap (50 requests an hour)
     - cron: "0 13 1 * *"      # calibration
@@ -119,6 +119,12 @@ jobs:
         continue-on-error: true  # research step: a failure is logged but must not discard the day's market data
         run: python3 scripts/routines_code.py ledger
 
+      - name: When could we buy it? (each stock rule as if today were its decision day; derived numbers only)
+        id: buy_window
+        if: env.MONTHLY != 'true' && env.MARKETS != 'true' && env.DRY != 'true'
+        continue-on-error: true  # research step: a failure is logged but must not discard the day's market data
+        run: python3 scripts/routines_code.py buywindow
+
       - name: Score people's public calls (derived numbers only)
         id: score_people
         if: env.MONTHLY != 'true' && env.MARKETS != 'true' && env.DRY != 'true'
@@ -175,6 +181,7 @@ jobs:
           ROUTINE_PAPER_PORTFOLIO: ${{ steps.paper_portfolio.outcome }}
           ROUTINE_RULE_BACKTESTS: ${{ steps.rule_backtests.outcome }}
           ROUTINE_RULE_LEDGER: ${{ steps.rule_ledger.outcome }}
+          ROUTINE_BUY_WINDOW: ${{ steps.buy_window.outcome }}
           ROUTINE_SCORE_PEOPLE: ${{ steps.score_people.outcome }}
           ROUTINE_TECHNICAL_CHECKLIST: ${{ steps.technical_checklist.outcome }}
           ROUTINE_CALIBRATION: ${{ steps.calibration.outcome }}

@@ -66,6 +66,10 @@
           },
           "category": {
             "$ref": "#/$defs/fund_category"
+          },
+          "sp500": {
+            "type": "boolean",
+            "description": "A company in the S&P 500 index, checked by hand on updated_at (S&P Dow Jones Indices announces changes). The household's whole-market fund (an S&P 500 fund) holds a small piece of a company exactly when this is true; absent means not checked, and the site then words it as a condition."
           }
         },
         "anyOf": [

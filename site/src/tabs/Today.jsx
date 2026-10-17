@@ -15,6 +15,9 @@ import { SectorSpotlights } from "../components/spotlight.jsx";
 import { requestChecklistView } from "../components/checklist.jsx";
 import { LatestVerdict } from "../components/verdict.jsx";
 import { candlesOf, fundCard, MARKET_WHO, marketNote, NOT_YET, nounsFor } from "../lib/markets.js";
+import { buyLine, buyWindowFor, mainListOf, mainWatchlistOf, sp500Of } from "../lib/buywindow.js";
+import { stocksEarned } from "../lib/money.js";
+import { trustStage } from "../components/trust.jsx";
 
 const plural = (n, one, many) => (n === 1 ? one : many);
 const noYear = (iso) => fmtDate(iso).replace(/\s\d{4}$/, ""); // "Thu, 22 Oct"
@@ -160,7 +163,7 @@ function TapLine({ onClick, children, tone }) {
  * companies (or funds) to know. The default market adds what we hold on paper and the brain's names; another market
  * has neither (they read Nasdaq only) and leads with its own benchmark ("The Israeli market").
  */
-function homeWords(md, { isDefault, held = [], picked = [], todayIso, funds }) {
+function homeWords(md, { isDefault, held = [], picked = [], todayIso, funds, earned = false, rulesResult = null }) {
   const id = md.marketId;
   const entry = md.marketEntry ?? null;
   const nouns = nounsFor(entry);
@@ -176,7 +179,18 @@ function homeWords(md, { isDefault, held = [], picked = [], todayIso, funds }) {
   // A fund has no company card: its plain sentence comes from config/funds.json.
   const withFund = (c) => ({ ...c, plain: fundCard(funds, c.ticker)?.plain ?? c.plain ?? null });
   const companies = companiesToKnow(pick).map(withFund);
-  const top = topStocks({ ...pick, candles: candlesOf(md) }).map(withFund);
+  // "When to buy": one short line per card from the Stock page's "When could we buy it?" (lib/buywindow.js).
+  const isFunds = entry?.kind === "funds";
+  const bwCtx = {
+    today: todayIso, derived: md.market, checklist: md.checklist, bw: md.buyWindow, mainList: mainListOf(md), stocksEarned: earned, rulesResult, names: md.names,
+    siteSample: Boolean(md.market?.sample), minRR: md.checklistCfg?.house_rule?.min_reward_to_risk ?? 2, stretchPct: md.settings?.setup?.stretch_pct ?? 8,
+  };
+  const withBuy = (c) => ({
+    ...c,
+    buy: buyLine(buyWindowFor(c.ticker, { ...bwCtx, fund: isFunds ? fundCard(funds, c.ticker) ?? {} : null, sp500: sp500Of(c.ticker, md.watchlist, mainWatchlistOf(md)) }), todayIso),
+    buyTo: `stock/${c.ticker}#buy-window`,
+  });
+  const top = topStocks({ ...pick, candles: candlesOf(md) }).map(withFund).map(withBuy);
   return { nouns, checklist, market, news, companies, top, note: marketNote(entry) };
 }
 
@@ -210,7 +224,8 @@ function SimpleHome({ data, market, go, showDetails }) {
   const { held, picked } = heldAndPicked(data);
   const isDefault = !market || market.isDefault;
   const md = isDefault ? data : market.state === "ready" ? market.data : null;
-  const words = md ? homeWords(md, { isDefault, held: isDefault ? held : [], picked: isDefault ? picked : [], todayIso, funds: data.funds }) : null;
+  const earned = stocksEarned(data.rulesResult, trustStage(data).stage);
+  const words = md ? homeWords(md, { isDefault, held: isDefault ? held : [], picked: isDefault ? picked : [], todayIso, funds: data.funds, earned, rulesResult: data.rulesResult }) : null;
   const nouns = nounsFor(market?.entry);
   // "See the candles": the Stock page opens with its checklist card on the Candles view, as the brief's own link does.
   const seeCandles = (to) => { requestChecklistView("candles"); openAt(go, to); };
@@ -253,7 +268,7 @@ function SimpleHome({ data, market, go, showDetails }) {
         openTo={(to) => openAt(go, to)} seeCandles={seeCandles} />
     )}
 
-    {isDefault && <SectorSpotlights data={data} openTo={(to) => openAt(go, to)} seeCandles={seeCandles} />}
+    {isDefault && <SectorSpotlights data={data} earned={earned} openTo={(to) => openAt(go, to)} seeCandles={seeCandles} />}
 
     <div className="mx-auto w-full max-w-[560px] px-4 pb-24">
       <div className="mt-10 grid gap-6">

@@ -1,0 +1,93 @@
+{
+  "$id": "buy_window.schema.json",
+  "title": "When could we buy it? (data/market/buy_window.json), contract version 2",
+  "description": "For each of our stock rules (the weekly game's rules first, then the monthly Five Leaders and its quarterly variant): what that rule's own engine would hold if today's close were its review day, given its latest paper holdings, and why each other name on the main list is out. Plus the date of the next weekly buy of the whole-market fund. Ranks, booleans and percentages only: no price, no volume. Pretend-money rules: this file never says a name is a buy for real money.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["as_of", "sample", "version", "next_weekly_buy", "rules"],
+  "properties": {
+    "as_of": {"$ref": "common.schema.json#/$defs/date"},
+    "sample": {"type": "boolean"},
+    "version": {"const": 2},
+    "next_weekly_buy": {"$ref": "common.schema.json#/$defs/date",
+                        "description": "The next weekly buy of the whole-market fund: the first trading day of the ISO week after as_of (US exchange holidays by rule). The same date the weekly rules look next."},
+    "rules": {
+      "type": "object",
+      "description": "One block per stock rule the card reads, in the card's order (weekly first); only rules present in config/rules.json that the forward ledger records (at least one: buy_window.problems).",
+      "additionalProperties": false,
+      "properties": {
+        "five_leaders_weekly": {"$ref": "#/$defs/rule"},
+        "weekly_swing": {"$ref": "#/$defs/rule"},
+        "five_leaders": {"$ref": "#/$defs/rule"},
+        "five_leaders_quarterly": {"$ref": "#/$defs/rule"}
+      }
+    }
+  },
+  "$defs": {
+    "rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "cadence", "next_review", "slots", "keep_rank", "rank_by", "entry_checks", "keep_checks",
+                   "stretch_limit_pct", "held_now", "would_hold_if_today", "names"],
+      "properties": {
+        "label": {"type": "string", "minLength": 1, "maxLength": 80, "description": "The rule's name in config/rules.json."},
+        "cadence": {"enum": ["weekly", "monthly", "quarterly"], "description": "How often the rule decides (its engine's rebalance)."},
+        "next_review": {"$ref": "common.schema.json#/$defs/date",
+                        "description": "First trading day of the next week, month, or January/April/July/October, by cadence (US exchange holidays by rule)."},
+        "slots": {"type": "integer", "minimum": 1, "maximum": 20},
+        "keep_rank": {"anyOf": [{"type": "integer", "minimum": 1, "maximum": 100}, {"type": "null"}],
+                      "description": "A held name keeps its place while it ranks in this top n; null: no retention (a held name is judged like a newcomer)."},
+        "rank_by": {"enum": ["rs_12_1", "rs_1m"],
+                    "description": "rs_12_1: rise over the past year skipping the latest month, against the benchmark. rs_1m: rise over the past month against the benchmark."},
+        "entry_checks": {"type": "array", "maxItems": 4, "uniqueItems": true, "items": {"$ref": "#/$defs/check"},
+                         "description": "The checks a newcomer must pass, in the rule's order."},
+        "keep_checks": {"type": "array", "maxItems": 4, "uniqueItems": true, "items": {"$ref": "#/$defs/check"},
+                        "description": "The checks a held name must still pass to keep its place (empty without retention)."},
+        "stretch_limit_pct": {"type": "number", "minimum": 0, "maximum": 100},
+        "held_now": {"type": "array", "maxItems": 20, "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/ticker"},
+                     "description": "The names in the rule's latest paper rebalance (data/portfolio/paper_rules.json)."},
+        "would_hold_if_today": {"type": "array", "maxItems": 20, "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/ticker"},
+                                "description": "The names the rule's engine (rules.pick_names) would hold if today's close were the review day."},
+        "names": {
+          "type": "object",
+          "description": "One row per main-list name, keyed by ticker.",
+          "additionalProperties": {"$ref": "#/$defs/name"}
+        }
+      }
+    },
+    "check": {
+      "enum": ["above_rising_200", "above_200", "above_50", "not_stretched"],
+      "description": "above_rising_200: above its 200-day average and that average higher than 21 trading days ago. above_200 / above_50: above that average. not_stretched: less than stretch_limit_pct above its 50-day average."
+    },
+    "name": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eligible", "rank", "of", "sector", "sector_leader", "held_now", "would_hold_if_today", "above_200",
+                   "rising_200", "above_50", "dist_sma50_pct", "stretched", "blockers"],
+      "properties": {
+        "eligible": {"type": "boolean", "description": "Has the year of unbroken history the rule needs."},
+        "rank": {"anyOf": [{"type": "integer", "minimum": 1, "maximum": 500}, {"type": "null"}],
+                 "description": "Place among the eligible names by the rule's rank_by; 1 is the strongest."},
+        "of": {"type": "integer", "minimum": 0, "maximum": 500},
+        "sector": {"type": "string", "minLength": 1, "maxLength": 60},
+        "sector_leader": {"anyOf": [{"$ref": "common.schema.json#/$defs/ticker"}, {"type": "null"}],
+                          "description": "The eligible name in the same sector ranked highest by the rule's rank_by (it may itself be blocked); null when the sector has no eligible name."},
+        "held_now": {"type": "boolean"},
+        "would_hold_if_today": {"type": "boolean"},
+        "above_200": {"type": ["boolean", "null"]},
+        "rising_200": {"type": ["boolean", "null"]},
+        "above_50": {"type": ["boolean", "null"]},
+        "dist_sma50_pct": {"anyOf": [{"type": "number", "minimum": -95, "maximum": 500}, {"type": "null"}],
+                           "description": "Percent above (+) or below (-) its 50-day average."},
+        "stretched": {"type": ["boolean", "null"]},
+        "blockers": {
+          "type": "array",
+          "maxItems": 8,
+          "uniqueItems": true,
+          "description": "Exactly why the name is not in the rule's would_hold_if_today (empty exactly when it is). not_eligible: under a year of unbroken prices. rank_too_low: a held name out of the top keep_rank. sector_taken: its sector's place goes to a better-ranked or kept name (one per sector). below_200 / falling_200: under its 200-day average, or that average falling (above_rising_200, above_200). below_50: under its 50-day average (above_50, Weekly Swing). stretched: stretch_limit_pct or more above its 50-day average. no_slot: every place goes to names ranked higher or kept.",
+          "items": {"enum": ["not_eligible", "rank_too_low", "sector_taken", "below_200", "falling_200", "below_50", "stretched", "no_slot"]}
+        }
+      }
+    }
+  }
+}

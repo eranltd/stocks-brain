@@ -1,7 +1,7 @@
 ---
-version: 0.22.0
-updated_at: 2026-10-16
-change_note: The brain takes sides every week (a best-three and worst-three bet scored against luck); "neutral" now reads as "do your weekly buy"; a lump-sum guide.
+version: 0.23.0
+updated_at: 2026-10-17
+change_note: The "When could we buy it?" card on every company's Stock page, weekly first (the weekly buy, then the weekly game, then the monthly rule), read from our own stock rules and calendar, never from the brain.
 ---
 # Decision log
 
@@ -17,6 +17,48 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Market file size**: `derived.json` is written one line per symbol (compact) and is about 330 KB with 21 names.
   Past roughly 35 names it would hit lint's 512 KB cap and the daily run would fail closed; before that, move the
   per-point dates into one shared array.
+
+## 2026-10-17
+- **"When could we buy it?" on every company, weekly first.** The household asked when it would next be time to buy
+  Microsoft, and for the same answer on every company. Since 2026-10-16 the household acts weekly, so the card answers
+  from our own written rules in this order:
+  1. **Real money**: not as a single stock (household rules 0.5.0: no stock plan with real money until a rule passes
+     history and the trust ladder reaches Small money; today none does). The weekly buy of the whole-market fund, with
+     its next date, already buys a small piece of the company, said only where true: each stock list now records by
+     hand whether a company is in the S&P 500 (`sp500` in the watchlists); a company that is not (the Israeli and
+     foreign-listed ones) is told the weekly buy does not hold it, an unchecked one gets "if it is in the S&P 500". A
+     fund that follows the plain S&P 500 is the kind of fund the weekly buy goes into; any other fund is not part of the
+     plan.
+  2. **The weekly game** (pretend money): its next look is the first trading day of next week, holiday-aware; for each
+     weekly rule (`five_leaders_weekly`, `weekly_swing`), would it pick the name if today were its decision day, with
+     yes/no checks from that rule's own engine (Five Leaders: strongest past-year rise, one per sector, above a rising
+     200-day line, not 8% or more above its 50-day; Weekly Swing: strongest past-month rise against the market, one per
+     sector, above its 50-day line, not stretched).
+  3. **The monthly rule**: Five Leaders and its quarterly variant, the same way, with their next dates (folded away on
+     the page).
+  4. **What to wait for**, in plain words, plus the house checks (3 of 4 quick checks, the chart checklist's
+     reward-to-risk to the first target at least 2). A wait line only one weekly rule needs names that rule ("Weekly
+     Swing: wait until it is back above its 50-day line."), so a check one rule does not have is never read as needed
+     for both. A name that misses a check carries no group or place reason from the engine; the card still marks its
+     place row not met when every place would go to higher-ranked names in other groups (or names a keep buffer keeps),
+     and says a group's place is open when the name leading it misses a check.
+  5. **The honest line**: our own rules, not a forecast.
+  A single stock is spoken of for real money only if the rule that picks it has ITS OWN frozen history verdict
+  `passes_history` and stocks have earned a place; another rule passing never counts.
+- **One engine, one calendar.** The routine `buy_window` (contract version 2) calls each rule's own engine
+  (`rules.pick_names`, the rule's config, the ledger's seed, cost, lag and engine hash, and that rule's latest paper
+  names) with today's close as the decision day, so the card can never disagree with what the ledger would record; for
+  every rule the names with no reason against them must be exactly the engine's pick, or nothing is written. The engine
+  hashes of the four rules are unchanged. The engine has no trading calendar (its periods are plain ISO weeks and
+  months), so `scripts/us_market_calendar.py` stays the repo's one calendar and now gives weekly, monthly and quarterly
+  next dates; the site's "This week" card, the two-minute read and this card all read the weekly buy day from the
+  same published date (`next_weekly_buy`), falling back to the coming Monday when the file is old; the card names the
+  weekly game's next look by that same day (it is the same first trading day), so it never shows two different weeks.
+- **Why the rules and not the brain.** The brain's calls and weekly bets are an unscored experiment and change with each
+  day's pack; the rules are pre-registered, tested against random picks and written down on each review day. "When" is a
+  question about our own process, so only the process answers it.
+- **What it never says.** No "buy signal", "recommend" or "you should buy"; never that a name is a buy for real money
+  while no stock rule has earned it; no forecast or price target. Ranks, yes/no checks and percents only; no prices.
 
 ## 2026-10-16
 - **The brain's weekly bet.** The household read a row of neutral calls as "the brain always says wait". Neutral is

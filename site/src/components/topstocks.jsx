@@ -6,6 +6,7 @@ import { lastCandle } from "../lib/spotlight.js";
 import { headlineFor } from "../lib/secnews.js";
 import { CandleZoom } from "./zoom.jsx";
 import { ArrowRight, Chevron } from "./ui.jsx";
+import { BuyLine } from "./buywindow.jsx";
 
 /*
  * "Top stocks": the simple home's first thing, a carousel of big calm cards, one per name, each with a small candle
@@ -202,6 +203,7 @@ function StockCard({ it, i, n, chart, openTo, seeCandles, fallback, onZoom, head
           <span className="mt-1 block text-[16px] font-semibold leading-snug text-ink">{headline.title} <span className="font-normal text-ink-3">↗</span></span>
         </a>
       )}
+      {it.buy && <BuyLine line={it.buy} onClick={() => openTo(it.buyTo)} />}
       <div className="mt-auto pt-5">
         <button type="button" onClick={() => openTo(it.to)} className="btn btn-primary min-h-[56px] w-full justify-center py-3 text-[18px]">
           See more <ArrowRight />

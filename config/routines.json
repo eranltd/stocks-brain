@@ -1,7 +1,7 @@
 {
-  "version": "0.13.0",
-  "updated_at": "2026-10-16",
-  "change_note": "The brain checks three times each market morning (05:23, 08:23 and 11:23 UTC), so a late data run waits at most three hours.",
+  "version": "0.14.0",
+  "updated_at": "2026-10-17",
+  "change_note": "When could we buy it? (buy_window): what each of our stock rules (weekly first) would hold if today were its decision day, the reasons each other name is out, the next dates and the next weekly buy. The brain checks three times each market morning (05:23, 08:23 and 11:23 UTC).",
   "timezone": "UTC",
   "routines": [
     {
@@ -245,6 +245,27 @@
       ],
       "human_gate": false,
       "why": "History can be re-fitted; a forward record cannot. On the first run of each month every testable rule's holdings are written down with only that day's data and never edited. Months later this is the evidence that decides which rules deserve money."
+    },
+    {
+      "id": "buy_window",
+      "name": "When could we buy it?",
+      "cadence": "daily",
+      "cron": "40 23 * * 1-5",
+      "runner": "github_actions",
+      "status": "active",
+      "milestone": "M4",
+      "uses_llm": false,
+      "max_cost_usd": 0,
+      "inputs": [
+        ".cache/prices (daily closes, never published)",
+        "config/rules.json",
+        "data/portfolio/paper_rules.json"
+      ],
+      "outputs": [
+        "data/market/buy_window.json"
+      ],
+      "human_gate": false,
+      "why": "Answers 'when could we buy it?' from our own rules, not the brain: each stock rule's engine (weekly game first, then Five Leaders monthly and quarterly) runs as if today were its decision day, from its latest paper names; each name's checks, each rule's next date, the next weekly buy. Ranks, yes/no, percents only."
     },
     {
       "id": "score_people",

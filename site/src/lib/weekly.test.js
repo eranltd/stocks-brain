@@ -1,11 +1,26 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { gameRow, historyWords, nextBuyDay, scoreLine } from "./weekly.js";
+import { gameRow, historyWords, nextBuyDay, scoreLine, weeklyBuyDay } from "./weekly.js";
 
 test("nextBuyDay is the coming Monday", () => {
   assert.equal(nextBuyDay("2026-10-16"), "2026-10-19"); // Friday
   assert.equal(nextBuyDay("2026-10-19"), "2026-10-19"); // Monday
   assert.equal(nextBuyDay("2026-10-18"), "2026-10-19"); // Sunday
+});
+
+test("weeklyBuyDay uses the published holiday-aware date while it is ahead, else the coming Monday", () => {
+  const bw = (d, sample = false) => ({ next_weekly_buy: d, sample });
+  assert.equal(weeklyBuyDay("2026-10-17", bw("2026-10-19")), "2026-10-19");
+  assert.equal(weeklyBuyDay("2026-02-14", bw("2026-02-17")), "2026-02-17"); // Washington's Birthday: Tuesday
+  assert.equal(weeklyBuyDay("2026-02-16", bw("2026-02-17")), "2026-02-17"); // on the holiday itself, not "today"
+  assert.equal(weeklyBuyDay("2026-10-19", bw("2026-10-19")), "2026-10-19"); // the day itself
+  assert.equal(weeklyBuyDay("2026-10-19", bw("2026-10-26")), "2026-10-26"); // after Monday's run
+  assert.equal(weeklyBuyDay("2026-10-21", bw("2026-10-19")), "2026-10-26"); // an old file: the coming Monday
+  assert.equal(weeklyBuyDay("2026-10-17", bw("2026-12-07")), "2026-10-19"); // too far ahead to be this week's
+  assert.equal(weeklyBuyDay("2026-10-17", bw("2026-10-20", true)), "2026-10-19"); // a sample file on a live site
+  assert.equal(weeklyBuyDay("2026-10-17", bw("2026-10-20", true), true), "2026-10-20");
+  assert.equal(weeklyBuyDay("2026-10-17", null), "2026-10-19");
+  assert.equal(weeklyBuyDay("2026-10-17", bw("soon")), "2026-10-19");
 });
 
 test("gameRow and scoreLine read the forward ledger", () => {

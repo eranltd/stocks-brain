@@ -1,7 +1,7 @@
 ---
-version: 0.15.0
-updated_at: 2026-10-13
-change_note: Company numbers from SEC filings (twelve months, point in time) in the pack and on Stock pages; a weekly second-source price cross-check.
+version: 0.16.0
+updated_at: 2026-10-17
+change_note: When could we buy it? Each stock rule's own engine (the weekly game's two rules first, then Five Leaders monthly and quarterly) run as if today were its decision day, with the reason each name is out, the next dates by the US market calendar and the next weekly buy.
 ---
 # Methodology
 
@@ -296,6 +296,30 @@ cash earns the T-bill fund's return, and zero before that fund existed (pessimis
   different future leaves every decision unchanged (a mutation check proves the test can fail); the fast period simulator used by the
   null equals the daily engine to nine decimals; a small repo test (12 random pickers against 80-draw nulls) guards only against gross miscalibration of the null; it does not test the
   17-try bar. A price gap that would silently shrink the universe stops the run instead of shortening a name's history.
+- **When could we buy it?** `data/market/buy_window.json` (routine buy_window, daily after the ledger; main list only;
+  contract version 2). For each stock rule the card reads, in this order: `five_leaders_weekly` and `weekly_swing` (the
+  weekly game), then `five_leaders` and `five_leaders_quarterly` (only those in the registry that the ledger records),
+  that rule's own engine (`rules.pick_names`, its config, the ledger's settings, cost, lag, seed and engine hash) is
+  called as if today's close were its decision day, with that rule's latest paper names as the names it holds (on its
+  review day, the names before that day's decision, so it shows exactly what the ledger recorded). For each name it
+  publishes, from the engine's own filter and rank functions: eligible (a year of history), rank among the eligible names
+  by the rule's `rank_by` (rs_12_1: the past-year rise skipping the latest month; rs_1m: the past-month rise, both
+  against the benchmark), the sector's leader by that rank, above its 200-day average and that average rising over 21
+  days, above its 50-day average, percent from the 50-day average, stretched (8% or more above it), and `blockers`,
+  exactly why it is not among the names that rule would hold: not_eligible, rank_too_low (a held name out of the top
+  `keep_rank`; Five Leaders only), sector_taken (one per sector), below_200, falling_200, below_50 (Weekly Swing),
+  stretched, no_slot (five slots, filled by stronger or kept names). Each rule also lists its `entry_checks` and
+  `keep_checks`, and a blocker for a check the rule does not have is refused. For every rule the names with no blocker
+  must be exactly the engine's pick, or the step writes nothing. `next_review` is the first trading day of the rule's
+  next week, month or quarter, and `next_weekly_buy` (the weekly buy of the whole-market fund) the first trading day of
+  next week, by the regular US exchange holidays (`scripts/us_market_calendar.py`, the repo's one trading calendar;
+  closures announced at short notice are not known in advance). The site's weekly buy day (This week card, two-minute
+  read, this card, and this card's weekly look) reads `next_weekly_buy` while it is ahead and falls back to the
+  coming Monday. Whether the weekly buy holds a company comes from the stock lists' hand-checked `sp500` flag. Ranks,
+  yes/no checks and percents only. It is
+  the pretend-money rules' view, not advice and not a forecast: no stock rule has earned real money (household rules),
+  and the card never says otherwise; a single stock is worded for real money only if the rule that picks it passed its
+  own frozen history test and stocks have earned a place.
 
 ## People we learn from (code only)
 `config/people.json` lists the investors, teachers and writers we follow: what we learn from each, where they publish, a

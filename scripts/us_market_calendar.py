@@ -1,7 +1,9 @@
 """US stock market calendar (New York Stock Exchange full-day closures), plain rules, no data provider.
 
-The repo had no trading calendar: the ledger simply records on the first run of a month. The "When could we buy it?"
-card needs the NEXT review date ahead of time, so this module lists the exchange's regular full-day holidays by rule:
+The rule engine has no trading calendar: its decision periods are plain dates (rules.new_period: a new ISO week, month
+or quarter) and the ledger records on the first run of each period. The "When could we buy it?" card needs the NEXT
+review date ahead of time, for weekly, monthly and quarterly rules and for the weekly buy of the whole-market fund, so
+this module (the repo's one trading calendar) lists the exchange's regular full-day holidays by rule:
 
   New Year's Day (1 Jan; a Sunday moves to Monday; a Saturday is NOT moved to the Friday before, by exchange rule),
   Martin Luther King Jr. Day (third Monday of January), Washington's Birthday (third Monday of February),
@@ -86,13 +88,33 @@ def first_trading_day(year: int, month: int) -> date:
     return d
 
 
-def next_review(as_of: str, quarterly: bool = False) -> str:
-    """The first trading day of the month after as_of's month (or of the next January, April, July or October for a
-    quarterly review). A review on as_of's own month has already happened by then: the ledger decides on the first
-    run of each month."""
+def first_trading_day_of_week(monday: date) -> date | None:
+    """The first trading day of the ISO week that starts on `monday`, or None if the whole week is closed."""
+    for k in range(5):
+        if is_trading_day(monday + timedelta(days=k)):
+            return monday + timedelta(days=k)
+    return None
+
+
+CADENCES = ("weekly", "monthly", "quarterly")
+
+
+def next_review(as_of: str, cadence: str = "monthly") -> str:
+    """The first trading day of the period after as_of's own period, by the rule's cadence (rules.new_period):
+    weekly, the next ISO week; monthly, the next month; quarterly, the next January, April, July or October. A review in
+    as_of's own period has already happened by then: the ledger decides on the first run of each period. The weekly buy
+    of the whole-market fund uses the weekly date (the first trading day of next week)."""
+    if cadence not in CADENCES:
+        raise ValueError(f"unknown cadence {cadence!r}")
     d = date.fromisoformat(as_of)
+    if cadence == "weekly":
+        monday = d - timedelta(days=d.weekday())
+        while True:
+            monday += timedelta(days=7)
+            if (first := first_trading_day_of_week(monday)) is not None:
+                return first.isoformat()
     y, m = d.year, d.month
     while True:
         y, m = (y + 1, 1) if m == 12 else (y, m + 1)
-        if not quarterly or m in QUARTER_MONTHS:
+        if cadence == "monthly" or m in QUARTER_MONTHS:
             return first_trading_day(y, m).isoformat()

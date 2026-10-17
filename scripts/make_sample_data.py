@@ -309,27 +309,30 @@ def sample_buy_window(st: dict, wl: dict, rc: dict) -> dict | None:
     """The 'When could we buy it?' sample (data/market/buy_window.json's shape, sample: true), computed on the fly from
     the synthetic bars like the other sample market files (build_site.py calls this; nothing is written under samples/).
 
-    The live file reads the rule's paper ledger, which samples do not have. A stand-in ledger is made the way the real
-    one starts: one record on the first trading day of the samples' last month, holding what the rule's engine picks
-    there from nothing (rules.pick_names with data up to that day only, seed 0, exactly as routines_code.update_ledger
-    does on a first record). The sample numbers mean nothing about any real company."""
+    The live file reads each rule's paper ledger, which samples do not have. A stand-in ledger is made the way the real
+    one starts: for each rule, one record on the first trading day of the samples' last period for that rule's cadence
+    (week, month or quarter, by rules.new_period), holding what the rule's engine picks there from nothing
+    (rules.pick_names with data up to that day only, seed 0, exactly as routines_code.update_ledger does on a first
+    record). The sample numbers mean nothing about any real company."""
     import random as _random
 
     import routines_code
     import rules as rl
-    rule = next((r for r in rc["rules"] if r["id"] == routines_code.BUY_WINDOW_RULE), None)
+    picked = routines_code.buy_window_rules(rc, st)
     M = routines_code._rule_market(SAMPLES / "prices", st, wl)
-    if not rule or not rule.get("engine") or not M:
+    if not picked or not M:
         return None
-    cfg = {k: v for k, v in rule["engine"].items() if k != "kind"}
     dates = M["dates"]
-    k = next(j for j, d in enumerate(dates) if d[:7] == dates[-1][:7])
-    if k - rl.WARM < 0:
-        return None
-    ledger = {"rules": {routines_code.BUY_WINDOW_RULE: {
-        "engine_hash": routines_code._engine_hash(cfg, st["portfolio"]["cost_bps"], rc["acceptance"]["fill_lag_days"], st),
-        "rebalances": [{"date": dates[k], "holdings": rl.pick_names(cfg, M, st, k, [], _random.Random(0))}]}}}
-    return routines_code.compute_buy_window(SAMPLES / "prices", st, wl, rc, ledger, sample=True)
+    rows = {}
+    for rid, _label, cfg, h in picked:
+        k = M["n"] - 1
+        while k > 0 and not rl.new_period(dates[k - 1], dates[k], cfg.get("rebalance", "monthly")):
+            k -= 1
+        if k - rl.WARM < 0:
+            return None
+        rows[rid] = {"engine_hash": h,
+                     "rebalances": [{"date": dates[k], "holdings": rl.pick_names(cfg, M, st, k, [], _random.Random(0))}]}
+    return routines_code.compute_buy_window(SAMPLES / "prices", st, wl, rc, {"rules": rows}, sample=True)
 
 
 if __name__ == "__main__":

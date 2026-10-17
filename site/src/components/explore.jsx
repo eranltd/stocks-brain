@@ -1,7 +1,7 @@
 import { todayISO } from "../lib/outlook.js";
 import { dayNumber, HOLES, nextFor, stockOfDay, targetOf, totalMinutes } from "../lib/explore.js";
 import { verdictHistory } from "../lib/verdict.js";
-import { nextBuyDay } from "../lib/weekly.js";
+import { weeklyBuyDay } from "../lib/weekly.js";
 import { ArrowRight, Reveal } from "./ui.jsx";
 
 /** Open a route and scroll to its "#section" once it has rendered. */
@@ -27,7 +27,7 @@ const dayShort = (iso) => new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US
 export function QuickRead({ data, market, go }) {
   const today = todayISO();
   const v = data.sample ? null : verdictHistory(data.runs, { today })[0];
-  const buy = nextBuyDay(today);
+  const buy = weeklyBuyDay(today, data.buyWindow, data.sample);
   const rows = [
     { k: "The brain", t: v ? v.headline : "No real answer yet.", to: "verdicts" },
     { k: "Your money", t: `${buy === today ? "Today" : dayShort(buy)}: the weekly buy into the whole-market fund. Money you need soon stays safe.`, to: "verdicts#money-action" },

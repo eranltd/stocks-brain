@@ -1,27 +1,31 @@
 {
-  "version": "0.5.0",
-  "updated_at": "2026-10-04",
-  "change_note": "Thirteen Nasdaq names from other sectors (Roni), with GICS sectors for the portfolio rule's sector cap.",
+  "version": "0.6.0",
+  "updated_at": "2026-10-17",
+  "change_note": "Each company says whether it is in the S&P 500 (checked by hand), so the buy card says the weekly whole-market buy holds a piece of it only where true.",
   "symbols": [
     {
       "symbol": "AAPL",
       "name": "Apple",
-      "sector": "Information Technology"
+      "sector": "Information Technology",
+      "sp500": true
     },
     {
       "symbol": "MSFT",
       "name": "Microsoft",
-      "sector": "Information Technology"
+      "sector": "Information Technology",
+      "sp500": true
     },
     {
       "symbol": "NVDA",
       "name": "NVIDIA",
-      "sector": "Information Technology"
+      "sector": "Information Technology",
+      "sp500": true
     },
     {
       "symbol": "AMZN",
       "name": "Amazon",
-      "sector": "Consumer Discretionary"
+      "sector": "Consumer Discretionary",
+      "sp500": true
     },
     {
       "symbol": "GOOGL",
@@ -29,87 +33,104 @@
       "aliases": [
         "GOOG"
       ],
-      "sector": "Communication Services"
+      "sector": "Communication Services",
+      "sp500": true
     },
     {
       "symbol": "META",
       "name": "Meta Platforms",
-      "sector": "Communication Services"
+      "sector": "Communication Services",
+      "sp500": true
     },
     {
       "symbol": "AVGO",
       "name": "Broadcom",
-      "sector": "Information Technology"
+      "sector": "Information Technology",
+      "sp500": true
     },
     {
       "symbol": "COST",
       "name": "Costco",
-      "sector": "Consumer Staples"
+      "sector": "Consumer Staples",
+      "sp500": true
     },
     {
       "symbol": "AMGN",
       "name": "Amgen",
-      "sector": "Health Care"
+      "sector": "Health Care",
+      "sp500": true
     },
     {
       "symbol": "ISRG",
       "name": "Intuitive Surgical",
-      "sector": "Health Care"
+      "sector": "Health Care",
+      "sp500": true
     },
     {
       "symbol": "GILD",
       "name": "Gilead Sciences",
-      "sector": "Health Care"
+      "sector": "Health Care",
+      "sp500": true
     },
     {
       "symbol": "PEP",
       "name": "PepsiCo",
-      "sector": "Consumer Staples"
+      "sector": "Consumer Staples",
+      "sp500": true
     },
     {
       "symbol": "MNST",
       "name": "Monster Beverage",
-      "sector": "Consumer Staples"
+      "sector": "Consumer Staples",
+      "sp500": true
     },
     {
       "symbol": "AEP",
       "name": "American Electric Power",
-      "sector": "Utilities"
+      "sector": "Utilities",
+      "sp500": true
     },
     {
       "symbol": "XEL",
       "name": "Xcel Energy",
-      "sector": "Utilities"
+      "sector": "Utilities",
+      "sp500": true
     },
     {
       "symbol": "CTAS",
       "name": "Cintas",
-      "sector": "Industrials"
+      "sector": "Industrials",
+      "sp500": true
     },
     {
       "symbol": "PCAR",
       "name": "PACCAR",
-      "sector": "Industrials"
+      "sector": "Industrials",
+      "sp500": true
     },
     {
       "symbol": "CME",
       "name": "CME Group",
-      "sector": "Financials"
+      "sector": "Financials",
+      "sp500": true
     },
     {
       "symbol": "TMUS",
       "name": "T-Mobile US",
-      "sector": "Communication Services"
+      "sector": "Communication Services",
+      "sp500": true
     },
     {
       "symbol": "FANG",
       "name": "Diamondback Energy",
-      "sector": "Energy"
+      "sector": "Energy",
+      "sp500": true
     },
     {
       "symbol": "LIN",
       "name": "Linde",
-      "sector": "Materials"
+      "sector": "Materials",
+      "sp500": true
     }
   ],
   "core": {

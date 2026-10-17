@@ -738,34 +738,46 @@ def run_ledger() -> None:
 
 # ------------------------------------------------- when could we buy it?
 
-BUY_WINDOW_RULE = "five_leaders"  # the household's satellite rule (config/rules.json set_five_leaders); its quarterly
-# variant shares the selection, so only the review date differs (next_review_quarterly)
+def buy_window_rules(rc: dict, st: dict) -> list[tuple[str, str, dict, str]]:
+    """The stock rules the card reads (buy_window.RULE_ORDER: the weekly game, then the monthly Five Leaders and its
+    quarterly variant), as (rule_id, label, engine config, engine hash): only those in the registry that the forward
+    ledger records (a satellite_select engine and a status the ledger keeps). The hash is the ledger's own."""
+    import buy_window as bw
+    by_id = {r["id"]: r for r in rc["rules"]}
+    out = []
+    for rid in bw.RULE_ORDER:
+        r = by_id.get(rid)
+        eng = (r or {}).get("engine")
+        if not eng or eng["kind"] != "satellite_select" or r["status"] not in ("testable_now", "reference_baseline"):
+            continue
+        cfg = {k: v for k, v in eng.items() if k != "kind"}
+        label = r["name"].replace("(pretend money)", "").strip()
+        out.append((rid, label, cfg, _engine_hash(cfg, st["portfolio"]["cost_bps"], rc["acceptance"]["fill_lag_days"], st)))
+    return out
 
 
 def compute_buy_window(prices_dir: Path, st: dict, wl: dict, rc: dict, ledger: dict | None, sample: bool) -> dict | None:
-    """data/market/buy_window.json: what the rule's own engine would hold if today's close were its review day, given
-    its latest paper holdings, with the reasons each other name is out. Same market, config, cost, lag and engine hash
-    as the ledger; the ledger's record counts only while its engine hash is the rule's current one (otherwise the
-    ledger would start a new record holding nothing, and so does this)."""
+    """data/market/buy_window.json: for each stock rule the card reads, what that rule's own engine would hold if today's
+    close were its review day, given its latest paper holdings, with the reasons each other name is out. Same market,
+    config, cost, lag and engine hash as the ledger; a rule's ledger record counts only while its engine hash is the
+    rule's current one (otherwise the ledger would start a new record holding nothing, and so does this)."""
     import buy_window as bw
-    rule = next((r for r in rc["rules"] if r["id"] == BUY_WINDOW_RULE), None)
-    if not rule or not rule.get("engine"):
+    import rules as rl
+    picked = buy_window_rules(rc, st)
+    if not picked:
         return None
     M = _rule_market(prices_dir, st, wl)
-    import rules as rl
     if not M or M["n"] - 1 - rl.WARM < 0:
         return None
     if (gaps := rl_gap_report(M)):
         raise SystemExit("buy_window: a price gap would silently shrink the universe (nothing written): " + "; ".join(gaps))
-    cfg = {k: v for k, v in rule["engine"].items() if k != "kind"}
-    h = _engine_hash(cfg, st["portfolio"]["cost_bps"], rc["acceptance"]["fill_lag_days"], st)
-    row = (ledger or {}).get("rules", {}).get(BUY_WINDOW_RULE)
-    if row and row.get("engine_hash") != h:
-        row = None
+    rows = (ledger or {}).get("rules", {})
+    rules_in = [(rid, label, cfg, row if (row := rows.get(rid)) and row.get("engine_hash") == h else None)
+                for rid, label, cfg, h in picked]
     members = [s["symbol"] for s in wl["symbols"]]
     sectors = {s["symbol"]: s["sector"] for s in wl["symbols"]}
     try:
-        return bw.build(cfg, M, st, row, members, sectors, BUY_WINDOW_RULE, rule["name"].split(":")[0].strip(), sample)
+        return bw.build(rules_in, M, st, members, sectors, sample)
     except bw.Unexplained as exc:
         raise SystemExit(f"buy_window: {exc} (nothing written)") from exc
 
@@ -779,7 +791,7 @@ def run_buy_window() -> None:
     doc = compute_buy_window(PRICES, st, wl, load_json(CONFIG / "rules.json"),
                              load_json(ledger_path) if ledger_path.exists() else None, sample=False)
     if not doc:
-        raise SystemExit("buy_window: missing prices, history or the rule (nothing written)")
+        raise SystemExit("buy_window: missing prices, history or the rules (nothing written)")
     import buy_window as bw
     problems = bw.problems(doc, {s["symbol"] for s in wl["symbols"]})
     for p in problems:  # a held name taken off the list since the last review stays in held_now until the next one
@@ -789,8 +801,9 @@ def run_buy_window() -> None:
     if bad:
         raise SystemExit(f"buy_window: {bad[:5]} (nothing written)")
     _write(MARKET / "buy_window.json", doc, "buy_window.schema.json", compact=True)
-    print(f"buy_window: as of {doc['as_of']}, next review {doc['next_review']} (quarterly {doc['next_review_quarterly']}), "
-          f"would hold {len(doc['would_hold_if_today'])} of {doc['slots']}, holds {len(doc['held_now'])}")
+    print(f"buy_window: as of {doc['as_of']}, next weekly buy {doc['next_weekly_buy']}; " + "; ".join(
+        f"{rid} next {r['next_review']}, would hold {len(r['would_hold_if_today'])} of {r['slots']}, holds {len(r['held_now'])}"
+        for rid, r in doc["rules"].items()))
 
 
 # ------------------------------------------------------- people we learn from

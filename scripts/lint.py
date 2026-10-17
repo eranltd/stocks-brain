@@ -865,11 +865,13 @@ class Lint:
                 self.err(path, f"overlays differ from the checklist row: {bad}")
 
     def check_buy_window_data(self, path: Path, doc: dict, on_list: set | None = None, as_of: str | None = None) -> None:
-        """'When could we buy it?' (data/market/buy_window.json): derived only (the closed schema allows ranks, booleans
-        and percents within a sane range, never a price or a volume), live, the main list's names only, and internally
-        consistent: the per-name flags match the lists, a name has blockers exactly when the rule would not hold it, and the
-        review dates are the market calendar's first trading days. A name that is not on the main list is a warning (a
-        stale file after a watchlist change; the next run rewrites it), as for the checklist."""
+        """'When could we buy it?' (data/market/buy_window.json, contract version 2): derived only (the closed schema
+        allows ranks, booleans and percents within a sane range, never a price or a volume), live, the main list's names
+        only, and internally consistent for every rule it reads (the weekly game's rules, then Five Leaders monthly and
+        quarterly): the per-name flags match the lists, a name has blockers exactly when that rule would not hold it and
+        only for checks that rule has, and each review date and the next weekly buy are the market calendar's first
+        trading days for their cadence. A name that is not on the main list is a warning (a stale file after a watchlist
+        change; the next run rewrites it), as for the checklist."""
         import buy_window as bw
         if on_list is None:
             try:

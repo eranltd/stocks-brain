@@ -10,12 +10,28 @@ export const WEEKLY_RULES = [
 
 const isNum = (v) => typeof v === "number" && Number.isFinite(v);
 
-/** The next weekly buy day: the coming Monday (today if it is Monday), as an ISO date. Holidays are not known here. */
+/** The coming Monday (today if it is Monday), as an ISO date: the fallback when no published date can be used. */
 export function nextBuyDay(todayIso) {
   const d = new Date(`${todayIso}T00:00:00Z`);
   const add = (8 - d.getUTCDay()) % 7;
   d.setUTCDate(d.getUTCDate() + add);
   return d.toISOString().slice(0, 10);
+}
+
+/**
+ * The next weekly buy day, the one source for every card that names it ("This week", the two-minute read and "When
+ * could we buy it?"). The daily run publishes it holiday-aware (buy_window.json `next_weekly_buy`: the first trading
+ * day of the week after its close, by the US exchange calendar). It is used while it is still ahead (today or later)
+ * and no more than a week past the coming Monday; otherwise (no file, an old file, a sample file on a live site) the
+ * coming Monday, without holidays.
+ */
+export function weeklyBuyDay(todayIso, bw = null, siteSample = false) {
+  const monday = nextBuyDay(todayIso);
+  const pub = bw?.next_weekly_buy;
+  if (typeof pub !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(pub) || (bw.sample && !siteSample)) return monday;
+  const limit = new Date(`${monday}T00:00:00Z`);
+  limit.setUTCDate(limit.getUTCDate() + 7);
+  return pub >= todayIso && pub < limit.toISOString().slice(0, 10) ? pub : monday;
 }
 
 /** How a rule did on the history test, in words: passed, rejected, or not tested yet. */

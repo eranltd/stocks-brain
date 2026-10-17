@@ -314,8 +314,9 @@ cash earns the T-bill fund's return, and zero before that fund existed (pessimis
   next week, month or quarter, and `next_weekly_buy` (the weekly buy of the whole-market fund) the first trading day of
   next week, by the regular US exchange holidays (`scripts/us_market_calendar.py`, the repo's one trading calendar;
   closures announced at short notice are not known in advance). The site's weekly buy day (This week card, two-minute
-  read, this card) reads `next_weekly_buy` while it is ahead and falls back to the coming Monday. Whether the weekly buy
-  holds a company comes from the stock lists' hand-checked `sp500` flag. Ranks, yes/no checks and percents only. It is
+  read, this card, and this card's weekly look) reads `next_weekly_buy` while it is ahead and falls back to the
+  coming Monday. Whether the weekly buy holds a company comes from the stock lists' hand-checked `sp500` flag. Ranks,
+  yes/no checks and percents only. It is
   the pretend-money rules' view, not advice and not a forecast: no stock rule has earned real money (household rules),
   and the card never says otherwise; a single stock is worded for real money only if the rule that picks it passed its
   own frozen history test and stocks have earned a place.

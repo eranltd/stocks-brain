@@ -98,8 +98,9 @@ test("not this week: each weekly rule says why, in its own rule's words", () => 
   assert.equal(gcond(a, "weekly_swing", "above50").ok, false);
   assert.equal(gcond(a, "weekly_swing", "above50").now, "2.4% below it");
   assert.match(gcond(a, "weekly_swing", "leader").now, /by past-month rise against the market/);
-  assert.ok(a.waitFor.includes("Wait until it is back above its 50-day line."));
-  assert.ok(a.waitFor.some((w) => /Beta Inc leads its group by past-year rise/.test(w)));
+  // Each wait line names the rule that needs it: a check one weekly rule lacks is never read as needed for both.
+  assert.ok(a.waitFor.includes("Weekly Swing: wait until it is back above its 50-day line."));
+  assert.ok(a.waitFor.includes("Five Leaders, weekly: Beta Inc leads its group by past-year rise. Our rules take one per group, so this one would need a bigger past-year rise than Beta Inc."));
   // The monthly rule still picks it, folded away: it never decides the headline while the weekly game is there.
   assert.equal(game(a, "five_leaders").would, true);
   assert.deepEqual(buyLine(a, "2026-10-17"), { text: "When to buy: not this week (see why)", tone: "flat" });
@@ -183,7 +184,16 @@ test("a held name the weekly game would let go says so", () => {
   assert.equal(a.headline, "Not this week. The weekly game holds it on paper, but would let it go.");
   assert.equal(game(a, "five_leaders_weekly").line, "would let it go");
   assert.equal(game(a, "five_leaders_weekly").why, "it is out of the top 10 and the places go to stronger names");
-  assert.ok(a.waitFor.includes("Wait until its past-year rise is back in the top 10 of our names."));
+  assert.ok(a.waitFor.includes("Five Leaders, weekly: wait until its past-year rise is back in the top 10 of our names."));
+  assert.ok(a.waitFor.includes("Weekly Swing: all 5 places go to names that rank higher by past-month rise against the market or that the rule already holds."));
+});
+
+test("a wait line both weekly rules need stays bare, once", () => {
+  const st = { AAA: { stretched: true, dist_sma50_pct: 9.4, would_hold_if_today: false, blockers: ["stretched"] } };
+  const a = main({ bw: contract({ five_leaders_weekly: st, weekly_swing: st }) });
+  honest(a);
+  assert.equal(a.waitFor.filter((w) => /less than 8% above its 50-day line/.test(w)).length, 1);
+  assert.ok(a.waitFor.includes("Wait until it is less than 8% above its 50-day line."));
 });
 
 test("below or under a falling 200-day line reads as one wait line", () => {
@@ -192,7 +202,7 @@ test("below or under a falling 200-day line reads as one wait line", () => {
   honest(a);
   assert.equal(gcond(a, "five_leaders_weekly", "trend200").ok, false);
   assert.match(gcond(a, "five_leaders_weekly", "trend200").now, /Below it; the line is falling/);
-  assert.ok(a.waitFor.includes("Wait until it is back above its 200-day line and that line turns up again."));
+  assert.ok(a.waitFor.includes("Five Leaders, weekly: wait until it is back above its 200-day line and that line turns up again."));
   assert.equal(a.waitFor.filter((w) => /200-day/.test(w)).length, 1);
 });
 
@@ -229,6 +239,16 @@ test("a held name kept by the top-10 buffer holds the place against a better-ran
   assert.match(gcond(h, "five_leaders_weekly", "leader").now, /keeps its group.s place/);
 });
 
+test("a held name that fell out of the keep buffer and is picked again does not 'keep' the place", () => {
+  // Alpha Corp is held but ranks 12, outside the top 10: it is picked again as a newcomer, by rank. Beta Inc ranks 3
+  // and misses only the stretch check, so the group's place is not what stops it.
+  const a = main({ symbol: "BBB", bw: group("five_leaders_weekly", { rank: 12 }, { rank: 3 }) });
+  honest(a);
+  assert.equal(gcond(a, "five_leaders_weekly", "leader").ok, true);
+  assert.ok(!a.waitFor.some((w) => /keeps it while it stays in the top 10/.test(w)));
+  assert.equal(game(a, "five_leaders_weekly").why, "stretched above its 50-day line");
+});
+
 test("a name that ranks above the group's holder is not marked down for the group", () => {
   const a = main({ symbol: "BBB", bw: group("five_leaders_weekly", { held_now: false }, { rank: 3 }), setup: setup({ stretched: true, dist_sma50_pct: 9.1 }) });
   honest(a);
@@ -262,8 +282,15 @@ test("a look whose next weekly look has gone by is stale, never a past date as t
   assert.equal(a.available, false);
   assert.doesNotMatch(say(a), /Mon 19 Oct/);
   assert.match(a.realMoney, /next weekly buy is Mon 26 Oct/); // the coming Monday, from the This week card's own rule
-  // A sample file on the sample site keeps its own (past) dates: everything there is labelled sample.
+  // A sample file on the sample site is read (everything there is labelled sample), but its fixed close ends weeks ago:
+  // the weekly look still names the weekly buy day, never the sample's past week.
   assert.equal(lookState(contract({}, { sample: true }), null, true, "2026-10-21"), "ok");
+  const s = main({ today: "2026-10-21", bw: contract({}, { sample: true }), siteSample: true });
+  assert.equal(s.available, true);
+  assert.equal(s.nextReview, "2026-10-26");
+  assert.equal(s.nextBuy, "2026-10-26");
+  assert.doesNotMatch(say(s), /19 Oct/);
+  assert.match(s.nextLook, /Mon 26 Oct/);
 });
 
 test("a missing, old-contract, stale or sample look falls back and says the look is not available yet", () => {
@@ -285,6 +312,8 @@ test("a missing, old-contract, stale or sample look falls back and says the look
   assert.equal(lookState(contract({}, { sample: true })), "sample");
   assert.equal(lookState(contract({}, { sample: true }), null, true), "ok");
   assert.equal(main({ symbol: "ZZZ" }).available, false); // a name the contract does not list
+  // A house check that fails still says what to wait for while the rules' look is missing.
+  assert.ok(main({ bw: null, checklist: ck(0.8, "resistance") }).waitFor.some((w) => /nearest ceiling is close/.test(w)));
 });
 
 test("the weekly buy day is the published, holiday-aware date while it is ahead", () => {
@@ -357,4 +386,21 @@ test("buyWindowFor reads a page's files: main list, readable checklist, fund car
   assert.equal(sp500Of("AAA", here, mainWl), false);
   assert.equal(sp500Of("BBB", here, mainWl), true);
   assert.equal(sp500Of("CCC", here, mainWl), null);
+});
+
+test("a name that misses a check is told when all the places would still go to stronger names", () => {
+  // Weekly Swing holds five names from other groups, all ranked above AAA; AAA is below its 50-day line.
+  const others = Object.fromEntries(["BBB", "CCC", "DDD", "EEE", "FFF"].map((t, k) => [t, { rank: k + 1, sector: `Group ${k}`, sector_leader: t }]));
+  const bw = contract({ weekly_swing: { AAA: { rank: 18, above_50: false, dist_sma50_pct: -4.4, would_hold_if_today: false, blockers: ["below_50"] }, ...others } });
+  const a = main({ bw });
+  honest(a);
+  const sw = game(a, "weekly_swing");
+  assert.equal(gcond(a, "weekly_swing", "leader").ok, false);
+  assert.match(gcond(a, "weekly_swing", "leader").now, /Ranks 18 of 21 by past-month rise against the market; all 5 places go to stronger names/);
+  assert.equal(sw.why, "the places go to stronger names and it is below its 50-day line");
+  // Ranked high enough, the same miss leaves the place row met, and a leader that misses a check leaves the group open.
+  const b = main({ bw: contract({ weekly_swing: { AAA: { rank: 3, sector_leader: "BBB", above_50: false, dist_sma50_pct: -1, would_hold_if_today: false, blockers: ["below_50"] }, BBB: { rank: 1, sector_leader: "BBB", above_50: false, dist_sma50_pct: -2, would_hold_if_today: false, blockers: ["below_50"] } } }) });
+  assert.equal(gcond(b, "weekly_swing", "leader").ok, true);
+  assert.match(gcond(b, "weekly_swing", "leader").now, /Beta Inc ranks higher in its group but misses a check, so the group's place is open/);
+  assert.equal(game(b, "weekly_swing").why, "below its 50-day line");
 });

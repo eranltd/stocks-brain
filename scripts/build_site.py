@@ -92,8 +92,8 @@ def main() -> int:
             if doc:
                 dump_json(OUT / "market" / "rules.json", doc, compact=True)
                 rules_result = "market/rules.json"
-    # When could we buy it? (the Five Leaders rule if today were its review day): same source rule as prices. Samples
-    # are computed from the synthetic bars with a stand-in ledger (make_sample_data.sample_buy_window), flagged sample.
+    # When could we buy it? (each stock rule, weekly first, as if today were its decision day): same source rule as
+    # prices. Samples are computed from the synthetic bars with a stand-in ledger (make_sample_data.sample_buy_window).
     buy_window = None
     if rules_cfg.exists():
         if price_source == "live" and (MARKET / "buy_window.json").exists():

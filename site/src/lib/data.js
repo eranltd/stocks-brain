@@ -134,7 +134,7 @@ export async function loadAll(onProgress = () => {}) {
     ...(manifest.fundamentals ? [manifest.fundamentals] : []),
     ...(manifest.price_check ? [manifest.price_check] : []),
     ...(manifest.sec_news ? [manifest.sec_news] : []),
-    // "When could we buy it?": the stock rule's look at the main list (data/market/buy_window.json); absent until the
+    // "When could we buy it?": each stock rule's look at the main list (data/market/buy_window.json); absent until the
     // first Nasdaq daily run that writes it.
     ...(manifest.buy_window ? [manifest.buy_window] : []),
   ];
@@ -188,7 +188,7 @@ export function derive(manifest, files) {
   const priceCheck = manifest.price_check ? files[manifest.price_check] : null;
   // Official company news from SEC filings (data/market/sec_news.json): every company on every stock list.
   const secNews = manifest.sec_news ? files[manifest.sec_news] : null;
-  // The stock rule's look at the main list (data/market/buy_window.json): what it holds now and would hold at today's close.
+  // Each stock rule's look at the main list (data/market/buy_window.json): what it holds now and would hold at today's close.
   const buyWindow = manifest.buy_window ? files[manifest.buy_window] ?? null : null;
   // Company outlook cards (config/outlook.json): researched, paraphrased and linked; may hold no companies yet.
   const outlook = doc("outlook") ? files[doc("outlook").file] : null;

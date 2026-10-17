@@ -37,7 +37,11 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   3. **The monthly rule**: Five Leaders and its quarterly variant, the same way, with their next dates (folded away on
      the page).
   4. **What to wait for**, in plain words, plus the house checks (3 of 4 quick checks, the chart checklist's
-     reward-to-risk to the first target at least 2).
+     reward-to-risk to the first target at least 2). A wait line only one weekly rule needs names that rule ("Weekly
+     Swing: wait until it is back above its 50-day line."), so a check one rule does not have is never read as needed
+     for both. A name that misses a check carries no group or place reason from the engine; the card still marks its
+     place row not met when every place would go to higher-ranked names in other groups (or names a keep buffer keeps),
+     and says a group's place is open when the name leading it misses a check.
   5. **The honest line**: our own rules, not a forecast.
   A single stock is spoken of for real money only if the rule that picks it has ITS OWN frozen history verdict
   `passes_history` and stocks have earned a place; another rule passing never counts.
@@ -48,7 +52,8 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   hashes of the four rules are unchanged. The engine has no trading calendar (its periods are plain ISO weeks and
   months), so `scripts/us_market_calendar.py` stays the repo's one calendar and now gives weekly, monthly and quarterly
   next dates; the site's "This week" card, the two-minute read and this card all read the weekly buy day from the
-  same published date (`next_weekly_buy`), falling back to the coming Monday when the file is old.
+  same published date (`next_weekly_buy`), falling back to the coming Monday when the file is old; the card names the
+  weekly game's next look by that same day (it is the same first trading day), so it never shows two different weeks.
 - **Why the rules and not the brain.** The brain's calls and weekly bets are an unscored experiment and change with each
   day's pack; the rules are pre-registered, tested against random picks and written down on each review day. "When" is a
   question about our own process, so only the process answers it.

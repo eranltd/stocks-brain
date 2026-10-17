@@ -156,6 +156,18 @@ class CalendarTest(unittest.TestCase):
         self.assertEqual(cal.next_review("2026-08-31", "weekly"), "2026-09-08")  # Labor Day
         self.assertEqual(cal.next_review("2026-12-31", "weekly"), "2027-01-04")  # across the year (ISO week 53)
         self.assertEqual(cal.next_review("2025-11-26", "weekly"), "2025-12-01")
+        self.assertEqual(cal.next_review("2026-11-20", "weekly"), "2026-11-23")  # Thanksgiving week opens on Monday
+        self.assertEqual(cal.next_review("2026-11-25", "weekly"), "2026-11-30")  # ... and from inside it
+        self.assertEqual(cal.next_review("2026-12-24", "weekly"), "2026-12-28")  # Christmas 2026 on a Friday
+        self.assertEqual(cal.next_review("2026-12-28", "weekly"), "2027-01-04")  # New Year's Day 2027 on a Friday
+        self.assertEqual(cal.next_review("2027-01-15", "weekly"), "2027-01-19")  # Martin Luther King Jr. Day 2027
+        self.assertEqual(cal.next_review("2027-03-22", "weekly"), "2027-03-29")  # Good Friday 2027 (26 March)
+        self.assertEqual(cal.next_review("2027-03-25", "monthly"), "2027-04-01")
+        self.assertEqual(cal.next_review("2027-06-14", "weekly"), "2027-06-21")  # Juneteenth 2027 observed on the 18th
+        self.assertEqual(cal.next_review("2027-07-02", "weekly"), "2027-07-06")  # Independence Day 2027 observed Monday
+        self.assertNotIn(date(2026, 11, 27), cal.holidays(2026))  # the day after Thanksgiving is a (short) trading day
+        self.assertIn(date(2027, 3, 26), cal.holidays(2027))
+        self.assertIn(date(2027, 1, 18), cal.holidays(2027))
         for d in ("2026-03-02", "2026-10-02", "2027-06-30"):  # always a trading day, always a later ISO week
             nxt = date.fromisoformat(cal.next_review(d, "weekly"))
             self.assertTrue(cal.is_trading_day(nxt))

@@ -139,21 +139,35 @@ function ruleLook(rd, n, { symbol, nameOf, earnedRule }) {
   // the rule keeps), so the row never shows a tick next to "another name leads its group".
   const taker = (rd.would_hold_if_today ?? []).find((t) => t !== symbol && rd.names?.[t] && rd.names[t].sector === n.sector) ?? null;
   const tk = taker ? rd.names[taker] : null;
-  const takerKept = Boolean(tk?.held_now) && rd.keep_rank != null && !(num(tk?.rank) != null && num(n.rank) != null && tk.rank < n.rank);
+  // A held name is kept (ahead of better-ranked newcomers) only while it ranks within the keep buffer; one that fell out
+  // of it and is picked again won its place as a newcomer, by rank.
+  const keptBy = (o) => Boolean(o?.held_now) && keep != null && num(o?.rank) != null && o.rank <= keep;
+  const takerKept = keptBy(tk) && !(num(n.rank) != null && tk.rank < n.rank);
   const placeGone = Boolean(taker) && !would && (takerKept || (num(tk.rank) != null && num(n.rank) != null && tk.rank < n.rank));
+  // A name that misses a check carries no group or place reason from the engine (it never got that far). It is still
+  // told when, even passing every check, it would not win a place: the rule's places all go to names in other groups
+  // that rank higher, or that a rule with a keep buffer keeps.
+  const ahead = (rd.would_hold_if_today ?? []).filter((t) => {
+    const o = t !== symbol ? rd.names?.[t] : null;
+    if (!o || o.sector === n.sector) return false;
+    return keptBy(o) || (num(o.rank) != null && num(n.rank) != null && o.rank < n.rank);
+  });
+  const slotsGone = !would && !placeGone && n.eligible !== false && !["sector_taken", "no_slot"].some((b) => blockers.has(b)) && ahead.length >= slots;
   const rankPart = n.eligible === false ? "Not a full year of prices yet"
     : num(n.rank) != null ? `Ranks ${n.rank} of ${n.of} by ${rw}` : "No rank today";
   const leadPart = n.eligible === false ? ""
     : taker && !would && !placeGone && leader === symbol ? `; leads its group, but ${nameOf(taker)} gets the place while this one misses a check`
     : taker ? `; ${nameOf(taker)} ${would ? "also " : ""}holds its group's place`
     : would ? (held ? "; keeps its group's place" : "; wins its group's place")
+    : slotsGone ? `; all ${slots} places go to stronger names`
     : leader === symbol ? "; leads its group"
+    : leader && !blockers.has("sector_taken") ? `; ${nameOf(leader)} ranks higher in its group but misses a check, so the group's place is open`
     : leader ? `; ${nameOf(leader)} leads its group` : "";
   const rankBlocked = ["not_eligible", "rank_too_low", "sector_taken", "no_slot"].some((b) => blockers.has(b));
   const conditions = [{
     id: "leader",
     label: keptMode ? `Keeps its place: still in the top ${keep} of our names by ${rw}` : `Strongest ${rw} in its group (one per group, ${slots} places in all)`,
-    ok: !(rankBlocked || placeGone),
+    ok: !(rankBlocked || placeGone || slotsGone),
     now: `${rankPart}${leadPart}`,
     need: keptMode ? `Stay in the top ${keep}` : `Lead its group and win one of the ${slots} places`,
   }];
@@ -183,7 +197,7 @@ function ruleLook(rd, n, { symbol, nameOf, earnedRule }) {
     waitFor.push(`${nameOf(taker)} already holds its group's place on paper and keeps it while it stays in the top ${keep}. Our rules take one per group.`);
     why.push(`${nameOf(taker)} keeps its group's place`);
   } else if (placeGone) {
-    waitFor.push(`${nameOf(taker)} holds its group's place: it ranks higher by ${rw} and passes the checks. Our rules take one per group, so this one would need a bigger ${rw} than ${nameOf(taker)}.`);
+    waitFor.push(`${nameOf(taker)} holds its group's place, because it ranks higher by ${rw} and passes the checks. Our rules take one per group, so this one would need a bigger ${rw} than ${nameOf(taker)}.`);
     why.push(`${nameOf(taker)} ranks higher in its group`);
   } else if (blockers.has("sector_taken")) {
     waitFor.push(leader && leader !== symbol
@@ -192,7 +206,7 @@ function ruleLook(rd, n, { symbol, nameOf, earnedRule }) {
     why.push(leader && leader !== symbol ? `${nameOf(leader)} leads its group` : "another name leads its group");
   }
   if (blockers.has("rank_too_low")) { waitFor.push(`Wait until its ${rw} is back in the top ${keep} of our names.`); why.push([`out of the top ${keep}`, `it is out of the top ${keep}`]); }
-  if (blockers.has("no_slot")) { waitFor.push(`All ${slots} places go to names that rank higher by ${rw} or that the rule already holds.`); why.push("the places go to stronger names"); }
+  if (blockers.has("no_slot") || slotsGone) { waitFor.push(`All ${slots} places go to names that rank higher by ${rw} or that the rule already holds.`); why.push("the places go to stronger names"); }
   if (blockers.has("below_200") && blockers.has("falling_200")) { waitFor.push("Wait until it is back above its 200-day line and that line turns up again."); why.push(["below a falling 200-day line", "it is below a falling 200-day line"]); }
   else if (blockers.has("below_200")) { waitFor.push("Wait until it is back above its 200-day line."); why.push(["below its 200-day line", "it is below its 200-day line"]); }
   else if (blockers.has("falling_200")) { waitFor.push("Wait until its 200-day line turns up again."); why.push("its 200-day line is falling"); }
@@ -204,6 +218,21 @@ function ruleLook(rd, n, { symbol, nameOf, earnedRule }) {
     id: rd.id, name: ruleName(rd.id, rd), cadence: rd.cadence, nextReview: rd.next_review ?? null, held, would,
     earned: Boolean(earnedRule(rd.id)), line, why: whyWords(why), conditions, waitFor,
   };
+}
+
+/**
+ * The rules' wait lines in one list. With two or more rules, a line that only some of them need names them ("Weekly
+ * Swing: wait until it is back above its 50-day line."), so a check one rule does not have is never read as needed for
+ * all; a line every rule needs stays bare, once.
+ */
+function ruleWaits(looks) {
+  if (looks.length < 2) return looks.flatMap((l) => l.waitFor);
+  const out = [];
+  for (const w of [...new Set(looks.flatMap((l) => l.waitFor))]) {
+    const who = looks.filter((l) => l.waitFor.includes(w)).map((l) => l.name);
+    out.push(who.length === looks.length ? w : `${who.join(" and ")}: ${/^(Wait|It|All|Another)\b/.test(w) ? w[0].toLowerCase() + w.slice(1) : w}`);
+  }
+  return out;
 }
 
 /**
@@ -301,7 +330,7 @@ export function buyWindow({ today = null, symbol, onMainList = false, isFund = f
       realMoney: realMoneyWords({ kind: "main", sp500, buy }),
       nextLook: `The weekly game looks on the first trading day of each week (pretend money)${buy ? `; the next one is ${buy}` : ""}. Its look at this name appears after the next daily run.`,
       conditions: [stretchRow(num(setup?.dist_sma50_pct), setup?.stretched ?? null, limit), ...house],
-      waitFor: [state === "stale" ? "The rules' look is from an older close than this page; wait for the next daily run." : "Wait for the next daily run, which writes the rules' look."],
+      waitFor: [state === "stale" ? "The rules' look is from an older close than this page; wait for the next daily run." : "Wait for the next daily run, which writes the rules' look.", ...houseWait],
       note: NOTE,
     };
   }
@@ -313,7 +342,10 @@ export function buyWindow({ today = null, symbol, onMainList = false, isFund = f
   const houseOk = house.every((c) => c.ok !== false) && house.find((c) => c.id === "reward").ok === true;
   const allow = picking.length > 0 && houseOk;
   const earned = picking.some((l) => l.earned);
-  const nextReview = lead[0].nextReview;
+  // The weekly game looks on the weekly buy day (both are the first trading day of next week, scripts/buy_window.py):
+  // one date from one source (weeklyBuyDay), so the card never names two different weeks, nor a past one on the sample
+  // site, whose fixed sample close ends weeks ago. On a live look in date they are the same day.
+  const nextReview = games.length && nextBuy ? nextBuy : lead[0].nextReview;
   const date = dayWords(nextReview);
   const who = games.length ? "The weekly game" : "Our monthly rule";
   const heldLead = lead.some((l) => l.held);
@@ -323,7 +355,7 @@ export function buyWindow({ today = null, symbol, onMainList = false, isFund = f
   else if (picking.length) headline = `${who} would pick it, but the house checks say wait.`;
   else headline = heldLead ? `Not this ${games.length ? "week" : "month"}. ${who} holds it on paper, but would let it go.` : `Not this ${games.length ? "week" : "month"}. ${who} would not pick it.`;
 
-  const waitFor = [...new Set([...lead.flatMap((l) => l.waitFor), ...houseWait])];
+  const waitFor = [...new Set([...ruleWaits(lead), ...houseWait])];
   if (allow) {
     waitFor.push(earned
       ? "Act only on the rule's review day, never between review days, and only within the house limits."

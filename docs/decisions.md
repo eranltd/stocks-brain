@@ -1,7 +1,7 @@
 ---
-version: 0.21.0
-updated_at: 2026-10-15
-change_note: The "When could we buy it?" card on every company's Stock page, read from our own Five Leaders rule and calendar, never from the brain.
+version: 0.23.0
+updated_at: 2026-10-17
+change_note: The "When could we buy it?" card on every company's Stock page, read from our own stock rules and calendar, never from the brain.
 ---
 # Decision log
 
@@ -17,6 +17,53 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Market file size**: `derived.json` is written one line per symbol (compact) and is about 330 KB with 21 names.
   Past roughly 35 names it would hit lint's 512 KB cap and the daily run would fail closed; before that, move the
   per-point dates into one shared array.
+
+## 2026-10-16
+- **The brain's weekly bet.** The household read a row of neutral calls as "the brain always says wait". Neutral is
+  the honest call (every stock rule lost to random picks), but it teaches nothing. So each run now also returns
+  `bets`: the three names the brain expects to do best over the coming week and the three it expects to do worst.
+  The first run of each ISO week counts; later runs that week repeat it (`pack.bets.this_week`). The site scores it
+  from that run's close to the next week's bet on the published indexed series (`site/src/lib/bets.js`; the brain sees
+  the same scores in `pack.bets`): it wins the week if its best three beat its worst three. The record is shown against
+  a coin: under twelve weeks it says "too early"; after that, how often luck would do as well. Best-minus-worst was
+  chosen over best-against-the-market because the market's own drift would flatter a long-only bet. A bet is never a
+  real-money instruction; it joins the trust ladder only like any rule would, by beating luck for months.
+- **"Neutral" reads as the plan, not "wait".** The run headline for all-neutral runs is now "Do your weekly buy of
+  the whole market. No single stock stands out." and the neutral mood word is "Can't tell".
+- **Got a lump sum?** A five-step guide on the Brain page for money already in hand (emergency reserve first, money
+  needed within five years stays out, the rest in one purchase per `windfall_lump_sum`, spreading over half a year
+  only as a price of comfort), with the history test's numbers and the questions to settle before a big move
+  (account type, the fund's country of registration, currency and fees).
+- **Guess the candle, a simpler Home, and three brain checks a morning.** A quiz page (Learn, `quiz`): a real chart
+  from our stocks with one notable candle marked; guess its kind, then whether the next week ended higher or lower;
+  the score is kept on the device next to what luck would score. Home drops the time-horizon money card (it stays on
+  the Brain's verdicts page), the market card and the companies card (both repeated other sections), and the candle
+  cards lose their legend. The brain routine now checks at 05:23, 08:23 and 11:23 UTC, so a late data run waits at most
+  three hours; the Routines page shows every time in the reader's own time zone too.
+- **Two ways to read the site.** The household wants busy readers informed in a couple of minutes and curious readers
+  to stay around twenty. Home now opens with "The two-minute read" (the brain's answer, this week's money action, the
+  market; then "that is all you need today"), ends with "Got more time? Go down a rabbit hole" (ten real questions the
+  site answers, each with a reading time, about forty-five minutes in all, `lib/explore.js`), and every other page ends
+  with "Keep exploring": three next questions, never from the page you are on, changing day by day. Curiosity, not
+  tricks: no endless feed, streaks or alarms.
+- **The brain writes a letter to the family.** The household asked for the brain to advise them "like Warren Buffett".
+  Each run now adds a `letter` (200 to 1400 characters, no digits): what to do with real money this week, what the
+  pretend-money calls and the weekly game honestly show, one lesson, and what would change our minds. Buffett's
+  shareholder letters set the tone only (plain, patient, candid); the letter never claims to be him or quotes him, and
+  the site says so under it. It is checked like the rest (banned phrases, no digits) and follows the house rules: real
+  money only in the weekly whole-market buy or safe savings.
+- **We act weekly.** The household said "we are weekly traders". Two parts:
+  - **Real money**: the core standing order moves from monthly to weekly. Our own savings-cadence test
+    (`savings_weekly` against the monthly baseline) rated weekly "better": about +0.6 points a year, ahead in about
+    four of five one-year windows, provided the broker's fee per order stays under the break-even fee the test prints.
+  - **Pretend money**: a weekly trading game. Two weekly satellite rules join the registry (1.1.0):
+    `five_leaders_weekly` (Five Leaders reviewed weekly) and `weekly_swing` (last month's strongest five, above their
+    50-day average and not stretched, swapped weekly). The engine gained a weekly decision calendar (first trading day
+    of each ISO week) for the backtest, the random baskets and the forward ledger. Both count as tries: 17 to 19, so
+    every rule's adjusted p rises, and the history test is frozen anew. Real money in weekly stock trades only if a
+    weekly rule passes history and then its paper record, exactly like every other rule.
+  - The site shows a "This week" card on Home and the Brain's verdicts page: the weekly buy day, then each weekly
+    rule's names this week, its score against the market and its history-test result in words.
 
 ## 2026-10-15
 - **"When could we buy it?" on every company.** The household asked when it would next be time to buy Microsoft, and

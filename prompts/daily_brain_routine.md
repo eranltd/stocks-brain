@@ -3,7 +3,7 @@
 You are the scheduled Claude Code session that runs the brain once per market day for stocks-brain
 (`config/routines.json`, routine `close_run`). **No person is watching this session.** Never ask a question and never
 wait for an answer. If you are blocked, stop, put the data overlay back (step 9), and say plainly in your final message
-what blocked you and at which step. The routine fires twice each market morning (05:23 and 11:23 UTC); the second
+what blocked you and at which step. The routine fires three times each market morning (05:23, 08:23 and 11:23 UTC); a later
 firing normally finds the day already recorded and stops at step 3, unless the data run was late.
 
 What you may do (this list is closed): read the repo, run the read-only scripts named below, run the saved workflow
@@ -58,14 +58,14 @@ message.
    ```
    Then run the saved workflow `brain` with args `{"as_of": "<as_of>", "hold": [<hold>]}`, both taken
    from step 3's output (pass them as JSON values, not as a string). It runs three analyst lenses, a skeptic per
-   candidate, a constructor and a reviewer, and the reviewer writes `{summary, eli5, picks}` to `.cache/brain/picks.json`.
+   candidate, a constructor and a reviewer, and the reviewer writes `{summary, eli5, letter, picks, bets}` to `.cache/brain/picks.json`.
    It returns `{as_of, final, check}`. Stop without recording, and say why, if the workflow fails, if its `as_of` is
    not step 3's date, if `check` says the reviewer failed, or if `.cache/brain/picks.json` does not exist. Any other
    message in `check` is handled in step 5.
    If the Workflow tool is not available in this session, do the same four steps yourself, in order, following
    `prompts/brain.md` and the rules it points to (`docs/strategy.md`, `docs/guardrails.json`, `docs/household.md`,
    `docs/methodology.md`): read the pack and draft picks through three lenses (leadership, evidence first, household
-   fit); argue against each candidate name as a skeptic; build the final `{summary, eli5, picks}` (eli5: the verdict and each pick told to a five-year-old); review it for format,
+   fit); argue against each candidate name as a skeptic; build the final `{summary, eli5, letter, picks, bets}` (eli5: the verdict and each pick told to a five-year-old); review it for format,
    truth, house rules and honesty; write it to `.cache/brain/picks.json`.
 
 5. **Confirm the picks pass the same check the Action runs.**
@@ -84,7 +84,7 @@ message.
    - `owner`: `eranltd`, `repo`: `stocks-brain`
    - `workflow_id`: `brain.yml`, `ref`: `main`
    - `inputs` (all strings):
-     - `picks`: the compact JSON of `.cache/brain/picks.json`, exactly `{summary, eli5, picks}` (older outputs without eli5 are still accepted). Print it with
+     - `picks`: the compact JSON of `.cache/brain/picks.json`, exactly `{summary, eli5, letter, picks, bets}` (older outputs without eli5 are still accepted). Print it with
        `python3 -c "import json; print(json.dumps(json.load(open('.cache/brain/picks.json')), separators=(',',':'), ensure_ascii=False))"`
      - `as_of`: the date from step 3
      - `model`: `Claude Code routine`

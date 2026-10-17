@@ -120,6 +120,53 @@ class BrainPipelineTest(unittest.TestCase):
         self.assertTrue(record_run.check_picks(o, self.pack, self.guard, self.on_list))
         self.assertNotIn("eli5", record_run.make_run(self.good(), self.packfile, "m", 1, 0.0, None, None))
 
+    def test_letter_is_optional_and_checked_like_the_rest(self):
+        letter = ("Dear family, this week we do the same quiet thing we always do: the weekly buy of the fund that holds "
+                  "the whole market, and money we need soon stays safe. The pretend-money game is still young and has shown "
+                  "no edge over picking from a hat. The lesson: a tree grows while you sleep, not while you dig it up. We "
+                  "would change our minds only if a tested rule beat chance for many months.")
+        out = self.good()
+        out["letter"] = letter
+        self.assertEqual(record_run.check_picks(out, self.pack, self.guard, self.on_list), [])
+        run = record_run.make_run(out, self.packfile, "Claude Code session", 5, 0.0, None, None)
+        self.assertEqual(run["letter"], letter)
+        self.assertEqual(Validator().validate(run, "run.schema.json"), [])
+        for bad in ({"letter": letter + " It rose 12 times."}, {"letter": "Too short."}, {"letter": letter + " A sure thing for anyone."}):
+            o = self.good()
+            o.update(bad)
+            self.assertTrue(record_run.check_picks(o, self.pack, self.guard, self.on_list), bad)
+        self.assertNotIn("letter", record_run.make_run(self.good(), self.packfile, "m", 1, 0.0, None, None))
+
+    def test_weekly_bet_takes_sides_and_is_checked(self):
+        names = sorted(self.on_list)[:7]
+        bets = {"best": names[:3], "worst": names[3:6], "why": "Steady leaders against names that slipped below their trend."}
+        out = self.good()
+        out["bets"] = bets
+        self.assertEqual(record_run.check_picks(out, self.pack, self.guard, self.on_list), [])
+        run = record_run.make_run(out, self.packfile, "m", 1, 0.0, None, None)
+        self.assertEqual(run["bets"], bets)
+        self.assertEqual(Validator().validate(run, "run.schema.json"), [])
+        for bad in ({**bets, "best": names[:2]}, {**bets, "worst": [names[0], *names[4:6]]}, {**bets, "best": ["ZZZZ", *names[1:3]]},
+                    {**bets, "why": "Too short."}, {**bets, "why": "A sure thing, written plainly enough."}, {"best": names[:3]}):
+            o = self.good()
+            o["bets"] = bad
+            self.assertTrue(record_run.check_picks(o, self.pack, self.guard, self.on_list), bad)
+        self.assertNotIn("bets", record_run.make_run(self.good(), self.packfile, "m", 1, 0.0, None, None))
+
+    def test_bets_block_scores_each_week_to_the_next_bet(self):
+        series = lambda vals: {"series": [{"date": d, "v": v} for d, v in vals]}
+        d1, d2, d3 = "2026-10-14", "2026-10-19", "2026-10-21"
+        rows = {t: series([(d1, 100), (d2, 110), (d3, 110)]) for t in "ABC"} | {t: series([(d1, 100), (d2, 100), (d3, 100)]) for t in "DEFX"}
+        bet = lambda b, w: {"best": list(b), "worst": list(w), "why": "a plain reason"}
+        runs = [{"date": d1, "status": "ok", "bets": bet("ABC", "DEF")}, {"date": "2026-10-15", "status": "ok", "bets": bet("DEF", "ABC")},
+                {"date": d2, "status": "ok", "bets": bet("DEF", "ABC")}, {"date": d3, "status": "ok", "bets": bet("ABC", "DEF")}]
+        b = build_pack.bets_block(runs, rows, "X", d3)
+        self.assertEqual((b["weeks_scored"], b["weeks_won"]), (1, 1))
+        self.assertEqual(b["recent"][1]["spread"], 10.0)
+        self.assertEqual(b["recent"][1]["best_vs_benchmark"], 10.0)
+        self.assertTrue(b["recent"][0]["open"])
+        self.assertEqual(b["this_week"], {"best": list("DEF"), "worst": list("ABC")})  # the d3 run itself is not before as_of
+
     def test_zero_picks_is_valid(self):
         out = {"summary": "Nothing clears the bar today; holding back is a valid answer.", "picks": []}
         self.assertEqual(record_run.check_picks(out, self.pack, self.guard, self.on_list), [])

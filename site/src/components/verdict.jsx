@@ -1,8 +1,8 @@
+import { WeeklyGame } from "./weekly.jsx";
 import { useState } from "react";
 import { todayISO } from "../lib/outlook.js";
 import { scorecard, steadyRuns, verdictHistory } from "../lib/verdict.js";
-import { MoneyAction, useHorizon } from "./money.jsx";
-import { HORIZONS, honestAction, moneyFacts } from "../lib/money.js";
+import { LumpSum, MoneyAction } from "./money.jsx";
 import { ArrowRight, Reveal } from "./ui.jsx";
 
 const TONE = { accent: "var(--accent)", down: "var(--down)", flat: "var(--ink-2)" };
@@ -62,6 +62,25 @@ function StockCard({ r, go }) {
   );
 }
 
+/** The brain's letter to the family: what to do this week, in plain words. Paragraphs split on blank lines or sentences
+ *  grouped in twos when the brain wrote one block. */
+function Letter({ text, date }) {
+  const parts = text.includes("\n") ? text.split(/\n+/).filter(Boolean)
+    : (text.match(/[^.!?]+[.!?]+(\s|$)/g) ?? [text]).reduce((acc, s, i) => { if (i % 2 === 0) acc.push(s.trim()); else acc[acc.length - 1] += ` ${s.trim()}`; return acc; }, []);
+  return (
+    <Reveal as="section" id="letter" className="card overflow-hidden">
+      <div className="h-1.5" style={{ background: "var(--ai)" }} />
+      <div className="p-6 sm:p-8">
+        <p className="meta" style={{ color: "var(--ai)" }}>The brain's letter to the family · {longDate(date)}</p>
+        <div className="mt-4 grid gap-3 font-serif text-[18.5px] leading-[1.7] text-ink">
+          {parts.map((p, i) => <p key={i}>{p}</p>)}
+        </div>
+        <p className="mt-5 text-[14px] leading-relaxed text-ink-3">Written by the brain in the spirit of a patient long-term owner's letter. It is not Warren Buffett and does not speak for him. General guidance from evidence, not personal financial advice.</p>
+      </div>
+    </Reveal>
+  );
+}
+
 /**
  * The newest brain run, short, for the home page: what it decided, in five-year-old words, and whether to do anything.
  * Shown only on live picks (sample runs are not the brain).
@@ -74,9 +93,6 @@ export function LatestVerdict({ data, go }) {
 }
 
 function LatestCard({ data, go, v }) {
-  const [horizon] = useHorizon();
-  const act = horizon ? honestAction(horizon, moneyFacts(data)) : null;
-  const h = HORIZONS.find((x) => x.id === horizon);
   return (
     <Reveal as="article" id="brain-verdict" className="card overflow-hidden">
       <div className="h-1" style={{ background: "var(--ai)" }} />
@@ -84,11 +100,8 @@ function LatestCard({ data, go, v }) {
         <h2 className="meta mb-4" style={{ color: "var(--ai)" }}>The brain's verdict · {v.when || longDate(v.date)}</h2>
         <p className="text-[clamp(22px,6vw,27px)] leading-snug font-semibold tracking-[-0.015em] text-ink">{v.headline}</p>
         <p className="mt-3 text-[17px] leading-relaxed text-ink-2">{v.eli5}</p>
-        <p className="mt-4 text-[16.5px] leading-relaxed text-ink">
-          <span className="font-semibold">What to do with your money:</span>{" "}
-          {act ? <>{act.title} <span className="text-ink-3">(for money you need {h.short.toLowerCase()} from now)</span></> : "tap below and say when you might need it."}
-        </p>
-        <button type="button" onClick={() => go("verdicts")} className="btn btn-primary mt-5 justify-center">Open the brain's full answer <ArrowRight /></button>
+        {v.letter && <p className="mt-4 text-[16px] leading-relaxed text-ink-2"><span className="font-semibold text-ink">This week's letter:</span> {v.letter.split(/(?<=[.!?])\s/)[0]}</p>}
+        <button type="button" onClick={() => go("verdicts")} className="btn btn-primary mt-5 justify-center">{v.letter ? "Read the brain's letter" : "Open the brain's full answer"} <ArrowRight /></button>
       </div>
     </Reveal>
   );
@@ -122,7 +135,11 @@ export function VerdictPage({ data, go }) {
         </div>
       </Reveal>
 
+      {v.letter && <Letter text={v.letter} date={v.date} />}
+
       <MoneyAction data={data} />
+      <LumpSum data={data} />
+      <WeeklyGame data={data} go={go} />
 
       {v.rows.length > 0 && (
         <section>
@@ -140,7 +157,7 @@ export function VerdictPage({ data, go }) {
       <Reveal as="section" className="card p-6 sm:p-8">
         <h3 className="text-[15px] font-semibold uppercase tracking-[0.12em] text-ink-2">Has the brain been right?</h3>
         <p className="mt-2 text-[18px] leading-relaxed text-ink">{score.line}</p>
-        <p className="mt-3 text-[15px] leading-relaxed text-ink-3">The brain is a careful machine, not a fortune teller. On past prices, its rules did not beat picking at random, so it stays humble and mostly watches.</p>
+        <p className="mt-3 text-[15px] leading-relaxed text-ink-3">The brain is a careful machine, not a fortune teller. On past prices, its rules did not beat picking at random, so it never asks for real money on a single stock. Its weekly bet, above, is how we find out if its ranking has any skill.</p>
         <button type="button" onClick={() => go("track")} className="meta mt-3 inline-flex min-h-[44px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">Every scored guess <ArrowRight className="size-3.5" /></button>
       </Reveal>
 

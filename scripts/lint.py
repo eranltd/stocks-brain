@@ -721,7 +721,9 @@ class Lint:
                 self.err(path, f"digits in pick text of {item['id']}; numbers come from code")
         if guard["no_digits_in_pick_text"] and re.search(r"\d", run.get("eli5", "")):
             self.err(path, "digits in the run's eli5; numbers come from code")
-        if any(b in (run["summary"] + " " + run.get("eli5", "")).lower() for b in banned):
+        if guard["no_digits_in_pick_text"] and re.search(r"\d", run.get("letter", "")):
+            self.err(path, "digits in the run's letter; numbers come from code")
+        if any(b in (run["summary"] + " " + run.get("eli5", "") + " " + run.get("letter", "")).lower() for b in banned):
             self.err(path, "banned phrase in summary")
 
     def check_market(self) -> None:

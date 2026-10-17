@@ -8,7 +8,7 @@ import { joinNames, shortName, whenWords } from "./simple.js";
 const MOOD = {
   bullish: { word: "Thumbs up", tone: "accent", mark: "▲" },
   bearish: { word: "Thumbs down", tone: "down", mark: "▼" },
-  neutral: { word: "Just watching", tone: "flat", mark: "◆" },
+  neutral: { word: "Can't tell", tone: "flat", mark: "◆" },
 };
 const SURE = { low: "not very sure", medium: "fairly sure", high: "very sure" };
 const COUNT = ["no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
@@ -21,10 +21,10 @@ const callOf = (p) => `${p.pick.stance}/${p.pick.conviction}`;
 export function headline(run) {
   const picks = run?.picks ?? [];
   if (!run || run.status !== "ok") return "The brain did not finish this time, so it said nothing.";
-  if (!picks.length) return "Nothing looks good enough. Do nothing.";
+  if (!picks.length) return "Do your weekly buy of the whole market. No single stock stands out.";
   const up = picks.filter((p) => p.pick.stance === "bullish").length;
   const down = picks.filter((p) => p.pick.stance === "bearish").length;
-  if (!up && !down) return "Wait and watch. Nothing to buy or sell.";
+  if (!up && !down) return "Do your weekly buy of the whole market. No single stock stands out.";
   if (up && !down) return `It likes ${count(up)} ${up === 1 ? "stock" : "stocks"} a little, with pretend money only.`;
   if (down && !up) return `It is worried about ${count(down)} ${down === 1 ? "stock" : "stocks"}.`;
   return "It likes some stocks and is worried about others.";
@@ -36,11 +36,11 @@ export function runEli5(run, nameOf = (t) => t) {
   const picks = run?.picks ?? [];
   if (!run || run.status !== "ok") return "The brain started its homework but did not finish it, so there is no answer this time.";
   const names = joinNames(picks.map((p) => nameOf(p.pick.ticker)));
-  if (!picks.length) return "The brain looked at every stock on our list and none looked good enough. So we do nothing, and our savings stay in the big fund that holds the whole market.";
+  if (!picks.length) return "The brain looked at every stock on our list and none looked good enough. So we keep buying the big fund that holds the whole market.";
   const up = picks.some((p) => p.pick.stance === "bullish");
   const down = picks.some((p) => p.pick.stance === "bearish");
   if (!up && !down) {
-    return `The brain looked closely at ${names}. None of them is a clear buy or a clear sell right now, so it waits, like waiting for the light to turn green. Our savings stay in the big fund that holds the whole market.`;
+    return `The brain looked closely at ${names}. It cannot tell which of them will beat the others, like guessing which runner wins before the race. So we keep buying the big fund that holds the whole market, which owns them all.`;
   }
   return `The brain looked closely at ${names} and has a guess about where some may go. It is only a guess with pretend money, so nothing real changes yet.`;
 }
@@ -51,7 +51,7 @@ export function pickEli5(pick, name) {
   if (pick.eli5) return pick.eli5;
   if (pick.stance === "bullish") return `The brain thinks ${name} might do a little better than the whole market. It is only a guess, so it plays with pretend money first.`;
   if (pick.stance === "bearish") return `The brain thinks ${name} might do worse than the whole market, so it would rather stay away for now.`;
-  return `${name}: no strong reason to buy or sell right now, so the brain keeps watching, like a goalkeeper waiting for the ball.`;
+  return `${name}: the brain cannot tell if it will beat the whole market. We already own a little of it through the big fund.`;
 }
 
 /** What changed from `prev` to `run`, in short sentences. */
@@ -130,6 +130,7 @@ export function verdictOf(run, prev, { outlook, names = {}, today } = {}) {
     byBrain: Boolean(run.eli5),
     changes: changes(run, prev, nameOf),
     summary: run.summary ?? "",
+    letter: run.letter ?? null,
     rows: (run.picks ?? []).map(({ pick }) => {
       const name = nameOf(pick.ticker);
       const m = MOOD[pick.stance] ?? MOOD.neutral;

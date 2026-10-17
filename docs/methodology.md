@@ -35,7 +35,7 @@ change_note: When could we buy it? The Five Leaders engine run as if today were 
      conviction is informative. The idea follows the reflection loop in Tauric Research's TradingAgents, minus the
      model-written lessons: lessons still reach `docs/learnings.json` only by a person's hand.
 3. **brain** (routine `close_run`): a scheduled Claude Code session on the household's Claude subscription, Tuesday to
-   Saturday at 05:23 UTC and again at 11:23 UTC in case the data run was late (after the Monday to Friday closes are
+   Saturday at 05:23 UTC, and again at 08:23 and 11:23 UTC in case the data run was late (after the Monday to Friday closes are
    published), follows `prompts/daily_brain_routine.md`. It
    restores the published data, builds the pack, and stops if `scripts/brain_status.py` says that market day's run already
    exists (so holidays are skipped). Otherwise it runs the saved workflow `.claude/workflows/brain.js` (`prompts/brain.md`:

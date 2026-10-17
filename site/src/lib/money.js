@@ -46,7 +46,7 @@ export function honestAction(horizon, facts = {}) {
       title: "Split it: part safe, part whole market.",
       steps: [
         `Put part in ${cash}.${cashPays}`,
-        `Put the rest in ${fund}.`,
+        `Put the rest in ${fund}, a little every week.`,
         "The sooner you need the money, the bigger the safe part: about half and half at five years, mostly safe when it is a year or two away.",
       ],
       why: `The safe part is there when you need it; the market part can grow.${history}`,
@@ -54,10 +54,10 @@ export function honestAction(horizon, facts = {}) {
     };
   }
   return {
-    title: "Buy the whole market, a little every month, and leave it alone.",
+    title: "Buy the whole market, a little every week, and leave it alone.",
     steps: [
       `Put it in ${fund}.`,
-      "Add a little every month, the same amount, whatever the news says.",
+      "Add a little every week, the same amount, whatever the news says. In our test, weekly did a bit better than monthly if the broker's fee per order is tiny.",
       "Do not sell when it drops. Look at it rarely.",
     ],
     why: `Owning the whole market is like planting an orchard instead of betting on one tree.${history} That has beaten almost everyone who tries to pick stocks.`,
@@ -79,5 +79,39 @@ export function moneyFacts(data) {
     years: core?.years ? Math.round(core.years) : null,
     maxDrop: core?.max_dd_pct ?? null,
     worstYear: core?.worst_12m_pct ?? null,
+  };
+}
+
+/**
+ * "Got a lump sum?": money already in hand (savings, a bonus, an inheritance). The household's rule is
+ * windfall_lump_sum (config/rules.json): one purchase, after the emergency reserve and the money needed soon are set
+ * aside. The numbers come from the savings history test (data/market/rules.json): the lump sum against spreading the
+ * same money over half a year, one year after each start date. `rulesResult` may be missing: the steps still hold.
+ */
+export function lumpSum(rulesResult, fund = "the whole-market fund") {
+  const rows = (rulesResult?.savings?.horizons ?? []).find((h) => h.weeks === 52)?.rows ?? [];
+  const lump = rows.find((r) => r.id === "windfall_lump_sum");
+  const half = rows.find((r) => r.id === "windfall_spread_26w");
+  const better = num(half?.vs_baseline_better_pct);
+  const dipLump = num(lump?.worst_vs_paid_median_pct);
+  const dipHalf = num(half?.worst_vs_paid_median_pct);
+  const test = better !== null && half.windows
+    ? `In our test on ${half.windows} start dates, putting it all in at once was ahead after a year ${Math.round(100 - better)} times in 100, against spreading it over half a year. Spreading only made the dips feel smaller${dipLump !== null && dipHalf !== null ? ` (the usual worst moment was ${pct(dipHalf)} down instead of ${pct(dipLump)})` : ""}.`
+    : "Studies of past prices found that putting it all in at once usually beat spreading it out, because markets rise more often than they fall.";
+  return {
+    title: "Got a lump sum? Five steps.",
+    steps: [
+      "First set aside 3 to 6 months of spending in safe savings. That is your emergency money; it never goes into stocks.",
+      "Money you will need within 5 years (a car, a flat, a wedding) also stays out of stocks: see the answer above for your time frame.",
+      `The rest goes into ${fund} in one purchase. ${test}`,
+      "If a crash right after buying would make you sell, spreading it over 6 months is fine: it costs a little on average, but staying in is what matters most.",
+      "Then keep adding new savings every week, and do not sell when it drops.",
+    ],
+    before: [
+      "Account type: a tax-advantaged account (in Israel, a keren hishtalmut or an investment kupat gemel) can beat a regular brokerage account.",
+      "Where the fund is registered: for non-US investors, a US-registered fund can bring US estate tax and a higher tax on dividends; an Irish-registered fund on the same index often avoids both.",
+      "Currency and fees: what the broker charges per order and per year, and whether you mind the fund moving with the dollar.",
+    ],
+    adviser: "For big sums, an hour with a licensed, fee-only adviser (a fixed fee, no commission) on these three questions is worth more than any stock pick.",
   };
 }

@@ -21,14 +21,24 @@ const NOTE = {
 };
 // A plainer schedule label where the cron alone would mislead (a Tue–Sat UTC cron covers the Mon–Fri US market days).
 const WHEN = {
-  close_run: "Morning after each US trading day (Mon–Fri) · 05:23 UTC, retry 11:23",
+  close_run: "Morning after each US trading day (Mon–Fri)",
 };
 
+/** "05:23, 08:23 and 11:23 UTC (08:23, 11:23 and 14:23 your time)": UTC from the cron, and the reader's own clock. */
+export function timesLabel(h, m, tz = undefined) {
+  const hours = h.split(",").map(Number);
+  const list = (xs) => (xs.length > 1 ? `${xs.slice(0, -1).join(", ")} and ${xs.at(-1)}` : xs[0]);
+  const utc = list(hours.map((x) => `${pad2(x)}:${pad2(+m)}`));
+  const now = new Date();
+  const local = list(hours.map((x) => new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), x, +m)).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: tz })));
+  return local === utc ? `${utc} UTC` : `${utc} UTC (${local} your time)`;
+}
+
 function when(r) {
-  if (WHEN[r.id]) return WHEN[r.id];
-  if (!r.cron) return "when you ask";
+  if (!r.cron) return WHEN[r.id] ?? "when you ask";
   const [m, h, dom, , dow] = r.cron.split(" ");
-  const t = h.split(",").map((x) => `${pad2(+x)}:${pad2(+m)}`).join(" and ") + " UTC";
+  const t = timesLabel(h, m);
+  if (WHEN[r.id]) return `${WHEN[r.id]} · ${t}`;
   if (r.cadence === "daily") return `${days(dow)} · ${t}`;
   if (r.cadence === "weekly") return `${DOW[+dow] ?? dow} · ${t}`;
   return `day ${dom} of the month · ${t}`;

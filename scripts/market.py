@@ -552,12 +552,15 @@ def checklist_at(B: dict, pre: dict, i: int, P: dict, house: dict) -> dict:
     if stop < pk["stop_atr_min"] * a:
         stop, basis = pk["stop_atr_min"] * a, "min_atr"
     stop_pct = stop / x * 100
-    if res:
-        tp1, tp1_basis = pct(x, res[0]["level"]), "resistance"
+    # A resistance level sitting on the close (under a hundredth of a percent above it, which rounds to zero) is not a
+    # target: the price is already there. Targets start at the next level up.
+    tgt = [z for z in res if pct(x, z["level"]) >= 0.01]
+    if tgt:
+        tp1, tp1_basis = pct(x, tgt[0]["level"]), "resistance"
     else:
         tp1, tp1_basis = pk["risk_multiple"] * stop_pct, "risk_multiple"
-    if len(res) > 1:
-        tp2, tp2_basis = pct(x, res[1]["level"]), "resistance"
+    if len(tgt) > 1:
+        tp2, tp2_basis = pct(x, tgt[1]["level"]), "resistance"
     else:
         tp2, tp2_basis = max(pk["risk_multiple"] * stop_pct, tp1 + stop_pct), "risk_multiple"
     rr1, rr2 = tp1 / stop_pct, tp2 / stop_pct

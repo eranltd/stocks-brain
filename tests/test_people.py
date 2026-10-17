@@ -313,10 +313,10 @@ class RoutineWiringTest(unittest.TestCase):
         self.assertIn("ROUTINE_SCORE_PEOPLE: ${{ steps.score_people.outcome }}", daily)
         self.assertIn("people", routines_code.STEPS)
 
-    def test_brain_fires_twice_to_catch_a_late_data_run(self):
+    def test_brain_fires_three_times_to_catch_a_late_data_run(self):
         rt = load_json(CONFIG / "routines.json")
         cron = {x["id"]: x for x in rt["routines"]}["close_run"]["cron"]
-        self.assertEqual(cron, "23 5,11 * * 2-6")
+        self.assertEqual(cron, "23 5,8,11 * * 2-6")
         self.assertEqual(Validator().validate(rt, "routines.schema.json"), [])
 
     def test_people_source_is_registered_and_13f_is_not_connected(self):

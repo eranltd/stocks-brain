@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { HORIZONS, honestAction, moneyFacts } from "../lib/money.js";
+import { HORIZONS, honestAction, lumpSum, moneyFacts } from "../lib/money.js";
 import { Reveal } from "./ui.jsx";
 
 const KEY = "sb:horizon";
@@ -37,7 +37,7 @@ export function MoneyAction({ data, compact = false }) {
   const [horizon, setHorizon] = useHorizon();
   const a = horizon ? honestAction(horizon, moneyFacts(data)) : null;
   return (
-    <Reveal as="section" id="money-action" className="card overflow-hidden">
+    <Reveal as="section" id="money-action" className="card scroll-mt-28 overflow-hidden">
       <div className="h-1.5" style={{ background: "var(--accent)" }} />
       <div className="p-6 sm:p-8">
         <h2 className="text-[15px] font-semibold uppercase tracking-[0.12em] text-accent">What should I do with my money?</h2>
@@ -66,5 +66,29 @@ export function MoneyAction({ data, compact = false }) {
         )}
       </div>
     </Reveal>
+  );
+}
+
+/** "Got a lump sum?": five steps for money already in hand, then the questions to settle before moving a big sum. */
+export function LumpSum({ data }) {
+  const g = lumpSum(data.rulesResult);
+  return (
+    <details id="lump-sum" className="card scroll-mt-28 p-6 sm:p-8">
+      <summary className="cursor-pointer text-[19px] font-semibold text-ink">{g.title} <span className="font-normal text-ink-3">Savings, a bonus, an inheritance</span></summary>
+      <ol className="mt-5 grid gap-3">
+        {g.steps.map((s, i) => (
+          <li key={s} className="flex gap-3 text-[17px] leading-relaxed text-ink">
+            <span className="grid size-7 shrink-0 place-items-center rounded-full bg-accent/15 text-[14px] font-semibold text-accent">{i + 1}</span>
+            <span className="min-w-0">{s}</span>
+          </li>
+        ))}
+      </ol>
+      <p className="mt-6 text-[16px] font-semibold text-ink">Before moving a big sum, settle these:</p>
+      <ul className="mt-2 grid gap-2">
+        {g.before.map((b) => <li key={b} className="text-[16px] leading-relaxed text-ink-2">• {b}</li>)}
+      </ul>
+      <p className="mt-4 text-[16px] leading-relaxed text-ink">{g.adviser}</p>
+      <p className="mt-4 text-[14px] leading-relaxed text-ink-3">General guidance from evidence, not personal financial advice.</p>
+    </details>
   );
 }

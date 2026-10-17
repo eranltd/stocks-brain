@@ -649,7 +649,7 @@ def _engine_hash(cfg: dict, cost: float, lag: int, st: dict | None = None) -> st
 
 def update_ledger(prev: dict | None, M: dict, st: dict, rc: dict, sample: bool) -> dict:
     """Forward ledger of every testable satellite rule. On the first run of each calendar month (each quarter for
-    quarterly rules) a rule's holdings are chosen with only that day's data and appended; recorded holdings are never
+    quarterly rules, each week for weekly rules) a rule's holdings are chosen with only that day's data and appended; recorded holdings are never
     edited. Each rule's track is replayed from its record by the same engine, on the recorded days (stops are
     mechanical). Append-only across registry changes: a rule whose settings change starts a new record and the old one
     is frozen under `retired`, as is a rule removed from the registry. If a recorded name or date is missing from the
@@ -675,9 +675,8 @@ def update_ledger(prev: dict | None, M: dict, st: dict, rc: dict, sample: bool) 
         if old and old.get("engine_hash") != h:  # the rule changed: freeze its record, start a new one
             retired[f"{r['id']}@{old.get('engine_hash', 'legacy')[:8]}"] = {**old, "retired_on": today}
             old = None
-        quarterly = cfg.get("rebalance") == "quarterly"
         rebs = [dict(x) for x in (old or {}).get("rebalances", [])]
-        due = not rebs or (today > rebs[-1]["date"] and today[:7] != rebs[-1]["date"][:7] and (not quarterly or int(today[5:7]) in (1, 4, 7, 10)))
+        due = not rebs or (today > rebs[-1]["date"] and rl.new_period(rebs[-1]["date"], today, cfg.get("rebalance", "monthly")))
         if due and last - rl.WARM >= 0:
             picked = rl.pick_names(cfg, M, st, last, rebs[-1]["holdings"] if rebs else [], random.Random(0))
             rebs.append({"date": today, "holdings": picked})

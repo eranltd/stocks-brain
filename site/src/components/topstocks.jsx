@@ -179,7 +179,6 @@ function RoundButton({ label, dir, onClick, disabled }) {
 }
 
 function StockCard({ it, i, n, chart, openTo, seeCandles, fallback, onZoom, headline }) {
-  const canCandles = it.hasChart && it.chip;
   return (
     <article role="group" aria-roledescription="slide" aria-label={`${it.name}, ${i + 1} of ${n}`}
       className="card top-card flex shrink-0 snap-start flex-col p-6 sm:p-7">
@@ -197,7 +196,7 @@ function StockCard({ it, i, n, chart, openTo, seeCandles, fallback, onZoom, head
           Zoom in: candles to notice
         </button>
       )}
-      <p className="mt-4 text-[17px] leading-relaxed text-ink">{it.plain ?? fallback}</p>
+      <p className="mt-4 line-clamp-3 text-[17px] leading-relaxed text-ink">{it.plain ?? fallback}</p>
       {headline && (
         <a href={headline.url} target="_blank" rel="noreferrer" className="mt-4 block rounded-2xl border border-line-2 px-4 py-3 transition hover:border-ink-3">
           <span className="meta block normal-case tracking-[0.04em]">Official news · {headline.day}</span>
@@ -209,11 +208,6 @@ function StockCard({ it, i, n, chart, openTo, seeCandles, fallback, onZoom, head
         <button type="button" onClick={() => openTo(it.to)} className="btn btn-primary min-h-[56px] w-full justify-center py-3 text-[18px]">
           See more <ArrowRight />
         </button>
-        {canCandles && (
-          <button type="button" onClick={() => seeCandles(it.candlesTo)} className="mt-2 inline-flex min-h-[44px] w-full items-center justify-center gap-2 text-[15.5px] text-ink-2 underline decoration-line-2 underline-offset-4 hover:text-ink">
-            See the candles
-          </button>
-        )}
       </div>
     </article>
   );
@@ -291,15 +285,6 @@ function MiniCandles({ name, ticker, chart }) {
       {win && <LastDay win={win} />}
       <div ref={ref} style={{ height: CHART_H }}>{body}</div>
       <figcaption className="mt-2.5">
-        {chart?.state !== "missing" && chart?.state !== "error" && <span className="block text-[15px] text-ink-2">Last month: one candle a day.</span>}
-        {win && (
-          <span className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-[15px] text-ink-2" aria-hidden="true">
-            <KeyItem mark="up">Green: up day</KeyItem>
-            <KeyItem mark="down">Red: down day</KeyItem>
-            <KeyItem mark="avg">Twenty-day average</KeyItem>
-            <KeyItem mark="last">Newest day</KeyItem>
-          </span>
-        )}
       </figcaption>
     </figure>
   );
@@ -315,19 +300,5 @@ function LastDay({ win }) {
       <span className="font-bold"><span aria-hidden="true" className="mr-1.5 text-[12px]">{green ? "▲" : "▼"}</span>{green ? "Green day." : "Red day."}</span>{" "}
       The last day closed {green ? "higher" : "lower"} than it opened.
     </p>
-  );
-}
-
-function KeyItem({ mark, children }) {
-  return (
-    <span className="inline-flex items-center gap-1.5">
-      <svg width="14" height="14" viewBox="0 0 14 14" className="shrink-0">
-        {mark === "up" && <><line x1="7" x2="7" y1="1" y2="13" stroke={UP} strokeWidth="1.5" /><rect x="3.75" y="3.75" width="6.5" height="6.5" rx="1" fill="var(--surface)" stroke={UP} strokeWidth="1.5" /></>}
-        {mark === "down" && <><line x1="7" x2="7" y1="1" y2="13" stroke={DOWN} strokeWidth="1.5" /><rect x="3" y="3" width="8" height="8" rx="1" fill={DOWN} /></>}
-        {mark === "last" && <circle cx="7" cy="7" r="4.5" fill="var(--ink-2)" />}
-        {mark === "avg" && <path d="M1 10 C5 9, 8 5, 13 4" fill="none" stroke={AVG} strokeWidth="2" strokeLinecap="round" />}
-      </svg>
-      {children}
-    </span>
   );
 }

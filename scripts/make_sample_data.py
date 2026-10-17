@@ -276,11 +276,11 @@ def write_sample_why(st: dict, wl: dict) -> int:
          "This is sample text so the page can be seen before the first real note. A real note says in our own words what "
          "happened and why it mattered for this name, with dated links to official sources or reputable outlets.",
          [{"url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent", "publisher": "U.S. Securities and Exchange Commission", "published": day},
-          {"url": "https://www.reuters.com/markets/", "publisher": "Reuters", "published": day}]),
+          {"url": "https://www.nyse.com/index", "publisher": "New York Stock Exchange", "published": day}]),
         ("unclear", "Sample note: no clear cause found for this made-up move",
-         "This is sample text. When no source on our allow-list explains a move, the note says plainly that no clear "
-         "cause was found, rather than guessing.",
-         [{"url": "https://www.reuters.com/markets/", "publisher": "Reuters", "published": day}]),
+         "This is sample text. When no page on our list that opens explains a move, the note says so plainly rather "
+         "than guessing: We looked but could not open a source on our list that explains this move.",
+         []),
     ]
     notes = [{"market_date": day, "key": r["symbol"], "kind": "stock", "market": markets_config()["default"], "headline": h, "why": w,
               "confidence": c, "sources": src, "move_pct": round(r["change_1d_pct"], 2), "symbols": [r["symbol"]],

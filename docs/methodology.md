@@ -1,7 +1,7 @@
 ---
-version: 0.15.0
-updated_at: 2026-10-13
-change_note: Company numbers from SEC filings (twelve months, point in time) in the pack and on Stock pages; a weekly second-source price cross-check.
+version: 0.16.0
+updated_at: 2026-10-15
+change_note: When could we buy it? The Five Leaders engine run as if today were its review day, with the reason each name is out and the next review date by the US market calendar.
 ---
 # Methodology
 
@@ -296,6 +296,20 @@ cash earns the T-bill fund's return, and zero before that fund existed (pessimis
   different future leaves every decision unchanged (a mutation check proves the test can fail); the fast period simulator used by the
   null equals the daily engine to nine decimals; a small repo test (12 random pickers against 80-draw nulls) guards only against gross miscalibration of the null; it does not test the
   17-try bar. A price gap that would silently shrink the universe stops the run instead of shortening a name's history.
+- **When could we buy it?** `data/market/buy_window.json` (routine buy_window, daily after the ledger; main list only).
+  The Five Leaders engine (`rules.pick_names`, same config, settings, cost, lag and seed as the ledger) is called as if
+  today's close were the review day, with the rule's latest paper names as the names it holds (on a review day, the names
+  before that day's decision, so it shows exactly what the ledger recorded). For each name it publishes, from the engine's
+  own filter and rank functions: eligible (a year of history), rank among the eligible names by the past-year rise
+  (12 months, skipping the latest), the sector's leader by that rank, above its 200-day average, that average rising over
+  21 days, percent from the 50-day average and stretched (8% or more above it), and `blockers`, exactly why it is not
+  among the names the rule would hold: not_eligible, rank_too_low (a held name out of the top 10), sector_taken (one per
+  sector), below_200, falling_200, stretched, no_slot (five slots, filled by stronger names). The names with no blocker
+  must be exactly the engine's pick, or the step writes nothing. `next_review` is the first trading day of next month and
+  `next_review_quarterly` that of the next January, April, July or October, by the regular US exchange holidays
+  (`scripts/us_market_calendar.py`; closures announced at short notice are not known in advance). Ranks, yes/no checks
+  and percents only. It is the pretend-money rule's view, not advice and not a forecast: no stock rule has earned real
+  money (household rules), and the card never says otherwise.
 
 ## People we learn from (code only)
 `config/people.json` lists the investors, teachers and writers we follow: what we learn from each, where they publish, a

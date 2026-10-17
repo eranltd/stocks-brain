@@ -3,7 +3,7 @@
 long-run portfolio statistics, the forward-only paper portfolio, the forward ledger of every rule and the scores of
 the public calls of the people we learn from.
 
-Usage: python3 scripts/routines_code.py derive|score|regime|calibration|longrun|paper|rules|ledger|people|checklist|markets|all
+Usage: python3 scripts/routines_code.py derive|score|regime|calibration|longrun|paper|rules|ledger|buywindow|people|checklist|markets|all
 `markets` runs in its own Action run (after the markets fetch) and writes data/markets/<id>/ only.
 Each step reads public data, computes with plain arithmetic, validates against its schema,
 and writes under data/kb/. Rules are documented in docs/methodology.md.
@@ -737,6 +737,63 @@ def run_ledger() -> None:
     print(f"ledger: {len(n)} rules, decisions {n}, as of {doc['as_of']}")
 
 
+# ------------------------------------------------- when could we buy it?
+
+BUY_WINDOW_RULE = "five_leaders"  # the household's satellite rule (config/rules.json set_five_leaders); its quarterly
+# variant shares the selection, so only the review date differs (next_review_quarterly)
+
+
+def compute_buy_window(prices_dir: Path, st: dict, wl: dict, rc: dict, ledger: dict | None, sample: bool) -> dict | None:
+    """data/market/buy_window.json: what the rule's own engine would hold if today's close were its review day, given
+    its latest paper holdings, with the reasons each other name is out. Same market, config, cost, lag and engine hash
+    as the ledger; the ledger's record counts only while its engine hash is the rule's current one (otherwise the
+    ledger would start a new record holding nothing, and so does this)."""
+    import buy_window as bw
+    rule = next((r for r in rc["rules"] if r["id"] == BUY_WINDOW_RULE), None)
+    if not rule or not rule.get("engine"):
+        return None
+    M = _rule_market(prices_dir, st, wl)
+    import rules as rl
+    if not M or M["n"] - 1 - rl.WARM < 0:
+        return None
+    if (gaps := rl_gap_report(M)):
+        raise SystemExit("buy_window: a price gap would silently shrink the universe (nothing written): " + "; ".join(gaps))
+    cfg = {k: v for k, v in rule["engine"].items() if k != "kind"}
+    h = _engine_hash(cfg, st["portfolio"]["cost_bps"], rc["acceptance"]["fill_lag_days"], st)
+    row = (ledger or {}).get("rules", {}).get(BUY_WINDOW_RULE)
+    if row and row.get("engine_hash") != h:
+        row = None
+    members = [s["symbol"] for s in wl["symbols"]]
+    sectors = {s["symbol"]: s["sector"] for s in wl["symbols"]}
+    try:
+        return bw.build(cfg, M, st, row, members, sectors, BUY_WINDOW_RULE, rule["name"].split(":")[0].strip(), sample)
+    except bw.Unexplained as exc:
+        raise SystemExit(f"buy_window: {exc} (nothing written)") from exc
+
+
+def run_buy_window() -> None:
+    if not (CONFIG / "rules.json").exists():
+        print("buy_window: no config/rules.json yet, nothing to explain")
+        return
+    st, wl = settings(), watchlist()
+    ledger_path = DATA / "portfolio" / "paper_rules.json"
+    doc = compute_buy_window(PRICES, st, wl, load_json(CONFIG / "rules.json"),
+                             load_json(ledger_path) if ledger_path.exists() else None, sample=False)
+    if not doc:
+        raise SystemExit("buy_window: missing prices, history or the rule (nothing written)")
+    import buy_window as bw
+    problems = bw.problems(doc, {s["symbol"] for s in wl["symbols"]})
+    for p in problems:  # a held name taken off the list since the last review stays in held_now until the next one
+        if p.endswith("is not on the main list"):
+            print(f"buy_window: warning: {p}")
+    bad = [p for p in problems if not p.endswith("is not on the main list")]
+    if bad:
+        raise SystemExit(f"buy_window: {bad[:5]} (nothing written)")
+    _write(MARKET / "buy_window.json", doc, "buy_window.schema.json", compact=True)
+    print(f"buy_window: as of {doc['as_of']}, next review {doc['next_review']} (quarterly {doc['next_review_quarterly']}), "
+          f"would hold {len(doc['would_hold_if_today'])} of {doc['slots']}, holds {len(doc['held_now'])}")
+
+
 # ------------------------------------------------------- people we learn from
 
 def people_series(prices_dir: Path, wl: dict, tickers: set[str]) -> tuple[dict, str] | None:
@@ -1075,7 +1132,8 @@ def run_markets() -> None:
 
 
 STEPS = {"derive": run_derive, "score": run_score, "regime": run_regime, "calibration": run_calibration,
-         "longrun": run_longrun, "paper": run_paper, "rules": run_rules, "ledger": run_ledger, "people": run_people,
+         "longrun": run_longrun, "paper": run_paper, "rules": run_rules, "ledger": run_ledger, "buywindow": run_buy_window,
+         "people": run_people,
          "checklist": run_checklist, "markets": run_markets}
 
 if __name__ == "__main__":

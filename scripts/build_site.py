@@ -92,6 +92,20 @@ def main() -> int:
             if doc:
                 dump_json(OUT / "market" / "rules.json", doc, compact=True)
                 rules_result = "market/rules.json"
+    # When could we buy it? (the Five Leaders rule if today were its review day): same source rule as prices. Samples
+    # are computed from the synthetic bars with a stand-in ledger (make_sample_data.sample_buy_window), flagged sample.
+    buy_window = None
+    if rules_cfg.exists():
+        if price_source == "live" and (MARKET / "buy_window.json").exists():
+            _copy(MARKET / "buy_window.json", OUT / "market" / "buy_window.json")
+            buy_window = "market/buy_window.json"
+        elif price_source == "sample":
+            import make_sample_data
+            from _common import watchlist
+            doc = make_sample_data.sample_buy_window(st, watchlist(), load_json(rules_cfg))
+            if doc:
+                dump_json(OUT / "market" / "buy_window.json", doc, compact=True)
+                buy_window = "market/buy_window.json"
     ledger = DATA / "portfolio" / "paper_rules.json"
     if price_source == "live" and ledger.exists():
         _copy(ledger, OUT / "portfolio" / "paper_rules.json")
@@ -196,6 +210,7 @@ def main() -> int:
         "market": "market/derived.json",
         "longrun": longrun,
         "rules_result": rules_result,
+        "buy_window": buy_window,
         "paper_rules": "portfolio/paper_rules.json" if price_source == "live" and ledger.exists() else None,
         "paper": "portfolio/paper.json" if price_source == "live" and paper.exists() else None,
         "people_scores": people_scores,

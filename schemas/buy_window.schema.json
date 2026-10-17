@@ -1,0 +1,57 @@
+{
+  "$id": "buy_window.schema.json",
+  "title": "When could we buy it? (data/market/buy_window.json)",
+  "description": "What the Five Leaders rule's own engine would hold if today's close were its review day, given its latest paper holdings, and why each other name on the main list is out. Ranks, booleans and percentages only: no price, no volume. A pretend-money rule: this file never says a name is a buy for real money.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["as_of", "sample", "rule", "rule_label", "next_review", "next_review_quarterly", "slots", "keep_rank",
+               "stretch_limit_pct", "held_now", "would_hold_if_today", "names"],
+  "properties": {
+    "as_of": {"$ref": "common.schema.json#/$defs/date"},
+    "sample": {"type": "boolean"},
+    "rule": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$", "maxLength": 60},
+    "rule_label": {"type": "string", "minLength": 1, "maxLength": 80},
+    "next_review": {"$ref": "common.schema.json#/$defs/date", "description": "First trading day of the next month (US exchange holidays by rule)."},
+    "next_review_quarterly": {"$ref": "common.schema.json#/$defs/date", "description": "First trading day of the next January, April, July or October."},
+    "slots": {"type": "integer", "minimum": 1, "maximum": 20},
+    "keep_rank": {"type": "integer", "minimum": 0, "maximum": 100, "description": "A held name keeps its place while it ranks in this top n (0: no retention)."},
+    "stretch_limit_pct": {"type": "number", "minimum": 0, "maximum": 100},
+    "held_now": {"type": "array", "maxItems": 20, "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/ticker"},
+                 "description": "The names in the rule's latest paper rebalance (data/portfolio/paper_rules.json)."},
+    "would_hold_if_today": {"type": "array", "maxItems": 20, "uniqueItems": true, "items": {"$ref": "common.schema.json#/$defs/ticker"},
+                            "description": "The names the rule's engine (rules.pick_names) would hold if today's close were the review day."},
+    "names": {
+      "type": "object",
+      "description": "One row per main-list name, keyed by ticker.",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["eligible", "rank", "of", "sector", "sector_leader", "held_now", "would_hold_if_today", "above_200",
+                     "rising_200", "dist_sma50_pct", "stretched", "blockers"],
+        "properties": {
+          "eligible": {"type": "boolean", "description": "Has the year of unbroken history the rule needs."},
+          "rank": {"anyOf": [{"type": "integer", "minimum": 1, "maximum": 500}, {"type": "null"}],
+                   "description": "Place among the eligible names by the rule's past-year rise (12 months, skipping the latest month); 1 is the strongest."},
+          "of": {"type": "integer", "minimum": 0, "maximum": 500},
+          "sector": {"type": "string", "minLength": 1, "maxLength": 60},
+          "sector_leader": {"anyOf": [{"$ref": "common.schema.json#/$defs/ticker"}, {"type": "null"}],
+                            "description": "The eligible name in the same sector ranked highest by past-year rise (it may itself be blocked); null when the sector has no eligible name."},
+          "held_now": {"type": "boolean"},
+          "would_hold_if_today": {"type": "boolean"},
+          "above_200": {"type": ["boolean", "null"]},
+          "rising_200": {"type": ["boolean", "null"]},
+          "dist_sma50_pct": {"anyOf": [{"type": "number", "minimum": -95, "maximum": 500}, {"type": "null"}],
+                             "description": "Percent above (+) or below (-) its 50-day average."},
+          "stretched": {"type": ["boolean", "null"]},
+          "blockers": {
+            "type": "array",
+            "maxItems": 7,
+            "uniqueItems": true,
+            "description": "Exactly why the name is not in would_hold_if_today (empty exactly when it is).",
+            "items": {"enum": ["not_eligible", "rank_too_low", "sector_taken", "below_200", "falling_200", "stretched", "no_slot"]}
+          }
+        }
+      }
+    }
+  }
+}

@@ -746,6 +746,11 @@ class Lint:
             doc = self.schema(p, "candles.schema.json")
             if doc:
                 self.check_candles_data(p, doc, cl)
+        bw_path = DATA / "market" / "buy_window.json"
+        if bw_path.exists():
+            bw = self.schema(bw_path, "buy_window.schema.json")
+            if bw:
+                self.check_buy_window_data(bw_path, bw)
         self.check_markets_data()
         for p in _walk(ROOT):
             rel = p.relative_to(ROOT).as_posix()
@@ -856,6 +861,30 @@ class Lint:
             bad = mk.overlay_mismatch(doc["overlays"], row)
             if bad:
                 self.err(path, f"overlays differ from the checklist row: {bad}")
+
+    def check_buy_window_data(self, path: Path, doc: dict, on_list: set | None = None, as_of: str | None = None) -> None:
+        """'When could we buy it?' (data/market/buy_window.json): derived only (the closed schema allows ranks, booleans
+        and percents within a sane range, never a price or a volume), live, the main list's names only, and internally
+        consistent: the per-name flags match the lists, a name has blockers exactly when the rule would not hold it, and the
+        review dates are the market calendar's first trading days. A name that is not on the main list is a warning (a
+        stale file after a watchlist change; the next run rewrites it), as for the checklist."""
+        import buy_window as bw
+        if on_list is None:
+            try:
+                on_list = {s["symbol"] for s in load_json(CONFIG / "watchlist.json")["symbols"]}
+            except Exception:  # noqa: BLE001  (reported by check_config)
+                return
+        if doc["sample"]:
+            self.err(path, "data/ holds live data only; the sample is built on the fly by build_site.py")
+        for p in bw.problems(doc, on_list):
+            (self.warn if p.endswith("is not on the main list") else self.err)(path, p)
+        if as_of is None and (DATA / "market" / "derived.json").exists():
+            try:
+                as_of = load_json(DATA / "market" / "derived.json")["as_of"]
+            except Exception:  # noqa: BLE001  (reported by the schema check)
+                as_of = None
+        if as_of and doc["as_of"] != as_of:
+            self.warn(path, f"as_of {doc['as_of']} differs from derived.json's {as_of} (the step failed today? the card shows its own date)")
 
     def check_ops_and_batches(self) -> None:
         log = DATA / "ops" / "routine_runs.json"

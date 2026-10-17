@@ -1,7 +1,7 @@
 ---
-version: 0.20.0
-updated_at: 2026-10-14
-change_note: Official company news from SEC filings and SEC company numbers for every company on every list; candles up close on every stock page.
+version: 0.21.0
+updated_at: 2026-10-15
+change_note: The "When could we buy it?" card on every company's Stock page, read from our own Five Leaders rule and calendar, never from the brain.
 ---
 # Decision log
 
@@ -17,6 +17,26 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Market file size**: `derived.json` is written one line per symbol (compact) and is about 330 KB with 21 names.
   Past roughly 35 names it would hit lint's 512 KB cap and the daily run would fail closed; before that, move the
   per-point dates into one shared array.
+
+## 2026-10-15
+- **"When could we buy it?" on every company.** The household asked when it would next be time to buy Microsoft, and
+  for the same answer on every company. The answer comes from our own written rules, in this order: with real money, not
+  as a single stock (household rules 0.4.0: no stock plan with real money until a rule passes history and the trust
+  ladder reaches Small money; today none does), and the monthly whole-market fund already holds the big US companies;
+  then the next date our stock rule looks (the first trading day of next month for Five Leaders, by the US exchange
+  holidays; quarterly for its variant); then, if that day were today, would the rule pick it and why or why not, as
+  yes/no checks (strongest past-year rise with one per sector, above a rising 200-day average, not 8% or more above its
+  50-day, and the checklist's reward-to-risk to the first target at least 2); then what to wait for, in plain words.
+  The routine `buy_window` calls the rule's own engine with today's close as the review day and the rule's latest paper
+  names, so the card can never disagree with what the ledger would record; the names with no reason against them must be
+  exactly the engine's pick, or nothing is written. A small rule-based US holiday calendar was added for the date (the
+  repo had none).
+- **Why the rules and not the brain.** The brain's daily calls are an unscored experiment and change with each day's
+  pack; the rule is pre-registered, tested against random picks and written down once a month. "When" is a question
+  about our own process, so only the process answers it.
+- **What it never says.** No "buy signal", "recommend" or "you should buy"; never that a name is a buy for real money
+  while no stock rule has earned it; no forecast or price target. It says that these are our own rules, not a forecast,
+  and that prices can change a lot before the next review. Ranks, yes/no checks and percents only; no prices.
 
 ## 2026-10-14
 - **Official company news from the SEC, for every company.** The household asked for every company to be backed by

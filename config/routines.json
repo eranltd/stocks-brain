@@ -1,7 +1,7 @@
 {
-  "version": "0.12.0",
-  "updated_at": "2026-10-14",
-  "change_note": "Official company news from SEC filings (sec_news), and company numbers (sec_fundamentals) for every stock list, not only the main one.",
+  "version": "0.13.0",
+  "updated_at": "2026-10-15",
+  "change_note": "When could we buy it? (buy_window): what the Five Leaders rule would hold if today were its review day, the reasons each other name is out, and the next review date.",
   "timezone": "UTC",
   "routines": [
     {
@@ -245,6 +245,27 @@
       ],
       "human_gate": false,
       "why": "History can be re-fitted; a forward record cannot. On the first run of each month every testable rule's holdings are written down with only that day's data and never edited. Months later this is the evidence that decides which rules deserve money."
+    },
+    {
+      "id": "buy_window",
+      "name": "When could we buy it?",
+      "cadence": "daily",
+      "cron": "40 23 * * 1-5",
+      "runner": "github_actions",
+      "status": "active",
+      "milestone": "M4",
+      "uses_llm": false,
+      "max_cost_usd": 0,
+      "inputs": [
+        ".cache/prices (daily closes, never published)",
+        "config/rules.json",
+        "data/portfolio/paper_rules.json"
+      ],
+      "outputs": [
+        "data/market/buy_window.json"
+      ],
+      "human_gate": false,
+      "why": "Answers 'when could we buy it?' from our own rule, not the brain: the Five Leaders engine runs as if today were its review day, from its latest paper names; each name gets the checks it passes or fails and the next review date. Ranks, yes/no and percents only. Pretend money: never a buy for real money."
     },
     {
       "id": "score_people",

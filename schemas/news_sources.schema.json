@@ -1,15 +1,17 @@
 {
   "$id": "news_sources.schema.json",
   "title": "Why-it-moved allow-list (config/news_sources.json)",
-  "description": "The only web hosts a why-it-moved note may link to (scripts/record_why.py and lint check every source URL). A host matches itself and its subdomains. Owner-editable.",
+  "description": "The only web hosts a why-it-moved note may link to (scripts/record_why.py and lint check every source URL). A host matches itself and its subdomains. Each source says whether our research tools can search it and open its pages (checked on reach_checked); hosts the search tool refuses are listed under blocked, never searched and never cited. Owner-editable.",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "version",
     "updated_at",
     "change_note",
+    "reach_checked",
     "rules",
-    "sources"
+    "sources",
+    "blocked"
   ],
   "properties": {
     "version": {
@@ -20,6 +22,10 @@
     },
     "change_note": {
       "$ref": "common.schema.json#/$defs/change_note"
+    },
+    "reach_checked": {
+      "$ref": "common.schema.json#/$defs/date",
+      "description": "When search and opens were last checked with the research tools (WebSearch with allowed_domains, WebFetch on a recent page)."
     },
     "rules": {
       "type": "array",
@@ -42,7 +48,9 @@
         "required": [
           "host",
           "publisher",
-          "kind"
+          "kind",
+          "search",
+          "opens"
         ],
         "properties": {
           "host": {
@@ -59,13 +67,60 @@
           "kind": {
             "enum": [
               "regulator",
+              "agency",
               "exchange",
               "company",
               "newswire",
               "outlet",
               "trade"
             ],
-            "description": "regulator, exchange, company and newswire are official sources; outlet and trade are reputable news outlets and trade publications."
+            "description": "regulator, agency (a public or intergovernmental body that publishes official data, such as EIA, BLS or OPEC), exchange, company and newswire are official sources; outlet and trade are reputable news outlets and trade publications."
+          },
+          "search": {
+            "type": "boolean",
+            "description": "true: WebSearch accepts this host in allowed_domains. The researchers search only these hosts; one host that refuses makes the whole search call fail."
+          },
+          "opens": {
+            "type": "boolean",
+            "description": "false: its pages refused to open for WebFetch when checked (an error, a bot check or a paywall). It may still be cited if a page opens; otherwise look for the same story on a listed host that opens. Never a workaround."
+          },
+          "note": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 200,
+            "description": "What to watch for on this host (for example which bylines to cite)."
+          }
+        }
+      }
+    },
+    "blocked": {
+      "type": "array",
+      "maxItems": 40,
+      "description": "Hosts our research tools cannot use at all (search refuses them; the pages tried did not open either), kept here so the owner sees why they are not in sources. Never searched, never opened, never cited.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "host",
+          "publisher",
+          "reason"
+        ],
+        "properties": {
+          "host": {
+            "type": "string",
+            "pattern": "^(?!www\\.)[a-z0-9-]+(\\.[a-z0-9-]+)+$",
+            "maxLength": 80,
+            "description": "Registrable host without www.; subdomains match (investor.example.com matches example.com)."
+          },
+          "publisher": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 60
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 240
           }
         }
       }

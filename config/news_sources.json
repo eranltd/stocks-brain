@@ -1,361 +1,636 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "updated_at": "2026-10-17",
-  "change_note": "First allow-list for why-it-moved notes: regulators, exchanges, the companies on our lists, the big newswires, reputable outlets and a few trade publications.",
+  "change_note": "The test run on the market day of October sixteen recorded nothing: eight outlets on the list make every search fail, and CNBC and Bloomberg pages refuse to open. Those eight move to blocked; outlets and official sources our tools can open are added; each host says whether it opens.",
+  "reach_checked": "2026-10-17",
   "rules": [
-    "Link only to these hosts or their subdomains. Anything else is refused when the note is recorded.",
-    "Prefer the official source (the company, a regulator, a newswire release) and add one reputable outlet that explains it.",
-    "Skip a page that asks for a login, a subscription or a bot check; never work around it.",
+    "Link only to the hosts in sources or their subdomains. Anything else, every host under blocked included, is refused when the note is recorded.",
+    "Search with allowed_domains set to the hosts marked search true, never a blocked host: one host that refuses automated search makes the whole search fail.",
+    "Prefer official sources: the company, a regulator, a newswire release, and for a market-wide move official data (EIA or OPEC for oil, the Fed, BLS or BEA for rates and data releases, the exchanges).",
+    "Add a reputable outlet that explains the move. A wire story republished in full on a listed host (AP on PBS or ABC News, Reuters on Yahoo Finance or NBC News) counts as that host's page.",
+    "A page that will not open (an error, a login, a subscription or a bot check) is skipped; look for the same story on another listed host. Never a cache, archive, mirror, proxy or reader copy.",
+    "A source counts only when its page was opened and supports the claim; a search snippet is never a source. Read each host's note before citing it.",
     "Write the note in your own words: no quotation marks, no copied sentences, no digits, no prices or price targets.",
     "Every source must be dated on or before the market day plus one day.",
-    "When no source here explains the move, say plainly that no clear cause was found.",
+    "When no listed page that opens explains the move, record an unclear note that says so plainly; it may have no source.",
     "A note explains a move. It is never a reason to buy or sell."
   ],
   "sources": [
     {
       "host": "sec.gov",
       "publisher": "U.S. Securities and Exchange Commission",
-      "kind": "regulator"
+      "kind": "regulator",
+      "search": true,
+      "opens": true
     },
     {
       "host": "fcc.gov",
       "publisher": "Federal Communications Commission",
-      "kind": "regulator"
+      "kind": "regulator",
+      "search": true,
+      "opens": false
     },
     {
       "host": "fda.gov",
       "publisher": "U.S. Food and Drug Administration",
-      "kind": "regulator"
+      "kind": "regulator",
+      "search": true,
+      "opens": false
     },
     {
       "host": "ftc.gov",
       "publisher": "Federal Trade Commission",
-      "kind": "regulator"
+      "kind": "regulator",
+      "search": true,
+      "opens": true
     },
     {
       "host": "justice.gov",
       "publisher": "U.S. Department of Justice",
-      "kind": "regulator"
+      "kind": "regulator",
+      "search": true,
+      "opens": false
     },
     {
       "host": "cftc.gov",
       "publisher": "Commodity Futures Trading Commission",
-      "kind": "regulator"
+      "kind": "regulator",
+      "search": true,
+      "opens": true
     },
     {
       "host": "federalreserve.gov",
       "publisher": "Federal Reserve",
-      "kind": "regulator"
+      "kind": "regulator",
+      "search": true,
+      "opens": true
     },
     {
       "host": "treasury.gov",
       "publisher": "U.S. Treasury",
-      "kind": "regulator"
+      "kind": "regulator",
+      "search": true,
+      "opens": true
     },
     {
       "host": "bls.gov",
       "publisher": "U.S. Bureau of Labor Statistics",
-      "kind": "regulator"
+      "kind": "agency",
+      "search": true,
+      "opens": true
     },
     {
       "host": "bea.gov",
       "publisher": "U.S. Bureau of Economic Analysis",
-      "kind": "regulator"
+      "kind": "agency",
+      "search": true,
+      "opens": true
     },
     {
       "host": "eia.gov",
       "publisher": "U.S. Energy Information Administration",
-      "kind": "regulator"
+      "kind": "agency",
+      "search": true,
+      "opens": true
+    },
+    {
+      "host": "opec.org",
+      "publisher": "OPEC",
+      "kind": "agency",
+      "search": true,
+      "opens": true,
+      "note": "Press releases carry their date in the title and address rather than a date line."
     },
     {
       "host": "ferc.gov",
       "publisher": "Federal Energy Regulatory Commission",
-      "kind": "regulator"
+      "kind": "regulator",
+      "search": true,
+      "opens": false
     },
     {
       "host": "commerce.gov",
       "publisher": "U.S. Department of Commerce",
-      "kind": "regulator"
+      "kind": "regulator",
+      "search": true,
+      "opens": false
     },
     {
       "host": "ustr.gov",
       "publisher": "Office of the U.S. Trade Representative",
-      "kind": "regulator"
+      "kind": "regulator",
+      "search": true,
+      "opens": true
     },
     {
       "host": "whitehouse.gov",
       "publisher": "The White House",
-      "kind": "regulator"
+      "kind": "regulator",
+      "search": true,
+      "opens": true,
+      "note": "A statement of policy by the government, not neutral analysis."
     },
     {
       "host": "ec.europa.eu",
       "publisher": "European Commission",
-      "kind": "regulator"
+      "kind": "regulator",
+      "search": true,
+      "opens": true,
+      "note": "The competition-policy pages open; the press corner loads empty."
     },
     {
       "host": "boi.org.il",
       "publisher": "Bank of Israel",
-      "kind": "regulator"
+      "kind": "regulator",
+      "search": true,
+      "opens": false,
+      "note": "Its pages answer with a bot check: skip them, never work around it."
     },
     {
       "host": "nasdaq.com",
       "publisher": "Nasdaq",
-      "kind": "exchange"
+      "kind": "exchange",
+      "search": true,
+      "opens": false,
+      "note": "Its pages answered with a server error: skip them and use another listed host."
     },
     {
       "host": "nyse.com",
       "publisher": "New York Stock Exchange",
-      "kind": "exchange"
+      "kind": "exchange",
+      "search": true,
+      "opens": true,
+      "note": "The exchange's own dated market commentary, not news reporting."
     },
     {
       "host": "tase.co.il",
       "publisher": "Tel Aviv Stock Exchange",
-      "kind": "exchange"
+      "kind": "exchange",
+      "search": true,
+      "opens": false,
+      "note": "Its pages load as an empty shell with no text or date: skip them."
     },
     {
       "host": "businesswire.com",
       "publisher": "Business Wire",
-      "kind": "newswire"
+      "kind": "newswire",
+      "search": true,
+      "opens": false,
+      "note": "Its pages refuse to open: use the company's own site or sec.gov for the same release."
     },
     {
       "host": "prnewswire.com",
       "publisher": "PR Newswire",
-      "kind": "newswire"
+      "kind": "newswire",
+      "search": true,
+      "opens": true
     },
     {
       "host": "globenewswire.com",
       "publisher": "GlobeNewswire",
-      "kind": "newswire"
+      "kind": "newswire",
+      "search": true,
+      "opens": false,
+      "note": "Its pages refuse to open: use the company's own site or sec.gov for the same release."
     },
     {
       "host": "apple.com",
       "publisher": "Apple",
-      "kind": "company"
+      "kind": "company",
+      "search": true,
+      "opens": true
     },
     {
       "host": "microsoft.com",
       "publisher": "Microsoft",
-      "kind": "company"
+      "kind": "company",
+      "search": true,
+      "opens": true
     },
     {
       "host": "nvidia.com",
       "publisher": "NVIDIA",
-      "kind": "company"
+      "kind": "company",
+      "search": true,
+      "opens": true
     },
     {
       "host": "aboutamazon.com",
       "publisher": "Amazon",
-      "kind": "company"
+      "kind": "company",
+      "search": true,
+      "opens": true
     },
     {
       "host": "amazon.com",
       "publisher": "Amazon",
-      "kind": "company"
+      "kind": "company",
+      "search": true,
+      "opens": false,
+      "note": "Its investor pages refuse to open: use aboutamazon.com or sec.gov."
     },
     {
       "host": "abc.xyz",
       "publisher": "Alphabet",
-      "kind": "company"
+      "kind": "company",
+      "search": true,
+      "opens": true
     },
     {
       "host": "blog.google",
       "publisher": "Google",
-      "kind": "company"
+      "kind": "company",
+      "search": true,
+      "opens": true
     },
     {
       "host": "atmeta.com",
       "publisher": "Meta",
-      "kind": "company"
+      "kind": "company",
+      "search": true,
+      "opens": true
     },
     {
       "host": "fb.com",
       "publisher": "Meta",
-      "kind": "company"
+      "kind": "company",
+      "search": true,
+      "opens": true
     },
     {
       "host": "meta.com",
       "publisher": "Meta",
-      "kind": "company"
+      "kind": "company",
+      "search": true,
+      "opens": true
     },
     {
       "host": "broadcom.com",
       "publisher": "Broadcom",
-      "kind": "company"
+      "kind": "company",
+      "search": true,
+      "opens": false
     },
     {
       "host": "costco.com",
       "publisher": "Costco",
-      "kind": "company"
+      "kind": "company",
+      "search": true,
+      "opens": true
     },
     {
       "host": "amgen.com",
       "publisher": "Amgen",
-      "kind": "company"
+      "kind": "company",
+      "search": true,
+      "opens": true
     },
     {
       "host": "intuitive.com",
       "publisher": "Intuitive Surgical",
-      "kind": "company"
+      "kind": "company",
+      "search": true,
+      "opens": false
     },
     {
       "host": "intuitivesurgical.com",
       "publisher": "Intuitive Surgical",
-      "kind": "company"
+      "kind": "company",
+      "search": true,
+      "opens": false
     },
     {
       "host": "gilead.com",
       "publisher": "Gilead Sciences",
-      "kind": "company"
+      "kind": "company",
+      "search": true,
+      "opens": true
     },
     {
       "host": "pepsico.com",
       "publisher": "PepsiCo",
-      "kind": "company"
+      "kind": "company",
+      "search": true,
+      "opens": true
     },
     {
       "host": "monsterbevcorp.com",
       "publisher": "Monster Beverage",
-      "kind": "company"
+      "kind": "company",
+      "search": true,
+      "opens": false
     },
     {
       "host": "aep.com",
       "publisher": "American Electric Power",
-      "kind": "company"
+      "kind": "company",
+      "search": true,
+      "opens": true
     },
     {
       "host": "xcelenergy.com",
       "publisher": "Xcel Energy",
-      "kind": "company"
+      "kind": "company",
+      "search": true,
+      "opens": true
     },
     {
       "host": "cintas.com",
       "publisher": "Cintas",
-      "kind": "company"
+      "kind": "company",
+      "search": true,
+      "opens": true
     },
     {
       "host": "paccar.com",
       "publisher": "PACCAR",
-      "kind": "company"
+      "kind": "company",
+      "search": true,
+      "opens": true
     },
     {
       "host": "cmegroup.com",
       "publisher": "CME Group",
-      "kind": "company"
+      "kind": "company",
+      "search": true,
+      "opens": false
     },
     {
       "host": "t-mobile.com",
       "publisher": "T-Mobile",
-      "kind": "company"
+      "kind": "company",
+      "search": true,
+      "opens": false,
+      "note": "Its pages refuse to open: use sec.gov or prnewswire.com, where it posts releases."
     },
     {
       "host": "diamondbackenergy.com",
       "publisher": "Diamondback Energy",
-      "kind": "company"
+      "kind": "company",
+      "search": true,
+      "opens": false
     },
     {
       "host": "linde.com",
       "publisher": "Linde",
-      "kind": "company"
+      "kind": "company",
+      "search": true,
+      "opens": false
     },
     {
-      "host": "reuters.com",
-      "publisher": "Reuters",
-      "kind": "outlet"
+      "host": "finance.yahoo.com",
+      "publisher": "Yahoo Finance",
+      "kind": "outlet",
+      "search": true,
+      "opens": true,
+      "note": "Cite only pages bylined by Yahoo Finance staff or by Reuters, AP or CNN; skip syndicated StockStory, Motley Fool, Simply Wall St and OilPrice pieces."
     },
     {
-      "host": "apnews.com",
-      "publisher": "Associated Press",
-      "kind": "outlet"
+      "host": "cbsnews.com",
+      "publisher": "CBS News",
+      "kind": "outlet",
+      "search": true,
+      "opens": true
+    },
+    {
+      "host": "abcnews.com",
+      "publisher": "ABC News",
+      "kind": "outlet",
+      "search": true,
+      "opens": true,
+      "note": "Carries AP wire stories. abcnews.go.com redirects here, so open the abcnews.com address."
+    },
+    {
+      "host": "nbcnews.com",
+      "publisher": "NBC News",
+      "kind": "outlet",
+      "search": true,
+      "opens": true,
+      "note": "Also republishes Reuters stories with their byline."
+    },
+    {
+      "host": "pbs.org",
+      "publisher": "PBS NewsHour",
+      "kind": "outlet",
+      "search": true,
+      "opens": true,
+      "note": "Republishes AP market stories with their byline and date."
+    },
+    {
+      "host": "fortune.com",
+      "publisher": "Fortune",
+      "kind": "outlet",
+      "search": true,
+      "opens": true
+    },
+    {
+      "host": "marketplace.org",
+      "publisher": "Marketplace",
+      "kind": "outlet",
+      "search": true,
+      "opens": true
+    },
+    {
+      "host": "asia.nikkei.com",
+      "publisher": "Nikkei Asia",
+      "kind": "outlet",
+      "search": true,
+      "opens": true,
+      "note": "Metered: a page behind the paywall is skipped. Also carries Reuters stories."
+    },
+    {
+      "host": "focustaiwan.tw",
+      "publisher": "Focus Taiwan (CNA)",
+      "kind": "outlet",
+      "search": true,
+      "opens": true,
+      "note": "The English service of Taiwan's national news agency: TSMC and the Taiwan chip makers."
     },
     {
       "host": "cnbc.com",
       "publisher": "CNBC",
-      "kind": "outlet"
-    },
-    {
-      "host": "wsj.com",
-      "publisher": "The Wall Street Journal",
-      "kind": "outlet"
+      "kind": "outlet",
+      "search": true,
+      "opens": false,
+      "note": "Search finds its stories but its pages refuse to open: look for the same story on a listed host that opens."
     },
     {
       "host": "bloomberg.com",
       "publisher": "Bloomberg",
-      "kind": "outlet"
-    },
-    {
-      "host": "ft.com",
-      "publisher": "Financial Times",
-      "kind": "outlet"
-    },
-    {
-      "host": "marketwatch.com",
-      "publisher": "MarketWatch",
-      "kind": "outlet"
-    },
-    {
-      "host": "barrons.com",
-      "publisher": "Barron's",
-      "kind": "outlet"
-    },
-    {
-      "host": "nytimes.com",
-      "publisher": "The New York Times",
-      "kind": "outlet"
-    },
-    {
-      "host": "economist.com",
-      "publisher": "The Economist",
-      "kind": "outlet"
+      "kind": "outlet",
+      "search": true,
+      "opens": false,
+      "note": "Search finds its stories but its pages refuse to open; Bloomberg energy stories also run on rigzone.com."
     },
     {
       "host": "globes.co.il",
       "publisher": "Globes",
-      "kind": "outlet"
+      "kind": "outlet",
+      "search": true,
+      "opens": true
     },
     {
       "host": "calcalistech.com",
       "publisher": "Calcalist",
-      "kind": "outlet"
+      "kind": "outlet",
+      "search": true,
+      "opens": true
     },
     {
       "host": "lightreading.com",
       "publisher": "Light Reading",
-      "kind": "trade"
+      "kind": "trade",
+      "search": true,
+      "opens": true
     },
     {
       "host": "fierce-network.com",
       "publisher": "Fierce Network",
-      "kind": "trade"
+      "kind": "trade",
+      "search": true,
+      "opens": false
     },
     {
       "host": "fiercepharma.com",
       "publisher": "Fierce Pharma",
-      "kind": "trade"
+      "kind": "trade",
+      "search": true,
+      "opens": false
     },
     {
       "host": "fiercebiotech.com",
       "publisher": "Fierce Biotech",
-      "kind": "trade"
+      "kind": "trade",
+      "search": true,
+      "opens": false
     },
     {
       "host": "statnews.com",
       "publisher": "STAT",
-      "kind": "trade"
+      "kind": "trade",
+      "search": true,
+      "opens": true
     },
     {
       "host": "utilitydive.com",
       "publisher": "Utility Dive",
-      "kind": "trade"
+      "kind": "trade",
+      "search": true,
+      "opens": true
     },
     {
       "host": "spglobal.com",
       "publisher": "S&P Global",
-      "kind": "trade"
+      "kind": "trade",
+      "search": true,
+      "opens": false
     },
     {
       "host": "eetimes.com",
       "publisher": "EE Times",
-      "kind": "trade"
+      "kind": "trade",
+      "search": true,
+      "opens": true
+    },
+    {
+      "host": "techcrunch.com",
+      "publisher": "TechCrunch",
+      "kind": "trade",
+      "search": true,
+      "opens": true,
+      "note": "Tech business news: AI funding and startups, not daily market moves."
+    },
+    {
+      "host": "theregister.com",
+      "publisher": "The Register",
+      "kind": "trade",
+      "search": true,
+      "opens": true
+    },
+    {
+      "host": "semiengineering.com",
+      "publisher": "Semiconductor Engineering",
+      "kind": "trade",
+      "search": true,
+      "opens": true
+    },
+    {
+      "host": "trendforce.com",
+      "publisher": "TrendForce",
+      "kind": "trade",
+      "search": true,
+      "opens": true,
+      "note": "Memory and chip market research: context for chip moves, not daily market news."
+    },
+    {
+      "host": "rigzone.com",
+      "publisher": "Rigzone",
+      "kind": "trade",
+      "search": true,
+      "opens": true,
+      "note": "Oil and gas news; carries Bloomberg energy wire stories with their byline."
+    }
+  ],
+  "blocked": [
+    {
+      "host": "reuters.com",
+      "publisher": "Reuters",
+      "reason": "WebSearch refuses the whole call when this host is in allowed_domains, and WebFetch cannot open its pages. Reuters stories open on finance.yahoo.com, nbcnews.com and asia.nikkei.com."
+    },
+    {
+      "host": "apnews.com",
+      "publisher": "Associated Press",
+      "reason": "WebSearch refuses the whole call when this host is in allowed_domains, and WebFetch cannot open its pages. AP stories open on abcnews.com, pbs.org and cbsnews.com."
+    },
+    {
+      "host": "wsj.com",
+      "publisher": "The Wall Street Journal",
+      "reason": "WebSearch refuses the whole call when this host is in allowed_domains; its pages were not tried. Paywalled as well."
+    },
+    {
+      "host": "ft.com",
+      "publisher": "Financial Times",
+      "reason": "WebSearch refuses the whole call when this host is in allowed_domains; its pages were not tried. Paywalled as well."
+    },
+    {
+      "host": "marketwatch.com",
+      "publisher": "MarketWatch",
+      "reason": "WebSearch refuses the whole call when this host is in allowed_domains, and WebFetch cannot open its pages."
+    },
+    {
+      "host": "barrons.com",
+      "publisher": "Barron's",
+      "reason": "WebSearch refuses the whole call when this host is in allowed_domains; its pages were not tried. Paywalled as well."
+    },
+    {
+      "host": "nytimes.com",
+      "publisher": "The New York Times",
+      "reason": "WebSearch refuses the whole call when this host is in allowed_domains; its pages were not tried."
+    },
+    {
+      "host": "economist.com",
+      "publisher": "The Economist",
+      "reason": "WebSearch refuses the whole call when this host is in allowed_domains; its pages were not tried. Paywalled as well."
+    },
+    {
+      "host": "theguardian.com",
+      "publisher": "The Guardian",
+      "reason": "WebSearch refuses the whole call when this host is in allowed_domains, and WebFetch cannot open its pages."
+    },
+    {
+      "host": "bbc.com",
+      "publisher": "BBC",
+      "reason": "WebSearch refuses the whole call when this host is in allowed_domains, and WebFetch cannot open its pages."
+    },
+    {
+      "host": "bbc.co.uk",
+      "publisher": "BBC",
+      "reason": "WebSearch refuses the whole call when this host is in allowed_domains; its pages were not tried, and bbc.com pages do not open."
+    },
+    {
+      "host": "en.yna.co.kr",
+      "publisher": "Yonhap",
+      "reason": "WebSearch finds nothing on this host and WebFetch cannot open its pages."
     }
   ]
 }

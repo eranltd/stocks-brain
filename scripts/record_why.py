@@ -10,13 +10,17 @@ which checks
     the same kind and market, each key once, and the day not recorded yet
   - the words: headline at most 90 characters, why at most 320, no digits, no quotation marks, no prices, price targets,
     ratings or advice, no links, no first person; an "unclear" note says plainly that no clear cause was found
-  - the sources: at most four (at least one unless the note is "unclear"), https links on a host of the allow-list
-    (config/news_sources.json, subdomains included), each published on or before the market day plus one day
+  - the sources: at most four (at least one unless the note is "unclear"; an unclear note may have none), https links on
+    a host of the allow-list (config/news_sources.json `sources`, subdomains included; never a `blocked` host), each
+    published on or before the market day plus one day. The host of every URL is checked here, never taken on trust from
+    the search tool's allowed_domains filter (it lets other hosts through)
 then fills move_pct and symbols FROM OUR DATA (never from the model), stamps researched_at and merges the notes into
 data/market/why.json, keeping the newest thirty days.
 
 Usage: python3 scripts/record_why.py [--check] NOTES_JSON [--today YYYY-MM-DD]
-  --check  validate only (the routine runs this before it dispatches); writes nothing
+       python3 scripts/record_why.py --domains
+  --check    validate only (the routine runs this before it dispatches); writes nothing
+  --domains  print the hosts the researchers pass to WebSearch as allowed_domains (sources marked search), as JSON
 """
 from __future__ import annotations
 
@@ -53,14 +57,24 @@ NOTE_QUOTES = (*QUOTE_MARKS, "«", "»", "‹", "›", "„", "‟", "″", "‶
 # never states an amount.
 AMOUNT = re.compile(r"[$€£¥₪%]|\b(per ?cent|percent(age)?|(hundred|thousand|million|billion|trillion)s?|bn|mln)\b", re.I)
 HOST_CHARS = re.compile(r"^[a-z0-9.-]+$")  # a plain DNS name: no backslash or other characters browsers read differently
-# What an honest "unclear" note says (any of these): we looked and found no clear, sourced cause.
+# What an honest "unclear" note says (any of these): we looked and found no clear, sourced cause. The routine's standard
+# wording when no allow-listed page that explains the move would open (.claude/workflows/why.js UNCLEAR_NOTE): We looked
+# but could not open a source on our list that explains this move.
 UNCLEAR_WORDS = re.compile(r"\b(unclear|not clear|no clear|could not|couldn't|did not find|didn't find|found no|no sign"
                            r"|no (\w+ ){0,2}(cause|reason|news|explanation|report|announcement|source)s?)\b", re.I)
 
 
 def allow_list(path: Path = NEWS_SOURCES) -> dict[str, str]:
-    """{host: publisher} of config/news_sources.json."""
+    """{host: publisher} of config/news_sources.json's sources (never its blocked hosts)."""
     return {s["host"]: s["publisher"] for s in load_json(path)["sources"]}
+
+
+def search_domains(path: Path = NEWS_SOURCES) -> list[str]:
+    """The hosts the researchers pass to WebSearch as allowed_domains: the sources marked search, in list order. A
+    blocked host is never among them (one host the search tool refuses makes the whole call fail)."""
+    doc = load_json(path)
+    blocked = {b["host"] for b in doc.get("blocked", [])}
+    return [s["host"] for s in doc["sources"] if s.get("search", True) and s["host"] not in blocked]
 
 
 def allowed_host(url: str, hosts) -> str | None:
@@ -198,11 +212,17 @@ def merge(existing: dict | None, obj: dict, cands: dict, researched_at: str, kee
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("notes", type=Path)
+    ap.add_argument("notes", type=Path, nargs="?")
     ap.add_argument("--check", action="store_true")
+    ap.add_argument("--domains", action="store_true")
     ap.add_argument("--today")
     ap.add_argument("--why", type=Path, default=WHY)
     a = ap.parse_args()
+    if a.domains:
+        print(json.dumps(search_domains()))
+        return 0
+    if a.notes is None:
+        ap.error("NOTES_JSON is required (or --domains)")
     now = datetime.now(timezone.utc).replace(microsecond=0)
     today = a.today or now.date().isoformat()
     try:

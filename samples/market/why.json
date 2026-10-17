@@ -18,8 +18,8 @@
           "published": "2026-10-02"
         },
         {
-          "url": "https://www.reuters.com/markets/",
-          "publisher": "Reuters",
+          "url": "https://www.nyse.com/index",
+          "publisher": "New York Stock Exchange",
           "published": "2026-10-02"
         }
       ],
@@ -35,15 +35,9 @@
       "kind": "stock",
       "market": "nasdaq",
       "headline": "Sample note: no clear cause found for this made-up move",
-      "why": "This is sample text. When no source on our allow-list explains a move, the note says plainly that no clear cause was found, rather than guessing.",
+      "why": "This is sample text. When no page on our list that opens explains a move, the note says so plainly rather than guessing: We looked but could not open a source on our list that explains this move.",
       "confidence": "unclear",
-      "sources": [
-        {
-          "url": "https://www.reuters.com/markets/",
-          "publisher": "Reuters",
-          "published": "2026-10-02"
-        }
-      ],
+      "sources": [],
       "move_pct": -3.13,
       "symbols": [
         "CME"

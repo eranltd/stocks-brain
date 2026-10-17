@@ -1,7 +1,7 @@
 ---
-version: 0.24.0
+version: 0.24.1
 updated_at: 2026-10-17
-change_note: Why-it-moved notes from a separate scheduled Claude session (allow-listed sources, own words, never a reason to trade, never in the pack), official SEC filings on Home and a look-only Sectors list; the "When could we buy it?" card on every company, weekly first, read from our own stock rules and calendar.
+change_note: Why notes: the allow-list now holds only hosts our research tools can use (outlets that block them listed apart), the routine finds a blocked story on a listed host that opens, and a move it cannot explain is recorded as an honest unclear note.
 ---
 # Decision log
 
@@ -20,6 +20,45 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   per-point dates into one shared array.
 
 ## 2026-10-17
+- **Why notes: an allow-list our tools can actually use, and honest unclear notes.** The first test fire of
+  `why_notes` (market day 2026-10-16; code flagged the chip fund SOXX, the energy benchmark XLE and the Nasdaq-100 with
+  QQQE, IYZ and XLK) recorded nothing. WebSearch refuses the whole call (HTTP 400, not accessible to its user agent)
+  when `allowed_domains` holds any of reuters.com, apnews.com, wsj.com, ft.com, marketwatch.com, barrons.com,
+  nytimes.com or economist.com, and WebFetch could not open the pages of those tried (Reuters, AP, MarketWatch).
+  Without them, search showed the causes on CNBC and Bloomberg, but every page there answered 403; the routine rightly
+  cites only pages it opened, so every note
+  was dropped. A probe of 104 hosts the next day (one search limited to each host and a fetch of a recent page) sorted
+  them. Within the owner's approval of the notes (official sources and reputable outlets only), `config/news_sources.json`
+  1.1.0:
+  - **Blocked for our tools**: those eight, plus The Guardian, the BBC and Yonhap, which fail the same way, move to a
+    separate `blocked` list with the reason, so the owner sees why they are missing. They are never searched or cited
+    (`scripts/record_why.py` refuses them like any unlisted host).
+  - **Added, because search and pages both work**: Yahoo Finance (only pages bylined by its staff or by Reuters, AP or
+    CNN; never its syndicated StockStory, Motley Fool, Simply Wall St or OilPrice pieces), CBS News, ABC News, NBC News,
+    PBS NewsHour, Fortune, Marketplace, Nikkei Asia, Focus Taiwan (CNA), TechCrunch, The Register, Semiconductor
+    Engineering, TrendForce, Rigzone and OPEC. AP, Reuters and Bloomberg wire stories reach us through these (AP on PBS,
+    ABC News and CBS; Reuters on Yahoo Finance, NBC News and Nikkei Asia; Bloomberg energy stories on Rigzone).
+    Not added: OilPrice (news mixed with commentary), Forbes and TheStreet (opinion mixed in, and blocked anyway),
+    pages with no visible date (Semiconductor Digest), and outlets whose pages refuse to open (CNN, Axios, the
+    Washington Post, NPR, the IEA, S&P Global).
+  - **Every source now says** `search` and `opens` (checked `reach_checked` 2026-10-17) and may carry a `note`. Official
+    and company hosts whose pages refused to open (the FCC, FDA, Justice Department, FERC, Commerce, the Bank of Israel,
+    Nasdaq, the Tel Aviv exchange, CME, Business Wire, GlobeNewswire, several company sites, the Fierce titles) and CNBC
+    and Bloomberg stay listed with `opens: false`: tried at most once, skipped on any error, never worked around. Lint
+    refuses a host that is both a source and blocked, or a source that can be neither searched nor opened.
+  - **The routine** (`.claude/workflows/why.js`, `prompts/why_routine.md` steps 5 to 7) searches with `allowed_domains`
+    set to exactly the sources marked `search` (`python3 scripts/record_why.py --domains`), ignores results on other
+    hosts (the filter leaks: searches limited to company hosts returned sec.gov pages, so the record checks every host
+    itself), looks for a story whose page will not open on another listed host that opens (a wire story republished
+    there counts; a cache, archive, AMP, proxy or reader copy never does), and for a market-wide move reads official data
+    first (EIA and OPEC for oil, the Fed, BLS, BEA and Treasury for rates and data releases, the exchange).
+  - **Unclear notes are recorded, not dropped.** When no listed page that explains a move would open, the note reads:
+    No clear cause found in the sources we could open. We looked but could not open a source on our list that explains
+    this move. It has no source and is shown with its confidence, No clear cause found, so the household sees the move
+    was looked into. `record_why.py` already accepted unclear notes with no source.
+  - **Rehearsal** on 2026-10-16 with the new list and nothing dispatched: all three moves explained from pages that
+    opened (CBS News, Nikkei Asia carrying Reuters, Yahoo Finance staff, Rigzone carrying Bloomberg); SOXX and the
+    Nasdaq-100 clear, XLE likely; `record_why.py --check` passed.
 - **Why it moved: short notes from a separate Claude session.** On Thursday 2026-10-08, after the US close, SpaceX
   (Nasdaq: SPCX) agreed to buy Grain Management's nationwide 800 MHz airwaves (about 8 billion dollars per the WSJ,
   pending FCC approval). On Friday T-Mobile, on our main list, fell 13.27% by our own numbers; Verizon and AT&T fell about

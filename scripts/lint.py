@@ -153,12 +153,7 @@ class Lint:
         if ns_path.exists():
             ns = self.schema(ns_path, "news_sources.schema.json")
             if ns:
-                hosts = [x["host"] for x in ns["sources"]]
-                if len(hosts) != len(set(hosts)):
-                    self.err(ns_path, "duplicate hosts")
-                for x in ns["sources"]:
-                    if any(q in x["publisher"] for q in QUOTE_MARKS):
-                        self.err(ns_path, f"{x['host']}: quotation marks in the publisher name")
+                self.check_news_sources(ns, ns_path)
         elif src and any(s["kind"] == "news" and s["status"] == "active" for s in src["sources"]):
             self.err(CONFIG / "sources.json", "an active news source needs its allow-list, config/news_sources.json")
         rt = self.schema(CONFIG / "routines.json", "routines.schema.json")
@@ -802,6 +797,33 @@ class Lint:
                     continue
                 if isinstance(obj, dict) and "bars" in obj and not obj.get("sample"):
                     self.err(p, "raw provider bars must not be committed (licence); publish derived numbers only")
+
+    def check_news_sources(self, ns: dict, path: Path) -> None:
+        """The why-it-moved allow-list (config/news_sources.json, already schema-valid): each host once, never both a
+        source and blocked (or a subdomain of a blocked host), no source our tools can neither search nor open (it
+        belongs under blocked), at least one host to search, and plain publisher names. docs/decisions.md 2026-10-17."""
+        hosts = [x["host"] for x in ns["sources"]]
+        blocked = [x["host"] for x in ns.get("blocked", [])]
+        for name, lst in (("sources", hosts), ("blocked", blocked)):
+            dup = sorted({h for h in lst if lst.count(h) > 1})
+            if dup:
+                self.err(path, f"duplicate hosts in {name}: {', '.join(dup)}")
+        for h in hosts:
+            b = next((b for b in blocked if h == b or h.endswith("." + b)), None)
+            if b:
+                self.err(path, f"{h}: listed as a source and under blocked ({b}); a blocked host is never searched or cited")
+            # A blocked subdomain of a source host would still pass the record's host check (subdomains match).
+            for b in blocked:
+                if b.endswith("." + h):
+                    self.err(path, f"{b}: blocked but a subdomain of the source {h}, so a note could still cite it")
+        for x in ns["sources"]:
+            if not x["search"] and not x["opens"]:
+                self.err(path, f"{x['host']}: our tools can neither search it nor open it; move it to blocked")
+        if not any(x["search"] for x in ns["sources"]):
+            self.err(path, "no source is marked search: the researchers would have nothing to search")
+        for x in (*ns["sources"], *ns.get("blocked", [])):
+            if any(q in x["publisher"] for q in QUOTE_MARKS):
+                self.err(path, f"{x['host']}: quotation marks in the publisher name")
 
     def check_why(self, path: Path, doc: dict, sample: bool, today: str | None = None) -> None:
         """Why-it-moved notes (data/market/why.json, recorded by why.yml through scripts/record_why.py): live in data/ and

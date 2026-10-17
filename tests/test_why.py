@@ -289,6 +289,29 @@ class RecordCheckTest(unittest.TestCase):
         self.assertEqual(self.check(n), [])
         n["notes"][0]["why"] = "No source on our list explained the move, so this note does not guess at a cause."
         self.assertEqual(self.check(n), [])
+        # The routine's standard wording when no allow-listed page that explains the move would open (why.js UNCLEAR_NOTE).
+        n["notes"][0]["headline"] = "No clear cause found in the sources we could open"
+        n["notes"][0]["why"] = "We looked but could not open a source on our list that explains this move."
+        self.assertEqual(self.check(n), [])
+
+    def test_routine_unclear_note_passes(self):
+        """The exact unclear note .claude/workflows/why.js writes in place of a dropped one passes the record's checks."""
+        js = (ROOT / ".claude" / "workflows" / "why.js").read_text()
+        m = re.search(r"const UNCLEAR_NOTE = \{ headline: '([^']+)', why: '([^']+)'", js)
+        self.assertIsNotNone(m, "why.js defines UNCLEAR_NOTE")
+        n = good_notes()
+        n["notes"][0].update(headline=m.group(1), why=m.group(2), confidence="unclear", sources=[])
+        self.assertEqual(self.check(n), [])
+        self.assertIn(m.group(2), (ROOT / "prompts" / "why_routine.md").read_text())
+
+    def test_the_filter_leak_is_caught(self):
+        """WebSearch's allowed_domains filter lets other hosts through (sec.gov showed up in searches limited to company
+        hosts): the record checks every cited host itself."""
+        hosts = record_why.allow_list()
+        n = good_notes()
+        n["notes"][0]["sources"] = [{"url": "https://www.oilprice.com/a", "publisher": "OilPrice", "published": self.day}]
+        errs = record_why.check(n, self.views, hosts, self.today, set(), [])[0]
+        self.assertTrue(any("not on the allow-list" in e for e in errs), errs)
 
     def test_keys_must_be_flagged_by_code(self):
         n = good_notes(key="BBB")
@@ -389,12 +412,60 @@ class RegistryAndActionTest(unittest.TestCase):
         ns = load_json(CONFIG / "news_sources.json")
         self.assertEqual(Validator().validate(ns, "news_sources.schema.json"), [])
         hosts = {s["host"] for s in ns["sources"]}
-        for h in ("sec.gov", "fcc.gov", "reuters.com", "apnews.com", "cnbc.com", "wsj.com", "bloomberg.com", "ft.com",
-                  "marketwatch.com", "barrons.com", "lightreading.com", "businesswire.com", "prnewswire.com", "globenewswire.com"):
+        for h in ("sec.gov", "fcc.gov", "cnbc.com", "bloomberg.com", "lightreading.com", "businesswire.com", "prnewswire.com",
+                  "globenewswire.com",
+                  # docs/decisions.md 2026-10-17: reputable outlets and official data our research tools can search and open
+                  "finance.yahoo.com", "cbsnews.com", "abcnews.com", "nbcnews.com", "pbs.org", "fortune.com", "marketplace.org",
+                  "asia.nikkei.com", "rigzone.com", "opec.org", "eia.gov", "federalreserve.gov", "bls.gov", "bea.gov", "nyse.com"):
             self.assertIn(h, hosts)
         import lint
         for h in lint.OUTLOOK_SOURCE_HOSTS:  # every company and regulator host the outlook cards already use
             self.assertIn(h, hosts)
+        # Hosts the search tool refuses (any one of them in allowed_domains fails the whole search, 2026-10-16 test
+        # fire) and whose pages do not open are kept under blocked, so the owner sees why, and are never searched or cited.
+        blocked = {b["host"] for b in ns["blocked"]}
+        for h in ("reuters.com", "apnews.com", "wsj.com", "ft.com", "marketwatch.com", "barrons.com", "nytimes.com", "economist.com"):
+            self.assertIn(h, blocked)
+            self.assertNotIn(h, hosts)
+            self.assertIsNone(record_why.allowed_host(f"https://www.{h}/markets/a", record_why.allow_list()), h)
+        domains = record_why.search_domains()
+        self.assertEqual(domains, [s["host"] for s in ns["sources"] if s["search"]])
+        self.assertFalse(blocked & set(domains))
+        # Every official source and every outlet added for the swap opens; the fetch-blocked ones stay as skip-on-error.
+        opens = {s["host"]: s["opens"] for s in ns["sources"]}
+        for h in ("finance.yahoo.com", "cbsnews.com", "pbs.org", "eia.gov", "opec.org", "sec.gov", "prnewswire.com"):
+            self.assertTrue(opens[h], h)
+        for h in ("cnbc.com", "bloomberg.com", "fcc.gov", "businesswire.com"):
+            self.assertFalse(opens[h], h)
+        self.assertIn("byline", {s["host"]: s.get("note", "") for s in ns["sources"]}["finance.yahoo.com"])
+
+    def test_lint_checks_the_allow_list(self):
+        ns = load_json(CONFIG / "news_sources.json")
+        lt = Lint()
+        lt.check_news_sources(ns, CONFIG / "news_sources.json")
+        self.assertEqual(lt.errors, [])
+        cases = {
+            "under blocked": lambda d: d["sources"].append({"host": "reuters.com", "publisher": "Reuters", "kind": "outlet",
+                                                            "search": True, "opens": True}),
+            "a subdomain of the source": lambda d: d["blocked"].append({"host": "news.sec.gov", "publisher": "SEC news",
+                                                                         "reason": "a made-up blocked subdomain"}),
+            "neither search it nor open it": lambda d: d["sources"][0].update(search=False, opens=False),
+            "duplicate hosts in sources": lambda d: d["sources"].append(dict(d["sources"][0])),
+            "duplicate hosts in blocked": lambda d: d["blocked"].append(dict(d["blocked"][0])),
+            "nothing to search": lambda d: [s.update(search=False, opens=True) for s in d["sources"]],
+        }
+        for want, change in cases.items():
+            d = copy.deepcopy(ns)
+            change(d)
+            lt = Lint()
+            lt.check_news_sources(d, CONFIG / "news_sources.json")
+            self.assertTrue(any(want in e for e in lt.errors), f"{want}: {lt.errors}")
+
+    def test_domains_cli(self):
+        import subprocess
+        out = subprocess.run([sys.executable, str(ROOT / "scripts" / "record_why.py"), "--domains"], capture_output=True,
+                             text=True, check=True).stdout
+        self.assertEqual(json.loads(out), record_why.search_domains())
 
     def test_the_brain_never_reads_the_notes(self):
         for f in ("build_pack.py", "record_run.py", "brain_status.py"):
@@ -438,7 +509,7 @@ class LintWhyTest(unittest.TestCase):
     def note(self, **kw):
         n = {**good_notes()["notes"][0], "market_date": "2026-10-09", "move_pct": -13.27, "symbols": ["AAA"],
              "researched_at": "2026-10-10T07:00:00Z"}
-        n["sources"] = [{"url": "https://www.reuters.com/a", "publisher": "Reuters", "published": "2026-10-09"}]
+        n["sources"] = [{"url": "https://www.cbsnews.com/news/a", "publisher": "CBS News", "published": "2026-10-09"}]
         n.update(kw)
         return n
 

@@ -1,7 +1,7 @@
 ---
-version: 0.17.0
+version: 0.17.1
 updated_at: 2026-10-17
-change_note: When could we buy it? (each stock rule run as if today were its decision day, weekly first) and why-it-moved notes (which moves code flags, how a note is checked and recorded, what it never does); the Sectors list and its own fetch run.
+change_note: Why-it-moved notes search only hosts our research tools can use, find a blocked story on a listed host that opens, and record a move no opened page explains as an honest unclear note.
 ---
 # Methodology
 
@@ -399,9 +399,12 @@ day. Code decides what is unusual and how big the move was; a model only finds a
 - **Research**: routine `why_notes`, a scheduled Claude Code session that is not the brain (`prompts/why_routine.md`),
   stops when `scripts/why_status.py` says the day has notes or code flags nothing. Otherwise the saved workflow
   `.claude/workflows/why.js` sends one researcher per move to the hosts of `config/news_sources.json` (regulators,
-  exchanges, the companies, newswires, reputable outlets and trade publications; subdomains count), a skeptic re-opens
-  every source, and a writer drafts `{market_date, notes}` with a headline, a why, a confidence (clear, likely, unclear)
-  and one to four dated sources per note.
+  public data agencies, exchanges, the companies, newswires, reputable outlets and trade publications; subdomains
+  count). It searches only the hosts marked `search` (never one under `blocked`, which our tools cannot use), skips a
+  page that will not open and looks for the same story on another listed host that opens, and reads official data first
+  for a market-wide move. A skeptic re-opens every source, and a writer drafts `{market_date, notes}` with a headline,
+  a why, a confidence (clear, likely, unclear) and up to four dated sources per note. A move that was looked into but
+  that no listed page that opened explains is recorded as an unclear note that says so, with no source.
 - **Checks** (`scripts/record_why.py`, run by the session with `--check` and again by `why.yml`): the shape; the day is a
   market day in our series and not yet recorded; every key is a move code flags for that day, with its kind and market;
   a headline of at most 90 characters and a why of at most 320, in our own words: no digits, no quotation marks, no

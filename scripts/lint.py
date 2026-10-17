@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """Repo lint: schemas, doc headers, guardrails, hygiene, size caps. Exits non-zero on any error.
 
-Usage: python3 scripts/lint.py [--soft-markets]
+Usage: python3 scripts/lint.py [--soft-markets] [--soft-why]
   --soft-markets  problems in the other markets' published files (data/markets/) are warnings, not errors: the main
                   daily run uses it, since it never writes those files and a market's problem must not discard the
                   main list's data (each market fails closed on its own; its own run lints them strictly)
+  --soft-why      problems in the why-it-moved notes (data/market/why.json) are warnings, not errors: the daily and
+                  brain runs use it, since they never write that file and a stale note (say, a host later taken off the
+                  allow-list) must not discard prices or a brain run; why.yml, which writes it, lints it strictly
 """
 from __future__ import annotations
 
@@ -83,11 +86,12 @@ BRAIN_WORKFLOW = ".claude/workflows/brain.js"  # the saved workflow a claude_rou
 
 
 class Lint:
-    def __init__(self, soft_markets: bool = False) -> None:
+    def __init__(self, soft_markets: bool = False, soft_why: bool = False) -> None:
         self.errors: list[str] = []
         self.warnings: list[str] = []
         self.v = Validator()
         self.soft_markets = soft_markets
+        self.soft_why = soft_why
         self.bad_markets: set[str] = set()  # markets whose published files have a problem (build_site leaves them out)
 
     def market_err(self, where: Path | str, msg: str) -> None:
@@ -142,6 +146,21 @@ class Lint:
             for s in src["sources"]:
                 if s["status"] == "active" and not s["provider"]:
                     self.err(CONFIG / "sources.json", f"{s['id']}: active source needs a provider")
+                if s["kind"] == "news" and s["status"] == "active" and "pack" in s["feeds"]:
+                    # docs/decisions.md 2026-10-17: news explains moves on the site; the brain stays sealed to its pack
+                    self.err(CONFIG / "sources.json", f"{s['id']}: news never feeds the brain's pack")
+        ns_path = CONFIG / "news_sources.json"
+        if ns_path.exists():
+            ns = self.schema(ns_path, "news_sources.schema.json")
+            if ns:
+                hosts = [x["host"] for x in ns["sources"]]
+                if len(hosts) != len(set(hosts)):
+                    self.err(ns_path, "duplicate hosts")
+                for x in ns["sources"]:
+                    if any(q in x["publisher"] for q in QUOTE_MARKS):
+                        self.err(ns_path, f"{x['host']}: quotation marks in the publisher name")
+        elif src and any(s["kind"] == "news" and s["status"] == "active" for s in src["sources"]):
+            self.err(CONFIG / "sources.json", "an active news source needs its allow-list, config/news_sources.json")
         rt = self.schema(CONFIG / "routines.json", "routines.schema.json")
         if rt and st:
             workflows = "\n".join(p.read_text() for p in (ROOT / ".github" / "workflows").glob("*.yml"))
@@ -209,11 +228,15 @@ class Lint:
                     self.err(where, f"{r['id']}: a claude_routine needs a prompt file")
                 elif r["status"] == "active" and not (root / r["prompt"]).is_file():
                     self.err(where, f"{r['id']}: active but its prompt {r['prompt']} does not exist")
-                if r["status"] == "active" and not (root / BRAIN_WORKFLOW).is_file():
-                    self.err(where, f"{r['id']}: active but the saved workflow {BRAIN_WORKFLOW} does not exist")
+                flow = r.get("workflow", BRAIN_WORKFLOW)
+                if r["status"] == "active" and not (root / flow).is_file():
+                    self.err(where, f"{r['id']}: active but the saved workflow {flow} does not exist")
+                if r.get("trigger_prompt") and r.get("prompt") and r["prompt"] not in r["trigger_prompt"]:
+                    self.err(where, f"{r['id']}: trigger_prompt must name the routine's prompt file {r['prompt']}")
             else:
-                if "prompt" in r:
-                    self.err(where, f"{r['id']}: only a claude_routine has a prompt")
+                for key in ("prompt", "workflow", "trigger_prompt"):
+                    if key in r:
+                        self.err(where, f"{r['id']}: only a claude_routine has a {key}")
                 if r["status"] == "active" and r["cron"] and r["cron"] not in workflows:
                     self.err(where, f"{r['id']}: active but cron {r['cron']!r} is in no workflow")
 
@@ -347,6 +370,8 @@ class Lint:
         for m in mc["markets"]:
             mid = m["id"]
             if mid == mc["default"]:
+                if "fetch_run" in m:
+                    self.err(path, f"{mid}: the default market has its own fetch run (nasdaq); fetch_run is for the others")
                 if m["watchlist"] != "config/watchlist.json" or m["data"] != "data/market":
                     self.err(path, f"{mid}: the default market is the main list (config/watchlist.json, data/market)")
                 if st and m["benchmark"] != st["scoring"]["benchmark"]["symbol"]:
@@ -385,14 +410,14 @@ class Lint:
 
     def check_fetch_budget(self, st: dict, mc: dict, lists: dict[str, dict], root: Path = ROOT) -> None:
         """One request per unique symbol per fetch run: each run's count within prices.max_requests_per_run, that below
-        the plan's prices.requests_per_hour, and the two runs' schedules far enough apart not to share an hour."""
-        from _common import default_fetch_symbols, market_symbols, scope_symbols
+        the plan's prices.requests_per_hour, and the three runs' schedules (fetch_prices, fetch_markets, fetch_sectors)
+        far enough apart that no two share an hour."""
+        from _common import fetch_plan, scope_symbols
         where = root / "config" / "settings.json"
         cap, hourly = st["prices"]["max_requests_per_run"], st["prices"]["requests_per_hour"]
         if cap >= hourly:
             self.err(where, f"prices.max_requests_per_run {cap} must stay below the plan's requests_per_hour {hourly} (room for retries)")
-        plan = {"nasdaq": {mc["default"]: default_fetch_symbols(st, lists[mc["default"]])},
-                "markets": {m["id"]: market_symbols(m, lists[m["id"]]) for m in mc["markets"] if m["id"] != mc["default"]}}
+        plan = fetch_plan(st, lists[mc["default"]], mc, lists)
         for scope, groups in plan.items():
             n = len(scope_symbols(groups))
             if n > cap:
@@ -400,14 +425,19 @@ class Lint:
         rt_path = root / "config" / "routines.json"
         if not rt_path.exists():
             return
-        crons = {r["id"]: r["cron"] for r in load_json(rt_path)["routines"] if r["id"] in ("fetch_prices", "fetch_markets")}
-        if plan["markets"] and "fetch_markets" not in crons:
-            self.err(rt_path, "other markets are configured but there is no fetch_markets routine")
-        elif len(crons) == 2:
-            gap = _cron_gap_minutes(crons["fetch_prices"], crons["fetch_markets"])
-            if gap is None or gap < MIN_FETCH_GAP_MINUTES:
-                self.err(rt_path, f"fetch_prices and fetch_markets must start at least {MIN_FETCH_GAP_MINUTES} minutes apart "
-                                  f"(one hour's requests must hold one run only)")
+        routine = {"nasdaq": "fetch_prices", "markets": "fetch_markets", "sectors": "fetch_sectors"}
+        crons = {r["id"]: r["cron"] for r in load_json(rt_path)["routines"] if r["id"] in routine.values()}
+        used = [routine[sc] for sc, groups in plan.items() if groups]
+        for rid in used:
+            if rid not in crons:
+                self.err(rt_path, f"markets are configured for a fetch run with no {rid} routine")
+        timed = [rid for rid in used if rid in crons]
+        for i, a in enumerate(timed):
+            for b in timed[i + 1:]:
+                gap = _cron_gap_minutes(crons[a], crons[b])
+                if gap is None or gap < MIN_FETCH_GAP_MINUTES:
+                    self.err(rt_path, f"{a} and {b} must start at least {MIN_FETCH_GAP_MINUTES} minutes apart "
+                                      f"(one hour's requests must hold one run only)")
 
     def all_market_symbols(self, include_bench: bool = True) -> set:
         """Every symbol on any market's list (and their benchmarks)."""
@@ -754,6 +784,15 @@ class Lint:
             if bw:
                 self.check_buy_window_data(bw_path, bw)
         self.check_markets_data()
+        for path, sample in ((DATA / "market" / "why.json", False), (SAMPLES / "market" / "why.json", True)):
+            if path.exists():
+                before = len(self.errors)
+                doc = self.schema(path, "why.schema.json")
+                if doc:
+                    self.check_why(path, doc, sample)
+                if self.soft_why and not sample:  # --soft-why: this run never writes the notes; why.yml lints them strictly
+                    moved, self.errors = self.errors[before:], self.errors[:before]
+                    self.warnings += [f"{e} (why notes: an error in why.yml's own run)" for e in moved]
         for p in _walk(ROOT):
             rel = p.relative_to(ROOT).as_posix()
             if rel.startswith("data/") and p.suffix == ".json":
@@ -763,6 +802,49 @@ class Lint:
                     continue
                 if isinstance(obj, dict) and "bars" in obj and not obj.get("sample"):
                     self.err(p, "raw provider bars must not be committed (licence); publish derived numbers only")
+
+    def check_why(self, path: Path, doc: dict, sample: bool, today: str | None = None) -> None:
+        """Why-it-moved notes (data/market/why.json, recorded by why.yml through scripts/record_why.py): live in data/ and
+        sample under samples/, as of their newest day, one note per key and day, thirty days kept, keys naming a list
+        symbol or a sector, and every note in our own words with allow-listed, dated sources (the record's own checks)."""
+        import record_why
+        from datetime import timedelta
+        today = today or date.today().isoformat()
+        if doc["sample"] != sample:
+            self.err(path, "sample flag must be true exactly for files under samples/")
+        notes = doc["notes"]
+        if notes and doc["as_of"] != max(n["market_date"] for n in notes):
+            self.err(path, f"as_of {doc['as_of']} is not the newest note's market day")
+        seen = [(n["market_date"], n["key"]) for n in notes]
+        if len(seen) != len(set(seen)):
+            self.err(path, "a key appears twice on one market day")
+        ns_path = CONFIG / "news_sources.json"
+        if notes and not ns_path.exists():
+            self.err(path, "notes need the allow-list config/news_sources.json")
+            return
+        hosts = record_why.allow_list(ns_path) if notes else {}
+        known = self.all_market_symbols()
+        try:
+            known |= {c["symbol"] for c in load_json(CONFIG / "watchlist.json").get("context", [])}
+        except Exception:  # noqa: BLE001  (reported by check_config)
+            pass
+        cutoff = (date.fromisoformat(doc["as_of"]) - timedelta(days=record_why.KEEP_DAYS)).isoformat()
+        for n in notes:
+            where = f"{n['market_date']} {n['key']}"
+            if n["market_date"] > today:
+                self.err(path, f"{where}: market day in the future")
+            if n["market_date"] <= cutoff:
+                self.err(path, f"{where}: older than {record_why.KEEP_DAYS} days before as_of (record_why drops these)")
+            if n["researched_at"][:10] < n["market_date"]:
+                self.err(path, f"{where}: researched before its market day")
+            if (n["kind"] == "sector") != n["key"].startswith("sector:"):
+                self.err(path, f"{where}: a sector note's key is sector:<GICS sector>, and only a sector's")
+            elif n["kind"] != "sector" and n["symbols"][0] != n["key"]:
+                self.err(path, f"{where}: symbols must start with the note's own ticker")
+            if known and n["kind"] != "sector" and n["key"] not in known:
+                self.warn(path, f"{where}: not on any list now (stale note?)")
+            for e in record_why.note_problems(n, n["market_date"], hosts, today):
+                self.err(path, f"{where}: {e}")
 
     def check_markets_data(self, data: Path = DATA) -> None:
         """The other markets' published files (data/markets/<id>/): each directory is a configured market, its derived,
@@ -1038,4 +1120,4 @@ def _cron_gap_minutes(a: str, b: str) -> int | None:
 
 
 if __name__ == "__main__":
-    sys.exit(Lint(soft_markets="--soft-markets" in sys.argv[1:]).run())
+    sys.exit(Lint(soft_markets="--soft-markets" in sys.argv[1:], soft_why="--soft-why" in sys.argv[1:]).run())

@@ -1,7 +1,7 @@
 ---
-version: 0.16.0
+version: 0.17.0
 updated_at: 2026-10-17
-change_note: When could we buy it? Each stock rule's own engine (the weekly game's two rules first, then Five Leaders monthly and quarterly) run as if today were its decision day, with the reason each name is out, the next dates by the US market calendar and the next weekly buy.
+change_note: When could we buy it? (each stock rule run as if today were its decision day, weekly first) and why-it-moved notes (which moves code flags, how a note is checked and recorded, what it never does); the Sectors list and its own fetch run.
 ---
 # Methodology
 
@@ -45,6 +45,9 @@ change_note: When could we buy it? Each stock rule's own engine (the weekly game
    The session never commits, edits files or fetches prices.
 4. **score_picks**: pure code. Each pick older than `scoring.horizon_days` trading days is scored against the benchmark.
 5. **lint**: schemas, hygiene and size caps. Publish only when lint passes.
+6. **why_notes** (a separate Claude routine, 06:47 and 09:47 UTC Tue-Sat): short notes on why an unusual move
+   happened, published to `data/market/why.json` after the brain's close is fixed and never read by the brain (see
+   Why it moved below).
 
 ## Scoring (code only)
 - `return_pct = (exit_close / ref_close - 1) * 100`, using adjusted closes `horizon_days` trading days apart,
@@ -80,6 +83,10 @@ portfolio, the rule backtests and the people's scores read; its files stay in `d
 - **iShares** (`config/watchlists/ishares.json`, kind `funds`): broad iShares index funds against SPY. Each fund has a
   plain category instead of a GICS sector; its card (`config/funds.json`) says what it holds, the index it follows and
   its yearly cost, from the fund's own page.
+- **Chips, Big Tech, Energy**: the biggest chip makers against SOXX, tech giants against QQQ, energy companies against XLE.
+- **Sectors** (`config/watchlists/sectors.json`, kind `funds`, `fetch_run` sectors): one US fund per industry against
+  SPY, the narrowest fund per industry (telecom carriers through IYZ rather than a fund mostly made of two internet
+  companies). It shows which parts of the market moved; its moves are also why-it-moved triggers. For looking only.
 
 For each other market, `routines_code.py markets` writes under `data/markets/<id>/` the same three files as Nasdaq,
 computed by the same functions with the market's list and benchmark as parameters:
@@ -89,10 +96,12 @@ rates and its own forward record) and `candles/<SYMBOL>.json`. The benchmark is 
 it, and may sit on another market's list (EIS is TLV's benchmark and an iShares fund).
 
 **Fetch budget.** One request per unique symbol. Tiingo's free plan allows 50 requests an hour (`prices.requests_per_hour`).
-The Nasdaq run needs 28 and the other markets 22 (EIS fetched once), so they run three hours apart (23:40 and 02:40
-UTC), each capped at `prices.max_requests_per_run` (40) requests including retries; the run logs how many it used. Lint
-fails if a run's unique symbols exceed the cap, the cap is not below the hourly limit, or the two runs start less than
-two hours apart.
+There are three runs, each in its own hours: the Nasdaq run needs 28 (23:40 UTC), the other markets 42 (02:40 UTC; a
+symbol shared by two lists is fetched once) and the sector funds 12 (04:40 UTC, `fetch_run` sectors in
+`config/markets.json`). Raw bars never leave a run, so a symbol needed by two runs (SPY, XLE) is fetched in each; about 71
+unique symbols a month. Each run is capped at `prices.max_requests_per_run` (45) requests including retries and logs how
+many it used. Lint fails if a run's unique symbols exceed the cap, the cap is not below the hourly limit, a run's markets
+have no fetch routine, or any two runs start less than two hours apart.
 
 **Fail closed per market.** A market's prices are written only if all its symbols passed; its files only if all of them
 computed and passed their schemas, with `derived.json` and `checklist.json` as of the same day. A failed market keeps
@@ -374,6 +383,34 @@ company's own release or investor page, its SEC filing, a regulator, or the news
   is confirmed, and whether the company gives guidance. Context only: a company's own outlook is its statement, not a
   forecast we endorse and never evidence that its stock will beat the index; a results date within about two weeks is
   event risk.
+
+## Why it moved (researched, not computed)
+`data/market/why.json` holds short notes on why one of our names, a context fund or a sector moved unusually on a market
+day. Code decides what is unusual and how big the move was; a model only finds and words the cause, and code checks it.
+- **Which moves** (`scripts/why_candidates.py`, read-only, from the published percent numbers): a name on any list whose
+  day move is at least 3% and at least 3 standard deviations of its daily moves over the 60 market days before (at least
+  20 of them), the feed's own test (`site/src/lib/feed.js` UNUSUAL; a test keeps the two equal); a context fund of the main
+  list, a market's benchmark or a sector fund at 1.5% or more; a sector average of the main list (the plain mean of its
+  names' day moves, as the market day computes it) at 2.5% or more when the sector has two names or more. A symbol on
+  several lists is judged once, in the first market that has it. One story gets one note: a sector average that is not
+  flagged without its flagged names merges into the biggest of them, and a fund or sector average that moved the same way
+  as the S&P 500 fund (or else the main benchmark), within 1.5 points of it, merges into it. At most five, biggest first.
+  `key` is the ticker, or `sector:<GICS sector>`.
+- **Research**: routine `why_notes`, a scheduled Claude Code session that is not the brain (`prompts/why_routine.md`),
+  stops when `scripts/why_status.py` says the day has notes or code flags nothing. Otherwise the saved workflow
+  `.claude/workflows/why.js` sends one researcher per move to the hosts of `config/news_sources.json` (regulators,
+  exchanges, the companies, newswires, reputable outlets and trade publications; subdomains count), a skeptic re-opens
+  every source, and a writer drafts `{market_date, notes}` with a headline, a why, a confidence (clear, likely, unclear)
+  and one to four dated sources per note.
+- **Checks** (`scripts/record_why.py`, run by the session with `--check` and again by `why.yml`): the shape; the day is a
+  market day in our series and not yet recorded; every key is a move code flags for that day, with its kind and market;
+  a headline of at most 90 characters and a why of at most 320, in our own words: no digits, no quotation marks, no
+  prices or market values, no price targets or ratings, no advice, no links, no first person; an unclear note says
+  plainly that no clear cause was found (it may have no source); every source an https link on the allow-list, dated
+  no later than the day after the move; the whole input under GitHub's dispatch limit. Then code fills `move_pct` and
+  `symbols` from our data, stamps `researched_at`, keeps the newest 30 days and lint re-checks the file.
+- **Use**: the site shows a note beside its move (Home's "In the news", the market day, the Stock page's "Why it moved"),
+  always with: This explains a move; it is not a reason to trade. Never in the brain's pack, never a signal for any rule.
 
 ## Evidence labels (the Playbook's rules)
 `replicated`: independent replication named in the cited library material. `mixed`: backed by principles from more than one source, with

@@ -1,0 +1,361 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-10-17",
+  "change_note": "First allow-list for why-it-moved notes: regulators, exchanges, the companies on our lists, the big newswires, reputable outlets and a few trade publications.",
+  "rules": [
+    "Link only to these hosts or their subdomains. Anything else is refused when the note is recorded.",
+    "Prefer the official source (the company, a regulator, a newswire release) and add one reputable outlet that explains it.",
+    "Skip a page that asks for a login, a subscription or a bot check; never work around it.",
+    "Write the note in your own words: no quotation marks, no copied sentences, no digits, no prices or price targets.",
+    "Every source must be dated on or before the market day plus one day.",
+    "When no source here explains the move, say plainly that no clear cause was found.",
+    "A note explains a move. It is never a reason to buy or sell."
+  ],
+  "sources": [
+    {
+      "host": "sec.gov",
+      "publisher": "U.S. Securities and Exchange Commission",
+      "kind": "regulator"
+    },
+    {
+      "host": "fcc.gov",
+      "publisher": "Federal Communications Commission",
+      "kind": "regulator"
+    },
+    {
+      "host": "fda.gov",
+      "publisher": "U.S. Food and Drug Administration",
+      "kind": "regulator"
+    },
+    {
+      "host": "ftc.gov",
+      "publisher": "Federal Trade Commission",
+      "kind": "regulator"
+    },
+    {
+      "host": "justice.gov",
+      "publisher": "U.S. Department of Justice",
+      "kind": "regulator"
+    },
+    {
+      "host": "cftc.gov",
+      "publisher": "Commodity Futures Trading Commission",
+      "kind": "regulator"
+    },
+    {
+      "host": "federalreserve.gov",
+      "publisher": "Federal Reserve",
+      "kind": "regulator"
+    },
+    {
+      "host": "treasury.gov",
+      "publisher": "U.S. Treasury",
+      "kind": "regulator"
+    },
+    {
+      "host": "bls.gov",
+      "publisher": "U.S. Bureau of Labor Statistics",
+      "kind": "regulator"
+    },
+    {
+      "host": "bea.gov",
+      "publisher": "U.S. Bureau of Economic Analysis",
+      "kind": "regulator"
+    },
+    {
+      "host": "eia.gov",
+      "publisher": "U.S. Energy Information Administration",
+      "kind": "regulator"
+    },
+    {
+      "host": "ferc.gov",
+      "publisher": "Federal Energy Regulatory Commission",
+      "kind": "regulator"
+    },
+    {
+      "host": "commerce.gov",
+      "publisher": "U.S. Department of Commerce",
+      "kind": "regulator"
+    },
+    {
+      "host": "ustr.gov",
+      "publisher": "Office of the U.S. Trade Representative",
+      "kind": "regulator"
+    },
+    {
+      "host": "whitehouse.gov",
+      "publisher": "The White House",
+      "kind": "regulator"
+    },
+    {
+      "host": "ec.europa.eu",
+      "publisher": "European Commission",
+      "kind": "regulator"
+    },
+    {
+      "host": "boi.org.il",
+      "publisher": "Bank of Israel",
+      "kind": "regulator"
+    },
+    {
+      "host": "nasdaq.com",
+      "publisher": "Nasdaq",
+      "kind": "exchange"
+    },
+    {
+      "host": "nyse.com",
+      "publisher": "New York Stock Exchange",
+      "kind": "exchange"
+    },
+    {
+      "host": "tase.co.il",
+      "publisher": "Tel Aviv Stock Exchange",
+      "kind": "exchange"
+    },
+    {
+      "host": "businesswire.com",
+      "publisher": "Business Wire",
+      "kind": "newswire"
+    },
+    {
+      "host": "prnewswire.com",
+      "publisher": "PR Newswire",
+      "kind": "newswire"
+    },
+    {
+      "host": "globenewswire.com",
+      "publisher": "GlobeNewswire",
+      "kind": "newswire"
+    },
+    {
+      "host": "apple.com",
+      "publisher": "Apple",
+      "kind": "company"
+    },
+    {
+      "host": "microsoft.com",
+      "publisher": "Microsoft",
+      "kind": "company"
+    },
+    {
+      "host": "nvidia.com",
+      "publisher": "NVIDIA",
+      "kind": "company"
+    },
+    {
+      "host": "aboutamazon.com",
+      "publisher": "Amazon",
+      "kind": "company"
+    },
+    {
+      "host": "amazon.com",
+      "publisher": "Amazon",
+      "kind": "company"
+    },
+    {
+      "host": "abc.xyz",
+      "publisher": "Alphabet",
+      "kind": "company"
+    },
+    {
+      "host": "blog.google",
+      "publisher": "Google",
+      "kind": "company"
+    },
+    {
+      "host": "atmeta.com",
+      "publisher": "Meta",
+      "kind": "company"
+    },
+    {
+      "host": "fb.com",
+      "publisher": "Meta",
+      "kind": "company"
+    },
+    {
+      "host": "meta.com",
+      "publisher": "Meta",
+      "kind": "company"
+    },
+    {
+      "host": "broadcom.com",
+      "publisher": "Broadcom",
+      "kind": "company"
+    },
+    {
+      "host": "costco.com",
+      "publisher": "Costco",
+      "kind": "company"
+    },
+    {
+      "host": "amgen.com",
+      "publisher": "Amgen",
+      "kind": "company"
+    },
+    {
+      "host": "intuitive.com",
+      "publisher": "Intuitive Surgical",
+      "kind": "company"
+    },
+    {
+      "host": "intuitivesurgical.com",
+      "publisher": "Intuitive Surgical",
+      "kind": "company"
+    },
+    {
+      "host": "gilead.com",
+      "publisher": "Gilead Sciences",
+      "kind": "company"
+    },
+    {
+      "host": "pepsico.com",
+      "publisher": "PepsiCo",
+      "kind": "company"
+    },
+    {
+      "host": "monsterbevcorp.com",
+      "publisher": "Monster Beverage",
+      "kind": "company"
+    },
+    {
+      "host": "aep.com",
+      "publisher": "American Electric Power",
+      "kind": "company"
+    },
+    {
+      "host": "xcelenergy.com",
+      "publisher": "Xcel Energy",
+      "kind": "company"
+    },
+    {
+      "host": "cintas.com",
+      "publisher": "Cintas",
+      "kind": "company"
+    },
+    {
+      "host": "paccar.com",
+      "publisher": "PACCAR",
+      "kind": "company"
+    },
+    {
+      "host": "cmegroup.com",
+      "publisher": "CME Group",
+      "kind": "company"
+    },
+    {
+      "host": "t-mobile.com",
+      "publisher": "T-Mobile",
+      "kind": "company"
+    },
+    {
+      "host": "diamondbackenergy.com",
+      "publisher": "Diamondback Energy",
+      "kind": "company"
+    },
+    {
+      "host": "linde.com",
+      "publisher": "Linde",
+      "kind": "company"
+    },
+    {
+      "host": "reuters.com",
+      "publisher": "Reuters",
+      "kind": "outlet"
+    },
+    {
+      "host": "apnews.com",
+      "publisher": "Associated Press",
+      "kind": "outlet"
+    },
+    {
+      "host": "cnbc.com",
+      "publisher": "CNBC",
+      "kind": "outlet"
+    },
+    {
+      "host": "wsj.com",
+      "publisher": "The Wall Street Journal",
+      "kind": "outlet"
+    },
+    {
+      "host": "bloomberg.com",
+      "publisher": "Bloomberg",
+      "kind": "outlet"
+    },
+    {
+      "host": "ft.com",
+      "publisher": "Financial Times",
+      "kind": "outlet"
+    },
+    {
+      "host": "marketwatch.com",
+      "publisher": "MarketWatch",
+      "kind": "outlet"
+    },
+    {
+      "host": "barrons.com",
+      "publisher": "Barron's",
+      "kind": "outlet"
+    },
+    {
+      "host": "nytimes.com",
+      "publisher": "The New York Times",
+      "kind": "outlet"
+    },
+    {
+      "host": "economist.com",
+      "publisher": "The Economist",
+      "kind": "outlet"
+    },
+    {
+      "host": "globes.co.il",
+      "publisher": "Globes",
+      "kind": "outlet"
+    },
+    {
+      "host": "calcalistech.com",
+      "publisher": "Calcalist",
+      "kind": "outlet"
+    },
+    {
+      "host": "lightreading.com",
+      "publisher": "Light Reading",
+      "kind": "trade"
+    },
+    {
+      "host": "fierce-network.com",
+      "publisher": "Fierce Network",
+      "kind": "trade"
+    },
+    {
+      "host": "fiercepharma.com",
+      "publisher": "Fierce Pharma",
+      "kind": "trade"
+    },
+    {
+      "host": "fiercebiotech.com",
+      "publisher": "Fierce Biotech",
+      "kind": "trade"
+    },
+    {
+      "host": "statnews.com",
+      "publisher": "STAT",
+      "kind": "trade"
+    },
+    {
+      "host": "utilitydive.com",
+      "publisher": "Utility Dive",
+      "kind": "trade"
+    },
+    {
+      "host": "spglobal.com",
+      "publisher": "S&P Global",
+      "kind": "trade"
+    },
+    {
+      "host": "eetimes.com",
+      "publisher": "EE Times",
+      "kind": "trade"
+    }
+  ]
+}

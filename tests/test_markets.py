@@ -41,7 +41,7 @@ class MarketsConfigTest(unittest.TestCase):
         mc = markets_config()
         self.assertEqual(v.validate(mc, "markets.schema.json"), [])
         self.assertEqual(mc["default"], "nasdaq")
-        self.assertEqual([m["id"] for m in mc["markets"]], ["nasdaq", "tlv", "ishares", "chips", "tech", "energy"])
+        self.assertEqual([m["id"] for m in mc["markets"]], ["nasdaq", "tlv", "ishares", "chips", "tech", "energy", "sectors"])
         for m in mc["markets"]:
             self.assertEqual(v.validate(market_watchlist(m), "watchlist.schema.json"), [], m["id"])
         lt = lint_with_markets()
@@ -58,6 +58,18 @@ class MarketsConfigTest(unittest.TestCase):
         self.assertIn("not covered by our data provider", by["tlv"]["note"])
         self.assertTrue(all("sector" in s for s in market_watchlist(by["tlv"])["symbols"]))
         self.assertTrue(all("category" in s and "sector" not in s for s in market_watchlist(by["ishares"])["symbols"]))
+        # Sectors: one fund per industry, look-only, against the S&P 500, in its own fetch run; telecom carriers through
+        # the narrow carrier fund, and the energy fund (the Energy list's benchmark) listed once.
+        sec = by["sectors"]
+        self.assertEqual((sec["kind"], sec["benchmark"], sec["label"], sec["fetch_run"]), ("funds", "SPY", "Sectors", "sectors"))
+        funds = [s["symbol"] for s in market_watchlist(sec)["symbols"]]
+        self.assertEqual(len(funds), 11)
+        self.assertEqual(len(set(funds)), 11)
+        self.assertIn("IYZ", funds)
+        self.assertNotIn("XLC", funds)
+        self.assertIn(by["energy"]["benchmark"], funds)
+        self.assertTrue(all(s.get("category") == "Sector" for s in market_watchlist(sec)["symbols"]))
+        self.assertTrue(all("fetch_run" not in m for m in markets_config()["markets"] if m["id"] != "sectors"))
 
     def tree(self, mutate_markets=None, mutate_lists=None):
         root = Path(tempfile.mkdtemp())
@@ -128,14 +140,20 @@ class FetchBudgetTest(unittest.TestCase):
     def test_counts_per_run_and_both_runs_together(self):
         st = settings()
         plan = fetch_plan()
-        nas, oth = scope_symbols(plan["nasdaq"]), scope_symbols(plan["markets"])
+        self.assertEqual(list(plan), ["nasdaq", "markets", "sectors"])
+        nas, oth, sec = scope_symbols(plan["nasdaq"]), scope_symbols(plan["markets"]), scope_symbols(plan["sectors"])
         self.assertEqual(len(nas), 28)  # 21 names, QQQ and six context funds
         self.assertEqual(len(oth), 42)  # 12 + EIS, 9 funds + SPY (EIS once), 7 chip makers + SOXX, 8 tech (2 shared) + QQQ, 5 energy + XLE
+        self.assertEqual(len(sec), 12)  # 11 sector funds + SPY
+        self.assertEqual(list(plan["sectors"]), ["sectors"])
+        self.assertNotIn("sectors", plan["markets"])
         self.assertEqual(len(set(nas) | set(oth)), 61)  # both in one hour would go over the plan: they run hours apart
+        self.assertEqual(len(set(nas) | set(oth) | set(sec)), 71)  # unique symbols a month: SPY and XLE are already fetched
         self.assertEqual(st["prices"]["requests_per_hour"], 50)
-        self.assertLessEqual(max(len(nas), len(oth)), st["prices"]["max_requests_per_run"])
+        self.assertLessEqual(max(len(nas), len(oth), len(sec)), st["prices"]["max_requests_per_run"])
         self.assertLess(st["prices"]["max_requests_per_run"], st["prices"]["requests_per_hour"])
         self.assertEqual(fetch_prices.symbols("markets"), oth)
+        self.assertEqual(fetch_prices.symbols("sectors"), sec)
         self.assertEqual(fetch_prices.symbols(), nas)
 
     def test_lint_guards_the_budget(self):
@@ -149,15 +167,39 @@ class FetchBudgetTest(unittest.TestCase):
         lt.check_markets_config(st, watchlist())
         self.assertTrue(any("must stay below the plan's requests_per_hour" in e for e in lt.errors), lt.errors)
 
-    def test_the_two_runs_never_share_an_hour(self):
+    def test_the_three_runs_never_share_an_hour(self):
         rt = {r["id"]: r for r in load_json(CONFIG / "routines.json")["routines"]}
         self.assertGreaterEqual(_cron_gap_minutes(rt["fetch_prices"]["cron"], rt["fetch_markets"]["cron"]), 120)
+        self.assertGreaterEqual(_cron_gap_minutes(rt["fetch_markets"]["cron"], rt["fetch_sectors"]["cron"]), 120)
+        self.assertGreaterEqual(_cron_gap_minutes(rt["fetch_prices"]["cron"], rt["fetch_sectors"]["cron"]), 120)
+        self.assertEqual(rt["sector_list"]["cron"], rt["fetch_sectors"]["cron"])
         self.assertEqual(_cron_gap_minutes("40 23 * * 1-5", "10 0 * * 2-6"), 30)
         self.assertIsNone(_cron_gap_minutes("*/5 * * * *", "40 2 * * 2-6"))
         daily = (ROOT / ".github" / "workflows" / "daily.yml").read_text()
         for needle in ('--scope markets', '--scope nasdaq', 'routines_code.py markets', "--soft-markets",
-                       "ROUTINE_FETCH_MARKETS", "ROUTINE_MARKET_LISTS", rt["fetch_markets"]["cron"]):
+                       "ROUTINE_FETCH_MARKETS", "ROUTINE_MARKET_LISTS", rt["fetch_markets"]["cron"],
+                       '--scope sectors', 'routines_code.py sectors', "ROUTINE_FETCH_SECTORS", "ROUTINE_SECTOR_LIST",
+                       rt["fetch_sectors"]["cron"]):
             self.assertIn(needle, daily)
+
+    def test_lint_refuses_a_sectors_run_too_close_or_missing(self):
+        import json as _json
+        root = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, root, True)
+        shutil.copytree(CONFIG, root / "config")
+        rt = load_json(root / "config" / "routines.json")
+        for r in rt["routines"]:
+            if r["id"] == "fetch_sectors":
+                r["cron"] = "10 3 * * 2-6"  # thirty minutes after the markets run
+        (root / "config" / "routines.json").write_text(_json.dumps(rt))
+        lt = Lint()
+        lt.check_markets_config(settings(), watchlist(), root=root)
+        self.assertTrue(any("fetch_markets and fetch_sectors must start at least" in e for e in lt.errors), lt.errors)
+        rt["routines"] = [r for r in rt["routines"] if r["id"] != "fetch_sectors"]
+        (root / "config" / "routines.json").write_text(_json.dumps(rt))
+        lt = Lint()
+        lt.check_markets_config(settings(), watchlist(), root=root)
+        self.assertTrue(any("no fetch_sectors routine" in e for e in lt.errors), lt.errors)
 
     def test_budget_counts_retries_and_stops_when_spent(self):
         prov = types.SimpleNamespace(REQUESTS=7)
@@ -219,7 +261,7 @@ class FetchPerMarketTest(unittest.TestCase):
         self.assertIn("market tlv FAILED", err)
         self.assertNotIn("market ishares FAILED", err)
         written = {p.stem for p in cache.glob("*.json")}
-        passed = {s for m in other_markets()[1:] for s in market_symbols(m)}
+        passed = {s for m in other_markets()[1:] if m.get("fetch_run", "markets") == "markets" for s in market_symbols(m)}
         self.assertEqual(written, passed)  # EIS is written: iShares holds it and passed
         self.assertNotIn("TEVA", written)
         self.assertNotIn("123.98", out + err)
@@ -385,7 +427,7 @@ class SiteExportTest(unittest.TestCase):
             self.assertEqual(build_site.main(), 0)
         man = load_json(out / "manifest.json")
         ms = man["markets"]
-        self.assertEqual(list(ms), ["nasdaq", "tlv", "ishares", "chips", "tech", "energy"])
+        self.assertEqual(list(ms), ["nasdaq", "tlv", "ishares", "chips", "tech", "energy", "sectors"])
         keys = {"label", "name", "note", "kind", "benchmark", "benchmark_label", "default", "sample", "derived", "checklist",
                 "candles", "watchlist"}
         for mid, e in ms.items():
@@ -403,7 +445,11 @@ class SiteExportTest(unittest.TestCase):
         self.assertEqual(ms["ishares"]["candles"]["EIS"], "markets/ishares/candles/EIS.json")
         self.assertEqual(ms["ishares"]["kind"], "funds")
         names = {d["name"] for d in man["docs"]}
-        self.assertTrue({"markets", "funds"} <= names)
+        self.assertTrue({"markets", "funds", "news_sources"} <= names)
+        self.assertEqual(ms["sectors"]["derived"], "markets/sectors/derived.json")
+        # Sample why-it-moved notes go with sample prices (manifest.why), flagged as samples.
+        self.assertEqual(man["why"], "market/why.json")
+        self.assertTrue(load_json(out / man["why"])["sample"])
 
     def test_live_build_without_market_files_shows_no_numbers(self):
         import build_site

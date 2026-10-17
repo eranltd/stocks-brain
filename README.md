@@ -27,26 +27,32 @@ config/      watchlist.json, settings.json, sources.json (connectors), routines.
              people.json (people we learn from, the research on following them, their dated public calls),
              outlook.json (company outlook cards: latest quarter, guidance, next results date, what's next; linked),
              checklist.json (the eight-step technical checklist from the household's video: steps, parameters, house rule),
-             markets.json (the markets the header switch shows) with watchlists/tlv.json and watchlists/ishares.json,
-             funds.json (plain cards for the iShares funds)
+             markets.json (the markets the header switch shows) with watchlists/<id>.json (tlv, ishares, chips,
+             tech, energy, sectors), funds.json (plain cards for the iShares funds),
+             news_sources.json (the allow-list the why-it-moved notes may link to)
 schemas/     JSON Schemas for every file above, plus pick, run, outcome, prices, library
 data/        market/derived.json + longrun.json (returns only, no prices), market/checklist.json (the technical
              checklist per name: percent distances, ratios and labels), portfolio/paper.json (forward record),
              kb/outcomes.json, kb/library.json, people/scores.json, ops/routine_runs.json,
-             markets/<id>/ (derived.json, checklist.json, candles/ for each other market)
+             markets/<id>/ (derived.json, checklist.json, candles/ for each other market),
+             market/why.json (why-it-moved notes: own words, dated links, the move from our data)
              (raw bars stay in git-ignored .cache/)
 runs/        run.<date>.json, one per run
 samples/     deterministic synthetic data so the dashboard renders before live data exists
 scripts/     _common.py (strict stdlib JSON-Schema subset), lint.py, scoring.py, market.py (setup checks, base
              rates, context), portfolio.py (rule v1, goal check), people.py (scores people's calls),
-             routines_code.py (daily code-only steps),
+             routines_code.py (daily code-only steps), why_candidates.py, why_status.py and record_why.py
+             (the why-it-moved notes: what code flags, whether a day is done, the checks and the record),
              make_sample_data.py, build_site.py
-prompts/     brain.md (the brain's rules), daily_brain_routine.md (what the scheduled brain session does)
+prompts/     brain.md (the brain's rules), daily_brain_routine.md (what the scheduled brain session does),
+             why_routine.md (what the scheduled why-it-moved session does)
 .claude/workflows/brain.js  the saved multi-agent brain workflow the routine runs by name
+.claude/workflows/why.js  the saved workflow that researches why a move happened (allow-listed sources only)
 .claude/workflows/outlook.js  the saved workflow that refreshes the company outlook cards (run on request)
 site/        React + Tailwind + Vite dashboard (builds to _site/)
 tests/       unittest suite (stdlib)
-.github/workflows/  lint.yml (PRs), pages.yml (deploy on main), daily.yml (code-only routines), brain.yml (records a brain run)
+.github/workflows/  lint.yml (PRs), pages.yml (deploy on main), daily.yml (code-only routines), brain.yml (records a brain run),
+                    why.yml (records the why-it-moved notes)
 ```
 
 ## Quickstart
@@ -94,6 +100,8 @@ It has no third-party runtime scripts or fonts: everything is bundled and served
 | technical_checklist | Mon–Fri 23:40 | `data/market/checklist.json` |
 | fetch_markets (Tiingo, per market) | Tue–Sat 02:40 | `.cache/prices/` (TLV and iShares lists and benchmarks) |
 | market_lists | Tue–Sat 02:40 | `data/markets/<id>/` |
+| fetch_sectors (Tiingo) | Tue–Sat 04:40 | `.cache/prices/` (the sector funds and SPY) |
+| sector_list | Tue–Sat 04:40 | `data/markets/sectors/` |
 | calibration | 1st of month 13:00 | `data/kb/calibration.json` |
 
 It lints, commits the data to `main` and redeploys Pages. Lint fails if a GitHub Actions routine marked `active` in
@@ -105,6 +113,8 @@ It lints, commits the data to `main` and redeploys Pages. Lint fails if a GitHub
 python3 scripts/fetch_prices.py --dry-run     # fetch + validate, write nothing (Nasdaq scope)
 python3 scripts/fetch_prices.py --scope markets --dry-run   # the other markets (leave an hour after the Nasdaq run)
 python3 scripts/routines_code.py markets      # derived numbers, checklist and candles for TLV and iShares
+python3 scripts/fetch_prices.py --scope sectors --dry-run   # the sector funds (their own run, two hours later)
+python3 scripts/routines_code.py sectors      # the same for the Sectors list
 python3 scripts/routines_code.py all          # score, regime, calibration
 ```
 
@@ -118,7 +128,8 @@ world, developed and emerging markets, Israel, US small companies, chip makers, 
 Each other market gets the same derived numbers, checklist and candles under `data/markets/<id>/`, from its own fetch
 run three hours after the Nasdaq one: Tiingo's free plan allows 50 requests an hour and the two runs need 28 and 22.
 A failed market keeps its old files and never touches Nasdaq. See `docs/decisions.md` (2026-10-10) and the Markets
-section of `docs/methodology.md`.
+section of `docs/methodology.md`. Later lists: chip makers, tech giants and energy (2026-10-14), and **Sectors**, eleven
+US sector funds against SPY, for looking only, fetched in a third run at 04:40 UTC (2026-10-17).
 
 ## The daily brain (Claude routine)
 
@@ -136,6 +147,23 @@ then runs the saved workflow `brain` (`.claude/workflows/brain.js`), checks the 
 rebuilds the pack, refuses the run if the data moved on, validates, lints and publishes `runs/run.<date>.json`, or
 writes nothing. To run it by hand, follow the same file in a Claude Code session. To stop it, pause the routine in
 Claude Code, or set `close_run` to `paused` in `config/routines.json` (see `docs/decisions.md`).
+
+## Why it moved (a second Claude routine)
+
+A separate scheduled Claude Code session, not the brain (routine `why_notes`, Tue–Sat 06:47 and 09:47 UTC), explains
+unusual moves in short notes in our own words with dated links, from an allow-list of official sources and reputable
+outlets (`config/news_sources.json`). It follows `prompts/why_routine.md`:
+
+```bash
+bash scripts/data_branch.sh restore >/dev/null
+python3 scripts/why_status.py                     # {"market_date", "recorded"}: stop if already recorded
+python3 scripts/why_candidates.py                 # the day's unusual moves, flagged by code (at most five)
+python3 scripts/record_why.py --check .cache/why/notes.json   # the Action's own checks, before dispatching
+```
+
+then dispatches `why.yml` with the notes, which checks them again, fills each move from our own data and publishes
+`data/market/why.json` (thirty days). A note explains a move; it is never a reason to trade and never enters the pack.
+To stop it, pause the scheduled task or set `why_notes` to `paused` in `config/routines.json`.
 
 ## Connectors and routines
 

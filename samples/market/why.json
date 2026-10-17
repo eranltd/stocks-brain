@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "as_of": "2026-10-02",
+  "sample": true,
+  "notes": [
+    {
+      "market_date": "2026-10-02",
+      "key": "NVDA",
+      "kind": "stock",
+      "market": "nasdaq",
+      "headline": "Sample note: made-up company news for a made-up move",
+      "why": "This is sample text so the page can be seen before the first real note. A real note says in our own words what happened and why it mattered for this name, with dated links to official sources or reputable outlets.",
+      "confidence": "likely",
+      "sources": [
+        {
+          "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent",
+          "publisher": "U.S. Securities and Exchange Commission",
+          "published": "2026-10-02"
+        },
+        {
+          "url": "https://www.reuters.com/markets/",
+          "publisher": "Reuters",
+          "published": "2026-10-02"
+        }
+      ],
+      "move_pct": 3.46,
+      "symbols": [
+        "NVDA"
+      ],
+      "researched_at": "2026-10-02T07:05:00Z"
+    },
+    {
+      "market_date": "2026-10-02",
+      "key": "CME",
+      "kind": "stock",
+      "market": "nasdaq",
+      "headline": "Sample note: no clear cause found for this made-up move",
+      "why": "This is sample text. When no source on our allow-list explains a move, the note says plainly that no clear cause was found, rather than guessing.",
+      "confidence": "unclear",
+      "sources": [
+        {
+          "url": "https://www.reuters.com/markets/",
+          "publisher": "Reuters",
+          "published": "2026-10-02"
+        }
+      ],
+      "move_pct": -3.13,
+      "symbols": [
+        "CME"
+      ],
+      "researched_at": "2026-10-02T07:05:00Z"
+    }
+  ]
+}

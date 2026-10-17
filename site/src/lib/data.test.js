@@ -124,3 +124,34 @@ test("loadMarket uses loadAll's data for the default market and fetches another 
     globalThis.fetch = realFetch;
   }
 });
+
+test("loadAll reads the why notes when listed and carries on without them when the file is missing", async () => {
+  const doc = (name) => ({ name, file: `config/${name}.json` });
+  const base = {
+    runs: [], runs_shown: 5, market: "market/derived.json", kb: {}, docs: ["watchlist", "settings", "learnings", "guardrails", "sources", "routines"].map(doc),
+  };
+  const files = {
+    "./data/market/derived.json": { as_of: "2026-10-09", symbols: [{ symbol: "AAA", spark: [{ date: "2026-10-09", v: 100 }] }] },
+    "./data/config/watchlist.json": { symbols: [{ symbol: "AAA", name: "Alpha", sector: "Utilities" }] },
+    "./data/config/settings.json": { scoring: { benchmark: { symbol: "IDX", label: "Index" } } },
+    "./data/config/learnings.json": {}, "./data/config/guardrails.json": {}, "./data/config/sources.json": {}, "./data/config/routines.json": {},
+    "./data/market/why.json": { version: 1, as_of: "2026-10-09", sample: false, notes: [] },
+  };
+  const realFetch = globalThis.fetch;
+  let manifest = { ...base, why: "market/why.json" };
+  globalThis.fetch = async (url) => {
+    if (url === "./data/manifest.json") return { ok: true, json: async () => manifest };
+    const v = files[url];
+    return v ? { ok: true, json: async () => v } : { ok: false, status: 404 };
+  };
+  try {
+    const { loadAll } = await import("./data.js");
+    assert.deepEqual((await loadAll()).why.notes, []);
+    manifest = { ...base, why: "market/missing.json" };
+    assert.equal((await loadAll()).why, null, "a missing notes file does not fail the load");
+    manifest = { ...base };
+    assert.equal((await loadAll()).why, null, "older builds have no notes");
+  } finally {
+    globalThis.fetch = realFetch;
+  }
+});

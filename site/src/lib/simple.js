@@ -3,6 +3,9 @@
 // digits: dates become weekday or month words ("yesterday", "next Wednesday", "in late October").
 
 import { VERDICT_PLAIN } from "./brief.js";
+import { shortSector } from "./marketday.js";
+import { recentFilings } from "./secnews.js";
+import { noteForMover, notesForDay, noteView, whyClause } from "./why.js";
 
 const DAY = 86400000;
 const num = (v) => (typeof v === "number" && Number.isFinite(v) ? v : null);
@@ -89,10 +92,15 @@ const shortVia = (via) => String(via ?? "").replace(/,?\s+(Inc\.?|LLC|LLP|L\.P\.
 
 /**
  * "In the news": up to `max` short lines, newest first: results coming in the next week (soonest first, on top), then
- * the latest company news from the outlook cards (its plain wording), the day's biggest mover and a recent people's call.
- * Each: {id, text, to, date, tone}.
+ * the latest company news from the outlook cards (its plain wording), the day's biggest mover (with why it moved when a
+ * note for that very day exists, lib/why.js), other "why it moved" notes of that day, recent official filings of our
+ * names (`secNews`, the last `filingDays`) and a recent people's call.
+ * Each: {id, text, to, date, tone, why?: noteView, filing?: {url, form}}. `why` is the notes file after usableWhy;
+ * `members` the market's own names (filings and notes of other lists stay out), `groups` symbol to sector or category,
+ * `market` the market id (a sector note belongs to one list).
  */
-export function newsLines({ outlook, day, people, today, names = {}, max = 3, newsDays = 21, peopleDays = 14 }) {
+export function newsLines({ outlook, day, people, today, names = {}, max = 3, newsDays = 21, peopleDays = 14,
+  why = null, secNews = null, members = null, groups = {}, market = null, filingDays = 3, maxNotes = 2, maxFilings = 2 }) {
   const name = (t) => shortName(t, outlook, names);
   const out = [];
   const soon = (outlook?.companies ?? [])
@@ -118,9 +126,39 @@ export function newsLines({ outlook, day, people, today, names = {}, max = 3, ne
   // The day's biggest mover on our list.
   const movers = [...(day?.risers ?? []), ...(day?.fallers ?? [])].sort((a, b) => Math.abs(b.pct) - Math.abs(a.pct) || a.symbol.localeCompare(b.symbol));
   const top = movers[0];
+  // Known names only (shortened from the outlook cards); an unknown ticker falls back to the note's own recorded name.
+  const view = (n) => noteView(n, { names: { ...names, ...Object.fromEntries((n.symbols ?? []).filter((t) => name(t) !== t).map((t) => [t, name(t)])) }, groups, short: shortSector });
+  const explained = new Set();
   if (top && day?.date) {
     const w = sizeWord(top.pct, "stock");
-    if (w && w !== "barely moved") out.push({ id: `mover:${top.symbol}`, text: `${name(top.symbol)} ${w} ${whenWords(day.date, today)}.`, to: `stock/${top.symbol}#brief`, date: day.date, tone: top.pct > 0 ? "accent" : "down" });
+    const note = noteForMover(why, { symbol: top.symbol, date: day.date });
+    if (w && w !== "barely moved") {
+      const when = whenWords(day.date, today);
+      if (note) explained.add(note.key);
+      out.push({ id: `mover:${top.symbol}`, text: note ? `${name(top.symbol)} ${w} ${when} — ${whyClause(note)}.` : `${name(top.symbol)} ${w} ${when}.`,
+        to: `stock/${top.symbol}#${note ? "why-it-moved" : "brief"}`, date: day.date, tone: top.pct > 0 ? "accent" : "down", why: note ? view(note) : null });
+    }
+  }
+  // Other notes of that day: another of our names, a fund or one of our sectors that moved unusually.
+  if (day?.date && why) {
+    const mine = members ? new Set(members) : null;
+    const extra = notesForDay(why, day.date, { market })
+      .filter((n) => !explained.has(n.key) && (n.kind === "sector" ? (!market || n.market === market) : !mine || n.symbols.some((t) => mine.has(t))))
+      .slice(0, maxNotes);
+    for (const n of extra) {
+      const v = view(n);
+      const w = sizeWord(n.move_pct, "stock");
+      const moved = w && w !== "barely moved" ? w : n.move_pct > 0 ? "rose" : "fell";
+      const one = n.kind !== "sector" && n.symbols.length === 1 ? n.symbols[0] : null;
+      out.push({ id: `why:${n.key}`, text: `${v.who} ${moved} ${whenWords(day.date, today)} — ${whyClause(n)}.`, to: one ? `stock/${one}#why-it-moved` : "details#market-today",
+        date: day.date, tone: n.move_pct > 0 ? "accent" : n.move_pct < 0 ? "down" : "flat", why: v });
+    }
+  }
+  // Official filings of our names in the last few days (fixed plain titles from scripts/sec_news.py, not copied text).
+  for (const f of recentFilings(secNews, { symbols: members, today, days: filingDays, max: maxFilings })) {
+    const title = f.title.charAt(0).toLowerCase() + f.title.slice(1);
+    out.push({ id: `filing:${f.symbol}:${f.date}`, text: `Official news from ${name(f.symbol)} ${whenWords(f.date, today)}: ${title}.`, to: `stock/${f.symbol}#official-news`,
+      date: f.date, tone: "flat", filing: { url: f.url, form: f.form } });
   }
   // A people's call when recent.
   const who = Object.fromEntries((people?.people ?? []).map((p) => [p.id, p.name]));

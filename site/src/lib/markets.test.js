@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   candlesOf, costWords, defaultId, fundCard, marketData, marketNote, NASDAQ_ONLY, nasdaqData, nasdaqOnlyLine, NOT_YET, nounsFor, pickMarket,
-  resolveSymbolMarket, roleIn, scopeOutlook, switchChoices, TLV_NOTE,
+  resolveSymbolMarket, roleIn, scopeOutlook, switchChoices, TLV_NOTE, MARKET_WHO,
 } from "./markets.js";
 import { ROUTES } from "./nav.js";
 
@@ -105,4 +105,12 @@ test("plain words: nouns, the TLV note, the not-yet line, the Nasdaq-only line, 
   assert.equal(costWords(0.2), "0.2% a year");
   assert.equal(costWords(0.15), "0.15% a year");
   assert.equal(costWords(null), null);
+});
+
+test("the Sectors list reads like the other fund lists", () => {
+  const [c] = switchChoices([{ id: "sectors", label: "Sectors", kind: "funds", available: true }]);
+  assert.deepEqual(c, { id: "sectors", label: "Sectors", what: "One fund per industry", available: true });
+  assert.deepEqual(nounsFor({ id: "sectors", kind: "funds" }), { one: "fund", many: "funds" });
+  assert.equal(MARKET_WHO.sectors, "The US market");
+  assert.equal(marketNote({ id: "sectors" }), null);
 });

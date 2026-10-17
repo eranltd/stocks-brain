@@ -102,12 +102,25 @@ def default_fetch_symbols(st: dict, wl: dict) -> list[str]:
     return out + [c["symbol"] for c in wl.get("context", []) if c["symbol"] not in out]
 
 
-def fetch_plan(st: dict | None = None, wl: dict | None = None, mc: dict | None = None) -> dict[str, dict[str, list[str]]]:
-    """{scope: {market id: symbols}} for the two fetch runs: "nasdaq" (the default market, with its context instruments)
-    and "markets" (every other market, list plus benchmark). One request per unique symbol in a scope."""
+FETCH_SCOPES = ("nasdaq", "markets", "sectors")  # one Action run each, at least two hours apart (lint checks the crons)
+
+
+def fetch_run(m: dict) -> str:
+    """Which fetch run a non-default market belongs to: its `fetch_run` in config/markets.json, "markets" by default.
+    The sector funds have their own run because the markets run is nearly at the per-run request cap."""
+    return m.get("fetch_run", "markets")
+
+
+def fetch_plan(st: dict | None = None, wl: dict | None = None, mc: dict | None = None,
+               lists: dict[str, dict] | None = None) -> dict[str, dict[str, list[str]]]:
+    """{scope: {market id: symbols}} for the three fetch runs: "nasdaq" (the default market, with its context
+    instruments), "markets" (every other market, list plus benchmark) and "sectors" (the markets whose fetch_run is
+    "sectors"). One request per unique symbol in a scope. `lists` ({market id: watchlist}) overrides reading the lists."""
     st, wl, mc = st or settings(), wl or watchlist(), mc or markets_config()
-    return {"nasdaq": {mc["default"]: default_fetch_symbols(st, wl)},
-            "markets": {m["id"]: market_symbols(m) for m in other_markets(mc)}}
+    plan: dict[str, dict[str, list[str]]] = {"nasdaq": {mc["default"]: default_fetch_symbols(st, wl)}, "markets": {}, "sectors": {}}
+    for m in other_markets(mc):
+        plan[fetch_run(m)][m["id"]] = market_symbols(m, (lists or {}).get(m["id"]))
+    return plan
 
 
 def scope_symbols(plan_scope: dict[str, list[str]]) -> list[str]:

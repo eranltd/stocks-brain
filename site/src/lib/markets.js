@@ -5,7 +5,7 @@
 export const DEFAULT_MARKET = "nasdaq";
 
 /** One line under each choice in the switch. */
-export const SWITCH_WORDS = { nasdaq: "US leaders", tlv: "Israeli companies, US listings", ishares: "Index funds", chips: "Chip makers", tech: "Tech giants", energy: "Oil and gas companies" };
+export const SWITCH_WORDS = { nasdaq: "US leaders", tlv: "Israeli companies, US listings", ishares: "Index funds", chips: "Chip makers", tech: "Tech giants", energy: "Oil and gas companies", sectors: "One fund per industry" };
 
 export const TLV_NOTE = "Israeli companies that also trade in the US. Tel Aviv-only companies such as the banks are not included, because our data provider does not cover the Tel Aviv exchange.";
 export const NOT_YET = "This market's numbers appear after the next nightly run.";
@@ -36,7 +36,7 @@ export const nounsFor = (entry) => (entry?.kind === "funds" ? { one: "fund", man
 export const marketNote = (entry) => (entry?.id === "tlv" ? TLV_NOTE : null);
 
 /** Who "the market" is in the home's sentence, without digits: the benchmark of that market in everyday words. */
-export const MARKET_WHO = { tlv: "The Israeli market", ishares: "The US market", chips: "Chip makers as a group", tech: "The Nasdaq-100", energy: "Energy companies as a group" };
+export const MARKET_WHO = { tlv: "The Israeli market", ishares: "The US market", chips: "Chip makers as a group", tech: "The Nasdaq-100", energy: "Energy companies as a group", sectors: "The US market" };
 
 /** The symbols on a market view's list (not the benchmark). */
 export const membersOf = (view) => (view?.watchlist?.symbols ?? []).map((s) => s.symbol);

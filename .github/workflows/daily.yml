@@ -8,6 +8,8 @@ on:
     - cron: "40 23 * * 1-5"   # fetch_prices, score_picks, regime_monitor, ..., score_people, technical_checklist (after the US close)
     - cron: "40 2 * * 2-6"    # fetch_markets, market_lists: the other markets (TLV, iShares), three hours later so the
                               # two fetches never share one hour of Tiingo's free-plan cap (50 requests an hour)
+    - cron: "40 4 * * 2-6"    # fetch_sectors, sector_list: the sector funds, two hours after the other markets (that run
+                              # is near the per-run request cap, so the sectors have their own hour)
     - cron: "0 13 1 * *"      # calibration
   workflow_dispatch:
     inputs:
@@ -16,9 +18,9 @@ on:
         type: boolean
         default: true
       scope:
-        description: "nasdaq: the main list and every routine; markets: the other markets (TLV, iShares) only. Leave an hour between the two."
+        description: "nasdaq: the main list and every routine; markets: the other markets (TLV, iShares, ...) only; sectors: the sector funds only. Leave an hour between any two."
         type: choice
-        options: [nasdaq, markets]
+        options: [nasdaq, markets, sectors]
         default: nasdaq
 
 permissions:
@@ -35,8 +37,9 @@ jobs:
     env:
       MONTHLY: ${{ github.event.schedule == '0 13 1 * *' }}
       DRY: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
-      # The other markets' run touches data/markets/ only; every Nasdaq step below is skipped in it.
-      MARKETS: ${{ github.event.schedule == '40 2 * * 2-6' || (github.event_name == 'workflow_dispatch' && inputs.scope == 'markets') }}
+      # The other markets' and the sectors' runs touch data/markets/ only; every Nasdaq step below is skipped in them.
+      MARKETS: ${{ github.event.schedule == '40 2 * * 2-6' || github.event.schedule == '40 4 * * 2-6' || (github.event_name == 'workflow_dispatch' && (inputs.scope == 'markets' || inputs.scope == 'sectors')) }}
+      SECTORS: ${{ github.event.schedule == '40 4 * * 2-6' || (github.event_name == 'workflow_dispatch' && inputs.scope == 'sectors') }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -141,7 +144,7 @@ jobs:
       # leaves a failed market's files as they were. Neither step reads or writes data/market/.
       - name: Fetch the other markets' prices (per market)
         id: fetch_markets
-        if: env.MARKETS == 'true'
+        if: env.MARKETS == 'true' && env.SECTORS != 'true'
         continue-on-error: true  # a failed market is logged; the markets that passed are still published
         env:
           TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
@@ -149,15 +152,31 @@ jobs:
 
       - name: Other markets' numbers, checklist and candles (derived only)
         id: market_lists
-        if: env.MARKETS == 'true' && env.DRY != 'true'
+        if: env.MARKETS == 'true' && env.SECTORS != 'true' && env.DRY != 'true'
         continue-on-error: true  # same: one market's failure keeps its old files and never stops the others
         run: python3 scripts/routines_code.py markets
 
+      # The sector funds (config/markets.json fetch_run "sectors"): the same fail-closed steps in their own run.
+      - name: Fetch the sector funds' prices
+        id: fetch_sectors
+        if: env.SECTORS == 'true'
+        continue-on-error: true  # a failure is logged; the sectors' published files stay as they were
+        env:
+          TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
+        run: python3 scripts/fetch_prices.py --scope sectors ${{ env.DRY == 'true' && '--dry-run' || '' }}
+
+      - name: Sector funds' numbers, checklist and candles (derived only)
+        id: sector_list
+        if: env.SECTORS == 'true' && env.DRY != 'true'
+        continue-on-error: true
+        run: python3 scripts/routines_code.py sectors
+
       # The Nasdaq run never writes data/markets/, so a problem there is a warning in it and cannot discard the day's
-      # main data; the markets run lints everything strictly.
+      # main data; the markets run lints everything strictly. No run here writes the why notes (data/market/why.json),
+      # so --soft-why keeps a stale note from ever discarding prices; why.yml lints them strictly.
       - name: Lint (fails closed)
         id: lint
-        run: python3 scripts/lint.py ${{ env.MARKETS != 'true' && '--soft-markets' || '' }}
+        run: python3 scripts/lint.py --soft-why ${{ env.MARKETS != 'true' && '--soft-markets' || '' }}
 
       # Always record the run (even on failure). Only data that passed lint is committed.
       - name: Record run and publish to the data branch
@@ -180,6 +199,8 @@ jobs:
           ROUTINE_CALIBRATION: ${{ steps.calibration.outcome }}
           ROUTINE_FETCH_MARKETS: ${{ steps.fetch_markets.outcome }}
           ROUTINE_MARKET_LISTS: ${{ steps.market_lists.outcome }}
+          ROUTINE_FETCH_SECTORS: ${{ steps.fetch_sectors.outcome }}
+          ROUTINE_SECTOR_LIST: ${{ steps.sector_list.outcome }}
           ROUTINE_LINT: ${{ steps.lint.outcome }}
         run: |
           if [ "${{ steps.lint.outcome }}" != "success" ]; then bash scripts/data_branch.sh reset "${{ steps.restore.outputs.base }}"; fi

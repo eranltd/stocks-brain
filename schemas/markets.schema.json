@@ -28,7 +28,7 @@
     "markets": {
       "type": "array",
       "minItems": 1,
-      "maxItems": 6,
+      "maxItems": 8,
       "items": {
         "type": "object",
         "additionalProperties": false,
@@ -87,6 +87,13 @@
             "type": "string",
             "minLength": 3,
             "maxLength": 200
+          },
+          "fetch_run": {
+            "enum": [
+              "markets",
+              "sectors"
+            ],
+            "description": "Which daily fetch run gets this market's prices (scripts/fetch_prices.py --scope): markets (02:40 UTC, the default) or sectors (04:40 UTC). Not for the default market, which has the nasdaq run."
           }
         }
       }

@@ -9,6 +9,8 @@ import { callsTouching, joinCalls, shortVia, statusPhrase } from "../lib/people.
 import { marketDay, shortSector } from "../lib/marketday.js";
 import { comingUp, inDays, todayISO } from "../lib/outlook.js";
 import { Accent, ArrowRight, Chip, Container, Conviction, Headline, Reveal, SectionHead, Strip } from "../components/ui.jsx";
+import { isBehind, notesForDay, noteView, usableWhy } from "../lib/why.js";
+import { WhyFooter, WhyNote } from "../components/why.jsx";
 
 const TONE = { bullish: "var(--accent)", bearish: "var(--down)", neutral: "var(--flat)" };
 
@@ -81,10 +83,43 @@ function Mover({ m, name, go }) {
   );
 }
 
-/** What the market did at the last close: index moves, our names' moves, sectors, and why the "why" is missing. */
+/** Open a route and scroll to the section after the hash once it renders (as Today's openAt does). */
+function goTo(go, to) {
+  const [route, id] = to.split("#");
+  go(route);
+  if (!id) return;
+  let tries = 0;
+  const seek = () => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ block: "start" });
+    else if (++tries < 40) setTimeout(seek, 50);
+  };
+  setTimeout(seek, 50);
+}
+
+/**
+ * The "why it moved" notes of one market day (lib/why.js): this list's names, sectors and context funds first, then
+ * notes from the other lists (labelled). Each: {v, lead, tag, to}.
+ */
+function dayNotes(data, why, date) {
+  const marketId = data.marketId ?? data.markets?.find((m) => m.default)?.id ?? null;
+  const labels = Object.fromEntries((data.markets ?? []).map((m) => [m.id, m.label ?? m.id]));
+  const mine = new Set([...(data.watchlist?.symbols ?? []).map((s) => s.symbol), ...(data.watchlist?.context ?? []).map((c) => c.symbol), data.bench?.symbol]);
+  const ours = (n) => (n.kind === "sector" ? !n.market || n.market === marketId : n.symbols.some((t) => mine.has(t)));
+  const notes = notesForDay(why, date);
+  return [...notes.filter(ours), ...notes.filter((n) => !ours(n))].map((n) => {
+    const v = noteView(n, { names: data.names, groups: data.sectors ?? {}, short: shortSector });
+    const one = n.kind !== "sector" && n.symbols.length === 1 ? n.symbols[0] : null;
+    return { v, lead: v.who, tag: !ours(n) && n.market && labels[n.market] ? `on the ${labels[n.market]} list` : null, to: one ? `stock/${one}#why-it-moved` : null };
+  });
+}
+
+/** What the market did at the last close: index moves, our names' moves, sectors, and why (when a note exists). */
 function MarketDay({ data, go }) {
   const d = marketDay(data.market, data.watchlist, data.bench);
   if (!d || !d.names) return null;
+  const why = usableWhy(data.why, Boolean(data.livePrices));
+  const notes = why ? dayNotes(data, why, d.date) : [];
   const lead = d.spx?.pct ?? d.bench?.pct ?? null;
   const who = d.spx?.pct != null ? "The market" : "The Nasdaq-100"; // the S&P 500 leads; older data has only the benchmark's move
   const verb = lead == null ? null : lead > 0.05 ? "rose" : lead < -0.05 ? "fell" : "barely moved";
@@ -124,13 +159,27 @@ function MarketDay({ data, go }) {
           )}
         </Reveal>
       )}
+      {notes.length > 0 && (
+        <Reveal id="market-why" className="card mt-4 scroll-mt-28 p-5 sm:p-6">
+          <div className="meta mb-3 text-accent">Why it moved</div>
+          <ul className="grid gap-3">
+            {notes.map((x) => <WhyNote key={x.v.key} v={x.v} tag={x.tag}
+              lead={x.to ? <button type="button" onClick={() => goTo(go, x.to)} className="text-left underline decoration-line-2 underline-offset-2 hover:text-ink-2">{x.lead}</button> : x.lead} />)}
+          </ul>
+          <WhyFooter className="mt-4" />
+        </Reveal>
+      )}
       <p className="mt-4 text-[14px] leading-relaxed text-ink-2">
         {d.spx && d.spx.pct == null && <>The {d.spx.name}'s move for the day shows up after the next daily run. </>}
         {d.spx?.fromHigh != null && <>The {d.spx.name} is {d.spx.fromHigh > -0.05 ? "at" : `${Math.abs(d.spx.fromHigh).toFixed(1)}% below`} its highest point of the past year. </>}
         {d.breadth != null && <>{fmtNum(d.breadth, 0)}% of our companies trade above their average price of the last 50 days. </>}
       </p>
       <p className="meta mt-3 normal-case tracking-[0.04em]">
-        This shows what moved, not why: news feeds cost money, so they are not connected yet. The US market closes at 4 pm New York time (20:00 UTC; 21:00 in winter) and our data arrives after the nightly run, so this updates overnight.
+        {notes.length ? "The notes above say why, in our own words with links; the numbers are ours. "
+          : !why ? "This shows what moved, not why: a note on why is added only when a move is unusual, and none has been written yet. "
+          : isBehind(why, d.date) ? "This shows what moved, not why: a note on why is added only when a move is unusual, a few hours after this day's numbers arrive. "
+          : "This shows what moved, not why: a note on why is added only when a move is unusual. "}
+        The US market closes at 4 pm New York time (20:00 UTC; 21:00 in winter) and our data arrives after the nightly run, so this updates overnight.
       </p>
     </section>
   );

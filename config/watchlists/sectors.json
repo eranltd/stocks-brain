@@ -1,0 +1,62 @@
+{
+ "version": "1.0.0",
+ "updated_at": "2026-10-17",
+ "change_note": "Eleven US sector funds, the narrowest fund per industry (telecom carriers through IYZ rather than a fund mostly made of two internet giants), measured against the S&P 500 (SPY).",
+ "symbols": [
+  {
+   "symbol": "IYZ",
+   "name": "Telecom carriers (iShares US Telecommunications)",
+   "category": "Sector"
+  },
+  {
+   "symbol": "XLK",
+   "name": "Technology (Technology Select Sector SPDR)",
+   "category": "Sector"
+  },
+  {
+   "symbol": "XLF",
+   "name": "Banks and finance (Financial Select Sector SPDR)",
+   "category": "Sector"
+  },
+  {
+   "symbol": "XLV",
+   "name": "Health care (Health Care Select Sector SPDR)",
+   "category": "Sector"
+  },
+  {
+   "symbol": "XLY",
+   "name": "Shops, cars and leisure (Consumer Discretionary SPDR)",
+   "category": "Sector"
+  },
+  {
+   "symbol": "XLP",
+   "name": "Everyday goods (Consumer Staples Select Sector SPDR)",
+   "category": "Sector"
+  },
+  {
+   "symbol": "XLI",
+   "name": "Industry and transport (Industrial Select Sector SPDR)",
+   "category": "Sector"
+  },
+  {
+   "symbol": "XLB",
+   "name": "Materials (Materials Select Sector SPDR)",
+   "category": "Sector"
+  },
+  {
+   "symbol": "XLU",
+   "name": "Utilities (Utilities Select Sector SPDR)",
+   "category": "Sector"
+  },
+  {
+   "symbol": "XLRE",
+   "name": "Real estate and towers (Real Estate Select Sector SPDR)",
+   "category": "Sector"
+  },
+  {
+   "symbol": "XLE",
+   "name": "Oil and gas (Energy Select Sector SPDR)",
+   "category": "Sector"
+  }
+ ]
+}

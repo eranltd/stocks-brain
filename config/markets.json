@@ -1,7 +1,7 @@
 {
-  "version": "1.1.0",
-  "updated_at": "2026-10-14",
-  "change_note": "Three more lists for the header switch and the home page: the biggest chip makers (against SOXX), tech giants (against QQQ) and energy companies (against XLE). Nasdaq stays the default and the only market the brain, rules, paper and people read.",
+  "version": "1.2.0",
+  "updated_at": "2026-10-17",
+  "change_note": "A Sectors list for looking only: one US fund per industry (telecom carriers, tech, banks, health care and so on) against the S&P 500, fetched in its own early-morning run. Nasdaq stays the default and the only market the brain, rules, paper and people read.",
   "default": "nasdaq",
   "markets": [
     {
@@ -69,6 +69,18 @@
       "benchmark_label": "Energy companies as a group (XLE proxy)",
       "data": "data/markets/energy",
       "note": "The biggest US oil and gas companies, each measured against the whole energy sector."
+    },
+    {
+      "id": "sectors",
+      "label": "Sectors",
+      "name": "US industries (sector funds)",
+      "kind": "funds",
+      "watchlist": "config/watchlists/sectors.json",
+      "benchmark": "SPY",
+      "benchmark_label": "S&P 500 (SPY proxy)",
+      "data": "data/markets/sectors",
+      "fetch_run": "sectors",
+      "note": "One fund per US industry, to see which parts of the market moved on a day. For looking only: never part of the plan."
     }
   ]
 }

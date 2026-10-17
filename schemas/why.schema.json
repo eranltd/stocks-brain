@@ -1,0 +1,165 @@
+{
+  "$id": "why.schema.json",
+  "title": "Why it moved (data/market/why.json)",
+  "description": "Short notes, in our own words and with dated links to allow-listed sources, on why one of our names, a context fund or a sector moved unusually on a market day. Researched by a scheduled Claude session (routine why_notes, never the brain), recorded by .github/workflows/why.yml through scripts/record_why.py, which fills move_pct and symbols from our own data. They explain a move; they are never a reason to trade and never enter the brain's pack. The newest thirty days are kept.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "as_of",
+    "sample",
+    "notes"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "as_of": {
+      "$ref": "common.schema.json#/$defs/date",
+      "description": "The newest market day with a note."
+    },
+    "sample": {
+      "type": "boolean"
+    },
+    "notes": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "market_date",
+          "key",
+          "kind",
+          "market",
+          "headline",
+          "why",
+          "confidence",
+          "sources",
+          "move_pct",
+          "symbols",
+          "researched_at"
+        ],
+        "properties": {
+          "market_date": {
+            "$ref": "common.schema.json#/$defs/date"
+          },
+          "key": {
+            "$ref": "#/$defs/key"
+          },
+          "kind": {
+            "$ref": "#/$defs/kind"
+          },
+          "market": {
+            "$ref": "#/$defs/market"
+          },
+          "headline": {
+            "$ref": "#/$defs/headline"
+          },
+          "why": {
+            "$ref": "#/$defs/why"
+          },
+          "confidence": {
+            "$ref": "#/$defs/confidence"
+          },
+          "sources": {
+            "$ref": "#/$defs/sources"
+          },
+          "move_pct": {
+            "type": "number",
+            "minimum": -100,
+            "maximum": 1000,
+            "description": "The day move in percent, computed by code from our derived data (never by the model)."
+          },
+          "symbols": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 20,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "common.schema.json#/$defs/ticker"
+            },
+            "description": "The names the move covers, from our data: the stock or fund itself (first), funds that moved with it, or a sector's names."
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80,
+            "description": "Who the note is about in words, from our config (the list name, benchmark label or sector), filled by record_why from the candidate (never by the model). Optional: older files have none."
+          },
+          "researched_at": {
+            "$ref": "common.schema.json#/$defs/datetime"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "key": {
+      "type": "string",
+      "pattern": "^([A-Z][A-Z0-9.\\-]{0,9}|sector:[A-Z][A-Za-z ]{2,40})$",
+      "description": "A stock or fund: its ticker. A sector average of the main list: sector:<GICS sector>, e.g. sector:Communication Services."
+    },
+    "kind": {
+      "enum": [
+        "stock",
+        "fund",
+        "sector"
+      ]
+    },
+    "market": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{1,20}$",
+      "description": "The config/markets.json id where the move was found."
+    },
+    "headline": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 90
+    },
+    "why": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 320
+    },
+    "confidence": {
+      "enum": [
+        "clear",
+        "likely",
+        "unclear"
+      ],
+      "description": "clear: an official or several reputable sources state the cause; likely: reputable outlets link the move to it; unclear: no allow-listed source explains it, and the note says so."
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url",
+        "publisher",
+        "published"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "pattern": "^https://[^\\s\"'<>]+$",
+          "maxLength": 500
+        },
+        "publisher": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 60
+        },
+        "published": {
+          "$ref": "common.schema.json#/$defs/date"
+        }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "maxItems": 4,
+      "items": {
+        "$ref": "#/$defs/source"
+      }
+    }
+  }
+}

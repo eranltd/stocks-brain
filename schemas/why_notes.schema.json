@@ -1,0 +1,57 @@
+{
+  "$id": "why_notes.schema.json",
+  "title": "Why-it-moved notes from the routine (.cache/why/notes.json)",
+  "description": "What the why_notes routine's workflow (.claude/workflows/why.js) writes and dispatches to why.yml as the `notes` input. scripts/record_why.py checks it against this schema, the allow-list (config/news_sources.json) and the candidates code recomputes for market_date.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "market_date",
+    "notes"
+  ],
+  "properties": {
+    "market_date": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "notes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "key",
+          "kind",
+          "market",
+          "headline",
+          "why",
+          "confidence",
+          "sources"
+        ],
+        "properties": {
+          "key": {
+            "$ref": "why.schema.json#/$defs/key"
+          },
+          "kind": {
+            "$ref": "why.schema.json#/$defs/kind"
+          },
+          "market": {
+            "$ref": "why.schema.json#/$defs/market"
+          },
+          "headline": {
+            "$ref": "why.schema.json#/$defs/headline"
+          },
+          "why": {
+            "$ref": "why.schema.json#/$defs/why"
+          },
+          "confidence": {
+            "$ref": "why.schema.json#/$defs/confidence"
+          },
+          "sources": {
+            "$ref": "why.schema.json#/$defs/sources"
+          }
+        }
+      }
+    }
+  }
+}

@@ -14,7 +14,8 @@ import { TopStocks } from "../components/topstocks.jsx";
 import { SectorSpotlights } from "../components/spotlight.jsx";
 import { requestChecklistView } from "../components/checklist.jsx";
 import { LatestVerdict } from "../components/verdict.jsx";
-import { candlesOf, fundCard, MARKET_WHO, marketNote, NOT_YET, nounsFor } from "../lib/markets.js";
+import { candlesOf, fundCard, MARKET_WHO, marketNote, membersOf, NOT_YET, nounsFor } from "../lib/markets.js";
+import { NOT_A_TRADE, usableWhy } from "../lib/why.js";
 
 const plural = (n, one, many) => (n === 1 ? one : many);
 const noYear = (iso) => fmtDate(iso).replace(/\s\d{4}$/, ""); // "Thu, 22 Oct"
@@ -155,6 +156,20 @@ function TapLine({ onClick, children, tone }) {
   );
 }
 
+/** Under a "why it moved" line: where it comes from, with the market day, as links. Nothing when an unclear note found
+ *  no source (the line itself already says no clear cause was found). */
+function WhySources({ v }) {
+  if (!v.sources.length) return null;
+  return (
+    <p className="mt-1.5 px-4 text-[13.5px] leading-relaxed text-ink-3">
+      {v.unclear ? "Looked at" : "From"}{" "}
+      {v.sources.map((s, i) => (
+        <Fragment key={s.url}>{i ? " · " : ""}<a href={s.url} target="_blank" rel="noopener noreferrer" className="underline decoration-line-2 underline-offset-2 hover:text-ink">{s.publisher}{s.day ? `, ${s.day}` : ""} ↗</a></Fragment>
+      ))}
+    </p>
+  );
+}
+
 /**
  * The market-dependent part of the simple home, in words: the carousel's names, the market sentence, the news and the
  * companies (or funds) to know. The default market adds what we hold on paper and the brain's names; another market
@@ -171,10 +186,29 @@ function homeWords(md, { isDefault, held = [], picked = [], todayIso, funds }) {
   const market = isDefault
     ? marketWords(day, md.regime, todayIso)
     : marketWords(day, null, todayIso, { who: MARKET_WHO[id] ?? "Our benchmark", noun: nouns.many, fromHigh: benchRow?.from_high_pct });
-  const news = newsLines({ outlook: md.outlook, day, people: isDefault ? md.people : null, today: todayIso, names: md.names });
+  // Why it moved (lib/why.js) and recent official filings of this market's own names; sample files never sit beside live
+  // numbers.
+  const live = Boolean(md.livePrices);
+  const why = usableWhy(md.why, live);
+  const secNews = md.secNews && !(md.secNews.sample && live) ? md.secNews : null;
+  // Five lines at most, one extra note: room for the explained mover and a recent official filing next to the results
+  // coming up and the latest company news.
+  const news = newsLines({ outlook: md.outlook, day, people: isDefault ? md.people : null, today: todayIso, names: md.names, max: 5, maxNotes: 1,
+    why, secNews, members: [...membersOf({ watchlist: md.watchlist }), ...(md.watchlist?.context ?? []).map((c) => c.symbol), md.bench.symbol],
+    groups: md.sectors ?? {}, market: id ?? null });
   const pick = { held, picked, day, outlook: md.outlook, checklist, names: md.names, bench: md.bench.symbol, today: todayIso };
-  // A fund has no company card: its plain sentence comes from config/funds.json.
-  const withFund = (c) => ({ ...c, plain: fundCard(funds, c.ticker)?.plain ?? c.plain ?? null });
+  // A fund has no company card: its plain sentence comes from config/funds.json, else its list's plain category (the
+  // sector funds may not have cards yet).
+  // A sector fund's category is just "Sector", so it says which industry from the plain part of its name ("Telecom
+  // carriers (iShares US Telecommunications)" -> "One industry: telecom carriers.").
+  const category = (t) => {
+    const cat = nouns.many === "funds" ? md.sectors?.[t] : null;
+    if (!cat) return null;
+    if (cat !== "Sector") return `${cat}.`;
+    const plain = String(md.names?.[t] ?? "").match(/^([^(]{3,60}?)\s*\(/)?.[1];
+    return plain ? `One industry: ${plain.charAt(0).toLowerCase()}${plain.slice(1)}.` : null;
+  };
+  const withFund = (c) => ({ ...c, plain: fundCard(funds, c.ticker)?.plain ?? c.plain ?? category(c.ticker) });
   const companies = companiesToKnow(pick).map(withFund);
   const top = topStocks({ ...pick, candles: candlesOf(md) }).map(withFund);
   return { nouns, checklist, market, news, companies, top, note: marketNote(entry) };
@@ -273,9 +307,15 @@ function SimpleHome({ data, market, go, showDetails }) {
             <SimpleCard kicker="In the news" tone="var(--ink-2)">
               {words.news.length ? (
                 <ul className="grid gap-2.5">
-                  {words.news.map((n) => <li key={n.id}><TapLine onClick={() => openAt(go, n.to)} tone={n.tone}>{n.text}</TapLine></li>)}
+                  {words.news.map((n) => (
+                    <li key={n.id}>
+                      <TapLine onClick={() => openAt(go, n.to)} tone={n.tone}>{n.text}</TapLine>
+                      {n.why && <WhySources v={n.why} />}
+                    </li>
+                  ))}
                 </ul>
               ) : <p className="text-[17px] leading-relaxed text-ink-2">Nothing new about our {words.nouns.many} this week.</p>}
+              {words.news.some((n) => n.why || n.filing) && <p className="mt-4 text-[14.5px] leading-relaxed text-ink-3">{NOT_A_TRADE}</p>}
             </SimpleCard>
 
           </>

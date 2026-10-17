@@ -1,7 +1,7 @@
 {
-  "version": "0.6.0",
-  "updated_at": "2026-10-14",
-  "change_note": "Official company news: the SEC's filings index (sec_filings) for every company on every stock list; company numbers (sec_xbrl) now cover every stock list too.",
+  "version": "0.7.0",
+  "updated_at": "2026-10-17",
+  "change_note": "News is active: a separate scheduled Claude session reads allow-listed sources (config/news_sources.json) to explain unusual moves in short own-words notes on the site. It never feeds the brain's pack.",
   "sources": [
     {
       "id": "prices",
@@ -56,16 +56,16 @@
     {
       "id": "news",
       "kind": "news",
-      "label": "Headlines for watchlist names",
-      "status": "planned",
-      "provider": null,
-      "cadence": "daily",
+      "label": "Why it moved (web research)",
+      "status": "active",
+      "provider": "claude_routine_web_research",
+      "cadence": "Tue–Sat 06:47 and 09:47 UTC",
       "feeds": [
-        "pack"
+        "data/market/why.json"
       ],
       "secret_env": null,
       "follow": [],
-      "note": "Headlines and links only; summaries are computed, not copied."
+      "note": "A scheduled Claude session (routine why_notes, not the brain) reads only the hosts in config/news_sources.json when a move is unusual and writes a short note in our own words with dated links. No article text is copied; never in the pack; never a reason to trade."
     },
     {
       "id": "sec_xbrl",

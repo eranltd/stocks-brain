@@ -4,10 +4,11 @@
 Raw bars are never committed: the provider's terms forbid redistribution. Public output is derived numbers only
 (data/market/derived.json and, for the other markets, data/markets/<id>/), written by routines_code.py.
 
-Two scopes, each its own Action run hours apart, because Tiingo's free plan allows 50 requests an hour
-(config/settings.json prices.requests_per_hour) and both together would need 49:
+Three scopes, each its own Action run at least two hours apart, because Tiingo's free plan allows 50 requests an hour
+(config/settings.json prices.requests_per_hour) and any two together would go over it:
   nasdaq   the default market: watchlist, benchmark and market-context instruments (the daily run)
   markets  every other market in config/markets.json: its list and its benchmark (the markets run)
+  sectors  the markets whose fetch_run is "sectors" (the sector funds; the sectors run)
 A run makes at most prices.max_requests_per_run HTTP requests, retries included, and logs how many it used.
 
 Fail closed per market: every symbol is fetched once, merged with what is on disk, trimmed to prices.keep_days,
@@ -15,7 +16,7 @@ sanity-checked and schema-validated in memory. A market is written only if all i
 writes nothing and the others still do (the nasdaq scope is one market, so it stays all-or-nothing). Exit 1 if any
 market failed.
 
-Usage: python3 scripts/fetch_prices.py [--scope nasdaq|markets] [--dry-run] [--fixtures DIR]
+Usage: python3 scripts/fetch_prices.py [--scope nasdaq|markets|sectors] [--dry-run] [--fixtures DIR]
   --fixtures DIR  read <DIR>/<SYMBOL>.json|.csv (the provider's raw format) instead of the network
 """
 from __future__ import annotations
@@ -27,7 +28,7 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _common import CONFIG, PRICES, Validator, dump_json, fetch_plan, load_json, scope_symbols, settings  # noqa: E402
+from _common import CONFIG, FETCH_SCOPES, PRICES, Validator, dump_json, fetch_plan, load_json, scope_symbols, settings  # noqa: E402
 import providers  # noqa: E402
 
 RETRIES = 3
@@ -87,7 +88,7 @@ class Budget:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--scope", choices=("nasdaq", "markets"), default="nasdaq")
+    ap.add_argument("--scope", choices=FETCH_SCOPES, default="nasdaq")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--fixtures")
     args = ap.parse_args()

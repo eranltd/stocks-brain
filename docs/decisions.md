@@ -1,7 +1,7 @@
 ---
-version: 0.22.0
-updated_at: 2026-10-16
-change_note: The brain takes sides every week (a best-three and worst-three bet scored against luck); "neutral" now reads as "do your weekly buy"; a lump-sum guide.
+version: 0.23.0
+updated_at: 2026-10-17
+change_note: Why-it-moved notes from a separate scheduled Claude session (allow-listed sources, own words, never a reason to trade, never in the pack); official SEC filings on Home; a look-only Sectors list in a third fetch run.
 ---
 # Decision log
 
@@ -9,7 +9,8 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 
 ## Open items (waiting on the owner)
 - **Author of sources S-001 to S-005**: confirm they are the same channel (Micha) as the later batches.
-- **Paid connectors** (news, X, options data for implied moves): parked until the owner wants to spend.
+- **Paid connectors** (news APIs, X, options data for implied moves): parked until the owner wants to spend. The
+  free why-it-moved notes (2026-10-17) do not need one.
 - **Two secrets to add** (Settings → Secrets and variables → Actions): `SEC_USER_AGENT` (a name and a contact email,
   which the SEC requires; until it exists the company-numbers step fails softly and the brain reads no fundamentals)
   and `POLYGON_API_KEY` (a free polygon.io key; until it exists the weekly price cross-check is skipped).
@@ -17,6 +18,66 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Market file size**: `derived.json` is written one line per symbol (compact) and is about 330 KB with 21 names.
   Past roughly 35 names it would hit lint's 512 KB cap and the daily run would fail closed; before that, move the
   per-point dates into one shared array.
+
+## 2026-10-17
+- **Why it moved: short notes from a separate Claude session.** On Thursday 2026-10-08, after the US close, SpaceX
+  (Nasdaq: SPCX) agreed to buy Grain Management's nationwide 800 MHz airwaves (about 8 billion dollars per the WSJ,
+  pending FCC approval). On Friday T-Mobile, on our main list, fell 13.27% by our own numbers; Verizon and AT&T fell about
+  nine to ten percent and the tower companies rose. The household sent a video on 2026-10-10 and asked why we had not
+  caught it. The site showed the fall (Home, the market day, the feed) but never the cause: no news source was ever
+  connected, nobody filed anything with the SEC, the names hit hardest are not on our lists, and the brain is sealed to
+  its pack by design. The owner approved option A of the design with its two free extras (B and C below):
+  - **What it does.** Routine `why_notes`, a scheduled Claude Code session on the household's Claude subscription that
+    is not the brain, wakes at 06:47 and 09:47 UTC Tue-Sat, after every data run. Code (`scripts/why_candidates.py`)
+    lists the day's unusual moves from our published percent numbers: a name at three percent or more and three or more
+    standard deviations of its last sixty days (the feed's own test), a context fund, benchmark or sector fund at one and
+    a half percent, a sector average of the main list at two and a half percent (two names or more). One story gets one
+    note: a sector average that only echoes a flagged name folds into that name (the Communication average on 10-09), and
+    funds that moved with the S&P 500 fold into it. At most five, biggest first. The saved workflow `why` sends one
+    researcher per move to the allow-listed sources and a skeptic re-opens every link; the session checks the notes
+    (`scripts/record_why.py --check`) and dispatches `why.yml`, which checks them again, takes each move and its names
+    from our own data (never from the model), publishes `data/market/why.json` (thirty days) and redeploys the site.
+    Home attaches the note to its mover line, the market day shows it instead of "what moved, not why", and each Stock
+    page lists its name's notes. Every note carries: This explains a move; it is not a reason to trade.
+  - **What it never does.** Trade, rate, recommend or set targets (the household does not buy on tips or headlines,
+    `config/rules.json`); enter the brain's pack (the point-in-time rule of 2026-10-13 still holds: notes are written
+    after the close and the brain never reads them); commit, push, edit a tracked file or open a pull request (it only
+    dispatches the Action, exactly like the brain); fetch or print a price or volume; copy article text (notes are in our
+    own words: no quotation marks, no digits, a headline of at most ninety characters and a why of at most three hundred
+    and twenty); get past a login, paywall or bot check; link to a host off the allow-list. When no trusted source
+    explains a move, the note says so plainly ("unclear") instead of guessing.
+  - **Hardening (adversarial review).** Web text is data: the workflow's agents get a closed tool list (no GitHub or
+    other connector tools, no git, no other commands) and the drafts handed between them are marked as data. The
+    record also refuses amounts and percents in words or symbols, share-price moves, any quote-like mark, hidden or
+    control characters and non-Latin look-alike letters, and a link whose host a browser would read differently (a
+    backslash); the publisher shown on the site comes from the allow-list, never from the model. The daily and brain
+    runs lint the notes with `--soft-why` (warnings), since they never write them, so a stale note (say, a host later
+    taken off the allow-list) can never discard a day's prices or a brain run; `why.yml` lints them strictly.
+  - **The allow-list** is `config/news_sources.json`, owner-editable: regulators (SEC, FCC, FDA and the like), the
+    exchanges, the companies' own investor pages already used by the outlook cards, the three big newswires, reputable
+    outlets (Reuters, AP, CNBC, WSJ, Bloomberg, FT, MarketWatch, Barron's and a few more) and a few trade publications
+    (Light Reading, Fierce, STAT and others). A source must be dated no later than the day after the move.
+  - **Cost.** No new bill and no new key: it uses the household's Claude allowance. On a quiet day a wake is a few
+    commands; on a flagged day it is one researcher and one skeptic per move plus a writer. Run over our own published
+    numbers for 40 market days (2026-08-21 to 2026-10-16), code would have flagged nothing on 7 days and one to five
+    moves on the others, about 1.4 a day on average, most often a fund moving one and a half percent (the chip-makers
+    fund on 20 days, the energy fund on 10, the Israel fund on 8); the sector funds will add some on broad days. If that
+    proves noisy, the fund threshold is the knob (`FUND_MIN_PCT` in the script). GitHub Actions minutes are free for this public
+    repo. To stop it, pause the scheduled task or set `why_notes` to `paused` in `config/routines.json`.
+  - This replaces the 2026-10-08 call that "why it moved" stays parked until a paid feed: the premise was not re-tested
+    against free routes. Paid news APIs stay parked; Google News stays rejected.
+- **Official filings on Home (option B, free).** Home's "In the news" now also lists our names' SEC 8-K filings of the
+  last three days, with the fixed plain titles `data/market/sec_news.json` already carries. It would not have caught the
+  SpaceX deal (no party filed), but it covers results, deals and leadership changes.
+- **A Sectors list for looking (option C, free).** Eleven US sector funds against the S&P 500, the narrowest fund per
+  industry: telecom carriers through IYZ (not XLC, which is mostly Meta and Alphabet), then XLK, XLF, XLV, XLY, XLP, XLI,
+  XLB, XLU, XLRE and XLE (also the Energy list's benchmark, listed once). Like the other markets it is for looking only:
+  the brain, rules, paper and people still read Nasdaq. The markets run already holds 42 of `max_requests_per_run` 45
+  and Tiingo allows 50 requests an hour, so the sectors have a third fetch run, `fetch_sectors` and `sector_list` at
+  04:40 UTC Tue-Sat (12 requests, two hours after the markets run; lint checks every pair of runs is at least two hours
+  apart and each within the cap). Raw bars never leave a run, so XLE and SPY are fetched again there; we now use 71
+  unique symbols a month. The sector funds' moves are also why-it-moved triggers. Plain fund cards for them can come
+  later; each has the plain category Sector.
 
 ## 2026-10-16
 - **The brain's weekly bet.** The household read a row of neutral calls as "the brain always says wait". Neutral is

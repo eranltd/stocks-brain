@@ -153,7 +153,8 @@ def main() -> int:
     cfg_docs = ("watchlist", "settings", "sources", "routines", *(("rules",) if (CONFIG / "rules.json").exists() else ()),
                 *(("people",) if people_cfg.exists() else ()), *(("outlook",) if (CONFIG / "outlook.json").exists() else ()),
                 *(("checklist",) if checklist_cfg.exists() else ()), *(("markets",) if (CONFIG / "markets.json").exists() else ()),
-                *(("funds",) if (CONFIG / "funds.json").exists() else ()))
+                *(("funds",) if (CONFIG / "funds.json").exists() else ()),
+                *(("news_sources",) if (CONFIG / "news_sources.json").exists() else ()))
     for name in cfg_docs:
         _copy(CONFIG / f"{name}.json", OUT / "config" / f"{name}.json")
 
@@ -180,6 +181,16 @@ def main() -> int:
             _copy(DATA / rel, OUT / rel)
             extra[key] = rel
 
+    # Why-it-moved notes (routine why_notes): the live file when there is one, else the sample notes, but only next to
+    # sample prices (never sample notes next to live numbers).
+    why = None
+    if args.source != "sample" and (MARKET / "why.json").exists():
+        _copy(MARKET / "why.json", OUT / "market" / "why.json")
+        why = "market/why.json"
+    elif price_source == "sample" and (SAMPLES / "market" / "why.json").exists():
+        _copy(SAMPLES / "market" / "why.json", OUT / "market" / "why.json")
+        why = "market/why.json"
+
     ops = DATA / "ops" / "routine_runs.json"
     if ops.exists():
         _copy(ops, OUT / "ops" / "routine_runs.json")
@@ -202,6 +213,7 @@ def main() -> int:
         "fundamentals": extra.get("fundamentals"),
         "price_check": extra.get("price_check"),
         "sec_news": extra.get("sec_news"),
+        "why": why,
         "checklist": checklist,
         "candles": candles or None,
         "markets": markets,

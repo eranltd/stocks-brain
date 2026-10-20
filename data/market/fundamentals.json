@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-17",
+  "as_of": "2026-10-20",
   "sample": false,
   "source": "SEC XBRL company facts: trailing twelve months, or the latest year for yearly filers",
   "companies": [
@@ -241,7 +241,7 @@
       "symbol": "AEP",
       "cik": 4904,
       "name": "American Electric Power Company, Inc.",
-      "status": "ok",
+      "status": "stale",
       "basis": "ttm",
       "period_end": "2026-03-31",
       "filed": "2026-05-05",

@@ -1,15 +1,15 @@
 {
-  "as_of": "2026-10-16",
+  "as_of": "2026-10-19",
   "sample": false,
   "benchmark": "QQQ",
   "state": "normal",
   "trend": "sideways",
   "label": "normal · sideways",
   "metrics": {
-    "vol_ann_pct": 18.55,
-    "drawdown_pct": -6.56,
-    "dist_sma_pct": -2.277,
-    "sma_slope_pct": 1.41
+    "vol_ann_pct": 15.85,
+    "drawdown_pct": -5.44,
+    "dist_sma_pct": -1.088,
+    "sma_slope_pct": 1.193
   },
   "params": {
     "vol_days": 20,

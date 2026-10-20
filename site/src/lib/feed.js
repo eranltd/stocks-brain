@@ -7,7 +7,7 @@
 // text copied from data (a company card's highlight, the brain's summary, a checklist change) stays as published.
 
 import { fmtPct, signTone } from "./format.js";
-import { translate } from "./i18n.js";
+import { isolate, translate } from "./i18n.js";
 import dict from "../i18n/home.js";
 
 export const KINDS = ["market", "companies", "brain", "people", "checklist"];
@@ -71,7 +71,8 @@ export function marketItems(market, watchlist, bench, names = {}, days = MARKET_
     const b = num(bm[date]), sp = num(spx.moves[date]);
     const lead = sp ?? b;
     // the S&P 500 leads, as the figure on the right; a name and its move read the same in both languages
-    const parts = [sp != null && `${spx.name} ${fmtPct(sp, 1, lang)}`, b != null && `${label} ${fmtPct(b, 1, lang)}`].filter(Boolean);
+    const nm = (x) => (lang === "he" ? isolate(x) : x); // a Latin name with brackets keeps its shape in a Hebrew line
+    const parts = [sp != null && `${nm(spx.name)} ${fmtPct(sp, 1, lang)}`, b != null && `${nm(label)} ${fmtPct(b, 1, lang)}`].filter(Boolean);
     const body = [];
     if (day.length) body.push(t("feed.rose", { rose, n: day.length, fell }));
     if (top) body.push(t(names[top.symbol] ? "feed.biggestNamed" : "feed.biggest", { sym: top.symbol, pct: fmtPct(top.pct, 1, lang), name: names[top.symbol] }));

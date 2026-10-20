@@ -513,6 +513,296 @@ add("today.unusual", "Unusual move", "תנועה חריגה");
 add("today.digest", "Checklist digest", "סיכום רשימת הבדיקה");
 add("today.latestClose", " · latest close", " · הסגירה האחרונה");
 
-/* @@COMPONENTS@@ */
+/* ============================================================ tabs/Details.jsx: the market details page */
+
+// the hero verdict (todayCall)
+add("det.head.stale", "The numbers are old.", "המספרים ישנים.");
+add("det.accent.stale", "Don't act on them.", "לא לפעול לפיהם.");
+add("det.head.swap", "Monthly swap day.", "יום ההחלפה החודשי.");
+add("det.accent.swap", "Only the rule's list changes.", "רק הרשימה של הכלל משתנה.");
+add("det.head.calm", "Nothing to do today.", "היום אין מה לעשות.");
+add("det.accent.leave", "Everything stays as it is.", "הכול נשאר כמו שהוא.");
+add("det.accent.core", "The plan stays in the whole-market fund.", "התוכנית נשארת בקרן על כל השוק.");
+add("det.v.jump", "What the market did at this close", "מה עשה השוק בסגירה הזו");
+add("det.v.close", "Market close · {date}", "סגירת המסחר · {date}");
+add("det.v.sample", "Sample prices · {date}", "מחירי דוגמה · {date}");
+add("det.v.daysOld", { one: " · {count} day old", other: " · {count} days old" }, { one: " · לפני יום", two: " · לפני יומיים", other: " · לפני {count} ימים" });
+add("det.v.stale", "The newest market close in the data is {date}. The daily job that fetches prices may have failed; the Routines page shows what ran, so check it before reading anything else.",
+  "סגירת המסחר החדשה ביותר בנתונים היא מ-{date}. ייתכן שהמשימה היומית שמביאה מחירים נכשלה; עמוד המשימות הקבועות מראה מה רץ, ולכן יש לבדוק אותו לפני שקוראים כל דבר אחר.");
+add("det.v.real", "In this plan, real money follows the brain's honest action: usually a fund that holds the whole market, bought a little at a time.",
+  "בתוכנית הזו, הכסף האמיתי הולך לפי הצעד הכן של המוח: בדרך כלל קרן שמחזיקה את כל השוק, שנקנית קצת בכל פעם.");
+add("det.v.game", "Separately, the rule plays a game with pretend money to learn if picking stocks works.",
+  "בנפרד, הכלל משחק בכסף מדומה כדי ללמוד אם בחירת מניות עובדת.");
+add("det.v.holds", "Its pretend portfolio holds {list}", "התיק המדומה שלו מחזיק {list}");
+add("det.v.wouldHold", "It would hold {list}", "הוא היה מחזיק {list}");
+add("det.v.noStocks", "no stocks", "אף מניה");
+add("det.v.andCore", " and {pct} in the whole-market fund", " ו-{pct} בקרן על כל השוק");
+add("det.v.looksAgain", "; it looks again on {date}.", "; הבדיקה הבאה ב-{date}.");
+add("det.v.tested", "Tested on past prices, the result is {word}: it did better than {pct} of random picks from the same list.",
+  "במבחן על מחירי עבר התוצאה היא {word}: הכלל הצליח יותר מ-{pct} מהבחירות האקראיות מאותה רשימה.");
+add("det.v.word.passes_history", "passed the test on past prices", "עבר את המבחן על מחירי עבר");
+add("det.v.word.candidate", "promising, not proven", "מבטיח, לא מוכח");
+add("det.v.word.inconclusive", "unclear", "לא חד-משמעית");
+add("det.v.word.rejected", "failed", "נכשל");
+add("det.v.stage", "Trust stage {stage}: a small side bet, within this site's limits.", "שלב {stage} בסולם האמון: הימור צדדי קטן, בגבולות הכללים של האתר.");
+add("det.v.notYet", "No real money follows the rule until trust stage 2: {met} conditions met.", "שום כסף אמיתי לא הולך לפי הכלל עד שלב 2 בסולם האמון: {met} תנאים התקיימו.");
+add("det.v.metOf", "{met} of {n}", "{met} מתוך {n}");
+add("det.v.routines", "Open routines", "לפתוח את המשימות הקבועות");
+add("det.v.goal", "Is {goal} a year realistic?", "האם {goal} בשנה זה מציאותי?");
+add("det.v.portfolio", "The pretend portfolio", "התיק המדומה");
+add("det.v.marketLink", "What the market did at the close", "מה עשה השוק בסגירה");
+
+// what the market did
+add("det.md.eyebrowLive", "What the market did · {date}", "מה עשה השוק · {date}");
+add("det.md.eyebrowSample", "Sample prices, not the market · {date}", "מחירי דוגמה, לא השוק · {date}");
+add("det.md.who.market", "The market", "השוק");
+add("det.md.who.ndx", "The Nasdaq-100", "מדד Nasdaq-100");
+add("det.md.lastA", "The last", "הסגירה");
+add("det.md.lastB", "close.", "האחרונה.");
+// "and" sits inside the last part: Hebrew joins ו to its word ("ואחת ירדה", "ו-3 ירדו").
+add("det.md.counted", "Of the {n} companies on this list, {up} {down}.", "מתוך {n} החברות ברשימה, {up} {down}.");
+add("det.md.countedFlat", "Of the {n} companies on this list, {up}, {down} {flat}.", "מתוך {n} החברות ברשימה, {up}, {down} {flat}.");
+add("det.md.up", { other: "{count} went up" }, { zero: "אף אחת לא עלתה", one: "אחת עלתה", other: "{count} עלו" });
+add("det.md.down", { other: "{count} went down" }, { zero: "אף אחת לא ירדה", one: "אחת ירדה", other: "{count} ירדו" });
+add("det.md.andDown", { other: "and {count} went down" }, { zero: "ואף אחת לא ירדה", one: "ואחת ירדה", other: "ו-{count} ירדו" });
+add("det.md.andFlat", { other: "and {count} stayed the same" }, { one: "ואחת לא זזה", other: "ו-{count} לא זזו" });
+add("det.md.notCounted", "How the companies on this list moved shows up after the next daily run.", "איך זזו החברות ברשימה יופיע אחרי הריצה היומית הבאה.");
+add("det.md.ledeTail", "Each number is how much the price changed since the day before. Tap a company to see more.",
+  "כל מספר הוא השינוי במחיר לעומת היום הקודם. הקשה על חברה פותחת עוד פרטים.");
+add("det.md.spxLater", "Its move for the day shows up after the next daily run.", "התנועה היומית שלו תופיע אחרי הריצה היומית הבאה.");
+add("det.md.spxDesc", "The whole US market: about 500 big companies in one number.", "כל השוק האמריקאי: בערך 500 חברות גדולות במספר אחד.");
+add("det.md.benchDesc", "The benchmark this site compares against: the 100 biggest Nasdaq companies, mostly tech.",
+  "מדד הייחוס שהאתר משווה אליו: 100 החברות הגדולות ב-Nasdaq, רובן טכנולוגיה.");
+add("det.md.upDown", "companies up/down", "חברות שעלו/ירדו");
+add("det.md.upDownDesc", "{counted} of the {n} companies on this list.", "{counted} מתוך {n} החברות ברשימה.");
+add("det.md.breadth", "above their usual level", "מעל הרמה הרגילה שלהן");
+add("det.md.breadthDesc", "How many of the companies on this list trade above their average price of the last 50 days. More means more companies are joining in.",
+  "כמה מהחברות ברשימה נסחרות מעל ממוצע 50 הימים שלהן. יותר פירושו שיותר חברות מצטרפות.");
+add("det.md.risers", "Went up the most", "עלו הכי הרבה");
+add("det.md.fallers", "Went down the most", "ירדו הכי הרבה");
+add("det.md.noneRose", "None rose.", "אף אחת לא עלתה.");
+add("det.md.noneFell", "None fell.", "אף אחת לא ירדה.");
+add("det.md.bySector", "By industry", "לפי ענף");
+add("det.md.why", "Why it moved", "למה זה זז");
+add("det.md.onList", "on the {list} list", "ברשימת {list}");
+add("det.md.spxPending", "The {name}'s move for the day shows up after the next daily run.", "התנועה היומית של {name} תופיע אחרי הריצה היומית הבאה.");
+add("det.md.atHigh", "The {name} is at its highest point of the past year.", "{name} נמצא בנקודה הגבוהה ביותר שלו בשנה האחרונה.");
+add("det.md.belowHigh", "The {name} is {pct} below its highest point of the past year.", "{name} נמצא {pct} מתחת לנקודה הגבוהה ביותר שלו בשנה האחרונה.");
+add("det.md.breadthLine", "{pct} of the companies on this list trade above their average price of the last 50 days.", "{pct} מהחברות ברשימה נסחרות מעל ממוצע 50 הימים שלהן.");
+add("det.md.notesSay", "The notes above say why, in the site's own words with links; the numbers come from the site's data.",
+  "ההסברים למעלה אומרים למה, במילים של האתר ועם קישורים; המספרים מגיעים מהנתונים של האתר.");
+add("det.md.noWhy", "This shows what moved, not why: a note on why is added only when a move is unusual, and none has been written yet.",
+  "כאן רואים מה זז, לא למה: הסבר נוסף רק כשתנועה חריגה, ועדיין לא נכתב אף הסבר.");
+add("det.md.behind", "This shows what moved, not why: a note on why is added only when a move is unusual, a few hours after this day's numbers arrive.",
+  "כאן רואים מה זז, לא למה: הסבר נוסף רק כשתנועה חריגה, כמה שעות אחרי שהמספרים של היום מגיעים.");
+add("det.md.whatNotWhy", "This shows what moved, not why: a note on why is added only when a move is unusual.",
+  "כאן רואים מה זז, לא למה: הסבר נוסף רק כשתנועה חריגה.");
+add("det.md.closeTime", "The US market closes at 4 pm New York time (20:00 UTC; 21:00 in winter) and this site's data arrives after the nightly run, so this updates overnight.",
+  "המסחר בארה״ב נסגר בארבע אחר הצהריים לפי שעון ניו יורק (בשעה 20:00 לפי שעון UTC, ובחורף בשעה 21:00), והנתונים של האתר מגיעים אחרי הריצה הלילית, כך שהעמוד מתעדכן במהלך הלילה.");
+
+// results days coming up
+add("det.cu.title", "Coming up · results days", "בקרוב · ימי תוצאות");
+add("det.cu.next", "next {n} days", "{n} הימים הבאים");
+add("det.cu.first", "In the pretend portfolio or picked by the brain", "בתיק המדומה או בבחירות של המוח");
+add("det.cu.others", "Others on the list", "שאר החברות ברשימה");
+add("det.cu.undated", "No date announced yet:", "עדיין לא הוכרז תאריך:");
+add("det.cu.explain", "In simple words: a few times a year each company tells everyone how much it earned. On that day the price can jump or drop a lot, either way. It is a bumpy day, not a sign to do anything. \"Expected\" means the company has not confirmed the date yet.",
+  "במילים פשוטות: כמה פעמים בשנה כל חברה מספרת לכולם כמה היא הרוויחה. ביום הזה המחיר יכול לקפוץ או לרדת הרבה, לכל כיוון. זה יום סוער, לא סימן לעשות משהו. „משוער” פירושו שהחברה עוד לא אישרה את התאריך.");
+
+// people
+add("det.people.title", "People this site learns from", "משקיעים שהאתר לומד מהם");
+add("det.people.lead",
+  { one: "A well-known investor said something public about companies in the pretend portfolio or picked by the brain:", other: "{count} public opinions from well-known investors are about companies in the pretend portfolio or picked by the brain:" },
+  { one: "משקיע ידוע אמר משהו בפומבי על חברות בתיק המדומה או בבחירות של המוח:", two: "שתי דעות פומביות של משקיעים ידועים עוסקות בחברות בתיק המדומה או בבחירות של המוח:", other: "{count} דעות פומביות של משקיעים ידועים עוסקות בחברות בתיק המדומה או בבחירות של המוח:" });
+add("det.people.item", "{t} {stance} by {via} ({kind} {date}): {status}", "{t}: עמדה {stance} של {via} ({kind}, {date}): {status}");
+add("det.people.13f", "from a required holdings filing", "מתוך דיווח החזקות חובה");
+add("det.people.public", "public", "פומבית");
+add("det.people.tail", ". Just for background: each opinion is checked later against the whole-market fund.", ". רק לרקע: כל דעה נבדקת מאוחר יותר מול הקרן על כל השוק.");
+add("det.people.button", "Their calls", "התחזיות שלהם");
+
+// the brain's picks
+add("det.picks.eyebrow", "The brain · {date}", "המוח · {date}");
+add("det.picks.titleA", "What the brain", "מה המוח");
+add("det.picks.titleB", "flagged.", "סימן.");
+add("det.picks.lede", "The brain runs by itself every market day. Each pick is a guess (up or down), the reason for it, and what would prove it wrong. Later, code checks whether the guess came true. These are ideas to learn from, not things to buy.",
+  "המוח רץ מעצמו בכל יום מסחר. כל בחירה היא ניחוש (עלייה או ירידה), הסיבה לו, ומה יוכיח שהוא שגוי. אחר כך קוד בודק אם הניחוש התממש. אלה רעיונות ללמוד מהם, לא דברים לקנות.");
+add("det.pick.stance.bullish", "leaning up", "נטייה לעלייה");
+add("det.pick.stance.bearish", "leaning down", "נטייה לירידה");
+add("det.pick.stance.neutral", "just watching", "רק במעקב");
+add("det.pick.checked", "checked in {n} market days", "נבדק אחרי {n} ימי מסחר");
+add("det.pick.risks", "What could go wrong", "מה יכול להשתבש");
+add("det.pick.wrongIf", "Proven wrong if", "יתברר כשגוי אם");
+add("det.pick.priceThen", "price then {price}", "המחיר אז {price}");
+add("det.pick.fromClose", "from the close of", "ממחיר הסגירה של");
+add("det.footer", "A research notebook, not investment advice. Every number on this page is computed by code from public market data.",
+  "מחברת מחקר, לא ייעוץ השקעות. כל מספר בעמוד הזה מחושב בקוד מנתוני שוק ציבוריים.");
+
+/* ============================================================ components/goal.jsx: the goal, the pretend portfolio, the mood, base rates */
+
+for (const [k, e, h] of [
+  ["kept", "Held", "בתיק"], ["added", "New this month", "חדשה החודש"], ["fails_checks", "Did not pass the checks", "לא עברה את הבדיקות"],
+  ["stretched", "Rose too fast: wait", "עלתה מהר מדי: ממתינה"], ["slots_full", "No free seat", "אין מושב פנוי"],
+  ["sector_cap", "Its industry already has 2", "בענף שלה כבר יש 2"], ["too_correlated", "Moves like one already held", "זזה כמו מניה שכבר בתיק"],
+  ["no_history", "Too new to judge", "חדשה מכדי לשפוט"],
+]) add(`goal.status.${k}`, e, h);
+add("goal.label.rule", "The rule's pretend picks ({range})", "הבחירות המדומות של הכלל ({range})");
+add("goal.label.equal", "All {n}, equal amounts", "כל {n}, בסכומים שווים");
+add("goal.label.core", "{core} (whole market)", "{core} (כל השוק)");
+add("goal.pending.title", "Shows up after the next daily run", "יופיע אחרי הריצה היומית הבאה");
+add("goal.pending.goal", "The goal check is worked out from all past prices by the daily job.", "בדיקת היעד מחושבת מכל מחירי העבר במשימה היומית.");
+add("goal.pending.portfolio", "The pretend portfolio is worked out from all past prices by the daily job.", "התיק המדומה מחושב מכל מחירי העבר במשימה היומית.");
+
+add("goal.eyebrow", "The goal", "היעד");
+add("goal.eyebrowSample", "The goal · sample prices", "היעד · מחירי דוגמה");
+add("goal.eyebrowYears", "The goal · {years} years of real prices", "היעד · {years} שנים של מחירים אמיתיים");
+add("goal.titleA", "{goal} a year.", "{goal} בשנה.");
+add("goal.titleB", "Is it realistic?", "האם זה מציאותי?");
+add("goal.ledeShort", "In simple words: very hard. A fund that holds the whole market has made close to 10% a year on average over the long run.",
+  "במילים פשוטות: קשה מאוד. קרן שמחזיקה את כל השוק הניבה לאורך זמן בממוצע קרוב ל-10% בשנה.");
+add("goal.lede", "In simple words: very hard. A fund that holds the whole market has made close to {ten} on average over the long run, so {goal} means beating it by a lot, year after year. {goal} would double the money every {years} ({m5} in 5 years, {m10} in 10). Below: what really happened from {from} to {to}, worked out by code.",
+  "במילים פשוטות: קשה מאוד. קרן שמחזיקה את כל השוק הניבה לאורך זמן בממוצע קרוב ל-{ten}, כך ש-{goal} פירושו לנצח אותה בפער גדול, שנה אחרי שנה. ב-{goal} הכסף היה מוכפל כל {years} ({m5} בתוך 5 שנים, {m10} בתוך 10). למטה: מה קרה באמת מ-{from} עד {to}, כפי שחושב בקוד.");
+add("goal.tenPct", "10% a year", "10% בשנה");
+add("goal.nYears", "{n} years", "{n} שנים");
+add("goal.series", "Goal {goal}/yr", "יעד {goal} בשנה");
+add("goal.perYearAvg", "a year, on average", "בשנה, בממוצע");
+add("goal.row.hit", "Years with {goal} or more", "שנים עם {goal} או יותר");
+add("goal.row.loss", "Years that lost money", "שנים עם הפסד");
+add("goal.row.worst", "Worst year", "השנה הגרועה ביותר");
+add("goal.row.dd", "Biggest drop", "הירידה הגדולה ביותר");
+add("goal.yearNote", "A \"year\" here is any 12 months in a row, whatever week it starts ({n} of them in all), not just January to December. \"Biggest drop\" is the largest fall from a high point before it recovered.",
+  "„שנה” כאן היא כל 12 חודשים רצופים, בלי קשר לשבוע שבו הם מתחילים (בסך הכול {n} כאלה), לא רק ינואר עד דצמבר. „הירידה הגדולה ביותר” היא הנפילה הגדולה ביותר מנקודת שיא לפני שהמחיר התאושש.");
+add("goal.chartLabel", "Growth of 100 since {from}: the rule's pretend picks, all companies in equal amounts, the whole-market fund and the benchmark, against the goal path",
+  "צמיחה של 100 מאז {from}: הבחירות המדומות של הכלל, כל החברות בסכומים שווים, הקרן על כל השוק ומדד הייחוס, מול מסלול היעד");
+add("goal.chartNote", "Each line starts at 100 and shows what it grew to. A steady {goal} a year is the straight dashed line. The chart is drawn so the same percentage move looks the same size, early or late. Trading costs ({bps} hundredths of a percent) are taken off the rule.",
+  "כל קו מתחיל ב-100 ומראה לכמה הוא צמח. {goal} קבוע בשנה הוא הקו המקווקו הישר. הגרף משורטט כך ששינוי זהה באחוזים נראה באותו גודל, בהתחלה או בסוף. עלויות מסחר ({bps} מאיות האחוז) מנוכות מהכלל.");
+add("goal.means", "What this means", "מה זה אומר");
+add("goal.perYear", "{pct} a year", "{pct} בשנה");
+add("goal.coreMade", "The whole-market fund ({core}) made {cagr} and reached {goal} in {hit} of 12-month stretches.",
+  "הקרן על כל השוק ({core}) הניבה {cagr} והגיעה ל-{goal} ב-{hit} מתקופות 12 החודשים.");
+add("goal.coreBelow", "The goal is more than the whole market made.", "היעד גבוה ממה שהשוק כולו הניב.");
+add("goal.coreStrong", "These were unusually strong years: over the long run the whole market averages closer to 10% a year.",
+  "אלה היו שנים חזקות במיוחד: לאורך זמן השוק כולו מניב בממוצע קרוב יותר ל-10% בשנה.");
+add("goal.ptsYear", "{pts} points a year", "{pts} נקודות אחוז בשנה");
+add("goal.better", "The rule's picks did better than simply holding all {n} companies by {gap}, with a biggest drop of {a} vs {b}. That gap is what the picking itself added or cost.",
+  "הבחירות של הכלל הצליחו יותר מהחזקה פשוטה של כל {n} החברות, ב-{gap}, עם ירידה גדולה ביותר של {a} לעומת {b}. הפער הזה הוא מה שהבחירה עצמה הוסיפה או עלתה.");
+add("goal.worse", "The rule's picks did worse than simply holding all {n} companies by {gap}, with a biggest drop of {a} vs {b}. That gap is what the picking itself added or cost.",
+  "הבחירות של הכלל הצליחו פחות מהחזקה פשוטה של כל {n} החברות, ב-{gap}, עם ירידה גדולה ביותר של {a} לעומת {b}. הפער הזה הוא מה שהבחירה עצמה הוסיפה או עלתה.");
+add("goal.winners", "Every line that beat {goal} here also fell {dd} or more from a high point along the way. Like a roller coaster: the higher the ride, the deeper the dips.",
+  "כל קו שעבר כאן את {goal} גם ירד {dd} או יותר מנקודת שיא בדרך. כמו רכבת הרים: ככל שהנסיעה גבוהה יותר, הירידות עמוקות יותר.");
+add("goal.noWinners", "Nothing here reached {goal} a year over the whole time, and the biggest drops ran from {a} to {b}.",
+  "שום דבר כאן לא הגיע ל-{goal} בשנה לאורך כל התקופה, והירידות הגדולות ביותר נעו בין {a} ל-{b}.");
+add("goal.caveats", "Read this before trusting the numbers", "לקרוא את זה לפני שסומכים על המספרים");
+add("goal.hindsight.b", "Picked with hindsight.", "נבחר בדיעבד.");
+add("goal.hindsight", "The list of companies was chosen today, already knowing they did well. It is like betting on a race after seeing who won: any test on it looks better than real life. Compare the lines with each other, not with the goal.",
+  "רשימת החברות נבחרה היום, כשכבר ידוע שהן הצליחו. זה כמו להמר על מרוץ אחרי שרואים מי ניצח: כל מבחן עליה נראה טוב יותר מהחיים האמיתיים. את הקווים יש להשוות זה לזה, לא ליעד.");
+add("goal.oneStretch.b", "Only one stretch of time.", "רק תקופה אחת.");
+add("goal.oneStretch", "{years} years, mostly great years for big US tech companies. Another ten years can look very different.",
+  "{years} שנים, רובן שנים מצוינות לחברות הטכנולוגיה הגדולות בארה״ב. עשר השנים הבאות יכולות להיראות אחרת לגמרי.");
+add("goal.pretendOnly.b", "Pretend money only.", "רק כסף מדומה.");
+add("goal.pretendOnly", "The rule's picks are an experiment with pretend money, not where the plan's real money goes. Only the pretend record kept from now on (below) counts as real evidence.",
+  "הבחירות של הכלל הן ניסוי בכסף מדומה, לא המקום שאליו הולך הכסף האמיתי של התוכנית. רק הרישום המדומה שנשמר מעכשיו והלאה (למטה) נחשב לראיה אמיתית.");
+
+add("goal.pf.eyebrowEmpty", "The pretend portfolio", "התיק המדומה");
+add("goal.pf.seats", "{n} seats.", "{n} מושבים.");
+add("goal.pf.pretend", "Pretend money.", "כסף מדומה.");
+add("goal.pf.eyebrow", "Pretend portfolio · rule {v}", "תיק מדומה · כלל {v}");
+add("goal.pf.record", " · pretend record", " · רישום מדומה");
+add("goal.pf.since", " · since {date}", " · מאז {date}");
+add("goal.pf.nextLook", " · next look {date}", " · הבדיקה הבאה {date}");
+add("goal.pf.companies", { zero: "No companies", one: "{count} company", other: "{count} companies" }, { zero: "אין חברות", one: "חברה אחת", two: "שתי חברות", other: "{count} חברות" });
+add("goal.pf.core", "{pct} whole market.", "{pct} בכל השוק.");
+add("goal.pf.full", ", every seat taken.", ", כל המושבים תפוסים.");
+add("goal.pf.lede", "In simple words: this is an experiment with pretend money, to learn whether picking a few stocks beats just owning the whole market. It is not where the plan's real money goes. The rule works like a table with {slots} seats: at most {max} from the same industry. A new company needs to pass {entry} of 4 checks and must not have risen too fast; a company already seated stays while it passes {keep}. Empty seats sit in the whole-market fund. It changes seats once a month.",
+  "במילים פשוטות: זה ניסוי בכסף מדומה, כדי ללמוד אם בחירה של כמה מניות מנצחת פשוט החזקה של השוק כולו. זה לא המקום שאליו הולך הכסף האמיתי של התוכנית. הכלל עובד כמו שולחן עם {slots} מושבים: לכל היותר {max} מאותו ענף. חברה חדשה צריכה לעבור {entry} מתוך 4 בדיקות, ואסור שתעלה מהר מדי; חברה שכבר יושבת נשארת כל עוד היא עוברת {keep}. מושבים ריקים נשארים בקרן על כל השוק. ההחלפות קורות פעם בחודש.");
+add("goal.pf.mix", "Try another mix", "לנסות תמהיל אחר");
+add("goal.pf.seat", "Seat {i} · {pct}", "מושב {i} · {pct}");
+add("goal.pf.passed", "passed {frac} checks", "עברה {frac} בדיקות");
+add("goal.pf.coreSeat", "Whole-market fund until a company passes", "קרן על כל השוק עד שחברה תעבור את הבדיקות");
+add("goal.pf.bumpy", "How bumpy this mix is · last 12 months", "כמה התמהיל הזה קופצני · 12 החודשים האחרונים");
+add("goal.pf.swing", "how much it typically swings in a year", "כמה הוא נע בדרך כלל בשנה");
+add("goal.pf.badMonth", "a bad month (happens about 1 in 20)", "חודש רע (קורה בערך פעם ב-20)");
+add("goal.pf.together", "how much they move together (0 to 1)", "כמה הן זזות יחד (0 עד 1)");
+add("goal.pf.cos", { one: "{count} company", other: "{count} companies" }, { one: "חברה אחת", two: "שתי חברות", other: "{count} חברות" });
+add("goal.pf.ind", { one: "industry among {cos}", other: "industries among {cos}" }, { one: "ענף בין {cos}", other: "ענפים בין {cos}" });
+add("goal.pf.later", "Worked out by the next daily run.", "יחושב בריצה היומית הבאה.");
+add("goal.pf.corrNote", "Near 1 means the companies rise and fall together, like eggs in one basket. Below 0.5 means they really are spread out, so one bad day hurts less.",
+  "קרוב ל-1 פירושו שהחברות עולות ויורדות יחד, כמו ביצים בסל אחד. מתחת ל-0.5 פירושו שהן באמת מפוזרות, כך שיום רע אחד פוגע פחות.");
+add("goal.pf.whyNot", "Why the other companies are not in", "למה שאר החברות לא בתיק");
+add("goal.pf.ofChecks", "{n} of 4 checks", "{n} מתוך 4 בדיקות");
+add("goal.pf.allIn", "Every company on the list is in.", "כל החברות ברשימה בתיק.");
+add("goal.pf.pathOnly", "The test on past prices also holds {list}: there it keeps a company it already had while it passes {keep} checks. The pretend record started fresh on {date}, so a company needs {entry} checks to get in.",
+  "המבחן על מחירי עבר מחזיק גם את {list}: שם הוא שומר חברה שכבר הייתה בתיק כל עוד היא עוברת {keep} בדיקות. הרישום המדומה התחיל מחדש ב-{date}, ולכן חברה צריכה {entry} בדיקות כדי להיכנס.");
+add("goal.pf.changes",
+  { one: "If the rule changed seats today it would make {count} change. It waits for the monthly date on purpose: fewer swaps, less reacting to noise.", other: "If the rule changed seats today it would make {count} changes. It waits for the monthly date on purpose: fewer swaps, less reacting to noise." },
+  { one: "אם הכלל היה מחליף מושבים היום, הוא היה עושה שינוי אחד. הוא מחכה למועד החודשי בכוונה: פחות החלפות, פחות תגובה לרעש.", two: "אם הכלל היה מחליף מושבים היום, הוא היה עושה שני שינויים. הוא מחכה למועד החודשי בכוונה: פחות החלפות, פחות תגובה לרעש.", other: "אם הכלל היה מחליף מושבים היום, הוא היה עושה {count} שינויים. הוא מחכה למועד החודשי בכוונה: פחות החלפות, פחות תגובה לרעש." });
+add("goal.pf.recordTitle", "Pretend record kept from now on · the only fair test", "רישום מדומה מעכשיו והלאה · המבחן ההוגן היחיד");
+add("goal.pf.recordLine", "Since {date} ({decisions}, written down and never changed): rule's picks {a}, whole-market fund {b}, benchmark {sym} {c}.",
+  "מאז {date} ({decisions}, שנרשמו ולא שונו מעולם): הבחירות של הכלל {a}, הקרן על כל השוק {b}, מדד הייחוס {sym} {c}.");
+add("goal.pf.decisions", { one: "{count} monthly decision", other: "{count} monthly decisions" }, { one: "החלטה חודשית אחת", two: "שתי החלטות חודשיות", other: "{count} החלטות חודשיות" });
+add("goal.pf.recordLater", "Starts with the next daily run. Each month the rule's picks are written down using only what was known that day, and never changed. Like sealing a guess in an envelope: nobody can tidy it up later.",
+  "מתחיל בריצה היומית הבאה. בכל חודש הבחירות של הכלל נרשמות רק לפי מה שהיה ידוע באותו יום, ולא משתנות לעולם. כמו לחתום ניחוש במעטפה: אף אחד לא יכול לייפות אותו אחר כך.");
+add("goal.pf.more", "More on the pretend portfolio", "עוד על התיק המדומה");
+
+add("goal.div.title", "This list is not very spread out", "הרשימה הזו לא מפוזרת במיוחד");
+add("goal.div.lead", "All {n} companies on this list are big US companies in only {ind}, {k} of them in {sector}", "כל {n} החברות ברשימה הן חברות אמריקאיות גדולות בסך הכול ב{ind}, {k} מהן בענף {sector}");
+add("goal.div.ind", { one: "{count} industry", other: "{count} industries" }, { one: "ענף אחד", two: "שני ענפים", other: "{count} ענפים" });
+add("goal.div.together", ", and they move together by {avg} on a 0 to 1 scale", ", והן זזות יחד ברמה של {avg} בסולם של 0 עד 1");
+add("goal.div.independent", "They look fairly independent this year, but when markets fall, companies in the same industry tend to fall together.",
+  "השנה הן נראות די עצמאיות, אבל כשהשווקים נופלים, חברות מאותו ענף נוטות ליפול יחד.");
+add("goal.div.oneBet", "A pretend portfolio of {range} stocks from this list moves mostly as one bet: eggs in one basket.",
+  "תיק מדומה של {range} מניות מהרשימה הזו זז בעיקר כמו הימור אחד: ביצים בסל אחד.");
+add("goal.div.spread", "Really spreading out would need companies from other industries (health care, banks, factories, energy, utilities). Adding them is a one-line change to the list.",
+  "פיזור אמיתי היה דורש חברות מענפים אחרים (בריאות, בנקים, תעשייה, אנרגיה, תשתיות). הוספה שלהן היא שינוי של שורה אחת ברשימה.");
+add("goal.div.see", "See which companies move together", "אילו חברות זזות יחד");
+
+add("goal.ctx.eyebrow", "The market's mood · {date}", "מצב הרוח של השוק · {date}");
+add("goal.ctx.titleA", "Is the market", "האם השוק");
+add("goal.ctx.titleB", "helping?", "עוזר?");
+add("goal.ctx.lede", "In simple words: four quick signs of the market's mood, like checking the weather before going out. They are background only, never a reason to act.",
+  "במילים פשוטות: ארבעה סימנים מהירים למצב הרוח של השוק, כמו לבדוק את מזג האוויר לפני שיוצאים. הם רק רקע, אף פעם לא סיבה לפעול.");
+add("goal.ctx.tf.k", "Whole-market direction", "הכיוון של השוק כולו");
+add("goal.ctx.tf.up", "Up", "למעלה");
+add("goal.ctx.tf.notUp", "Not up", "לא למעלה");
+add("goal.ctx.tf.above", "The whole-market fund ({sym}) is above its average price of the last 10 months ({pct})", "הקרן על כל השוק ({sym}) נמצאת מעל המחיר הממוצע שלה ב-10 החודשים האחרונים ({pct})");
+add("goal.ctx.tf.below", "The whole-market fund ({sym}) is below its average price of the last 10 months ({pct})", "הקרן על כל השוק ({sym}) נמצאת מתחת למחיר הממוצע שלה ב-10 החודשים האחרונים ({pct})");
+add("goal.ctx.tf.made", " and made {r} in 12 months", " והניבה {r} ב-12 חודשים");
+add("goal.ctx.tf.cash", ", vs {c} for cash", ", לעומת {c} במזומן");
+add("goal.ctx.tf.tail", ". A slow signal, just for background: never a reason to sell or buy the fund.", ". סימן איטי, רק לרקע: אף פעם לא סיבה למכור או לקנות את הקרן.");
+add("goal.ctx.cash.k", "Safe savings pay", "חיסכון בטוח מניב");
+add("goal.ctx.cash.d", "A year, from short US government loans (very safe). Any stock idea has to beat this, because this needs no risk at all.",
+  "בשנה, מהלוואות קצרות לממשלת ארה״ב (בטוח מאוד). כל רעיון של מניה צריך לנצח את זה, כי כאן אין שום סיכון.");
+add("goal.ctx.p.k", "How many are joining in", "כמה מצטרפות");
+add("goal.ctx.p.few", "Few", "מעטות");
+add("goal.ctx.p.many", "Many", "רבות");
+add("goal.ctx.p.some", "Some", "חלק");
+add("goal.ctx.p.d", "A typical Nasdaq-100 company vs the index as a whole: {a} over 60 days", "חברה טיפוסית במדד Nasdaq-100 לעומת המדד כולו: {a} ב-60 ימים");
+add("goal.ctx.p.spx", "; S&P 500: {b}", "; מדד S&P 500: {b}");
+add("goal.ctx.p.tail", ". \"Few\" means a handful of giant companies are doing the lifting while most others lag.", ". „מעטות” פירושו שקומץ חברות ענק עושות את העבודה בזמן שרוב האחרות מפגרות.");
+add("goal.ctx.credit.k", "Lenders' mood", "מצב הרוח של המלווים");
+add("goal.ctx.credit.calm", "Calm", "רגוע");
+add("goal.ctx.credit.nervous", "Nervous", "עצבני");
+add("goal.ctx.credit.d", "Loans to riskier companies vs loans to the US government, over 60 days: {pct}. When lenders get nervous, it often shows here first.",
+  "הלוואות לחברות מסוכנות יותר לעומת הלוואות לממשלת ארה״ב, ב-60 ימים: {pct}. כשהמלווים נהיים עצבניים, זה מופיע כאן לרוב ראשון.");
+
+add("goal.br.eyebrow", "Do this site's checks work? · {from} to {to} · {n} companies", "האם הבדיקות של האתר עובדות? · {from} עד {to} · {n} חברות");
+add("goal.br.edgeA", "The checks", "הבדיקות");
+add("goal.br.edgeB", "helped.", "עזרו.");
+add("goal.br.betterA", "Slightly better.", "קצת יותר טוב.");
+add("goal.br.betterB", "Not proven.", "לא הוכח.");
+add("goal.br.noneA", "No advantage", "לא נמצא");
+add("goal.br.noneB", "found.", "יתרון.");
+add("goal.br.lede", "In simple words: what happened in the past when a company passed this site's checks, compared with when it did not. Every {step} market days in the past, each company got a grade from the 4 checks; {h} days later the code looked at whether it did better than the benchmark ({sym}). The list was picked with hindsight, so this only compares passing with not passing.",
+  "במילים פשוטות: מה קרה בעבר כשחברה עברה את הבדיקות של האתר, לעומת כשלא עברה. כל {step} ימי מסחר בעבר, כל חברה קיבלה ציון מ-4 הבדיקות; {h} ימים אחר כך הקוד בדק אם היא הצליחה יותר ממדד הייחוס ({sym}). הרשימה נבחרה בדיעבד, ולכן זו רק השוואה בין מי שעברה למי שלא.");
+add("goal.br.passed", "Passed the checks", "עברו את הבדיקות");
+add("goal.br.failed", "Did not pass", "לא עברו");
+add("goal.br.passNote", "on average per {h} days vs {sym} · beat it {hit} of the time · {n} cases", "בממוצע לכל {h} ימים מול {sym} · ניצחו אותו ב-{hit} מהפעמים · {n} מקרים");
+add("goal.br.failNote", "beat it {hit} of the time · {n} cases", "ניצחו אותו ב-{hit} מהפעמים · {n} מקרים");
+add("goal.br.range", "For companies that passed, the true result is very likely (90% sure) between {a} and {b}.", "לחברות שעברו, התוצאה האמיתית נמצאת כמעט בוודאות (90% ביטחון) בין {a} ל-{b}.");
+add("goal.br.aboveZero", "Even the low end is above zero.", "גם הקצה הנמוך מעל אפס.");
+add("goal.br.luck", "That range includes zero, so it could just be luck.", "הטווח הזה כולל את האפס, כך שזה יכול להיות סתם מזל.");
+add("goal.br.ladder", "To move up the trust ladder, the low end must be above zero.", "כדי לעלות בסולם האמון, הקצה הנמוך צריך להיות מעל אפס.");
+add("goal.br.byScore", "By how many of the 4 checks passed (dot: average; bar: likely range)", "לפי כמה מתוך 4 הבדיקות עברו (נקודה: ממוצע; פס: הטווח הסביר)");
+add("goal.br.of4", "{n} of 4", "{n} מתוך 4");
+add("goal.br.tooFew", "too few cases", "מעט מדי מקרים");
 
 export default { en, he };

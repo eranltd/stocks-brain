@@ -2,7 +2,7 @@ import { WeeklyGame } from "../components/weekly.jsx";
 import { QuickRead, RabbitHoles } from "../components/explore.jsx";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { fmtDate } from "../lib/format.js";
-import { localeOf, translate } from "../lib/i18n.js";
+import { hasHebrew, localeOf, translate } from "../lib/i18n.js";
 import { Auto, En, EnglishNote, useLang } from "../lib/lang.jsx";
 import { marketBrief } from "../components/brief.jsx";
 import { comingUp, inDays, todayISO } from "../lib/outlook.js";
@@ -38,6 +38,8 @@ const KIND_META = {
   checklist: { glyph: "✓", color: null },
 };
 const PAGE = 30;
+/** In Hebrew, a line with no Hebrew letters (English from data) reads left to right; otherwise it follows the page. */
+const dirFor = (text, lang) => (lang === "he" && !hasHebrew(text) ? "ltr" : undefined);
 const SOON_DAYS = 14;
 
 /**
@@ -158,13 +160,14 @@ function SimpleCard({ kicker, tone = "var(--accent)", children, id }) {
   );
 }
 
-function TapLine({ onClick, children, tone }) {
+function TapLine({ onClick, children, tone, english = false }) {
   return (
     <button type="button" onClick={onClick}
       className="flex min-h-[52px] w-full items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-3.5 text-start transition hover:border-ink-3">
       {tone && <span className="size-2.5 shrink-0 rounded-full" style={{ background: TONE_VAR[tone] ?? "var(--ink-3)" }} aria-hidden="true" />}
-      {/* dir="auto": a line in Hebrew reads right to left, a company card's own English line left to right */}
-      <span dir="auto" className="min-w-0 flex-1 text-start text-[17px] leading-snug text-ink">{children}</span>
+      {/* A company card's own English line reads left to right; the site's own lines follow the page (a Hebrew line that
+          starts with a ticker still reads right to left, so not dir="auto"). */}
+      <span lang={english ? "en" : undefined} dir={english ? "ltr" : undefined} className="min-w-0 flex-1 text-start text-[17px] leading-snug text-ink">{children}</span>
       <ArrowRight className="size-4 shrink-0 text-ink-3" />
     </button>
   );
@@ -345,7 +348,7 @@ function SimpleHome({ data, market, go, showDetails }) {
                 <ul className="grid gap-2.5">
                   {words.news.map((n) => (
                     <li key={n.id}>
-                      <TapLine onClick={() => openAt(go, n.to)} tone={n.tone}>{n.text}</TapLine>
+                      <TapLine onClick={() => openAt(go, n.to)} tone={n.tone} english={he && !hasHebrew(n.text)}>{n.text}</TapLine>
                       {n.why && <WhySources v={n.why} />}
                     </li>
                   ))}
@@ -634,9 +637,10 @@ function FeedItem({ it, open, ahead = false }) {
             {it.latest && t("today.latestClose")}
             {ahead && <> · {noYear(it.date, lang)} · {inDays(it.days, lang)}</>}
           </span>
-          {/* dir="auto": the site's Hebrew sentences read right to left, English text from data left to right */}
-          <span dir="auto" className="mt-0.5 line-clamp-3 text-start text-[15px] leading-snug text-ink">{it.title}</span>
-          {it.body.map((b, i) => <span key={i} dir="auto" className="mt-1 line-clamp-2 text-start text-[13.5px] leading-relaxed text-ink-2">{b}</span>)}
+          {/* A line with no Hebrew (English from data, a ticker and a number) reads left to right; the site's own Hebrew
+              sentences follow the page even when they start with a ticker (so not dir="auto"). */}
+          <span dir={dirFor(it.title, lang)} className="mt-0.5 line-clamp-3 text-start text-[15px] leading-snug text-ink">{it.title}</span>
+          {it.body.map((b, i) => <span key={i} dir={dirFor(b, lang)} className="mt-1 line-clamp-2 text-start text-[13.5px] leading-relaxed text-ink-2">{b}</span>)}
         </span>
         {it.value && <span className={`num mt-0.5 shrink-0 font-mono text-[13px] ${TONE_TEXT[it.value.tone] ?? "text-ink-2"}`}>{it.value.text}</span>}
       </button>

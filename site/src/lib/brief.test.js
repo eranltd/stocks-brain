@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { aboutPct, aboutTimes, BRIEF_FOOTER, direction, eightChecks, NO_CHECKLIST, plainSummary, readable, setupState, wherePaper } from "./brief.js";
+import { aboutPct, aboutTimes, BRIEF_FOOTER, briefFooter, direction, eightChecks, NO_CHECKLIST, plainSummary, readable, setupState, wherePaper } from "./brief.js";
+import { stripBidi } from "./i18n.js";
 
 const cfg = {
   house_rule: { min_reward_to_risk: 2 },
@@ -99,7 +100,7 @@ test("rounded whole percents and reward-to-risk in words", () => {
 test("where to invest on paper: within the rules, the plan in whole percents", () => {
   const w = wherePaper({ row: row(), setup: setupOk });
   assert.equal(w.ok, true);
-  assert.equal(w.head, "Within the house rules for a paper entry");
+  assert.equal(w.head, "Within this site's rules for a paper entry");
   assert.deepEqual(w.plan, [
     "Stop: sell if it falls about 3% (just under support)",
     "First target: take some profit about 9% higher (at resistance)",
@@ -116,7 +117,7 @@ test("where to invest on paper: within the rules, the plan in whole percents", (
 test("where to invest on paper: why not, and what would change it", () => {
   const hot = wherePaper({ row: row({ rsi: { zone: "overbought" } }), setup: { passed: 3, stretched: true, checks: { trend: true, rs_3m: true, rs_6m: false, calm: false } } });
   assert.equal(hot.ok, false);
-  assert.equal(hot.head, "Not within the house rules today");
+  assert.equal(hot.head, "Not within this site's rules today");
   assert.deepEqual(hot.why, ["it has run too far above its trend"]);
   assert.deepEqual(hot.wait, ["wait until it cools down"]);
   assert.deepEqual(hot.plan, []);
@@ -142,4 +143,68 @@ test("the footer says paper, unproven and the index fund", () => {
   assert.match(BRIEF_FOOTER, /On paper only/);
   assert.match(BRIEF_FOOTER, /unproven/);
   assert.match(BRIEF_FOOTER, /index fund/);
+});
+
+/* ------------------------------------------------------------------------------------------------ Hebrew */
+
+const HE = /[֐-׿]/;
+const ADVICE = /buy signal|recommend|you should buy|מומלץ לקנות|כדאי לקנות|המלצ/i;
+/** Every Hebrew line: has Hebrew letters, no missing key ("[br.…]"), no "undefined", no advice. */
+function hebrew(s) {
+  assert.match(s, HE, s);
+  assert.doesNotMatch(s, /\[[a-z]+\.|undefined|null|NaN/, s);
+  assert.doesNotMatch(s, ADVICE, s);
+}
+
+test("Hebrew: the verdict word and the checklist's own summary said whole", () => {
+  const d = direction(row(), "he");
+  assert.equal(d.word, "נוטה לעלות");
+  assert.equal(d.summary, "בעד הקריאה: הקונים מנצחים בנרות האחרונים, מגמת עלייה, מחזור המסחר תומך בעלייה. הרווח האפשרי גדול מספיק ביחס לסיכון.");
+  assert.equal(plainSummary("Mixed: an uptrend; against it, bearish candles, RSI overbought. Reward-to-risk is below the house rule.", "he"),
+    "בעד הקריאה: מגמת עלייה. נגדה: המוכרים מנצחים בנרות האחרונים, מדד RSI מראה התחממות יתר. הרווח האפשרי קטן מדי ביחס לסיכון.");
+  assert.equal(plainSummary("Leans down: a downtrend.", "he"), "בעד הקריאה: מגמת ירידה.");
+  // a summary with a phrase the site does not know stays English, whole, rather than half translated
+  assert.equal(plainSummary("Leans up: something new.", "he"), "Something new.");
+  assert.equal(direction(null, "he"), null);
+  // English is unchanged by the Hebrew path
+  assert.equal(direction(row(), "en").word, "Going up");
+});
+
+test("Hebrew: readable() says why a reading cannot be used", () => {
+  for (const r of [readable(null, null, null, { lang: "he" }), readable({ sample: true }, {}, null, { lang: "he" }), readable({}, null, null, { lang: "he" }),
+    readable({}, { as_of: "2026-10-01" }, "2026-10-02", { lang: "he" })]) {
+    assert.equal(r.ok, false);
+    hebrew(r.why);
+  }
+  assert.equal(readable(null).why, NO_CHECKLIST);
+});
+
+test("Hebrew: the eight checks, step names in Hebrew, every row in Hebrew", () => {
+  const rows = eightChecks(row(), cfg, "he");
+  assert.deepEqual(rows.map((r) => r.name), ["תבנית הנר", "מגמה", "מחזור מסחר", "ממוצע 20 הימים", "פערים", "תמיכה והתנגדות", "מדד RSI", "ניהול סיכון ויציאה"]);
+  for (const r of rows) { hebrew(r.text); if (r.note) hebrew(r.note); }
+  assert.equal(rows[1].text, "מגמה: עולה");
+  const no = eightChecks(row({ risk_plan: { ...row().risk_plan, fits_house_rule: false } }), cfg, "he")[7];
+  assert.equal(stripBidi(no.note), "היעד הראשון רחוק פחות מפי 2 מנקודת היציאה");
+});
+
+test("Hebrew: whole percents, and where to invest on paper", () => {
+  assert.equal(aboutPct(3.4, "he"), "בערך ⁨3%⁩");
+  assert.equal(aboutPct(0.2, "he"), "פחות מאחוז אחד");
+  assert.equal(stripBidi(aboutTimes(2.53, "he")), "בערך 2.5");
+  const w = wherePaper({ row: row(), setup: setupOk, lang: "he" });
+  assert.equal(w.head, "בתוך כללי האתר לכניסה על הנייר");
+  assert.deepEqual(w.plan.map(stripBidi), [
+    "נקודת יציאה: מכירה אם היא יורדת בערך 3% (קצת מתחת לרמת התמיכה)",
+    "יעד ראשון: מימוש חלק מהרווח בערך 9% גבוה יותר (ברמת ההתנגדות)",
+    "יעד שני: בערך 14% גבוה יותר",
+    "על כל 1 בסיכון, רווח אפשרי של בערך 2.5",
+  ]);
+  const weak = wherePaper({ row: row({ trend: { direction: "down" }, risk_plan: { ...row().risk_plan, fits_house_rule: false } }), lang: "he",
+    setup: { passed: 1, stretched: false, checks: { trend: false, rs_3m: false, rs_6m: false, calm: true } }, benchLabel: "מדד Nasdaq-100" });
+  assert.equal(weak.head, "לא בתוך כללי האתר היום");
+  for (const s of [...weak.why, ...weak.wait]) hebrew(s);
+  assert.ok(weak.wait.map(stripBidi).includes("לחכות שהביצועים שלה יעקפו שוב את מדד Nasdaq-100"));
+  hebrew(briefFooter("he"));
+  assert.match(briefFooter("he"), /על הנייר בלבד/);
 });

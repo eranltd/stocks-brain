@@ -22,6 +22,9 @@ export const LEAN_TONE = { bullish: "accent", bearish: "down", neutral: "flat" }
 export const LEAN_WORD = { bullish: "bullish", bearish: "bearish", neutral: "neutral" };
 export const STEP_IDS = ["candle", "trend", "volume", "ma20", "gaps", "levels", "rsi", "risk_plan"];
 
+/** A Hebrew calendar day without its weekday ("2 באוקטובר 2026"), for dates inside a sentence. */
+const HE_DAY = new Intl.DateTimeFormat("he-IL", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+const heDay = (iso) => HE_DAY.format(new Date(`${String(iso).slice(0, 10)}T00:00:00Z`));
 const num = (v) => (typeof v === "number" && Number.isFinite(v) ? v : null);
 const abs1 = (v) => `${Math.abs(v).toFixed(1)}%`;
 const x2s = (v) => Number(v).toFixed(2).replace(/0$/, "");
@@ -202,7 +205,7 @@ export function forwardWords(fwd, lang = "en") {
   if (!fwd) return t("cl.fwd.none");
   const recs = fwd.records?.length ?? 0;
   const scored = fwd.scored_records ?? 0;
-  const head = t("cl.fwd.head", { since: lang === "en" || !fwd.started ? fwd.started : fmtDate(fwd.started, lang), count: recs, scored });
+  const head = t("cl.fwd.head", { since: lang === "en" || !fwd.started ? fwd.started : heDay(fwd.started), count: recs, scored });
   return scored ? head : `${head} ${t("cl.fwd.first", { days: fwd.horizon_days })}`;
 }
 
@@ -214,7 +217,7 @@ export function gateReason(checklist, row, cfg, lastClose = null, lang = "en") {
   if (!row?.risk_plan) return { ok: false, text: t("cl.gate.noRow") };
   if (checklist.sample) return { ok: false, text: t("cl.gate.sample") };
   // A plan written from an older close than the one shown is out of date (the checklist step failed or has not run yet).
-  if (lastClose && row.as_of && row.as_of < lastClose) return { ok: false, text: t("cl.gate.older", { date: fmtDate(row.as_of, lang) }) };
+  if (lastClose && row.as_of && row.as_of < lastClose) return { ok: false, text: t("cl.gate.older", { date: lang === "he" ? heDay(row.as_of) : fmtDate(row.as_of) }) };
   const rp = row.risk_plan;
   const rr = Number(rp.rr_tp1).toFixed(1);
   if (rp.tp1_basis !== "resistance") return { ok: Boolean(rp.fits_house_rule), text: t("cl.gate.byConstruction", { rr, min }) };

@@ -3,7 +3,7 @@
 // 20-period average, as published in data/market/candles/<SYMBOL>.json. Nothing in this file turns them back into prices.
 // The words (labels, names, tooltips) take `lang` last ("en" by default); the texts are in i18n/stock.js ("cd.*").
 
-import { fmtDate, fmtPct } from "./format.js";
+import { fmtPct } from "./format.js";
 import { isolate, translate } from "./i18n.js";
 import dict from "../i18n/stock.js";
 
@@ -32,6 +32,9 @@ export const ALL_ON = Object.fromEntries(OVERLAYS.map((o) => [o.id, true]));
 /** An overlay's label in a language. */
 export const overlayLabel = (o, lang = "en") => (lang === "en" ? o.label : tr(lang)(`cd.overlay.${o.id}`));
 
+/** A Hebrew calendar day without its weekday ("2 באוקטובר 2026"), for dates inside a sentence. */
+const HE_DAY = new Intl.DateTimeFormat("he-IL", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+const heDay = (iso) => HE_DAY.format(new Date(`${String(iso).slice(0, 10)}T00:00:00Z`));
 const isNum = (v) => typeof v === "number" && Number.isFinite(v);
 const KEYS = ["dates", "o", "h", "l", "c", "vol_rel", "ma20", "rsi"];
 
@@ -261,6 +264,6 @@ export function chartSummary(symbol, win, lang = "en") {
   if (!win) return "";
   const lo = Math.min(...win.l.filter(isNum)), hi = Math.max(...win.h.filter(isNum));
   return tr(lang)(win.weekly ? "cd.summary.weekly" : "cd.summary.daily", {
-    symbol, n: win.n, from: lang === "en" ? win.dates[0] : fmtDate(win.dates[0], lang), to: lang === "en" ? win.dates.at(-1) : fmtDate(win.dates.at(-1), lang), lo: fmtPct(lo, 1, lang), hi: fmtPct(hi, 1, lang),
+    symbol, n: win.n, from: lang === "en" ? win.dates[0] : heDay(win.dates[0]), to: lang === "en" ? win.dates.at(-1) : heDay(win.dates.at(-1)), lo: fmtPct(lo, 1, lang), hi: fmtPct(hi, 1, lang),
   });
 }

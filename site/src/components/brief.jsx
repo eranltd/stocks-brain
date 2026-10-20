@@ -1,28 +1,33 @@
+import { translate } from "../lib/i18n.js";
+import { Bdi, En, useLang } from "../lib/lang.jsx";
+import dict from "../i18n/stock.js";
 import { ArrowRight, Reveal } from "./ui.jsx";
 
 /**
  * Lessons and claims for today, built by code from derived prices, the regime and the library.
- * No model involved: conditions map to library tags, and the principles carrying those tags are shown.
+ * No model involved: conditions map to library tags, and the principles carrying those tags are shown. Each lesson's
+ * `why` is in `lang` ("en" by default); `whyKey`/`whyVars` let a component say it again in the page's language.
  */
-export function marketBrief(data) {
+export function marketBrief(data, lang = "en") {
+  const t = translate(dict, lang);
   const { market, regime, bench, library, observations, watchlist } = data;
   const members = market.symbols.filter((s) => s.symbol !== bench.symbol);
   const dd = regime?.metrics.drawdown_pct ?? -100;
   const nearHigh = dd > -2;
-  // Breadth from equal-weight vs cap-weight funds (real participation), not from our 8 names.
+  // Breadth from equal-weight vs cap-weight funds (real participation), not from the list's few names.
   const part = market.context?.participation_ndx?.state;
   const stretched = members.filter((s) => s.setup?.stretched);
 
   const conds = [
-    part === "narrow" && { why: "A few giants carry the index", tags: ["breadth", "megacap", "concentration"] },
-    nearHigh && { why: `${bench.symbol} is at a 1-year high`, tags: ["all_time_highs"] },
-    stretched.length > 0 && { why: `${stretched.map((s) => s.symbol).join(", ")} stretched above trend`, tags: ["overextension", "mean_reversion"] },
-    (regime?.metrics.dist_sma_pct ?? 0) > 5 && { why: "The index is stretched above its trend", tags: ["overextension"] },
-    regime?.state === "stressed" && { why: "Volatility is stressed", tags: ["volatility", "risk"] },
-    regime?.trend === "down" && { why: "The trend is down", tags: ["bottoms", "invalidation"] },
-    market.context?.core?.trend_filter && !market.context.core.trend_filter.on && { why: "The core's slow trend filter is off", tags: ["trend", "regime", "drawdown"] },
-    { why: "The goal: a diverse 4–5 stock portfolio", tags: ["diversification", "concentration", "correlation", "position_sizing"] },
-  ].filter(Boolean);
+    part === "narrow" && { key: "mb.cond.narrow", tags: ["breadth", "megacap", "concentration"] },
+    nearHigh && { key: "mb.cond.high", vars: { symbol: bench.symbol }, tags: ["all_time_highs"] },
+    stretched.length > 0 && { key: "mb.cond.stretched", vars: { list: stretched.map((s) => s.symbol).join(", "), count: stretched.length }, tags: ["overextension", "mean_reversion"] },
+    (regime?.metrics.dist_sma_pct ?? 0) > 5 && { key: "mb.cond.indexStretched", tags: ["overextension"] },
+    regime?.state === "stressed" && { key: "mb.cond.stressed", tags: ["volatility", "risk"] },
+    regime?.trend === "down" && { key: "mb.cond.down", tags: ["bottoms", "invalidation"] },
+    market.context?.core?.trend_filter && !market.context.core.trend_filter.on && { key: "mb.cond.filterOff", tags: ["trend", "regime", "drawdown"] },
+    { key: "mb.cond.goal", tags: ["diversification", "concentration", "correlation", "position_sizing"] },
+  ].filter(Boolean).map((c) => ({ ...c, why: t(c.key, c.vars) }));
   const principles = (library?.sources ?? []).flatMap((s) => s.principles.map((p) => ({ ...p, source: s })));
   const used = new Set();
   const lessons = conds.map((c) => {
@@ -33,7 +38,7 @@ export function marketBrief(data) {
       .sort((a, b) => b.score - a.score || (b.p.source.published ?? "").localeCompare(a.p.source.published ?? ""))[0];
     if (!best) return null;
     used.add(best.p.id);
-    return { why: c.why, p: best.p };
+    return { why: c.why, whyKey: c.key, whyVars: c.vars, p: best.p };
   }).filter(Boolean).slice(0, 3);
 
   // Claims only about the watchlist itself (aliases included), never about the benchmark.
@@ -47,45 +52,49 @@ export function marketBrief(data) {
 }
 
 export function BriefSections({ data, brief, go }) {
+  const { t: tr } = useLang();
+  const t = tr(dict);
   const titleOf = (s) => (s.title.match(/\(([^()]*)\)\s*$/) || [, s.title])[1];
   return (
     <section id="brief" className="scroll-mt-28 pt-24">
-      <div className="eyebrow mb-5">From our library · picked by code, not made up</div>
+      <div className="eyebrow mb-5">{t("mb.eyebrow")}</div>
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
         <Reveal className="card p-6 sm:p-8">
           <div className="flex items-baseline justify-between gap-3">
-            <h3 className="text-[22px] font-semibold tracking-[-0.02em]">Lessons that fit today</h3>
-            <button type="button" onClick={() => go("insights")} className="meta inline-flex items-center gap-1 hover:text-ink">Lessons <ArrowRight className="size-3.5" /></button>
+            <h3 className="text-[22px] font-semibold tracking-[-0.02em]">{t("mb.lessons.title")}</h3>
+            <button type="button" onClick={() => go("insights")} className="meta inline-flex items-center gap-1 hover:text-ink">{t("mb.lessons.link")} <ArrowRight className="size-3.5" /></button>
           </div>
-          <p className="mt-1 text-[14px] text-ink-3">In simple words: what the market looks like today, and a lesson from our books and videos that fits it.</p>
+          <p className="mt-1 text-[14px] text-ink-3">{t("mb.lessons.lede")}</p>
           <ol className="mt-6 grid gap-5">
-            {brief.lessons.map(({ why, p }) => (
+            {brief.lessons.map(({ why, whyKey, whyVars, p }, i) => (
               <li key={p.id} className="border-t border-line pt-5 first:border-0 first:pt-0">
-                <div className="meta text-accent">{why}</div>
-                <p className="mt-2 text-[16px] leading-relaxed">{p.text}</p>
-                <div className="meta mt-2 truncate normal-case tracking-[0.04em]" title={p.source.title}>{p.id} · {titleOf(p.source)}</div>
+                <div className="meta text-accent">{whyKey ? t(whyKey, whyVars) : why}</div>
+                <En note={i === 0} className="mt-2 text-[16px] leading-relaxed">
+                  <p>{p.text}</p>
+                  <div className="meta mt-2 truncate normal-case tracking-[0.04em]" title={p.source.title}>{p.id} · {titleOf(p.source)}</div>
+                </En>
               </li>
             ))}
-            {!brief.lessons.length && <li className="text-ink-3">No condition stands out today.</li>}
+            {!brief.lessons.length && <li className="text-ink-3">{t("mb.lessons.none")}</li>}
           </ol>
         </Reveal>
         <Reveal delay={80} className="card p-6 sm:p-8">
           <div className="flex items-baseline justify-between gap-3">
-            <h3 className="text-[22px] font-semibold tracking-[-0.02em]">What others said about our companies</h3>
-            <span className="meta">{brief.claims.length} unexpired</span>
+            <h3 className="text-[22px] font-semibold tracking-[-0.02em]">{t("mb.claims.title")}</h3>
+            <span className="meta">{t("mb.claims.count", { count: brief.claims.length })}</span>
           </div>
-          <p className="mt-1 text-[14px] text-ink-3">In simple words: things people said, like a weather forecast with a date. Nobody has checked them, so never act on one alone.</p>
+          <p className="mt-1 text-[14px] text-ink-3">{t("mb.claims.lede")}</p>
           <ul className="mt-5 grid gap-4">
-            {brief.claims.map((c) => (
+            {brief.claims.map((c, i) => (
               <li key={c.id} className="border-t border-line pt-4 first:border-0 first:pt-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  {c.tickers.map((t) => <span key={t} className="font-mono text-[13px] font-medium text-ink-2">{t}</span>)}
-                  <span className="meta ms-auto">{c.as_of} → {c.expires}</span>
+                  {c.tickers.map((x) => <span key={x} className="font-mono text-[13px] font-medium text-ink-2">{x}</span>)}
+                  <span className="meta ms-auto"><Bdi>{c.as_of} → {c.expires}</Bdi></span>
                 </div>
-                <p className="mt-1.5 text-[14.5px] leading-relaxed text-ink-2">{c.text}</p>
+                <En as="p" note={i === 0} className="mt-1.5 text-[14.5px] leading-relaxed text-ink-2">{c.text}</En>
               </li>
             ))}
-            {!brief.claims.length && <li className="text-[14px] text-ink-3">No unexpired claims about your watchlist.</li>}
+            {!brief.claims.length && <li className="text-[14px] text-ink-3">{t("mb.claims.none")}</li>}
           </ul>
         </Reveal>
       </div>

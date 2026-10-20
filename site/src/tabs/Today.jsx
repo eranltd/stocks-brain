@@ -1,11 +1,14 @@
 import { WeeklyGame } from "../components/weekly.jsx";
 import { QuickRead, RabbitHoles } from "../components/explore.jsx";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
-import { fmtDate, fmtNum, numWord, relDays } from "../lib/format.js";
+import { fmtDate } from "../lib/format.js";
+import { localeOf, translate } from "../lib/i18n.js";
+import { Auto, En, EnglishNote, useLang } from "../lib/lang.jsx";
 import { marketBrief } from "../components/brief.jsx";
 import { comingUp, inDays, todayISO } from "../lib/outlook.js";
-import { ago, buildFeed, byDay, filterFeed, KIND_LABEL, KINDS } from "../lib/feed.js";
+import { ago, buildFeed, byDay, filterFeed, kindLabel, KINDS } from "../lib/feed.js";
 import { ArrowRight, Reveal, Segmented } from "../components/ui.jsx";
+import { NotAdvice } from "../components/shell.jsx";
 import { heldAndPicked, todayCall } from "./Details.jsx";
 import { marketDay } from "../lib/marketday.js";
 import { companiesToKnow, marketWords, newsLines } from "../lib/simple.js";
@@ -14,14 +17,16 @@ import { TopStocks } from "../components/topstocks.jsx";
 import { SectorSpotlights } from "../components/spotlight.jsx";
 import { requestChecklistView } from "../components/checklist.jsx";
 import { LatestVerdict } from "../components/verdict.jsx";
-import { candlesOf, fundCard, MARKET_WHO, marketNote, membersOf, NOT_YET, nounsFor } from "../lib/markets.js";
+import { candlesOf, fundCard, marketNote, marketWho, membersOf, notYet } from "../lib/markets.js";
 import { buyLine, buyWindowFor, mainListOf, mainWatchlistOf, sp500Of } from "../lib/buywindow.js";
 import { stocksEarned } from "../lib/money.js";
 import { trustStage } from "../components/trust.jsx";
-import { NOT_A_TRADE, usableWhy } from "../lib/why.js";
+import { notATrade, usableWhy } from "../lib/why.js";
+import dict from "../i18n/home.js";
 
-const plural = (n, one, many) => (n === 1 ? one : many);
-const noYear = (iso) => fmtDate(iso).replace(/\s\d{4}$/, ""); // "Thu, 22 Oct"
+// Every text on this page is in i18n/home.js ("today.*"), in English and Hebrew; the pure libs it calls take `lang` last.
+/** "Thu, 22 Oct" ("יום ה׳, 22 באוקטובר"): a date without its year. */
+const noYear = (iso, lang = "en") => fmtDate(iso, lang).replace(/\s\d{4}$/, "");
 const TONE_VAR = { accent: "var(--accent)", down: "var(--down)", flat: "var(--ink-2)" };
 const TONE_TEXT = { accent: "text-accent", down: "text-down", flat: "text-ink-2" };
 // Each kind has its own glyph; market moves and checklist changes take the colour of their direction.
@@ -41,8 +46,8 @@ const SOON_DAYS = 14;
  * thing the data knows (market closes, unusual moves, brain runs, company news, people's calls, checklist changes),
  * newest first. Everything is computed or copied from published data; nothing is fetched from elsewhere.
  */
-// The home always opens on "Simple": the household asked that a first look is never the numbers view. An older version
-// remembered the last choice on the device; forget it so nobody is left on "Details".
+// The home always opens on "Simple": a first look is never the numbers view. An older version remembered the last
+// choice on the device; forget it so nobody is left on "Details".
 const OLD_VIEW_KEY = "sb:home-view";
 function forgetOldView() {
   try { window.localStorage.removeItem(OLD_VIEW_KEY); } catch { /* private mode or blocked storage */ }
@@ -53,14 +58,15 @@ function forgetOldView() {
  * the live feed, one tap away for this visit only.
  */
 export default function Today(props) {
+  const t = useLang().t(dict);
   const [view, setView] = useState("simple");
   useEffect(forgetOldView, []);
   const pickView = (v) => { setView(v); window.scrollTo({ top: 0 }); };
   return (
     <>
       <div className="mx-auto flex w-full max-w-[560px] justify-center px-4 pt-6 sm:pt-10">
-        <Segmented label="How much to show" value={view} onChange={pickView}
-          options={[{ value: "simple", label: "Simple" }, { value: "details", label: "Details" }]} />
+        <Segmented label={t("today.howMuch")} value={view} onChange={pickView}
+          options={[{ value: "simple", label: t("today.simple") }, { value: "details", label: t("today.details") }]} />
       </div>
       {view === "simple" ? <SimpleHome {...props} showDetails={() => pickView("details")} /> : <LiveFeed {...props} />}
     </>
@@ -68,13 +74,15 @@ export default function Today(props) {
 }
 
 function LiveFeed({ data, market, go, live, checkNow }) {
+  const { lang, t: tr } = useLang();
+  const t = tr(dict);
   // The details feed reads the main list only: show that list in the header's switch rather than a notice.
   useEffect(() => { if (market && !market.isDefault) market.choose(market.defaultId); }, [market?.id]); // eslint-disable-line react-hooks/exhaustive-deps
   const call = todayCall(data);
   const brief = marketBrief(data);
   const run = data.sample ? null : data.lastOk;
   const todayIso = todayISO(); // New York date: market days follow its calendar
-  const feed = useMemo(() => buildFeed(data, todayIso), [data, todayIso]);
+  const feed = useMemo(() => buildFeed(data, todayIso, lang), [data, todayIso, lang]);
   const [filter, setFilter] = useState("all");
   const [shown, setShown] = useState(PAGE);
   const feedTop = useRef(null);
@@ -97,9 +105,10 @@ function LiveFeed({ data, market, go, live, checkNow }) {
       </div>
       <Feed feed={feed} filter={filter} pick={pick} shown={shown} setShown={setShown} open={open} data={data} feedTop={feedTop} />
       <Reveal className="mt-10 grid gap-3 text-center">
-        <button type="button" onClick={() => go("details")} className="btn btn-primary justify-center">Market details <ArrowRight /></button>
-        <button type="button" onClick={() => go("portfolio")} className="btn justify-center">The portfolio <ArrowRight /></button>
-        <p className="meta mt-6 normal-case tracking-[0.04em]">A research notebook for one household, not financial advice. Every number here is computed by code from public market data.</p>
+        <button type="button" onClick={() => go("details")} className="btn btn-primary justify-center">{t("today.marketDetails")} <ArrowRight /></button>
+        <button type="button" onClick={() => go("portfolio")} className="btn justify-center">{t("today.portfolio")} <ArrowRight /></button>
+        <NotAdvice compact className="mx-auto mt-6" />
+        <p className="meta normal-case tracking-[0.04em]">{t("today.computed")}</p>
       </Reveal>
     </div>
   );
@@ -134,7 +143,8 @@ function useNow(ms = 60000) {
 
 /* ------------------------------------------------------------------ simple */
 
-const weekdayOf = (iso) => new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", { weekday: "long", timeZone: "UTC" });
+/** "Friday" ("יום שישי"). */
+const weekdayOf = (iso, lang = "en") => new Date(`${iso}T00:00:00Z`).toLocaleDateString(lang === "en" ? "en-US" : localeOf(lang), { weekday: "long", timeZone: "UTC" });
 
 function SimpleCard({ kicker, tone = "var(--accent)", children, id }) {
   return (
@@ -151,9 +161,10 @@ function SimpleCard({ kicker, tone = "var(--accent)", children, id }) {
 function TapLine({ onClick, children, tone }) {
   return (
     <button type="button" onClick={onClick}
-      className="flex min-h-[52px] w-full items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-3.5 text-left transition hover:border-ink-3">
+      className="flex min-h-[52px] w-full items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-3.5 text-start transition hover:border-ink-3">
       {tone && <span className="size-2.5 shrink-0 rounded-full" style={{ background: TONE_VAR[tone] ?? "var(--ink-3)" }} aria-hidden="true" />}
-      <span className="min-w-0 flex-1 text-[17px] leading-snug text-ink">{children}</span>
+      {/* dir="auto": a line in Hebrew reads right to left, a company card's own English line left to right */}
+      <span dir="auto" className="min-w-0 flex-1 text-start text-[17px] leading-snug text-ink">{children}</span>
       <ArrowRight className="size-4 shrink-0 text-ink-3" />
     </button>
   );
@@ -162,12 +173,13 @@ function TapLine({ onClick, children, tone }) {
 /** Under a "why it moved" line: where it comes from, with the market day, as links. Nothing when an unclear note found
  *  no source (the line itself already says no clear cause was found). */
 function WhySources({ v }) {
+  const t = useLang().t(dict);
   if (!v.sources.length) return null;
   return (
     <p className="mt-1.5 px-4 text-[13.5px] leading-relaxed text-ink-3">
-      {v.unclear ? "Looked at" : "From"}{" "}
+      {t(v.unclear ? "today.lookedAt" : "today.from")}{" "}
       {v.sources.map((s, i) => (
-        <Fragment key={s.url}>{i ? " · " : ""}<a href={s.url} target="_blank" rel="noopener noreferrer" className="underline decoration-line-2 underline-offset-2 hover:text-ink">{s.publisher}{s.day ? `, ${s.day}` : ""} ↗</a></Fragment>
+        <Fragment key={s.url}>{i ? " · " : ""}<a href={s.url} target="_blank" rel="noopener noreferrer" className="underline decoration-line-2 underline-offset-2 hover:text-ink"><bdi>{s.publisher}</bdi>{s.day ? <>, <bdi>{s.day}</bdi></> : ""} ↗</a></Fragment>
       ))}
     </p>
   );
@@ -175,20 +187,23 @@ function WhySources({ v }) {
 
 /**
  * The market-dependent part of the simple home, in words: the carousel's names, the market sentence, the news and the
- * companies (or funds) to know. The default market adds what we hold on paper and the brain's names; another market
+ * companies (or funds) to know. The default market adds what is held on paper and the brain's names; another market
  * has neither (they read Nasdaq only) and leads with its own benchmark ("The Israeli market").
  */
-function homeWords(md, { isDefault, held = [], picked = [], todayIso, funds, earned = false, rulesResult = null }) {
+function homeWords(md, { isDefault, held = [], picked = [], todayIso, funds, earned = false, rulesResult = null, lang = "en" }) {
+  const t = translate(dict, lang); // plain code, not a component: the dictionary directly
   const id = md.marketId;
   const entry = md.marketEntry ?? null;
-  const nouns = nounsFor(entry);
+  const isFunds = entry?.kind === "funds";
+  const noun = isFunds ? "funds" : "companies";
   const day = marketDay(md.market, md.watchlist, md.bench);
   // A checklist from sample prices on a live site is not a reading of the market: no chips or reasons from it.
   const checklist = md.checklist && (!md.checklist.sample || md.sample) ? md.checklist : null;
   const benchRow = (md.market?.symbols ?? []).find((r) => r.symbol === md.bench.symbol);
+  // Another market's benchmark in words (lib/markets.js; its Hebrew phrases are all masculine singular, form "m").
   const market = isDefault
-    ? marketWords(day, md.regime, todayIso)
-    : marketWords(day, null, todayIso, { who: MARKET_WHO[id] ?? "Our benchmark", noun: nouns.many, fromHigh: benchRow?.from_high_pct });
+    ? marketWords(day, md.regime, todayIso, { lang })
+    : marketWords(day, null, todayIso, { who: marketWho(id, lang) ?? t("today.benchmark"), g: "m", noun, fromHigh: benchRow?.from_high_pct, lang });
   // Why it moved (lib/why.js) and recent official filings of this market's own names; sample files never sit beside live
   // numbers.
   const live = Boolean(md.livePrices);
@@ -198,48 +213,50 @@ function homeWords(md, { isDefault, held = [], picked = [], todayIso, funds, ear
   // coming up and the latest company news.
   const news = newsLines({ outlook: md.outlook, day, people: isDefault ? md.people : null, today: todayIso, names: md.names, max: 5, maxNotes: 1,
     why, secNews, members: [...membersOf({ watchlist: md.watchlist }), ...(md.watchlist?.context ?? []).map((c) => c.symbol), md.bench.symbol],
-    groups: md.sectors ?? {}, market: id ?? null });
-  const pick = { held, picked, day, outlook: md.outlook, checklist, names: md.names, bench: md.bench.symbol, today: todayIso };
+    groups: md.sectors ?? {}, market: id ?? null, lang });
+  const pick = { held, picked, day, outlook: md.outlook, checklist, names: md.names, bench: md.bench.symbol, today: todayIso, lang };
   // A fund has no company card: its plain sentence comes from config/funds.json, else its list's plain category (the
-  // sector funds may not have cards yet).
+  // sector funds may not have cards yet). Both are English data for now.
   // A sector fund's category is just "Sector", so it says which industry from the plain part of its name ("Telecom
   // carriers (iShares US Telecommunications)" -> "One industry: telecom carriers.").
-  const category = (t) => {
-    const cat = nouns.many === "funds" ? md.sectors?.[t] : null;
+  const category = (x) => {
+    const cat = isFunds ? md.sectors?.[x] : null;
     if (!cat) return null;
     if (cat !== "Sector") return `${cat}.`;
-    const plain = String(md.names?.[t] ?? "").match(/^([^(]{3,60}?)\s*\(/)?.[1];
-    return plain ? `One industry: ${plain.charAt(0).toLowerCase()}${plain.slice(1)}.` : null;
+    const plain = String(md.names?.[x] ?? "").match(/^([^(]{3,60}?)\s*\(/)?.[1];
+    return plain ? t("today.oneIndustry", { what: `${plain.charAt(0).toLowerCase()}${plain.slice(1)}` }) : null;
   };
   const withFund = (c) => ({ ...c, plain: fundCard(funds, c.ticker)?.plain ?? c.plain ?? category(c.ticker) });
   const companies = companiesToKnow(pick).map(withFund);
-  // "When to buy": one short line per card from the Stock page's "When could we buy it?" (lib/buywindow.js).
-  const isFunds = entry?.kind === "funds";
+  // "When to buy": one short line per card from the Stock page's "When could it be bought?" (lib/buywindow.js; it takes
+  // the language last once it speaks Hebrew).
   const bwCtx = {
     today: todayIso, derived: md.market, checklist: md.checklist, bw: md.buyWindow, mainList: mainListOf(md), stocksEarned: earned, rulesResult, names: md.names,
     siteSample: Boolean(md.market?.sample), minRR: md.checklistCfg?.house_rule?.min_reward_to_risk ?? 2, stretchPct: md.settings?.setup?.stretch_pct ?? 8,
   };
   const withBuy = (c) => ({
     ...c,
-    buy: buyLine(buyWindowFor(c.ticker, { ...bwCtx, fund: isFunds ? fundCard(funds, c.ticker) ?? {} : null, sp500: sp500Of(c.ticker, md.watchlist, mainWatchlistOf(md)) }), todayIso),
+    buy: buyLine(buyWindowFor(c.ticker, { ...bwCtx, fund: isFunds ? fundCard(funds, c.ticker) ?? {} : null, sp500: sp500Of(c.ticker, md.watchlist, mainWatchlistOf(md)) }), todayIso, lang),
     buyTo: `stock/${c.ticker}#buy-window`,
   });
   const top = topStocks({ ...pick, candles: candlesOf(md) }).map(withFund).map(withBuy);
-  return { nouns, checklist, market, news, companies, top, note: marketNote(entry) };
+  return { isFunds, noun, checklist, market, news, companies, top, note: marketNote(entry, lang) };
 }
 
 /** Where the market's words go while another market loads, fails or has no numbers yet. */
 function MarketWait({ market }) {
+  const { lang, t: tr } = useLang();
+  const t = tr(dict);
   const label = market.entry?.label ?? market.id;
   return (
     <div className="mx-auto w-full max-w-[560px] px-4 pt-8">
       <div className="card p-6 sm:p-7" role={market.state === "loading" ? "status" : undefined}>
-        {market.state === "loading" && <p className="text-[18px] leading-relaxed text-ink-2">Loading {label}…</p>}
-        {market.state === "none" && <p className="text-[19px] leading-relaxed text-ink">{NOT_YET}</p>}
+        {market.state === "loading" && <p className="text-[18px] leading-relaxed text-ink-2">{t("today.loading", { label })}</p>}
+        {market.state === "none" && <p className="text-[19px] leading-relaxed text-ink">{notYet(lang)}</p>}
         {market.state === "error" && (
           <>
-            <p className="text-[18px] leading-relaxed text-ink">{label} could not load just now.</p>
-            <button type="button" onClick={market.retry} className="btn mt-4 min-h-[52px] justify-center">Try again</button>
+            <p className="text-[18px] leading-relaxed text-ink">{t("today.loadFailed", { label })}</p>
+            <button type="button" onClick={market.retry} className="btn mt-4 min-h-[52px] justify-center">{t("today.retry")}</button>
           </>
         )}
       </div>
@@ -248,23 +265,25 @@ function MarketWait({ market }) {
 }
 
 /**
- * The simple home: the market, the news, companies to know and our plan, in words. No figures: every sentence comes
+ * The simple home: the market, the news, companies to know and the plan, in words. No figures: every sentence comes
  * from lib/simple.js, which turns the same published data into words (dates as weekdays or month words). The header's
- * market switch changes the top stocks, the market, the news and the companies; our plan always reads Nasdaq.
+ * market switch changes the top stocks, the market, the news and the companies; the plan always reads Nasdaq.
  */
 function SimpleHome({ data, market, go, showDetails }) {
+  const { lang, he, t: tr } = useLang();
+  const t = tr(dict);
   const call = todayCall(data);
   const todayIso = todayISO();
   const { held, picked } = heldAndPicked(data);
   const isDefault = !market || market.isDefault;
   const md = isDefault ? data : market.state === "ready" ? market.data : null;
   const earned = stocksEarned(data.rulesResult, trustStage(data).stage);
-  const words = md ? homeWords(md, { isDefault, held: isDefault ? held : [], picked: isDefault ? picked : [], todayIso, funds: data.funds, earned, rulesResult: data.rulesResult }) : null;
-  const nouns = nounsFor(market?.entry);
+  const words = md ? homeWords(md, { isDefault, held: isDefault ? held : [], picked: isDefault ? picked : [], todayIso, funds: data.funds, earned, rulesResult: data.rulesResult, lang }) : null;
+  const isFunds = market?.entry?.kind === "funds";
   // "See the candles": the Stock page opens with its checklist card on the Candles view, as the brief's own link does.
   const seeCandles = (to) => { requestChecklistView("candles"); openAt(go, to); };
   const sample = md ? md.sample || (!isDefault && !md.livePrices) : data.sample;
-  const status = call.stale ? "The data is old: the daily update may have failed." : sample ? "Sample data, not the market." : "Live: updated after each US close.";
+  const status = t(call.stale ? "today.status.old" : sample ? "today.status.sample" : "today.status.live");
   const statusTone = call.stale ? "var(--down)" : sample ? "var(--people)" : "var(--accent)";
   const label = market?.entry?.label ?? "Nasdaq";
   const top = words?.top ?? [];
@@ -273,23 +292,23 @@ function SimpleHome({ data, market, go, showDetails }) {
     {/* As wide as the carousel under it, so the greeting and "Top stocks" line up on a tablet. */}
     <div className={`mx-auto w-full px-4 pt-8 ${top.length ? "max-w-[1040px]" : "max-w-[560px]"}`}>
       <header>
-        <h1 className="display text-[clamp(32px,8.5vw,44px)] leading-[1.05] tracking-[-0.03em]">Hi! It's <span className="text-accent">{weekdayOf(todayIso)}.</span></h1>
+        <h1 className="display text-[clamp(32px,8.5vw,44px)] leading-[1.05] tracking-[-0.03em]">{t.rich("today.hi", { day: <span className="text-accent">{weekdayOf(todayIso, lang)}.</span> })}</h1>
         <p className="mt-3 flex items-center gap-2 text-[15px] text-ink-2">
           <span className="inline-block size-2 shrink-0 rounded-full" style={{ background: statusTone }} aria-hidden="true" />
           <span style={{ color: call.stale ? statusTone : undefined }}>{status}</span>
         </p>
         {!isDefault && (
           <p className="mt-3 max-w-[62ch] text-[16px] leading-relaxed text-ink-2">
-            <span className="font-semibold text-ink">Showing {label}:</span>{" "}
+            <span className="font-semibold text-ink">{t("today.showing", { label })}</span>{" "}
             {/* The market's own note already says what the list is (TLV); otherwise its one line from the switch. */}
-            {words?.note ?? `${market.choices.find((c) => c.id === market.id)?.what ?? market.entry?.name}.`}
+            <Auto>{words?.note ?? `${market.choices.find((c) => c.id === market.id)?.what ?? market.entry?.name}.`}</Auto>
           </p>
         )}
       </header>
 
       {call.stale && (
         <p role="alert" className="mt-6 rounded-3xl border border-down/50 bg-down/10 p-5 text-[17px] leading-relaxed text-down">
-          Please don't act on anything below until the daily update runs again.
+          {t("today.staleAlert")}
         </p>
       )}
       {isDefault && <div className="mt-6"><QuickRead data={data} market={words?.market?.main ?? null} go={go} /></div>}
@@ -297,8 +316,9 @@ function SimpleHome({ data, market, go, showDetails }) {
 
     {!words && <MarketWait market={market} />}
     {words && (
-      <TopStocks key={md.marketId ?? market?.id} items={top} manifest={data.manifest} news={data.secNews} marketId={md.marketId ?? market?.id} title={nouns.many === "funds" ? "Top funds" : "Top stocks"} one={nouns.one}
-        fallback={nouns.many === "funds" ? "Its fund card appears with the next update." : undefined}
+      <TopStocks key={md.marketId ?? market?.id} items={top} manifest={data.manifest} news={data.secNews} marketId={md.marketId ?? market?.id}
+        title={t(isFunds ? "today.topFunds" : "today.topStocks")} one={isFunds ? "fund" : "company"}
+        fallback={isFunds ? t("today.fundFallback") : undefined} englishNote={top.some((c) => c.plain)}
         openTo={(to) => openAt(go, to)} seeCandles={seeCandles} />
     )}
 
@@ -310,16 +330,17 @@ function SimpleHome({ data, market, go, showDetails }) {
           <>
             {/* The default market's line is in the two-minute read; another market keeps its own card. */}
             {!isDefault && (
-              <SimpleCard kicker="The market" tone={TONE_VAR[words.market.tone] ?? "var(--accent)"}>
+              <SimpleCard kicker={t("today.theMarket")} tone={TONE_VAR[words.market.tone] ?? "var(--accent)"}>
                 <p className="text-[clamp(22px,6vw,27px)] leading-snug font-semibold tracking-[-0.015em] text-ink">{words.market.main}</p>
                 {words.market.more && <p className="mt-3 text-[17px] leading-relaxed text-ink-2">{words.market.more}</p>}
                 {isDefault
-                  ? <button type="button" onClick={() => openAt(go, "details#market-today")} className="meta mt-5 inline-flex min-h-[44px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">What the market did <ArrowRight className="size-3.5" /></button>
-                  : <button type="button" onClick={() => go("watchlist")} className="meta mt-5 inline-flex min-h-[44px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">The whole {label} list <ArrowRight className="size-3.5" /></button>}
+                  ? <button type="button" onClick={() => openAt(go, "details#market-today")} className="meta mt-5 inline-flex min-h-[44px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">{t("today.whatMarketDid")} <ArrowRight className="size-3.5" /></button>
+                  : <button type="button" onClick={() => go("watchlist")} className="meta mt-5 inline-flex min-h-[44px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">{t("today.wholeList", { label })} <ArrowRight className="size-3.5" /></button>}
               </SimpleCard>
             )}
 
-            <SimpleCard kicker="In the news" tone="var(--ink-2)">
+            <SimpleCard kicker={t("today.news")} tone="var(--ink-2)">
+              {he && words.news.some((n) => n.english) && <EnglishNote className="-mt-1" />}
               {words.news.length ? (
                 <ul className="grid gap-2.5">
                   {words.news.map((n) => (
@@ -329,8 +350,8 @@ function SimpleHome({ data, market, go, showDetails }) {
                     </li>
                   ))}
                 </ul>
-              ) : <p className="text-[17px] leading-relaxed text-ink-2">Nothing new about our {words.nouns.many} this week.</p>}
-              {words.news.some((n) => n.why || n.filing) && <p className="mt-4 text-[14.5px] leading-relaxed text-ink-3">{NOT_A_TRADE}</p>}
+              ) : <p className="text-[17px] leading-relaxed text-ink-2">{t("today.noNews", { noun: t(`noun.${words.noun}`) }, { bidi: false })}</p>}
+              {words.news.some((n) => n.why || n.filing) && <p className="mt-4 text-[14.5px] leading-relaxed text-ink-3">{notATrade(lang)}</p>}
             </SimpleCard>
 
           </>
@@ -344,8 +365,8 @@ function SimpleHome({ data, market, go, showDetails }) {
       </div>
 
       <Reveal className="mt-10 grid gap-3 text-center">
-        <button type="button" onClick={showDetails} className="btn btn-primary justify-center">Show the details <ArrowRight /></button>
-        <p className="meta mt-6 normal-case tracking-[0.04em]">A notebook for one household, not personal financial advice.</p>
+        <button type="button" onClick={showDetails} className="btn btn-primary justify-center">{t("today.showDetails")} <ArrowRight /></button>
+        <NotAdvice compact className="mx-auto mt-6" />
       </Reveal>
     </div>
     </>
@@ -355,36 +376,38 @@ function SimpleHome({ data, market, go, showDetails }) {
 /* ------------------------------------------------------------------ header */
 
 function PostHeader({ data, todayIso, live, checkNow, stale, age }) {
+  const { lang, t: tr } = useLang();
+  const t = tr(dict);
   const now = useNow();
   const built = data.manifest.built_at;
   const tone = stale ? "var(--down)" : data.sample ? "var(--people)" : "var(--accent)";
-  const label = stale ? `Data is ${age} days old` : data.sample ? "Sample data" : "Live";
+  const label = stale ? t("today.dataOld", { count: age }) : t(data.sample ? "today.sampleData" : "today.live");
   return (
     <header>
       <div className="flex items-center gap-3">
         <span className="grid size-11 shrink-0 place-items-center rounded-full border-2 border-accent/60 bg-surface font-mono text-[15px] font-medium text-accent" aria-hidden="true">sb</span>
         <div className="min-w-0 flex-1">
-          <div className="text-[15px] leading-tight font-semibold">stocks·brain</div>
+          <div className="text-[15px] leading-tight font-semibold"><bdi>stocks·brain</bdi></div>
           <div className="mt-0.5 flex items-center gap-2 text-[12.5px] text-ink-2">
             <span className="relative inline-flex size-2 shrink-0" aria-hidden="true">
               {!stale && !data.sample && <span className="absolute inset-0 animate-ping rounded-full opacity-60 motion-reduce:hidden" style={{ background: tone }} />}
               <span className="relative inline-block size-2 rounded-full" style={{ background: tone }} />
             </span>
-            <span className="min-w-0 truncate"><span style={{ color: tone }}>{label}</span> · updated {built ? ago(built, now) : "–"}</span>
+            <span className="min-w-0 truncate"><span style={{ color: tone }}>{label}</span> · {t("today.updated", { when: built ? ago(built, now, lang) : "–" }, { bidi: false })}</span>
           </div>
         </div>
-        <time dateTime={todayIso} className="meta shrink-0">{noYear(todayIso)}</time>
+        <time dateTime={todayIso} className="meta shrink-0">{noYear(todayIso, lang)}</time>
       </div>
-      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 pl-14 text-[12.5px] text-ink-3">
-        <span>Next update after the US close</span>
+      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 ps-14 text-[12.5px] text-ink-3">
+        <span>{t("today.nextUpdate")}</span>
         <button type="button" onClick={checkNow} disabled={live?.checking} className="min-h-[32px] underline decoration-line-2 underline-offset-2 hover:text-ink disabled:no-underline">
-          {live?.checking ? "Checking…" : live?.checkedAt ? `Checked ${ago(live.checkedAt.toISOString(), now)}` : "Check now"}
+          {live?.checking ? t("today.checking") : live?.checkedAt ? t("today.checked", { when: ago(live.checkedAt.toISOString(), now, lang) }, { bidi: false }) : t("today.checkNow")}
         </button>
       </div>
-      {live?.fresh && <p role="status" className="pill mt-3 ml-14 border-accent/40 bg-accent/10 normal-case tracking-[0.04em] text-accent">New data loaded</p>}
+      {live?.fresh && <p role="status" className="pill mt-3 ms-14 border-accent/40 bg-accent/10 normal-case tracking-[0.04em] text-accent">{t("today.fresh")}</p>}
       {live?.reload && (
-        <button type="button" onClick={() => window.location.reload()} className="pill mt-3 ml-14 min-h-[36px] border-accent/50 bg-accent/12 normal-case tracking-[0.04em] text-accent">
-          New data is out · tap to refresh
+        <button type="button" onClick={() => window.location.reload()} className="pill mt-3 ms-14 min-h-[36px] border-accent/50 bg-accent/12 normal-case tracking-[0.04em] text-accent">
+          {t("today.reload")}
         </button>
       )}
     </header>
@@ -400,13 +423,14 @@ const Pin = () => (
 );
 
 function PinnedCard({ kicker, tone = "var(--accent)", children, id }) {
+  const t = useLang().t(dict);
   return (
     <Reveal as="article" id={id} className="card overflow-hidden">
       <div className="h-1" style={{ background: tone }} />
       <div className="p-5 sm:p-6">
         <div className="mb-4 flex items-center justify-between gap-3">
           <span className="meta min-w-0" style={{ color: tone }}>{kicker}</span>
-          <span className="meta inline-flex shrink-0 items-center gap-1 normal-case tracking-[0.04em]"><Pin />pinned</span>
+          <span className="meta inline-flex shrink-0 items-center gap-1 normal-case tracking-[0.04em]"><Pin />{t("today.pinned")}</span>
         </div>
         {children}
       </div>
@@ -424,30 +448,32 @@ function Fact({ label, value, note }) {
         <div className="text-[14.5px] text-ink">{label}</div>
         {note && <div className="meta mt-0.5 normal-case tracking-[0.03em]">{note}</div>}
       </div>
-      <div className="shrink-0 text-right text-[14.5px] font-medium text-ink">{value}</div>
+      <div className="shrink-0 text-end text-[14.5px] font-medium text-ink">{value}</div>
     </div>
   );
 }
 
 /** Hello and what to do, in one pinned card. */
 function TodayCard({ data, call, run, todayIso, go }) {
+  const { lang, t: tr, fmt } = useLang();
+  const t = tr(dict);
   const { asOf, stale } = call;
   const tone = stale ? "var(--down)" : "var(--accent)";
   const lastRun = data.latest?.date ?? null;
   return (
-    <PinnedCard kicker="Today" tone={tone}>
-      <h2 className="display text-[clamp(28px,7.4vw,36px)] leading-[1.05] tracking-[-0.03em]">Hi! Today is <span className="text-accent">{noYear(todayIso)}.</span></h2>
+    <PinnedCard kicker={t("today.today")} tone={tone}>
+      <h2 className="display text-[clamp(28px,7.4vw,36px)] leading-[1.05] tracking-[-0.03em]">{t.rich("today.hiDate", { date: <span className="text-accent">{noYear(todayIso, lang)}.</span> })}</h2>
       <div className="mt-4">
-        <Fact label="Last market close we have" value={noYear(asOf)} note={stale ? `${call.age} days old: the daily update may have failed` : relDays(asOf)} />
-        <Fact label="Last time the brain ran" value={lastRun ? noYear(lastRun) : "Not yet"} note={lastRun ? relDays(lastRun) : null} />
-        {run && <Fact label="Stocks it looked at closely" value={`${numWord(run.picks.length).toLowerCase()} ${plural(run.picks.length, "stock", "stocks")}`} note="in the feed below" />}
+        <Fact label={t("today.lastClose")} value={noYear(asOf, lang)} note={stale ? t("today.closeOld", { count: call.age }) : fmt.rel(asOf)} />
+        <Fact label={t("today.lastRun")} value={lastRun ? noYear(lastRun, lang) : t("today.notYet")} note={lastRun ? fmt.rel(lastRun) : null} />
+        {run && <Fact label={t("today.lookedClosely")} value={t("today.stocksN", { count: run.picks.length, word: fmt.numWord(run.picks.length).toLowerCase() })} note={t("today.inFeed")} />}
       </div>
       <div className="mt-5 border-t border-line pt-5">
-        <div className="meta mb-2" style={{ color: tone }}>What should I do with my money?</div>
+        <div className="meta mb-2" style={{ color: tone }}>{t("today.moneyQ")}</div>
         {stale
-          ? <Para className="text-down">The data is old. Please don't act on anything below until the daily update runs again.</Para>
-          : <Para>The brain's page answers it in simple words, based on when you might need the money. Most of the time the answer is the same calm one: own the whole market and leave it alone.</Para>}
-        <button type="button" onClick={() => go("verdicts")} className="btn btn-primary mt-4 justify-center">The brain's answer <ArrowRight /></button>
+          ? <Para className="text-down">{t("today.staleMoney")}</Para>
+          : <Para>{t("today.moneyA")}</Para>}
+        <button type="button" onClick={() => go("verdicts")} className="btn btn-primary mt-4 justify-center">{t("today.brainAnswer")} <ArrowRight /></button>
       </div>
     </PinnedCard>
   );
@@ -455,68 +481,77 @@ function TodayCard({ data, call, run, todayIso, go }) {
 
 /** Results days (and other dated company events) in the next two weeks, as a compact strip. */
 function ComingStrip({ data, ahead, todayIso, go }) {
+  const { lang, t: tr } = useLang();
+  const t = tr(dict);
   const { held, picked } = heldAndPicked(data);
   const mine = new Set([...held, ...picked]);
   const soon = ahead.filter((a) => a.days <= SOON_DAYS);
   const later = ahead.filter((a) => a.days > SOON_DAYS && a.results)[0] ?? null;
   const { undated } = comingUp(data.outlook, todayIso, SOON_DAYS, [...mine]);
   if (!data.outlook) return null;
+  const tickerButton = (x, to) => <button type="button" onClick={() => openAt(go, to)} className="font-mono text-ink underline decoration-line-2 underline-offset-2">{x}</button>;
   return (
-    <PinnedCard kicker={`Coming up · next ${SOON_DAYS} days`}>
+    <PinnedCard kicker={t("today.comingUp", { n: SOON_DAYS })}>
       {soon.length ? (
         <ul className="no-scrollbar -mx-5 flex snap-x gap-2.5 overflow-x-auto px-5 pb-1 sm:-mx-6 sm:px-6">
           {soon.map((a) => (
             <li key={a.id} className="w-[148px] shrink-0 snap-start">
-              <button type="button" onClick={() => openAt(go, `stock/${a.ticker}#whats-next`)} className="flex h-full min-h-[44px] w-full flex-col rounded-2xl border border-line-2 bg-surface-2 p-3 text-left hover:border-ink-3">
+              <button type="button" onClick={() => openAt(go, `stock/${a.ticker}#whats-next`)} className="flex h-full min-h-[44px] w-full flex-col rounded-2xl border border-line-2 bg-surface-2 p-3 text-start hover:border-ink-3">
                 <span className="flex items-center gap-2">
-                  <span className="font-mono text-[15px] font-medium text-ink">{a.ticker}</span>
-                  {mine.has(a.ticker) && <span className="pill py-0 text-[9.5px] text-people">{held.includes(a.ticker) ? "held" : "picked"}</span>}
+                  <bdi className="font-mono text-[15px] font-medium text-ink">{a.ticker}</bdi>
+                  {mine.has(a.ticker) && <span className="pill py-0 text-[9.5px] text-people">{t(held.includes(a.ticker) ? "today.held" : "today.picked")}</span>}
                 </span>
-                <span className="mt-0.5 text-[12.5px] text-ink-2">{a.results ? "Results" : "Company event"}</span>
-                <span className="mt-auto pt-2 text-[13px] text-ink">{noYear(a.date)}</span>
-                <span className="meta normal-case tracking-[0.03em]">{inDays(a.days)}{a.results && !a.confirmed ? " · expected" : ""}</span>
+                <span className="mt-0.5 text-[12.5px] text-ink-2">{t(a.results ? "today.results" : "today.event")}</span>
+                <span className="mt-auto pt-2 text-[13px] text-ink">{noYear(a.date, lang)}</span>
+                <span className="meta normal-case tracking-[0.03em]">{inDays(a.days, lang)}{a.results && !a.confirmed ? t("today.expected") : ""}</span>
               </button>
             </li>
           ))}
         </ul>
       ) : (
-        <Para>No results days in the next {SOON_DAYS} days.</Para>
+        <Para>{t("today.noResults", { n: SOON_DAYS })}</Para>
       )}
-      {later && <p className="mt-3 text-[13.5px] text-ink-2">After that: <button type="button" onClick={() => openAt(go, `stock/${later.ticker}#whats-next`)} className="font-mono text-ink underline decoration-line-2 underline-offset-2">{later.ticker}</button> reports {noYear(later.date)} ({inDays(later.days)}).</p>}
+      {later && <p className="mt-3 text-[13.5px] text-ink-2">{t.rich("today.after", { t: tickerButton(later.ticker, `stock/${later.ticker}#whats-next`), date: noYear(later.date, lang), in: inDays(later.days, lang) })}</p>}
       {undated.length > 0 && (
         <p className="mt-2 text-[13.5px] leading-relaxed text-ink-2">
-          No date announced yet for{" "}
-          {undated.map((u, i) => (
-            <Fragment key={u.ticker}>{i ? ", " : ""}<button type="button" onClick={() => go(`stock/${u.ticker}`)} className="font-mono text-ink underline decoration-line-2 underline-offset-2">{u.ticker}</button></Fragment>
-          ))}.
+          {t.rich("today.undated", { list: (
+            <>{undated.map((u, i) => (
+              <Fragment key={u.ticker}>{i ? ", " : ""}<button type="button" onClick={() => go(`stock/${u.ticker}`)} className="font-mono text-ink underline decoration-line-2 underline-offset-2">{u.ticker}</button></Fragment>
+            ))}</>
+          ) })}
         </p>
       )}
-      <p className="meta mt-3 normal-case tracking-[0.04em]">A results day is like a report card: the stock can jump a lot either way. It is not a sign to buy or sell.</p>
+      <p className="meta mt-3 normal-case tracking-[0.04em]">{t("today.reportCard")}</p>
     </PinnedCard>
   );
 }
 
-/** The latest "What we learned" note, pinned under today. */
+/** The latest lesson from the tests, pinned under today. */
 function Learned({ data, call, brief }) {
+  const { t: tr, fmt } = useLang();
+  const t = tr(dict);
   const br = data.market.base_rates;
   const edge = br && br.gate.pass.ci_low != null && br.gate.pass.ci_low > 0;
   const better = br && br.gate.pass.mean != null && br.gate.fail.mean != null && br.gate.pass.mean > br.gate.fail.mean;
   const lesson = brief.lessons[0];
   const titleOf = (s) => (s.title.match(/\(([^()]*)\)\s*$/) || [, s.title])[1];
+  const head = edge ? "helped" : better ? "hint" : "luck";
   return (
-    <PinnedCard kicker="What we learned" tone="var(--people)">
+    <PinnedCard kicker={t("today.learned")} tone="var(--people)">
       <div className="text-[22px] leading-snug font-semibold tracking-[-0.02em]">
-        {edge ? <>Our checks <span className="text-people">helped.</span></> : better ? <>A hint of help, <span className="text-people">nothing proven.</span></> : <>Our checks haven't <span className="text-people">beaten luck.</span></>}
+        {t(`today.head.${head}.a`)} <span className="text-people">{t(`today.head.${head}.b`)}</span>
       </div>
       <Para className="mt-3">
-        {call.v1res && <>We tested our stock-picking rule on years of past prices. It beat only <Ink>{fmtNum(call.v1res.percentile, 0)} out of every 100</Ink> baskets of stocks picked at random; plain luck would beat about half. </>}
-        {br && (edge ? "Stocks that passed our checks did better than the whole market afterwards." : better ? "Stocks that passed our checks did a tiny bit better than the others, not enough to trust." : "Stocks that passed our checks did no better than the ones that failed.")}
+        {call.v1res && <>{t.rich("today.tested", { n: <Ink>{t("today.nOf100", { n: fmt.num(call.v1res.percentile, 0) }, { bidi: false })}</Ink> })} </>}
+        {br && t(edge ? "today.br.edge" : better ? "today.br.better" : "today.br.none")}
       </Para>
       {lesson && (
         <figure className="mt-4 rounded-2xl border border-line-2 bg-surface-2 p-4">
-          <figcaption className="meta mb-2 text-people">A lesson that fits today · {lesson.why}</figcaption>
-          <blockquote className="text-[14.5px] leading-relaxed text-ink">{lesson.p.text}</blockquote>
-          <div className="meta mt-2 truncate normal-case tracking-[0.04em]" title={lesson.p.source.title}>{titleOf(lesson.p.source)}</div>
+          <figcaption className="meta mb-2 text-people">{t("today.lesson")} · <bdi>{lesson.why}</bdi></figcaption>
+          {/* a library principle, quoted as written (English) */}
+          <EnglishNote />
+          <En as="blockquote" className="text-[14.5px] leading-relaxed text-ink">{lesson.p.text}</En>
+          <div dir="auto" className="meta mt-2 truncate normal-case tracking-[0.04em]" title={lesson.p.source.title}>{titleOf(lesson.p.source)}</div>
         </figure>
       )}
     </PinnedCard>
@@ -526,53 +561,56 @@ function Learned({ data, call, brief }) {
 /* -------------------------------------------------------------------- feed */
 
 const EMPTY = {
-  checklist: (data) => (data.checklist ? "No checklist changes worth a line yet." : "The technical checklist's day-to-day changes appear after the next daily run."),
-  brain: (data) => (data.sample ? "Brain runs show here once its picks are real; this build uses sample picks." : "No brain runs yet."),
-  people: () => "No logged public calls yet.",
-  companies: () => "No dated company news yet.",
-  market: () => "Market closes appear after the next daily run.",
-  all: () => "Nothing in the feed yet.",
+  checklist: (data) => (data.checklist ? "today.empty.checklist" : "today.empty.checklistLater"),
+  brain: (data) => (data.sample ? "today.empty.brainSample" : "today.empty.brain"),
+  people: () => "today.empty.people",
+  companies: () => "today.empty.companies",
+  market: () => "today.empty.market",
+  all: () => "today.empty.all",
 };
 
 function Feed({ feed, filter, pick, shown, setShown, open, data, feedTop }) {
-  const { list, counts } = filterFeed(feed, filter);
+  const { lang, he, t: tr, fmt } = useLang();
+  const t = tr(dict);
+  const { list, counts } = filterFeed(feed, filter, lang);
   const days = byDay(list.slice(0, shown));
   const ahead = filter === "companies" ? feed.ahead : [];
   const sampleChecklist = Boolean(data.checklist?.sample) && !data.sample;
   return (
-    <section ref={feedTop} aria-label="Feed" className="mt-10 scroll-mt-24">
+    <section ref={feedTop} aria-label={t("today.feedLabel")} className="mt-10 scroll-mt-24">
       <div className="flex items-baseline justify-between gap-3">
-        <h2 className="text-[22px] font-semibold tracking-[-0.02em]">The feed</h2>
-        <span className="meta normal-case tracking-[0.04em]">newest first</span>
+        <h2 className="text-[22px] font-semibold tracking-[-0.02em]">{t("today.feed")}</h2>
+        <span className="meta normal-case tracking-[0.04em]">{t("today.newestFirst")}</span>
       </div>
-      <p className="mt-1 text-[13.5px] leading-relaxed text-ink-3">Everything that happened, newest first, like a diary: how the market closed, big jumps, what the brain said, company news and what famous investors said. Tap one to open it.</p>
+      <p className="mt-1 text-[13.5px] leading-relaxed text-ink-3">{t("today.feedIntro")}</p>
+      {he && list.some((it) => it.english) && <EnglishNote className="mt-2" />}
       <div className="mt-4">
-        <Segmented label="Show" value={filter} onChange={pick}
-          options={["all", ...KINDS].map((k) => ({ value: k, label: KIND_LABEL[k], count: counts[k] }))} />
+        <Segmented label={t("today.show")} value={filter} onChange={pick}
+          options={["all", ...KINDS].map((k) => ({ value: k, label: kindLabel(k, lang), count: counts[k] }))} />
       </div>
       {sampleChecklist && (filter === "all" || filter === "checklist") && (
-        <p className="mt-3 rounded-2xl border border-dashed border-people/60 px-4 py-2.5 text-[13px] text-people">Checklist items here come from sample prices, not the market.</p>
+        <p className="mt-3 rounded-2xl border border-dashed border-people/60 px-4 py-2.5 text-[13px] text-people">{t("today.sampleChecklist")}</p>
       )}
       {ahead.length > 0 && (
         <div className="mt-6">
-          <div className="meta mb-2 text-accent">Ahead</div>
+          <div className="meta mb-2 text-accent">{t("today.ahead")}</div>
           <ul className="grid gap-2">{ahead.map((it) => <FeedItem key={it.id} it={it} open={open} ahead />)}</ul>
         </div>
       )}
       {days.map((d) => (
         <div key={d.date} className="mt-6">
           <div className="meta mb-2 flex items-center gap-3">
-            <span className="shrink-0">{noYear(d.date)}</span>
+            <span className="shrink-0">{noYear(d.date, lang)}</span>
             <span className="h-px flex-1 bg-line" />
-            <span className="shrink-0 normal-case tracking-[0.04em]">{relDays(d.date)}</span>
+            <span className="shrink-0 normal-case tracking-[0.04em]">{fmt.rel(d.date)}</span>
           </div>
           <ul className="grid gap-2">{d.items.map((it) => <FeedItem key={it.id} it={it} open={open} />)}</ul>
         </div>
       ))}
-      {!list.length && !ahead.length && <p className="mt-6 rounded-2xl border border-dashed border-line-2 p-5 text-center text-[14px] text-ink-2">{EMPTY[filter](data)}</p>}
+      {!list.length && !ahead.length && <p className="mt-6 rounded-2xl border border-dashed border-line-2 p-5 text-center text-[14px] text-ink-2">{t(EMPTY[filter](data))}</p>}
       {list.length > shown && (
         <button type="button" onClick={() => setShown((n) => n + PAGE)} className="btn mt-6 w-full justify-center text-[15px]">
-          Show more <span className="num font-mono text-[13px] text-ink-3">{list.length - shown} older</span>
+          {t("today.showMore")} <span className="num font-mono text-[13px] text-ink-3">{t("today.older", { n: list.length - shown })}</span>
         </button>
       )}
     </section>
@@ -580,22 +618,25 @@ function Feed({ feed, filter, pick, shown, setShown, open, data, feedTop }) {
 }
 
 function FeedItem({ it, open, ahead = false }) {
+  const { lang, t: tr } = useLang();
+  const t = tr(dict);
   const meta = KIND_META[it.kind];
   const color = it.unusual ? TONE_VAR[it.tone] : meta.color ?? TONE_VAR[it.tone] ?? "var(--ink-2)";
   const glyph = it.unusual ? "!" : meta.glyph;
   return (
     <li>
       <button type="button" onClick={() => open(it.to)}
-        className={`flex min-h-[44px] w-full gap-3 rounded-2xl border bg-surface px-4 py-3 text-left transition hover:border-ink-3 ${it.latest ? "border-line-2" : "border-line"}`}>
+        className={`flex min-h-[44px] w-full gap-3 rounded-2xl border bg-surface px-4 py-3 text-start transition hover:border-ink-3 ${it.latest ? "border-line-2" : "border-line"}`}>
         <span className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-full border text-[14px]" style={{ color, borderColor: `color-mix(in srgb, ${color} 40%, transparent)`, background: `color-mix(in srgb, ${color} 10%, transparent)` }} aria-hidden="true">{glyph}</span>
         <span className="min-w-0 flex-1">
           <span className="meta block normal-case tracking-[0.06em]">
-            <span className="uppercase tracking-[0.14em]">{it.unusual ? "Unusual move" : it.digest ? "Checklist digest" : KIND_LABEL[it.kind]}</span>
-            {it.latest && " · latest close"}
-            {ahead && ` · ${noYear(it.date)} · ${inDays(it.days)}`}
+            <span className="uppercase tracking-[0.14em]">{it.unusual ? t("today.unusual") : it.digest ? t("today.digest") : kindLabel(it.kind, lang)}</span>
+            {it.latest && t("today.latestClose")}
+            {ahead && <> · {noYear(it.date, lang)} · {inDays(it.days, lang)}</>}
           </span>
-          <span className="mt-0.5 line-clamp-3 text-[15px] leading-snug text-ink">{it.title}</span>
-          {it.body.map((b, i) => <span key={i} className="mt-1 line-clamp-2 text-[13.5px] leading-relaxed text-ink-2">{b}</span>)}
+          {/* dir="auto": the site's Hebrew sentences read right to left, English text from data left to right */}
+          <span dir="auto" className="mt-0.5 line-clamp-3 text-start text-[15px] leading-snug text-ink">{it.title}</span>
+          {it.body.map((b, i) => <span key={i} dir="auto" className="mt-1 line-clamp-2 text-start text-[13.5px] leading-relaxed text-ink-2">{b}</span>)}
         </span>
         {it.value && <span className={`num mt-0.5 shrink-0 font-mono text-[13px] ${TONE_TEXT[it.value.tone] ?? "text-ink-2"}`}>{it.value.text}</span>}
       </button>

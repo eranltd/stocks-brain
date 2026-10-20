@@ -22,3 +22,20 @@ test("stock holes need a stock of the day", () => {
   assert.equal(stockOfDay({ watchlist: { symbols: [{ symbol: "BBB" }] } }), "BBB");
   assert.equal(dayNumber("1970-01-02"), 1);
 });
+
+test("the rabbit holes in Hebrew: every question has its own Hebrew words, no digits; English is the hole's own", async () => {
+  const { holeQuestion } = await import("./explore.js");
+  const { hasHebrew } = await import("./i18n.js");
+  const seen = new Set();
+  for (const h of HOLES) {
+    assert.equal(holeQuestion(h), h.q);
+    assert.equal(holeQuestion(h, "en"), h.q);
+    const q = holeQuestion(h, "he");
+    assert.ok(hasHebrew(q) && (q.endsWith("?") || q.endsWith(".")), h.id);
+    assert.doesNotMatch(q, /\d/, h.id);
+    assert.ok(!seen.has(q), h.id);
+    seen.add(q);
+  }
+  assert.equal(holeQuestion({ id: "made-up", q: "A new question?" }, "he"), "A new question?");
+  for (const h of HOLES) assert.doesNotMatch(h.q, /\bour\b|\bwe\b/i, h.id); // any reader, not "our"
+});

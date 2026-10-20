@@ -138,7 +138,7 @@ export function BuyWindowCard({ a, go }) {
           <div className="mt-7">
             <Head>{a.tone === "rules_allow" ? "Still to keep in mind" : "What to wait for"}</Head>
             <ul className="grid gap-2 text-[16.5px] leading-relaxed text-ink">
-              {a.waitFor.map((w) => <li key={w} className="relative pl-4 before:absolute before:left-0 before:top-[0.75em] before:h-px before:w-2 before:bg-ink-3">{w}</li>)}
+              {a.waitFor.map((w) => <li key={w} className="relative ps-4 before:absolute before:start-0 before:top-[0.75em] before:h-px before:w-2 before:bg-ink-3">{w}</li>)}
             </ul>
           </div>
         )}
@@ -161,7 +161,7 @@ export function BuyLine({ line, onClick }) {
   if (!line) return null;
   return (
     <button type="button" onClick={onClick}
-      className="mt-4 flex min-h-[48px] w-full items-center gap-3 rounded-2xl border border-line-2 px-4 py-2.5 text-left transition hover:border-ink-3">
+      className="mt-4 flex min-h-[48px] w-full items-center gap-3 rounded-2xl border border-line-2 px-4 py-2.5 text-start transition hover:border-ink-3">
       <span className="size-2.5 shrink-0 rounded-full" style={{ background: LINE_DOT[line.tone] ?? "var(--ink-3)" }} aria-hidden="true" />
       <span className="min-w-0 flex-1 text-[16px] leading-snug text-ink">{line.text}</span>
       <ArrowRight className="size-4 shrink-0 text-ink-3" />

@@ -73,7 +73,7 @@ function List({ data, go }) {
       />
       {regime && <Regime regime={regime} above={rows.filter((r) => r.m?.above_sma50).length} total={rows.length} />}
       <div className="meta mb-3 hidden grid-cols-[minmax(150px,1.1fr)_minmax(140px,2fr)_minmax(100px,.8fr)_minmax(130px,.9fr)] gap-6 px-7 sm:grid">
-        <span>{nouns.many === "funds" ? "Fund · category" : "Name · sector"}</span><span>{days} days, indexed</span><span className="text-right">Quick checks · chart checklist · rule</span><span className="text-right">Today</span>
+        <span>{nouns.many === "funds" ? "Fund · category" : "Name · sector"}</span><span>{days} days, indexed</span><span className="text-end">Quick checks · chart checklist · rule</span><span className="text-end">Today</span>
       </div>
       <div className="grid gap-3">
         <Row r={bm} i={0} bench go={go} />
@@ -112,11 +112,11 @@ function Row({ r, i, bench = false, go, rule, ck, hasChecklist, group = null }) 
       <div className="row-span-2 sm:row-span-1">
         {m?.bars?.length > 1 ? <Sparkline bars={m.bars} tone={tone} delay={i * 60} indexed /> : <span className="meta">no data</span>}
       </div>
-      <div className="order-last text-right text-[13px] sm:order-none" title={m?.setup ? `${m.setup.passed} of 4 quick checks pass` : ""}>
-        {bench ? <span className="num font-mono text-ink-2 sm:text-[16px]">{m ? fmtPct(m.ret_20d_pct, 1) : "—"}<span className="ml-1 text-[11px] text-ink-3">20 days</span></span> : (
+      <div className="order-last text-end text-[13px] sm:order-none" title={m?.setup ? `${m.setup.passed} of 4 quick checks pass` : ""}>
+        {bench ? <span className="num font-mono text-ink-2 sm:text-[16px]">{m ? fmtPct(m.ret_20d_pct, 1) : "—"}<span className="ms-1 text-[11px] text-ink-3">20 days</span></span> : (
           <>
             <span className="num font-mono sm:text-[16px]">{m?.setup ? `${m.setup.passed}/4` : "—"}</span>
-            {m?.setup?.stretched && <span className="ml-1.5 text-[11px] text-people" title="It ran up too fast">ran up fast</span>}
+            {m?.setup?.stretched && <span className="ms-1.5 text-[11px] text-people" title="It ran up too fast">ran up fast</span>}
             {hasChecklist && <div className="mt-1"><VerdictPill verdict={ck?.verdict} /></div>}
             {rule && <div className={`hidden truncate text-[11.5px] sm:block ${STATUS[rule].tone}`}>{STATUS[rule].label}</div>}
           </>

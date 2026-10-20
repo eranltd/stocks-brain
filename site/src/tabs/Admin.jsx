@@ -72,7 +72,7 @@ export default function Admin({ data }) {
         </>}
       />
       <Reveal className="card flex items-center gap-5 overflow-hidden p-6 sm:p-7">
-        <span aria-hidden="true" className="absolute inset-y-0 left-0 w-[3px] bg-accent" />
+        <span aria-hidden="true" className="absolute inset-y-0 start-0 w-[3px] bg-accent" />
         <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-accent/15 text-accent">
           <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 5 5 9-10" /></svg>
         </span>
@@ -83,7 +83,7 @@ export default function Admin({ data }) {
       </Reveal>
 
       <div className="mt-16 mb-6 flex items-baseline justify-between gap-4">
-        <h3 className="text-[24px] font-semibold tracking-[-0.03em]">The docs <span className="num ml-1 font-mono text-[13px] font-normal text-ink-3">{pad2(docs.length)}</span></h3>
+        <h3 className="text-[24px] font-semibold tracking-[-0.03em]">The docs <span className="num ms-1 font-mono text-[13px] font-normal text-ink-3">{pad2(docs.length)}</span></h3>
         <span className="meta hidden sm:inline">What the brain reads each morning</span>
       </div>
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -91,11 +91,11 @@ export default function Admin({ data }) {
           <Reveal key={d.name} delay={(i % 3) * 80} as="article" className={`card card-hover group flex flex-col p-7 sm:p-8 ${d.name === "library" ? "border-dashed border-people/50" : ""}`}>
             <div className="flex items-center justify-between">
               <span className="meta">{pad2(i + 1)}</span>
-              <a href={editUrl(d.path)} target="_blank" rel="noreferrer" className="-my-2 -mr-3 inline-flex min-h-[44px] items-center gap-1.5 px-3 text-[14.5px] font-medium text-ink-2 transition hover:text-accent">
-                Edit <ArrowRight className="size-4 transition group-hover:translate-x-0.5" />
+              <a href={editUrl(d.path)} target="_blank" rel="noreferrer" className="-my-2 -me-3 inline-flex min-h-[44px] items-center gap-1.5 px-3 text-[14.5px] font-medium text-ink-2 transition hover:text-accent">
+                Edit <ArrowRight className="size-4 transition group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5" />
               </a>
             </div>
-            <button type="button" onClick={() => setOpen(d)} className="mt-5 text-left">
+            <button type="button" onClick={() => setOpen(d)} className="mt-5 text-start">
               <h4 className="text-[26px] font-semibold tracking-[-0.03em] transition group-hover:text-accent">{cap(d.name)}</h4>
               <p className="mt-2 text-[15px] text-ink-2">{ABOUT[d.name]}</p>
               <p className="mt-5 font-mono text-[12px] font-semibold tracking-[0.12em] text-accent uppercase">{stats(d, data)}</p>
@@ -103,7 +103,7 @@ export default function Admin({ data }) {
             <div className="mt-auto flex items-center gap-3 border-t border-line pt-5 text-[14px] [margin-top:max(1.5rem,auto)]">
               <span className="pill py-1 text-[11px] text-ink-2">v{d.version}</span>
               <span className="text-ink-3">{relDays(d.updated_at)}</span>
-              <span className="min-w-0 flex-1 truncate text-right text-[13px] text-ink-3" title={d.change_note}>{d.change_note}</span>
+              <span className="min-w-0 flex-1 truncate text-end text-[13px] text-ink-3" title={d.change_note}>{d.change_note}</span>
             </div>
           </Reveal>
         ))}
@@ -176,7 +176,7 @@ function Viewer({ doc, onClose, editUrl }) {
         role="dialog"
         aria-modal="true"
         aria-label={doc.name}
-        className="relative flex h-full w-full max-w-[760px] flex-col border-l border-line bg-surface shadow-2xl outline-none"
+        className="relative flex h-full w-full max-w-[760px] flex-col border-s border-line bg-surface shadow-2xl outline-none"
         style={{ animation: "slide-in 650ms cubic-bezier(.16,1,.3,1) both" }}
       >
         <style>{"@keyframes slide-in{from{transform:translateX(40px);opacity:0}}"}</style>
@@ -192,7 +192,7 @@ function Viewer({ doc, onClose, editUrl }) {
           </div>
         </div>
         <div className="flex-1 overflow-y-auto px-6 py-6 sm:px-8">
-          <p className="mb-6 rounded-xl border border-line bg-bg/40 px-4 py-3 text-[14px] text-ink-2"><span className="meta mr-2 text-ink">change note</span>{doc.change_note}</p>
+          <p className="mb-6 rounded-xl border border-line bg-bg/40 px-4 py-3 text-[14px] text-ink-2"><span className="meta me-2 text-ink">change note</span>{doc.change_note}</p>
           {isMd ? <Markdown source={doc.content} /> : raw ? (
             <pre className="overflow-x-auto rounded-xl bg-bg/60 p-4 font-mono text-[12.5px] leading-relaxed text-ink-2">{JSON.stringify(doc.content, null, 2)}</pre>
           ) : (

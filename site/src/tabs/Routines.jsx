@@ -148,7 +148,7 @@ export default function Routines({ data }) {
               </div>
               <h3 className="mt-5 text-[21px] font-semibold tracking-[-0.02em]">{r.name}</h3>
               {NOTE[r.id] && r.status === "active"
-                ? <p className="mt-3 border-l-2 border-ai/50 pl-3 text-[14.5px] leading-relaxed text-ink">{NOTE[r.id]}</p>
+                ? <p className="mt-3 border-s-2 border-ai/50 ps-3 text-[14.5px] leading-relaxed text-ink">{NOTE[r.id]}</p>
                 : <p className="mt-3 text-[14.5px] leading-relaxed text-ink-2">{r.why}</p>}
               <dl className="mt-5 grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1.5 border-t border-line pt-4 text-[13px]">
                 <dt className="meta">building step</dt><dd>{r.milestone}</dd>
@@ -185,7 +185,7 @@ export default function Routines({ data }) {
             <div className="no-scrollbar overflow-x-auto">
               <table className="w-full min-w-[760px] text-[13.5px]">
                 <thead>
-                  <tr className="meta border-b border-line text-left">
+                  <tr className="meta border-b border-line text-start">
                     {["Finished", "Job", "Started by", "Result", "Steps", "Log"].map((h) => <th key={h} className="px-5 py-4 font-medium">{h}</th>)}
                   </tr>
                 </thead>

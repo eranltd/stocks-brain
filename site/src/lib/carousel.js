@@ -3,6 +3,8 @@
 // percent from the last close, and the mini chart draws no numbers at all.
 
 import { plainSummary } from "./brief.js";
+import { translate } from "./i18n.js";
+import dict from "../i18n/home.js";
 import { bands, candleGeom, fitDomain, linePath, scaleLinear } from "./candles.js";
 import { companiesToKnow } from "./simple.js";
 
@@ -24,7 +26,9 @@ export function topStocks({ max = TOP_MAX, candles = {}, ...args }) {
     const summary = rows[c.ticker]?.score?.summary;
     return {
       ...c,
-      plain: c.plain ?? (summary ? plainSummary(summary) : null),
+      // Both come from data in English for now (the outlook card, the checklist's own summary); the page shows them
+      // with dir="auto". plainSummary gets the language too, for when lib/brief.js learns Hebrew.
+      plain: c.plain ?? (summary ? plainSummary(summary, args.lang ?? "en") : null),
       hasChart: Boolean(candles?.[c.ticker]),
       candlesTo: `stock/${c.ticker}#checklist`,
     };
@@ -54,13 +58,15 @@ export function monthDirection(win) {
 }
 
 /** One sentence for screen readers, in words only (no digits, like the rest of the simple home). */
-export function miniSummary(name, win) {
-  if (!win) return `${name}: no chart yet.`;
+export function miniSummary(name, win, lang = "en") {
+  const t = translate(dict, lang);
+  if (!win) return t("mini.none", { name });
   const days = win.ok.filter(Boolean).length;
   const ups = win.ok.filter((ok, i) => ok && win.c[i] >= win.o[i]).length;
-  const mix = ups > days / 2 + 1 ? "mostly up days" : ups < days / 2 - 1 ? "mostly down days" : "about as many up days as down days";
-  const dir = { up: "ended the month higher than it began", down: "ended the month lower than it began", flat: "ended the month about where it began" }[monthDirection(win)];
-  return `${name}: the last month of daily candles, ${mix}${dir ? `; it ${dir}` : ""}. A description of the chart, not a forecast.`;
+  const mix = t(ups > days / 2 + 1 ? "mini.mostlyUp" : ups < days / 2 - 1 ? "mini.mostlyDown" : "mini.even");
+  const d = monthDirection(win);
+  const dir = d ? t(`mini.dir.${d}`) : "";
+  return t("mini.summary", { name, mix, dir }, { bidi: false });
 }
 
 /**

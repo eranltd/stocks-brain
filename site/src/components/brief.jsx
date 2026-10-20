@@ -80,7 +80,7 @@ export function BriefSections({ data, brief, go }) {
               <li key={c.id} className="border-t border-line pt-4 first:border-0 first:pt-0">
                 <div className="flex flex-wrap items-center gap-2">
                   {c.tickers.map((t) => <span key={t} className="font-mono text-[13px] font-medium text-ink-2">{t}</span>)}
-                  <span className="meta ml-auto">{c.as_of} → {c.expires}</span>
+                  <span className="meta ms-auto">{c.as_of} → {c.expires}</span>
                 </div>
                 <p className="mt-1.5 text-[14.5px] leading-relaxed text-ink-2">{c.text}</p>
               </li>

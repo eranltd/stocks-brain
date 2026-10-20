@@ -1,16 +1,21 @@
 // "Why it moved" notes (data/market/why.json) in plain words for the Home's news card, the Full dashboard's market day
 // and each Stock page. Pure functions, no React; tested in why.test.js.
 // The notes are written by a separate scheduled Claude session (not the stock-picking brain) from an allow-list of
-// official sources and reputable outlets, in our own words, and checked by scripts/record_why.py before they are
+// official sources and reputable outlets, in its own words, and checked by scripts/record_why.py before they are
 // published. The size of each move (move_pct) and the names it covers (symbols) come from our own data, never from the
 // model. A note explains a move after it happened; it is never a reason to trade and never enters the brain's pack.
 
-/** The line every note carries wherever it is shown (config/rules.json: the household does not buy on headlines). */
+import { fmtShort, translate } from "./i18n.js";
+import dict from "../i18n/home.js";
+
+/** The line every note carries wherever it is shown (config/rules.json: the plan does not buy on headlines). */
 export const NOT_A_TRADE = "This explains a move; it is not a reason to trade.";
+export const notATrade = (lang = "en") => translate(dict, lang)("why.notATrade");
 /** How far back a Stock page lists a name's notes (why.json itself keeps about thirty days). */
 export const WHY_DAYS = 30;
 
-/** Each confidence in words: a short label for a chip and the word the news line uses before the headline. */
+/** Each confidence in words (English): a short label for a chip and the word the news line uses before the headline.
+ *  Other languages: confidenceWord(conf, lang). */
 export const CONFIDENCE = {
   clear: { word: "Clear cause", lead: "why", tone: "accent" },
   likely: { word: "Likely cause", lead: "likely why", tone: "flat" },
@@ -22,8 +27,14 @@ const DAY = 86400000;
 const utc = (iso) => Date.parse(`${iso}T00:00:00Z`);
 const isDate = (s) => typeof s === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s);
 const num = (v) => (typeof v === "number" && Number.isFinite(v) ? v : null);
-/** "Oct 9" for a YYYY-MM-DD date. */
-export const noteDay = (iso) => { if (!isDate(iso)) return ""; const d = new Date(utc(iso)); return `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`; };
+export const confidenceWord = (conf, lang = "en") => translate(dict, lang)(`why.conf.${CONFIDENCE[conf] ? conf : "unclear"}`);
+/** "Oct 9" for a YYYY-MM-DD date ("9 באוק׳" in Hebrew). */
+export const noteDay = (iso, lang = "en") => {
+  if (!isDate(iso)) return "";
+  if (lang !== "en") return fmtShort(iso, lang);
+  const d = new Date(utc(iso));
+  return `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`;
+};
 const trimEnd = (s) => String(s ?? "").trim().replace(/[.;:,\s]+$/, "");
 
 /**
@@ -96,19 +107,21 @@ export function isBehind(doc, latestDate) {
 
 /**
  * The words a news line adds after the move: "why: SpaceX agreed to buy phone airwaves", "likely why: ...", or for an
- * unclear note "we looked for why and found no clear cause yet". No trailing full stop.
+ * unclear note "no clear cause has been found yet". No trailing full stop. The headline is the note's own (English)
+ * text; in Hebrew it is isolated so it reads left to right inside the line.
  */
-export function whyClause(note) {
+export function whyClause(note, lang = "en") {
   if (!note) return "";
-  const c = CONFIDENCE[confidenceOf(note)];
-  return c.lead ? `${c.lead}: ${trimEnd(note.headline)}` : "we looked for why and found no clear cause yet";
+  const conf = confidenceOf(note);
+  const t = translate(dict, lang);
+  return CONFIDENCE[conf].lead ? t(`why.lead.${conf}`, { headline: trimEnd(note.headline) }) : t("why.none");
 }
 
 /** A note's sources for display, in the order given: {url, publisher, day}. Only https links are kept. */
-export function sourcesOf(note) {
+export function sourcesOf(note, lang = "en") {
   return (note?.sources ?? [])
     .filter((s) => typeof s?.url === "string" && /^https:\/\//.test(s.url))
-    .map((s) => ({ url: s.url, publisher: String(s.publisher ?? "").trim() || hostOf(s.url), day: noteDay(s.published) }));
+    .map((s) => ({ url: s.url, publisher: String(s.publisher ?? "").trim() || hostOf(s.url), day: noteDay(s.published, lang) }));
 }
 
 function hostOf(url) {
@@ -130,18 +143,19 @@ export function sectorOf(note, groups = {}) {
 
 /**
  * Who a note is about, in words: the stock or fund itself (its first symbol; any others are funds that moved with it),
- * from `names`, else the note's own name (filled from our config by record_why, so funds of other lists read as words
- * too), else the ticker; "Our Communication companies" for a sector average. `names` maps symbol to name, `short` shortens a sector name
- * (lib/marketday.js shortSector).
+ * from `names`, else the note's own name (filled from the site's config by record_why, so funds of other lists read as
+ * words too), else the ticker; "Communication companies on the list" for a sector average. `names` maps symbol to name,
+ * `short(sector, lang)` shortens a sector name (lib/marketday.js shortSector), `lang` the language.
  */
-export function whoOf(note, { names = {}, groups = {}, short = (s) => s } = {}) {
+export function whoOf(note, { names = {}, groups = {}, short = (s) => s, lang = "en" } = {}) {
+  const t = translate(dict, lang);
   if (note?.kind === "sector") {
     const sector = sectorOf(note, groups);
-    return sector ? `Our ${short(sector)} companies` : "One group of our companies";
+    return sector ? t("why.who.sector", { sector: short(sector, lang) }) : t("why.who.group");
   }
   const first = note?.symbols?.[0];
   const named = (first && names[first]) || note?.name || first;
-  return named ? plainName(named) : "One of our names";
+  return named ? plainName(named) : t("why.who.one");
 }
 
 /** A name without its data-provider suffix: "Nasdaq-100 (QQQ proxy)" becomes "Nasdaq-100". */
@@ -149,24 +163,26 @@ export const plainName = (s) => String(s ?? "").replace(/\s*\([A-Z0-9.^-]+ proxy
 
 /**
  * A note ready to show: {key, kind, date, day, who, headline, why, confidence, word, tone, sources, move_pct,
- * symbols}. `why` is the longer own-words explanation (may be empty); `word` the confidence in words.
+ * symbols}. `why` is the longer own-words explanation (may be empty, English like the headline); `word` the confidence
+ * in words. `opts`: whoOf's options, with `lang` for the words the site writes (who, word, day).
  */
 export function noteView(note, opts = {}) {
   const conf = confidenceOf(note);
+  const lang = opts.lang ?? "en";
   return {
     key: `${note.market_date}:${note.key ?? (note.symbols ?? []).join(",")}`, // a name can have notes on several days
     kind: note.kind,
     market: note.market ?? null,
     date: note.market_date,
-    day: noteDay(note.market_date),
+    day: noteDay(note.market_date, lang),
     who: whoOf(note, opts),
     headline: trimEnd(note.headline),
     why: String(note.why ?? "").trim(),
     confidence: conf,
-    word: CONFIDENCE[conf].word,
+    word: confidenceWord(conf, lang),
     tone: CONFIDENCE[conf].tone,
     unclear: conf === "unclear",
-    sources: sourcesOf(note),
+    sources: sourcesOf(note, lang),
     move_pct: num(note.move_pct),
     symbols: note.symbols ?? [],
   };

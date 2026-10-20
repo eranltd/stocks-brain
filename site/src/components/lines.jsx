@@ -56,7 +56,7 @@ export function LinesChart({ dates, series, log = true, height, ariaLabel }) {
           </span>
         ))}
       </div>
-      <div ref={box} className="relative">
+      <div ref={box} dir="ltr" className="relative">
         <svg ref={svg} viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full touch-pan-y overflow-visible" role="img" aria-label={ariaLabel}
           onPointerMove={onMove} onPointerDown={onMove} onPointerLeave={() => setHover(null)}>
           {ticks.map((t) => (
@@ -84,7 +84,7 @@ export function LinesChart({ dates, series, log = true, height, ariaLabel }) {
           )}
         </svg>
         {h != null && (
-          <div className="pointer-events-none absolute top-0 z-10 min-w-[190px] rounded-xl border border-line-2 bg-surface px-3 py-2 text-[12.5px] shadow-xl"
+          <div dir="auto" className="pointer-events-none absolute top-0 z-10 min-w-[190px] rounded-xl border border-line-2 bg-surface px-3 py-2 text-[12.5px] shadow-xl"
             style={{ left: `clamp(0px, calc(${(x(h) / W) * 100}% - 95px), calc(100% - 190px))` }}>
             <div className="meta mb-1">{fmtDate(dates[h])}</div>
             {series.map((s) => (

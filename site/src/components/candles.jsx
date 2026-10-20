@@ -131,10 +131,10 @@ export function CandlesView({ data, symbol, row, cfg }) {
           const pressed = on[o.id];
           return (
             <button key={o.id} type="button" aria-pressed={pressed} onClick={() => toggle(o.id)}
-              className={`flex min-h-[48px] min-w-0 items-center gap-2 rounded-xl border px-2.5 py-1.5 text-left transition duration-200 ${pressed ? "border-line-2 bg-surface-2" : "border-line opacity-55 hover:opacity-80"}`}>
+              className={`flex min-h-[48px] min-w-0 items-center gap-2 rounded-xl border px-2.5 py-1.5 text-start transition duration-200 ${pressed ? "border-line-2 bg-surface-2" : "border-line opacity-55 hover:opacity-80"}`}>
               <Key id={o.id} />
               <span className="min-w-0">
-                <span className="block text-[12.5px] leading-tight text-ink"><span className="num mr-1 font-mono text-[11px] text-ink-3">{s.n}</span>{o.step === "risk_plan" ? "Risk plan" : s.name}</span>
+                <span className="block text-[12.5px] leading-tight text-ink"><span className="num me-1 font-mono text-[11px] text-ink-3">{s.n}</span>{o.step === "risk_plan" ? "Risk plan" : s.name}</span>
               </span>
             </button>
           );
@@ -249,7 +249,7 @@ function CandleChart({ win, doc, on, pattern, symbol, rsiCfg, spots = [], sel = 
   const patternText = pattern ? `${LEAN_GLYPH[pattern.lean] ?? ""} ${win.partial ? "week so far: " : ""}${pattern.pattern}` : win.partial ? "week so far" : null;
 
   return (
-    <div ref={box} className="relative select-none">
+    <div ref={box} dir="ltr" className="relative select-none">
       <svg ref={svg} width={W} height={H} viewBox={`0 0 ${W} ${H}`} className="block max-w-full touch-pan-y" tabIndex={0}
         style={{ outline: kbd ? "2px solid var(--accent)" : "none", outlineOffset: 4, borderRadius: 8 }}
         onFocus={() => { if (!byPointer.current) setKbd(true); }}
@@ -378,20 +378,20 @@ function CandleChart({ win, doc, on, pattern, symbol, rsiCfg, spots = [], sel = 
       </svg>
 
       {tip && (
-        <div role="status" className="pointer-events-none absolute top-1 z-10 w-[176px] rounded-xl border border-line-2 bg-surface px-3 py-2 text-[12px] shadow-[0_20px_40px_-12px_rgb(0_0_0/0.45)]"
+        <div role="status" dir="auto" className="pointer-events-none absolute top-1 z-10 w-[176px] rounded-xl border border-line-2 bg-surface px-3 py-2 text-[12px] shadow-[0_20px_40px_-12px_rgb(0_0_0/0.45)]"
           style={tipLeft ? { left: 4 } : { right: R + 4 }}>
           <div className="meta mb-1 normal-case tracking-[0.04em]">{fmtDate(tip.date)}{tip.partial ? " · week so far" : ""}</div>
           <div className="text-[10.5px] text-ink-3">from the last close</div>
           <dl className="mt-0.5 grid grid-cols-[auto_1fr] gap-x-3">
-            {tip.ohlc.flatMap(([k, v]) => [<dt key={`k${k}`} className="text-ink-3">{k}</dt>, <dd key={`v${k}`} className="num text-right font-mono font-semibold text-ink">{v}</dd>])}
+            {tip.ohlc.flatMap(([k, v]) => [<dt key={`k${k}`} className="text-ink-3">{k}</dt>, <dd key={`v${k}`} className="num text-end font-mono font-semibold text-ink">{v}</dd>])}
           </dl>
           <dl className="mt-1.5 grid grid-cols-[auto_1fr] gap-x-3 border-t border-line pt-1.5">
             <dt className="text-ink-3">{tip.moveLabel}</dt>
-            <dd className={`num text-right font-mono font-semibold ${tip.move ? { accent: "text-accent", down: "text-down", flat: "text-ink" }[tip.move.tone] : "text-ink-3"}`}>{tip.move?.text ?? "–"}</dd>
+            <dd className={`num text-end font-mono font-semibold ${tip.move ? { accent: "text-accent", down: "text-down", flat: "text-ink" }[tip.move.tone] : "text-ink-3"}`}>{tip.move?.text ?? "–"}</dd>
             <dt className="text-ink-3">Volume</dt>
-            <dd className="num text-right font-mono text-ink">{tip.vol ? `${tip.vol} avg` : "–"}</dd>
+            <dd className="num text-end font-mono text-ink">{tip.vol ? `${tip.vol} avg` : "–"}</dd>
             <dt className="text-ink-3">RSI</dt>
-            <dd className="num text-right font-mono text-ink">{tip.rsi ?? "–"}</dd>
+            <dd className="num text-end font-mono text-ink">{tip.rsi ?? "–"}</dd>
           </dl>
         </div>
       )}

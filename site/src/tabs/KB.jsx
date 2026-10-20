@@ -69,7 +69,7 @@ export default function KB({ data, query, setQuery, go }) {
       <Reveal delay={100} className="mt-4 flex flex-wrap items-center gap-3">
         <Segmented label="Result" value={verdict} onChange={setVerdict} options={VERDICTS.map((v) => ({ ...v, count: filtered.counts[v.value] }))} />
         <Segmented label="Sort" value={sort} onChange={setSort} options={[{ value: "newest", label: "Newest" }, { value: "excess", label: "Most ahead of market" }, { value: "hits", label: "Right first" }]} />
-        <span className="meta ml-auto">{filtered.list.length} of {kb.length} guesses</span>
+        <span className="meta ms-auto">{filtered.list.length} of {kb.length} guesses</span>
       </Reveal>
 
       <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -113,7 +113,7 @@ function KBCard({ k, i, horizon }) {
       </div>
       <div className="mt-auto flex items-center justify-between gap-3 pt-6">
         <Chip kind={k.verdict}>{k.verdict === "pending" ? "pending" : `${k.verdict} ${fmtPct(k.outcome.excess_pct, 1)}`}</Chip>
-        <span className="meta num text-right">{k.date} → {k.outcome?.scored_date ?? addTradingDays(k.date, horizon)}</span>
+        <span className="meta num text-end">{k.date} → {k.outcome?.scored_date ?? addTradingDays(k.date, horizon)}</span>
       </div>
     </Reveal>
   );

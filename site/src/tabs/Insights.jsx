@@ -151,8 +151,8 @@ function SourceCard({ s, n, principles, claims, filtered, delay }) {
             <button type="button" onClick={() => setAll(true)} className="btn mt-5 px-5 py-3 text-[14px]">Show all {principles.length} principles</button>
           )}
         </div>
-        <div className="border-t border-line p-6 sm:p-8 lg:border-t-0 lg:border-l">
-          <button type="button" onClick={() => setOpen(!open)} className="meta flex min-h-[44px] w-full items-center justify-between gap-3 text-left hover:text-ink" aria-expanded={open}>
+        <div className="border-t border-line p-6 sm:p-8 lg:border-t-0 lg:border-s">
+          <button type="button" onClick={() => setOpen(!open)} className="meta flex min-h-[44px] w-full items-center justify-between gap-3 text-start hover:text-ink" aria-expanded={open}>
             <span>Dated guesses · {claims.length} <span className="text-people">({liveClaims} still in date)</span></span>
             <span className={`transition-transform duration-500 ${open ? "rotate-90" : ""}`}><ArrowRight className="size-4" /></span>
           </button>
@@ -177,7 +177,7 @@ function ClaimRow({ c }) {
     <li className={`rounded-2xl border border-line bg-bg/40 p-4 ${expired ? "opacity-60" : ""}`}>
       <div className="flex flex-wrap items-center gap-2">
         {c.tickers.map((t) => <span key={t} className="font-mono text-[13px] font-medium text-accent">{t}</span>)}
-        <span className="meta ml-auto">{c.as_of} → {expired ? "expired" : c.expires}</span>
+        <span className="meta ms-auto">{c.as_of} → {expired ? "expired" : c.expires}</span>
       </div>
       <p className="mt-2 text-[14px] leading-relaxed text-ink-2">{c.text}</p>
     </li>

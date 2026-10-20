@@ -55,7 +55,7 @@ export default function People({ data, go }) {
     <Container className="pt-14">
       <Reveal className="eyebrow mb-4">
         People · v{cfg.version} · {fmtDate(cfg.updated_at)}{sc ? ` · scored to ${fmtDate(sc.as_of)}` : ""}
-        {sc?.sample && <span className="pill ml-2 border-dashed border-people/60 text-people">sample prices</span>}
+        {sc?.sample && <span className="pill ms-2 border-dashed border-people/60 text-people">sample prices</span>}
       </Reveal>
       <Headline size="xl" className="max-w-[14ch]">People we <Accent>learn from.</Accent></Headline>
       <Reveal delay={250} as="p" className="mt-6 max-w-[62ch] text-[clamp(17px,1.7vw,20px)] leading-relaxed text-ink-2">
@@ -106,7 +106,7 @@ function Leg({ leg, weeks, since, ticker }) {
   }
   return (
     <div className="min-w-0">
-      <div className={`num font-mono text-[15px] ${tone(leg.signed_excess_pct)}`}>{fmtPct(leg.signed_excess_pct, 1)}<span className="ml-1.5 font-sans text-[11.5px] text-ink-3">vs the market</span></div>
+      <div className={`num font-mono text-[15px] ${tone(leg.signed_excess_pct)}`}>{fmtPct(leg.signed_excess_pct, 1)}<span className="ms-1.5 font-sans text-[11.5px] text-ink-3">vs the market</span></div>
       <div className="num font-mono text-[11.5px] leading-snug text-ink-3"><div>{ticker} {fmtPct(leg.name_pct, 1)}</div><div>whole market {fmtPct(leg.core_pct, 1)}</div></div>
     </div>
   );
@@ -146,7 +146,7 @@ function CallRow({ c, p, name, judge, horizons }) {
           <div className="flex items-center gap-2.5">
             <span className="font-mono text-[20px] leading-none font-medium tracking-[-0.02em]">{c.ticker}</span>
             <Chip kind={c.stance}>{c.stance}</Chip>
-            <span className="ml-auto flex items-center gap-2"><Chip kind={STATUS_CHIP[st.kind]}>{st.label}</Chip><Toggle /></span>
+            <span className="ms-auto flex items-center gap-2"><Chip kind={STATUS_CHIP[st.kind]}>{st.label}</Chip><Toggle /></span>
           </div>
           <div className="text-[13.5px] leading-snug text-ink-2">
             <span className="text-ink">{callerName(c, p)}</span>
@@ -237,8 +237,8 @@ function PersonCard({ p, rec, i, judge, minMatured, firmCalls, group }) {
               <span className={rec?.n || firmCalls.length ? "text-ink" : "text-ink-3"}>{recordLine(p, rec, judge, minMatured, firmCalls)}</span>
             </div>
           )}
-          <p className="mt-2 line-clamp-2 text-[14px] leading-snug group-open:line-clamp-none"><span className="meta mr-1.5 text-accent">Learn</span>{p.learn}</p>
-          <p className="mt-1.5 line-clamp-2 text-[14px] leading-snug text-ink-2 group-open:line-clamp-none"><span className="meta mr-1.5 text-people">Careful</span>{p.caution}</p>
+          <p className="mt-2 line-clamp-2 text-[14px] leading-snug group-open:line-clamp-none"><span className="meta me-1.5 text-accent">Learn</span>{p.learn}</p>
+          <p className="mt-1.5 line-clamp-2 text-[14px] leading-snug text-ink-2 group-open:line-clamp-none"><span className="meta me-1.5 text-people">Careful</span>{p.caution}</p>
         </summary>
         <ul className="grid gap-0.5 border-t border-line px-4 pt-2 pb-3 text-[13.5px] sm:px-5">
           {links.map((l) => <LinkRow key={l.href} href={l.href}>{l.label}</LinkRow>)}
@@ -256,13 +256,13 @@ function PrinciplesRow({ p }) {
       <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 sm:px-5 [&::-webkit-details-marker]:hidden">
         <span className="min-w-0">
           <span className="text-[16px] font-semibold tracking-[-0.01em]">{p.name}</span>
-          <span className="meta ml-2 normal-case tracking-[0.02em]">{p.style}</span>
+          <span className="meta ms-2 normal-case tracking-[0.02em]">{p.style}</span>
         </span>
         <Toggle />
       </summary>
       <div className="px-4 pb-4 sm:px-5">
-        <p className="text-[14px] leading-snug"><span className="meta mr-1.5 text-accent">Learn</span>{p.learn}</p>
-        <p className="mt-2 text-[14px] leading-snug text-ink-2"><span className="meta mr-1.5 text-people">Careful</span>{p.caution}</p>
+        <p className="text-[14px] leading-snug"><span className="meta me-1.5 text-accent">Learn</span>{p.learn}</p>
+        <p className="mt-2 text-[14px] leading-snug text-ink-2"><span className="meta me-1.5 text-people">Careful</span>{p.caution}</p>
         <ul className="mt-2 grid gap-0.5 text-[13.5px]">{links.map((l) => <LinkRow key={l.href} href={l.href}>{l.label}</LinkRow>)}</ul>
       </div>
     </details>

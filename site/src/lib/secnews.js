@@ -2,10 +2,18 @@
 // the home's cards. Pure functions, no React; tested in secnews.test.js. Titles are fixed plain words chosen by code
 // (scripts/sec_news.py), never text from the filings, so they can be shown as they are.
 
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-export const shortDay = (iso) => { const d = new Date(`${iso}T00:00:00Z`); return `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`; };
+import { fmtShort, translate } from "./i18n.js";
+import dict from "../i18n/home.js";
 
-/** How each kind of news is shown: a word for the badge and a tone. */
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+/** "Oct 9" ("9 באוק׳" in Hebrew). */
+export const shortDay = (iso, lang = "en") => {
+  if (lang !== "en") return fmtShort(iso, lang);
+  const d = new Date(`${iso}T00:00:00Z`);
+  return `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`;
+};
+
+/** How each kind of news is shown: a word for the badge (English; other languages: kindOf) and a tone. */
 export const NEWS_KIND = {
   results: { word: "Results", tone: "accent" },
   report: { word: "Report", tone: "flat" },
@@ -17,24 +25,30 @@ export const NEWS_KIND = {
   other: { word: "Other", tone: "flat" },
 };
 
+/** A kind's badge word and tone in a language. */
+export function kindOf(kind, lang = "en") {
+  if (!NEWS_KIND[kind]) return {};
+  return { ...NEWS_KIND[kind], word: lang === "en" ? NEWS_KIND[kind].word : translate(dict, lang)(`sec.kind.${kind}`) };
+}
+
 /** A company's filings, newest first (as published), or []. */
 export function newsFor(doc, symbol) {
   return (doc?.companies ?? []).find((c) => c.symbol === symbol)?.filings ?? [];
 }
 
 /** The newest filing worth a line on a card: quarterly results or a heads-up first if within two weeks of the newest. */
-export function headlineFor(doc, symbol) {
+export function headlineFor(doc, symbol, lang = "en") {
   const f = newsFor(doc, symbol);
   if (!f.length) return null;
   const newest = f[0].date;
   const near = (x) => (new Date(`${newest}T00:00:00Z`) - new Date(`${x.date}T00:00:00Z`)) / 864e5 <= 14;
   const top = f.find((x) => near(x) && (x.kind === "results" || x.kind === "warning")) ?? f[0];
-  return { ...top, title: top.titles[0], day: shortDay(top.date), ...NEWS_KIND[top.kind] };
+  return { ...top, title: top.titles[0], day: shortDay(top.date, lang), ...kindOf(top.kind, lang) };
 }
 
-/** Rows for the Stock page's list. */
-export function newsRows(doc, symbol, max = 6) {
-  return newsFor(doc, symbol).slice(0, max).map((f) => ({ ...f, title: f.titles.join(" · "), day: shortDay(f.date), ...NEWS_KIND[f.kind] }));
+/** Rows for the Stock page's list. The titles are fixed English words from scripts/sec_news.py (PR 3 translates them). */
+export function newsRows(doc, symbol, max = 6, lang = "en") {
+  return newsFor(doc, symbol).slice(0, max).map((f) => ({ ...f, title: f.titles.join(" · "), day: shortDay(f.date, lang), ...kindOf(f.kind, lang) }));
 }
 
 /**

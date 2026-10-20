@@ -204,7 +204,7 @@ function Stock({ data, symbol, go, market: mk }) {
           <ArrowRight className="size-3.5 rotate-180" /> {isDefault ? "Stocks" : `${entry?.label ?? "Stocks"} list`}
         </button>
         {!isBench && idx >= 0 && (
-          <span className="ml-auto flex gap-2">
+          <span className="ms-auto flex gap-2">
             <button type="button" onClick={() => go(`stock/${others[(idx - 1 + others.length) % others.length].symbol}`)} className="pill text-ink-2 hover:text-ink">← {others[(idx - 1 + others.length) % others.length].symbol}</button>
             <button type="button" onClick={() => go(`stock/${others[(idx + 1) % others.length].symbol}`)} className="pill text-ink-2 hover:text-ink">{others[(idx + 1) % others.length].symbol} →</button>
           </span>
@@ -216,7 +216,7 @@ function Stock({ data, symbol, go, market: mk }) {
 
       {candlesOf(data)[symbol] && (
         <button type="button" onClick={() => setZoom(true)}
-          className="mt-6 flex w-full items-center gap-4 rounded-3xl border border-line-2 bg-surface p-5 text-left transition hover:border-ink-3 active:scale-[0.99] sm:p-6">
+          className="mt-6 flex w-full items-center gap-4 rounded-3xl border border-line-2 bg-surface p-5 text-start transition hover:border-ink-3 active:scale-[0.99] sm:p-6">
           <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-accent/12 text-accent" aria-hidden="true">
             <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M6 3v18M12 6v12M18 4v14" /><rect x="4.5" y="7" width="3" height="7" rx="1" fill="currentColor" /><rect x="10.5" y="9" width="3" height="5" rx="1" /><rect x="16.5" y="6" width="3" height="8" rx="1" fill="currentColor" /></svg>
           </span>
@@ -224,7 +224,7 @@ function Stock({ data, symbol, go, market: mk }) {
             <span className="block text-[19px] font-bold tracking-[-0.01em] text-ink">Candles up close</span>
             <span className="block text-[15px] text-ink-2">Zoom in and see which days are worth noticing, and why.</span>
           </span>
-          <ArrowRight className="ml-auto size-5 shrink-0 text-ink-2" />
+          <ArrowRight className="ms-auto size-5 shrink-0 text-ink-2" />
         </button>
       )}
       {zoom && <CandleZoom it={{ ticker: symbol, name: names?.[symbol] ?? symbol, candlesTo: `stock/${symbol}#checklist` }} manifest={data.manifest} marketId={data.marketId ?? "nasdaq"}
@@ -237,7 +237,7 @@ function Stock({ data, symbol, go, market: mk }) {
           <div className="mt-4 flex flex-wrap gap-2">
             {data.checklistCfg && (
               <button type="button" onClick={() => jump("checklist")} className="pill min-h-[40px] max-w-full text-ink hover:border-ink-3">
-                Checklist {ckRow ? <VerdictPill verdict={ckRow.score.verdict} className="ml-1" /> : null} <span aria-hidden="true">↓</span>
+                Checklist {ckRow ? <VerdictPill verdict={ckRow.score.verdict} className="ms-1" /> : null} <span aria-hidden="true">↓</span>
               </button>
             )}
             {!isBench && (
@@ -248,7 +248,7 @@ function Stock({ data, symbol, go, market: mk }) {
           </div>
         </div>
         {!isBench && (
-          <Reveal delay={200} className="card px-6 py-5 text-right">
+          <Reveal delay={200} className="card px-6 py-5 text-end">
             <div className="meta">Quick checks passed</div>
             <div className="display num mt-1 text-[48px] leading-none">{passed}<span className="text-ink-3">/4</span></div>
             <div className="meta mt-2 normal-case tracking-[0.04em]">a report card, not advice</div>
@@ -406,7 +406,7 @@ function Stock({ data, symbol, go, market: mk }) {
                     <Chip kind={k.verdict}>{k.verdict === "pending" ? "pending" : `${k.verdict} ${fmtPct(k.outcome.excess_pct, 1)}`}</Chip>
                   </div>
                   <p className="mt-4 text-[15px] leading-relaxed">{k.thesis}</p>
-                  <div className="mt-4 text-[14px] text-ink-2"><span className="meta mr-2">Proved wrong if</span>{k.invalidation}</div>
+                  <div className="mt-4 text-[14px] text-ink-2"><span className="meta me-2">Proved wrong if</span>{k.invalidation}</div>
                 </Reveal>
               ))}
             </div>
@@ -512,7 +512,7 @@ function StockBrief({ data, row, symbol, today, jump, seeCandles, isDefault = tr
               return (
                 <li key={c.id}>
                   <button type="button" onClick={() => jump(`checklist-${c.id}`)}
-                    className="flex min-h-[52px] w-full items-center gap-3 rounded-2xl border border-line px-4 py-3 text-left transition hover:border-ink-3">
+                    className="flex min-h-[52px] w-full items-center gap-3 rounded-2xl border border-line px-4 py-3 text-start transition hover:border-ink-3">
                     <span className={`grid size-8 shrink-0 place-items-center rounded-full text-[11px] ${m.cls}`} role="img" aria-label={m.label}>{m.glyph}</span>
                     <span className="min-w-0 flex-1">
                       <span className="block text-[16px] leading-snug text-ink">{c.text}</span>
@@ -545,7 +545,7 @@ function StockBrief({ data, row, symbol, today, jump, seeCandles, isDefault = tr
         <div className={`text-[20px] leading-snug font-semibold tracking-[-0.01em] ${where.ok ? "text-accent" : "text-people"}`}>{where.head}.</div>
         {where.ok ? (
           <ul className="mt-3 grid gap-2 text-[16px] leading-relaxed text-ink">
-            {where.plan.map((p) => <li key={p} className="relative pl-4 before:absolute before:left-0 before:top-[0.7em] before:h-px before:w-2 before:bg-ink-3">{p}.</li>)}
+            {where.plan.map((p) => <li key={p} className="relative ps-4 before:absolute before:start-0 before:top-[0.7em] before:h-px before:w-2 before:bg-ink-3">{p}.</li>)}
           </ul>
         ) : (
           <div className="mt-3 grid gap-2 text-[16px] leading-relaxed">
@@ -589,7 +589,7 @@ const dayOnly = (iso) => fmtDate(iso).replace(/^\w+, /, ""); // "19 Nov 2026"
 
 function Src({ url }) {
   if (!url) return null;
-  return <a href={url} {...ext} className="ml-1 whitespace-nowrap text-[12px] text-ink-3 underline decoration-line-2 underline-offset-2 hover:text-ink">{host(url)} ↗</a>;
+  return <a href={url} {...ext} className="ms-1 whitespace-nowrap text-[12px] text-ink-3 underline decoration-line-2 underline-offset-2 hover:text-ink">{host(url)} ↗</a>;
 }
 
 const SubHead = ({ children }) => <div className="meta mb-3 text-accent">{children}</div>;
@@ -760,7 +760,7 @@ function WhatsNext({ card, symbol, today, hasFile }) {
           <div className="text-[17px] font-semibold leading-snug">Sales (revenue) {lt.revenue}</div>
           <div className="mt-1 text-[13.5px] text-ink-3">{growth ? `${growth} · ` : ""}reported {dayOnly(lt.reported_on)}<Src url={lt.source_url} /></div>
           <ul className="mt-3 grid gap-1.5 text-[14.5px] leading-relaxed text-ink-2">
-            {lt.highlights.map((h) => <li key={h} className="relative pl-4 before:absolute before:left-0 before:top-[0.75em] before:h-px before:w-2 before:bg-ink-3">{h}</li>)}
+            {lt.highlights.map((h) => <li key={h} className="relative ps-4 before:absolute before:start-0 before:top-[0.75em] before:h-px before:w-2 before:bg-ink-3">{h}</li>)}
           </ul>
           <div className="mt-4 rounded-2xl border border-line px-4 py-3">
             <div className="meta mb-1">The company's own outlook{g.given && g.period ? ` · ${g.period}` : ""}</div>
@@ -865,7 +865,7 @@ function StockChart({ row, bench, benchSymbol, picks }) {
         </div>
         <Segmented label="Range" value={range} onChange={setRange} options={RANGES.filter((r) => r.value <= Math.max(21, maxRange)).map((r) => ({ ...r }))} />
       </div>
-      <div ref={box} className="relative">
+      <div ref={box} dir="ltr" className="relative">
         <svg ref={svg} viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full touch-pan-y overflow-visible" role="img"
           aria-label={`${row.symbol} over ${n} trading days, indexed to 100${bench ? `, against ${benchSymbol}` : ""}`}
           onPointerMove={onMove} onPointerDown={onMove} onPointerLeave={() => setHover(null)}>
@@ -901,7 +901,7 @@ function StockChart({ row, bench, benchSymbol, picks }) {
           )}
         </svg>
         {h != null && (
-          <div className="pointer-events-none absolute top-0 z-10 min-w-[170px] rounded-xl border border-line-2 bg-surface px-3 py-2 text-[12.5px] shadow-xl"
+          <div dir="auto" className="pointer-events-none absolute top-0 z-10 min-w-[170px] rounded-xl border border-line-2 bg-surface px-3 py-2 text-[12.5px] shadow-xl"
             style={{ left: `clamp(0px, calc(${(x(h) / W) * 100}% - 85px), calc(100% - 170px))` }}>
             <div className="meta mb-1">{fmtDate(dates[h])}</div>
             <div className="flex justify-between gap-4"><span>{row.symbol}</span><b className="num font-mono">{fmtPct(pts[h] - 100, 1)}</b></div>

@@ -27,7 +27,7 @@ export function Sparkline({ bars, tone = "accent", height = 48, delay = 0, index
   };
   const hp = hover != null ? pts[hover] : null;
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} dir="ltr" className="relative">
       <svg
         viewBox={`0 0 ${W} ${H}`}
         preserveAspectRatio="none"
@@ -94,7 +94,7 @@ export function BarChart({ items, value, label, tooltip, refs = [], height = 380
   const labelEvery = Math.ceil(items.length / 6);
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} dir="ltr" className="relative">
       <div ref={box} className="relative">
         <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full overflow-visible" role="img" aria-label={ariaLabel}>
           {ticks.map((t) => (

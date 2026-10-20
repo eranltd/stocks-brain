@@ -199,7 +199,7 @@ function MapShowcase() {
         </div>
 
         <div className="min-w-0">
-          <div className="no-scrollbar -mx-6 overflow-x-auto px-6 sm:mx-0 sm:px-0">
+          <div dir="ltr" className="no-scrollbar -mx-6 overflow-x-auto px-6 sm:mx-0 sm:px-0">
             <svg viewBox="0 0 1000 470" className="block h-auto w-full min-w-[680px] md:min-w-0" role="img" aria-label="Map of the daily circle, from the watchlist to the rule book and back">
               <defs>
                 <pattern id="dotgrid" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="var(--line)" /></pattern>
@@ -334,7 +334,7 @@ function Ring({ done }) {
   });
   const arc = (2 * Math.PI * R) * (done / MILESTONES.length);
   return (
-    <svg viewBox="0 0 400 400" className="w-full max-w-[420px] overflow-visible" role="img" aria-label={`Roadmap: ${done} of ${MILESTONES.length} milestones shipped`}>
+    <svg viewBox="0 0 400 400" direction="ltr" className="w-full max-w-[420px] overflow-visible" role="img" aria-label={`Roadmap: ${done} of ${MILESTONES.length} milestones shipped`}>
       <circle cx={C} cy={C} r={R} fill="none" stroke="var(--line-2)" strokeWidth="1.5" />
       <circle cx={C} cy={C} r={R} fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round"
         strokeDasharray={`${arc} ${2 * Math.PI * R}`} transform={`rotate(-90 ${C} ${C})`} />

@@ -72,7 +72,7 @@ const day = (iso) => fmtDate(iso).replace(/ \d{4}$/, ""); // "Thu, 22 Oct"
 function Mover({ m, name, go }) {
   return (
     <li>
-      <button type="button" onClick={() => go(`stock/${m.symbol}`)} className="flex w-full min-h-[44px] items-center justify-between gap-2 rounded-xl border border-line px-3 py-2 text-left hover:border-ink-3">
+      <button type="button" onClick={() => go(`stock/${m.symbol}`)} className="flex w-full min-h-[44px] items-center justify-between gap-2 rounded-xl border border-line px-3 py-2 text-start hover:border-ink-3">
         <span className="min-w-0">
           <span className="font-mono text-[14px] font-semibold">{m.symbol}</span>
           <span className="block truncate text-[12px] text-ink-3">{name}</span>
@@ -151,7 +151,7 @@ function MarketDay({ data, go }) {
           </div>
           {d.sectors.length > 0 && (
             <p className="mt-5 text-[13.5px] leading-relaxed text-ink-2">
-              <span className="meta mr-2">By industry</span>
+              <span className="meta me-2">By industry</span>
               {d.sectors.map((x, i) => (
                 <Fragment key={x.sector}>{i ? " · " : ""}<span className="whitespace-nowrap">{shortSector(x.sector)} <span className={`num font-mono ${upDown(x.avg)}`}>{fmtPct(x.avg, 1)}</span></span></Fragment>
               ))}
@@ -164,7 +164,7 @@ function MarketDay({ data, go }) {
           <div className="meta mb-3 text-accent">Why it moved</div>
           <ul className="grid gap-3">
             {notes.map((x) => <WhyNote key={x.v.key} v={x.v} tag={x.tag}
-              lead={x.to ? <button type="button" onClick={() => goTo(go, x.to)} className="text-left underline decoration-line-2 underline-offset-2 hover:text-ink-2">{x.lead}</button> : x.lead} />)}
+              lead={x.to ? <button type="button" onClick={() => goTo(go, x.to)} className="text-start underline decoration-line-2 underline-offset-2 hover:text-ink-2">{x.lead}</button> : x.lead} />)}
           </ul>
           <WhyFooter className="mt-4" />
         </Reveal>
@@ -208,13 +208,13 @@ function ComingUp({ data, go }) {
           <ul className="grid gap-2 sm:grid-cols-2">
             {rows.map((r) => (
               <li key={r.ticker}>
-                <button type="button" onClick={() => go(`stock/${r.ticker}`)} className="flex w-full min-h-[44px] items-center justify-between gap-3 rounded-xl border border-line px-3 py-2 text-left hover:border-ink-3">
+                <button type="button" onClick={() => go(`stock/${r.ticker}`)} className="flex w-full min-h-[44px] items-center justify-between gap-3 rounded-xl border border-line px-3 py-2 text-start hover:border-ink-3">
                   <span className="min-w-0">
                     <span className="font-mono text-[14px] font-semibold">{r.ticker}</span>
-                    {r.first && <span className="pill ml-2 whitespace-nowrap py-0.5 text-[10.5px] text-people">{tag(r.ticker)}</span>}
+                    {r.first && <span className="pill ms-2 whitespace-nowrap py-0.5 text-[10.5px] text-people">{tag(r.ticker)}</span>}
                     <span className="block truncate text-[12px] text-ink-3">{data.names[r.ticker] ?? r.name}</span>
                   </span>
-                  <span className="shrink-0 text-right text-[13px]">
+                  <span className="shrink-0 text-end text-[13px]">
                     <span className="block text-ink">{day(r.date)}</span>
                     <span className="block text-[12px] text-ink-3">{inDays(r.days)}{r.confirmed ? "" : " · expected"}</span>
                   </span>
@@ -400,7 +400,7 @@ export function PickCard({ item, i, name, horizon }) {
           <span className="display text-[96px] leading-[0.8] font-medium tracking-[-0.06em] text-ink transition-transform duration-700 group-hover:-translate-y-1">{pad2(i + 1)}</span>
           <Conviction level={pick.conviction} />
         </div>
-        <div className="absolute bottom-6 left-7 right-7">
+        <div className="absolute bottom-6 start-7 end-7">
           <div className="font-mono text-[32px] leading-none font-medium tracking-[-0.02em]" style={{ color: tone }}>{pick.ticker}</div>
           <div className="meta mt-3">{pick.stance} · {name}</div>
         </div>
@@ -415,7 +415,7 @@ export function PickCard({ item, i, name, horizon }) {
           <div>
             <div className="meta mb-2">What could go wrong</div>
             <ul className="grid gap-1 text-ink-2">
-              {pick.risks.map((r) => <li key={r} className="relative pl-4 before:absolute before:left-0 before:top-[0.7em] before:h-px before:w-2 before:bg-ink-3">{r}</li>)}
+              {pick.risks.map((r) => <li key={r} className="relative ps-4 before:absolute before:start-0 before:top-[0.7em] before:h-px before:w-2 before:bg-ink-3">{r}</li>)}
             </ul>
           </div>
           <div>

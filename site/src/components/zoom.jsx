@@ -139,7 +139,7 @@ export function SpotList({ spots, focus, onPick, reduced, zoomWords = false }) {
         return (
           <li key={s.i} className="motion-safe:animate-[rise_420ms_ease-out_both]" style={{ animationDelay: reduced ? undefined : `${250 + k * 90}ms` }}>
             <button type="button" onClick={() => onPick(s)} aria-pressed={on}
-              className={`flex w-full gap-3 rounded-2xl border p-4 text-left transition-colors ${on ? "border-accent/60 bg-accent/10" : "border-line-2 hover:border-ink-3"}`}>
+              className={`flex w-full gap-3 rounded-2xl border p-4 text-start transition-colors ${on ? "border-accent/60 bg-accent/10" : "border-line-2 hover:border-ink-3"}`}>
               <span className="grid size-8 shrink-0 place-items-center rounded-full text-[15px] font-bold text-bg" style={{ background: TONE[s.tone] }}>{s.n}</span>
               <span className="min-w-0">
                 <span className="block text-[17px] font-semibold text-ink">{s.title} <span className="font-normal text-ink-3">· {dayWords(s.date)}</span></span>
@@ -172,7 +172,7 @@ export function BigChart({ view, spots, chosen, reduced, onSpot, name }) {
   }, [view, w]);
   const step = reduced ? 0 : Math.min(28, 700 / Math.max(1, view.n));
   return (
-    <div ref={ref} className="relative overflow-hidden rounded-2xl bg-surface-2" style={{ height: H }}>
+    <div ref={ref} dir="ltr" className="relative overflow-hidden rounded-2xl bg-surface-2" style={{ height: H }}>
       {g && (
         <svg width={w} height={H} viewBox={`0 0 ${w} ${H}`} role="img" aria-label={`${name}: ${view.n} daily candles with ${spots.length} marked.`} className="block">
           {Number.isFinite(chosen) && g.candles[chosen] && (

@@ -63,17 +63,17 @@ export function BaseRates({ br, benchLabel, highlight }) {
   if (!br) return null;
   const rows = [...VERDICTS.map((v) => ({ key: v, label: VERDICT[v].word, r: br.by_verdict?.find((x) => x.verdict === v) })), { key: "all", label: "Every snapshot", r: br.all }];
   return (
-    <table className="w-full text-left text-[13.5px]">
-      <caption className="mb-2 text-left text-[12.5px] leading-relaxed text-ink-3">Looking back: after each reading, how much better or worse than the whole market (the {benchLabel}) the stock did over the next {br.horizon_days} trading days on average, how often it did better, and how many times we saw it. The past is a hint, not a promise.</caption>
-      <thead className="meta normal-case tracking-[0.04em]"><tr className="border-b border-line"><th className="py-2 font-normal">Reading</th><th className="py-2 pl-2 text-right font-normal">Average</th><th className="hidden py-2 pl-2 text-right font-normal sm:table-cell">Likely range</th><th className="py-2 pl-2 text-right font-normal">Did better</th><th className="py-2 pl-2 text-right font-normal">Times</th></tr></thead>
+    <table className="w-full text-start text-[13.5px]">
+      <caption className="mb-2 text-start text-[12.5px] leading-relaxed text-ink-3">Looking back: after each reading, how much better or worse than the whole market (the {benchLabel}) the stock did over the next {br.horizon_days} trading days on average, how often it did better, and how many times we saw it. The past is a hint, not a promise.</caption>
+      <thead className="meta normal-case tracking-[0.04em]"><tr className="border-b border-line"><th className="py-2 font-normal">Reading</th><th className="py-2 ps-2 text-end font-normal">Average</th><th className="hidden py-2 ps-2 text-end font-normal sm:table-cell">Likely range</th><th className="py-2 ps-2 text-end font-normal">Did better</th><th className="py-2 ps-2 text-end font-normal">Times</th></tr></thead>
       <tbody>
         {rows.map(({ key, label, r }) => (
           <tr key={key} className={`border-b border-line last:border-0 ${key === highlight ? "bg-surface-2" : ""}`}>
-            <td className={`whitespace-nowrap py-2 pr-2 ${key === "all" ? "text-ink-2" : "text-ink"}`}>{label}{key === highlight ? <span className="text-ink-3"> · now</span> : null}</td>
-            <td className={`num py-2 pl-2 text-right font-mono ${r?.mean == null ? "text-ink-3" : r.mean >= 0 ? "text-accent" : "text-down"}`}>{r?.mean == null ? "–" : fmtPct(r.mean, 1)}</td>
-            <td className="num hidden py-2 pl-2 text-right font-mono text-ink-3 sm:table-cell">{r?.ci_low == null ? "–" : `${fmtPct(r.ci_low, 1)} to ${fmtPct(r.ci_high, 1)}`}</td>
-            <td className="num py-2 pl-2 text-right font-mono text-ink-2">{r?.hit_pct == null ? "–" : `${Math.round(r.hit_pct)}%`}</td>
-            <td className="num py-2 pl-2 text-right font-mono text-ink-3">{r?.n ?? 0}</td>
+            <td className={`whitespace-nowrap py-2 pe-2 ${key === "all" ? "text-ink-2" : "text-ink"}`}>{label}{key === highlight ? <span className="text-ink-3"> · now</span> : null}</td>
+            <td className={`num py-2 ps-2 text-end font-mono ${r?.mean == null ? "text-ink-3" : r.mean >= 0 ? "text-accent" : "text-down"}`}>{r?.mean == null ? "–" : fmtPct(r.mean, 1)}</td>
+            <td className="num hidden py-2 ps-2 text-end font-mono text-ink-3 sm:table-cell">{r?.ci_low == null ? "–" : `${fmtPct(r.ci_low, 1)} to ${fmtPct(r.ci_high, 1)}`}</td>
+            <td className="num py-2 ps-2 text-end font-mono text-ink-2">{r?.hit_pct == null ? "–" : `${Math.round(r.hit_pct)}%`}</td>
+            <td className="num py-2 ps-2 text-end font-mono text-ink-3">{r?.n ?? 0}</td>
           </tr>
         ))}
       </tbody>
@@ -184,7 +184,7 @@ export function ChecklistCard({ data, symbol, go, view: viewProp, onView }) {
           <div className="meta mb-1">What it says · seven steps</div>
           <div className={`display text-[clamp(30px,7vw,40px)] ${TONE_TEXT[v.tone]}`}>{v.word}</div>
         </div>
-        <div className="text-left text-[13px] text-ink-2 sm:text-right">
+        <div className="text-start text-[13px] text-ink-2 sm:text-end">
           <div className="num font-mono text-[15px] text-ink">score {row.score.net > 0 ? "+" : ""}{row.score.net} of 7</div>
           <div>{row.score.bullish} lean up · {row.score.bearish} lean down · {row.score.neutral} no lean</div>
         </div>
@@ -198,7 +198,7 @@ export function ChecklistCard({ data, symbol, go, view: viewProp, onView }) {
               {s.lean ? <Dot lean={s.lean} /> : <span className="mt-1.5 inline-block size-2.5 shrink-0 rounded-full border border-ink-3" aria-hidden="true" />}
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-baseline justify-between gap-x-3">
-                  <span className="text-[15px] font-semibold"><span className="num mr-1.5 font-mono text-[12px] font-normal text-ink-3">{s.n}</span>{s.id === "risk_plan" ? "Safety plan (pretend money)" : s.name}</span>
+                  <span className="text-[15px] font-semibold"><span className="num me-1.5 font-mono text-[12px] font-normal text-ink-3">{s.n}</span>{s.id === "risk_plan" ? "Safety plan (pretend money)" : s.name}</span>
                   {s.lean && <span className={`meta normal-case tracking-[0.04em] ${TONE_TEXT[LEAN_TONE[s.lean]]}`}>{LEAN_LABEL[s.lean]}</span>}
                 </div>
                 {s.id === "risk_plan" ? <div className="mt-2"><RiskPlan rp={rp} /></div> : <p className="mt-1 text-[13.5px] leading-relaxed text-ink-2">{s.text}</p>}

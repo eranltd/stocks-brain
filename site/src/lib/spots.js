@@ -2,26 +2,28 @@
 // name and a plain reason. Pure functions, no React; tested in spots.test.js. Inputs are a candles window (lib/candles.js
 // windowOf): every price-like value is percent from the last close, so nothing here turns them back into prices.
 //
-// These are descriptions of what happened, not signals: our prices are end of day only, and in our own tests candle
-// readings did not beat chance. Every reason says so in its own words.
+// These are descriptions of what happened, not signals: the prices are end of day only, and in this site's own tests
+// candle readings did not beat chance. Every reason says so in its own words.
+
+import { translate } from "./i18n.js";
+import dict from "../i18n/home.js";
 
 const isNum = (v) => typeof v === "number" && Number.isFinite(v);
 const okAt = (w, i) => [w.o[i], w.h[i], w.l[i], w.c[i]].every(isNum);
 
-/** The kinds of candle we point at: a title, a tone, why people notice it, and the honest caveat. */
-export const SPOT_KINDS = {
-  big_green: { title: "Big green day", tone: "up", why: "It opened low and closed much higher: buyers were in charge all day." },
-  big_red: { title: "Big red day", tone: "down", why: "It opened high and closed much lower: sellers were in charge all day." },
-  gap_up: { title: "Gap up", tone: "up", why: "It opened above the whole day before, often after news. Gaps sometimes get filled later, sometimes not." },
-  gap_down: { title: "Gap down", tone: "down", why: "It opened below the whole day before, often after news. Chart readers watch whether it climbs back." },
-  hammer: { title: "Hammer", tone: "up", why: "After falling, sellers pushed it down during the day but buyers pushed it back up. Chart readers see a possible turn up." },
-  shooting_star: { title: "Shooting star", tone: "down", why: "After rising, buyers pushed it up during the day but it fell back. Chart readers see a possible turn down." },
-  engulf_up: { title: "Green swallows red", tone: "up", why: "A green day whose body covers the whole red day before it: buyers took over from sellers." },
-  engulf_down: { title: "Red swallows green", tone: "down", why: "A red day whose body covers the whole green day before it: sellers took over from buyers." },
-  busy: { title: "Very busy day", tone: "flat", why: "About twice the usual trading or more. Big moves on busy days get more attention than quiet ones." },
-};
+const TONES = { big_green: "up", big_red: "down", gap_up: "up", gap_down: "down", hammer: "up", shooting_star: "down", engulf_up: "up", engulf_down: "down", busy: "flat" };
 
-export const SPOT_CAVEAT = "A clue, not a promise: in our own tests, candle shapes did not beat chance.";
+/** The kinds of candle pointed at, in a language: a title, a tone, and why people notice it. */
+export function spotKinds(lang = "en") {
+  const t = translate(dict, lang);
+  return Object.fromEntries(Object.entries(TONES).map(([k, tone]) => [k, { title: t(`spots.${k}.title`), tone, why: t(`spots.${k}.why`) }]));
+}
+/** The kinds in English (lib/quiz.js and the Quiz page read these). */
+export const SPOT_KINDS = spotKinds("en");
+
+/** The honest caveat under any list of these candles. */
+export const spotCaveat = (lang = "en") => translate(dict, lang)("spots.caveat");
+export const SPOT_CAVEAT = spotCaveat("en");
 
 const median = (xs) => {
   const s = xs.filter(isNum).sort((a, b) => a - b);
@@ -74,12 +76,13 @@ export function findSpots(w) {
  * The candles worth pointing at in a window: at most `max`, the strongest, a little in favour of recent ones, shown in
  * date order and numbered. Each carries its date, title, tone and reason.
  */
-export function topSpots(w, max = 5) {
+export function topSpots(w, max = 5, lang = "en") {
+  const kinds = lang === "en" ? SPOT_KINDS : spotKinds(lang);
   const all = findSpots(w);
   const n = w?.dates?.length ?? 0;
   const ranked = [...all].sort((a, b) => b.score * (1 + a.i / n / 2) - a.score * (1 + b.i / n / 2) || b.i - a.i);
   return ranked.slice(0, max).sort((a, b) => a.i - b.i).map((s, k) => ({
-    ...s, n: k + 1, date: w.dates[s.i], ...SPOT_KINDS[s.kind],
+    ...s, n: k + 1, date: w.dates[s.i], ...kinds[s.kind],
   }));
 }
 

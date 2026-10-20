@@ -86,10 +86,10 @@ export default function Portfolio({ data, go }) {
             const on = picked.includes(s.symbol);
             return (
               <button key={s.symbol} type="button" onClick={() => toggle(s.symbol)} aria-pressed={on}
-                className={`min-h-[44px] rounded-2xl border px-4 py-2 text-left transition ${on ? "border-accent/60 bg-accent/10" : "border-line-2 hover:border-ink-3"} ${!on && picked.length >= slots ? "opacity-40" : ""}`}>
+                className={`min-h-[44px] rounded-2xl border px-4 py-2 text-start transition ${on ? "border-accent/60 bg-accent/10" : "border-line-2 hover:border-ink-3"} ${!on && picked.length >= slots ? "opacity-40" : ""}`}>
                 <span className={`font-mono text-[15px] font-semibold ${on ? "text-accent" : ""}`}>{s.symbol}</span>
-                <span className="ml-2 text-[12.5px] text-ink-3">{s.sector.replace("Information Technology", "Tech").replace("Communication Services", "Comms").replace("Consumer ", "Cons. ")}</span>
-                {on && view && <span className="num ml-2 font-mono text-[12.5px] text-ink-2">{fmtNum(view.w[s.symbol] * 100, 0)}%</span>}
+                <span className="ms-2 text-[12.5px] text-ink-3">{s.sector.replace("Information Technology", "Tech").replace("Communication Services", "Comms").replace("Consumer ", "Cons. ")}</span>
+                {on && view && <span className="num ms-2 font-mono text-[12.5px] text-ink-2">{fmtNum(view.w[s.symbol] * 100, 0)}%</span>}
               </button>
             );
           })}
@@ -159,7 +159,7 @@ export default function Portfolio({ data, go }) {
         <SectionHead eyebrow={`Each stock · ${fmtDate(lr.from)} to ${fmtDate(lr.to)}`} title={<>The stocks, <Accent>one by one.</Accent></>} size="md"
           lede="How each stock did on its own in the past. A year = average yearly growth. Biggest drop = the worst fall from a high point. Bumpiness = how much the price jumps around in a year." />
         <Reveal className="card overflow-x-auto">
-          <table className="w-full min-w-[720px] text-left text-[14px]">
+          <table className="w-full min-w-[720px] text-start text-[14px]">
             <thead className="meta">
               <tr className="border-b border-line">
                 {["Stock", "Kind of business", "A year", `Years at +${goal}%`, "Worst year", "Biggest drop", "Bumpiness (1y)", "Time the rule held it", "Rule today"].map((h) => <th key={h} className="px-4 py-3 font-normal">{h}</th>)}
@@ -189,7 +189,7 @@ export default function Portfolio({ data, go }) {
           title={<>What the rule <Accent>held, on paper.</Accent></>}
           lede={<>A replay on past prices of what the rule would have picked each month, with pretend money. It held {fmtNum(lr.avg_names_held, 1)} stocks on average and swapped about {fmtNum(lr.traded_per_year_pct / 2, 0)}% of the pot a year (how often it swaps stocks), paying a pretend fee of {lr.rule.cost_bps} bp per trade (100 bp = 1%). This replay is redone every day on today's list; the paper record further down is never redone.</>} size="md" />
         <Reveal className="card overflow-x-auto">
-          <table className="w-full min-w-[560px] text-left text-[14px]">
+          <table className="w-full min-w-[560px] text-start text-[14px]">
             <thead className="meta"><tr className="border-b border-line"><th className="px-4 py-3 font-normal">Month</th><th className="px-4 py-3 font-normal">Stocks held</th><th className="px-4 py-3 font-normal">In the core fund</th><th className="px-4 py-3 font-normal">Swapped</th></tr></thead>
             <tbody>
               {[...lr.rebalances].reverse().map((r) => (
@@ -223,7 +223,7 @@ function MixChips({ names, sectors, picked }) {
     <div className="flex flex-wrap gap-1.5">
       {names.map((s) => (
         <span key={s} className={`rounded-full border px-2.5 py-1 font-mono text-[12.5px] ${picked.includes(s) ? "border-accent/60 text-accent" : "border-line-2"}`}>
-          {s}<span className="ml-1.5 font-sans text-[11px] text-ink-3">{SHORT(sectors[s])}</span>
+          {s}<span className="ms-1.5 font-sans text-[11px] text-ink-3">{SHORT(sectors[s])}</span>
         </span>
       ))}
     </div>
@@ -347,7 +347,7 @@ function Row({ k, v, tone = "" }) {
   return (
     <div className="flex items-baseline justify-between gap-3 border-t border-line pt-1">
       <dt className="text-ink-3">{k}</dt>
-      <dd className={`num text-right font-mono ${tone}`}>{v}</dd>
+      <dd className={`num text-end font-mono ${tone}`}>{v}</dd>
     </div>
   );
 }

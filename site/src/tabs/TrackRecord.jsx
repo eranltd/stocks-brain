@@ -32,7 +32,7 @@ export default function TrackRecord({ data }) {
         lede={`In simple words: every guess the brain makes is checked about a month later, like marking homework. Each stock it talked about is compared with ${bench.label} (the whole market) over the next ${settings.scoring.horizon_days} market days. If the guess was right by more than ${settings.scoring.flat_band_pct}%, it is a hit; wrong by more than that, a miss; anything closer is "flat", too small to count. A plain computer program does the marking, not the AI, so it cannot be talked into a better grade. These are guesses to learn from, not things we buy.`}
       />
       <div className="mb-6"><TrustLadder data={data} go={() => {}} compact /></div>
-      {data.sample && <p className="mb-6 rounded-2xl border border-dashed border-people/50 px-5 py-4 text-[15px] text-ink-2"><span className="pill mr-3 border-dashed border-people/60 text-people">sample</span>The numbers below are made up, to show what the page will look like. They do not count.</p>}
+      {data.sample && <p className="mb-6 rounded-2xl border border-dashed border-people/50 px-5 py-4 text-[15px] text-ink-2"><span className="pill me-3 border-dashed border-people/60 text-people">sample</span>The numbers below are made up, to show what the page will look like. They do not count.</p>}
       <Strip
         cells={[
           { value: s.n, label: "guesses marked", desc: `${pending} more still waiting for their month to pass.` },
@@ -59,7 +59,7 @@ export default function TrackRecord({ data }) {
           <Split s={s} />
           {calibration && (
             <p className="mt-8 rounded-2xl border border-line bg-bg/40 px-4 py-3 text-[13.5px] text-ink-2">
-              <span className="meta mr-2 text-ink">Does "very sure" mean anything?</span>
+              <span className="meta me-2 text-ink">Does "very sure" mean anything?</span>
               {{
                 informative: "Guesses the brain was very sure about did better than the ones it was unsure about. Its confidence means something.",
                 not_informative: "Guesses it was very sure about did not do better than unsure ones yet. Ignore how sure it says it is.",
@@ -73,7 +73,7 @@ export default function TrackRecord({ data }) {
               <div key={g.st + g.cv} className="grid grid-cols-[1fr_auto_auto] items-center gap-3 text-[13.5px]">
                 <span className="flex items-center gap-2"><Chip kind={g.st} className="py-1 text-[11px]" /><Conviction level={g.cv} showLabel={false} /></span>
                 <span className="num font-mono text-ink-3">{g.n}×</span>
-                <span className="num w-14 text-right font-mono">{fmtNum(g.hitRate, 0)}%</span>
+                <span className="num w-14 text-end font-mono">{fmtNum(g.hitRate, 0)}%</span>
               </div>
             ))}
           </div>
@@ -84,9 +84,9 @@ export default function TrackRecord({ data }) {
         <div className="no-scrollbar overflow-x-auto">
           <table className="w-full min-w-[760px] text-[13.5px]">
             <thead>
-              <tr className="meta border-b border-line text-left">
+              <tr className="meta border-b border-line text-start">
                 {["Day", "Stock", "Guess", "How sure", "Stock moved", "Market moved", "Difference", "Mark"].map((h, i) => (
-                  <th key={h} className={`px-5 py-4 font-medium ${i >= 4 && i <= 6 ? "text-right" : ""}`}>{h}</th>
+                  <th key={h} className={`px-5 py-4 font-medium ${i >= 4 && i <= 6 ? "text-end" : ""}`}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -97,9 +97,9 @@ export default function TrackRecord({ data }) {
                   <td className="px-5 py-3.5 font-semibold">{o.ticker}</td>
                   <td className="px-5 py-3.5"><Chip kind={o.stance} className="py-1 text-[11px]" /></td>
                   <td className="px-5 py-3.5"><Conviction level={o.conviction} /></td>
-                  <td className="num px-5 py-3.5 text-right font-mono">{fmtPct(o.return_pct)}</td>
-                  <td className="num px-5 py-3.5 text-right font-mono text-ink-3">{fmtPct(o.benchmark_return_pct)}</td>
-                  <td className="num px-5 py-3.5 text-right font-mono font-semibold">{fmtPct(o.excess_pct)}</td>
+                  <td className="num px-5 py-3.5 text-end font-mono">{fmtPct(o.return_pct)}</td>
+                  <td className="num px-5 py-3.5 text-end font-mono text-ink-3">{fmtPct(o.benchmark_return_pct)}</td>
+                  <td className="num px-5 py-3.5 text-end font-mono font-semibold">{fmtPct(o.excess_pct)}</td>
                   <td className="px-5 py-3.5"><Chip kind={o.verdict} className="py-1 text-[11px]" /></td>
                 </tr>
               ))}
@@ -129,7 +129,7 @@ function Split({ s }) {
         {parts.map((p, i) => (
           <i
             key={p.k}
-            className={`block h-full ${p.c} transition-[width] duration-[1400ms] ease-[cubic-bezier(.16,1,.3,1)] first:rounded-l-md last:rounded-r-md`}
+            className={`block h-full ${p.c} transition-[width] duration-[1400ms] ease-[cubic-bezier(.16,1,.3,1)] first:rounded-s-md last:rounded-e-md`}
             style={{ width: inView ? `${(p.v / s.n) * 100}%` : 0, transitionDelay: `${300 + i * 120}ms` }}
           />
         ))}

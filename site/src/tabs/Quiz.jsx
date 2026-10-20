@@ -75,7 +75,7 @@ export default function Quiz({ data }) {
                 {q.choices.map((c) => {
                   const isRight = c.kind === q.kind, picked = kindPick === c.kind;
                   const tone = kindPick ? (isRight ? "border-accent bg-accent/12 text-accent" : picked ? "border-down bg-down/10 text-down" : "border-line-2 text-ink-3") : "border-line-2 text-ink hover:border-ink-3";
-                  return <button key={c.kind} type="button" onClick={() => answerKind(c.kind)} disabled={Boolean(kindPick)} className={`min-h-[52px] rounded-2xl border px-4 text-left text-[16.5px] font-semibold transition-colors ${tone}`}>{c.title}</button>;
+                  return <button key={c.kind} type="button" onClick={() => answerKind(c.kind)} disabled={Boolean(kindPick)} className={`min-h-[52px] rounded-2xl border px-4 text-start text-[16.5px] font-semibold transition-colors ${tone}`}>{c.title}</button>;
                 })}
               </div>
               {kindPick && (

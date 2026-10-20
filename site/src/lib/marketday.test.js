@@ -51,3 +51,10 @@ test("sector names shorten for one line on a phone", () => {
   assert.equal(shortSector("Information Technology"), "Tech");
   assert.equal(shortSector("Utilities"), "Utilities");
 });
+
+test("Hebrew sector names, English ones unchanged", () => {
+  assert.equal(shortSector("Information Technology", "he"), "טכנולוגיה");
+  assert.equal(shortSector("Health Care", "he"), "בריאות");
+  assert.equal(shortSector("Some New Group", "he"), "Some New Group", "an unknown group stays as written");
+  assert.equal(shortSector("Information Technology"), "Tech");
+});

@@ -47,9 +47,9 @@ export default function Runs({ data }) {
         <div className="no-scrollbar overflow-x-auto">
           <table className="w-full min-w-[880px] text-[13.5px]">
             <thead>
-              <tr className="meta border-b border-line text-left">
+              <tr className="meta border-b border-line text-start">
                 {["Morning", "Result", "Cost", "Minutes", "Pack size", "Guesses", "Rule versions", "Fingerprint"].map((h, i) => (
-                  <th key={h} className={`px-5 py-4 font-medium ${[2, 3, 5].includes(i) ? "text-right" : ""}`}>{h}</th>
+                  <th key={h} className={`px-5 py-4 font-medium ${[2, 3, 5].includes(i) ? "text-end" : ""}`}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -58,8 +58,8 @@ export default function Runs({ data }) {
                 <tr key={r.run_id} className="border-b border-line transition-colors last:border-0 hover:bg-ink/[0.03]" title={r.failure_reason}>
                   <td className="px-5 py-3.5 font-mono">{r.date}</td>
                   <td className="px-5 py-3.5"><Chip kind={r.status} icon={false} className="py-1 text-[11px]">{r.status}{r.repair_retries ? " · retry" : ""}</Chip></td>
-                  <td className={`num px-5 py-3.5 text-right font-mono ${r.cost.usd > settings.cost.warn_usd ? "text-people" : ""}`}>{fmtUsd(r.cost.usd)}</td>
-                  <td className="num px-5 py-3.5 text-right font-mono text-ink-2">{fmtNum(r.duration_minutes, 1)}</td>
+                  <td className={`num px-5 py-3.5 text-end font-mono ${r.cost.usd > settings.cost.warn_usd ? "text-people" : ""}`}>{fmtUsd(r.cost.usd)}</td>
+                  <td className="num px-5 py-3.5 text-end font-mono text-ink-2">{fmtNum(r.duration_minutes, 1)}</td>
                   <td className="px-5 py-3.5">
                     <div className="flex items-center gap-3">
                       <div className="h-1 w-20 overflow-hidden rounded bg-line">
@@ -68,7 +68,7 @@ export default function Runs({ data }) {
                       <span className="num font-mono text-[12px] text-ink-3">{fmtK(r.pack.tokens)}/{fmtK(r.pack.cap_tokens)}</span>
                     </div>
                   </td>
-                  <td className="num px-5 py-3.5 text-right font-mono">{r.picks.length}</td>
+                  <td className="num px-5 py-3.5 text-end font-mono">{r.picks.length}</td>
                   <td className="px-5 py-3.5 font-mono text-[12px] text-ink-3">
                     s{r.doc_versions.strategy} g{r.doc_versions.guardrails} m{r.doc_versions.methodology} l{r.doc_versions.learnings}
                   </td>

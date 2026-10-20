@@ -80,7 +80,7 @@ export function TrustLadder({ data, go, compact = false }) {
                   <div className={`font-semibold ${on ? "text-accent" : ""}`}>{s.name}</div>
                   <div className="text-[13px] text-ink-3">{s.money}</div>
                 </div>
-                {on && <span className="meta ml-auto text-accent">you are here</span>}
+                {on && <span className="meta ms-auto text-accent">you are here</span>}
               </li>
             );
           })}

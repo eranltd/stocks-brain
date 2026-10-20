@@ -1,39 +1,39 @@
 // A company's own numbers (data/market/fundamentals.json, from its SEC filings) in plain sentences for the Stock page.
 // Pure functions, no React. Trailing twelve months; "cents of each dollar of sales" reads easier than a margin.
+// The words take `lang` last ("en" by default); the texts are in i18n/stock.js ("fu.*").
+
+import { fmtDate } from "./format.js";
+import { translate } from "./i18n.js";
+import dict from "../i18n/stock.js";
 
 const num = (v) => (typeof v === "number" && Number.isFinite(v) ? v : null);
-const cents = (pct) => `${Math.round(Math.abs(pct))} cents`;
-const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-const monthYear = (iso) => { const d = new Date(`${iso}T00:00:00Z`); return `${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`; };
+const cents = (pct) => Math.round(Math.abs(pct));
+const monthYear = (iso, t) => { const d = new Date(`${iso}T00:00:00Z`); return `${t(`fu.month.${d.getUTCMonth()}`)} ${d.getUTCFullYear()}`; };
 
 export function companyNumbers(doc, symbol) {
   return (doc?.companies ?? []).find((c) => c.symbol === symbol && c.status !== "no_data") ?? null;
 }
 
-/** Plain lines for one company's filed numbers: [{label, text, tone}] plus the period they cover. */
-export function fundamentalsWords(c) {
+/** Plain lines for one company's filed numbers: [{id, label, text, tone}] plus the period they cover. */
+export function fundamentalsWords(c, lang = "en") {
   if (!c) return null;
+  const t = translate(dict, lang);
   const lines = [];
   const g = num(c.revenue_growth_yoy_pct);
   if (g != null) {
     const q = num(c.quarter_revenue_growth_yoy_pct);
-    lines.push({ label: "Sales", tone: g >= 0 ? "accent" : "down",
-      text: `${g >= 0 ? "Grew" : "Shrank"} ${Math.abs(g).toFixed(0)}% over ${c.basis === "annual" ? "its latest year" : "the last twelve months"}` +
-        (q != null ? `; the latest quarter was ${q >= 0 ? "up" : "down"} ${Math.abs(q).toFixed(0)}% on a year before.` : ".") });
+    const head = t(g >= 0 ? "fu.sales.grew" : "fu.sales.shrank", { pct: `${Math.abs(g).toFixed(0)}%`, period: t(c.basis === "annual" ? "fu.sales.year" : "fu.sales.ttm") });
+    const tail = q != null ? t(q >= 0 ? "fu.sales.qUp" : "fu.sales.qDown", { pct: `${Math.abs(q).toFixed(0)}%` }) : ".";
+    lines.push({ id: "sales", label: t("fu.label.sales"), tone: g >= 0 ? "accent" : "down", text: head + tail });
   }
   const op = num(c.operating_margin_pct);
-  if (op != null) lines.push({ label: "Profit from the business", tone: op >= 0 ? "accent" : "down",
-    text: op >= 0 ? `Keeps ${cents(op)} of operating profit from each dollar of sales.` : `Lost ${cents(op)} on each dollar of sales from running the business.` });
+  if (op != null) lines.push({ id: "op", label: t("fu.label.op"), tone: op >= 0 ? "accent" : "down", text: t(op >= 0 ? "fu.op.pos" : "fu.op.neg", { c: cents(op) }) });
   const net = num(c.net_margin_pct);
-  if (net != null) lines.push({ label: "Bottom line", tone: net >= 0 ? "accent" : "down",
-    text: net >= 0 ? `${cents(net)} of each dollar of sales was left as profit after everything.` : `A loss of ${cents(net)} on each dollar of sales after everything, often a one-off charge: check the filing.` });
+  if (net != null) lines.push({ id: "net", label: t("fu.label.net"), tone: net >= 0 ? "accent" : "down", text: t(net >= 0 ? "fu.net.pos" : "fu.net.neg", { c: cents(net) }) });
   const fcf = num(c.fcf_margin_pct);
-  if (fcf != null) lines.push({ label: "Cash after investing", tone: fcf >= 0 ? "accent" : "down",
-    text: fcf >= 0 ? `Brought in ${cents(fcf)} of spare cash per dollar of sales after paying for new buildings and equipment.` :
-      `Spent ${cents(fcf)} more per dollar of sales than it brought in, after paying for new buildings and equipment.` });
-  const period = c.basis === "annual"
-    ? `Its latest full year, to ${monthYear(c.period_end)}, from its yearly report to the SEC (filed ${c.filed}). It reports yearly, so there are no quarterly numbers.`
-    : `Twelve months to ${monthYear(c.period_end)}, from the company's filings with the SEC (filed ${c.filed}).`;
+  if (fcf != null) lines.push({ id: "fcf", label: t("fu.label.fcf"), tone: fcf >= 0 ? "accent" : "down", text: t(fcf >= 0 ? "fu.fcf.pos" : "fu.fcf.neg", { c: cents(fcf) }) });
+  const filed = lang === "en" || !c.filed ? c.filed : fmtDate(c.filed, lang);
+  const period = t(c.basis === "annual" ? "fu.period.annual" : "fu.period.ttm", { month: monthYear(c.period_end, t), filed });
   return { lines, period,
     stale: c.status === "stale", missing: c.missing ?? [] };
 }

@@ -30,7 +30,7 @@ function Tagged({ text }) {
   const body = m ? text.slice(m[0].length) : text;
   return (
     <>
-      {m && <span className={`mr-1.5 inline-block rounded-full border px-2 py-0.5 align-middle font-mono text-[10.5px] uppercase tracking-[0.06em] ${m[1] === "engine" ? "border-accent/50 text-accent" : "border-dashed border-people/60 text-people"}`}>{m[1] === "engine" ? "program" : "planned"}</span>}
+      {m && <span className={`me-1.5 inline-block rounded-full border px-2 py-0.5 align-middle font-mono text-[10.5px] uppercase tracking-[0.06em] ${m[1] === "engine" ? "border-accent/50 text-accent" : "border-dashed border-people/60 text-people"}`}>{m[1] === "engine" ? "program" : "planned"}</span>}
       {body}
     </>
   );
@@ -155,7 +155,7 @@ function Sets({ rb, name, satVerdict }) {
               {s.rule_ids.map((id) => (
                 <a key={id} href={`#rule-${id}`} onClick={(e) => { e.preventDefault(); document.getElementById(`rule-${id}`)?.scrollIntoView({ behavior: "smooth", block: "center" }); }}
                   className="rounded-full border border-line-2 px-3 py-1.5 text-[12.5px] text-ink-2 hover:border-ink-3 hover:text-ink">
-                  {satVerdict[id] && <i className="mr-1.5 inline-block size-1.5 rounded-full align-middle" style={{ background: DOT[satVerdict[id]] }} />}{name(id)}
+                  {satVerdict[id] && <i className="me-1.5 inline-block size-1.5 rounded-full align-middle" style={{ background: DOT[satVerdict[id]] }} />}{name(id)}
                 </a>
               ))}
             </div>
@@ -196,7 +196,7 @@ function Savings({ rb, res, name }) {
             : clear.length === 0 ? <>No choice was clearly better than another: <span className="text-ink">pick what matches pay day and what your broker charges per trade.</span></> : <>Some differences are clear; read the rows.</>}</>}
         right={sv.horizons.length > 1 ? <Segmented label="How long" value={h.weeks} onChange={setHw} options={sv.horizons.map((x) => ({ value: x.weeks, label: HORIZON(x.weeks) }))} /> : null} />
       <Reveal className="card hidden overflow-x-auto md:block">
-        <table className="w-full min-w-[820px] text-left text-[14px]">
+        <table className="w-full min-w-[820px] text-start text-[14px]">
           <thead className="meta">
             <tr className="border-b border-line">{["Rule", "Buys a year", "Typical yearly growth", "vs the plain way", "Better how often", "Worst dip below money put in", "Cash waiting", "Fee where they tie", ""].map((x) => <th key={x} className="px-4 py-3 font-normal">{x}</th>)}</tr>
           </thead>
@@ -218,7 +218,7 @@ function Savings({ rb, res, name }) {
           <p className="mt-2 max-w-[62ch] text-[15px] text-ink-2">If a bonus or a gift arrives, is it better to put it all into the core fund right away, or a bit each week while the rest waits in safe short-term government savings (T-bills)?</p>
           <div className="mt-5 grid gap-3 md:hidden">{windfall.map((r) => <SavingsCard key={r.id} r={r} name={name} />)}</div>
           <Reveal className="card mt-5 hidden overflow-x-auto md:block">
-            <table className="w-full min-w-[560px] text-left text-[14px]">
+            <table className="w-full min-w-[560px] text-start text-[14px]">
               <thead className="meta"><tr className="border-b border-line">{["Rule", "Typical yearly growth", "vs all at once", "Better how often", "Worst dip below money put in", ""].map((x) => <th key={x} className="px-4 py-3 font-normal">{x}</th>)}</tr></thead>
               <tbody>
                 {windfall.map((r) => (
@@ -304,31 +304,31 @@ function Satellite({ rb, res, name, data }) {
         lede={<>In simple words: each stock-picking rule plays against {fmtNum(n, 0)} pretend players who pick stocks at random, like pulling names from a hat. The random players hold the <span className="text-ink">same number of stocks, swap them just as often</span> and pay the same fees. Only <em>which</em> stocks differs, so the race shows whether the rule has skill or just luck. {rows.length > 0 && rows.every((r) => r.verdict === "rejected") ? " So far every rule was rejected: none clearly beat the random pickers." : ""}</>} />
       <Reveal className="card p-5 sm:p-8">
         <div className="meta mb-5 flex flex-wrap gap-x-6 gap-y-2 normal-case tracking-[0.04em]">
-          <span><i className="mr-2 inline-block h-3 w-8 rounded bg-line-2 align-middle" />random pickers: the middle 90% of them</span>
-          <span><i className="mr-2 inline-block size-2.5 rounded-full bg-accent align-middle" />the rule (average yearly growth)</span>
-          <span><i className="mr-2 inline-block h-3 w-px bg-ink align-middle" />core fund (the whole market)</span>
-          <span><i className="mr-2 inline-block h-3 border-l border-dashed border-ink-2 align-middle" />every stock on the list, equal shares</span>
+          <span><i className="me-2 inline-block h-3 w-8 rounded bg-line-2 align-middle" />random pickers: the middle 90% of them</span>
+          <span><i className="me-2 inline-block size-2.5 rounded-full bg-accent align-middle" />the rule (average yearly growth)</span>
+          <span><i className="me-2 inline-block h-3 w-px bg-ink align-middle" />core fund (the whole market)</span>
+          <span><i className="me-2 inline-block h-3 border-s border-dashed border-ink-2 align-middle" />every stock on the list, equal shares</span>
         </div>
         <div className="grid gap-3">
           {rows.map((r) => (
             <div key={r.id} className="grid grid-cols-[96px_minmax(0,1fr)_64px] items-center gap-3 sm:grid-cols-[200px_minmax(0,1fr)_72px]">
-              <button type="button" className="min-w-0 truncate text-left text-[13px] text-ink-2 hover:text-ink sm:text-[14px]" title={name(r.id)} onClick={() => document.getElementById(`rule-${r.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" })}>{name(r.id)}</button>
-              <div className="relative h-7">
+              <button type="button" className="min-w-0 truncate text-start text-[13px] text-ink-2 hover:text-ink sm:text-[14px]" title={name(r.id)} onClick={() => document.getElementById(`rule-${r.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" })}>{name(r.id)}</button>
+              <div dir="ltr" className="relative h-7">
                 <i className="absolute top-0 h-full w-px bg-ink" style={{ left: `${axis.pos(sat.controls.core.cagr_pct)}%` }} />
-                <i className="absolute top-0 h-full border-l border-dashed border-ink-2" style={{ left: `${axis.pos(sat.controls.equal_weight.cagr_pct)}%` }} />
+                <i className="absolute top-0 h-full border-s border-dashed border-ink-2" style={{ left: `${axis.pos(sat.controls.equal_weight.cagr_pct)}%` }} />
                 <i className="absolute top-1/2 h-2 -translate-y-1/2 rounded bg-line-2" style={{ left: `${axis.pos(r.null_cagr_pct.p05)}%`, width: `${axis.pos(r.null_cagr_pct.p95) - axis.pos(r.null_cagr_pct.p05)}%` }} />
                 <i className="absolute top-1/2 h-4 w-px -translate-y-1/2 bg-ink-3" style={{ left: `${axis.pos(r.null_cagr_pct.p50)}%` }} />
                 <i className="absolute top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-surface" style={{ left: `${axis.pos(r.stats.cagr_pct)}%`, background: DOT[r.verdict] }} />
               </div>
-              <span className="num text-right font-mono text-[13px]">{fmtPct(r.stats.cagr_pct, 1)}</span>
+              <span className="num text-end font-mono text-[13px]">{fmtPct(r.stats.cagr_pct, 1)}</span>
             </div>
           ))}
         </div>
-        <div className="meta mt-4 flex justify-between normal-case tracking-[0.04em]"><span>{axis.lo}% a year</span><span>{axis.hi}%</span></div>
+        <div dir="ltr" className="meta mt-4 flex justify-between normal-case tracking-[0.04em]"><span>{axis.lo}% a year</span><span>{axis.hi}%</span></div>
       </Reveal>
 
       <Reveal className="card mt-5 hidden overflow-x-auto md:block">
-        <table className="w-full min-w-[900px] text-left text-[14px]">
+        <table className="w-full min-w-[900px] text-start text-[14px]">
           <thead className="meta">
             <tr className="border-b border-line">{["Rule", "Growth a year", "vs core fund", "Beat random pickers", "First / second half", "Biggest drop", "Swaps a year", "Stocks", "Result"].map((x) => <th key={x} className="px-4 py-3 font-normal">{x}</th>)}</tr>
           </thead>
@@ -407,7 +407,7 @@ function Forward({ rb, data, name }) {
         <Empty title="Starts with the next daily run">The daily computer run writes down the first pretend picks. Each rule's line shows up from the second day.</Empty>
       ) : (
         <Reveal className="card overflow-x-auto">
-          <table className="w-full min-w-[640px] text-left text-[14px]">
+          <table className="w-full min-w-[640px] text-start text-[14px]">
             <thead className="meta"><tr className="border-b border-line">{["Rule", "Since", "Days", "Monthly picks", "Rule grew", "Core fund grew", "Beat random pickers", "Pretend holdings now"].map((x) => <th key={x} className="px-4 py-3 font-normal">{x}</th>)}</tr></thead>
             <tbody>
               {rows.map(([id, r]) => {
@@ -458,7 +458,7 @@ function TechChecklist({ data }) {
       <Reveal className="card border-people/40 p-5 text-[14.5px] leading-relaxed text-ink-2 sm:p-6">
         <span className="pill mb-3 border-dashed border-people/60 text-people">{cfg.status}</span>
         <ul className="grid gap-2">
-          {cfg.how_to_read.map((t) => <li key={t} className="relative pl-4 before:absolute before:left-0 before:top-[0.75em] before:h-px before:w-2 before:bg-people">{t}</li>)}
+          {cfg.how_to_read.map((t) => <li key={t} className="relative ps-4 before:absolute before:start-0 before:top-[0.75em] before:h-px before:w-2 before:bg-people">{t}</li>)}
         </ul>
       </Reveal>
 
@@ -466,7 +466,7 @@ function TechChecklist({ data }) {
         {cfg.steps.map((s, i) => (
           <Reveal as="li" key={s.id} delay={(i % 2) * 60} className="card p-5 sm:p-6">
             <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-              <span className="text-[17px] font-semibold"><span className="num mr-2 font-mono text-[13px] font-normal text-ink-3">{s.n}</span>{s.name}</span>
+              <span className="text-[17px] font-semibold"><span className="num me-2 font-mono text-[13px] font-normal text-ink-3">{s.n}</span>{s.name}</span>
             </div>
             <p className="mt-2 text-[14.5px] leading-relaxed text-ink">{s.checks}</p>
             <div className="meta mt-3 mb-1 normal-case tracking-[0.04em]">How the computer works it out{s.directional ? "" : " · a plan, not an up-or-down guess"}</div>
@@ -499,15 +499,15 @@ function TechChecklist({ data }) {
             {br.by_check?.length > 0 && (
               <div className="mt-5 overflow-x-auto">
                 <div className="meta mb-2 normal-case tracking-[0.04em]">Each step on its own: average result vs the {bench} when it pointed up or down</div>
-                <table className="w-full min-w-[300px] text-left text-[13.5px]">
-                  <thead className="meta normal-case tracking-[0.04em]"><tr className="border-b border-line"><th className="py-2 font-normal">Step</th><th className="py-2 pl-2 text-right font-normal">Said "up"</th><th className="py-2 pl-2 text-right font-normal">Said "down"</th></tr></thead>
+                <table className="w-full min-w-[300px] text-start text-[13.5px]">
+                  <thead className="meta normal-case tracking-[0.04em]"><tr className="border-b border-line"><th className="py-2 font-normal">Step</th><th className="py-2 ps-2 text-end font-normal">Said "up"</th><th className="py-2 ps-2 text-end font-normal">Said "down"</th></tr></thead>
                   <tbody>
                     {br.by_check.map((c) => (
                       <tr key={c.check} className="border-b border-line last:border-0">
-                        <td className="py-2 pr-2">{stepName[c.check] ?? c.check}</td>
+                        <td className="py-2 pe-2">{stepName[c.check] ?? c.check}</td>
                         {["bullish", "bearish"].map((k) => (
-                          <td key={k} className={`num whitespace-nowrap py-2 pl-2 text-right font-mono ${c[k]?.n ? STEP_TONE[signTone(c[k].mean, 1)] : "text-ink-3"}`}>
-                            {c[k]?.n ? fmtPct(c[k].mean, 1) : "–"}<span className="ml-1 text-[11px] text-ink-3">{c[k]?.n ?? 0}</span>
+                          <td key={k} className={`num whitespace-nowrap py-2 ps-2 text-end font-mono ${c[k]?.n ? STEP_TONE[signTone(c[k].mean, 1)] : "text-ink-3"}`}>
+                            {c[k]?.n ? fmtPct(c[k].mean, 1) : "–"}<span className="ms-1 text-[11px] text-ink-3">{c[k]?.n ?? 0}</span>
                           </td>
                         ))}
                       </tr>
@@ -525,7 +525,7 @@ function TechChecklist({ data }) {
         <p className="mt-3 text-[14px] leading-relaxed text-ink-2">{forwardWords(ck?.forward)}</p>
       </Reveal>
       <ul className="mt-5 grid gap-2 text-[13.5px] leading-relaxed text-ink-3">
-        {cfg.notes.map((n) => <li key={n} className="relative pl-4 before:absolute before:left-0 before:top-[0.75em] before:h-px before:w-2 before:bg-ink-3">{n}</li>)}
+        {cfg.notes.map((n) => <li key={n} className="relative ps-4 before:absolute before:start-0 before:top-[0.75em] before:h-px before:w-2 before:bg-ink-3">{n}</li>)}
       </ul>
     </section>
   );
@@ -579,7 +579,7 @@ function RuleCard({ r, verdict, i, go }) {
             <div><div className="meta mb-1 text-down">Dropped if</div><p className="text-ink-2">{r.reject_if}</p></div>
           </div>
           {r.library_refs.length > 0 && (
-            <div className="flex flex-wrap items-center gap-1.5"><span className="meta mr-1">Where it comes from</span>
+            <div className="flex flex-wrap items-center gap-1.5"><span className="meta me-1">Where it comes from</span>
               {r.library_refs.map((x) => <button key={x} type="button" onClick={() => go("insights")} className="rounded-full border border-line-2 px-2.5 py-1 font-mono text-[11.5px] text-ink-2 hover:text-ink">{x}</button>)}</div>
           )}
           {r.data_needed && r.status === "needs_data" && <p className="text-people">Needs data we do not have yet: {r.data_needed}. The owner must say yes to any new data source first.</p>}
@@ -607,7 +607,7 @@ function Process({ rb }) {
     <ul>
       {list.map((r) => (
         <li key={r.id} className="border-b border-line last:border-0">
-          <button type="button" onClick={() => toggle(r.id)} aria-pressed={done.includes(r.id)} className="flex min-h-[56px] w-full items-start gap-4 px-2 py-3 text-left">
+          <button type="button" onClick={() => toggle(r.id)} aria-pressed={done.includes(r.id)} className="flex min-h-[56px] w-full items-start gap-4 px-2 py-3 text-start">
             <span className={`mt-0.5 grid size-6 shrink-0 place-items-center rounded-full border text-[12px] ${done.includes(r.id) ? "border-accent bg-accent text-bg" : "border-line-2 text-transparent"}`}>✓</span>
             <span><span className="block font-medium">{r.name}</span><span className="block text-[14px] leading-relaxed text-ink-2">{r.plain}</span></span>
           </button>
@@ -644,7 +644,7 @@ function Testing({ rb }) {
       <SectionHead eyebrow="How we test" title={<>How a rule <Accent>earns its place.</Accent></>} size="md"
         lede={`In simple words: the marking scheme, written before any result was seen, like a teacher writing the answer key before the exam. ${rb.tries_counted} versions are counted as tries, so the bar for "not just luck" rises with every rule added.`} />
       <Reveal className="card mb-4 p-5 text-[14.5px] leading-relaxed text-ink-2">
-        <span className="mr-1.5 inline-block rounded-full border border-accent/50 px-2 py-0.5 align-middle font-mono text-[10.5px] uppercase tracking-[0.06em] text-accent">program</span>
+        <span className="me-1.5 inline-block rounded-full border border-accent/50 px-2 py-0.5 align-middle font-mono text-[10.5px] uppercase tracking-[0.06em] text-accent">program</span>
         the computer checks it on every daily run. <span className="mx-1.5 inline-block rounded-full border border-dashed border-people/60 px-2 py-0.5 align-middle font-mono text-[10.5px] uppercase tracking-[0.06em] text-people">planned</span>
         written down but not built yet: people check it by hand. "E04" and the like name the experiments listed below.
       </Reveal>
@@ -675,7 +675,7 @@ function Testing({ rb }) {
       <div className="mt-6 grid gap-3">
         {rb.experiments.map((e) => (
           <Reveal key={e.id} className="card p-5">
-            <div className="font-medium"><span className="meta mr-2 normal-case tracking-[0.04em]">{e.id.split("_")[0]}</span>{e.question}</div>
+            <div className="font-medium"><span className="meta me-2 normal-case tracking-[0.04em]">{e.id.split("_")[0]}</span>{e.question}</div>
             <p className="mt-2 text-[14px] leading-relaxed text-ink-2">{e.method}</p>
             <p className="meta mt-3 normal-case tracking-[0.04em]">Compared with: {e.null_model} · Passes if: {e.pass_criteria}</p>
           </Reveal>

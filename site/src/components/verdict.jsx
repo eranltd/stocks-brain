@@ -36,7 +36,7 @@ function StockCard({ r, go }) {
       <div className="h-1" style={{ background: TONE[r.tone] }} />
       <div className="p-5 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
-          <button type="button" onClick={() => go(`stock/${r.ticker}`)} className="text-left text-[22px] font-semibold tracking-[-0.02em] text-ink hover:underline">{r.name}</button>
+          <button type="button" onClick={() => go(`stock/${r.ticker}`)} className="text-start text-[22px] font-semibold tracking-[-0.02em] text-ink hover:underline">{r.name}</button>
           <Mood r={r} />
         </div>
         <p className="mt-4 text-[18px] leading-relaxed text-ink">{r.eli5}</p>
@@ -177,7 +177,7 @@ export function VerdictPage({ data, go }) {
               return (
                 <li key={p.date} className="card overflow-hidden">
                   <button type="button" onClick={() => togglePast(p.date)} aria-expanded={isOpen}
-                    className="flex w-full min-h-[56px] items-center justify-between gap-3 px-5 py-4 text-left sm:px-6">
+                    className="flex w-full min-h-[56px] items-center justify-between gap-3 px-5 py-4 text-start sm:px-6">
                     <span className="min-w-0">
                       <span className="meta block" style={{ color: "var(--ai)" }}>{longDate(p.date)}</span>
                       <span className="mt-1 block text-[17px] leading-snug text-ink">{p.headline}</span>

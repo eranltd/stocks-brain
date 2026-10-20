@@ -36,3 +36,15 @@ test("recentFilings: current reports of our names in the last few days, newest p
   assert.deepEqual(recentFilings(d, { today: "2026-10-20" }), []);
   assert.deepEqual(recentFilings(null, { today: "2026-10-10" }), []);
 });
+
+test("Hebrew: the badge word and the short day, titles as published", async () => {
+  const { kindOf } = await import("./secnews.js");
+  const h = headlineFor(doc, "AAA", "he");
+  assert.equal(h.word, "תוצאות");
+  assert.equal(h.day, "1 באוק׳");
+  assert.equal(h.title, "Quarterly results");
+  assert.equal(h.tone, "accent");
+  assert.equal(newsRows(doc, "AAA", 1, "he")[0].word, "עדכון");
+  assert.equal(shortDay("2026-01-05", "he"), "5 בינו׳");
+  assert.deepEqual(kindOf("nope", "he"), {});
+});

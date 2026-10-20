@@ -123,7 +123,7 @@ function Row({ k, v, tone = "" }) {
   return (
     <div className="flex items-baseline justify-between gap-3 border-t border-line pt-1.5">
       <dt className="text-ink-3">{k}</dt>
-      <dd className={`num text-right font-mono ${tone}`}>{v}</dd>
+      <dd className={`num text-end font-mono ${tone}`}>{v}</dd>
     </div>
   );
 }
@@ -169,7 +169,7 @@ export function PortfolioNow({ data, go }) {
       />
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         {cells.map(({ s }, i) => s ? (
-          <Reveal key={s} delay={i * 60} as="button" type="button" onClick={() => go(`stock/${s}`)} className="card card-hover p-5 text-left">
+          <Reveal key={s} delay={i * 60} as="button" type="button" onClick={() => go(`stock/${s}`)} className="card card-hover p-5 text-start">
             <div className="meta">Seat {i + 1} · {fmtNum(100 / slots, 0)}%</div>
             <div className="mt-3 font-mono text-[26px] font-medium text-accent">{s}</div>
             <div className="mt-1 truncate text-[13.5px] text-ink-2">{data.names[s]}</div>
@@ -208,7 +208,7 @@ export function PortfolioNow({ data, go }) {
                   {xs.map((x) => (
                     <button key={x.symbol} type="button" onClick={() => go(`stock/${x.symbol}`)} title={x.passed != null ? `${x.passed} of 4 checks` : ""}
                       className="min-h-[34px] rounded-full border border-line-2 px-3 font-mono text-[12.5px] hover:border-ink-3 hover:text-ink">
-                      {x.symbol}{x.passed != null && <span className="ml-1.5 text-ink-3">{x.passed}/4</span>}
+                      {x.symbol}{x.passed != null && <span className="ms-1.5 text-ink-3">{x.passed}/4</span>}
                     </button>
                   ))}
                 </div>
@@ -364,7 +364,7 @@ export function BaseRates({ data }) {
             {br.by_score.map((r) => (
               <div key={r.passed} className="grid grid-cols-[64px_minmax(0,1fr)_72px] items-center gap-3 text-[13.5px]">
                 <span className="font-mono">{r.passed} of 4</span>
-                <div className="relative h-5">
+                <div dir="ltr" className="relative h-5">
                   <div className="absolute top-1/2 left-1/2 h-4 w-px -translate-y-1/2 bg-line-2" />
                   {r.n >= MIN_N && (
                     <>
@@ -374,7 +374,7 @@ export function BaseRates({ data }) {
                   )}
                   {r.n > 0 && r.n < MIN_N && <span className="absolute inset-0 grid place-items-center text-[11.5px] text-ink-3">too few cases</span>}
                 </div>
-                <span className="num text-right font-mono text-ink-2">{r.n ? fmtPct(r.mean, 2) : "–"} <span className="text-ink-3">n{r.n}</span></span>
+                <span className="num text-end font-mono text-ink-2">{r.n ? fmtPct(r.mean, 2) : "–"} <span className="text-ink-3">n{r.n}</span></span>
               </div>
             ))}
           </div>

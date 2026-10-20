@@ -1,6 +1,9 @@
 import { Children, useEffect, useRef, useState } from "react";
 import { useCountUp, useInView, useReducedMotion } from "../lib/motion.js";
 import { fmtNum } from "../lib/format.js";
+import { hasHebrew } from "../lib/i18n.js";
+import { useLang } from "../lib/lang.jsx";
+import shellText from "../i18n/shell.js";
 
 /* ------------------------------------------------------------------ layout */
 
@@ -28,14 +31,25 @@ export function Headline({ children, className = "", as: Tag = "h1", size = "lg"
     md: "text-[clamp(30px,4.4vw,56px)]",
   };
   let i = 0;
+  // In Hebrew, each word is its own inline block, so a run of Latin words or numbers ("S&P 500", "+4.1%") is kept as
+  // one block with its own direction; English headlines split exactly as before.
+  const pieces = (text) => {
+    if (!hasHebrew(text)) return text.split(/(\s+)/);
+    const out = [];
+    for (const w of text.split(/(\s+)/)) {
+      const prev = out.length >= 2 ? out[out.length - 2] : null;
+      if (/^\s+$/.test(w) || hasHebrew(w) || prev == null || hasHebrew(prev)) out.push(w);
+      else { out[out.length - 2] = `${prev}${out.pop()}${w}`; }
+    }
+    return out;
+  };
   const words = (node, accent = false) =>
-    (Array.isArray(node) ? node.join("") : String(node))
-      .split(/(\s+)/)
+    pieces(Array.isArray(node) ? node.join("") : String(node))
       .map((w, k) =>
         /^\s+$/.test(w) ? (
           " "
         ) : (
-          <span key={`${i}-${k}`} className="inline-block overflow-hidden pb-[0.1em] -mb-[0.1em] align-bottom">
+          <span key={`${i}-${k}`} dir={rtlText ? "auto" : undefined} className="inline-block overflow-hidden pb-[0.1em] -mb-[0.1em] align-bottom">
             <span
               className={`inline-block transition-[transform,opacity] duration-[1100ms] ease-[cubic-bezier(.16,1,.3,1)] ${accent ? "text-accent" : ""} ${inView ? "translate-y-0 opacity-100" : "translate-y-[105%] opacity-0"}`}
               style={{ transitionDelay: `${i++ * 55}ms` }}
@@ -45,6 +59,7 @@ export function Headline({ children, className = "", as: Tag = "h1", size = "lg"
           </span>
         ),
       );
+  const rtlText = Children.toArray(children).some((c) => hasHebrew(typeof c === "string" ? c : c?.props?.children));
   const content = Children.toArray(children).flatMap((c) =>
     typeof c === "string" || typeof c === "number" ? words(c) : c?.type === Accent ? words(c.props.children, true) : c?.type === "br" ? [c] : [c],
   );
@@ -77,8 +92,10 @@ export function SectionHead({ eyebrow, title, lede, right, size = "lg", classNam
 export function CountUp({ value, decimals = 0, prefix = "", suffix = "", className = "" }) {
   const [ref, inView] = useInView();
   const v = useCountUp(value, inView);
+  const { he } = useLang();
+  // In Hebrew the whole figure (sign, digits, unit) is one left-to-right piece, so "+" and "%" stay where they belong.
   return (
-    <span ref={ref} className={`num ${className}`}>
+    <span ref={ref} dir={he ? "ltr" : undefined} className={`num ${className}`}>
       {prefix}
       {fmtNum(v, decimals)}
       {suffix}
@@ -106,7 +123,7 @@ export function Strip({ cells, dense = false }) {
   return (
     <Reveal className={`card brackets grid overflow-hidden lg:[grid-template-columns:repeat(var(--n),minmax(0,1fr))] ${dense ? "grid-cols-2" : "sm:grid-cols-2"}`} style={{ "--n": cells.length }}>
       {cells.map((c, i) => (
-        <div key={i} className={`border-line ${dense ? "border-b p-5 sm:p-8 [&:nth-child(odd)]:border-r lg:border-b-0 lg:[&:not(:last-child)]:border-r" : "p-6 sm:p-8 [&:not(:last-child)]:border-b lg:[&:not(:last-child)]:border-r lg:[&:not(:last-child)]:border-b-0"}`}>
+        <div key={i} className={`border-line ${dense ? "border-b p-5 sm:p-8 [&:nth-child(odd)]:border-e lg:border-b-0 lg:[&:not(:last-child)]:border-e" : "p-6 sm:p-8 [&:not(:last-child)]:border-b lg:[&:not(:last-child)]:border-e lg:[&:not(:last-child)]:border-b-0"}`}>
           <div className={`display num ${dense ? "text-[clamp(30px,5vw,64px)]" : "text-[clamp(40px,5vw,64px)]"}`}>{c.value}</div>
           <div className={`mt-3 flex items-center gap-2 text-[15px] font-semibold ${TONES[c.tone ?? "accent"]}`}>
             <Dot tone={c.tone ?? "accent"} dashed={c.dashed} />
@@ -171,24 +188,30 @@ const CHIP = {
 const ARROW = { bullish: "▲", bearish: "▼", neutral: "◆", hit: "✓", miss: "✕", flat: "–" };
 
 export function Chip({ kind, children, icon = true, className = "" }) {
+  const t = useLang().t(shellText);
+  // Without text of its own, a chip says its kind: in English the kind itself, as always; in Hebrew its words when the
+  // dictionary has them ("ui.chip.<kind>"), else the kind.
+  const own = t.lang !== "en" && t.has(`ui.chip.${kind}`) ? t(`ui.chip.${kind}`) : kind;
   return (
     <span className={`pill ${CHIP[kind] ?? ""} ${className}`}>
       {icon && ARROW[kind] && <span aria-hidden="true" className="text-[9px]">{ARROW[kind]}</span>}
-      {children ?? kind}
+      {children ?? own}
     </span>
   );
 }
 
 export function Conviction({ level, showLabel = true, tone = "accent" }) {
+  const t = useLang().t(shellText);
   const n = { low: 1, medium: 2, high: 3 }[level] ?? 0;
+  const word = n ? t(`ui.conviction.${level}`) : level;
   return (
-    <span className="meta inline-flex items-center gap-2" title={`${level} conviction`}>
+    <span className="meta inline-flex items-center gap-2" title={t("ui.convictionTitle", { level: word }, { bidi: false })}>
       <span className="inline-flex gap-[3px]" aria-hidden="true">
         {[0, 1, 2].map((i) => (
           <i key={i} className={`block h-3 w-[3px] rounded-sm ${i < n ? (tone === "accent" ? "bg-accent" : "bg-ink-2") : "bg-line-2"}`} />
         ))}
       </span>
-      {showLabel && <span className={n === 3 ? "text-accent" : ""}>{level}</span>}
+      {showLabel && <span className={n === 3 ? "text-accent" : ""}>{word}</span>}
     </span>
   );
 }
@@ -229,34 +252,60 @@ export function IconButton({ label, onClick, children, disabled }) {
   );
 }
 
-export const Chevron = ({ dir = "right" }) => (
-  <svg viewBox="0 0 24 24" className={`size-5 ${dir === "left" ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="m9 6 6 6-6 6" />
-  </svg>
-);
-export const ArrowRight = ({ className = "size-4" }) => (
-  <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M5 12h14M13 6l6 6-6 6" />
-  </svg>
-);
+/**
+ * Mirror a "forward" icon for right-to-left pages: forward points left, back (rotate-180) points right, a turned arrow
+ * keeps its meaning (rotate-90 "open" still points down, -rotate-45 "external link" becomes ↖). The mirror applies
+ * before the rotation, so every rotation other than 180° is negated.
+ */
+export function mirrorIcon(className, dir) {
+  if (dir !== "rtl") return className;
+  const flipped = className.split(/\s+/).map((c) => {
+    const m = c.match(/^((?:[\w-]+:)*)(-?)rotate-(\d+)$/);
+    if (!m || m[3] === "180" || m[3] === "0") return c;
+    return `${m[1]}${m[2] ? "" : "-"}rotate-${m[3]}`;
+  });
+  return `${flipped.join(" ")} -scale-x-100`;
+}
+
+export const Chevron = ({ dir = "right" }) => {
+  const { dir: page } = useLang();
+  return (
+    <svg viewBox="0 0 24 24" className={mirrorIcon(`size-5 ${dir === "left" ? "rotate-180" : ""}`, page)} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m9 6 6 6-6 6" />
+    </svg>
+  );
+};
+/** "Forward" arrow; mirrored on a right-to-left page (see mirrorIcon). `noMirror` for an arrow inside a chart. */
+export const ArrowRight = ({ className = "size-4", noMirror = false }) => {
+  const { dir } = useLang();
+  return (
+    <svg viewBox="0 0 24 24" className={noMirror ? className : mirrorIcon(className, dir)} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M5 12h14M13 6l6 6-6 6" />
+    </svg>
+  );
+};
 
 /** Horizontal snap rail with prev/next buttons. */
 export function Carousel({ children, meta }) {
   const rail = useRef(null);
+  const { dir: page, t: tr } = useLang();
+  const t = tr(shellText);
   const [edge, setEdge] = useState({ start: true, end: false });
   const update = () => {
     const el = rail.current;
     if (!el) return;
-    setEdge({ start: el.scrollLeft < 8, end: el.scrollLeft + el.clientWidth >= el.scrollWidth - 8 });
+    // On a right-to-left page scrollLeft runs from 0 down to negative values: measure the distance from the start.
+    const from = Math.abs(el.scrollLeft);
+    setEdge({ start: from < 8, end: from + el.clientWidth >= el.scrollWidth - 8 });
   };
   useEffect(update, [children]);
-  const go = (dir) => rail.current?.scrollBy({ left: dir * rail.current.clientWidth * 0.8, behavior: "smooth" });
+  const go = (dir) => rail.current?.scrollBy({ left: (page === "rtl" ? -dir : dir) * rail.current.clientWidth * 0.8, behavior: "smooth" });
   return (
     <div>
       <div className="mb-5 flex items-center justify-end gap-3">
-        {meta && <span className="meta mr-2">{meta}</span>}
-        <IconButton label="Previous" onClick={() => go(-1)} disabled={edge.start}><Chevron dir="left" /></IconButton>
-        <IconButton label="Next" onClick={() => go(1)} disabled={edge.end}><Chevron /></IconButton>
+        {meta && <span className="meta me-2">{meta}</span>}
+        <IconButton label={t("ui.prev")} onClick={() => go(-1)} disabled={edge.start}><Chevron dir="left" /></IconButton>
+        <IconButton label={t("ui.next")} onClick={() => go(1)} disabled={edge.end}><Chevron /></IconButton>
       </div>
       <div
         ref={rail}
@@ -270,6 +319,7 @@ export function Carousel({ children, meta }) {
 }
 
 export function CodeBlock({ cmd, label }) {
+  const t = useLang().t(shellText);
   const [copied, setCopied] = useState(false);
   const copy = async () => {
     try {
@@ -285,16 +335,17 @@ export function CodeBlock({ cmd, label }) {
       {label && (
         <div className="mb-2 flex items-center justify-between text-[14.5px] text-ink">
           <span>{label}</span>
-          <span className="meta">terminal</span>
+          <span className="meta">{t("ui.terminal")}</span>
         </div>
       )}
-      <div className="flex items-center gap-3 rounded-2xl border border-line-2 bg-bg/60 py-2 pr-2 pl-5">
+      {/* A shell command reads left to right in both languages. */}
+      <div dir="ltr" className="flex items-center gap-3 rounded-2xl border border-line-2 bg-bg/60 py-2 pe-2 ps-5">
         <code className="no-scrollbar min-w-0 flex-1 overflow-x-auto py-2 font-mono text-[13.5px] whitespace-nowrap">
-          <span className="mr-3 text-accent">$</span>
+          <span className="me-3 text-accent">$</span>
           {cmd}
         </code>
         <button type="button" onClick={copy} className="shrink-0 rounded-full border border-line-2 px-4 py-2 text-[13px] font-medium transition hover:border-ink-3">
-          {copied ? "Copied" : "Copy"}
+          <span lang={t.lang}>{copied ? t("ui.copied") : t("ui.copy")}</span>
         </button>
       </div>
     </div>

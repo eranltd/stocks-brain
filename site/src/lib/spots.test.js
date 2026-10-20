@@ -48,3 +48,17 @@ test("zoomAround stays inside the window", () => {
   assert.deepEqual(zoomAround(30, 60, 15), [23, 38]);
   assert.deepEqual(zoomAround(3, 8, 15), [0, 8]);
 });
+
+test("Hebrew: the candle kinds and the caveat, the English ones unchanged", async () => {
+  const { spotKinds, spotCaveat, SPOT_CAVEAT } = await import("./spots.js");
+  const he = spotKinds("he");
+  assert.deepEqual(Object.keys(he), Object.keys(SPOT_KINDS));
+  assert.equal(he.hammer.title, "פטיש");
+  assert.equal(he.hammer.tone, SPOT_KINDS.hammer.tone);
+  for (const k of Object.values(he)) assert.doesNotMatch(k.why, /\d/);
+  assert.match(spotCaveat("he"), /^רמז, לא הבטחה/);
+  assert.equal(spotCaveat(), SPOT_CAVEAT);
+  const w = quiet(30);
+  [3, 8, 13].forEach((i) => set(w, i, -9, -6.9, -9.1, -7));
+  assert.equal(topSpots(w, 2, "he")[0].title, "יום ירוק גדול");
+});

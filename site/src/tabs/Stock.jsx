@@ -23,6 +23,7 @@ import { candlesOf, costWords, fundCard, notYet, resolveSymbolMarket } from "../
 import { buyWindowFor, mainListOf, mainWatchlistOf, sp500Of } from "../lib/buywindow.js";
 import { stocksEarned } from "../lib/money.js";
 import { BuyWindowCard } from "../components/buywindow.jsx";
+import { StockReplay } from "../components/replay.jsx";
 
 /** A trust stage's name (components/trust.jsx STAGES, English there) in a language. */
 const stageName = (stage, t) => (t.has(`st.stage.${stage}`) ? t(`st.stage.${stage}`) : STAGES[stage].name);
@@ -278,6 +279,7 @@ function Stock({ data, symbol, go, market: mk }) {
       </div>
 
       <ChecklistCard data={data} symbol={symbol} go={go} view={ckView} onView={setCkView} />
+      {candlesOf(data)[symbol] && <StockReplay data={data} symbol={symbol} />}
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
         <Reveal className="card p-6 sm:p-8">

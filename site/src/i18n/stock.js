@@ -646,6 +646,60 @@ add("cdv.tip.from", "from the last close", "מהסגירה האחרונה");
 add("cdv.tip.volume", "Volume", "מחזור");
 add("cdv.tip.avg", "{x} avg", "{x} מהממוצע");
 
+/* ======================================================= components/replay.jsx and lib/replay.js: the replay */
+
+add("rp.eyebrow", "Replay", "הילוך חוזר");
+add("rp.title.daily", { one: "The past month, day by day", other: "The past {count} months, day by day" },
+  { one: "החודש האחרון, יום אחר יום", other: "{count} החודשים האחרונים, יום אחר יום" });
+add("rp.title.weekly", { one: "The past month, week by week", other: "The past {count} months, week by week" },
+  { one: "החודש האחרון, שבוע אחר שבוע", other: "{count} החודשים האחרונים, שבוע אחר שבוע" });
+add("rp.lede.daily", "Press Play to watch each day's candle appear in turn, with the 20-day average drawing along.",
+  "״הפעלה״ מציגה את הנר של כל יום בתורו, וממוצע 20 הימים נמשך יחד איתו.");
+add("rp.lede.weekly", "Press Play to watch each week's candle appear in turn, with the 20-week average drawing along.",
+  "״הפעלה״ מציגה את הנר של כל שבוע בתורו, וממוצע 20 השבועות נמשך יחד איתו.");
+add("rp.mode", "Replay by", "הילוך חוזר לפי");
+add("rp.mode.daily", "Days", "ימים");
+add("rp.mode.weekly", "Weeks", "שבועות");
+add("rp.play", "Play", "הפעלה");
+add("rp.resume", "Resume", "המשך");
+add("rp.pause", "Pause", "השהיה");
+add("rp.restart", "Restart", "מההתחלה");
+add("rp.speed", "Speed", "מהירות");
+add("rp.scrub.daily", "Choose a day", "בחירת יום");
+add("rp.scrub.weekly", "Choose a week", "בחירת שבוע");
+add("rp.since", "since {when}", "מאז {when}");
+add("rp.move.daily", "{pct} that day", "{pct} באותו יום");
+add("rp.move.weekly", "{pct} that week", "{pct} באותו שבוע");
+add("rp.first.daily", "the first day", "היום הראשון");
+add("rp.first.weekly", "the first week", "השבוע הראשון");
+add("rp.weekTo", "Week to {date}", "השבוע שעד {date}");
+add("rp.weekSoFar", "This week so far", "השבוע עד עכשיו");
+add("rp.start", "start", "התחלה");
+add("rp.avg.daily", "20-day average", "ממוצע 20 הימים");
+add("rp.avg.weekly", "20-week average", "ממוצע 20 השבועות");
+add("rp.startLine", "where it started", "נקודת ההתחלה");
+add("rp.axis", "Percent from the first close in the replay, never prices.", "באחוזים מהסגירה הראשונה בהילוך החוזר, אף פעם לא מחירים.");
+add("rp.frame.daily", "A replay of what really happened, one trading day at a time. Past moves do not tell what comes next.",
+  "הילוך חוזר של מה שבאמת קרה, יום מסחר אחד בכל פעם. תנועות העבר לא מגלות מה יקרה בהמשך.");
+add("rp.frame.weekly", "A replay of what really happened, one trading week at a time. Past moves do not tell what comes next.",
+  "הילוך חוזר של מה שבאמת קרה, שבוע מסחר אחד בכל פעם. תנועות העבר לא מגלות מה יקרה בהמשך.");
+add("rp.reduced", "Motion is turned down on this device, so Play shows the whole period at once. Drag the slider to step through it.",
+  "התנועה מופחתת במכשיר הזה, ולכן ״הפעלה״ מציגה את כל התקופה בבת אחת. אפשר לגרור את המחוון כדי לעבור עליה צעד אחר צעד.");
+add("rp.loading", "Loading the replay…", "טוענים את ההילוך החוזר…");
+add("rp.error", "The replay did not load.", "ההילוך החוזר לא נטען.");
+add("rp.paused", "Paused on {date}.", "מושהה ב-{date}.");
+add("rp.aria.daily", "{name}: daily candles from {from}, shown up to {to}, {change} since the first day.",
+  "{name}: נרות יומיים מ-{from}, מוצגים עד {to}, {change} מאז היום הראשון.");
+add("rp.aria.weekly", "{name}: weekly candles from {from}, shown up to {to}, {change} since the first week.",
+  "{name}: נרות שבועיים מ-{from}, מוצגים עד {to}, {change} מאז השבוע הראשון.");
+// The line at the end ({tail} is one of the three below; the month words carry their Hebrew prefix letter: "מאפריל").
+add("rp.end.up", "From {from} to {to}, {name} rose {pct}{tail}.", "מ{from} עד {to}, {name} עלתה ב-{pct}{tail}.");
+add("rp.end.down", "From {from} to {to}, {name} fell {pct}{tail}.", "מ{from} עד {to}, {name} ירדה ב-{pct}{tail}.");
+add("rp.end.flat", "From {from} to {to}, {name} ended about where it started ({pct}){tail}.", "מ{from} עד {to}, {name} סיימה בערך באותה רמה שבה התחילה ({pct}){tail}.");
+add("rp.end.dropIn", ", with its biggest drop of {pct} in {month}", ", והירידה הגדולה ביותר שלה, {pct}, הייתה ב{month}");
+add("rp.end.dropBetween", ", with its biggest drop of {pct} between {a} and {b}", ", והירידה הגדולה ביותר שלה, {pct}, הייתה בין {a} ל{b}");
+add("rp.end.noDrop", ", without a drop of {pct} or more along the way", ", בלי ירידה של {pct} או יותר בדרך");
+
 /* =================================================================== components/zoom.jsx: candles up close */
 
 add("zm.range.1m", "1 month", "חודש");

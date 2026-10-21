@@ -542,6 +542,44 @@ add("today.unusual", "Unusual move", "תנועה חריגה");
 add("today.digest", "Checklist digest", "סיכום רשימת הבדיקה");
 add("today.latestClose", " · latest close", " · הסגירה האחרונה");
 
+/* ============================================================ components/race.jsx and lib/replay.js: the race */
+
+add("race.eyebrow", "The race", "המרוץ");
+add("race.title", "The past year as a race", "השנה האחרונה, כמו מרוץ");
+add("race.lede", "Each line is one company on the main list, all starting together a year ago. Press Play to watch the year go by.",
+  "כל קו הוא חברה אחת מהרשימה הראשית, וכולן יוצאות יחד לפני שנה. ״הפעלה״ מריצה את השנה מחדש.");
+add("race.frame", "A replay of what really happened, one trading day at a time. Past moves do not tell what comes next.",
+  "הילוך חוזר של מה שבאמת קרה, יום מסחר אחד בכל פעם. תנועות העבר לא מגלות מה יקרה בהמשך.");
+add("race.play", "Play", "הפעלה");
+add("race.resume", "Resume", "המשך");
+add("race.pause", "Pause", "השהיה");
+add("race.restart", "Restart", "מההתחלה");
+add("race.speed", "Speed", "מהירות");
+add("race.scrub", "Choose a day", "בחירת יום");
+add("race.day", "Trading day {i} of {n}", "יום מסחר {i} מתוך {n}");
+add("race.leaders", "Top 5 so far", "5 המובילות עד עכשיו");
+add("race.benchSoFar", "{bench}, the benchmark", "{bench}, מדד הייחוס");
+add("race.legendBench", "Dashed line: {bench}, the benchmark the site compares against", "קו מקווקו: {bench}, מדד הייחוס שהאתר משווה אליו");
+add("race.legendColour", "In colour: the {top} that did best over the year and the {bottom} that did worst",
+  "בצבע: {top} החברות שהצליחו הכי טוב במשך השנה ו-{bottom} שהצליחו הכי פחות");
+add("race.legendFaint", { one: "Faint line: the other company", other: "Faint lines: the other {count} companies" },
+  { one: "קו חיוור: החברה הנוספת", other: "קווים חיוורים: {count} החברות האחרות" });
+add("race.axis", "Change since {date}, in percent; every line starts at zero. Never prices.", "השינוי באחוזים מאז {date}; כל קו מתחיל באפס. אף פעם לא מחירים.");
+add("race.reduced", "Motion is turned down on this device, so Play shows the whole year at once. Drag the slider to go day by day.",
+  "התנועה מופחתת במכשיר הזה, ולכן ״הפעלה״ מציגה את כל השנה בבת אחת. אפשר לגרור את המחוון כדי לעבור יום אחר יום.");
+add("race.paused", "Paused on {date}.", "מושהה ב-{date}.");
+add("race.aria", "The race: how {count} companies and the benchmark moved since {from}, shown up to {to}. Leading: {leaders}.",
+  "המרוץ: איך {count} חברות ומדד הייחוס זזו מאז {from}, מוצג עד {to}. בראש: {leaders}.");
+// The line at the end (lib/replay.js raceSummary); the month words carry their Hebrew prefix letter ("מאוקטובר").
+add("race.end.head", "From {from} to {to}, {first} finished first ({firstPct}) and {last} last ({lastPct}).",
+  "מ{from} עד {to}, {first} סיימה ראשונה ({firstPct}) ו-{last} אחרונה ({lastPct}).");
+add("race.end.benchUp", "The benchmark, {bench}, rose {pct}.", "מדד הייחוס, {bench}, עלה ב-{pct}.");
+add("race.end.benchDown", "The benchmark, {bench}, fell {pct}.", "מדד הייחוס, {bench}, ירד ב-{pct}.");
+add("race.end.benchFlat", "The benchmark, {bench}, ended about where it started ({pct}).", "מדד הייחוס, {bench}, סיים בערך באותה רמה שבה התחיל ({pct}).");
+add("race.end.ahead",
+  { zero: "None of the {total} companies finished ahead of it.", one: "{count} of the {total} companies finished ahead of it.", other: "{count} of the {total} companies finished ahead of it." },
+  { zero: "אף אחת מ-{total} החברות לא סיימה לפניו.", one: "חברה אחת מתוך {total} סיימה לפניו.", other: "{count} מתוך {total} החברות סיימו לפניו." });
+
 /* ============================================================ tabs/Details.jsx: the market details page */
 
 // the hero verdict (todayCall)

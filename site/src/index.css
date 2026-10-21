@@ -20,6 +20,10 @@
   --glow: rgb(110 227 154 / 0.10);
   --field: 110 227 154;
   --grain: 0.05;
+  /* The race's line colours (components/race.jsx): a categorical palette in a fixed order, checked for colour-blind
+     separation on this surface (adjacent pairs; each line is also named at its tip). */
+  --race-1: #3987e5; --race-2: #d95926; --race-3: #199e70; --race-4: #c98500;
+  --race-5: #d55181; --race-6: #008300; --race-7: #9085e9; --race-8: #e66767;
 }
 :root[data-theme="light"] {
   color-scheme: light;
@@ -28,6 +32,8 @@
   --ink: #0c0d0c; --ink-2: #4a4d4a; --ink-3: #7d817d;
   --accent: #138a48; --ai: #5a45d4; --people: #9a6500; --down: #c63d33; --flat: #6f736f;
   --glow: rgb(19 138 72 / 0.08); --field: 19 138 72; --grain: 0.03;
+  --race-1: #2a78d6; --race-2: #eb6834; --race-3: #1baf7a; --race-4: #eda100;
+  --race-5: #e87ba4; --race-6: #008300; --race-7: #6250d6; --race-8: #e34948;
 }
 
 @theme inline {
@@ -137,6 +143,16 @@
   }
   .no-scrollbar { scrollbar-width: none; }
   .no-scrollbar::-webkit-scrollbar { display: none; }
+
+  /* The replay's slider (components/replay.jsx): a 44px touch target, the played part filled up to --p. */
+  .scrub { -webkit-appearance: none; appearance: none; display: block; width: 100%; height: 44px; margin: 0; background: transparent; cursor: pointer; }
+  .scrub::-webkit-slider-runnable-track { height: 6px; border-radius: 999px; background: linear-gradient(to right, var(--ink-2) var(--p, 0%), var(--line-2) var(--p, 0%)); }
+  .scrub::-moz-range-track { height: 6px; border-radius: 999px; background: linear-gradient(to right, var(--ink-2) var(--p, 0%), var(--line-2) var(--p, 0%)); }
+  .scrub::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; margin-top: -9px; border-radius: 50%; background: var(--ink); border: 3px solid var(--surface); box-shadow: 0 0 0 1px var(--line-2); }
+  .scrub::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--ink); border: 3px solid var(--surface); box-shadow: 0 0 0 1px var(--line-2); }
+  .scrub:focus-visible { outline: none; }
+  .scrub:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px var(--accent); }
+  .scrub:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px var(--accent); }
 
   /* markdown */
   .md { @apply max-w-[72ch] text-ink-2; }

@@ -155,6 +155,24 @@ export function CandlesView({ data, symbol, row, cfg }) {
 
 /* ----------------------------------------------------------------- the chart */
 
+/**
+ * One candle from candleGeom (lib/candles.js): up hollow in the up colour, down filled in the down colour, the week so
+ * far (`partial`) dashed. Shared by the chart below and the replay (components/replay.jsx).
+ */
+export function CandleMark({ g, partial = false, opacity }) {
+  const col = g.up ? "var(--accent)" : "var(--down)";
+  const wx = Math.round(g.cx) + 0.5;
+  const bx = Math.round(g.cx) - Math.floor(g.w / 2);
+  return (
+    <g opacity={opacity}>
+      <line x1={wx} x2={wx} y1={g.wickTop} y2={g.wickBot} stroke={col} strokeWidth="1" />
+      {g.hollow || partial
+        ? <rect x={bx + 0.5} y={g.y + 0.5} width={Math.max(0.5, g.w - 1)} height={Math.max(0.5, g.h - 1)} fill="var(--surface)" stroke={col} strokeWidth="1" strokeDasharray={partial ? "2 1.5" : undefined} />
+        : <rect x={bx} y={g.y} width={g.w} height={g.h} fill={col} />}
+    </g>
+  );
+}
+
 function CandleChart({ win, doc, on, pattern, symbol, rsiCfg, spots = [], sel = null, onSpot = () => {} }) {
   const { lang, t: tr, fmt } = useLang();
   const t = tr(dict);
@@ -290,20 +308,9 @@ function CandleChart({ win, doc, on, pattern, symbol, rsiCfg, spots = [], sel = 
 
           {/* the candles: up hollow in the up colour, down filled in the down colour */}
           <g style={{ opacity: shown ? 1 : 0, transition: reduced ? "none" : "opacity 500ms cubic-bezier(.16,1,.3,1)" }}>
-            {geoms.map((g) => {
-              const col = g.up ? "var(--accent)" : "var(--down)";
-              const partial = win.partial && g.i === win.n - 1;
-              const wx = Math.round(g.cx) + 0.5;
-              const bx = Math.round(g.cx) - Math.floor(g.w / 2);
-              return (
-                <g key={g.i} opacity={hi != null && hi !== g.i ? 0.55 : 1}>
-                  <line x1={wx} x2={wx} y1={g.wickTop} y2={g.wickBot} stroke={col} strokeWidth="1" />
-                  {g.hollow || partial
-                    ? <rect x={bx + 0.5} y={g.y + 0.5} width={Math.max(0.5, g.w - 1)} height={Math.max(0.5, g.h - 1)} fill="var(--surface)" stroke={col} strokeWidth="1" strokeDasharray={partial ? "2 1.5" : undefined} />
-                    : <rect x={bx} y={g.y} width={g.w} height={g.h} fill={col} />}
-                </g>
-              );
-            })}
+            {geoms.map((g) => (
+              <CandleMark key={g.i} g={g} partial={win.partial && g.i === win.n - 1} opacity={hi != null && hi !== g.i ? 0.55 : 1} />
+            ))}
           </g>
 
           {/* step 4: the 20-period average */}

@@ -17,6 +17,7 @@ import { TopStocks } from "../components/topstocks.jsx";
 import { SectorSpotlights } from "../components/spotlight.jsx";
 import { requestChecklistView } from "../components/checklist.jsx";
 import { LatestVerdict } from "../components/verdict.jsx";
+import { MarketRace } from "../components/race.jsx";
 import { candlesOf, fundCard, marketNote, marketWho, membersOf, notYet } from "../lib/markets.js";
 import { buyLine, buyWindowFor, mainListOf, mainWatchlistOf, sp500Of } from "../lib/buywindow.js";
 import { stocksEarned } from "../lib/money.js";
@@ -105,6 +106,8 @@ function LiveFeed({ data, market, go, live, checkNow }) {
         <ComingStrip data={data} ahead={feed.ahead} todayIso={todayIso} go={go} />
         <Learned data={data} call={call} brief={brief} run={run} />
       </div>
+      {/* The race: the main list's past year replayed day by day, only when the reader presses Play. */}
+      <div className="mt-4"><MarketRace data={data} /></div>
       <Feed feed={feed} filter={filter} pick={pick} shown={shown} setShown={setShown} open={open} data={data} feedTop={feedTop} />
       <Reveal className="mt-10 grid gap-3 text-center">
         <button type="button" onClick={() => go("details")} className="btn btn-primary justify-center">{t("today.marketDetails")} <ArrowRight /></button>

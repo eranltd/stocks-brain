@@ -1,4 +1,6 @@
-import { fmtDate, pad2 } from "../lib/format.js";
+import { pad2 } from "../lib/format.js";
+import { useLang, En, EnglishNote } from "../lib/lang.jsx";
+import dict from "../i18n/learn.js";
 import { Accent, ArrowRight, Chip, Container, Empty, Reveal, SectionHead, Strip } from "../components/ui.jsx";
 
 export default function Learnings({ data, openKB }) {
@@ -7,27 +9,30 @@ export default function Learnings({ data, openKB }) {
   const active = items.filter((l) => l.status === "active");
   const evidence = new Set(items.flatMap((l) => l.evidence));
   const byId = Object.fromEntries(outcomes.map((o) => [o.pick_id, o]));
+  const { t: tr, fmt } = useLang();
+  const t = tr(dict);
 
   return (
     <Container className="pt-20">
       <SectionHead
-        eyebrow={`What we learned · v${learnings.version}`}
-        title={<>What the scores <Accent>taught us.</Accent></>}
+        eyebrow={t("lrn.eyebrow", { v: learnings.version })}
+        title={<>{t("lrn.title.a")} <Accent>{t("lrn.title.b")}</Accent></>}
         lede={<>
-          <span className="block text-ink">In simple words: these are the lessons we took from the brain's checked guesses, so it does not make the same mistake twice.</span>
-          <span className="mt-3 block">A lesson only counts if the scores show it, not because the AI thinks so. Like a coach who watches the game tape, a person writes each lesson and points to the guesses that prove it. The brain rereads the lessons still in use every morning.</span>
+          <span className="block text-ink">{t("lrn.lede1")}</span>
+          <span className="mt-3 block">{t("lrn.lede2")}</span>
         </>}
       />
       <Strip
         cells={[
-          { value: items.length, label: "lessons", desc: `Updated ${fmtDate(learnings.updated_at)}.` },
-          { value: active.length, label: "in use", desc: "Given to the brain every morning." },
-          { value: items.length - active.length, label: "retired", tone: "flat", desc: "No longer true or useful. Kept for history; the brain does not read them." },
-          { value: "You", label: "write them", tone: "people", dashed: true, desc: "The AI does not add lessons here. People decide." },
+          { value: items.length, label: t("lrn.s.lessons"), desc: t("lrn.s.updated", { date: fmt.date(learnings.updated_at) }) },
+          { value: active.length, label: t("lrn.s.inUse"), desc: t("lrn.s.inUseDesc") },
+          { value: items.length - active.length, label: t("lrn.s.retired"), tone: "flat", desc: t("lrn.s.retiredDesc") },
+          { value: t("lrn.s.people"), label: t("lrn.s.write"), tone: "people", dashed: true, desc: t("lrn.s.writeDesc") },
         ]}
       />
       <div className="mt-10 grid gap-5">
-        {items.length === 0 && <Empty title="No lessons yet">A lesson gets added once enough guesses have been checked to show a pattern. One or two results could just be luck.</Empty>}
+        {items.length === 0 && <Empty title={t("lrn.empty.title")}>{t("lrn.empty.body")}</Empty>}
+        {items.length > 0 && <EnglishNote className="mb-0" />}
         {items.map((l, i) => (
           <Reveal key={l.id} delay={i * 80} as="article" className={`card grid gap-6 p-7 sm:p-9 md:grid-cols-[180px_minmax(0,1fr)] ${l.status === "retired" ? "border-dashed opacity-70" : "card-hover"}`}>
             <div>
@@ -35,10 +40,10 @@ export default function Learnings({ data, openKB }) {
               <div className="meta mt-3">{l.id} · {l.added}</div>
             </div>
             <div className="min-w-0">
-              <Chip kind={l.status} icon={false}>{l.status}</Chip>
-              <p className="mt-4 text-[clamp(18px,2vw,23px)] leading-snug font-medium tracking-[-0.02em]">{l.lesson}</p>
+              <Chip kind={l.status} icon={false}>{t.has(`lrn.status.${l.status}`) ? t(`lrn.status.${l.status}`) : l.status}</Chip>
+              <En as="p" className="mt-4 text-[clamp(18px,2vw,23px)] leading-snug font-medium tracking-[-0.02em]">{l.lesson}</En>
               <div className="mt-6 border-t border-line pt-5">
-                <div className="meta mb-3">Proof · {l.evidence.length} {l.evidence.length === 1 ? "checked guess" : "checked guesses"} (tap to open)</div>
+                <div className="meta mb-3">{t("lrn.proof", { count: l.evidence.length })}</div>
                 <div className="flex flex-wrap gap-2">
                   {l.evidence.map((id) => {
                     const o = byId[id];
@@ -62,7 +67,7 @@ export default function Learnings({ data, openKB }) {
         ))}
       </div>
       <Reveal className="meta mt-10 text-center normal-case tracking-[0.04em]">
-        Source: docs/learnings.json{manifest.source === "sample" ? " (sample lessons shown until live data exists)" : ""}
+        {t("source", { what: "docs/learnings.json" })}{manifest.source === "sample" ? t("lrn.sample") : ""}
       </Reveal>
     </Container>
   );

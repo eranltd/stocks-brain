@@ -40,6 +40,14 @@ class DescribeTest(unittest.TestCase):
         self.assertTrue(sec_news.describe("8-K/A", "5.02")[1][0].startswith("Correction to an earlier filing: a leadership change"))
         self.assertEqual(sec_news.describe("8-K", "")[1], ["Company news"])
 
+    def test_the_site_has_every_title_in_its_dictionary(self):
+        # The site shows these titles in Hebrew by item code or form (site/src/i18n/home.js "sec.item.*", "sec.form.*").
+        src = (Path(__file__).resolve().parents[1] / "site" / "src" / "i18n" / "home.js").read_text(encoding="utf-8")
+        for code, (title, _) in sec_news.ITEMS.items():
+            self.assertIn(f'["{code}", "{title}", "', src, f"home.js lacks sec.item.{code}")
+        for title, _ in set(sec_news.FORMS.values()):
+            self.assertIn(f'"{title}"', src, f"home.js lacks the form title {title!r}")
+
 
 class FilingsTest(unittest.TestCase):
     def test_point_in_time_window_and_order(self):

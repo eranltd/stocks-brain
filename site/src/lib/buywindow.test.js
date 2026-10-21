@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buyLine, buyWindow, buyWindowFor, CARD_RULES, dayWords, isCoreFundCard, lookRules, lookState, mainListOf, sp500Of } from "./buywindow.js";
+import { buyLine, buyWindow, buyWindowFor, CARD_RULES, cardRules, dayWords, isCoreFundCard, lookRules, lookState, mainListOf, sp500Of } from "./buywindow.js";
+import { stripBidi } from "./i18n.js";
 
 const names = { AAA: "Alpha Corp", BBB: "Beta Inc", CCC: "Gamma Co", DDD: "Delta Ltd" };
 const FORBIDDEN = /buy signal|recommend|you should buy/i;
@@ -100,7 +101,7 @@ test("not this week: each weekly rule says why, in its own rule's words", () => 
   assert.match(gcond(a, "weekly_swing", "leader").now, /by past-month rise against the market/);
   // Each wait line names the rule that needs it: a check one weekly rule lacks is never read as needed for both.
   assert.ok(a.waitFor.includes("Weekly Swing: wait until it is back above its 50-day line."));
-  assert.ok(a.waitFor.includes("Five Leaders, weekly: Beta Inc leads its group by past-year rise. Our rules take one per group, so this one would need a bigger past-year rise than Beta Inc."));
+  assert.ok(a.waitFor.includes("Five Leaders, weekly: Beta Inc leads its group by past-year rise. The rules take one per group, so this one would need a bigger past-year rise than Beta Inc."));
   // The monthly rule still picks it, folded away: it never decides the headline while the weekly game is there.
   assert.equal(game(a, "five_leaders").would, true);
   assert.deepEqual(buyLine(a, "2026-10-17"), { text: "When to buy: not this week (see why)", tone: "flat" });
@@ -119,7 +120,7 @@ test("the rule would pick it, but a thin reward-to-risk still says wait", () => 
   const a = main({ checklist: ck(1.4, "risk_multiple") });
   honest(a);
   assert.equal(a.tone, "wait");
-  assert.equal(a.headline, "The weekly game would pick it, but the house checks say wait.");
+  assert.equal(a.headline, "The weekly game would pick it, but the site's checks say wait.");
   assert.deepEqual(a.conditions.map((c) => c.id), ["setup", "reward"]);
   assert.equal(cond(a, "reward").ok, false);
   assert.ok(a.waitFor.some((w) => /2 to 1 or more/.test(w)));
@@ -142,8 +143,8 @@ test("real money for a single stock only when the rule that picks it passed its 
   }
   const yes = main({ stocksEarned: true, verdicts: { weekly_swing: "passes_history" } });
   assert.equal(yes.earned, true);
-  assert.equal(yes.headline, "Our rules would allow a small amount on Mon 19 Oct, if nothing changes.");
-  assert.match(yes.realMoney, /only within the house limits/);
+  assert.equal(yes.headline, "The rules would allow a small amount on Mon 19 Oct, if nothing changes.");
+  assert.match(yes.realMoney, /only within the plan's limits/);
   assert.equal(game(yes, "weekly_swing").earned, true);
   assert.equal(game(yes, "five_leaders_weekly").earned, false);
   // ... but not while the trust ladder says no, and not when that rule would not pick it.
@@ -166,7 +167,7 @@ test("a held name the weekly game keeps says so, judged by what keeps it", () =>
   assert.equal(a.headline, "The weekly game holds it on paper, and would keep it. Real money still waits.");
   const fl = game(a, "five_leaders_weekly");
   assert.equal(fl.line, "would keep it");
-  assert.match(fl.conditions[0].label, /Keeps its place: still in the top 10 of our names by past-year rise/);
+  assert.match(fl.conditions[0].label, /Keeps its place: still in the top 10 of the list by past-year rise/);
   assert.deepEqual(fl.conditions.map((c) => c.id), ["leader", "above200"]);
   // Weekly Swing has no keep buffer: a held name is judged like a newcomer.
   assert.deepEqual(game(a, "weekly_swing").conditions.map((c) => c.id), ["leader", "above50", "stretch"]);
@@ -184,7 +185,7 @@ test("a held name the weekly game would let go says so", () => {
   assert.equal(a.headline, "Not this week. The weekly game holds it on paper, but would let it go.");
   assert.equal(game(a, "five_leaders_weekly").line, "would let it go");
   assert.equal(game(a, "five_leaders_weekly").why, "it is out of the top 10 and the places go to stronger names");
-  assert.ok(a.waitFor.includes("Five Leaders, weekly: wait until its past-year rise is back in the top 10 of our names."));
+  assert.ok(a.waitFor.includes("Five Leaders, weekly: wait until its past-year rise is back in the top 10 of the list."));
   assert.ok(a.waitFor.includes("Weekly Swing: all 5 places go to names that rank higher by past-month rise against the market or that the rule already holds."));
 });
 
@@ -336,11 +337,11 @@ test("real money for names the rules do not read: S&P 500 members only where tru
   assert.match(a.nextLook, /^No date/);
   assert.match(a.realMoney, /already buys a small piece of it/);
   assert.equal(a.games.length, 0);
-  assert.match(look(false).realMoney, /It is not in the S&P 500, so our weekly buy of the whole-market fund does not hold it/);
+  assert.match(look(false).realMoney, /It is not in the S&P 500, so the weekly buy of the whole-market fund does not hold it/);
   assert.doesNotMatch(look(false).realMoney, /small piece/);
   assert.match(look(null).realMoney, /If this company is in the S&P 500/);
   for (const sp of [true, false, null]) honest(look(sp));
-  assert.equal(buyLine(a).text, "When to buy: not part of our plan (see why)");
+  assert.equal(buyLine(a).text, "When to buy: not part of the plan (see why)");
   // A main-list name that is not in the S&P 500 is never told the fund holds it either.
   assert.match(main({ sp500: false }).realMoney, /not in the S&P 500/);
 });
@@ -349,10 +350,10 @@ test("funds: the core fund is what the weekly buy goes into; any other fund is n
   const core = buyWindow({ today: "2026-10-17", symbol: "DDD", isFund: true, isCoreFund: true, bw: contract() });
   honest(core);
   assert.equal(core.kind, "core");
-  assert.equal(core.headline, "This is the kind of fund our weekly buy goes into.");
+  assert.equal(core.headline, "This is the kind of fund the weekly buy goes into.");
   assert.match(core.realMoney, /every week/);
   assert.match(core.realMoney, /next weekly buy is Mon 19 Oct/);
-  assert.deepEqual(buyLine(core), { text: "When to buy: every week, in our plan", tone: "accent" });
+  assert.deepEqual(buyLine(core), { text: "When to buy: every week, in the plan", tone: "accent" });
   const other = buyWindow({ today: "2026-10-17", symbol: "DDD", isFund: true, isCoreFund: false, bw: contract(), setup: setup() });
   honest(other);
   assert.equal(other.tone, "not_ours");
@@ -403,4 +404,77 @@ test("a name that misses a check is told when all the places would still go to s
   assert.equal(gcond(b, "weekly_swing", "leader").ok, true);
   assert.match(gcond(b, "weekly_swing", "leader").now, /Beta Inc ranks higher in its group but misses a check, so the group's place is open/);
   assert.equal(game(b, "weekly_swing").why, "below its 50-day line");
+});
+
+/* ------------------------------------------------------------------------------------------------ Hebrew */
+
+const HE = /[\u0590-\u05FF]/;
+const ADVICE_HE = /buy signal|recommend|you should buy|מומלץ לקנות|כדאי לקנות|המלצ/i;
+/** Every sentence of a Hebrew answer: Hebrew letters, no English left over, no missing key, no advice. */
+function hebrewAnswer(a) {
+  const all = say(a);
+  assert.doesNotMatch(all, ADVICE_HE);
+  assert.doesNotMatch(all, /undefined|null|NaN|\[bw\./);
+  for (const s of [a.headline, a.realMoney, a.nextLook, a.note, ...a.waitFor, ...a.conditions.flatMap((c) => [c.label, c.now, c.need])]) {
+    assert.match(s, HE, s);
+    // English words that would mean a sentence was left half translated
+    assert.doesNotMatch(stripBidi(s), /\b(the|wait|with|would|rule|rules|money|week)\b/i, s);
+  }
+}
+const heMain = (over = {}) => main({ lang: "he", ...over });
+
+test("Hebrew: dates, rule names and the main answers", () => {
+  assert.equal(dayWords("2026-11-02", "he"), "יום ב׳, 2 בנוב׳");
+  assert.equal(dayWords("2026-11-02"), "Mon 2 Nov");
+  assert.deepEqual(cardRules("he").map((r) => r.name), ["חמש המובילות, שבועי", "התנופה השבועית", "חמש המובילות, חודשי", "חמש המובילות, כל שלושה חודשים"]);
+  const a = heMain();
+  hebrewAnswer(a);
+  assert.equal(a.tone, "rules_allow");
+  assert.equal(stripBidi(a.headline), "המשחק השבועי היה בוחר בה ביום ב׳, 19 באוק׳, אם שום דבר לא ישתנה. הכסף האמיתי עדיין מחכה.");
+  assert.match(a.realMoney, /^בכסף אמיתי: לא כמניה בודדת, לא היום\./);
+  assert.match(stripBidi(a.realMoney), /הקנייה השבועית הבאה: יום ב׳, 19 באוק׳\.$/);
+  assert.ok(a.games.every((g) => g.line === "הייתה נבחרת"));
+  assert.equal(buyLine(a, "2026-10-17", "he").text, "המשחק השבועי היה בוחר בה ביום שני בשבוע הבא, אם שום דבר לא ישתנה");
+  // the same answer in English is untouched
+  assert.equal(main().headline, "The weekly game would pick it on Mon 19 Oct if nothing changes. Real money still waits.");
+});
+
+test("Hebrew: why not, joined reasons and per-rule wait lines", () => {
+  const bw = contract({
+    five_leaders_weekly: { AAA: { rank: 7, sector_leader: "BBB", would_hold_if_today: false, blockers: ["sector_taken"] }, BBB: { rank: 2, sector_leader: "BBB", would_hold_if_today: false, blockers: ["stretched"], stretched: true, dist_sma50_pct: 11 } },
+    weekly_swing: { AAA: { rank: 4, above_50: false, dist_sma50_pct: -2.4, would_hold_if_today: false, blockers: ["below_50"] } },
+  });
+  const a = heMain({ bw });
+  hebrewAnswer(a);
+  assert.equal(stripBidi(a.headline), "לא השבוע. המשחק השבועי לא היה בוחר בה.");
+  assert.equal(stripBidi(game(a, "five_leaders_weekly").why), "Beta Inc מובילה את הקבוצה");
+  assert.equal(stripBidi(gcond(a, "weekly_swing", "above50").now), "2.4% מתחתיו");
+  assert.match(stripBidi(gcond(a, "five_leaders_weekly", "leader").now), /^מקום 7 מתוך 21 לפי העלייה בשנה האחרונה; Beta Inc מובילה את הקבוצה$/);
+  assert.ok(a.waitFor.map(stripBidi).includes("התנופה השבועית: לחכות שהיא תחזור מעל ממוצע 50 הימים."));
+  const two = heMain({ symbol: "BBB", bw: group("five_leaders_weekly", { rank: 2, held_now: false }, { rank: 6, blockers: ["below_200", "falling_200"], above_200: false, rising_200: false, stretched: false, dist_sma50_pct: 2 }) });
+  assert.equal(stripBidi(game(two, "five_leaders_weekly").why), "Alpha Corp מדורגת גבוה יותר בקבוצה, וגם היא מתחת לממוצע 200 הימים, והוא יורד");
+  assert.deepEqual(buyLine(a, "2026-10-17", "he"), { text: "מתי קונים: לא השבוע (ההסבר בפנים)", tone: "flat" });
+});
+
+test("Hebrew: funds, names the rules do not read, and a missing look", () => {
+  const core = buyWindow({ today: "2026-10-17", symbol: "DDD", isFund: true, isCoreFund: true, bw: contract(), lang: "he" });
+  hebrewAnswer(core);
+  assert.equal(core.headline, "זה סוג הקרן שהקנייה השבועית נכנסת אליה.");
+  const fund = buyWindow({ today: "2026-10-17", symbol: "DDD", isFund: true, bw: contract(), lang: "he" });
+  hebrewAnswer(fund);
+  for (const sp500 of [true, false, null]) {
+    const look = buyWindow({ today: "2026-10-17", symbol: "CCC", onMainList: false, sp500, names, bw: contract(), setup: setup({ checks: { trend: false }, dist_sma50_pct: -2.5, dist_long_pct: 3 }), checklist: ck(0.8, "resistance"), lang: "he" });
+    hebrewAnswer(look);
+    assert.equal(stripBidi(cond(look, "trend").now), "2.5% מתחת לממוצע 50 הימים, 3.0% מעל ממוצע 200 הימים");
+    assert.equal(stripBidi(cond(look, "reward").now), "0.8 ל-1");
+  }
+  for (const bw of [null, contract({}, { as_of: "2026-10-15" })]) {
+    const m = heMain({ bw });
+    hebrewAnswer(m);
+    assert.equal(m.headline, "לחכות. הבדיקה של הכללים עדיין לא זמינה.");
+  }
+  const earned = heMain({ stocksEarned: true, verdicts: { weekly_swing: "passes_history" } });
+  hebrewAnswer(earned);
+  assert.equal(stripBidi(earned.headline), "הכללים היו מאפשרים סכום קטן ביום ב׳, 19 באוק׳, אם שום דבר לא ישתנה.");
+  assert.equal(buyLine(core, null, "he").text, "מתי קונים: בכל שבוע, לפי התוכנית");
 });

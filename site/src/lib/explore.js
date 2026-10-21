@@ -2,23 +2,36 @@
 // Pure functions, no React; tested in explore.test.js. Curiosity, not tricks: every hole is a real question the site
 // can answer honestly, with a rough reading time.
 
+import { translate } from "./i18n.js";
+import text from "../i18n/shell.js";
+
+const T = { en: translate(text, "en"), he: translate(text, "he") };
+
 /**
  * The rabbit holes. `to` is a route, with an optional "#section"; "stock" asks for the stock of the day (chosen from
- * the data, so no ticker is written in code). Minutes are rough reading times.
+ * the data, so no ticker is written in code). Minutes are rough reading times. `q` is the English question; the
+ * words of every language are in i18n/shell.js ("hole.<id>"), read with holeQuestion(hole, lang).
  */
-export const HOLES = [
-  { id: "people", q: "Did famous investors beat the market with the calls we followed?", to: "people", minutes: 5 },
-  { id: "weekly", q: "Who is winning the weekly game this week?", to: "verdicts#this-week", minutes: 2 },
-  { id: "right", q: "Has the brain been right so far?", to: "track", minutes: 3 },
-  { id: "quiz", q: "Play Guess the candle: what kind is it, and what happened next?", to: "quiz", minutes: 5 },
-  { id: "candles", q: "Can you spot a hammer or a shooting star? Zoom into a real chart.", to: "stock#checklist", minutes: 4 },
-  { id: "news", q: "What did one of our companies tell regulators lately?", to: "stock#official-news", minutes: 3 },
-  { id: "rules", q: "Does buying every week beat buying every month? See the test.", to: "playbook", minutes: 6 },
-  { id: "stocks", q: "Which of our stocks had the wildest month?", to: "watchlist", minutes: 4 },
-  { id: "lessons", q: "What did the books and videos we read actually teach?", to: "insights", minutes: 8 },
-  { id: "mistakes", q: "What did our own results teach us, with proof?", to: "learnings", minutes: 5 },
-  { id: "machine", q: "How does a robot brain read the market every morning?", to: "how", minutes: 6 },
+const SHAPE = [
+  { id: "people", to: "people", minutes: 5 },
+  { id: "weekly", to: "verdicts#this-week", minutes: 2 },
+  { id: "right", to: "track", minutes: 3 },
+  { id: "quiz", to: "quiz", minutes: 5 },
+  { id: "candles", to: "stock#checklist", minutes: 4 },
+  { id: "news", to: "stock#official-news", minutes: 3 },
+  { id: "rules", to: "playbook", minutes: 6 },
+  { id: "stocks", to: "watchlist", minutes: 4 },
+  { id: "lessons", to: "insights", minutes: 8 },
+  { id: "mistakes", to: "learnings", minutes: 5 },
+  { id: "machine", to: "how", minutes: 6 },
 ];
+export const HOLES = SHAPE.map((h) => ({ id: h.id, q: T.en(`hole.${h.id}`), to: h.to, minutes: h.minutes }));
+
+/** A hole's question in a language (a hole without words of its own keeps its `q`). */
+export function holeQuestion(hole, lang = "en") {
+  const t = T[lang] ?? T.en;
+  return t.has(`hole.${hole.id}`) ? t(`hole.${hole.id}`) : hole.q;
+}
 
 const routeOf = (to) => to.split("#")[0];
 

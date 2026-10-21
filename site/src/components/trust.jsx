@@ -1,20 +1,29 @@
 import { daysBetween } from "../lib/stats.js";
-import { fmtNum, fmtPct } from "../lib/format.js";
+import { fmtDate, fmtNum, fmtPct, translate } from "../lib/i18n.js";
+import { useLang } from "../lib/lang.jsx";
 import { Accent, ArrowRight, Reveal } from "./ui.jsx";
+import dict from "../i18n/plan.js";
 
-export const STAGES = [
-  { id: 0, name: "Observe", money: "No money moves", blurb: "Level one, like a new player: the stock rule has no record yet. Watch and learn." },
-  { id: 1, name: "Paper", money: "No money moves", blurb: "Level two: the stock rule plays with pretend money, written down every month and never changed afterwards." },
-  { id: 2, name: "Small money", money: "A small side bet", blurb: "Level three, unlocked only by proof: the pretend record and years of history both beat the whole market. Then a small side bet, within the house limits." },
-  { id: 3, name: "Trusted", money: "A small side bet, within limits", blurb: "Level four: a full year of pretend record, still ahead of the whole market." },
-];
+// Every text here is in i18n/plan.js ("trust.*"). STAGES keeps the English for callers that read it directly;
+// stageText(id, lang) gives a stage's words in either language.
+const STAGE_EN = translate(dict, "en");
+export const STAGES = [0, 1, 2, 3].map((id) => ({
+  id, name: STAGE_EN(`trust.stage.${id}.name`), money: STAGE_EN(`trust.stage.${id}.money`), blurb: STAGE_EN(`trust.stage.${id}.blurb`),
+}));
+
+/** One trust stage's name, money line and blurb in a language. */
+export function stageText(id, lang = "en") {
+  const t = translate(dict, lang);
+  return { id, name: t(`trust.stage.${id}.name`), money: t(`trust.stage.${id}.money`), blurb: t(`trust.stage.${id}.blurb`) };
+}
 
 /**
  * Trust stage for the thing that would move money: portfolio rule v1. Evidence (all computed by code):
  * the forward paper record (data/portfolio/paper.json), the ~9-year rule test (longrun.json) and the
  * base rates of the setup gate (derived.json). Samples never count. Thresholds: settings.trust.
  */
-export function trustStage(data) {
+export function trustStage(data, lang = "en") {
+  const tr = translate(dict, lang);
   const t = data.settings.trust;
   const paper = data.paper && !data.paper.sample ? data.paper : null;
   const lr = data.longrun && !data.longrun.sample ? data.longrun : null;
@@ -25,37 +34,40 @@ export function trustStage(data) {
   const ruleVsAll = lr ? lr.stats.rule.cagr_pct - lr.stats.equal_weight.cagr_pct : null;
 
   const small = [
-    { ok: days >= t.paper_min_days_small, text: `Paper record: ${days} of ${t.paper_min_days_small} days` },
-    { ok: vsCore != null && vsCore > 0, text: vsCore == null ? "Paper portfolio ahead of the core (not measured yet)" : `Paper portfolio vs the core since ${paper.started}: ${fmtPct(vsCore, 1)} (need above 0)` },
-    { ok: ruleVsAll != null && ruleVsAll > 0, text: ruleVsAll == null ? "Rule beats holding every name (history not computed yet)" : `Over ${fmtNum(lr.years, 1)} years the rule ${ruleVsAll > 0 ? "beat" : "trailed"} holding every name by ${fmtNum(Math.abs(ruleVsAll), 1)} pts a year` },
-    { ok: Boolean(gate && gate.pass.ci_low > 0), text: gate ? `Names passing the gate beat ${data.bench.symbol}: ${fmtPct(gate.pass.mean ?? 0, 2)} per 20 days, 90% range from ${fmtPct(gate.pass.ci_low ?? 0, 2)} (need above 0)` : "Setup-gate base rates (not computed yet)" },
+    { ok: days >= t.paper_min_days_small, text: tr("trust.need.paperDays", { days, need: t.paper_min_days_small }) },
+    { ok: vsCore != null && vsCore > 0, text: vsCore == null ? tr("trust.need.vsCoreNone") : tr("trust.need.vsCore", { since: lang === "en" ? paper.started : fmtDate(paper.started, lang), pct: fmtPct(vsCore, 1, lang) }) },
+    { ok: ruleVsAll != null && ruleVsAll > 0, text: ruleVsAll == null ? tr("trust.need.ruleNone") : tr(ruleVsAll > 0 ? "trust.need.ruleBeat" : "trust.need.ruleTrail", { years: fmtNum(lr.years, 1, lang), pts: fmtNum(Math.abs(ruleVsAll), 1, lang) }) },
+    { ok: Boolean(gate && gate.pass.ci_low > 0), text: gate ? tr("trust.need.gate", { bench: data.bench.symbol, mean: fmtPct(gate.pass.mean ?? 0, 2, lang), lo: fmtPct(gate.pass.ci_low ?? 0, 2, lang) }) : tr("trust.need.gateNone") },
   ];
   const trusted = [
-    { ok: days >= t.paper_min_days_trusted, text: `Paper record: ${days} of ${t.paper_min_days_trusted} days` },
-    { ok: vsCore != null && vsCore > 0, text: "Still ahead of the core" },
+    { ok: days >= t.paper_min_days_trusted, text: tr("trust.need.paperDays", { days, need: t.paper_min_days_trusted }) },
+    { ok: vsCore != null && vsCore > 0, text: tr("trust.need.ahead") },
   ];
   let stage = paper ? 1 : 0;
   if (stage === 1 && small.every((c) => c.ok)) stage = 2;
   if (stage === 2 && trusted.every((c) => c.ok)) stage = 3;
-  const need = [[{ ok: false, text: "The paper portfolio starts with the next daily run" }], small, trusted, []][stage];
+  const need = [[{ ok: false, text: tr("trust.need.start") }], small, trusted, []][stage];
   return { stage, need, days, vsCore, small };
 }
 
 export function TrustLadder({ data, go, compact = false }) {
-  const { stage, need } = trustStage(data);
-  const cur = STAGES[stage];
+  const { lang, t: tr } = useLang();
+  const t = tr(dict);
+  const { stage, need } = trustStage(data, lang);
+  const stages = STAGES.map((s) => stageText(s.id, lang));
+  const cur = stages[stage];
   return (
     <Reveal className="card brackets overflow-hidden">
       <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <div>
-          <div className="eyebrow mb-4">Can we trust it yet?</div>
-          <h3 className="display text-[clamp(30px,4vw,48px)]">Stage {stage}: <Accent>{cur.name}.</Accent></h3>
+          <div className="eyebrow mb-4">{t("trust.eyebrow")}</div>
+          <h3 className="display text-[clamp(30px,4vw,48px)]">{t.rich("trust.title", { stage, name: <Accent>{cur.name}.</Accent> })}</h3>
           <p className="mt-4 text-[16px] leading-relaxed text-ink-2">
-            {cur.blurb} <span className="text-ink">{cur.money}.</span> Trust is earned by the record, never by the story, and the site steps back down if the numbers slip.
+            {cur.blurb} <span className="text-ink">{cur.money}.</span> {t("trust.tail")}
           </p>
           {need.length > 0 && (
             <div className="mt-5">
-              <div className="meta mb-2">To reach {STAGES[stage + 1].name}</div>
+              <div className="meta mb-2">{t("trust.toReach", { name: stages[stage + 1].name })}</div>
               <ul className="grid gap-2 text-[14.5px]">
                 {need.map((n) => (
                   <li key={n.text} className="flex gap-2.5">
@@ -67,11 +79,11 @@ export function TrustLadder({ data, go, compact = false }) {
             </div>
           )}
           {!compact && (
-            <button type="button" onClick={() => go("admin")} className="btn mt-6 px-5 py-3 text-[14px]">Read the house rules <ArrowRight /></button>
+            <button type="button" onClick={() => go("admin")} className="btn mt-6 px-5 py-3 text-[14px]">{t("trust.rules")} <ArrowRight /></button>
           )}
         </div>
         <ol className="grid gap-2 self-center">
-          {STAGES.map((s) => {
+          {stages.map((s) => {
             const done = s.id < stage, on = s.id === stage;
             return (
               <li key={s.id} className={`flex items-center gap-4 rounded-2xl border px-4 py-3.5 transition ${on ? "border-accent/50 bg-accent/10" : "border-line"} ${s.id > stage ? "opacity-55" : ""}`}>
@@ -80,7 +92,7 @@ export function TrustLadder({ data, go, compact = false }) {
                   <div className={`font-semibold ${on ? "text-accent" : ""}`}>{s.name}</div>
                   <div className="text-[13px] text-ink-3">{s.money}</div>
                 </div>
-                {on && <span className="meta ml-auto text-accent">you are here</span>}
+                {on && <span className="meta ms-auto text-accent">{t("trust.here")}</span>}
               </li>
             );
           })}

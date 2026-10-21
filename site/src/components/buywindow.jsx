@@ -1,12 +1,14 @@
 import { dayWords } from "../lib/buywindow.js";
+import { useLang } from "../lib/lang.jsx";
+import dict from "../i18n/stock.js";
 import { ArrowRight, Reveal } from "./ui.jsx";
 
 /*
- * "When could we buy it?": what our own house rules say about one company or fund, in this order: real money first (the
- * weekly buy of the whole-market fund), then the weekly game (its next look, and for each weekly rule whether it would
- * pick the name if today were its decision day, and why), then the monthly rule (folded away), the house checks, what to
- * wait for, and one honest line. Wording: lib/buywindow.js. Made for a phone: one column, big plain headline, rows that
- * wrap.
+ * "When would the rules allow a buy?": what this site's own rules say about one company or fund, in this order: real
+ * money first (the weekly buy of the whole-market fund), then the weekly game (its next look, and for each weekly rule
+ * whether it would pick the name if today were its decision day, and why), then the monthly rule (folded away), the
+ * site's checks, what to wait for, and one honest line. Wording: lib/buywindow.js (pass it the page's `lang`), the
+ * card's own words: i18n/stock.js "bwc.*". Made for a phone: one column, big plain headline, rows that wrap.
  */
 
 const TONE = {
@@ -16,9 +18,9 @@ const TONE = {
 };
 
 const MARK = {
-  true: { glyph: "✓", cls: "bg-accent/15 text-accent", label: "met" },
-  false: { glyph: "✕", cls: "bg-down/15 text-down", label: "not met" },
-  null: { glyph: "?", cls: "bg-surface-2 text-ink-3", label: "not known today" },
+  true: { glyph: "✓", cls: "bg-accent/15 text-accent", label: "bwc.mark.met" },
+  false: { glyph: "✕", cls: "bg-down/15 text-down", label: "bwc.mark.notMet" },
+  null: { glyph: "?", cls: "bg-surface-2 text-ink-3", label: "bwc.mark.unknown" },
 };
 
 function Head({ children }) {
@@ -26,12 +28,14 @@ function Head({ children }) {
 }
 
 function Mark({ ok, small = false }) {
+  const t = useLang().t(dict);
   const m = MARK[String(ok)] ?? MARK.null;
-  return <span className={`grid shrink-0 place-items-center rounded-full font-semibold ${small ? "mt-0.5 size-6 text-[12px]" : "mt-0.5 size-8 text-[14px]"} ${m.cls}`} role="img" aria-label={m.label}>{m.glyph}</span>;
+  return <span className={`grid shrink-0 place-items-center rounded-full font-semibold ${small ? "mt-0.5 size-6 text-[12px]" : "mt-0.5 size-8 text-[14px]"} ${m.cls}`} role="img" aria-label={t(m.label)}>{m.glyph}</span>;
 }
 
 /** Full rows: a check, its value now and what it needs. */
 function Rows({ rows }) {
+  const t = useLang().t(dict);
   return (
     <ul className="grid gap-2">
       {rows.map((c) => (
@@ -40,10 +44,10 @@ function Rows({ rows }) {
           <span className="min-w-0 flex-1">
             <span className="block text-[16px] leading-snug text-ink">{c.label}</span>
             <span className="mt-1 block text-[14px] leading-snug text-ink-2">
-              <span className="text-ink-3">Now:</span> <span className="num">{c.now}</span>
+              <span className="text-ink-3">{t("bwc.now")}</span> <span className="num">{c.now}</span>
             </span>
             <span className="mt-0.5 block text-[14px] leading-snug text-ink-2">
-              <span className="text-ink-3">Needs:</span> <span className="num">{c.need}</span>
+              <span className="text-ink-3">{t("bwc.needs")}</span> <span className="num">{c.need}</span>
             </span>
           </span>
         </li>
@@ -54,13 +58,15 @@ function Rows({ rows }) {
 
 /** One rule's look, compact: "<rule>: would pick it" or "would not pick it: why", then its checks in one line each. */
 function RuleBlock({ r, showDate = false }) {
+  const { lang, t: tr } = useLang();
+  const t = tr(dict);
   return (
     <li className="rounded-2xl border border-line-2 p-4">
       <div className="flex items-start gap-3">
         <Mark ok={r.would} />
         <p className="min-w-0 flex-1 pt-1 text-[16.5px] leading-snug text-ink">
           <span className="font-semibold">{r.name}:</span> {r.line}{!r.would && r.why ? `: ${r.why}` : ""}.
-          {showDate && r.nextReview && <span className="block text-[14px] text-ink-3">Next look {dayWords(r.nextReview)}</span>}
+          {showDate && r.nextReview && <span className="block text-[14px] text-ink-3">{t("bwc.nextLook", { date: dayWords(r.nextReview, lang) })}</span>}
         </p>
       </div>
       <ul className="mt-3 grid gap-1.5 border-t border-line pt-3">
@@ -78,28 +84,29 @@ function RuleBlock({ r, showDate = false }) {
 }
 
 export function BuyWindowCard({ a, go }) {
+  const t = useLang().t(dict);
   if (!a) return null;
-  const t = TONE[a.tone] ?? TONE.wait;
+  const tone = TONE[a.tone] ?? TONE.wait;
   const hasGame = a.games?.length > 0;
-  const condHead = a.kind === "main" ? (a.available ? "Our house checks" : "Our checks today") : "Our checks today (for learning only)";
+  const condHead = t(a.kind === "main" ? (a.available ? "bwc.cond.main" : "bwc.cond.today") : "bwc.cond.learn");
   const mlines = (a.monthly ?? []).map((r) => r.line);
   // Both monthly versions usually agree: then one phrase; otherwise each version's own.
   const monthlyLine = new Set(mlines).size === 1 ? mlines[0] : (a.monthly ?? []).map((r) => `${r.name}: ${r.line}`).join(" · ");
   return (
-    <Reveal as="section" id="buy-window" aria-labelledby="buy-window-title" className={`card mt-6 scroll-mt-28 overflow-hidden ${t.border}`}>
-      <div className="h-1.5" style={{ background: t.bar }} aria-hidden="true" />
+    <Reveal as="section" id="buy-window" aria-labelledby="buy-window-title" className={`card mt-6 scroll-mt-28 overflow-hidden ${tone.border}`}>
+      <div className="h-1.5" style={{ background: tone.bar }} aria-hidden="true" />
       <div className="p-6 sm:p-8">
-        <h2 id="buy-window-title" className="text-[15px] font-semibold uppercase tracking-[0.12em] text-accent">When could we buy it?</h2>
-        <p className={`mt-3 text-[clamp(24px,6.5vw,32px)] leading-[1.15] font-semibold tracking-[-0.02em] ${t.text}`}>{a.headline}</p>
+        <h2 id="buy-window-title" className="text-[15px] font-semibold uppercase tracking-[0.12em] text-accent">{t("bwc.title")}</h2>
+        <p className={`mt-3 text-[clamp(24px,6.5vw,32px)] leading-[1.15] font-semibold tracking-[-0.02em] ${tone.text}`}>{a.headline}</p>
 
         <div className="mt-6 rounded-2xl border border-line-2 bg-surface-2 p-4 sm:p-5">
-          <p className="meta normal-case tracking-[0.04em] text-accent">Real money</p>
+          <p className="meta normal-case tracking-[0.04em] text-accent">{t("bwc.realMoney")}</p>
           <p className="mt-1 text-[17px] leading-relaxed text-ink">{a.realMoney}</p>
         </div>
 
         {(hasGame || a.nextLook) && (
           <div className="mt-7">
-            {hasGame && <Head>Pretend money: the weekly game</Head>}
+            {hasGame && <Head>{t("bwc.game")}</Head>}
             {a.nextLook && (
               <div className="flex items-start gap-3">
                 <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-accent/12 text-accent" aria-hidden="true">
@@ -110,7 +117,7 @@ export function BuyWindowCard({ a, go }) {
             )}
             {hasGame && (
               <>
-                <p className="mt-3 text-[14.5px] leading-relaxed text-ink-3">If that look were today:</p>
+                <p className="mt-3 text-[14.5px] leading-relaxed text-ink-3">{t("bwc.ifToday")}</p>
                 <ul className="mt-2 grid gap-3">{a.games.map((r) => <RuleBlock key={r.id} r={r} />)}</ul>
               </>
             )}
@@ -120,7 +127,7 @@ export function BuyWindowCard({ a, go }) {
         {a.monthly?.length > 0 && (
           <details className="group mt-4 rounded-2xl border border-line-2">
             <summary className="flex min-h-[52px] cursor-pointer list-none items-center gap-3 px-4 py-3 text-[16px] leading-snug text-ink">
-              <span className="min-w-0 flex-1"><span className="font-semibold">Monthly rule:</span> <span className="text-ink-2">{monthlyLine}</span></span>
+              <span className="min-w-0 flex-1"><span className="font-semibold">{t("bwc.monthly")}</span> <span className="text-ink-2">{monthlyLine}</span></span>
               <ArrowRight className="size-4 shrink-0 rotate-90 text-ink-3 transition group-open:-rotate-90" />
             </summary>
             <ul className="grid gap-3 px-3 pb-3">{a.monthly.map((r) => <RuleBlock key={r.id} r={r} showDate />)}</ul>
@@ -136,9 +143,9 @@ export function BuyWindowCard({ a, go }) {
 
         {a.waitFor.length > 0 && (
           <div className="mt-7">
-            <Head>{a.tone === "rules_allow" ? "Still to keep in mind" : "What to wait for"}</Head>
+            <Head>{t(a.tone === "rules_allow" ? "bwc.keepInMind" : "bwc.waitFor")}</Head>
             <ul className="grid gap-2 text-[16.5px] leading-relaxed text-ink">
-              {a.waitFor.map((w) => <li key={w} className="relative pl-4 before:absolute before:left-0 before:top-[0.75em] before:h-px before:w-2 before:bg-ink-3">{w}</li>)}
+              {a.waitFor.map((w) => <li key={w} className="relative ps-4 before:absolute before:start-0 before:top-[0.75em] before:h-px before:w-2 before:bg-ink-3">{w}</li>)}
             </ul>
           </div>
         )}
@@ -146,7 +153,7 @@ export function BuyWindowCard({ a, go }) {
         <p className="mt-6 border-t border-line pt-4 text-[14.5px] leading-relaxed text-ink-2">{a.note}</p>
         {go && (
           <button type="button" onClick={() => go("admin")} className="meta mt-3 inline-flex min-h-[44px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">
-            Our house rules <ArrowRight className="size-3.5" />
+            {t("bwc.rules")} <ArrowRight className="size-3.5" />
           </button>
         )}
       </div>
@@ -156,12 +163,13 @@ export function BuyWindowCard({ a, go }) {
 
 const LINE_DOT = { accent: "var(--accent)", flat: "var(--people)" };
 
-/** The one short line on a home company card ("When to buy: not this week (see why)"), tappable to the Stock page's card. */
+/** The one short line on a home company card ("When to buy: not this week (see why)"), tappable to the Stock page's card.
+ *  Its words come from buyLine(a, today, lang) in lib/buywindow.js. */
 export function BuyLine({ line, onClick }) {
   if (!line) return null;
   return (
     <button type="button" onClick={onClick}
-      className="mt-4 flex min-h-[48px] w-full items-center gap-3 rounded-2xl border border-line-2 px-4 py-2.5 text-left transition hover:border-ink-3">
+      className="mt-4 flex min-h-[48px] w-full items-center gap-3 rounded-2xl border border-line-2 px-4 py-2.5 text-start transition hover:border-ink-3">
       <span className="size-2.5 shrink-0 rounded-full" style={{ background: LINE_DOT[line.tone] ?? "var(--ink-3)" }} aria-hidden="true" />
       <span className="min-w-0 flex-1 text-[16px] leading-snug text-ink">{line.text}</span>
       <ArrowRight className="size-4 shrink-0 text-ink-3" />

@@ -2,15 +2,16 @@
 // by how much they rose over the past year, in words (no digits, like the rest of the simple home). Pure functions, no
 // React; tested in spotlight.test.js. The lists are config/markets.json markets; nothing here reads prices back.
 
+import { translate } from "./i18n.js";
 import { verdictChip } from "./simple.js";
+import dict from "../i18n/home.js";
 
 /** The markets shown as spotlights on the home, in this order (only those the site publishes). */
 export const SPOTLIGHTS = ["chips", "tech", "energy"];
 
-/** Who each list is measured against, in everyday words. */
+/** Who each list is measured against, in everyday words (English; the "spot.who.<id>" texts in other languages). */
 export const SPOTLIGHT_WHO = { chips: "chip makers as a group", tech: "the Nasdaq-100", energy: "energy companies as a group" };
-
-const ORD = ["Biggest", "Second-biggest", "Third-biggest", "Fourth-biggest", "Fifth-biggest", "Sixth-biggest", "Seventh-biggest", "Eighth-biggest", "Ninth-biggest", "Tenth-biggest"];
+const RANKS = 10; // "Biggest" to "Tenth-biggest" ("spot.rank.0" to "spot.rank.9"), then "A rise of the past year"
 const isNum = (v) => typeof v === "number" && Number.isFinite(v);
 
 /** The rise over the derived series (about a year, indexed to 100 at its start), in percent; null without one. */
@@ -32,23 +33,24 @@ export function lastCandle(win) {
  * One spotlight's carousel items (the shape TopStocks takes), strongest rise first. `view` is loadMarket's view of the
  * list; `candles` its published candle files ({SYMBOL: path}).
  */
-export function spotlightItems(view, candles = {}) {
+export function spotlightItems(view, candles = {}, lang = "en") {
+  const t = translate(dict, lang);
   const rows = view?.market?.symbols ?? [];
   const bench = yearRise(rows.find((r) => r.symbol === view?.benchmark));
-  const who = SPOTLIGHT_WHO[view?.id] ?? "its group";
-  const list = (view?.watchlist?.symbols ?? []).map((s) => ({ t: s.symbol, rise: yearRise(rows.find((r) => r.symbol === s.symbol)) }));
-  list.sort((a, b) => (b.rise ?? -Infinity) - (a.rise ?? -Infinity) || a.t.localeCompare(b.t));
-  return list.map(({ t, rise }, i) => {
-    const name = view.names?.[t] ?? t;
-    const tag = rise == null ? "no year of prices yet" : rise > 0 ? `${ORD[i] ?? "A"} rise of the past year` : "lower than a year ago";
-    const vs = rise == null || bench == null ? null : rise >= bench ? `rose more than ${who}` : `did worse than ${who}`;
+  const who = SPOTLIGHT_WHO[view?.id] ? t(`spot.who.${view.id}`) : t("spot.who.other");
+  const list = (view?.watchlist?.symbols ?? []).map((s) => ({ sym: s.symbol, rise: yearRise(rows.find((r) => r.symbol === s.symbol)) }));
+  list.sort((a, b) => (b.rise ?? -Infinity) - (a.rise ?? -Infinity) || a.sym.localeCompare(b.sym));
+  return list.map(({ sym, rise }, i) => {
+    const name = view.names?.[sym] ?? sym;
+    const tag = rise == null ? t("spot.noYear") : rise > 0 ? t(i < RANKS ? `spot.rank.${i}` : "spot.rank.other") : t("spot.lower");
+    const vs = rise == null || bench == null ? null : rise >= bench ? "more" : "worse";
     return {
-      ticker: t, name, tag,
-      plain: vs ? `Over the past year it ${vs}. A past rise does not promise the next one.` : null,
-      chip: verdictChip(view.checklist, t),
-      hasChart: Boolean(candles?.[t]),
-      candlesTo: `stock/${t}#checklist`,
-      to: `stock/${t}#brief`,
+      ticker: sym, name, tag,
+      plain: vs ? t(`spot.${vs}`, { who }, { bidi: false }) : null,
+      chip: verdictChip(view.checklist, sym, lang),
+      hasChart: Boolean(candles?.[sym]),
+      candlesTo: `stock/${sym}#checklist`,
+      to: `stock/${sym}#brief`,
     };
   });
 }

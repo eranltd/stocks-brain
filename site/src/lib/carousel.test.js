@@ -118,3 +118,17 @@ test("charts load near the viewport", () => {
   assert.deepEqual(nearCards(312 * 7, 360, 312, 8), [6, 7], "clamped at the end");
   assert.deepEqual(nearCards(0, 0, 0, 0), [0, 0]);
 });
+
+test("Hebrew: the screen-reader sentence and the cards' tags", async () => {
+  const { stripBidi } = await import("./i18n.js");
+  const win = miniWindow(doc(30, (i) => i * 0.4));
+  const s = miniSummary("Alpha", win, "he");
+  assert.match(s, /^Alpha: החודש האחרון בנרות יומיים, .*\. זה תיאור של הגרף, לא תחזית\.$/);
+  assert.match(s, /המחיר סיים את החודש גבוה יותר מאשר בתחילתו/);
+  assert.doesNotMatch(s, /\d/);
+  assert.equal(stripBidi(miniSummary("Alpha", null, "he")), "Alpha: עדיין אין גרף.");
+  const top = topStocks({ held: ["AAA"], picked: [], day: day(), outlook, checklist, names, bench: "IDX", lang: "he" });
+  assert.equal(top[0].tag, "בתיק המדומה");
+  assert.equal(top[0].chip.word, "נטייה לעלייה");
+  assert.equal(top[0].plain, "Microsoft: its cloud business is growing fast.", "the company card's own words stay as written");
+});

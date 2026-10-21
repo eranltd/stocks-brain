@@ -53,3 +53,34 @@ test("the lump-sum guide uses the savings history test when it exists", () => {
   assert.match(lumpSum(null).steps[2], /usually beat spreading/);
   assert.equal(g.before.length, 3);
 });
+
+test("Hebrew: the honest action and the lump-sum steps, in infinitives, with the numbers kept whole", async () => {
+  const { stripBidi, hasHebrew } = await import("./i18n.js");
+  const { horizons } = await import("./money.js");
+  const S = stripBidi;
+  const f = moneyFacts({ core: { symbol: "IDX" }, market: { context: { cash_yield_pct: 3.65, instruments: [{ role: "cash", symbol: "CSH" }] } },
+    longrun: { stats: { core: { cagr_pct: 16.78, years: 7, max_dd_pct: -33.7, worst_12m_pct: -19.73 } } } }, "he");
+  assert.match(S(f.fundName), /כמו IDX\)$/);
+  const medium = honestAction("medium", f, "he");
+  assert.equal(S(medium.steps[0]), "לשים חלק בחיסכון ממשלתי לטווח קצר (T-bills, כמו CSH). התשואה כרגע היא בערך 3.6% בשנה.");
+  assert.match(medium.steps[0], /⁦3\.6%⁩/, "the percent stays with its number");
+  assert.match(S(medium.risk), /הפסיד 20%\.$/);
+  const long = honestAction("long", {}, "he");
+  assert.equal(long.title, "לקנות את השוק כולו, קצת בכל שבוע, ולא לגעת.");
+  assert.match(long.why, /לאורך עשרות שנים היא צמחה בממוצע בערך 10% בשנה/);
+  assert.equal(honestAction("short", {}, "he").title, "לשמור את הכסף במקום בטוח.");
+  for (const h of ["long", "medium", "short"]) {
+    const a = honestAction(h, f, "he");
+    for (const s of [a.title, ...a.steps, a.why, a.risk]) { assert.ok(hasHebrew(s), s); assert.doesNotMatch(s, /undefined|null|מומלץ|המלצ|כדאי לקנות/); }
+  }
+  const rulesResult = { savings: { horizons: [{ weeks: 52, rows: [
+    { id: "windfall_lump_sum", windows: 103, worst_vs_paid_median_pct: -8.25 },
+    { id: "windfall_spread_26w", windows: 103, vs_baseline_better_pct: 24.3, worst_vs_paid_median_pct: -4.04 },
+  ] }] } };
+  const g = lumpSum(rulesResult, null, "he");
+  assert.match(S(g.steps[2]), /^השאר נכנס בקנייה אחת אל הקרן על כל השוק\. במבחן של האתר על 103 תאריכי התחלה.*76 פעמים מתוך 100.*ירידה של 4% במקום 8%\)\.$/);
+  assert.equal(g.before.length, 3);
+  assert.deepEqual(horizons("he").map((h) => h.id), HORIZONS.map((h) => h.id));
+  assert.equal(horizons("he")[2].label, "בתוך שנה");
+  assert.equal(horizons(), HORIZONS);
+});

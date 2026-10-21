@@ -1,7 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { AFTER, BEFORE, makeQuestion, rng, scoreWords } from "./quiz.js";
-import { findSpots } from "./spots.js";
+import { findSpots, spotKinds } from "./spots.js";
+import { hasHebrew, stripBidi } from "./i18n.js";
 
 function series(n) {
   const d = { dates: [], o: [], h: [], l: [], c: [], vol_rel: [] };
@@ -36,4 +37,19 @@ test("no question without a notable candle that fits", () => {
 test("scoreWords puts luck beside the score", () => {
   assert.match(scoreWords({ kindRight: 3, kindTried: 8, weekRight: 4, weekTried: 8 }), /3 of 8 \(luck: about 2\).*4 of 8 \(luck: about 4\)/);
   assert.match(scoreWords(null), /No guesses yet/);
+});
+
+test("scoreWords and the answer titles speak Hebrew when asked", () => {
+  const he = stripBidi(scoreWords({ kindRight: 3, kindTried: 8, weekRight: 4, weekTried: 8 }, "he"));
+  assert.equal(he, "הניקוד במכשיר הזה: שמות נרות: 3 מתוך 8 (מזל לבדו: בערך 2); השבוע הבא: 4 מתוך 8 (מזל לבדו: בערך 4).");
+  assert.equal(scoreWords(null, "he"), "עדיין אין ניחושים במכשיר הזה.");
+  assert.equal(scoreWords({ kindRight: 3, kindTried: 8, weekRight: 4, weekTried: 8 }), "Your score: candle names 3 of 8 (luck: about 2); next week 4 of 8 (luck: about 4).");
+  const d = series(60);
+  d.o[40] = -9; d.c[40] = -7; d.h[40] = -6.9; d.l[40] = -9.1;
+  const en = makeQuestion(d, rng(7));
+  const q = makeQuestion(d, rng(7), "he");
+  assert.deepEqual(q.choices.map((c) => c.kind), en.choices.map((c) => c.kind));
+  const titles = spotKinds("he");
+  for (const c of q.choices) assert.equal(c.title, titles[c.kind].title);
+  assert.ok(q.choices.every((c) => hasHebrew(c.title)));
 });

@@ -1,64 +1,65 @@
 import { useMemo, useState } from "react";
-import { fmtDate, pad2 } from "../lib/format.js";
+import { pad2 } from "../lib/format.js";
+import { useLang, En, EnglishNote } from "../lib/lang.jsx";
 import { Accent, ArrowRight, Chip, Container, Empty, Reveal, SectionHead, Strip } from "../components/ui.jsx";
+import { translate, fmtList, fmtUsd } from "../lib/i18n.js";
+import dict from "../i18n/learn.js";
 
-const CADENCE = [
-  { id: "all", label: "All" },
-  { id: "daily", label: "Every trading day" },
-  { id: "weekly", label: "Every week" },
-  { id: "monthly", label: "Every month" },
-  { id: "on_demand", label: "Only when asked" },
-];
-const DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+// Labels are i18n/learn.js "rt.cad.<id>"; weekdays "rt.dow.<0-6>" (0 is Sunday).
+const CADENCE = ["all", "daily", "weekly", "monthly", "on_demand"];
 // Who starts a routine: a GitHub Actions schedule in the repo, or a scheduled Claude Code session (a Claude routine).
+// Label "rt.runner.<runner>", hover text "rt.runner.<runner>.title".
 const RUNNER = {
-  github_actions: { label: "GitHub Action", cls: "text-ink-2", title: "Started by a schedule in a GitHub Actions workflow file" },
-  claude_routine: { label: "Claude routine", cls: "border-ai/40 text-ai", title: "Started by a scheduled Claude Code session on the household's Claude subscription" },
+  github_actions: { cls: "text-ink-2" },
+  claude_routine: { cls: "border-ai/40 text-ai" },
 };
-// One plain-English line for routines whose card needs more than the schedule says.
-const NOTE = {
-  close_run: "The brain runs by itself every market morning, then the brain workflow checks its picks and records them. If a check fails, nothing is recorded.",
-};
-// A plainer schedule label where the cron alone would mislead (a Tue–Sat UTC cron covers the Mon–Fri US market days).
-const WHEN = {
-  close_run: "Morning after each US trading day (Mon–Fri)",
-};
+// Routines whose card needs more than the schedule says: a plain line ("rt.note.<id>"), shown while it is active.
+const NOTE = new Set(["close_run"]);
+// A plainer schedule label where the cron alone would mislead (a Tue–Sat UTC cron covers the Mon–Fri US market days):
+// "rt.when.<id>".
+const WHEN = new Set(["close_run"]);
 
 /** "05:23, 08:23 and 11:23 UTC (08:23, 11:23 and 14:23 your time)": UTC from the cron, and the reader's own clock. */
-export function timesLabel(h, m, tz = undefined) {
+export function timesLabel(h, m, tz = undefined, lang = "en") {
+  const t = translate(dict, lang);
   const hours = h.split(",").map(Number);
-  const list = (xs) => (xs.length > 1 ? `${xs.slice(0, -1).join(", ")} and ${xs.at(-1)}` : xs[0]);
+  const list = (xs) => (lang !== "en" ? fmtList(xs, lang) : xs.length > 1 ? `${xs.slice(0, -1).join(", ")} and ${xs.at(-1)}` : xs[0]);
   const utc = list(hours.map((x) => `${pad2(x)}:${pad2(+m)}`));
   const now = new Date();
   const local = list(hours.map((x) => new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), x, +m)).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: tz })));
-  return local === utc ? `${utc} UTC` : `${utc} UTC (${local} your time)`;
+  return local === utc ? t("rt.utc", { times: utc }) : t("rt.utcLocal", { times: utc, local });
 }
 
-function when(r) {
-  if (!r.cron) return WHEN[r.id] ?? "when you ask";
+function when(r, lang) {
+  const t = translate(dict, lang);
+  if (!r.cron) return WHEN.has(r.id) ? t(`rt.when.${r.id}`) : t("rt.whenAsked");
   const [m, h, dom, , dow] = r.cron.split(" ");
-  const t = timesLabel(h, m);
-  if (WHEN[r.id]) return `${WHEN[r.id]} · ${t}`;
-  if (r.cadence === "daily") return `${days(dow)} · ${t}`;
-  if (r.cadence === "weekly") return `${DOW[+dow] ?? dow} · ${t}`;
-  return `day ${dom} of the month · ${t}`;
+  const tl = timesLabel(h, m, undefined, lang);
+  if (WHEN.has(r.id)) return `${t(`rt.when.${r.id}`)} · ${tl}`;
+  if (r.cadence === "daily") return `${days(dow, lang)} · ${tl}`;
+  if (r.cadence === "weekly") return `${t.has(`rt.dow.${+dow}`) ? t("rt.weekly", { day: t(`rt.dow.${+dow}`) }, { bidi: false }) : dow} · ${tl}`;
+  return `${t("rt.monthly", { dom })} · ${tl}`;
 }
 
 /** Scheduled Claude sessions run on the subscription ($0 per run); the other model routines carry a cost cap. */
-function llmDesc(llm) {
+function llmDesc(llm, lang) {
+  const t = translate(dict, lang);
   const capped = llm.filter((r) => r.runner !== "claude_routine");
   const sub = llm.length - capped.length;
-  const cap = capped.length ? `${sub ? "the others are" : "each is"} capped at up to $${Math.max(...capped.map((r) => r.max_cost_usd)).toFixed(2)} per run` : "";
-  return [sub ? `${sub === 1 ? "One runs" : `${sub} run`} on the Claude subscription, $0 per run` : "", cap].filter(Boolean).join("; ").replace(/^./, (c) => c.toUpperCase()) + ".";
+  const usd = capped.length ? fmtUsd(Math.max(...capped.map((r) => r.max_cost_usd)), lang) : null;
+  const cap = usd ? t(sub ? "rt.llm.capOthers" : "rt.llm.capEach", { usd }) : "";
+  return [sub ? t("rt.llm.sub", { count: sub }) : "", cap].filter(Boolean).join("; ").replace(/^./, (c) => c.toUpperCase()) + ".";
 }
 
-function days(dow) {
-  if (dow === "*") return "daily";
+function days(dow, lang) {
+  const t = translate(dict, lang);
+  const name = (d) => (t.has(`rt.dow.${d}`) ? t(`rt.dow.${d}`) : d);
+  if (dow === "*") return t("rt.everyDay");
   const [a, b] = dow.split("-").map(Number);
-  return b === undefined ? DOW[a] ?? dow : `${DOW[a] ?? a}–${DOW[b] ?? b}`;
+  return b === undefined ? name(a) : `${name(a)}–${name(b)}`;
 }
 
-/** Next fire time for the simple cron shapes we use: "m h * * d-d|d|*" and "m h D * *"; h may be a list ("5,11"). */
+/** Next fire time for the simple cron shapes in use: "m h * * d-d|d|*" and "m h D * *"; h may be a list ("5,11"). */
 function nextRun(cron, from = new Date()) {
   if (!cron) return null;
   const [m, h, dom, , dow] = cron.split(" ");
@@ -76,11 +77,18 @@ function nextRun(cron, from = new Date()) {
   return null;
 }
 
-function relTime(d) {
+function relTime(d, lang) {
   if (!d) return "";
+  const t = translate(dict, lang);
   const hrs = Math.round((d - new Date()) / 36e5);
-  return hrs < 24 ? `in ${hrs} h` : `in ${Math.round(hrs / 24)} d`;
+  return hrs < 24 ? t("rt.inHours", { count: hrs }) : t("rt.inDays", { count: Math.round(hrs / 24) });
 }
+
+const HE_UTC = new Intl.DateTimeFormat("he-IL", { weekday: "short", day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "UTC" });
+/** A fire time in UTC: "Tue, 20 Oct 2026 05:23 UTC" / its Hebrew form. */
+const utcStamp = (d, lang) => (lang === "he" ? `${HE_UTC.format(d)} UTC` : d.toUTCString().replace(":00 GMT", " UTC"));
+/** A status or outcome word, or the raw value when the dictionary has none. */
+const word = (t, prefix, v) => (t.has(`${prefix}.${v}`) ? t(`${prefix}.${v}`) : v);
 
 export default function Routines({ data }) {
   const { routines, opsLog, manifest } = data;
@@ -98,44 +106,47 @@ export default function Routines({ data }) {
   }, [runs]);
   const next = active.map((r) => ({ r, at: nextRun(r.cron) })).filter((x) => x.at).sort((a, b) => a.at - b.at)[0];
   const repo = `https://github.com/${manifest.repo}`;
+  const { lang, fmt, t: tr } = useLang();
+  const t = tr(dict);
 
   return (
     <Container className="pt-20">
       <SectionHead
-        eyebrow={`Routines · behind the scenes · v${routines.version}`}
-        title={<>Every timed job, <Accent>in the open.</Accent></>}
+        eyebrow={t("rt.eyebrow", { v: routines.version })}
+        title={<>{t("rt.title.a")} <Accent>{t("rt.title.b")}</Accent></>}
         lede={<>
-          <span className="block text-ink">In simple words: these are the jobs that run by themselves on a timer, like an alarm clock that also makes the coffee. This page shows each one, so nothing happens in secret.</span>
-          <span className="mt-3 block">For each job: what it does, when, who starts it, what it may spend and what it saves. Every run is logged below, failures too. A job that would change the rules or the watchlist never acts alone; it asks a person first with a proposed change (a pull request).</span>
+          <span className="block text-ink">{t("rt.lede1")}</span>
+          <span className="mt-3 block">{t("rt.lede2")}</span>
         </>}
         right={
           <div className="flex flex-wrap gap-2">
             <a className="btn px-5 py-3 text-[14px]" href={`${repo}/blob/main/config/routines.json`} target="_blank" rel="noreferrer">routines.json <ArrowRight className="size-4 -rotate-45" /></a>
-            <a className="btn px-5 py-3 text-[14px]" href={`${repo}/actions`} target="_blank" rel="noreferrer">Actions <ArrowRight className="size-4 -rotate-45" /></a>
+            <a className="btn px-5 py-3 text-[14px]" href={`${repo}/actions`} target="_blank" rel="noreferrer">{t("rt.actions")} <ArrowRight className="size-4 -rotate-45" /></a>
           </div>
         }
       />
       <Strip
         cells={[
-          { value: `${active.length}/${all.length}`, label: "switched on", desc: "The rest are planned and get switched on one building step at a time." },
-          { value: next ? relTime(next.at) : "—", label: next ? `next: ${next.r.name}` : "nothing scheduled", tone: "flat", desc: next ? `${next.at.toUTCString().replace(":00 GMT", " UTC")}` : "" },
-          { value: last ? last.status : "none yet", label: "last run", tone: !last ? "flat" : last.status === "success" ? "accent" : last.status === "partial" ? "people" : "down", desc: last ? `${fmtDate(last.finished_at.slice(0, 10))} · ${last.trigger}` : "The first timed run needs the price company's key (Tiingo) and main set as the default branch." },
-          { value: llm.length, label: "use the AI", tone: "ai", desc: llmDesc(llm) },
+          { value: <bdi dir="ltr">{active.length}/{all.length}</bdi>, label: t("rt.s.on"), desc: t("rt.s.onDesc") },
+          { value: next ? relTime(next.at, lang) : "—", label: next ? t("rt.s.next", { name: next.r.name }) : t("rt.s.nothing"), tone: "flat", desc: next ? utcStamp(next.at, lang) : "" },
+          { value: last ? word(t, "rt.out", last.status) : t("rt.s.noneYet"), label: t("rt.s.lastRun"), tone: !last ? "flat" : last.status === "success" ? "accent" : last.status === "partial" ? "people" : "down", desc: last ? `${fmt.date(last.finished_at.slice(0, 10))} · ${last.trigger}` : t("rt.s.firstRun") },
+          { value: llm.length, label: t("rt.s.ai"), tone: "ai", desc: llmDesc(llm, lang) },
         ]}
       />
 
       <Reveal className="no-scrollbar mt-10 flex gap-2 overflow-x-auto pb-1">
-        {CADENCE.map((c) => {
-          const n = c.id === "all" ? all.length : all.filter((r) => r.cadence === c.id).length;
+        {CADENCE.map((id) => {
+          const n = id === "all" ? all.length : all.filter((r) => r.cadence === id).length;
           return (
-            <button key={c.id} type="button" onClick={() => setCad(c.id)} aria-pressed={cad === c.id}
-              className={`flex shrink-0 items-center gap-2 rounded-full border px-5 py-2.5 text-[14px] font-medium transition ${cad === c.id ? "border-transparent bg-ink text-bg" : "border-line-2 text-ink-2 hover:text-ink"}`}>
-              {c.label} <span className={`num font-mono text-[12px] ${cad === c.id ? "text-bg/60" : "text-ink-3"}`}>{n}</span>
+            <button key={id} type="button" onClick={() => setCad(id)} aria-pressed={cad === id}
+              className={`flex shrink-0 items-center gap-2 rounded-full border px-5 py-2.5 text-[14px] font-medium transition ${cad === id ? "border-transparent bg-ink text-bg" : "border-line-2 text-ink-2 hover:text-ink"}`}>
+              {t(`rt.cad.${id}`)} <span className={`num font-mono text-[12px] ${cad === id ? "text-bg/60" : "text-ink-3"}`}>{n}</span>
             </button>
           );
         })}
       </Reveal>
 
+      <EnglishNote className="mt-6" />
       <div key={cad} className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         {list.map((r, i) => {
           const lr = lastByRoutine[r.id];
@@ -143,27 +154,27 @@ export default function Routines({ data }) {
           return (
             <article key={r.id} className={`card card-hover flex animate-rise flex-col p-7 ${r.status !== "active" ? "border-dashed" : ""} ${r.human_gate ? "border-people/50" : ""}`} style={{ animationDelay: `${i * 50}ms` }}>
               <div className="flex items-center justify-between gap-3">
-                <span className="meta num">{when(r)}</span>
-                <Chip kind={r.status === "active" ? "active" : "planned"} icon={false}>{r.status}</Chip>
+                <span className="meta num">{when(r, lang)}</span>
+                <Chip kind={r.status === "active" ? "active" : "planned"} icon={false}>{word(t, "rt.status", r.status)}</Chip>
               </div>
-              <h3 className="mt-5 text-[21px] font-semibold tracking-[-0.02em]">{r.name}</h3>
-              {NOTE[r.id] && r.status === "active"
-                ? <p className="mt-3 border-l-2 border-ai/50 pl-3 text-[14.5px] leading-relaxed text-ink">{NOTE[r.id]}</p>
-                : <p className="mt-3 text-[14.5px] leading-relaxed text-ink-2">{r.why}</p>}
+              <En as="h3" className="mt-5 text-[21px] font-semibold tracking-[-0.02em]">{r.name}</En>
+              {NOTE.has(r.id) && r.status === "active"
+                ? <p className="mt-3 border-s-2 border-ai/50 ps-3 text-[14.5px] leading-relaxed text-ink">{t(`rt.note.${r.id}`)}</p>
+                : <En as="p" className="mt-3 text-[14.5px] leading-relaxed text-ink-2">{r.why}</En>}
               <dl className="mt-5 grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1.5 border-t border-line pt-4 text-[13px]">
-                <dt className="meta">building step</dt><dd>{r.milestone}</dd>
-                <dt className="meta">reads</dt><dd className="truncate font-mono text-[12px]">{r.inputs.join(", ") || "its own outputs"}</dd>
-                <dt className="meta">saves</dt><dd className="truncate font-mono text-[12px]" title={r.outputs.join(", ")}>{r.outputs.join(", ")}</dd>
-                {at && (<><dt className="meta">next</dt><dd>{relTime(at)}</dd></>)}
-                <dt className="meta">last</dt>
-                <dd>{lr ? <a href={lr.url} target="_blank" rel="noreferrer" className={`hover:underline ${lr.outcome === "success" ? "text-accent" : "text-down"}`}>{lr.outcome} · {lr.at.slice(0, 10)}</a> : <span className="text-ink-3">never ran</span>}</dd>
+                <dt className="meta">{t("rt.dl.step")}</dt><dd><bdi>{r.milestone}</bdi></dd>
+                <dt className="meta">{t("rt.dl.reads")}</dt>{r.inputs.length ? <dd dir="ltr" className="truncate text-start font-mono text-[12px]">{r.inputs.join(", ")}</dd> : <dd>{t("rt.dl.ownOutputs")}</dd>}
+                <dt className="meta">{t("rt.dl.saves")}</dt><dd dir="ltr" className="truncate text-start font-mono text-[12px]" title={r.outputs.join(", ")}>{r.outputs.join(", ")}</dd>
+                {at && (<><dt className="meta">{t("rt.dl.next")}</dt><dd>{relTime(at, lang)}</dd></>)}
+                <dt className="meta">{t("rt.dl.last")}</dt>
+                <dd>{lr ? <a href={lr.url} target="_blank" rel="noreferrer" className={`hover:underline ${lr.outcome === "success" ? "text-accent" : "text-down"}`}>{word(t, "rt.out", lr.outcome)} · <bdi>{lr.at.slice(0, 10)}</bdi></a> : <span className="text-ink-3">{t("rt.dl.never")}</span>}</dd>
               </dl>
               <div className="mt-auto flex flex-wrap items-center gap-2 pt-5 [margin-top:max(1.25rem,auto)]">
-                {RUNNER[r.runner] && <span className={`pill py-1 text-[11px] ${RUNNER[r.runner].cls}`} title={RUNNER[r.runner].title}>{RUNNER[r.runner].label}</span>}
+                {RUNNER[r.runner] && <span className={`pill py-1 text-[11px] ${RUNNER[r.runner].cls}`} title={t(`rt.runner.${r.runner}.title`)}>{t(`rt.runner.${r.runner}`)}</span>}
                 {r.uses_llm
-                  ? <span className="pill border-ai/40 bg-ai/10 py-1 text-[11px] text-ai">{r.runner === "claude_routine" ? "✦ AI · Claude subscription, $0 per run" : `✦ AI · cap $${r.max_cost_usd.toFixed(2)}`}</span>
-                  : <span className="pill py-1 text-[11px] text-ink-2">plain code · $0</span>}
-                {r.human_gate && <span className="pill border-dashed border-people/60 py-1 text-[11px] text-people">you approve</span>}
+                  ? <span className="pill border-ai/40 bg-ai/10 py-1 text-[11px] text-ai">{r.runner === "claude_routine" ? t("rt.pill.sub") : t("rt.pill.cap", { usd: fmt.usd(r.max_cost_usd) })}</span>
+                  : <span className="pill py-1 text-[11px] text-ink-2">{t("rt.pill.code")}</span>}
+                {r.human_gate && <span className="pill border-dashed border-people/60 py-1 text-[11px] text-people">{t("rt.pill.gate")}</span>}
               </div>
             </article>
           );
@@ -172,30 +183,30 @@ export default function Routines({ data }) {
 
       <section className="pt-28">
         <SectionHead
-          eyebrow="Run history"
-          title={<>What actually <Accent>ran.</Accent></>}
-          lede="One row each time a job ran. The job writes its own row (into data/ops/routine_runs.json). Failed steps stay visible, and data from a failed run is never saved."
+          eyebrow={t("rt.hist.eyebrow")}
+          title={<>{t("rt.hist.title.a")} <Accent>{t("rt.hist.title.b")}</Accent></>}
+          lede={t("rt.hist.lede")}
           size="md"
-          right={<span className="meta">{runs.length} runs logged</span>}
+          right={<span className="meta">{t("rt.hist.logged", { n: runs.length })}</span>}
         />
         {!runs.length ? (
-          <Empty title="No runs yet">The daily job starts once the price company's key (Tiingo) is added and main is the default branch. Each run will show up here.</Empty>
+          <Empty title={t("rt.hist.empty.title")}>{t("rt.hist.empty.body")}</Empty>
         ) : (
           <Reveal className="card overflow-hidden">
             <div className="no-scrollbar overflow-x-auto">
               <table className="w-full min-w-[760px] text-[13.5px]">
                 <thead>
-                  <tr className="meta border-b border-line text-left">
-                    {["Finished", "Job", "Started by", "Result", "Steps", "Log"].map((h) => <th key={h} className="px-5 py-4 font-medium">{h}</th>)}
+                  <tr className="meta border-b border-line text-start">
+                    {["finished", "job", "by", "result", "steps", "log"].map((h) => <th key={h} className="px-5 py-4 text-start font-medium">{t(`rt.th.${h}`)}</th>)}
                   </tr>
                 </thead>
                 <tbody>
                   {runs.slice(0, 60).map((r) => (
                     <tr key={r.run_id} className="border-b border-line last:border-0 hover:bg-ink/[0.03]">
-                      <td className="px-5 py-3.5 font-mono">{r.finished_at.replace("T", " ").replace("Z", "")}</td>
-                      <td className="px-5 py-3.5">{r.workflow}</td>
-                      <td className="px-5 py-3.5 text-ink-2">{r.trigger}</td>
-                      <td className="px-5 py-3.5"><Chip kind={r.status === "success" ? "ok" : r.status === "partial" ? "planned" : r.status === "skipped" ? "retired" : "failed"} icon={false}>{r.status}</Chip></td>
+                      <td className="px-5 py-3.5 font-mono"><bdi dir="ltr">{r.finished_at.replace("T", " ").replace("Z", "")}</bdi></td>
+                      <td className="px-5 py-3.5"><bdi>{r.workflow}</bdi></td>
+                      <td className="px-5 py-3.5 text-ink-2"><bdi>{r.trigger}</bdi></td>
+                      <td className="px-5 py-3.5"><Chip kind={r.status === "success" ? "ok" : r.status === "partial" ? "planned" : r.status === "skipped" ? "retired" : "failed"} icon={false}>{word(t, "rt.out", r.status)}</Chip></td>
                       <td className="px-5 py-3.5">
                         <div className="flex flex-wrap gap-1.5">
                           {r.steps.filter((s) => s.outcome !== "skipped").map((s) => (
@@ -203,7 +214,7 @@ export default function Routines({ data }) {
                           ))}
                         </div>
                       </td>
-                      <td className="px-5 py-3.5"><a href={r.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-ink-2 hover:text-accent">#{r.run_id.slice(-6)} <ArrowRight className="size-3.5 -rotate-45" /></a></td>
+                      <td className="px-5 py-3.5"><a href={r.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-ink-2 hover:text-accent"><bdi>#{r.run_id.slice(-6)}</bdi> <ArrowRight className="size-3.5 -rotate-45" /></a></td>
                     </tr>
                   ))}
                 </tbody>

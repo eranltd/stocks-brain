@@ -1,11 +1,23 @@
 import { useId, useMemo, useRef, useState } from "react";
 import { useInView } from "../lib/motion.js";
-import { fmtDate, fmtNum, fmtPct, fmtShort, fmtUsd, fmtK } from "../lib/format.js";
+import { useLang } from "../lib/lang.jsx";
+import { isolate } from "../lib/i18n.js";
+import dict from "../i18n/stock.js";
+import shell from "../i18n/shell.js";
 import { Tip } from "./ui.jsx";
+
+/** A data code (bullish, hit, failed…) in words: the shell's chip words when it has them, else the code itself. */
+function useCode() {
+  const { lang, t: tr } = useLang();
+  const t = tr(shell);
+  return (code) => (lang !== "en" && t.has(`ui.chip.${code}`) ? t(`ui.chip.${code}`) : code);
+}
 
 /* ---------------------------------------------------------------- sparkline */
 
 export function Sparkline({ bars, tone = "accent", height = 48, delay = 0, indexed = false }) {
+  const { t: tr, fmt } = useLang();
+  const t = tr(dict);
   const [ref, inView] = useInView();
   const id = useId();
   const [hover, setHover] = useState(null);
@@ -27,7 +39,7 @@ export function Sparkline({ bars, tone = "accent", height = 48, delay = 0, index
   };
   const hp = hover != null ? pts[hover] : null;
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} dir="ltr" className="relative">
       <svg
         viewBox={`0 0 ${W} ${H}`}
         preserveAspectRatio="none"
@@ -35,7 +47,7 @@ export function Sparkline({ bars, tone = "accent", height = 48, delay = 0, index
         onPointerMove={onMove}
         onPointerLeave={() => setHover(null)}
         role="img"
-        aria-label={indexed ? `${bars.length}-day performance indexed to 100, ending at ${fmtNum(bars.at(-1).close)}` : `${bars.length}-day closing prices, from ${fmtNum(bars[0].close)} to ${fmtNum(bars.at(-1).close)}`}
+        aria-label={indexed ? t("ch.spark.indexed", { n: bars.length, end: fmt.num(bars.at(-1).close) }) : t("ch.spark.closes", { n: bars.length, from: fmt.num(bars[0].close), to: fmt.num(bars.at(-1).close) })}
       >
         <defs>
           <linearGradient id={id} x1="0" x2="0" y1="0" y2="1">
@@ -61,7 +73,7 @@ export function Sparkline({ bars, tone = "accent", height = 48, delay = 0, index
       {hp && (
         <>
           <span className="pointer-events-none absolute size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-surface" style={{ left: `${(hp[0] / W) * 100}%`, top: `${(hp[1] / H) * 100}%`, background: color }} />
-          <Tip tip={{ x: `${(hp[0] / W) * 100}%`, y: (hp[1] / H) * 48, content: <><div className="meta mb-1">{fmtShort(bars[hover].date)}</div>{indexed ? <><span className="text-ink-3">index </span><b className="num font-mono">{fmtNum(bars[hover].close, 1)}</b> <span className="num font-mono text-ink-3">{fmtPct(bars[hover].close - 100, 1)}</span></> : <b className="num font-mono">{fmtNum(bars[hover].close)}</b>}</> }} />
+          <Tip tip={{ x: `${(hp[0] / W) * 100}%`, y: (hp[1] / H) * 48, content: <div dir="auto"><div className="meta mb-1">{fmt.short(bars[hover].date)}</div>{indexed ? <><span className="text-ink-3">{t("ch.spark.index")} </span><b className="num font-mono">{fmt.num(bars[hover].close, 1)}</b> <span className="num font-mono text-ink-3">{fmt.pct(bars[hover].close - 100, 1)}</span></> : <b className="num font-mono">{fmt.num(bars[hover].close)}</b>}</div> }} />
         </>
       )}
     </div>
@@ -83,6 +95,8 @@ export function BarChart({ items, value, label, tooltip, refs = [], height = 380
   const [ref, inView] = useInView();
   const [tip, setTip] = useState(null);
   const box = useWidth();
+  // A Hebrew label that starts with a digit ("16 באוק׳") reads backwards inside this left-to-right box unless isolated.
+  const { he } = useLang();
   const W = 1000, H = height, padL = 64, padR = 12, padT = 24, padB = 40;
   const vals = items.map(value);
   const max = Math.max(0, ...vals, ...refs.map((r) => r.value));
@@ -94,7 +108,7 @@ export function BarChart({ items, value, label, tooltip, refs = [], height = 380
   const labelEvery = Math.ceil(items.length / 6);
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} dir="ltr" className="relative">
       <div ref={box} className="relative">
         <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full overflow-visible" role="img" aria-label={ariaLabel}>
           {ticks.map((t) => (
@@ -128,7 +142,7 @@ export function BarChart({ items, value, label, tooltip, refs = [], height = 380
                   onPointerLeave={() => setTip(null)}
                 />
                 {i % labelEvery === 0 && (
-                  <text x={padL + i * bw + bw / 2} y={H - 10} textAnchor="middle" className="fill-ink-3 font-mono text-[15px]">{label(it)}</text>
+                  <text x={padL + i * bw + bw / 2} y={H - 10} textAnchor="middle" className="fill-ink-3 font-mono text-[15px]">{he ? isolate(label(it)) : label(it)}</text>
                 )}
               </g>
             );
@@ -160,48 +174,54 @@ function niceTicks(min, max, n) {
 /* ------------------------------------------------------------ presets */
 
 export function ExcessChart({ outcomes }) {
+  const { t: tr, fmt } = useLang();
+  const t = tr(dict);
+  const code = useCode();
   const items = [...outcomes].sort((a, b) => a.run_date.localeCompare(b.run_date) || a.ticker.localeCompare(b.ticker));
   return (
     <BarChart
       items={items}
       value={(o) => o.excess_pct}
-      label={(o) => fmtShort(o.run_date)}
+      label={(o) => fmt.short(o.run_date)}
       format={(v) => `${v > 0 ? "+" : ""}${v}%`}
       colorOf={(o) => (o.verdict === "hit" ? "var(--accent)" : o.verdict === "miss" ? "var(--down)" : "var(--flat)")}
-      ariaLabel="How far each marked guess beat or trailed the whole market, oldest first"
+      ariaLabel={t("ch.excess.aria")}
       tooltip={(o) => (
-        <>
-          <div className="mb-1 flex items-center justify-between gap-3"><b className="font-mono">{o.ticker}</b><span className="meta">{o.stance}</span></div>
-          <div className="text-ink-3">{fmtShort(o.run_date)} → {fmtShort(o.scored_date)}</div>
-          <div className="mt-1 num font-mono">difference <b>{fmtPct(o.excess_pct)}</b></div>
-          <div className="num font-mono text-ink-3">stock {fmtPct(o.return_pct)} · market {fmtPct(o.benchmark_return_pct)}</div>
-          <div className="mt-1 meta">{o.verdict}</div>
-        </>
+        <div dir="auto">
+          <div className="mb-1 flex items-center justify-between gap-3"><b className="font-mono">{o.ticker}</b><span className="meta">{code(o.stance)}</span></div>
+          <div className="text-ink-3">{t("ch.excess.dates", { from: fmt.short(o.run_date), to: fmt.short(o.scored_date) })}</div>
+          <div className="mt-1 num font-mono">{t.rich("ch.excess.diff", { pct: <b>{fmt.pct(o.excess_pct)}</b> })}</div>
+          <div className="num font-mono text-ink-3">{t("ch.excess.both", { stock: fmt.pct(o.return_pct), market: fmt.pct(o.benchmark_return_pct) })}</div>
+          <div className="mt-1 meta">{code(o.verdict)}</div>
+        </div>
       )}
     />
   );
 }
 
 export function CostChart({ runs, cost }) {
+  const { t: tr, fmt } = useLang();
+  const t = tr(dict);
+  const code = useCode();
   return (
     <BarChart
       items={runs}
       value={(r) => r.cost.usd}
-      label={(r) => fmtShort(r.date)}
+      label={(r) => fmt.short(r.date)}
       format={(v) => `$${v}`}
       refs={[
-        { value: cost.target_usd, label: `target ${fmtUsd(cost.target_usd)}`, color: "var(--accent)" },
-        { value: cost.warn_usd, label: `warn ${fmtUsd(cost.warn_usd)}`, color: "var(--people)" },
+        { value: cost.target_usd, label: t("ch.cost.target", { usd: fmt.usd(cost.target_usd) }), color: "var(--accent)" },
+        { value: cost.warn_usd, label: t("ch.cost.warn", { usd: fmt.usd(cost.warn_usd) }), color: "var(--people)" },
       ]}
       colorOf={(r) => (r.status === "failed" ? "var(--down)" : r.cost.usd > cost.warn_usd ? "var(--people)" : "var(--ink-3)")}
-      ariaLabel="What each run cost in US dollars, with the target line and the warning line"
+      ariaLabel={t("ch.cost.aria")}
       tooltip={(r) => (
-        <>
-          <div className="mb-1 flex items-center justify-between gap-3"><b className="font-mono">{fmtDate(r.date)}</b></div>
-          <div className="num font-mono">{fmtUsd(r.cost.usd)} · {fmtNum(r.duration_minutes, 1)} min</div>
-          <div className="num font-mono text-ink-3">pack {fmtK(r.pack.tokens)} / {fmtK(r.pack.cap_tokens)} tokens</div>
-          <div className="mt-1 meta">{r.status}{r.cost.usd > cost.warn_usd ? " · over the warning line" : ""}</div>
-        </>
+        <div dir="auto">
+          <div className="mb-1 flex items-center justify-between gap-3"><b className="font-mono">{fmt.date(r.date)}</b></div>
+          <div className="num font-mono">{t("ch.cost.usdMin", { usd: fmt.usd(r.cost.usd), min: fmt.num(r.duration_minutes, 1) })}</div>
+          <div className="num font-mono text-ink-3">{t("ch.cost.pack", { tokens: fmt.k(r.pack.tokens), cap: fmt.k(r.pack.cap_tokens) })}</div>
+          <div className="mt-1 meta">{code(r.status)}{r.cost.usd > cost.warn_usd ? ` · ${t("ch.cost.over")}` : ""}</div>
+        </div>
       )}
     />
   );

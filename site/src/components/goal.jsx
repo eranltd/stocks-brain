@@ -1,8 +1,23 @@
 import { fmtDate, fmtNum, fmtPct } from "../lib/format.js";
+import { ltr, translate } from "../lib/i18n.js";
+import { Bdi, useLang } from "../lib/lang.jsx";
+import { shortSector } from "../lib/marketday.js";
 import { goalPath } from "../lib/stats.js";
 import { LinesChart } from "./lines.jsx";
 import { Accent, ArrowRight, Empty, Reveal, SectionHead } from "./ui.jsx";
+import dict from "../i18n/home.js";
 
+// Every text here is in i18n/home.js ("goal.*"), in English and Hebrew.
+/** A whole percent ("62%"), kept left to right inside a Hebrew line. */
+const whole = (v, lang = "en") => { const s = `${fmtNum(v, 0)}%`; return lang === "he" ? ltr(s) : s; };
+/** "+15%": the goal, kept left to right inside a Hebrew line. */
+const goalText = (goal, lang = "en") => (lang === "he" ? ltr(`+${goal}%`) : `+${goal}%`);
+/** A short left-to-right token ("×1.9", "3/4") inside a Hebrew line. */
+const ltrIf = (s, lang = "en") => (lang === "he" ? ltr(s) : s);
+/** A sector in the page's language: English keeps the data's own name. */
+const sectorName = (s, lang = "en") => (lang === "en" ? s : shortSector(s, lang));
+
+/** Why a name is in or out of the pretend portfolio. `label` is the English; statusLabel(key, lang) gives either language. */
 export const STATUS = {
   kept: { label: "Held", tone: "text-accent" },
   added: { label: "New this month", tone: "text-accent" },
@@ -14,6 +29,9 @@ export const STATUS = {
   no_history: { label: "Too new to judge", tone: "text-ink-3" },
 };
 
+/** A STATUS label in a language ("Held" / "בתיק"). */
+export const statusLabel = (key, lang = "en") => (lang === "en" || !STATUS[key] ? STATUS[key]?.label ?? key : translate(dict, lang)(`goal.status.${key}`));
+
 /** First weekday of the month after `iso` (holidays ignored): when the rule next rebalances. */
 export function nextRebalance(iso) {
   const d = new Date(iso + "T00:00:00Z");
@@ -22,38 +40,47 @@ export function nextRebalance(iso) {
   return n.toISOString().slice(0, 10);
 }
 
-export const LABELS = (data) => ({
-  rule: "The rule's pretend picks (4–5)",
-  equal_weight: `All ${data.watchlist.symbols.length}, equal amounts`,
-  core: `${data.longrun?.core ?? data.core?.symbol ?? "Core"} (whole market)`,
-  bench: `${data.bench.symbol}`,
-});
+/** The four lines' names, in `lang` (default English). */
+export const LABELS = (data, lang = "en") => {
+  const t = translate(dict, lang);
+  return {
+    rule: t("goal.label.rule", { range: "4–5" }),
+    equal_weight: t("goal.label.equal", { n: data.watchlist.symbols.length }),
+    core: t("goal.label.core", { core: data.longrun?.core ?? data.core?.symbol ?? "Core" }),
+    bench: `${data.bench.symbol}`,
+  };
+};
 export const COLORS = { rule: "var(--accent)", equal_weight: "var(--ai)", core: "var(--ink)", bench: "var(--ink-3)", goal: "var(--people)" };
 
+/** `what` is "goal" or "portfolio". */
 function Pending({ what }) {
-  return <Empty title="Shows up after the next daily run">{what} is worked out from all past prices by the daily job.</Empty>;
+  const t = useLang().t(dict);
+  return <Empty title={t("goal.pending.title")}>{t(`goal.pending.${what}`)}</Empty>;
 }
 
 /* ------------------------------------------------------------------ goal */
 
 export function GoalSection({ data }) {
+  const { lang, t: tr, fmt } = useLang();
+  const t = tr(dict);
   const lr = data.longrun;
   const goal = data.settings.goal.annual_return_pct;
+  const g = goalText(goal, lang);
+  const title = <>{t("goal.titleA", { goal: g }, { bidi: false })} <Accent>{t("goal.titleB")}</Accent></>;
   if (!lr) {
     return (
       <section id="goal" className="scroll-mt-28 pt-24">
-        <SectionHead eyebrow="The goal" title={<>+{goal}% a year. <Accent>Is it realistic?</Accent></>}
-          lede="In simple words: very hard. A fund that holds the whole market has made close to 10% a year on average over the long run." />
-        <Pending what="The goal check" />
+        <SectionHead eyebrow={t("goal.eyebrow")} title={title} lede={t("goal.ledeShort")} />
+        <Pending what="goal" />
       </section>
     );
   }
-  const L = LABELS(data);
+  const L = LABELS(data, lang);
   const s = lr.stats;
   const keys = ["rule", "equal_weight", "core", "bench"];
   const w = lr.weekly;
   const series = [
-    { key: "goal", label: `Goal +${goal}%/yr`, values: goalPath(w.dates.length, goal), color: COLORS.goal, dash: true, width: 1.5 },
+    { key: "goal", label: t("goal.series", { goal: g }, { bidi: false }), values: goalPath(w.dates.length, goal), color: COLORS.goal, dash: true, width: 1.5 },
     { key: "core", label: L.core, values: w.core, color: COLORS.core, width: 1.6 },
     { key: "bench", label: L.bench, values: w.bench, color: COLORS.bench, dash: true, width: 1.6 },
     { key: "equal_weight", label: L.equal_weight, values: w.equal_weight, color: COLORS.equal_weight, width: 1.8 },
@@ -65,9 +92,14 @@ export function GoalSection({ data }) {
   return (
     <section id="goal" className="scroll-mt-28 pt-24">
       <SectionHead
-        eyebrow={`The goal · ${lr.sample ? "sample prices" : `${fmtNum(lr.years, 1)} years of real prices`}`}
-        title={<>+{goal}% a year. <Accent>Is it realistic?</Accent></>}
-        lede={<>In simple words: very hard. A fund that holds the whole market has made close to <span className="text-ink">10% a year</span> on average over the long run, so +{goal}% means beating it by a lot, year after year. +{goal}% would double the money every <span className="text-ink">{lr.goal.years_to_double} years</span> (×{lr.goal.multiple_5y} in 5 years, ×{lr.goal.multiple_10y} in 10). Below: what really happened from {fmtDate(lr.from)} to {fmtDate(lr.to)}, worked out by code.</>}
+        eyebrow={lr.sample ? t("goal.eyebrowSample") : t("goal.eyebrowYears", { years: fmt.num(lr.years, 1) }, { bidi: false })}
+        title={title}
+        lede={t.rich("goal.lede", {
+          ten: <span className="text-ink">{t("goal.tenPct")}</span>, goal: g,
+          years: <span className="text-ink">{t("goal.nYears", { n: lr.goal.years_to_double })}</span>,
+          m5: ltrIf(`×${lr.goal.multiple_5y}`, lang), m10: ltrIf(`×${lr.goal.multiple_10y}`, lang),
+          from: fmtDate(lr.from, lang), to: fmtDate(lr.to, lang),
+        })}
       />
       <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         {keys.map((k, i) => {
@@ -75,43 +107,43 @@ export function GoalSection({ data }) {
           const hit = x.cagr_pct >= goal;
           return (
             <Reveal key={k} delay={i * 70} className={`card p-4 sm:p-6 ${k === "rule" ? "border-accent/40" : ""}`}>
-              <div className="meta flex items-center gap-2 truncate"><i className="inline-block h-[3px] w-4 shrink-0 rounded" style={{ background: COLORS[k] }} />{L[k]}</div>
-              <div className={`display num mt-3 text-[clamp(30px,4vw,52px)] leading-none ${hit ? "text-accent" : ""}`}>{fmtPct(x.cagr_pct, 1)}</div>
-              <div className="meta mt-1 normal-case tracking-[0.04em]">a year, on average</div>
+              <div className="meta flex items-center gap-2 truncate"><i className="inline-block h-[3px] w-4 shrink-0 rounded" style={{ background: COLORS[k] }} /><bdi>{L[k]}</bdi></div>
+              <div className={`display num mt-3 text-[clamp(30px,4vw,52px)] leading-none ${hit ? "text-accent" : ""}`}>{fmt.pct(x.cagr_pct, 1)}</div>
+              <div className="meta mt-1 normal-case tracking-[0.04em]">{t("goal.perYearAvg")}</div>
               <dl className="mt-4 grid gap-1.5 text-[13px] sm:mt-5 sm:text-[13.5px]">
-                <Row k={`Years with +${goal}% or more`} v={`${fmtNum(x.hit_goal_12m_pct, 0)}%`} tone={x.hit_goal_12m_pct >= 50 ? "text-accent" : ""} />
-                <Row k="Years that lost money" v={`${fmtNum(x.loss_12m_pct, 0)}%`} />
-                <Row k="Worst year" v={fmtPct(x.worst_12m_pct, 0)} tone={x.worst_12m_pct < 0 ? "text-down" : ""} />
-                <Row k="Biggest drop" v={fmtPct(x.max_dd_pct, 0)} tone="text-down" />
+                <Row k={t("goal.row.hit", { goal: g }, { bidi: false })} v={whole(x.hit_goal_12m_pct, lang)} tone={x.hit_goal_12m_pct >= 50 ? "text-accent" : ""} />
+                <Row k={t("goal.row.loss")} v={whole(x.loss_12m_pct, lang)} />
+                <Row k={t("goal.row.worst")} v={fmt.pct(x.worst_12m_pct, 0)} tone={x.worst_12m_pct < 0 ? "text-down" : ""} />
+                <Row k={t("goal.row.dd")} v={fmt.pct(x.max_dd_pct, 0)} tone="text-down" />
               </dl>
             </Reveal>
           );
         })}
       </div>
-      <p className="meta mt-3 normal-case tracking-[0.04em]">A "year" here is any 12 months in a row, whatever week it starts ({s.rule.windows_12m} of them in all), not just January to December. "Biggest drop" is the largest fall from a high point before it recovered.</p>
+      <p className="meta mt-3 normal-case tracking-[0.04em]">{t("goal.yearNote", { n: s.rule.windows_12m })}</p>
       <Reveal className="card mt-5 p-5 sm:p-8">
-        <LinesChart dates={w.dates} series={series} ariaLabel={`Growth of 100 since ${lr.from}: the rule's pretend picks, all companies in equal amounts, the whole-market fund and the yardstick, against the goal path`} />
-        <p className="meta mt-3 normal-case tracking-[0.04em]">Each line starts at 100 and shows what it grew to. A steady +{goal}% a year is the straight dashed line. The chart is drawn so the same percentage move looks the same size, early or late. Trading costs ({lr.rule.cost_bps} hundredths of a percent) are taken off the rule.</p>
+        <LinesChart dates={w.dates} series={series} ariaLabel={t("goal.chartLabel", { from: lr.from })} />
+        <p className="meta mt-3 normal-case tracking-[0.04em]">{t("goal.chartNote", { goal: g, bps: lr.rule.cost_bps }, { bidi: false })}</p>
       </Reveal>
       <div className="mt-5 grid gap-5 lg:grid-cols-2">
         <Reveal className="card p-6 sm:p-8">
-          <div className="eyebrow mb-3">What this means</div>
+          <div className="eyebrow mb-3">{t("goal.means")}</div>
           <ul className="grid gap-3 text-[15.5px] leading-relaxed">
-            <li>The whole-market fund ({lr.core}) made <span className="text-ink">{fmtPct(s.core.cagr_pct, 1)} a year</span> and reached +{goal}% in {fmtNum(coreHit, 0)}% of 12-month stretches. {s.core.cagr_pct < goal ? "The goal is more than the whole market made." : "These were unusually strong years: over the long run the whole market averages closer to 10% a year."}</li>
-            <li>The rule's picks {ruleVsAll >= 0 ? "did better than" : "did worse than"} simply holding all {data.watchlist.symbols.length} companies by <span className="text-ink">{fmtNum(Math.abs(ruleVsAll), 1)} points a year</span>, with a biggest drop of {fmtPct(s.rule.max_dd_pct, 0)} vs {fmtPct(s.equal_weight.max_dd_pct, 0)}. That gap is what the picking itself added or cost.</li>
+            <li>{t.rich("goal.coreMade", { core: lr.core, cagr: <span className="text-ink">{t("goal.perYear", { pct: fmt.pct(s.core.cagr_pct, 1) }, { bidi: false })}</span>, goal: g, hit: whole(coreHit, lang) })} {t(s.core.cagr_pct < goal ? "goal.coreBelow" : "goal.coreStrong")}</li>
+            <li>{t.rich(ruleVsAll >= 0 ? "goal.better" : "goal.worse", { n: data.watchlist.symbols.length, gap: <span className="text-ink">{t("goal.ptsYear", { pts: fmt.num(Math.abs(ruleVsAll), 1) }, { bidi: false })}</span>, a: fmt.pct(s.rule.max_dd_pct, 0), b: fmt.pct(s.equal_weight.max_dd_pct, 0) })}</li>
             {winners.length > 0 ? (
-              <li>Every line that beat +{goal}% here also fell {fmtPct(Math.max(...winners.map((k) => s[k].max_dd_pct)), 0)} or more from a high point along the way. Like a roller coaster: the higher the ride, the deeper the dips.</li>
+              <li>{t("goal.winners", { goal: g, dd: fmt.pct(Math.max(...winners.map((k) => s[k].max_dd_pct)), 0) })}</li>
             ) : (
-              <li>Nothing here reached +{goal}% a year over the whole time, and the biggest drops ran from {fmtPct(Math.max(...keys.map((k) => s[k].max_dd_pct)), 0)} to {fmtPct(Math.min(...keys.map((k) => s[k].max_dd_pct)), 0)}.</li>
+              <li>{t("goal.noWinners", { goal: g, a: fmt.pct(Math.max(...keys.map((k) => s[k].max_dd_pct)), 0), b: fmt.pct(Math.min(...keys.map((k) => s[k].max_dd_pct)), 0) })}</li>
             )}
           </ul>
         </Reveal>
         <Reveal delay={80} className="card border-people/40 p-6 sm:p-8">
-          <div className="eyebrow mb-3 text-people">Read this before trusting the numbers</div>
+          <div className="eyebrow mb-3 text-people">{t("goal.caveats")}</div>
           <ul className="grid gap-3 text-[15px] leading-relaxed text-ink-2">
-            <li><span className="text-ink">Picked with hindsight.</span> The list of companies was chosen today, already knowing they did well. It is like betting on a race after seeing who won: any test on it looks better than real life. Compare the lines with each other, not with the goal.</li>
-            <li><span className="text-ink">Only one stretch of time.</span> {fmtNum(lr.years, 1)} years, mostly great years for big US tech companies. Another ten years can look very different.</li>
-            <li><span className="text-ink">Pretend money only.</span> The rule's picks are an experiment with pretend money, not where the household's money goes. Only the pretend record kept from now on (below) counts as real evidence.</li>
+            <li><span className="text-ink">{t("goal.hindsight.b")}</span> {t("goal.hindsight")}</li>
+            <li><span className="text-ink">{t("goal.oneStretch.b")}</span> {t("goal.oneStretch", { years: fmt.num(lr.years, 1) })}</li>
+            <li><span className="text-ink">{t("goal.pretendOnly.b")}</span> {t("goal.pretendOnly")}</li>
           </ul>
         </Reveal>
       </div>
@@ -123,7 +155,7 @@ function Row({ k, v, tone = "" }) {
   return (
     <div className="flex items-baseline justify-between gap-3 border-t border-line pt-1.5">
       <dt className="text-ink-3">{k}</dt>
-      <dd className={`num text-right font-mono ${tone}`}>{v}</dd>
+      <dd className={`num text-end font-mono ${tone}`}>{v}</dd>
     </div>
   );
 }
@@ -131,20 +163,22 @@ function Row({ k, v, tone = "" }) {
 /* ------------------------------------------------------------- portfolio */
 
 export function PortfolioNow({ data, go }) {
+  const { lang, t: tr, fmt } = useLang();
+  const t = tr(dict);
   const lr = data.longrun;
   const slots = data.settings.portfolio.slots;
   if (!lr) {
     return (
       <section id="portfolio" className="scroll-mt-28 pt-24">
-        <SectionHead eyebrow="The pretend portfolio" title={<>{slots} seats. <Accent>Pretend money.</Accent></>} />
-        <Pending what="The pretend portfolio" />
+        <SectionHead eyebrow={t("goal.pf.eyebrowEmpty")} title={<>{t("goal.pf.seats", { n: slots })} <Accent>{t("goal.pf.pretend")}</Accent></>} />
+        <Pending what="portfolio" />
       </section>
     );
   }
   const now = lr.now;
   const paper = data.paper && !data.paper.sample ? data.paper : null;
   const last = paper?.track.at(-1);
-  // Show what the forward paper record holds (what the household follows). The history test's own path can differ:
+  // Show what the forward paper record holds (what the plan follows). The history test's own path can differ:
   // it keeps names it already held, while the record started fresh and needs the entry checks.
   const rec = paper?.rebalances.at(-1) ?? null;
   const holdings = rec ? rec.holdings : now.holdings;
@@ -162,76 +196,82 @@ export function PortfolioNow({ data, go }) {
   return (
     <section id="portfolio" className="scroll-mt-28 pt-24">
       <SectionHead
-        eyebrow={`Pretend portfolio · rule ${lr.rule.version}${rec ? " · pretend record" : ""} · since ${fmtDate(rec ? rec.date : now.last_rebalance)} · next look ${fmtDate(nextRebalance(lr.as_of))}`}
-        title={<>{holdings.length ? `${holdings.length} companies` : "No companies"}{holdings.length < slots ? <>, <Accent>{fmtNum(corePct, 0)}% whole market.</Accent></> : <Accent>, every seat taken.</Accent>}</>}
-        lede={<>In simple words: this is an experiment with pretend money, to learn whether picking a few stocks beats just owning the whole market. It is not where the household's money goes. The rule works like a table with {slots} seats: at most {lr.rule.max_per_sector} from the same industry. A new company needs to pass {lr.rule.entry_min_checks} of 4 checks and must not have risen too fast; a company already seated stays while it passes {lr.rule.keep_min_checks}. Empty seats sit in the whole-market fund. It changes seats once a month.</>}
-        right={<button type="button" onClick={() => go("portfolio")} className="btn">Try your own mix <ArrowRight /></button>}
+        eyebrow={<>{t("goal.pf.eyebrow", { v: lr.rule.version })}{rec ? t("goal.pf.record") : ""}{t("goal.pf.since", { date: fmtDate(rec ? rec.date : now.last_rebalance, lang) }, { bidi: false })}{t("goal.pf.nextLook", { date: fmtDate(nextRebalance(lr.as_of), lang) }, { bidi: false })}</>}
+        title={<>{t("goal.pf.companies", { count: holdings.length })}{holdings.length < slots ? <>, <Accent>{t("goal.pf.core", { pct: whole(corePct, lang) }, { bidi: false })}</Accent></> : <Accent>{t("goal.pf.full")}</Accent>}</>}
+        lede={t("goal.pf.lede", { slots, max: lr.rule.max_per_sector, entry: lr.rule.entry_min_checks, keep: lr.rule.keep_min_checks })}
+        right={<button type="button" onClick={() => go("portfolio")} className="btn">{t("goal.pf.mix")} <ArrowRight /></button>}
       />
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         {cells.map(({ s }, i) => s ? (
-          <Reveal key={s} delay={i * 60} as="button" type="button" onClick={() => go(`stock/${s}`)} className="card card-hover p-5 text-left">
-            <div className="meta">Seat {i + 1} · {fmtNum(100 / slots, 0)}%</div>
-            <div className="mt-3 font-mono text-[26px] font-medium text-accent">{s}</div>
-            <div className="mt-1 truncate text-[13.5px] text-ink-2">{data.names[s]}</div>
-            <div className="meta mt-3 truncate normal-case tracking-[0.04em]">{data.sectors[s]}</div>
+          <Reveal key={s} delay={i * 60} as="button" type="button" onClick={() => go(`stock/${s}`)} className="card card-hover p-5 text-start">
+            <div className="meta">{t("goal.pf.seat", { i: i + 1, pct: whole(100 / slots, lang) }, { bidi: false })}</div>
+            <bdi className="mt-3 block font-mono text-[26px] font-medium text-accent">{s}</bdi>
+            <div dir="auto" className="mt-1 truncate text-[13.5px] text-ink-2">{data.names[s]}</div>
+            <div className="meta mt-3 truncate normal-case tracking-[0.04em]">{data.sectors[s] ? sectorName(data.sectors[s], lang) : ""}</div>
             <div className="mt-3 flex items-center justify-between text-[12.5px]">
-              <span className="num font-mono">passed {st[s]?.passed ?? "–"}/4 checks</span>
-              <span className={`num font-mono ${(st[s]?.vs_bench_long_pct ?? 0) >= 0 ? "text-accent" : "text-down"}`}>{st[s]?.vs_bench_long_pct != null ? fmtPct(st[s].vs_bench_long_pct, 0) : ""}</span>
+              <span className="num font-mono">{t("goal.pf.passed", { frac: ltrIf(`${st[s]?.passed ?? "–"}/4`, lang) }, { bidi: false })}</span>
+              <span className={`num font-mono ${(st[s]?.vs_bench_long_pct ?? 0) >= 0 ? "text-accent" : "text-down"}`}>{st[s]?.vs_bench_long_pct != null ? fmt.pct(st[s].vs_bench_long_pct, 0) : ""}</span>
             </div>
           </Reveal>
         ) : (
           <Reveal key={`core-${i}`} delay={i * 60} className="card border-dashed p-5">
-            <div className="meta">Seat {i + 1} · {fmtNum(100 / slots, 0)}%</div>
-            <div className="mt-3 font-mono text-[26px] font-medium text-ink-2">{lr.core}</div>
-            <div className="mt-1 text-[13.5px] text-ink-3">Whole-market fund until a company passes</div>
+            <div className="meta">{t("goal.pf.seat", { i: i + 1, pct: whole(100 / slots, lang) }, { bidi: false })}</div>
+            <bdi className="mt-3 block font-mono text-[26px] font-medium text-ink-2">{lr.core}</bdi>
+            <div className="mt-1 text-[13.5px] text-ink-3">{t("goal.pf.coreSeat")}</div>
           </Reveal>
         ))}
       </div>
       <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <Reveal className="card p-6 sm:p-8">
-          <div className="eyebrow mb-4">How bumpy this mix is · last 12 months</div>
+          <div className="eyebrow mb-4">{t("goal.pf.bumpy")}</div>
           {div ? <div className="grid grid-cols-2 gap-5">
-            <Big v={`${fmtNum(div.vol_1y_pct, 0)}%`} l="how much it typically swings in a year" />
-            <Big v={fmtPct(div.loss_95_20d_pct, 0)} l="a bad month (happens about 1 in 20)" tone="text-down" />
-            <Big v={div.avg_pair_corr != null ? fmtNum(div.avg_pair_corr, 2) : "–"} l="how much they move together (0 to 1)" />
-            <Big v={`${div.sectors}`} l={`industr${div.sectors === 1 ? "y" : "ies"} among ${div.names} compan${div.names === 1 ? "y" : "ies"}`} />
-          </div> : <p className="text-[15px] text-ink-2">Worked out by the next daily run.</p>}
-          <p className="mt-5 text-[14px] leading-relaxed text-ink-3">Near 1 means the companies rise and fall together, like eggs in one basket. Below 0.5 means they really are spread out, so one bad day hurts less.</p>
+            <Big v={whole(div.vol_1y_pct, lang)} l={t("goal.pf.swing")} />
+            <Big v={fmt.pct(div.loss_95_20d_pct, 0)} l={t("goal.pf.badMonth")} tone="text-down" />
+            <Big v={div.avg_pair_corr != null ? fmt.num(div.avg_pair_corr, 2) : "–"} l={t("goal.pf.together")} />
+            <Big v={`${div.sectors}`} l={t("goal.pf.ind", { count: div.sectors, cos: t("goal.pf.cos", { count: div.names }) }, { bidi: false })} />
+          </div> : <p className="text-[15px] text-ink-2">{t("goal.pf.later")}</p>}
+          <p className="mt-5 text-[14px] leading-relaxed text-ink-3">{t("goal.pf.corrNote")}</p>
         </Reveal>
         <Reveal delay={80} className="card p-6 sm:p-8">
-          <div className="eyebrow mb-4">Why the other companies are not in</div>
+          <div className="eyebrow mb-4">{t("goal.pf.whyNot")}</div>
           <ul className="grid gap-4">
             {Object.entries(out.reduce((g, x) => ((g[x.status] ??= []).push(x), g), {})).map(([k, xs]) => (
               <li key={k}>
-                <div className={`text-[14px] font-medium ${STATUS[k].tone}`}>{STATUS[k].label} <span className="text-ink-3">· {xs.length}</span></div>
+                <div className={`text-[14px] font-medium ${STATUS[k].tone}`}>{statusLabel(k, lang)} <span className="text-ink-3">· {xs.length}</span></div>
                 <div className="mt-2 flex flex-wrap gap-1.5">
                   {xs.map((x) => (
-                    <button key={x.symbol} type="button" onClick={() => go(`stock/${x.symbol}`)} title={x.passed != null ? `${x.passed} of 4 checks` : ""}
+                    <button key={x.symbol} type="button" onClick={() => go(`stock/${x.symbol}`)} title={x.passed != null ? t("goal.pf.ofChecks", { n: x.passed }, { bidi: false }) : ""}
                       className="min-h-[34px] rounded-full border border-line-2 px-3 font-mono text-[12.5px] hover:border-ink-3 hover:text-ink">
-                      {x.symbol}{x.passed != null && <span className="ml-1.5 text-ink-3">{x.passed}/4</span>}
+                      <bdi>{x.symbol}</bdi>{x.passed != null && <bdi className="ms-1.5 text-ink-3">{x.passed}/4</bdi>}
                     </button>
                   ))}
                 </div>
               </li>
             ))}
-            {!out.length && <li className="text-ink-3">Every company we follow is in.</li>}
+            {!out.length && <li className="text-ink-3">{t("goal.pf.allIn")}</li>}
           </ul>
-          {pathOnly.length > 0 && <p className="mt-4 text-[14px] text-ink-3">The test on past prices also holds {pathOnly.join(", ")}: there it keeps a company it already had while it passes {lr.rule.keep_min_checks} checks. The pretend record started fresh on {fmtDate(paper.started)}, so a company needs {lr.rule.entry_min_checks} checks to get in.</p>}
-          {changes > 0 && <p className="mt-4 text-[14px] text-people">If the rule changed seats today it would make {changes} change{changes === 1 ? "" : "s"}. It waits for the monthly date on purpose: fewer swaps, less reacting to noise.</p>}
+          {pathOnly.length > 0 && <p className="mt-4 text-[14px] text-ink-3">{t("goal.pf.pathOnly", { list: pathOnly.join(", "), keep: lr.rule.keep_min_checks, date: fmtDate(paper.started, lang), entry: lr.rule.entry_min_checks })}</p>}
+          {changes > 0 && <p className="mt-4 text-[14px] text-people">{t("goal.pf.changes", { count: changes })}</p>}
         </Reveal>
       </div>
       <Reveal className="card mt-5 flex flex-col items-start gap-x-8 gap-y-5 p-6 sm:flex-row sm:items-center sm:p-8">
         <div className="min-w-0 flex-1">
-          <div className="eyebrow mb-2">Pretend record kept from now on · the only fair test</div>
+          <div className="eyebrow mb-2">{t("goal.pf.recordTitle")}</div>
           {paper && last ? (
             <p className="text-[16px] leading-relaxed">
-              Since {fmtDate(paper.started)} ({paper.rebalances.length} monthly decision{paper.rebalances.length === 1 ? "" : "s"}, written down and never changed): rule's picks <b className={`num font-mono ${last.v >= 100 ? "text-accent" : "text-down"}`}>{fmtPct(last.v - 100, 1)}</b>, whole-market fund <b className="num font-mono">{fmtPct(last.core_v - 100, 1)}</b>, yardstick {data.bench.symbol} <b className="num font-mono">{fmtPct(last.bench_v - 100, 1)}</b>.
+              {t.rich("goal.pf.recordLine", {
+                date: fmtDate(paper.started, lang), decisions: t("goal.pf.decisions", { count: paper.rebalances.length }),
+                a: <b className={`num font-mono ${last.v >= 100 ? "text-accent" : "text-down"}`}>{fmtPct(last.v - 100, 1)}</b>,
+                b: <b className="num font-mono">{fmtPct(last.core_v - 100, 1)}</b>,
+                sym: data.bench.symbol,
+                c: <b className="num font-mono">{fmtPct(last.bench_v - 100, 1)}</b>,
+              })}
             </p>
           ) : (
-            <p className="text-[16px] leading-relaxed text-ink-2">Starts with the next daily run. Each month the rule's picks are written down using only what was known that day, and never changed. Like sealing a guess in an envelope: nobody can tidy it up later.</p>
+            <p className="text-[16px] leading-relaxed text-ink-2">{t("goal.pf.recordLater")}</p>
           )}
         </div>
-        <button type="button" onClick={() => go("portfolio")} className="btn">More on the pretend portfolio <ArrowRight /></button>
+        <button type="button" onClick={() => go("portfolio")} className="btn">{t("goal.pf.more")} <ArrowRight /></button>
       </Reveal>
       <DiversityNote data={data} go={go} />
     </section>
@@ -264,16 +304,19 @@ export function universeConcentration(data) {
 }
 
 function DiversityNote({ data, go }) {
+  const { lang, t: tr, fmt } = useLang();
+  const t = tr(dict);
   const u = universeConcentration(data);
   if (!u.concentrated) return null;
   return (
     <Reveal className="card mt-5 border-people/40 p-6 sm:p-8">
-      <div className="eyebrow mb-3 text-people">Our list is not very spread out</div>
+      <div className="eyebrow mb-3 text-people">{t("goal.div.title")}</div>
       <p className="text-[15.5px] leading-relaxed text-ink-2">
-        All {u.n} companies we follow are big US companies in only <span className="text-ink">{u.sectors} industries</span>, {u.top[1]} of them in {u.top[0]}{u.avg != null ? <>, and they move together by <span className="text-ink">{fmtNum(u.avg, 2)}</span> on a 0 to 1 scale</> : null}.
-        {u.avg != null && u.avg < 0.4 ? " They look fairly independent this year, but when markets fall, companies in the same industry tend to fall together." : " A pretend portfolio of 4–5 stocks from this list moves mostly as one bet: eggs in one basket."} Really spreading out would need companies from other industries (health care, banks, factories, energy, utilities). Adding them is a one-line change to the list, decided by the household.
+        {t.rich("goal.div.lead", { n: u.n, ind: <span className="text-ink">{t("goal.div.ind", { count: u.sectors })}</span>, k: u.top[1], sector: sectorName(u.top[0], lang) })}
+        {u.avg != null ? t.rich("goal.div.together", { avg: <span className="text-ink">{fmt.num(u.avg, 2)}</span> }) : null}.{" "}
+        {t(u.avg != null && u.avg < 0.4 ? "goal.div.independent" : "goal.div.oneBet", { range: "4–5" })} {t("goal.div.spread")}
       </p>
-      <button type="button" onClick={() => go("portfolio")} className="meta mt-4 inline-flex items-center gap-1 hover:text-ink">See which companies move together <ArrowRight className="size-3.5" /></button>
+      <button type="button" onClick={() => go("portfolio")} className="meta mt-4 inline-flex items-center gap-1 hover:text-ink">{t("goal.div.see")} <ArrowRight className="size-3.5" /></button>
     </Reveal>
   );
 }
@@ -281,6 +324,8 @@ function DiversityNote({ data, go }) {
 /* --------------------------------------------------------------- context */
 
 export function MarketContext({ data }) {
+  const { lang, t: tr, fmt } = useLang();
+  const t = tr(dict);
   const ctx = data.market.context;
   if (!ctx) return null;
   const tf = ctx.core?.trend_filter;
@@ -288,26 +333,28 @@ export function MarketContext({ data }) {
   const ps = ctx.participation_spx;
   const cards = [
     tf && {
-      k: "Whole-market direction", v: tf.on ? "Up" : "Not up", tone: tf.on ? "text-accent" : "text-people",
-      d: `The whole-market fund (${ctx.core.symbol}) is ${tf.above_10m_avg ? "above" : "below"} its average price of the last 10 months (${fmtPct(tf.dist_10m_avg_pct ?? 0, 1)})${tf.ret_12m_pct != null ? ` and made ${fmtPct(tf.ret_12m_pct, 1)} in 12 months${tf.cash_12m_pct != null ? `, vs ${fmtPct(tf.cash_12m_pct, 1)} for cash` : ""}` : ""}. A slow signal, just for background: never a reason to sell or buy the fund.`,
+      k: t("goal.ctx.tf.k"), v: t(tf.on ? "goal.ctx.tf.up" : "goal.ctx.tf.notUp"), tone: tf.on ? "text-accent" : "text-people",
+      d: t(tf.above_10m_avg ? "goal.ctx.tf.above" : "goal.ctx.tf.below", { sym: ctx.core.symbol, pct: fmt.pct(tf.dist_10m_avg_pct ?? 0, 1) })
+        + (tf.ret_12m_pct != null ? t("goal.ctx.tf.made", { r: fmt.pct(tf.ret_12m_pct, 1) }) + (tf.cash_12m_pct != null ? t("goal.ctx.tf.cash", { c: fmt.pct(tf.cash_12m_pct, 1) }) : "") : "")
+        + t("goal.ctx.tf.tail"),
     },
     ctx.cash_yield_pct != null && {
-      k: "Safe savings pay", v: `${fmtNum(ctx.cash_yield_pct, 1)}%`, tone: "",
-      d: "A year, from short US government loans (very safe). Any stock idea has to beat this, because this needs no risk at all.",
+      k: t("goal.ctx.cash.k"), v: ltrIf(`${fmtNum(ctx.cash_yield_pct, 1)}%`, lang), tone: "",
+      d: t("goal.ctx.cash.d"),
     },
     p && {
-      k: "How many are joining in", v: p.state === "narrow" ? "Few" : p.state === "broad" ? "Many" : "Some", tone: p.state === "narrow" ? "text-people" : p.state === "broad" ? "text-accent" : "",
-      d: `A typical Nasdaq-100 company vs the index as a whole: ${fmtPct(p.eq_vs_cap_60d_pct, 1)} over 60 days${ps ? `; S&P 500: ${fmtPct(ps.eq_vs_cap_60d_pct, 1)}` : ""}. "Few" means a handful of giant companies are doing the lifting while most others lag.`,
+      k: t("goal.ctx.p.k"), v: t(p.state === "narrow" ? "goal.ctx.p.few" : p.state === "broad" ? "goal.ctx.p.many" : "goal.ctx.p.some"), tone: p.state === "narrow" ? "text-people" : p.state === "broad" ? "text-accent" : "",
+      d: t("goal.ctx.p.d", { a: fmt.pct(p.eq_vs_cap_60d_pct, 1) }) + (ps ? t("goal.ctx.p.spx", { b: fmt.pct(ps.eq_vs_cap_60d_pct, 1) }) : "") + t("goal.ctx.p.tail"),
     },
     ctx.credit_vs_treasuries_60d_pct != null && {
-      k: "Lenders' mood", v: ctx.credit_vs_treasuries_60d_pct >= 0 ? "Calm" : "Nervous", tone: ctx.credit_vs_treasuries_60d_pct >= 0 ? "text-accent" : "text-people",
-      d: `Loans to riskier companies vs loans to the US government, over 60 days: ${fmtPct(ctx.credit_vs_treasuries_60d_pct, 1)}. When lenders get nervous, it often shows here first.`,
+      k: t("goal.ctx.credit.k"), v: t(ctx.credit_vs_treasuries_60d_pct >= 0 ? "goal.ctx.credit.calm" : "goal.ctx.credit.nervous"), tone: ctx.credit_vs_treasuries_60d_pct >= 0 ? "text-accent" : "text-people",
+      d: t("goal.ctx.credit.d", { pct: fmt.pct(ctx.credit_vs_treasuries_60d_pct, 1) }),
     },
   ].filter(Boolean);
   return (
     <section className="pt-24">
-      <SectionHead eyebrow={`The market's mood · ${fmtDate(data.market.as_of)}`} title={<>Is the market <Accent>helping?</Accent></>} size="md"
-        lede="In simple words: four quick signs of the market's mood, like checking the weather before going out. They are background only, never a reason to act." />
+      <SectionHead eyebrow={t("goal.ctx.eyebrow", { date: fmtDate(data.market.as_of, lang) }, { bidi: false })} title={<>{t("goal.ctx.titleA")} <Accent>{t("goal.ctx.titleB")}</Accent></>} size="md"
+        lede={t("goal.ctx.lede")} />
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {cards.map((c, i) => (
           <Reveal key={c.k} delay={i * 60} className="card p-6">
@@ -324,6 +371,8 @@ export function MarketContext({ data }) {
 /* ------------------------------------------------------------ base rates */
 
 export function BaseRates({ data }) {
+  const { lang, t: tr, fmt } = useLang();
+  const t = tr(dict);
   const br = data.market.base_rates;
   if (!br) return null;
   const g = br.gate;
@@ -335,36 +384,36 @@ export function BaseRates({ data }) {
   return (
     <section className="pt-24">
       <SectionHead
-        eyebrow={`Do our checks work? · ${br.from} to ${br.to} · ${br.names} companies`}
-        title={edge ? <>The checks <Accent>helped.</Accent></> : better ? <>Slightly better. <Accent>Not proven.</Accent></> : <>No advantage <Accent>found.</Accent></>}
-        lede={<>In simple words: what happened in the past when a company passed our checks, compared with when it did not. Every {br.step_days} market days in the past, each company got a grade from the 4 checks; {br.horizon_days} days later we looked at whether it did better than the yardstick ({data.bench.symbol}). The list was picked with hindsight, so this only compares passing with not passing.</>}
+        eyebrow={t("goal.br.eyebrow", { from: br.from, to: br.to, n: br.names })}
+        title={(([a, b]) => <>{t(a)} <Accent>{t(b)}</Accent></>)(edge ? ["goal.br.edgeA", "goal.br.edgeB"] : better ? ["goal.br.betterA", "goal.br.betterB"] : ["goal.br.noneA", "goal.br.noneB"])}
+        lede={t("goal.br.lede", { step: br.step_days, h: br.horizon_days, sym: data.bench.symbol })}
         size="md"
       />
       <div className="grid gap-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <Reveal className="card p-6 sm:p-8">
           <div className="grid grid-cols-2 gap-5">
             <div>
-              <div className="meta text-accent">Passed the checks</div>
-              <div className={`display num mt-2 text-[40px] leading-none ${g.pass.mean >= 0 ? "text-accent" : "text-down"}`}>{fmtPct(g.pass.mean ?? 0, 2)}</div>
-              <p className="mt-2 text-[13px] text-ink-3">on average per {br.horizon_days} days vs {data.bench.symbol} · beat it {fmtNum(g.pass.hit_pct ?? 0, 0)}% of the time · {g.pass.n} cases</p>
+              <div className="meta text-accent">{t("goal.br.passed")}</div>
+              <div className={`display num mt-2 text-[40px] leading-none ${g.pass.mean >= 0 ? "text-accent" : "text-down"}`}>{fmt.pct(g.pass.mean ?? 0, 2)}</div>
+              <p className="mt-2 text-[13px] text-ink-3">{t("goal.br.passNote", { h: br.horizon_days, sym: data.bench.symbol, hit: whole(g.pass.hit_pct ?? 0, lang), n: g.pass.n })}</p>
             </div>
             <div>
-              <div className="meta">Did not pass</div>
-              <div className={`display num mt-2 text-[40px] leading-none ${g.fail.mean >= 0 ? "" : "text-down"}`}>{fmtPct(g.fail.mean ?? 0, 2)}</div>
-              <p className="mt-2 text-[13px] text-ink-3">beat it {fmtNum(g.fail.hit_pct ?? 0, 0)}% of the time · {g.fail.n} cases</p>
+              <div className="meta">{t("goal.br.failed")}</div>
+              <div className={`display num mt-2 text-[40px] leading-none ${g.fail.mean >= 0 ? "" : "text-down"}`}>{fmt.pct(g.fail.mean ?? 0, 2)}</div>
+              <p className="mt-2 text-[13px] text-ink-3">{t("goal.br.failNote", { hit: whole(g.fail.hit_pct ?? 0, lang), n: g.fail.n })}</p>
             </div>
           </div>
           <p className="mt-6 text-[14.5px] leading-relaxed text-ink-2">
-            For companies that passed, the true result is very likely (90% sure) between {fmtPct(g.pass.ci_low ?? 0, 2)} and {fmtPct(g.pass.ci_high ?? 0, 2)}. {edge ? "Even the low end is above zero." : "That range includes zero, so it could just be luck."} To move up the trust ladder, the low end must be above zero.
+            {t("goal.br.range", { a: fmt.pct(g.pass.ci_low ?? 0, 2), b: fmt.pct(g.pass.ci_high ?? 0, 2) })} {t(edge ? "goal.br.aboveZero" : "goal.br.luck")} {t("goal.br.ladder")}
           </p>
         </Reveal>
         <Reveal delay={80} className="card p-6 sm:p-8">
-          <div className="meta mb-4">By how many of the 4 checks passed (dot: average; bar: likely range)</div>
+          <div className="meta mb-4">{t("goal.br.byScore")}</div>
           <div className="grid gap-3">
             {br.by_score.map((r) => (
               <div key={r.passed} className="grid grid-cols-[64px_minmax(0,1fr)_72px] items-center gap-3 text-[13.5px]">
-                <span className="font-mono">{r.passed} of 4</span>
-                <div className="relative h-5">
+                <span className="font-mono">{t("goal.br.of4", { n: r.passed })}</span>
+                <div dir="ltr" className="relative h-5">
                   <div className="absolute top-1/2 left-1/2 h-4 w-px -translate-y-1/2 bg-line-2" />
                   {r.n >= MIN_N && (
                     <>
@@ -372,9 +421,9 @@ export function BaseRates({ data }) {
                       <div className={`absolute top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 rounded-full ${r.mean >= 0 ? "bg-accent" : "bg-down"}`} style={{ left: `${pos(r.mean)}%` }} />
                     </>
                   )}
-                  {r.n > 0 && r.n < MIN_N && <span className="absolute inset-0 grid place-items-center text-[11.5px] text-ink-3">too few cases</span>}
+                  {r.n > 0 && r.n < MIN_N && <span dir="auto" className="absolute inset-0 grid place-items-center text-[11.5px] text-ink-3">{t("goal.br.tooFew")}</span>}
                 </div>
-                <span className="num text-right font-mono text-ink-2">{r.n ? fmtPct(r.mean, 2) : "–"} <span className="text-ink-3">n{r.n}</span></span>
+                <span dir="ltr" className="num text-end font-mono text-ink-2">{r.n ? fmtPct(r.mean, 2) : "–"} <span className="text-ink-3">n{r.n}</span></span>
               </div>
             ))}
           </div>

@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { cardFor, comingUp, daysUntil, growthWords, inDays, isStale, splitWhatsNext, staleness, todayISO } from "./outlook.js";
+import { cardFor, comingUp, daysUntil, growthWords, inDays, isStale, kindLabel, KIND_LABEL, splitWhatsNext, staleness, todayISO } from "./outlook.js";
+import { stripBidi } from "./i18n.js";
 import { signTone } from "./format.js";
 
 const card = (ticker, date, confirmed = true, reported_on = "2026-08-20") => ({ ticker, name: `${ticker} Inc`, latest: { reported_on }, next_earnings: { date, confirmed } });
@@ -70,4 +71,14 @@ test("growth in words", () => {
   assert.equal(growthWords(62.4), "up 62% from a year earlier");
   assert.equal(growthWords(-3.25), "down 3.3% from a year earlier");
   assert.equal(growthWords(null), "");
+});
+
+test("Hebrew: days, growth and kinds in words", () => {
+  assert.deepEqual([0, 1, -1, 2, -2, 5, -3, null].map((n) => stripBidi(inDays(n, "he"))), ["היום", "מחר", "אתמול", "בעוד יומיים", "לפני יומיים", "בעוד 5 ימים", "לפני 3 ימים", ""]);
+  assert.equal(stripBidi(growthWords(4.12, "he")), "עלייה של 4.1% לעומת שנה קודם לכן");
+  assert.equal(stripBidi(growthWords(-23.4, "he")), "ירידה של 23% לעומת שנה קודם לכן");
+  assert.equal(growthWords(null, "he"), "");
+  assert.equal(kindLabel("deal", "he"), "עסקה");
+  assert.equal(kindLabel("deal"), KIND_LABEL.deal);
+  assert.equal(kindLabel("mystery", "he"), "mystery");
 });

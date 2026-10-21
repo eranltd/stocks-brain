@@ -1,6 +1,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useInView, useReducedMotion } from "../lib/motion.js";
 import { pad2 } from "../lib/format.js";
+import { useLang } from "../lib/lang.jsx";
+import dict from "../i18n/learn.js";
 import { Accent, Chevron, CodeBlock, Container, Dot, Headline, IconButton, Reveal, SectionHead, Strip } from "../components/ui.jsx";
 
 const ROUTE = "M70,150 H920 Q940,150 940,170 V390 Q940,410 920,410 H400 Q380,410 380,390 V150";
@@ -10,38 +12,27 @@ const BRANCHES = {
 };
 const LOOP = "M540,410 H400 Q380,410 380,390 V170";
 
-// kind: data | code | ai | people. `on` = which path the station sits on.
+// kind: data | code | ai | people. `on` = which path the station sits on. Each stop's label and description are
+// i18n/learn.js "how.st.<id>.label" and ".text"; kinds are "how.kind.<kind>".
 const STATIONS = [
-  { id: "watchlist", label: "Watchlist", kind: "data", x: 70, y: 150, lx: 0, ly: -30, glyph: "≡", file: "config/watchlist.json", m: "M1",
-    text: "The shopping list: which companies to watch, plus the whole market to compare them with (the benchmark). The list lives in one file, and an automatic checker complains if any code sneaks in a company of its own." },
-  { id: "fetch", label: "Fetch", kind: "code", x: 210, y: 150, lx: 0, ly: -30, glyph: "↓", file: "scripts/fetch_prices.py", m: "M2",
-    text: "After the market closes, a small program collects each day's prices and saves them. Like a plug adapter, the part that talks to the price company can be swapped for another one." },
-  { id: "library", label: "Lessons", kind: "data", x: 200, y: 310, lx: 0, ly: 40, glyph: "▤", branch: "library", file: "data/kb/library.json", m: "M1",
-    text: "Lessons from videos and books, in our own words, each saying where it came from. Only the lessons that fit the day go into the brain's lunchbox." },
-  { id: "packer", label: "Packer", kind: "code", x: 380, y: 150, lx: -18, ly: -30, glyph: "◫", file: "scripts/build_pack.py", m: "M3",
-    text: "Packs the brain's lunchbox: one file with the rules, how much each stock went up or down and how bumpy it was (no prices), recent mornings, matching lessons, the checked calls of famous investors, when each company reports next, and the chart checklist (background only, not proven). If the box is too big for the AI to read, the run stops before the AI is asked anything." },
-  { id: "brain", label: "Brain · AI", kind: "ai", x: 540, y: 150, lx: 0, ly: 42, glyph: "✦", file: "prompts/brain.md", m: "M3",
-    text: "The only AI step. Every market morning it wakes up by itself (with a second try later that morning in case the data was late) and reads the lunchbox. Inside, it acts like a small team: three analysts, a doubter for each company, a builder and a reviewer. It writes down its guesses. They are guesses with no proven record yet, and they must follow a set form or nothing is saved." },
-  { id: "checker", label: "Checker", kind: "code", x: 690, y: 150, lx: 0, ly: 42, glyph: "✓", file: "schemas/ + scripts/lint.py", m: "M1",
-    text: "Plain code, like a teacher with a checklist: every company must be on the watchlist, no numbers in the written reasons, no forbidden words, no file too big, no passwords. If something fails, the guess is not saved." },
-  { id: "runs", label: "Run record", kind: "data", x: 840, y: 150, lx: 0, ly: 42, glyph: "◉", file: "runs/run.<date>.json", m: "M1",
-    text: "A receipt for each morning: what it cost, how many minutes it took, a fingerprint of the lunchbox, which rule versions it read, and the guesses. Every change is kept in the project's history, so nothing can be quietly changed later." },
-  { id: "dashboard", label: "This site", kind: "code", x: 840, y: 48, lx: 26, ly: 5, anchor: "start", glyph: "▣", branch: "dashboard", file: "site/", m: "M1",
-    text: "The site you are reading. It is rebuilt and put online by itself every time the project changes." },
-  { id: "scorer", label: "Scorer", kind: "code", x: 940, y: 290, lx: -28, ly: 5, anchor: "end", glyph: "±", file: "scripts/score_picks.py", m: "M4",
-    text: "About a month later, code keeps score: did each guess do better or worse than the whole market? It is plain arithmetic, like a referee reading the scoreboard, not anyone's opinion." },
-  { id: "kb", label: "Library", kind: "data", x: 700, y: 410, lx: 0, ly: 42, glyph: "◎", file: "data/kb/outcomes.json", m: "M4",
-    text: "The brain's diary: every checked guess, kept forever, the bad ones too. The most recent pages go back into the lunchbox for the next morning." },
-  { id: "you", label: "You", kind: "people", x: 540, y: 410, lx: 0, ly: 42, glyph: "☺", file: "pull request", m: "you",
-    text: "People read the scores and write lessons, each with proof, as a proposed change someone reviews (a pull request). The AI never changes its own rules, just as a player does not rewrite the rule book." },
-  { id: "rulebook", label: "Rule book", kind: "data", x: 380, y: 290, lx: 28, ly: 6, anchor: "start", glyph: "❏", file: "docs/", m: "M1",
-    text: "The rules: the plan, the safety rails, how we measure, and what we learned. Each change gets a version number, and the next lunchbox includes them. The circle closes here and starts again tomorrow." },
+  { id: "watchlist", kind: "data", x: 70, y: 150, lx: 0, ly: -30, glyph: "≡", file: "config/watchlist.json", m: "M1" },
+  { id: "fetch", kind: "code", x: 210, y: 150, lx: 0, ly: -30, glyph: "↓", file: "scripts/fetch_prices.py", m: "M2" },
+  { id: "library", kind: "data", x: 200, y: 310, lx: 0, ly: 40, glyph: "▤", branch: "library", file: "data/kb/library.json", m: "M1" },
+  { id: "packer", kind: "code", x: 380, y: 150, lx: -18, ly: -30, glyph: "◫", file: "scripts/build_pack.py", m: "M3" },
+  { id: "brain", kind: "ai", x: 540, y: 150, lx: 0, ly: 42, glyph: "✦", file: "prompts/brain.md", m: "M3" },
+  { id: "checker", kind: "code", x: 690, y: 150, lx: 0, ly: 42, glyph: "✓", file: "schemas/ + scripts/lint.py", m: "M1" },
+  { id: "runs", kind: "data", x: 840, y: 150, lx: 0, ly: 42, glyph: "◉", file: "runs/run.<date>.json", m: "M1" },
+  { id: "dashboard", kind: "code", x: 840, y: 48, lx: 26, ly: 5, anchor: "start", glyph: "▣", branch: "dashboard", file: "site/", m: "M1" },
+  { id: "scorer", kind: "code", x: 940, y: 290, lx: -28, ly: 5, anchor: "end", glyph: "±", file: "scripts/score_picks.py", m: "M4" },
+  { id: "kb", kind: "data", x: 700, y: 410, lx: 0, ly: 42, glyph: "◎", file: "data/kb/outcomes.json", m: "M4" },
+  { id: "you", kind: "people", x: 540, y: 410, lx: 0, ly: 42, glyph: "☺", file: "pull request", m: "you" },
+  { id: "rulebook", kind: "data", x: 380, y: 290, lx: 28, ly: 6, anchor: "start", glyph: "❏", file: "docs/", m: "M1" },
 ];
 const KIND = {
-  data: { label: "Saved data", stroke: "var(--accent)", fill: "color-mix(in srgb, var(--accent) 14%, var(--bg))", tone: "accent" },
-  code: { label: "Plain code", stroke: "var(--ink-3)", fill: "var(--bg)", tone: "flat" },
-  ai: { label: "AI", stroke: "var(--ai)", fill: "color-mix(in srgb, var(--ai) 16%, var(--bg))", tone: "ai" },
-  people: { label: "People", stroke: "var(--people)", fill: "var(--bg)", tone: "people", dashed: true },
+  data: { stroke: "var(--accent)", fill: "color-mix(in srgb, var(--accent) 14%, var(--bg))", tone: "accent" },
+  code: { stroke: "var(--ink-3)", fill: "var(--bg)", tone: "flat" },
+  ai: { stroke: "var(--ai)", fill: "color-mix(in srgb, var(--ai) 16%, var(--bg))", tone: "ai" },
+  people: { stroke: "var(--people)", fill: "var(--bg)", tone: "people", dashed: true },
 };
 const STEP_MS = 2200;
 
@@ -61,44 +52,45 @@ export default function HowItWorks({ data }) {
   );
 }
 
-const STORY = [
-  ["Data comes in", "After the market closes each day, a small program collects the day's prices, like picking up the newspaper from the doorstep."],
-  ["The brain reads it", "Next morning, the brain, an AI, reads a tidy pack of that data plus its rules and old lessons, and makes a call: a guess about which stocks might do better or worse than the whole market."],
-  ["Code checks the call", "Plain code checks that the guess follows the rules. Then, about a month later, it keeps score: did the guess beat the whole market or not? Plain arithmetic, no opinions."],
-  ["The site shows it", "This site shows every guess and every score, the misses too, so anyone can see how the brain is really doing."],
-  ["People learn", "People read the scores and write down lessons. The brain reads them next time. The AI never changes its own rules."],
-];
+// The five story steps are i18n/learn.js "how.story.<n>.head" and ".body".
+const STORY = [1, 2, 3, 4, 5];
+
+/** The page's words: the area dictionary bound to the reader's language. */
+const useWords = () => useLang().t(dict);
 
 /** The whole system in five plain steps, before the detailed map. */
 function Story() {
+  const t = useWords();
   return (
     <div>
       <SectionHead
-        eyebrow="How it works"
-        title={<>The whole thing, <Accent>in five steps.</Accent></>}
+        eyebrow={t("how.story.eyebrow")}
+        title={<>{t("how.story.title.a")} <Accent>{t("how.story.title.b")}</Accent></>}
         lede={<>
-          <span className="block text-ink">In simple words: a computer guesses about stocks every morning, and plain code checks later whether it was right. This page shows how, step by step.</span>
-          <span className="mt-3 block">Think of a weather forecaster who writes tomorrow's forecast in a notebook, and a friend who checks it a month later. Until the notebook shows many good forecasts, nobody plans a picnic on it.</span>
+          <span className="block text-ink">{t("how.story.lede1")}</span>
+          <span className="mt-3 block">{t("how.story.lede2")}</span>
         </>}
       />
       <Reveal className="card px-2 py-1 sm:p-4">
         <ol className="grid">
-          {STORY.map(([head, body], i) => (
-            <li key={head} className="flex gap-3 border-b border-line px-2 py-3 last:border-0">
+          {STORY.map((n, i) => (
+            <li key={n} className="flex gap-3 border-b border-line px-2 py-3 last:border-0">
               <span className="num shrink-0 font-mono text-[12.5px] leading-[22px] text-accent">{pad2(i + 1)}</span>
-              <span className="text-[15px] leading-snug"><span className="font-semibold text-ink">{head}.</span> <span className="text-ink-2">{body}</span></span>
+              <span className="text-[15px] leading-snug"><span className="font-semibold text-ink">{t(`how.story.${n}.head`)}.</span> <span className="text-ink-2">{t(`how.story.${n}.body`)}</span></span>
             </li>
           ))}
         </ol>
       </Reveal>
       <Reveal className="card mt-3 border-people/40 p-4 text-[15px] leading-relaxed text-ink-2 sm:p-5">
-        <span className="text-people">What about real money?</span> The brain's stock calls are guesses with no proven record yet. So the household's real money does not follow them. It follows the honest action on the Brain's verdicts page, which is usually a low-cost fund that holds the whole market, bought a little at a time on a regular schedule. That stays the plan unless the scores ever show, over a long time, that something else does better. Analysis only, not financial advice.
+        <span className="text-people">{t("how.money.head")}</span> {t("how.money.body")}
       </Reveal>
     </div>
   );
 }
 
 function MapShowcase() {
+  const t = useWords();
+  const label = (s) => t(`how.st.${s.id}.label`);
   const reduced = useReducedMotion();
   const [wrapRef, inView] = useInView({ threshold: 0.3 });
   const routeRef = useRef(null);
@@ -172,35 +164,40 @@ function MapShowcase() {
   return (
     <div ref={wrapRef} className="card brackets overflow-hidden">
       <div className="flex items-center justify-between border-b border-line px-6 py-5 sm:px-10">
-        <span className="meta flex items-center gap-2"><Dot /> stocks·brain / <span className="text-ink">the whole map, step by step</span></span>
-        <span className="meta">{STATIONS.length} stops</span>
+        <span className="meta flex items-center gap-2"><Dot /> <bdi>stocks·brain</bdi> / <span className="text-ink">{t("how.map.title")}</span></span>
+        <span className="meta">{t("how.map.stops", { n: STATIONS.length })}</span>
       </div>
       <div className="grid gap-10 p-6 sm:p-10 xl:grid-cols-[minmax(0,5fr)_minmax(0,8fr)]">
         <div className="flex flex-col justify-center">
-          <div className="eyebrow mb-6 flex items-center gap-2"><Dot /> How a guess gets made and checked</div>
-          <Headline size="md">Every checked guess teaches <Accent>the next one.</Accent></Headline>
+          <div className="eyebrow mb-6 flex items-center gap-2"><Dot /> {t("how.map.eyebrow")}</div>
+          <Headline size="md">{t("how.map.head.a")} <Accent>{t("how.map.head.b")}</Accent></Headline>
           <p className="mt-6 max-w-[46ch] text-[17px] leading-relaxed text-ink-2">
-            <span className="text-ink">Data comes in</span>, <span className="text-ink">the AI makes one guess</span>, plain code checks it, <span className="text-ink">people decide</span>. {STATIONS.length} stops in one circle. Tap a stop, or press Replay to watch it go round.
+            {t.rich("how.map.body", {
+              a: <span className="text-ink">{t("how.map.a")}</span>,
+              b: <span className="text-ink">{t("how.map.b")}</span>,
+              c: <span className="text-ink">{t("how.map.c")}</span>,
+              n: STATIONS.length,
+            })}
           </p>
           <div className="mt-8 inline-flex w-fit flex-wrap gap-x-5 gap-y-2 rounded-3xl border border-line px-6 py-3">
             {counts.map(({ k, n }) => (
               <span key={k} className="inline-flex items-center gap-2 text-[14.5px]">
-                <Dot tone={KIND[k].tone} dashed={KIND[k].dashed} /> {KIND[k].label} <span className="num text-ink-3">{n}</span>
+                <Dot tone={KIND[k].tone} dashed={KIND[k].dashed} /> {t(`how.kind.${k}`)} <span className="num text-ink-3">{n}</span>
               </span>
             ))}
           </div>
           <div className="mt-8 flex flex-wrap gap-3">
             <button type="button" onClick={replay} className="btn btn-primary whitespace-nowrap">
               <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5" /></svg>
-              Replay <span className="num font-mono font-normal opacity-60">· {clock(totalS)}</span>
+              {t("how.map.replay")} <span className="num font-mono font-normal opacity-60">· <bdi>{clock(totalS)}</bdi></span>
             </button>
-            <button type="button" onClick={() => goTo(step < 0 ? 0 : step + 1)} className="btn whitespace-nowrap">Step through</button>
+            <button type="button" onClick={() => goTo(step < 0 ? 0 : step + 1)} className="btn whitespace-nowrap">{t("how.map.step")}</button>
           </div>
         </div>
 
         <div className="min-w-0">
-          <div className="no-scrollbar -mx-6 overflow-x-auto px-6 sm:mx-0 sm:px-0">
-            <svg viewBox="0 0 1000 470" className="block h-auto w-full min-w-[680px] md:min-w-0" role="img" aria-label="Map of the daily circle, from the watchlist to the rule book and back">
+          <div dir="ltr" className="no-scrollbar -mx-6 overflow-x-auto px-6 sm:mx-0 sm:px-0">
+            <svg viewBox="0 0 1000 470" className="block h-auto w-full min-w-[680px] md:min-w-0" role="img" aria-label={t("how.map.aria")}>
               <defs>
                 <pattern id="dotgrid" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="var(--line)" /></pattern>
                 <radialGradient id="mapglow" cx="50%" cy="40%" r="60%"><stop offset="0" stopColor="var(--glow)" /><stop offset="1" stopColor="transparent" /></radialGradient>
@@ -231,7 +228,7 @@ function MapShowcase() {
                 const on = reached(s);
                 const active = i === step;
                 return (
-                  <g key={s.id} onClick={() => goTo(i)} className="cursor-pointer" role="button" aria-label={s.label}>
+                  <g key={s.id} onClick={() => goTo(i)} className="cursor-pointer" role="button" aria-label={label(s)}>
                     {active && !reduced && (
                       <circle cx={s.x} cy={s.y} r="18" fill="none" stroke={k.stroke} strokeWidth="2" opacity="0.6">
                         <animate attributeName="r" from="18" to="34" dur="1.6s" repeatCount="indefinite" />
@@ -244,7 +241,7 @@ function MapShowcase() {
                     <text x={s.x} y={s.y + 5} textAnchor="middle" fontSize="14" fill={on ? k.stroke : "var(--ink-3)"} style={{ transition: "fill 500ms" }}>{s.glyph}</text>
                     <text x={s.x + s.lx} y={s.y + s.ly} textAnchor={s.anchor ?? "middle"} fontSize="19" fontWeight="600"
                       fill={on ? "var(--ink)" : "var(--ink-3)"} style={{ transition: "fill 500ms", letterSpacing: "-0.01em" }}>
-                      {s.kind === "ai" ? <>Brain · <tspan fill="var(--ai)">AI</tspan></> : s.label}
+                      {s.kind === "ai" ? <>{t("how.st.brain.short")} · <tspan fill="var(--ai)">AI</tspan></> : label(s)}
                     </text>
                   </g>
                 );
@@ -259,65 +256,61 @@ function MapShowcase() {
             <div className="display num text-[56px] leading-[0.85] text-ink-3">{pad2(Math.max(0, step) + 1)}</div>
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-[19px] font-semibold tracking-[-0.02em]">{cur.label}</span>
-                <span className="pill py-1 text-[11px]" style={{ color: KIND[cur.kind].stroke, borderColor: KIND[cur.kind].stroke, borderStyle: KIND[cur.kind].dashed ? "dashed" : "solid" }}>{KIND[cur.kind].label}</span>
-                <span className="pill py-1 text-[11px] text-ink-3">{cur.m === "you" ? "people" : cur.m}</span>
+                <span className="text-[19px] font-semibold tracking-[-0.02em]">{label(cur)}</span>
+                <span className="pill py-1 text-[11px]" style={{ color: KIND[cur.kind].stroke, borderColor: KIND[cur.kind].stroke, borderStyle: KIND[cur.kind].dashed ? "dashed" : "solid" }}>{t(`how.kind.${cur.kind}`)}</span>
+                <span className="pill py-1 text-[11px] text-ink-3">{cur.m === "you" ? t("how.map.people") : cur.m}</span>
               </div>
-              <p className="mt-2 text-[15px] leading-relaxed text-ink-2">{cur.text}</p>
-              <code className="mt-3 inline-block font-mono text-[12.5px] text-accent">{cur.file}</code>
+              <p className="mt-2 text-[15px] leading-relaxed text-ink-2">{t(`how.st.${cur.id}.text`)}</p>
+              <code dir="ltr" className="mt-3 inline-block font-mono text-[12.5px] text-accent">{cur.file}</code>
             </div>
           </div>
         </div>
       </div>
 
       <div className="flex items-center gap-4 border-t border-line px-6 py-5 sm:px-10">
-        <IconButton label="Previous stop" onClick={() => goTo(step - 1)} disabled={step <= 0}><Chevron dir="left" /></IconButton>
-        <IconButton label="Next stop" onClick={() => goTo(step + 1)} disabled={step >= STATIONS.length - 1}><Chevron /></IconButton>
+        <IconButton label={t("how.map.prev")} onClick={() => goTo(step - 1)} disabled={step <= 0}><Chevron dir="left" /></IconButton>
+        <IconButton label={t("how.map.next")} onClick={() => goTo(step + 1)} disabled={step >= STATIONS.length - 1}><Chevron /></IconButton>
         <div className="flex flex-1 gap-1.5">
           {STATIONS.map((s, i) => (
-            <button key={s.id} type="button" aria-label={`Go to ${s.label}`} onClick={() => goTo(i)} className="group h-6 flex-1">
+            <button key={s.id} type="button" aria-label={t("how.map.goTo", { label: label(s) })} onClick={() => goTo(i)} className="group h-6 flex-1">
               <span className={`block h-[3px] rounded-full transition-colors duration-500 ${i <= step ? "bg-ink" : "bg-line-2 group-hover:bg-ink-3"}`} />
             </button>
           ))}
         </div>
-        <span className="meta num hidden sm:inline">{clock(elapsed)} / {clock(totalS)}</span>
+        <span dir="ltr" className="meta num hidden sm:inline">{clock(elapsed)} / {clock(totalS)}</span>
       </div>
     </div>
   );
 }
 
-const MILESTONES = [
-  { id: "M1", label: "Scaffold", desc: "The frame: rules, forms, the checker and this site, on made-up sample data." },
-  { id: "M2", label: "Prices", desc: "Real daily prices, collected by themselves after each close." },
-  { id: "M3", label: "Brain", desc: "Pack the lunchbox, let the AI guess, then code checks and saves it." },
-  { id: "M4", label: "Scoring", desc: "About a month later, each guess is compared with the whole market." },
-  { id: "M5", label: "Routine", desc: "Timers run the whole circle by themselves. The brain already runs by itself every market morning." },
-];
+// Each milestone's label and description are i18n/learn.js "how.ms.<id>.label" and ".desc".
+const MILESTONES = ["M1", "M2", "M3", "M4", "M5"].map((id) => ({ id }));
 
 function RunIt({ data }) {
+  const t = useWords();
   const done = 4;
   return (
     <div className="grid gap-12 xl:grid-cols-[minmax(0,7fr)_minmax(0,4fr)]">
       <div>
         <SectionHead
-          eyebrow="For the builder"
-          title={<>Run the next <Accent>step.</Accent></>}
-          lede="This part is for whoever looks after the code. Everything runs from the project folder with a few plain commands. The AI does one step only; a person approves every change and makes every decision."
+          eyebrow={t("how.run.eyebrow")}
+          title={<>{t("how.run.title.a")} <Accent>{t("how.run.title.b")}</Accent></>}
+          lede={t("how.run.lede")}
         />
         <Strip
           cells={[
-            { value: MILESTONES.length, label: "milestones", desc: "Building steps, from the bare frame to a circle that runs by itself every day." },
-            { value: done, label: "done", desc: "This site, daily prices, the brain and the scorekeeping. Next: the other timed jobs." },
-            { value: "You", label: "choose the data companies", tone: "people", dashed: true, desc: "No new data source or add-on without your yes." },
+            { value: MILESTONES.length, label: t("how.run.s.milestones"), desc: t("how.run.s.milestonesDesc") },
+            { value: done, label: t("how.run.s.done"), desc: t("how.run.s.doneDesc") },
+            { value: t("how.run.s.people"), label: t("how.run.s.choose"), tone: "people", dashed: true, desc: t("how.run.s.chooseDesc") },
           ]}
         />
         <div className="mt-10 grid gap-6">
-          <CodeBlock label="Make the made-up sample data again" cmd="python3 scripts/make_sample_data.py" />
-          <CodeBlock label="Run the checker: forms, rules, no passwords, no oversized files" cmd="python3 scripts/lint.py" />
-          <CodeBlock label="Copy the data over for this site" cmd="python3 scripts/build_site.py" />
-          <CodeBlock label="Open this site on your own computer" cmd="cd site && npm ci && npm run dev" />
+          <CodeBlock label={t("how.run.cmd.sample")} cmd="python3 scripts/make_sample_data.py" />
+          <CodeBlock label={t("how.run.cmd.lint")} cmd="python3 scripts/lint.py" />
+          <CodeBlock label={t("how.run.cmd.build")} cmd="python3 scripts/build_site.py" />
+          <CodeBlock label={t("how.run.cmd.dev")} cmd="cd site && npm ci && npm run dev" />
         </div>
-        <p className="meta mt-8 normal-case tracking-[0.04em]">Repo: {data.manifest.repo}</p>
+        <p className="meta mt-8 normal-case tracking-[0.04em]">{t("how.run.repo", { repo: data.manifest.repo })}</p>
       </div>
       <Reveal className="flex items-center justify-center">
         <Ring done={done} />
@@ -327,18 +320,19 @@ function RunIt({ data }) {
 }
 
 function Ring({ done }) {
+  const t = useWords();
   const R = 150, C = 200;
   const pts = MILESTONES.map((m, i) => {
     const a = -Math.PI / 2 + (i / MILESTONES.length) * Math.PI * 2;
-    return { ...m, x: C + R * Math.cos(a), y: C + R * Math.sin(a), a };
+    return { ...m, label: t(`how.ms.${m.id}.label`), desc: t(`how.ms.${m.id}.desc`), x: C + R * Math.cos(a), y: C + R * Math.sin(a), a };
   });
   const arc = (2 * Math.PI * R) * (done / MILESTONES.length);
   return (
-    <svg viewBox="0 0 400 400" className="w-full max-w-[420px] overflow-visible" role="img" aria-label={`Roadmap: ${done} of ${MILESTONES.length} milestones shipped`}>
+    <svg viewBox="0 0 400 400" direction="ltr" className="w-full max-w-[420px] overflow-visible" role="img" aria-label={t("how.ring.aria", { done, total: MILESTONES.length })}>
       <circle cx={C} cy={C} r={R} fill="none" stroke="var(--line-2)" strokeWidth="1.5" />
       <circle cx={C} cy={C} r={R} fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round"
         strokeDasharray={`${arc} ${2 * Math.PI * R}`} transform={`rotate(-90 ${C} ${C})`} />
-      <text x={C} y={C - 6} textAnchor="middle" className="fill-accent font-mono text-[12px] font-semibold tracking-[0.25em]">THE ROADMAP</text>
+      <text x={C} y={C - 6} textAnchor="middle" className="fill-accent font-mono text-[12px] font-semibold tracking-[0.25em]">{t("how.ring.title")}</text>
       <text x={C} y={C + 18} textAnchor="middle" className="fill-ink-3 font-mono text-[12px] tracking-[0.15em]">M1 → M5</text>
       {pts.map((p, i) => {
         const shipped = i < done;

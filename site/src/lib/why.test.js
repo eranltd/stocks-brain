@@ -77,8 +77,8 @@ test("whyClause: why, likely why, or an honest no clear cause; no trailing stop"
   const [clear, fund, sector, old] = doc.notes;
   assert.equal(whyClause(clear), "why: A rival agreed to buy airwaves that could make it a new competitor");
   assert.equal(whyClause(fund), "likely why: Lower interest rate hopes lifted the group");
-  assert.equal(whyClause(sector), "we looked for why and found no clear cause yet");
-  assert.equal(whyClause(old), "we looked for why and found no clear cause yet", "an unknown confidence reads as unclear");
+  assert.equal(whyClause(sector), "no clear cause has been found yet");
+  assert.equal(whyClause(old), "no clear cause has been found yet", "an unknown confidence reads as unclear");
   assert.equal(whyClause(null), "");
   assert.equal(CONFIDENCE.unclear.lead, null);
   assert.match(NOT_A_TRADE, /not a reason to trade/);
@@ -93,15 +93,15 @@ test("sources: https only, publisher or host, short day", () => {
   assert.deepEqual(sourcesOf(null), []);
 });
 
-test("who: a name, names, or a sector of our list", () => {
+test("who: a name, names, or a sector of the list", () => {
   const names = { AAA: "Alpha", BBB: "Beta", CCC: "Gamma" };
   const groups = { BBB: "Utilities", CCC: "Utilities", AAA: "Information Technology" };
   assert.equal(whoOf(doc.notes[0], { names }), "Alpha");
   assert.equal(whoOf({ kind: "stock", symbols: ["AAA", "BBB", "CCC"] }, { names }), "Alpha", "the others are funds that moved with it");
   assert.equal(sectorOf({ key: "sector:Communication Services", symbols: ["BBB"] }, groups), "Communication Services");
-  assert.equal(whoOf(doc.notes[2], { names, groups, short: (s) => s.slice(0, 4) }), "Our Util companies");
+  assert.equal(whoOf(doc.notes[2], { names, groups, short: (s) => s.slice(0, 4) }), "Util companies on the list");
   assert.equal(sectorOf({ sector: "Energy", symbols: ["BBB"] }, groups), "Energy");
-  assert.equal(whoOf({ kind: "sector", symbols: ["ZZZ"] }, { groups }), "One group of our companies");
+  assert.equal(whoOf({ kind: "sector", symbols: ["ZZZ"] }, { groups }), "One group of companies on the list");
   assert.equal(whoOf({ kind: "fund", symbols: ["ZZZ"], name: "Zeta Fund" }, { names }), "Zeta Fund", "another list's fund by its recorded name");
   assert.equal(whoOf({ kind: "fund", symbols: ["ZZZ"] }, { names }), "ZZZ");
   assert.equal(whoOf({ kind: "fund", symbols: ["BBB"] }, { names: { BBB: "Beta-100 (BBB proxy)" } }), "Beta-100", "no provider suffix");
@@ -110,7 +110,7 @@ test("who: a name, names, or a sector of our list", () => {
 test("noteView: ready to show, unclear says so", () => {
   const v = noteView(notesForDay(doc, "2026-10-09")[1], { names: {}, groups: {} });
   assert.equal(v.key, "2026-10-09:sector:Utilities");
-  assert.equal(v.who, "Our Utilities companies");
+  assert.equal(v.who, "Utilities companies on the list");
   assert.equal(v.unclear, true);
   assert.equal(v.word, "No clear cause found");
   assert.equal(v.day, "Oct 9");
@@ -119,4 +119,32 @@ test("noteView: ready to show, unclear says so", () => {
   assert.equal(c.headline, "A rival agreed to buy airwaves that could make it a new competitor");
   assert.equal(c.sources.length, 2);
   assert.equal(c.move_pct, -13.2);
+});
+
+/* ------------------------------------------------------------------ Hebrew */
+
+import { stripBidi } from "./i18n.js";
+import { notATrade, confidenceWord } from "./why.js";
+import { shortSector } from "./marketday.js";
+
+test("Hebrew: the clause, who, the day and the confidence word", () => {
+  const [clear, fund, sector] = doc.notes;
+  assert.equal(stripBidi(whyClause(clear, "he")), "הסיבה: A rival agreed to buy airwaves that could make it a new competitor");
+  assert.match(whyClause(clear, "he"), /⁨A rival/, "the English headline keeps its own direction");
+  assert.equal(stripBidi(whyClause(fund, "he")), "הסיבה הסבירה: Lower interest rate hopes lifted the group");
+  assert.equal(whyClause(sector, "he"), "עדיין לא נמצאה סיבה ברורה");
+  assert.equal(stripBidi(whoOf(sector, { groups: {}, short: shortSector, lang: "he" })), "חברות תשתיות ברשימה");
+  assert.equal(whoOf({ kind: "sector", symbols: ["ZZZ"] }, { lang: "he" }), "קבוצת חברות אחת ברשימה");
+  assert.equal(whoOf({ kind: "stock", symbols: [] }, { lang: "he" }), "מניה אחת ברשימה");
+  assert.equal(whoOf(clear, { names: { AAA: "Alpha" }, lang: "he" }), "Alpha", "a name stays as it is");
+  assert.equal(confidenceWord("likely", "he"), "סיבה סבירה");
+  assert.equal(confidenceWord("mystery", "he"), "לא נמצאה סיבה ברורה");
+  assert.equal(noteDay("2026-10-09", "he"), "9 באוק׳");
+  assert.match(notATrade("he"), /לא סיבה לקנות או למכור/);
+  assert.equal(notATrade(), NOT_A_TRADE);
+  const v = noteView(notesForDay(doc, "2026-10-09")[1], { names: {}, groups: {}, short: shortSector, lang: "he" });
+  assert.equal(v.word, "לא נמצאה סיבה ברורה");
+  assert.equal(v.day, "9 באוק׳");
+  assert.equal(v.headline, "Nothing clear", "the note's own text is left as written");
+  assert.equal(sourcesOf({ sources: [src("2026-10-09")] }, "he")[0].day, "9 באוק׳");
 });

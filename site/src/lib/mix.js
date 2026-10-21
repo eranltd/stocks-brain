@@ -3,6 +3,9 @@
 // exactly like basketSeries/weeklyStats in stats.js, so a mix scored here reads the same on the Portfolio page.
 // This is hindsight by construction: the list was chosen knowing which companies became large.
 
+import { translate } from "./i18n.js";
+import dict from "../i18n/home.js";
+
 const WEEKS = 52;
 
 export function prepare(weekly, symbols) {
@@ -74,6 +77,9 @@ export const MEASURES = {
   calm: { label: "Growth for the bumps", pick: (m) => (m.vol > 0 ? m.cagr / m.vol : 0) },
   smooth: { label: "Smallest drop", pick: (m) => m.dd },
 };
+
+/** A measure's label in a language (MEASURES[k].label is the English one). */
+export const measureLabel = (k, lang = "en") => (lang === "en" ? MEASURES[k]?.label : translate(dict, lang)(`mix.${k}`));
 
 /** Share of all mixes (0-100) that scored strictly below `value` on `measure`. */
 export function standing(all, measure, value) {

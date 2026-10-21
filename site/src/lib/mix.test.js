@@ -76,3 +76,9 @@ test("best changes: add when there is room, swap when full, never break the cap"
   const f = (c) => c.score.cagr;
   for (let i = 1; i < swap.changes.length; i++) assert.ok(f(swap.changes[i - 1]) >= f(swap.changes[i]));
 });
+
+test("measure labels in both languages", async () => {
+  const { MEASURES, measureLabel } = await import("./mix.js");
+  for (const k of Object.keys(MEASURES)) assert.equal(measureLabel(k), MEASURES[k].label);
+  assert.equal(measureLabel("smooth", "he"), "הירידה הקטנה ביותר");
+});

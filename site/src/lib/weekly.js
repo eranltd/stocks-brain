@@ -1,14 +1,26 @@
-// The weekly game: the household acts weekly. Real money buys the whole-market fund every week; pretend money plays
+// The weekly game: the plan acts weekly. Real money buys the whole-market fund every week; pretend money plays
 // two weekly rules (config/rules.json five_leaders_weekly and weekly_swing), recorded forward in the rules ledger
 // (data/portfolio/paper_rules.json) and judged against random picks in the history test (data/market/rules.json).
 // Pure functions, no React; tested in weekly.test.js.
 
+import { translate } from "./i18n.js";
+import dict from "../i18n/home.js";
+
+/** The two weekly rules, with their English name and line (other languages: weeklyRule(id, lang)). */
 export const WEEKLY_RULES = [
   { id: "weekly_swing", name: "Weekly Swing", what: "Each week: the five names that beat the market most over the last month." },
   { id: "five_leaders_weekly", name: "Five Leaders, weekly", what: "Each week: the strongest steady climbers of the past year." },
 ];
 
 const isNum = (v) => typeof v === "number" && Number.isFinite(v);
+
+/** A weekly rule's {id, name, what} in a language. */
+export function weeklyRule(id, lang = "en") {
+  const r = WEEKLY_RULES.find((x) => x.id === id);
+  if (!r || lang === "en") return r ?? null;
+  const t = translate(dict, lang);
+  return { ...r, name: t(`wk.rule.${id}.name`), what: t(`wk.rule.${id}.what`) };
+}
 
 /** The coming Monday (today if it is Monday), as an ISO date: the fallback when no published date can be used. */
 export function nextBuyDay(todayIso) {
@@ -35,17 +47,13 @@ export function weeklyBuyDay(todayIso, bw = null, siteSample = false) {
 }
 
 /** How a rule did on the history test, in words: passed, rejected, or not tested yet. */
-export function historyWords(rulesResult, id) {
+export function historyWords(rulesResult, id, lang = "en") {
+  const t = translate(dict, lang);
   const row = (rulesResult?.satellite?.rules ?? []).find((r) => r.id === id);
-  if (!row || !isNum(row.percentile)) return { tested: false, line: "Not tested on past prices yet: the next nightly run does it." };
+  if (!row || !isNum(row.percentile)) return { tested: false, line: t("wk.hist.none") };
   const p = Math.round(row.percentile);
   const passed = row.verdict === "passes_history" || row.verdict === "passed";
-  return {
-    tested: true, passed, percentile: p,
-    line: passed
-      ? `On past prices it beat ${p} out of 100 random picks: good enough to keep playing on paper.`
-      : `On past prices it beat only ${p} out of 100 random picks; luck alone beats about half. Not good enough for real money.`,
-  };
+  return { tested: true, passed, percentile: p, line: t(passed ? "wk.hist.passed" : "wk.hist.failed", { p }) };
 }
 
 /** One weekly rule's pretend record: this week's names, weeks played, and its result against the market since it began. */
@@ -66,10 +74,11 @@ export function gameRow(ledger, id, names = {}) {
 }
 
 /** The scoreboard line for a row, in words. */
-export function scoreLine(row) {
-  if (!row) return "Starts with the next weekly review.";
-  if (!isNum(row.ahead) || row.weeks < 2) return `Week ${row.weeks}: too early to score. It is checked again every week.`;
+export function scoreLine(row, lang = "en") {
+  const t = translate(dict, lang);
+  if (!row) return t("wk.score.none");
+  if (!isNum(row.ahead) || row.weeks < 2) return t("wk.score.early", { weeks: row.weeks });
   const a = Math.abs(row.ahead);
-  const by = a < 0.5 ? "about level with" : `${a.toFixed(1)} points ${row.ahead > 0 ? "ahead of" : "behind"}`;
-  return `After ${row.weeks} weeks it is ${by} the whole market. A few weeks prove nothing: luck swings this much.`;
+  const key = a < 0.5 ? "level" : row.ahead > 0 ? "ahead" : "behind";
+  return t(`wk.score.${key}`, { count: row.weeks, weeks: row.weeks, pts: a.toFixed(1) });
 }

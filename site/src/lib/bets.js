@@ -3,6 +3,10 @@
 // from its run's close to the next bet's run, or to the latest close while it is open, on the published indexed series
 // (data/market/derived.json symbols[].series: 100 = start of window, so ratios are returns and no price is published).
 // Pure functions, no React; tested in bets.test.js. The pack's copy for the brain is scripts/build_pack.py bets_block.
+// The record's sentence is in i18n/plan.js ("bets.*"); betRecord takes `lang` last (default English).
+
+import { translate } from "./i18n.js";
+import dict from "../i18n/plan.js";
 
 const isNum = (v) => typeof v === "number" && Number.isFinite(v);
 
@@ -78,18 +82,14 @@ export function luckOdds(won, n) {
 export const MIN_WEEKS = 12; // under a quarter of weekly results, a coin does as well too often to tell
 
 /** The scoreboard in words: weeks won, against luck. */
-export function betRecord(scored) {
+export function betRecord(scored, lang = "en") {
+  const t = translate(dict, lang);
   const done = scored.filter((b) => !b.open && b.won !== null);
   const won = done.filter((b) => b.won).length;
   const n = done.length;
-  if (!n) return { n, won, line: "The first week is still running. Each bet is scored when the next week's bet is placed." };
+  if (!n) return { n, won, line: t("bets.first") };
   const odds = luckOdds(won, n);
-  const base = `The brain won ${won} of ${n} ${n === 1 ? "week" : "weeks"}. Luck alone wins about half.`;
-  if (n < MIN_WEEKS) return { n, won, odds, line: `${base} Too early to tell: it needs about ${MIN_WEEKS} weeks before the score means anything.` };
-  return {
-    n, won, odds,
-    line: odds <= 5
-      ? `${base} A coin would do this well only ${odds} times in 100: the first sign of real skill. Still pretend money until it lasts.`
-      : `${base} A coin would do this well ${odds} times in 100, so this is still within luck.`,
-  };
+  const base = t("bets.base", { count: n, won, n });
+  if (n < MIN_WEEKS) return { n, won, odds, line: `${base} ${t("bets.early", { min: MIN_WEEKS })}` };
+  return { n, won, odds, line: `${base} ${t(odds <= 5 ? "bets.skill" : "bets.luck", { odds })}` };
 }

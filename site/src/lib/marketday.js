@@ -40,7 +40,10 @@ export function marketDay(market, watchlist, bench, top = 3) {
   };
 }
 
-/** Short sector names for one compact line on a phone. */
+import { translate } from "./i18n.js";
+import dict from "../i18n/home.js";
+
+/** Short sector names for one compact line on a phone (English; other languages: the "sector.<name>" texts). */
 const SHORT = {
   "Information Technology": "Tech",
   "Communication Services": "Communication",
@@ -48,4 +51,8 @@ const SHORT = {
   "Consumer Staples": "Staples",
   "Health Care": "Health care",
 };
-export const shortSector = (s) => SHORT[s] ?? s;
+export function shortSector(s, lang = "en") {
+  if (lang === "en") return SHORT[s] ?? s;
+  const t = translate(dict, lang);
+  return t.has(`sector.${s}`) ? t(`sector.${s}`) : SHORT[s] ?? s;
+}

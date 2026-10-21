@@ -1,5 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { stripBidi } from "./i18n.js";
 import { betRecord, luckOdds, scoreBets, weeklyBets } from "./bets.js";
 
 const bet = (best, worst) => ({ best, worst, why: "a plain reason for the ranking" });
@@ -46,4 +47,17 @@ test("luck odds and the record in words", () => {
   assert.match(betRecord(weeks(3, 1)).line, /won 3 of 4 weeks.*Too early/);
   assert.match(betRecord(weeks(10, 2)).line, /2 times in 100: the first sign/);
   assert.match(betRecord(weeks(7, 5)).line, /within luck/);
+});
+
+test("Hebrew: the record in words, with Hebrew counting", () => {
+  const he = (x) => stripBidi(betRecord(x, "he").line);
+  const weeks = (won, lost) => [...Array(won).fill({ open: false, won: true }), ...Array(lost).fill({ open: false, won: false })];
+  assert.equal(he([]), "השבוע הראשון עדיין רץ. כל הימור מקבל ציון כשההימור של השבוע הבא נקבע.");
+  assert.equal(he(weeks(1, 0)), "שבוע אחד קיבל ציון עד עכשיו. ניצחונות של המוח: 1. מזל לבדו מנצח בערך בחצי מהשבועות. מוקדם מדי לדעת: צריך בערך 12 שבועות עד שלציון תהיה משמעות.");
+  assert.match(he(weeks(1, 1)), /^שבועיים קיבלו ציון עד עכשיו\. ניצחונות של המוח: 1\./);
+  assert.match(he(weeks(3, 1)), /^4 שבועות קיבלו ציון עד עכשיו\. ניצחונות של המוח: 3\..*מוקדם מדי לדעת/);
+  assert.match(he(weeks(10, 2)), /מטבע היה מצליח כך רק 2 פעמים מתוך 100: סימן ראשון ליכולת אמיתית/);
+  assert.match(he(weeks(7, 5)), /בגבולות המזל\.$/);
+  assert.notEqual(betRecord(weeks(3, 1), "he").line, he(weeks(3, 1)), "numbers are isolated inside the Hebrew line");
+  assert.equal(betRecord(weeks(3, 1)).line, "The brain won 3 of 4 weeks. Luck alone wins about half. Too early to tell: it needs about 12 weeks before the score means anything.");
 });

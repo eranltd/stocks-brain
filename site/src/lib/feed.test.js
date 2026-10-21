@@ -206,3 +206,77 @@ test("ago: relative time in words", () => {
   assert.equal(ago("2026-10-05T09:00:00Z", now), "4 days ago");
   assert.equal(ago("not a date", now), "");
 });
+
+/* ------------------------------------------------------------------ Hebrew */
+
+import { stripBidi } from "./i18n.js";
+import { kindLabel, KIND_LABEL, verdictWord } from "./feed.js";
+const S = (s) => stripBidi(s);
+
+test("Hebrew: market and unusual items keep each number with its sign", () => {
+  const market = {
+    as_of: iso(80),
+    symbols: [{ symbol: "AAA", series: series([...calm(79, 0.5), 6]) }, { symbol: "BBB", series: series([...calm(79, 0.5), -1]) }, { symbol: "IDX", series: series([...calm(79), 0.3]) }],
+    context: { instruments: [{ role: "spx", name: "S&P 500", change_1d_pct: -0.2 }] },
+  };
+  const last = marketItems(market, wl, bench, { AAA: "Aye" }, 15, "he").at(-1);
+  assert.equal(S(last.title), "S&P 500 −0.2%, Index +0.3%");
+  assert.match(last.title, /⁦−0\.2%⁩/, "the sign stays in front of its number in a right-to-left line");
+  assert.equal(S(last.body[0]), "1 מתוך 2 מניות עלו, 1 ירדו.");
+  assert.equal(S(last.body[1]), "התנועה הגדולה ביותר: AAA +6.0% (Aye).");
+  const u = unusualItems(market, wl, { AAA: "Aye" }, 15, undefined, "he");
+  assert.equal(S(u[0].title), "AAA זינקה 6.0% ביום אחד");
+  assert.match(S(u[0].body[0]), /^בערך פי \d+(\.\d)? מהתנודה היומית הרגילה שלה \(0\.5% ב-60 הימים שלפני כן\)\. Aye\.$/);
+});
+
+test("Hebrew: brain, company, people and checklist items", () => {
+  const runs = [
+    { date: "2026-10-07", status: "ok", summary: "First thing. Second.", picks: [{ pick: { ticker: "AAA", stance: "neutral" } }, { pick: { ticker: "BBB", stance: "neutral" } }] },
+    { date: "2026-10-08", status: "ok", picks: [{ pick: { ticker: "AAA", stance: "bullish" } }, { pick: { ticker: "BBB", stance: "neutral" } }, { pick: { ticker: "CCC", stance: "bearish" } }] },
+    { date: "2026-10-09", status: "ok", picks: [{ pick: { ticker: "AAA", stance: "bullish" } }] },
+    { date: "2026-10-10", status: "failed" },
+  ];
+  const [a, b, c, d] = brainItems(runs, "he");
+  assert.equal(a.title, "המוח סימן שתי מניות, שתיהן רק במעקב");
+  assert.deepEqual(a.body, ["AAA · BBB", "First thing."], "the brain's own summary stays as written");
+  assert.equal(S(b.title), "המוח סימן 3 מניות");
+  assert.equal(b.body[0], "AAA בנטייה לעלייה · BBB רק במעקב · CCC בנטייה לירידה");
+  assert.equal(c.title, "המוח סימן מניה אחת, בנטייה לעלייה");
+  assert.equal(d.title, "הריצה של המוח נכשלה");
+
+  const { items, ahead } = companyItems(outlook, "2026-10-09", 45, "he");
+  assert.equal(S(items.find((i) => i.id === "report:AAA:2026-09-01").title), "AAA פרסמה תוצאות: הכנסות של $1.0 billion, עלייה של 12% לעומת שנה קודם לכן");
+  assert.equal(S(items.find((i) => i.id === "results:BBB:2026-10-01").title), "מועד התוצאות של BBB כבר עבר");
+  assert.equal(S(ahead[1].title), "AAA מפרסמת תוצאות");
+  assert.equal(S(ahead[1].body[0]), "Aye Inc, התאריך אושר.");
+
+  const cfg = { people: [{ id: "pat", name: "Pat Smith" }], calls: [{ id: "c1", person: "pat", via: "Fund LLP", date: "2026-01-02", ticker: "AAA", stance: "bearish", source_kind: "13f" }] };
+  const scores = { calls: [{ id: "c1", w26: { end_date: "2026-07-03", right: false, signed_excess_pct: -7.19 } }] };
+  const people = peopleItems(cfg, scores, 26, "he");
+  assert.equal(S(people[0].title), "Pat Smith, דיווח 13F: עמדה פסימית לגבי AAA");
+  assert.equal(S(people[1].title), "העמדה של Pat Smith לגבי AAA נבדקה אחרי 26 שבועות: טעתה");
+  assert.equal(S(people[1].body[0]), "−7.2% לעמדה, בהשוואה לקרן הליבה על מדד S&P 500.");
+  assert.equal(people[1].value.text, "טעתה");
+
+  const checks = checklistItems(checklist, "he");
+  assert.equal(checks[0].value.text, "נטייה לעלייה");
+  assert.equal(checks[0].title, "AAA: verdict mixed to lean up", "the checklist's own change text stays as written");
+  const digest = collapseChecklist(checks, 2, "he")[0];
+  assert.equal(S(digest.title), "רשימת הבדיקה: 3 מניות השתנו");
+  assert.equal(verdictWord("lean_down", "he"), "נטייה לירידה");
+  assert.equal(verdictWord("odd", "he"), "odd");
+  assert.equal(kindLabel("people", "he"), "אנשים");
+  for (const k of Object.keys(KIND_LABEL)) assert.equal(kindLabel(k), KIND_LABEL[k]);
+});
+
+test("Hebrew: ago, with the dual forms", () => {
+  const now = new Date("2026-10-09T12:00:00Z");
+  assert.equal(ago("2026-10-09T11:59:40Z", now, "he"), "ממש עכשיו");
+  assert.equal(ago("2026-10-09T11:59:00Z", now, "he"), "לפני דקה");
+  assert.equal(ago("2026-10-09T11:58:00Z", now, "he"), "לפני שתי דקות");
+  assert.equal(S(ago("2026-10-09T11:55:00Z", now, "he")), "לפני 5 דקות");
+  assert.equal(ago("2026-10-09T10:00:00Z", now, "he"), "לפני שעתיים");
+  assert.equal(ago("2026-10-08T09:00:00Z", now, "he"), "אתמול");
+  assert.equal(ago("2026-10-07T09:00:00Z", now, "he"), "לפני יומיים");
+  assert.equal(S(ago("2026-10-05T09:00:00Z", now, "he")), "לפני 4 ימים");
+});

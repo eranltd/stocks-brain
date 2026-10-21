@@ -7,6 +7,8 @@ import { DEFAULT_MARKET, defaultId, marketData, nasdaqData, pickMarket, switchCh
 import { newerBundle } from "./lib/appversion.js";
 import { Field, Footer, Header, Loader, MobileNav, PageIntro } from "./components/shell.jsx";
 import { Container } from "./components/ui.jsx";
+import { En, useLang } from "./lib/lang.jsx";
+import shellText from "./i18n/shell.js";
 import Today from "./tabs/Today.jsx";
 import Details from "./tabs/Details.jsx";
 import Quiz from "./tabs/Quiz.jsx";
@@ -39,6 +41,10 @@ const POLL_MS = 10 * 60 * 1000;
 const FOCUS_MIN_MS = 60 * 1000;
 
 export default function App() {
+  // The whole page re-renders when the language changes (the header switch), so every component and every lib
+  // sentence built during render follows it, not only the ones that read useLang() themselves.
+  const { lang, t: tr } = useLang();
+  const t = tr(shellText);
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [progress, setProgress] = useState(0);
@@ -167,10 +173,10 @@ export default function App() {
     const st = isDefault ? { state: entry?.available === false ? "none" : "ready", data: base }
       : other.key === otherKey ? { state: other.state, data: otherData } : { state: "loading", data: null };
     return {
-      id: marketId, entry, isDefault, defaultId: defId, choices: switchChoices(data.markets), ...st,
+      id: marketId, entry, isDefault, defaultId: defId, choices: switchChoices(data.markets, lang), ...st,
       choose: chooseMarket, adopt: adoptMarket, retry: () => setAttempt((n) => n + 1),
     };
-  }, [data, marketId, defId, base, other, otherKey, otherData, chooseMarket, adoptMarket]);
+  }, [data, marketId, defId, base, other, otherKey, otherData, chooseMarket, adoptMarket, lang]);
 
   const toggleTheme = () => {
     const next = theme === "dark" ? "light" : "dark";
@@ -189,15 +195,19 @@ export default function App() {
     <>
       <Field />
       <Loader progress={progress} done={Boolean(data || error)} />
-      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-lg focus:bg-ink focus:px-3 focus:py-2 focus:text-bg">Skip to content</a>
+      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:start-2 focus:z-50 focus:rounded-lg focus:bg-ink focus:px-3 focus:py-2 focus:text-bg">{t("app.skip")}</a>
       <Header route={tab} onNav={go} sample={data?.sample} livePrices={data?.livePrices} theme={theme} onTheme={toggleTheme} market={market} sampleRoutes={sampleRoutes} />
       <main id="main" className="relative min-h-[70vh] [view-transition-name:main]">
         {error && (
           <Container className="py-24">
             <div className="card p-8">
-              <div className="eyebrow mb-3 text-down">Could not load data</div>
-              <p className="text-ink-2">{String(error.message || error)}</p>
-              <p className="mt-3 text-ink-2">Locally, export the data first: <code className="font-mono text-ink">python3 scripts/build_site.py</code>, then <code className="font-mono text-ink">cd site && npm run dev</code>.</p>
+              <div className="eyebrow mb-3 text-down">{t("app.loadError")}</div>
+              {/* The browser's own error message (English). */}
+              <En as="p" className="text-ink-2">{String(error.message || error)}</En>
+              <p className="mt-3 text-ink-2">{t.rich("app.loadHelp", {
+                build: <code dir="ltr" className="font-mono text-ink">python3 scripts/build_site.py</code>,
+                dev: <code dir="ltr" className="font-mono text-ink">cd site && npm run dev</code>,
+              })}</p>
             </div>
           </Container>
         )}
@@ -205,7 +215,7 @@ export default function App() {
         {data && (
           // Under the page's own heading line the page starts closer to the top.
           <div className={intro ? "[&>*:first-child]:pt-10" : ""}>
-            <Active key={tab} data={base} market={market} go={go} query={query} setQuery={setQuery} openKB={openKB} symbol={symbol} live={live} checkNow={checkNow} />
+            <Active key={tab} lang={lang} data={base} market={market} go={go} query={query} setQuery={setQuery} openKB={openKB} symbol={symbol} live={live} checkNow={checkNow} />
           </div>
         )}
         {data && tab !== "today" && <KeepExploring key={`ke-${tab}`} data={base} route={tab} go={go} />}
@@ -213,9 +223,9 @@ export default function App() {
       {data && <Footer data={data} />}
       {update && (
         <button type="button" onClick={() => window.location.reload()} role="status"
-          className="fixed inset-x-4 bottom-[calc(env(safe-area-inset-bottom)+92px)] z-50 mx-auto max-w-[420px] rounded-2xl border border-accent/60 bg-surface px-5 py-4 text-left text-[16px] leading-snug text-ink shadow-xl sm:bottom-6">
-          <span className="block font-semibold text-accent">A new version of the app is ready</span>
-          <span className="block text-ink-2">Tap here to update</span>
+          className="fixed inset-x-4 bottom-[calc(env(safe-area-inset-bottom)+92px)] z-50 mx-auto max-w-[420px] rounded-2xl border border-accent/60 bg-surface px-5 py-4 text-start text-[16px] leading-snug text-ink shadow-xl sm:bottom-6">
+          <span className="block font-semibold text-accent">{t("app.updateTitle")}</span>
+          <span className="block text-ink-2">{t("app.updateTap")}</span>
         </button>
       )}
       <MobileNav route={tab} onNav={go} sampleRoutes={sampleRoutes} />

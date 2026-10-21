@@ -21,10 +21,11 @@ for (const [area, dict] of Object.entries(AREAS)) {
 }
 
 test("the not-advice notice says what the owner asked for, in both languages", () => {
-  const en = `${shell.en["notAdvice.body"]} ${shell.en["notAdvice.compact"]}`;
+  // The title is always shown with the body and with the compact line, so it counts as part of the notice.
+  const en = `${shell.en["notAdvice.title"]} ${shell.en["notAdvice.body"]} ${shell.en["notAdvice.compact"]}`;
   for (const w of ["educational research notebook", "not investment advice", "investment marketing", "portfolio management", "Israel Securities Authority", "Past results do not promise future results", "licensed"])
     assert.ok(en.toLowerCase().includes(w.toLowerCase()), `en notice mentions "${w}"`);
-  const he = `${shell.he["notAdvice.body"]} ${shell.he["notAdvice.compact"]}`;
+  const he = `${shell.he["notAdvice.title"]} ${shell.he["notAdvice.body"]} ${shell.he["notAdvice.compact"]}`;
   for (const w of ["מחברת מחקר לימודית", "ייעוץ השקעות", "שיווק השקעות", "ניהול תיקי השקעות", "רשות ניירות ערך", "תוצאות עבר אינן מבטיחות", "רישיון"])
     assert.ok(he.includes(w), `he notice mentions "${w}"`);
   assert.doesNotMatch(en + he, /section|סעיף|§/i, "no law section number");

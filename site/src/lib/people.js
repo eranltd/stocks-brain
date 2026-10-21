@@ -1,5 +1,9 @@
 // View helpers for the People tab (config/people.json + data/people/scores.json).
-// Every number comes from scripts/people.py; nothing here computes a return.
+// Every number comes from scripts/people.py; nothing here computes a return. Sentences take `lang` last ("en" by default,
+// so old callers and tests keep English); the words are in i18n/learn.js.
+
+import { translate } from "./i18n.js";
+import dict from "../i18n/learn.js";
 
 /** "Pershing Square Capital Management, L.P." -> "Pershing Square"; "Berkshire Hathaway Inc" -> "Berkshire Hathaway". */
 export function shortVia(via) {
@@ -9,7 +13,7 @@ export function shortVia(via) {
     .trim();
 }
 
-/** Investors we follow, teachers (teacher, educator or writer, by their kind), and whose principles we keep. */
+/** Investors followed, teachers (teacher, educator or writer, by their kind), and people whose principles are kept. */
 export function groupPeople(people) {
   const groups = { investors: [], teachers: [], principles: [] };
   for (const p of people ?? []) {
@@ -36,41 +40,44 @@ export function ownLinks(p) {
   return (p.links ?? []).filter((l) => !(cik && /sec\.gov\/cgi-bin\/browse-edgar/.test(l.url) && l.url.includes(cik)));
 }
 
-const plural = (n, one, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
+const pct1 = (v) => `${v >= 0 ? "+" : "−"}${Math.abs(v).toFixed(1)}%`;
 
 /**
  * One plain line for a person's record, e.g. "3 calls logged, 2 half a year old: too few to judge (needs 10)".
  * firmCalls: calls on this person's fund that are the firm's own (scored for the fund, never for the person).
  */
-export function recordLine(person, rec, judgeWeeks = 26, minMatured = 10, firmCalls = []) {
-  if (person.status === "principles_only") return "Principles only: no calls to score.";
+export function recordLine(person, rec, judgeWeeks = 26, minMatured = 10, firmCalls = [], lang = "en") {
+  const t = translate(dict, lang);
+  if (person.status === "principles_only") return t("rec.principlesOnly");
   if (!rec || !rec.n) {
-    if (firmCalls.length) return `${plural(firmCalls.length, `${shortVia(firmCalls[0].via)} call`)} logged, scored as the firm's, not as personal picks.`;
-    return "No calls logged yet.";
+    if (firmCalls.length) return t("rec.firm", { count: firmCalls.length, firm: shortVia(firmCalls[0].via) });
+    return t("rec.none");
   }
-  const age = judgeWeeks === 26 ? "half a year old" : `${judgeWeeks} weeks old`;
-  const head = `${plural(rec.n, "call")} logged, ${rec.matured_26w} ${age}`;
-  if (!rec.enough) return `${head}: too few to judge (needs ${minMatured}).`;
-  const med = rec.median_signed_excess_26w;
-  return `${head}: right ${Math.round(rec.right_26w_pct)}% of the time, typical call ${med >= 0 ? "+" : "−"}${Math.abs(med).toFixed(1)}% vs the core.`;
+  const head = judgeWeeks === 26
+    ? t("rec.head26", { count: rec.n, matured: rec.matured_26w })
+    : t("rec.headWeeks", { count: rec.n, matured: rec.matured_26w, weeks: judgeWeeks });
+  if (!rec.enough) return head + t("rec.tooFew", { min: minMatured });
+  return head + t("rec.enough", { pct: `${Math.round(rec.right_26w_pct)}%`, med: pct1(rec.median_signed_excess_26w) });
 }
 
 /** Where a scored call stands at the judging horizon: right, wrong, maturing, or not scored. */
-export function callStatus(c, judgeWeeks = 26) {
-  if (!c.scored) return { kind: "unscored", label: "not scored", detail: c.reason ?? "" };
+export function callStatus(c, judgeWeeks = 26, lang = "en") {
+  const t = translate(dict, lang);
+  if (!c.scored) return { kind: "unscored", label: t("status.unscored"), detail: c.reason ?? "" };
   const leg = c[`w${judgeWeeks}`];
-  if (leg) return leg.right ? { kind: "right", label: "right" } : { kind: "wrong", label: "wrong" };
-  return { kind: "maturing", label: "maturing", detail: `${c.weeks_since ?? 0} of ${judgeWeeks} weeks` };
+  if (leg) return leg.right ? { kind: "right", label: t("status.right") } : { kind: "wrong", label: t("status.wrong") };
+  return { kind: "maturing", label: t("status.maturing"), detail: t("status.weeksOf", { since: c.weeks_since ?? 0, judge: judgeWeeks }) };
 }
 
 /** Where a call stands, in words, e.g. "judged wrong at 26 weeks, −20.1% for the call vs the core". */
-export function statusPhrase(c, judgeWeeks = 26) {
-  const st = callStatus(c, judgeWeeks);
+export function statusPhrase(c, judgeWeeks = 26, lang = "en") {
+  const t = translate(dict, lang);
+  const st = callStatus(c, judgeWeeks, lang);
   const leg = c[`w${judgeWeeks}`];
-  const pct = (v) => `${v >= 0 ? "+" : "−"}${Math.abs(v).toFixed(1)}%`;
-  if (st.kind === "right" || st.kind === "wrong") return `judged ${st.kind} at ${judgeWeeks} weeks, ${pct(leg.signed_excess_pct)} for the call vs the core`;
-  if (st.kind === "maturing") return `maturing, ${st.detail}`;
-  return st.detail ? `not scored: ${st.detail}` : "not scored";
+  if (st.kind === "right" || st.kind === "wrong")
+    return t(st.kind === "right" ? "status.judgedRight" : "status.judgedWrong", { weeks: judgeWeeks, pct: pct1(leg.signed_excess_pct) });
+  if (st.kind === "maturing") return t("status.maturingPhrase", { detail: st.detail }, { bidi: false });
+  return st.detail ? t("status.notScoredPhrase", { detail: st.detail }) : st.label;
 }
 
 /** Logged calls on any of the given tickers, newest first. */
@@ -83,12 +90,13 @@ export function callsTouching(calls, tickers) {
  * Join the config's calls with their scores (by id); a call without a score row still shows.
  * `note` stays the config's note (context about the call); `reason` is why code did not score it.
  */
-export function joinCalls(cfg, scores) {
+export function joinCalls(cfg, scores, lang = "en") {
+  const t = translate(dict, lang);
   const byId = Object.fromEntries((scores?.calls ?? []).map((s) => [s.id, s]));
   return (cfg?.calls ?? [])
     .map((c) => {
       const s = byId[c.id];
-      const reason = s ? (s.scored ? null : s.note ?? null) : scores ? "not scored yet" : "scored after the next daily run";
+      const reason = s ? (s.scored ? null : s.note ?? null) : scores ? t("reason.notYet") : t("reason.nextRun");
       return { ...c, ...(s ?? { scored: false }), note: c.note ?? null, reason };
     })
     .sort((a, b) => b.date.localeCompare(a.date) || a.ticker.localeCompare(b.ticker));

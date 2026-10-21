@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { fmtPct, cap, signTone } from "../lib/format.js";
-import { ltr, translate } from "../lib/i18n.js";
+import { isolate, ltr, translate } from "../lib/i18n.js";
 import { Auto, Bdi, En, EnglishNote, useLang } from "../lib/lang.jsx";
 import dict from "../i18n/stock.js";
 import shell from "../i18n/shell.js";
@@ -165,7 +165,7 @@ export default function StockPage({ data, market, symbol, go }) {
 }
 
 function Stock({ data, symbol, go, market: mk }) {
-  const { lang, t: tr, fmt } = useLang();
+  const { lang, he, t: tr, fmt } = useLang();
   const t = tr(dict);
   const chip = tr(shell);
   const code = (k) => (lang !== "en" && chip.has(`ui.chip.${k}`) ? chip(`ui.chip.${k}`) : k);
@@ -409,7 +409,7 @@ function Stock({ data, symbol, go, market: mk }) {
           <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
             <div>
               <div className="eyebrow mb-3">{t("sp.guess.eyebrow")}</div>
-              <h2 className="display text-[clamp(30px,4.4vw,52px)]">{sample ? <>{t("sp.guess.sampleA")} <Accent>M3.</Accent></>
+              <h2 className="display text-[clamp(30px,4.4vw,52px)]">{sample ? t.rich("sp.guess.sampleHead", { m: <Accent>{he ? "M3" : "M3."}</Accent> })
                 : picks.length ? <>{STANCE_KEY[picks[0].stance] ? t(STANCE_KEY[picks[0].stance]) : cap(picks[0].stance)}, <Accent>{SURE_KEY[picks[0].conviction] ? t(SURE_KEY[picks[0].conviction]) : t("sp.guess.conviction", { level: picks[0].conviction })}.</Accent></>
                 : <>{t("sp.guess.noneA")} <Accent>{t("sp.guess.noneB")}</Accent></>}</h2>
             </div>
@@ -425,7 +425,7 @@ function Stock({ data, symbol, go, market: mk }) {
               {picks.slice(0, 4).map((k, i) => (
                 <Reveal key={k.id} delay={i * 60} as="article" className={`card p-6 ${sample ? "border-dashed" : ""}`}>
                   <div className="flex items-center justify-between gap-3">
-                    <span className="meta">{k.id}</span>
+                    <span className="meta"><Bdi>{k.id}</Bdi></span>
                     <Conviction level={k.conviction} />
                   </div>
                   <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -434,7 +434,7 @@ function Stock({ data, symbol, go, market: mk }) {
                   </div>
                   {i === 0 && <EnglishNote className="mt-4" />}
                   <En as="p" className="mt-4 text-[15px] leading-relaxed">{k.thesis}</En>
-                  <div className="mt-4 text-[14px] text-ink-2"><span className="meta me-2">{t("sp.guess.wrongIf")}</span><En as="span">{k.invalidation}</En></div>
+                  <div className="mt-4 text-[14px] text-ink-2"><span className="meta me-2">{t("sp.guess.wrongIf")}</span><En as={he ? "p" : "span"}>{k.invalidation}</En></div>
                 </Reveal>
               ))}
             </div>
@@ -652,7 +652,7 @@ function NextList({ label, items }) {
         {items.map((w) => (
           <li key={w.item} className="text-[14.5px] leading-relaxed">
             <div className="meta mb-0.5 normal-case tracking-[0.04em]"><span className="uppercase tracking-[0.14em]">{kindLabel(w.kind, lang)}</span> · <En as="span">{w.when}</En></div>
-            <En as="span">{w.item}</En><Src url={w.source_url} />
+            <En as="p">{w.item}<Src url={w.source_url} /></En>
           </li>
         ))}
       </ul>
@@ -816,7 +816,7 @@ function WhatsNext({ card, symbol, today, hasFile }) {
           </En>
           <div className="mt-4 rounded-2xl border border-line px-4 py-3">
             <div className="meta mb-1">{g.given && g.period ? t("sp.next.outlookPeriod", { period: g.period }) : t("sp.next.outlook")}</div>
-            <p className="text-[14.5px] leading-relaxed"><En as="span" className={g.given ? "" : "text-ink-2"}>{g.text}</En><Src url={g.source_url} /></p>
+            <En as="p" className={`text-[14.5px] leading-relaxed ${g.given ? "" : "text-ink-2"}`}>{g.text}<Src url={g.source_url} /></En>
           </div>
         </div>
 
@@ -831,7 +831,7 @@ function WhatsNext({ card, symbol, today, hasFile }) {
                 {!ne.confirmed && <span className="pill border-dashed py-0.5 text-[10.5px] text-people">{t("sp.next.expected")}</span>}
               </div>
             ) : <div className="text-[15px] text-ink-2">{t("sp.next.notAnnounced")}</div>}
-            {ne.note && <p className="mt-1 text-[13px] leading-relaxed text-ink-3"><En as="span">{ne.note}</En><Src url={ne.source_url} /></p>}
+            {ne.note && <En as="p" className="mt-1 text-[13px] leading-relaxed text-ink-3">{ne.note}<Src url={ne.source_url} /></En>}
             {!ne.note && <Src url={ne.source_url} />}
           </div>
           <NextList label={t("sp.next.ahead")} items={groups.ahead} />
@@ -843,7 +843,7 @@ function WhatsNext({ card, symbol, today, hasFile }) {
           <SubHead>{t("sp.next.watch")}</SubHead>
           {card.watch.length ? (
             <ul className="grid gap-3">
-              {card.watch.map((w) => <li key={w.item} className="text-[14.5px] leading-relaxed text-ink-2"><En as="span">{w.item}</En><Src url={w.source_url} /></li>)}
+              {card.watch.map((w) => <En as="li" key={w.item} className="text-[14.5px] leading-relaxed text-ink-2">{w.item}<Src url={w.source_url} /></En>)}
             </ul>
           ) : <p className="text-[14px] text-ink-3">{t("sp.next.noRisks")}</p>}
         </div>
@@ -856,7 +856,7 @@ function WhatsNext({ card, symbol, today, hasFile }) {
 /* ------------------------------------------------------------------ chart */
 
 function StockChart({ row, bench, benchSymbol, picks }) {
-  const { t: tr, fmt } = useLang();
+  const { t: tr, fmt, he } = useLang();
   const t = tr(dict);
   const [range, setRange] = useState(126);
   const [ref, inView] = useInView();
@@ -931,7 +931,7 @@ function StockChart({ row, bench, benchSymbol, picks }) {
           ))}
           {lo < 100 && hi > 100 && <line x1={L} x2={W - R} y1={y(100)} y2={y(100)} stroke="var(--line-2)" strokeDasharray="2 4" />}
           {dates.map((d, i) => i % labelEvery === 0 && (
-            <text key={d} x={Math.max(L + 18, x(i))} y={H - 6} textAnchor="middle" className="fill-ink-3 font-mono text-[11.5px]">{fmt.short(d)}</text>
+            <text key={d} x={Math.max(L + 18, x(i))} y={H - 6} textAnchor="middle" className="fill-ink-3 font-mono text-[11.5px]">{he ? isolate(fmt.short(d)) : fmt.short(d)}</text>
           ))}
           <path d={path(spts)} fill="none" stroke="var(--ink-2)" strokeWidth="1.2" opacity="0.6" vectorEffect="non-scaling-stroke" />
           {bpts.length > 0 && <path d={path(bpts)} fill="none" stroke="var(--ink-3)" strokeWidth="2" strokeDasharray="6 5" vectorEffect="non-scaling-stroke" />}

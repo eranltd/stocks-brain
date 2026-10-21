@@ -3,6 +3,7 @@ import { Sparkline } from "../components/charts.jsx";
 import { STATUS } from "../components/goal.jsx";
 import { Accent, Container, Reveal, SectionHead, Segmented, Strip } from "../components/ui.jsx";
 import { VerdictPill } from "../components/checklist.jsx";
+import { shortSector } from "../lib/marketday.js";
 import { marketNote, notYet } from "../lib/markets.js";
 import { ltr } from "../lib/i18n.js";
 import { Auto, useLang } from "../lib/lang.jsx";
@@ -93,9 +94,11 @@ function List({ data, go }) {
 }
 
 function Row({ r, i, bench = false, go, rule, ck, hasChecklist, group = null }) {
-  const { fmt, t: tr } = useLang();
+  const { fmt, lang, t: tr } = useLang();
   const t = tr(dict);
   const m = r.m;
+  // A sector's name in Hebrew (the home area's sector words); English, and a fund's category, stay as written.
+  const groupName = group && lang !== "en" ? shortSector(group, lang) : group;
   const tone = (m?.ret_20d_pct ?? 0) < 0 ? "down" : "accent";
   return (
     <Reveal
@@ -113,7 +116,7 @@ function Row({ r, i, bench = false, go, rule, ck, hasChecklist, group = null }) 
           {bench && <span className="pill hidden py-1 text-[11px] text-ink-3 sm:inline-flex">{t("wl.wholeMarket")}</span>}
         </div>
         <div className="line-clamp-3 text-[13px] leading-snug text-ink-3 sm:line-clamp-none sm:truncate">{bench ? <span className="sm:hidden">{t("wl.wholeMarketDot")}</span> : null}<Auto>{r.name}</Auto></div>
-        {group && <div dir="auto" className="mt-0.5 text-[12.5px] leading-snug text-ink-3 sm:mt-0 sm:truncate">{group}</div>}
+        {group && <div dir="auto" className="mt-0.5 text-[12.5px] leading-snug text-ink-3 sm:mt-0 sm:truncate">{groupName}</div>}
       </div>
       <div className="row-span-2 sm:row-span-1">
         {m?.bars?.length > 1 ? <Sparkline bars={m.bars} tone={tone} delay={i * 60} indexed /> : <span className="meta">{t("wl.noData")}</span>}

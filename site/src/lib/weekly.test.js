@@ -45,7 +45,7 @@ test("historyWords: not tested, rejected, passed", () => {
 test("Hebrew: the scoreboard and history lines, with the dual for two weeks", async () => {
   const { stripBidi } = await import("./i18n.js");
   const { weeklyRule, WEEKLY_RULES } = await import("./weekly.js");
-  assert.equal(scoreLine(null, "he"), "מתחיל בסקירה השבועית הבאה.");
+  assert.equal(scoreLine(null, "he"), "הציון יתחיל בסקירה השבועית הבאה.");
   assert.equal(stripBidi(scoreLine({ weeks: 1, ahead: null }, "he")), "שבוע 1: מוקדם מדי לתת ציון. הבדיקה חוזרת כל שבוע.");
   assert.match(stripBidi(scoreLine({ weeks: 2, ahead: 2 }, "he")), /^אחרי שבועיים הכלל מקדים את השוק כולו ב-2\.0 נקודות אחוז\./);
   assert.match(stripBidi(scoreLine({ weeks: 6, ahead: -1.34 }, "he")), /^אחרי 6 שבועות הכלל מפגר אחרי השוק כולו ב-1\.3 נקודות אחוז\./);

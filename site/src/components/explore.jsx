@@ -3,7 +3,7 @@ import { dayNumber, holeQuestion, HOLES, nextFor, stockOfDay, targetOf, totalMin
 import { verdictHistory } from "../lib/verdict.js";
 import { weeklyBuyDay } from "../lib/weekly.js";
 import { ArrowRight, Reveal } from "./ui.jsx";
-import { En, useLang } from "../lib/lang.jsx";
+import { useLang } from "../lib/lang.jsx";
 import { localeOf } from "../lib/i18n.js";
 import shellText from "../i18n/shell.js";
 
@@ -29,15 +29,13 @@ const dayShort = (iso, lang) => new Date(`${iso}T00:00:00Z`).toLocaleDateString(
  * then a clear "that is all you need today" so a busy reader can leave informed.
  */
 export function QuickRead({ data, market, go }) {
-  const { lang, he, t: tr } = useLang();
+  const { lang, t: tr } = useLang();
   const t = tr(shellText);
   const today = todayISO();
-  const v = data.sample ? null : verdictHistory(data.runs, { today })[0];
+  const v = data.sample ? null : verdictHistory(data.runs, { today, lang })[0];
   const buy = weeklyBuyDay(today, data.buyWindow, data.sample);
-  // The brain's headline is the brain's own words (English for now): kept left to right, with the one-line note in Hebrew.
-  const brain = v
-    ? (he ? <><En as="span" className="block">{v.headline}</En><span className="mt-0.5 block text-[13.5px] text-ink-3">{t("englishNote")}</span></> : v.headline)
-    : t("explore.quickNoAnswer");
+  // The headline is the site's own short sentence about the brain's answer (lib/verdict.js headline), in the reader's language.
+  const brain = v ? v.headline : t("explore.quickNoAnswer");
   const rows = [
     { id: "brain", k: t("explore.quickBrain"), t: brain, to: "verdicts" },
     { id: "plan", k: t("explore.quickPlan"), t: buy === today ? t("explore.quickBuyToday") : t("explore.quickBuyOn", { day: dayShort(buy, lang) }), to: "verdicts#money-action" },

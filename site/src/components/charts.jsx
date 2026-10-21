@@ -1,6 +1,7 @@
 import { useId, useMemo, useRef, useState } from "react";
 import { useInView } from "../lib/motion.js";
 import { useLang } from "../lib/lang.jsx";
+import { isolate } from "../lib/i18n.js";
 import dict from "../i18n/stock.js";
 import shell from "../i18n/shell.js";
 import { Tip } from "./ui.jsx";
@@ -94,6 +95,8 @@ export function BarChart({ items, value, label, tooltip, refs = [], height = 380
   const [ref, inView] = useInView();
   const [tip, setTip] = useState(null);
   const box = useWidth();
+  // A Hebrew label that starts with a digit ("16 באוק׳") reads backwards inside this left-to-right box unless isolated.
+  const { he } = useLang();
   const W = 1000, H = height, padL = 64, padR = 12, padT = 24, padB = 40;
   const vals = items.map(value);
   const max = Math.max(0, ...vals, ...refs.map((r) => r.value));
@@ -139,7 +142,7 @@ export function BarChart({ items, value, label, tooltip, refs = [], height = 380
                   onPointerLeave={() => setTip(null)}
                 />
                 {i % labelEvery === 0 && (
-                  <text x={padL + i * bw + bw / 2} y={H - 10} textAnchor="middle" className="fill-ink-3 font-mono text-[15px]">{label(it)}</text>
+                  <text x={padL + i * bw + bw / 2} y={H - 10} textAnchor="middle" className="fill-ink-3 font-mono text-[15px]">{he ? isolate(label(it)) : label(it)}</text>
                 )}
               </g>
             );

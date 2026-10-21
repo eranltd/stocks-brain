@@ -26,7 +26,7 @@ test("companyNumbers skips companies with no data", () => {
 test("Hebrew: the company's own numbers in Hebrew, percents kept whole", () => {
   const w = fundamentalsWords(row, "he");
   assert.deepEqual(w.lines.map((l) => l.label), ["מכירות", "רווח מהפעילות", "השורה התחתונה", "מזומן אחרי השקעות"]);
-  assert.equal(stripBidi(w.lines[0].text), "גדלו ב-14% במהלך 12 החודשים האחרונים; ברבעון האחרון הן ירדו ב-2% לעומת שנה קודם.");
+  assert.equal(stripBidi(w.lines[0].text), "גדלו ב-14% במהלך 12 החודשים האחרונים; ברבעון האחרון הן ירדו ב-2% לעומת הרבעון המקביל אשתקד.");
   assert.equal(stripBidi(w.lines[1].text), "נשארים לה 33 סנט רווח תפעולי מכל דולר של מכירות.");
   assert.match(w.lines[2].text, /הפסד של/);
   assert.equal(stripBidi(w.period), "12 חודשים עד יוני 2026, מהדיווחים הרשמיים של החברה ל-SEC (הוגשו ב-30 ביולי 2026).");

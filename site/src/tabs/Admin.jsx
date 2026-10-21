@@ -1,56 +1,39 @@
 import { useEffect, useRef, useState } from "react";
 import { Markdown, stripFrontMatter } from "../lib/markdown.jsx";
-import { cap, fmtK, fmtUsd, pad2, relDays } from "../lib/format.js";
+import { cap, pad2 } from "../lib/format.js";
+import { useLang, En, EnglishNote } from "../lib/lang.jsx";
+import dict from "../i18n/learn.js";
 import { Accent, ArrowRight, Chip, Container, Reveal, SectionHead } from "../components/ui.jsx";
 
 const ORDER = ["household", "shelf", "strategy", "guardrails", "methodology", "learnings", "watchlist", "settings", "sources", "people", "outlook", "checklist", "routines", "library", "decisions"];
-const ABOUT = {
-  strategy: "What a guess is, and what the brain looks for.",
-  guardrails: "The safety rails: lines a guess may never cross.",
-  methodology: "How a morning run works and how guesses are scored.",
-  learnings: "What checked guesses taught us, with proof.",
-  watchlist: "The companies the brain may talk about.",
-  settings: "Limits, costs, how long before a guess is checked, and what counts as the whole market.",
-  sources: "Where the data comes from.",
-  people: "People we learn from, the research on following them, and their dated public calls.",
-  outlook: "What's next for each company: latest quarter, its own guidance, next results date. Linked and dated.",
-  checklist: "The eight-step chart checklist from the video: how each step is worked out, the risk rule, how it is measured. Not proven.",
-  routines: "The timetable: which job runs when, and what it may spend.",
-  library: "Lessons from books and talks.",
-  decisions: "Every decision and why, plus what is still open.",
-  household: "When and how much the household acts on anything here.",
-  shelf: "What a 119-book library supports, disputes and rejects.",
-};
+// Each doc's display name and one-line description are i18n/learn.js "adm.name.<name>" and "adm.about.<name>".
 
-function stats(doc, data) {
+/** A doc's name as shown: its translated name, else the file's name with a capital. */
+const docName = (t, name) => (t.has(`adm.name.${name}`) ? t(`adm.name.${name}`) : cap(name));
+
+function stats(doc, data, t, fmt) {
   const c = doc.content;
+  const sections = (body) => t("adm.stats.sections", { sections: (body.match(/^## /gm) || []).length, rules: (body.match(/^\s*(-|\d+\.)\s/gm) || []).length });
   switch (doc.name) {
-    case "household": {
-      const body = stripFrontMatter(c);
-      return `${(body.match(/^## /gm) || []).length} sections · ${(body.match(/^\s*(-|\d+\.)\s/gm) || []).length} rules`;
-    }
+    case "household":
+    case "strategy":
+    case "methodology":
+      return sections(stripFrontMatter(c));
     case "decisions": {
       const body = stripFrontMatter(c);
       const open = body.split("## Open items")[1]?.split("\n## ")[0] ?? "";
-      return `${(open.match(/^- /gm) || []).length} open items · ${(body.match(/^- \*\*/gm) || []).length} entries`;
+      return t("adm.stats.decisions", { open: (open.match(/^- /gm) || []).length, entries: (body.match(/^- \*\*/gm) || []).length });
     }
-    case "strategy":
-    case "methodology": {
-      const body = stripFrontMatter(c);
-      const sections = (body.match(/^## /gm) || []).length;
-      const items = (body.match(/^\s*(-|\d+\.)\s/gm) || []).length;
-      return `${sections} sections · ${items} rules`;
-    }
-    case "guardrails": return `max ${c.max_picks} picks · ${c.banned_phrases.length} banned phrases · ${c.forbidden_keys.length} forbidden keys`;
-    case "learnings": return `${c.items.length} lessons · ${c.items.filter((l) => l.status === "active").length} active`;
-    case "watchlist": return `${c.symbols.length} symbols · bench ${data.bench.symbol}`;
-    case "settings": return `pack ${fmtK(c.pack.token_cap)} · target ${fmtUsd(c.cost.target_usd)} · ${c.scoring.horizon_days}d horizon`;
-    case "sources": return `${c.sources.length} connectors · ${c.sources.filter((s) => s.status === "active").length} active`;
-    case "people": return `${c.people.length} people · ${c.calls.length} calls · ${c.evidence.length} findings`;
-    case "outlook": return `${c.companies.length} companies · ${c.companies.filter((x) => x.next_earnings?.date).length} results dates`;
-    case "checklist": return `${c.steps.length} steps · reward-to-risk ${c.house_rule.min_reward_to_risk}+ to TP1 · ${c.status}`;
-    case "routines": return `${c.routines.length} routines · ${c.routines.filter((r) => r.uses_llm).length} use the model`;
-    case "library": return `${c.sources.length} sources · ${c.sources.reduce((a, s) => a + s.principles.length, 0)} principles`;
+    case "guardrails": return t("adm.stats.guardrails", { max: c.max_picks, phrases: c.banned_phrases.length, keys: c.forbidden_keys.length });
+    case "learnings": return t("adm.stats.learnings", { n: c.items.length, active: c.items.filter((l) => l.status === "active").length });
+    case "watchlist": return t("adm.stats.watchlist", { n: c.symbols.length, bench: data.bench.symbol });
+    case "settings": return t("adm.stats.settings", { cap: fmt.k(c.pack.token_cap), usd: fmt.usd(c.cost.target_usd), days: c.scoring.horizon_days });
+    case "sources": return t("adm.stats.sources", { n: c.sources.length, active: c.sources.filter((s) => s.status === "active").length });
+    case "people": return t("adm.stats.people", { people: c.people.length, calls: c.calls.length, findings: c.evidence.length });
+    case "outlook": return t("adm.stats.outlook", { n: c.companies.length, dates: c.companies.filter((x) => x.next_earnings?.date).length });
+    case "checklist": return t("adm.stats.checklist", { steps: c.steps.length, min: `${c.house_rule.min_reward_to_risk}+`, status: c.status });
+    case "routines": return t("adm.stats.routines", { n: c.routines.length, llm: c.routines.filter((r) => r.uses_llm).length });
+    case "library": return t("adm.stats.library", { n: c.sources.length, p: c.sources.reduce((a, s) => a + s.principles.length, 0) });
     default: return "";
   }
 }
@@ -60,15 +43,17 @@ export default function Admin({ data }) {
   const docs = ORDER.map((n) => data.docs.find((d) => d.name === n)).filter(Boolean);
   const repo = data.manifest.repo;
   const editUrl = (path) => `https://github.com/${repo}/edit/main/${path}`;
+  const { t: tr, fmt } = useLang();
+  const t = tr(dict);
 
   return (
     <Container className="pt-20">
       <SectionHead
-        eyebrow="Admin · behind the scenes"
-        title={<>The rule <Accent>book.</Accent></>}
+        eyebrow={t("adm.eyebrow")}
+        title={<>{t("adm.title.a")} <Accent>{t("adm.title.b")}</Accent></>}
         lede={<>
-          <span className="block text-ink">In simple words: these are the rule papers the brain reads every morning. Anyone can read them here; changing one takes a person's approval.</span>
-          <span className="mt-3 block">Each file has a version number. Open one to read it, or edit it on GitHub. Every edit is a proposed change (a pull request): an automatic checker reads it, and the old version is kept, like the undo button, so any change can be taken back.</span>
+          <span className="block text-ink">{t("adm.lede1")}</span>
+          <span className="mt-3 block">{t("adm.lede2")}</span>
         </>}
       />
       <Reveal className="card flex items-center gap-5 overflow-hidden p-6 sm:p-7">
@@ -77,14 +62,14 @@ export default function Admin({ data }) {
           <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 5 5 9-10" /></svg>
         </span>
         <div>
-          <div className="meta text-ink">How changes happen · pull requests</div>
-          <p className="mt-1 text-[15px] text-ink-2">This page is public and read-only. Changes go through {repo} on GitHub. No passwords, keys or details of what the household owns are ever kept in the project.</p>
+          <div className="meta text-ink">{t("adm.how.head")}</div>
+          <p className="mt-1 text-[15px] text-ink-2">{t("adm.how.body", { repo })}</p>
         </div>
       </Reveal>
 
       <div className="mt-16 mb-6 flex items-baseline justify-between gap-4">
-        <h3 className="text-[24px] font-semibold tracking-[-0.03em]">The docs <span className="num ms-1 font-mono text-[13px] font-normal text-ink-3">{pad2(docs.length)}</span></h3>
-        <span className="meta hidden sm:inline">What the brain reads each morning</span>
+        <h3 className="text-[24px] font-semibold tracking-[-0.03em]">{t("adm.docs")} <span className="num ms-1 font-mono text-[13px] font-normal text-ink-3">{pad2(docs.length)}</span></h3>
+        <span className="meta hidden sm:inline">{t("adm.docsSub")}</span>
       </div>
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         {docs.map((d, i) => (
@@ -92,18 +77,18 @@ export default function Admin({ data }) {
             <div className="flex items-center justify-between">
               <span className="meta">{pad2(i + 1)}</span>
               <a href={editUrl(d.path)} target="_blank" rel="noreferrer" className="-my-2 -me-3 inline-flex min-h-[44px] items-center gap-1.5 px-3 text-[14.5px] font-medium text-ink-2 transition hover:text-accent">
-                Edit <ArrowRight className="size-4 transition group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5" />
+                {t("edit")} <ArrowRight className="size-4 transition group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5" />
               </a>
             </div>
             <button type="button" onClick={() => setOpen(d)} className="mt-5 text-start">
-              <h4 className="text-[26px] font-semibold tracking-[-0.03em] transition group-hover:text-accent">{cap(d.name)}</h4>
-              <p className="mt-2 text-[15px] text-ink-2">{ABOUT[d.name]}</p>
-              <p className="mt-5 font-mono text-[12px] font-semibold tracking-[0.12em] text-accent uppercase">{stats(d, data)}</p>
+              <h4 className="text-[26px] font-semibold tracking-[-0.03em] transition group-hover:text-accent">{docName(t, d.name)}</h4>
+              {t.has(`adm.about.${d.name}`) && <p className="mt-2 text-[15px] text-ink-2">{t(`adm.about.${d.name}`)}</p>}
+              <p className="mt-5 font-mono text-[12px] font-semibold tracking-[0.12em] text-accent uppercase">{stats(d, data, t, fmt)}</p>
             </button>
             <div className="mt-auto flex items-center gap-3 border-t border-line pt-5 text-[14px] [margin-top:max(1.5rem,auto)]">
-              <span className="pill py-1 text-[11px] text-ink-2">v{d.version}</span>
-              <span className="text-ink-3">{relDays(d.updated_at)}</span>
-              <span className="min-w-0 flex-1 truncate text-end text-[13px] text-ink-3" title={d.change_note}>{d.change_note}</span>
+              <span className="pill py-1 text-[11px] text-ink-2">{t("version", { v: d.version })}</span>
+              <span className="text-ink-3">{fmt.rel(d.updated_at)}</span>
+              <En as="span" className="min-w-0 flex-1 truncate text-end text-[13px] text-ink-3" title={d.change_note}>{d.change_note}</En>
             </div>
           </Reveal>
         ))}
@@ -119,30 +104,32 @@ export default function Admin({ data }) {
 const KIND_ICON = { prices: "↗", social: "@", news: "≣", filings: "▤", library: "❏", people: "◎", other: "•" };
 
 function Connectors({ sources, editUrl }) {
+  const t = useLang().t(dict);
   return (
     <section className="pt-32">
       <SectionHead
-        eyebrow="Data feeds"
-        title={<>Where the data <Accent>comes from.</Accent></>}
-        lede="Every data source is listed in config/sources.json. A feed that needs a password only names where to find it; the password itself is kept locked away in GitHub's secret store, never in this public project."
+        eyebrow={t("adm.feeds.eyebrow")}
+        title={<>{t("dataFeeds.title.a")} <Accent>{t("dataFeeds.title.b")}</Accent></>}
+        lede={t("adm.feeds.lede")}
         size="md"
-        right={<a href={editUrl} target="_blank" rel="noreferrer" className="btn">Edit sources <ArrowRight /></a>}
+        right={<a href={editUrl} target="_blank" rel="noreferrer" className="btn">{t("adm.feeds.edit")} <ArrowRight /></a>}
       />
+      <EnglishNote />
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {sources.sources.map((s, i) => (
           <Reveal key={s.id} delay={(i % 3) * 70} className={`card p-7 ${s.status === "planned" ? "border-dashed" : ""}`}>
             <div className="flex items-start justify-between gap-3">
               <span className="grid size-11 place-items-center rounded-xl border border-line-2 font-mono text-[18px] text-ink-2">{KIND_ICON[s.kind] ?? KIND_ICON.other}</span>
-              <Chip kind={s.status} icon={false}>{s.status}</Chip>
+              <Chip kind={s.status} icon={false}>{t.has(`adm.status.${s.status}`) ? t(`adm.status.${s.status}`) : s.status}</Chip>
             </div>
-            <h4 className="mt-5 text-[20px] font-semibold tracking-[-0.02em]">{s.label}</h4>
-            <p className="mt-2 text-[14px] leading-relaxed text-ink-2">{s.note}</p>
+            <En as="h4" className="mt-5 text-[20px] font-semibold tracking-[-0.02em]">{s.label}</En>
+            <En as="p" className="mt-2 text-[14px] leading-relaxed text-ink-2">{s.note}</En>
             <dl className="mt-5 grid grid-cols-[auto_minmax(0,1fr)] gap-x-5 gap-y-2 border-t border-line pt-5 text-[13px]">
-              <dt className="meta">company</dt><dd className={s.provider ? "font-mono" : "text-people"}>{s.provider ?? "not chosen yet"}</dd>
-              <dt className="meta">how often</dt><dd>{s.cadence}</dd>
-              <dt className="meta">feeds</dt><dd className="truncate font-mono text-[12px]">{s.feeds.join(", ")}</dd>
-              <dt className="meta">password name</dt><dd className="font-mono text-[12px]">{s.secret_env ?? "none"}</dd>
-              {s.kind === "social" && (<><dt className="meta">following</dt><dd>{s.follow.length ? s.follow.join(" ") : "nobody yet"}</dd></>)}
+              <dt className="meta">{t("adm.dl.company")}</dt><dd className={s.provider ? "font-mono" : "text-people"}>{s.provider ? <bdi>{s.provider}</bdi> : t("adm.dl.notChosen")}</dd>
+              <dt className="meta">{t("adm.dl.often")}</dt><dd><En as="span">{s.cadence}</En></dd>
+              <dt className="meta">{t("adm.dl.feeds")}</dt><dd dir="ltr" className="truncate text-start font-mono text-[12px]">{s.feeds.join(", ")}</dd>
+              <dt className="meta">{t("adm.dl.secret")}</dt><dd className="font-mono text-[12px]">{s.secret_env ? <bdi>{s.secret_env}</bdi> : t("adm.dl.none")}</dd>
+              {s.kind === "social" && (<><dt className="meta">{t("adm.dl.following")}</dt><dd>{s.follow.length ? <bdi dir="ltr">{s.follow.join(" ")}</bdi> : t("adm.dl.nobody")}</dd></>)}
             </dl>
           </Reveal>
         ))}
@@ -152,6 +139,8 @@ function Connectors({ sources, editUrl }) {
 }
 
 function Viewer({ doc, onClose, editUrl }) {
+  const { t: tr, dir } = useLang();
+  const t = tr(dict);
   const panel = useRef(null);
   const [raw, setRaw] = useState(false);
   useEffect(() => {
@@ -169,35 +158,38 @@ function Viewer({ doc, onClose, editUrl }) {
   const isMd = typeof doc.content === "string";
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
-      <button type="button" aria-label="Close" onClick={onClose} className="absolute inset-0 animate-[rise_400ms_ease-out_both] bg-black/50 backdrop-blur-sm" />
+      <button type="button" aria-label={t("close")} onClick={onClose} className="absolute inset-0 animate-[rise_400ms_ease-out_both] bg-black/50 backdrop-blur-sm" />
       <div
         ref={panel}
         tabIndex={-1}
         role="dialog"
         aria-modal="true"
-        aria-label={doc.name}
+        aria-label={docName(t, doc.name)}
         className="relative flex h-full w-full max-w-[760px] flex-col border-s border-line bg-surface shadow-2xl outline-none"
         style={{ animation: "slide-in 650ms cubic-bezier(.16,1,.3,1) both" }}
       >
-        <style>{"@keyframes slide-in{from{transform:translateX(40px);opacity:0}}"}</style>
+        <style>{`@keyframes slide-in{from{transform:translateX(${dir === "rtl" ? -40 : 40}px);opacity:0}}`}</style>
         <div className="flex items-center justify-between gap-4 border-b border-line px-6 py-5 sm:px-8">
           <div className="min-w-0">
-            <div className="meta truncate">{doc.path} · v{doc.version} · {doc.updated_at}</div>
-            <h3 className="mt-1 text-[26px] font-semibold tracking-[-0.03em]">{cap(doc.name)}</h3>
+            <div className="meta truncate"><bdi>{doc.path}</bdi> · {t("version", { v: doc.version })} · <bdi>{doc.updated_at}</bdi></div>
+            <h3 className="mt-1 text-[26px] font-semibold tracking-[-0.03em]">{docName(t, doc.name)}</h3>
           </div>
           <div className="flex shrink-0 items-center gap-2">
-            {!isMd && <button type="button" onClick={() => setRaw(!raw)} className="pill text-ink-2">{raw ? "Formatted" : "JSON"}</button>}
-            <a href={editUrl} target="_blank" rel="noreferrer" className="pill border-accent/40 text-accent">Edit</a>
-            <button type="button" onClick={onClose} aria-label="Close" className="grid size-10 place-items-center rounded-full border border-line-2 hover:border-ink-3">✕</button>
+            {!isMd && <button type="button" onClick={() => setRaw(!raw)} className="pill text-ink-2">{raw ? t("adm.view.formatted") : t("adm.view.json")}</button>}
+            <a href={editUrl} target="_blank" rel="noreferrer" className="pill border-accent/40 text-accent">{t("edit")}</a>
+            <button type="button" onClick={onClose} aria-label={t("close")} className="grid size-10 place-items-center rounded-full border border-line-2 hover:border-ink-3">✕</button>
           </div>
         </div>
         <div className="flex-1 overflow-y-auto px-6 py-6 sm:px-8">
-          <p className="mb-6 rounded-xl border border-line bg-bg/40 px-4 py-3 text-[14px] text-ink-2"><span className="meta me-2 text-ink">change note</span>{doc.change_note}</p>
-          {isMd ? <Markdown source={doc.content} /> : raw ? (
-            <pre className="overflow-x-auto rounded-xl bg-bg/60 p-4 font-mono text-[12.5px] leading-relaxed text-ink-2">{JSON.stringify(doc.content, null, 2)}</pre>
-          ) : (
-            <JsonView value={doc.content} />
-          )}
+          <p className="mb-6 rounded-xl border border-line bg-bg/40 px-4 py-3 text-[14px] text-ink-2"><span className="meta me-2 text-ink">{t("adm.changeNote")}</span><En as="span">{doc.change_note}</En></p>
+          <EnglishNote />
+          <En>
+            {isMd ? <Markdown source={doc.content} /> : raw ? (
+              <pre className="overflow-x-auto rounded-xl bg-bg/60 p-4 font-mono text-[12.5px] leading-relaxed text-ink-2">{JSON.stringify(doc.content, null, 2)}</pre>
+            ) : (
+              <JsonView value={doc.content} />
+            )}
+          </En>
         </div>
       </div>
     </div>
@@ -207,8 +199,9 @@ function Viewer({ doc, onClose, editUrl }) {
 const SKIP = new Set(["version", "updated_at", "change_note"]);
 
 function JsonView({ value, depth = 0 }) {
+  const t = useLang().t(dict);
   if (Array.isArray(value)) {
-    if (!value.length) return <span className="text-ink-3">none</span>;
+    if (!value.length) return <span className="text-ink-3">{t("adm.json.none")}</span>;
     if (value.every((v) => typeof v !== "object" || v === null))
       return <div className="flex flex-wrap gap-1.5">{value.map((v, i) => <span key={i} className="rounded-full border border-line-2 px-2.5 py-1 font-mono text-[12px]">{String(v)}</span>)}</div>;
     return <div className="grid gap-3">{value.map((v, i) => <div key={i} className="rounded-2xl border border-line p-4"><JsonView value={v} depth={depth + 1} /></div>)}</div>;
@@ -226,7 +219,7 @@ function JsonView({ value, depth = 0 }) {
       </dl>
     );
   }
-  if (value === null) return <span className="text-people">not set</span>;
-  if (typeof value === "boolean") return <span className={value ? "text-accent" : "text-ink-3"}>{value ? "yes" : "no"}</span>;
+  if (value === null) return <span className="text-people">{t("adm.json.notSet")}</span>;
+  if (typeof value === "boolean") return <span className={value ? "text-accent" : "text-ink-3"}>{t(value ? "adm.json.yes" : "adm.json.no")}</span>;
   return <span className={typeof value === "number" ? "num font-mono" : ""}>{String(value)}</span>;
 }

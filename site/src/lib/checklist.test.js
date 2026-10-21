@@ -137,8 +137,8 @@ test("Hebrew: every step row in Hebrew, with Hebrew step names and candle patter
   assert.equal(patternName("something new", "he"), "something new");
   assert.equal(patternName("doji"), "doji");
   assert.equal(stripBidi(candleLine({ daily: { lean: "bullish", pattern: "hammer", close_in_range_pct: 50 }, weekly: { lean: "bearish", pattern: "down week" } }, "he")),
-    "יומי: פטיש, סגירה באמצע הטווח (50%). שבוע שעבר: שבוע ירידה. הם לא מסכימים, ולכן ניטרלי.");
-  assert.deepEqual(Object.values(verdictWords("he")).map((v) => v.word), ["נטייה לעלייה", "מעורב", "נטייה לירידה"]);
+    "יומי: פטיש, סגירה באמצע הטווח (50%). השבוע שעבר: שבוע ירידה. היום והשבוע לא מסכימים, ולכן הקריאה ניטרלית.");
+  assert.deepEqual(Object.values(verdictWords("he")).map((v) => v.word), ["נטייה לעלייה", "תמונה מעורבת", "נטייה לירידה"]);
 });
 
 test("Hebrew: numbers keep their sign and direction inside the sentence", () => {
@@ -166,7 +166,7 @@ test("Hebrew: risk plan, gate reason, base rates and the forward record", () => 
   assert.match(gateReason(ck, { ...row, as_of: "2026-10-01" }, cfg, "2026-10-02", "he").text, /באוקטובר 2026/);
   const line = baseRateLine(br, "lean_up", "Nasdaq-100", "he");
   hebrew(line);
-  assert.equal(stripBidi(line), "כשהקריאה הייתה נטייה לעלייה, המניה עקפה את Nasdaq-100 ב-1.1 נקודות בממוצע ב-20 ימי המסחר שאחריה (231 מקרים, טווח של 90%: +0.2% עד +2.1%).");
+  assert.equal(stripBidi(line), "כשהקריאה הייתה נטייה לעלייה, המניה עקפה את Nasdaq-100 ב-1.1 נקודות אחוז בממוצע ב-20 ימי המסחר שאחריה (231 מקרים, טווח של 90%: +0.2% עד +2.1%).");
   assert.match(baseRateLine(br, "lean_down", "Nasdaq-100", "he"), /פיגרה אחרי/);
   hebrew(edgeWords(br, "he"));
   hebrew(forwardWords(null, "he"));

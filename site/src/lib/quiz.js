@@ -1,9 +1,11 @@
-// "Guess the candle": a real chart from our stocks with one notable candle marked. Round one: what kind of candle is
+// "Guess the candle": a real chart from a stock on the list with one notable candle marked. Round one: what kind of candle is
 // it? Round two: did the next week end higher or lower? The score sits beside what plain luck would score, so the
 // honest lesson shows itself. Pure functions, no React; tested in quiz.test.js. Every value is percent from the last
 // close, as in the candle files, so no price is ever shown.
 
-import { findSpots, SPOT_KINDS } from "./spots.js";
+import { findSpots, SPOT_KINDS, spotKinds } from "./spots.js";
+import { translate } from "./i18n.js";
+import dict from "../i18n/learn.js";
 
 export const BEFORE = 30; // candles shown before the marked one
 export const AFTER = 5; // candles revealed after it (about a week)
@@ -24,7 +26,7 @@ export function rng(seed) {
  * One question from a daily candle series: a notable candle with enough history before it and a week after it,
  * four answer choices (the right kind and three others), and what the next week did. Null when none fits.
  */
-export function makeQuestion(daily, rand = Math.random) {
+export function makeQuestion(daily, rand = Math.random, lang = "en") {
   if (!daily?.dates?.length) return null;
   const all = findSpots(daily).filter((s) => s.i >= BEFORE && s.i + AFTER < daily.dates.length);
   if (!all.length) return null;
@@ -41,18 +43,19 @@ export function makeQuestion(daily, rand = Math.random) {
   const move = ((100 + c1) / (100 + c0) - 1) * 100;
   return {
     i: spot.i, kind: spot.kind, date: daily.dates[spot.i],
-    choices: choices.map((k) => ({ kind: k, title: SPOT_KINDS[k].title })),
+    choices: choices.map((k) => ({ kind: k, title: (lang === "en" ? SPOT_KINDS : spotKinds(lang))[k].title })),
     nextWeek: move >= 0 ? "higher" : "lower",
     from: spot.i - BEFORE, to: spot.i + 1, toAfter: spot.i + 1 + AFTER,
   };
 }
 
 /** The running score in words, beside what luck would get: a quarter on the candle name, half on the next week. */
-export function scoreWords(score) {
+export function scoreWords(score, lang = "en") {
+  const t = translate(dict, lang);
   const { kindRight = 0, kindTried = 0, weekRight = 0, weekTried = 0 } = score ?? {};
-  if (!kindTried && !weekTried) return "No guesses yet on this device.";
+  if (!kindTried && !weekTried) return t("quiz.score.none");
   const parts = [];
-  if (kindTried) parts.push(`candle names ${kindRight} of ${kindTried} (luck: about ${Math.round(kindTried / 4)})`);
-  if (weekTried) parts.push(`next week ${weekRight} of ${weekTried} (luck: about ${Math.round(weekTried / 2)})`);
-  return `Your score: ${parts.join("; ")}.`;
+  if (kindTried) parts.push(t("quiz.score.kind", { right: kindRight, tried: kindTried, luck: Math.round(kindTried / 4) }));
+  if (weekTried) parts.push(t("quiz.score.week", { right: weekRight, tried: weekTried, luck: Math.round(weekTried / 2) }));
+  return t("quiz.score.line", { parts: parts.join("; ") }, { bidi: false });
 }

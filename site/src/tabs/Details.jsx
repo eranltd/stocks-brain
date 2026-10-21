@@ -266,7 +266,7 @@ function ComingUp({ data, go }) {
 function PeopleNote({ data, go }) {
   const { lang, t: tr } = useLang();
   const t = tr(dict);
-  const calls = joinCalls(data.people, data.peopleScores);
+  const calls = joinCalls(data.people, data.peopleScores, lang);
   if (!calls.length) return null;
   const judge = data.peopleScores?.judge_at_weeks ?? 26;
   const { held, picked } = heldAndPicked(data);

@@ -75,8 +75,8 @@ test("growth in words", () => {
 
 test("Hebrew: days, growth and kinds in words", () => {
   assert.deepEqual([0, 1, -1, 2, -2, 5, -3, null].map((n) => stripBidi(inDays(n, "he"))), ["היום", "מחר", "אתמול", "בעוד יומיים", "לפני יומיים", "בעוד 5 ימים", "לפני 3 ימים", ""]);
-  assert.equal(stripBidi(growthWords(4.12, "he")), "עלייה של 4.1% לעומת שנה קודם");
-  assert.equal(stripBidi(growthWords(-23.4, "he")), "ירידה של 23% לעומת שנה קודם");
+  assert.equal(stripBidi(growthWords(4.12, "he")), "עלייה של 4.1% לעומת שנה קודם לכן");
+  assert.equal(stripBidi(growthWords(-23.4, "he")), "ירידה של 23% לעומת שנה קודם לכן");
   assert.equal(growthWords(null, "he"), "");
   assert.equal(kindLabel("deal", "he"), "עסקה");
   assert.equal(kindLabel("deal"), KIND_LABEL.deal);

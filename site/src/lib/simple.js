@@ -3,7 +3,7 @@
 // digits: dates become weekday or month words ("yesterday", "next Wednesday", "in late October").
 
 import { VERDICT_PLAIN } from "./brief.js";
-import { fmtList, isolate, translate } from "./i18n.js";
+import { fmtList, hasHebrew, isolate, translate } from "./i18n.js";
 import { shortSector } from "./marketday.js";
 import { recentFilings } from "./secnews.js";
 import { noteForMover, notesForDay, noteView, whyClause } from "./why.js";
@@ -190,10 +190,10 @@ export function newsLines({ outlook, day, people, today, names = {}, max = 3, ne
     }
   }
   // Official filings of the list's names in the last few days (fixed plain titles from scripts/sec_news.py, not copied text).
-  for (const f of recentFilings(secNews, { symbols: members, today, days: filingDays, max: maxFilings })) {
+  for (const f of recentFilings(secNews, { symbols: members, today, days: filingDays, max: maxFilings, lang })) {
     const title = lang === "he" ? f.title : lowerFirst(f.title);
     out.push({ id: `filing:${f.symbol}:${f.date}`, text: t("news.filing", { name: name(f.symbol), when: whenWords(f.date, today, lang), title }), to: `stock/${f.symbol}#official-news`,
-      date: f.date, tone: "flat", filing: { url: f.url, form: f.form }, english: true });
+      date: f.date, tone: "flat", filing: { url: f.url, form: f.form }, english: lang === "en" || !hasHebrew(f.title) });
   }
   // A people's call when recent.
   const who = Object.fromEntries((people?.people ?? []).map((p) => [p.id, p.name]));

@@ -23,12 +23,12 @@ test("three subjects hold every old route exactly once, each page with a label a
 
 test("menu grouping: Learn ends with a small Behind the scenes group, the others have one group", () => {
   assert.deepEqual(menuGroups("today").map((g) => [g.id, g.label, g.pages.map((p) => p.label)]), [
-    ["main", null, ["Home", "Stocks", "Market details", "People we learn from"]],
+    ["main", null, ["Home", "Stocks", "Market details", "People to learn from"]],
   ]);
   assert.deepEqual(menuGroups("plan")[0].pages.map((p) => p.route), ["portfolio", "playbook", "track"]);
   const learn = menuGroups("learn");
   assert.deepEqual(learn.map((g) => g.label), [null, GROUP_LABEL.behind]);
-  assert.deepEqual(learn[0].pages.map((p) => p.label), ["Lessons", "Guess the candle", "Library", "What we learned", "How it works"]);
+  assert.deepEqual(learn[0].pages.map((p) => p.label), ["Lessons", "Guess the candle", "Library", "Lessons learned", "How it works"]);
   assert.deepEqual(learn[1].pages.map((p) => p.route), ["runs", "routines", "admin"]);
   assert.deepEqual(menuGroups("nope"), []);
 });

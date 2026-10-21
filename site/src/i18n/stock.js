@@ -35,17 +35,17 @@ add("step.risk_plan", "Risk management and exit", "ניהול סיכון ויצ�
 
 /* ============================================================== lib/brief.js: "<Company> in short" */
 
-add("br.verdict.lean_up", "Going up", "נוטה לעלות");
+add("br.verdict.lean_up", "Going up", "נטייה לעלייה");
 add("br.verdict.mixed", "Mixed", "תמונה מעורבת");
-add("br.verdict.lean_down", "Going down", "נוטה לרדת");
+add("br.verdict.lean_down", "Going down", "נטייה לירידה");
 add("br.footer", "On paper only: no real money moves on this. These checks are still unproven, and the plan keeps most of the money in an S&P 500 index fund.",
-  "על הנייר בלבד: שום כסף אמיתי לא זז בגלל זה. הבדיקות האלה עדיין לא הוכחו, והתוכנית שומרת את רוב הכסף בקרן מחקה של מדד S&P 500.");
-add("br.noChecklist", "The checklist appears after the next daily run.", "רשימת הבדיקה תופיע אחרי ההרצה היומית הבאה.");
+  "על הנייר בלבד: שום כסף אמיתי לא זז בגלל זה. הבדיקות האלה עדיין לא הוכחו, והתוכנית שומרת את רוב הכסף בקרן מחקה על מדד S&P 500.");
+add("br.noChecklist", "The checklist appears after the next daily run.", "רשימת הבדיקה תופיע אחרי הריצה היומית הבאה.");
 add("br.read.sample", "The checklist here comes from sample prices, so it cannot count; it updates after the next daily run.",
-  "רשימת הבדיקה כאן מחושבת ממחירים לדוגמה, ולכן היא לא נחשבת. היא תתעדכן אחרי ההרצה היומית הבאה.");
+  "רשימת הבדיקה כאן מחושבת ממחירים לדוגמה, ולכן היא לא נחשבת. היא תתעדכן אחרי הריצה היומית הבאה.");
 add("br.read.noRow", "No checklist for this name yet: not enough price history.", "עדיין אין רשימת בדיקה למניה הזאת: אין מספיק היסטוריית מחירים.");
 add("br.read.older", "The checklist is from an older close; it updates after the next daily run.",
-  "רשימת הבדיקה היא מסגירה ישנה יותר. היא תתעדכן אחרי ההרצה היומית הבאה.");
+  "רשימת הבדיקה היא מסגירה ישנה יותר. היא תתעדכן אחרי הריצה היומית הבאה.");
 
 // The checklist summary's phrases (scripts/market.py PHRASE), said whole in another language.
 add("br.phrase.candle.up", "buyers winning the last candles", "הקונים מנצחים בנרות האחרונים");
@@ -75,7 +75,7 @@ add("br.row.candle.down", "Last candle: sellers won the day", "הנר האחרו
 add("br.row.candle.none", "Last candle: no clear winner", "הנר האחרון: אין מנצח ברור");
 add("br.row.trend.up", "Trend: going up", "מגמה: עולה");
 add("br.row.trend.down", "Trend: going down", "מגמה: יורדת");
-add("br.row.trend.side", "Trend: sideways, no clear direction", "מגמה: הצידה, בלי כיוון ברור");
+add("br.row.trend.side", "Trend: sideways, no clear direction", "מגמה: דשדוש, בלי כיוון ברור");
 add("br.row.volume.trap", "Volume: rising on falling volume, careful", "מחזור מסחר: עלייה כשהמחזור יורד, זהירות");
 add("br.row.volume.backsFall", "Volume: backs the fall", "מחזור מסחר: תומך בירידה");
 add("br.row.volume.backsMove", "Volume: supports the move", "מחזור מסחר: תומך בתנועה");
@@ -101,12 +101,12 @@ add("br.row.rsi.hot", "RSI: overheated", "מדד RSI: התחממות יתר");
 add("br.row.rsi.oversold", "RSI: oversold", "מדד RSI: מכירת יתר");
 add("br.row.rsi.normal", "RSI: not overheated", "מדד RSI: אין התחממות יתר");
 add("br.row.risk.none", "Risk plan: not available", "תוכנית הסיכון: לא זמינה");
-add("br.row.risk.no", "Risk plan: not worth it", "תוכנית הסיכון: לא משתלם");
+add("br.row.risk.no", "Risk plan: not worth it", "תוכנית הסיכון: לא משתלמת");
 add("br.row.risk.noNote", "the first target is less than {min} times as far as the stop", "היעד הראשון רחוק פחות מפי {min} מנקודת היציאה");
-add("br.row.risk.paper", "Risk plan: worth it, on paper", "תוכנית הסיכון: משתלם, על הנייר");
+add("br.row.risk.paper", "Risk plan: worth it, on paper", "תוכנית הסיכון: משתלמת, על הנייר");
 add("br.row.risk.paperNote", "nothing overhead, so the target is set from the risk: arithmetic, not upside",
   "אין התנגדות מעל, ולכן היעד נקבע לפי הסיכון: חשבון, לא סיכוי לעלייה");
-add("br.row.risk.yes", "Risk plan: worth it", "תוכנית הסיכון: משתלם");
+add("br.row.risk.yes", "Risk plan: worth it", "תוכנית הסיכון: משתלמת");
 add("br.row.risk.yesNote", "the first target is at least {min} times as far as the stop", "היעד הראשון רחוק לפחות פי {min} מנקודת היציאה");
 
 // Percent and times in words (the value carries its own % sign)
@@ -119,33 +119,33 @@ add("br.stopWhy.support", "just under support", "קצת מתחת לרמת התמ
 add("br.stopWhy.atr", "about two normal days' swings down", "בערך שתי תנודות של יום רגיל כלפי מטה");
 add("br.stopWhy.minAtr", "one normal day's swing down, the closest allowed", "תנודה אחת של יום רגיל כלפי מטה, הכי קרוב שמותר");
 add("br.stopWhy.entry", "below the entry", "מתחת למחיר הכניסה");
-add("br.plan.stop", "Stop: sell if it falls {pct} ({why})", "נקודת יציאה: מכירה אם היא יורדת {pct} ({why})");
-add("br.plan.tp1Res", "First target: take some profit {pct} higher (at resistance)", "יעד ראשון: מימוש חלק מהרווח {pct} גבוה יותר (ברמת ההתנגדות)");
+add("br.plan.stop", "Stop: sell if it falls {pct} ({why})", "נקודת יציאה: מכירה אחרי ירידה של {pct} ({why})");
+add("br.plan.tp1Res", "First target: take some profit {pct} higher (at resistance)", "יעד ראשון: מימוש חלק מהרווח אחרי עלייה של {pct} (ברמת ההתנגדות)");
 add("br.plan.tp1Risk", "First target: take some profit {pct} higher (nothing overhead, so set at twice the risk)",
-  "יעד ראשון: מימוש חלק מהרווח {pct} גבוה יותר (אין התנגדות מעל, ולכן הוא נקבע בפעמיים הסיכון)");
-add("br.plan.tp2", "Second target: {pct} higher", "יעד שני: {pct} גבוה יותר");
+  "יעד ראשון: מימוש חלק מהרווח אחרי עלייה של {pct} (אין התנגדות מעל, ולכן הוא נקבע לפי פעמיים הסיכון)");
+add("br.plan.tp2", "Second target: {pct} higher", "יעד שני: אחרי עלייה של {pct}");
 add("br.plan.rr", "You risk one to make {x}", "על כל 1 בסיכון, רווח אפשרי של {x}");
 add("br.head.ok", "Within this site's rules for a paper entry", "בתוך כללי האתר לכניסה על הנייר");
 add("br.head.no", "Not within this site's rules today", "לא בתוך כללי האתר היום");
 add("br.why.stretched", "it has run too far above its trend", "היא עלתה רחוק מדי מעל המגמה שלה");
-add("br.why.fewChecks", "fewer than three of the four setup checks pass", "פחות משלוש מארבע הבדיקות המהירות עוברות");
+add("br.why.fewChecks", "fewer than three of the four setup checks pass", "פחות משלוש מתוך ארבע הבדיקות המהירות עוברות");
 add("br.why.noPlan", "there is no written risk plan for it", "אין לה תוכנית סיכון כתובה");
 add("br.why.needsChecklist", "the risk plan needs today's checklist", "תוכנית הסיכון צריכה את רשימת הבדיקה של היום");
 add("br.why.smallGain", "the possible gain is too small for the risk", "הרווח האפשרי קטן מדי ביחס לסיכון");
 add("br.wait.cool", "wait until it cools down", "לחכות שהיא תירגע");
 add("br.wait.trendUp", "wait for the trend to turn up", "לחכות שהמגמה תפנה למעלה");
 add("br.wait.beatBench", "wait until it does better than {bench} again", "לחכות שהביצועים שלה יעקפו שוב את {bench}");
-add("br.wait.nextRun", "wait for the next daily run", "לחכות להרצה היומית הבאה");
+add("br.wait.nextRun", "wait for the next daily run", "לחכות לריצה היומית הבאה");
 add("br.wait.pullback", "wait for a pullback toward support, or a clean break above resistance",
   "לחכות לירידה חזרה לכיוון רמת התמיכה, או לפריצה ברורה מעל רמת ההתנגדות");
 
 /* ====================================================== lib/checklist.js: the chart checklist in numbers */
 
 add("cl.verdict.lean_up", "Leans up", "נטייה לעלייה");
-add("cl.verdict.mixed", "Mixed", "מעורב");
+add("cl.verdict.mixed", "Mixed", "תמונה מעורבת");
 add("cl.verdict.lean_down", "Leans down", "נטייה לירידה");
 add("cl.verdictShort.lean_up", "lean up", "נטייה לעלייה");
-add("cl.verdictShort.mixed", "mixed", "מעורב");
+add("cl.verdictShort.mixed", "mixed", "תמונה מעורבת");
 add("cl.verdictShort.lean_down", "lean down", "נטייה לירידה");
 
 // Candle patterns (scripts/market.py classify_candle)
@@ -169,8 +169,8 @@ add("cl.daily.mid", "Daily: {pattern}, closing mid-range ({pct}).", "יומי: {
 add("cl.daily.low", "Daily: {pattern}, closing near the low ({pct} up the range).", "יומי: {pattern}, סגירה קרוב לשפל של היום ({pct} מהטווח).");
 add("cl.daily.none", "Daily: {pattern}.", "יומי: {pattern}.");
 add("cl.week.partial", "Week so far: {pattern} (partial).", "השבוע עד עכשיו: {pattern} (חלקי).");
-add("cl.week.last", "Last week: {pattern}.", "שבוע שעבר: {pattern}.");
-add("cl.disagree", "They disagree, so neutral.", "הם לא מסכימים, ולכן ניטרלי.");
+add("cl.week.last", "Last week: {pattern}.", "השבוע שעבר: {pattern}.");
+add("cl.disagree", "They disagree, so neutral.", "היום והשבוע לא מסכימים, ולכן הקריאה ניטרלית.");
 
 add("cl.dir.up", "Uptrend", "מגמת עלייה");
 add("cl.dir.down", "Downtrend", "מגמת ירידה");
@@ -229,8 +229,8 @@ add("cl.stop.support", "just under the nearest support", "קצת מתחת לרמ
 add("cl.stop.atr", "two ATRs below the close", "שני ATR מתחת לסגירה");
 add("cl.stop.minAtr", "one ATR, the closest allowed", "ATR אחד, הכי קרוב שמותר");
 add("cl.tp1.risk", "at {mult}× the risk: no resistance overhead in the past year, so it fits the rule by construction",
-  "בפי {mult} מהסיכון: אין רמת התנגדות מעל בשנה האחרונה, ולכן הוא עומד בכלל מעצם החישוב");
-add("cl.tp1.riskShort", "at {mult}× the risk: nothing overhead", "בפי {mult} מהסיכון: אין התנגדות מעל");
+  "במרחק פי {mult} מהסיכון: אין רמת התנגדות מעל בשנה האחרונה, ולכן הוא עומד בכלל מעצם החישוב");
+add("cl.tp1.riskShort", "at {mult}× the risk: nothing overhead", "במרחק פי {mult} מהסיכון: אין התנגדות מעל");
 add("cl.tp1.res", "at the nearest resistance", "ברמת ההתנגדות הקרובה");
 add("cl.tp2.res", "at the next resistance", "ברמת ההתנגדות הבאה");
 add("cl.tp2.risk", "set from the risk: no second resistance", "נקבע לפי הסיכון: אין רמת התנגדות שנייה");
@@ -242,38 +242,38 @@ add("cl.br.beat", {
   one: "When it read {v}, the name beat the {bench} by {pts} points on average over the next {days} trading days ({count} case{range}).",
   other: "When it read {v}, the name beat the {bench} by {pts} points on average over the next {days} trading days ({count} cases{range}).",
 }, {
-  one: "כשהקריאה הייתה {v}, המניה עקפה את {bench} ב-{pts} נקודות בממוצע ב-{days} ימי המסחר שאחריה (מקרה אחד{range}).",
-  other: "כשהקריאה הייתה {v}, המניה עקפה את {bench} ב-{pts} נקודות בממוצע ב-{days} ימי המסחר שאחריה ({count} מקרים{range}).",
+  one: "כשהקריאה הייתה {v}, המניה עקפה את {bench} ב-{pts} נקודות אחוז בממוצע ב-{days} ימי המסחר שאחריה (מקרה אחד{range}).",
+  other: "כשהקריאה הייתה {v}, המניה עקפה את {bench} ב-{pts} נקודות אחוז בממוצע ב-{days} ימי המסחר שאחריה ({count} מקרים{range}).",
 });
 add("cl.br.trailed", {
   one: "When it read {v}, the name trailed the {bench} by {pts} points on average over the next {days} trading days ({count} case{range}).",
   other: "When it read {v}, the name trailed the {bench} by {pts} points on average over the next {days} trading days ({count} cases{range}).",
 }, {
-  one: "כשהקריאה הייתה {v}, המניה פיגרה אחרי {bench} ב-{pts} נקודות בממוצע ב-{days} ימי המסחר שאחריה (מקרה אחד{range}).",
-  other: "כשהקריאה הייתה {v}, המניה פיגרה אחרי {bench} ב-{pts} נקודות בממוצע ב-{days} ימי המסחר שאחריה ({count} מקרים{range}).",
+  one: "כשהקריאה הייתה {v}, המניה פיגרה אחרי {bench} ב-{pts} נקודות אחוז בממוצע ב-{days} ימי המסחר שאחריה (מקרה אחד{range}).",
+  other: "כשהקריאה הייתה {v}, המניה פיגרה אחרי {bench} ב-{pts} נקודות אחוז בממוצע ב-{days} ימי המסחר שאחריה ({count} מקרים{range}).",
 });
 add("cl.edge.clear", "Lean-up readings did better than the average snapshot, even at the low end of their range. In-sample and on survivors, so still unproven.",
   "קריאות של נטייה לעלייה הצליחו יותר מתמונת המצב הממוצעת, גם בקצה הנמוך של הטווח. זה נמדד על אותם נתונים ועל מניות ששרדו, ולכן זה עדיין לא מוכח.");
 add("cl.edge.noise", "Lean-up readings did a little better than the average snapshot ({pct}), but within the noise: not an edge to trust.",
   "קריאות של נטייה לעלייה הצליחו קצת יותר מתמונת המצב הממוצעת ({pct}), אבל בתוך הרעש: לא יתרון שאפשר לסמוך עליו.");
 add("cl.edge.none", "Lean-up readings did no better than the average snapshot ({pct}).", "קריאות של נטייה לעלייה לא הצליחו יותר מתמונת המצב הממוצעת ({pct}).");
-add("cl.fwd.none", "The forward record starts with the next daily run.", "התיעוד מכאן והלאה מתחיל בהרצה היומית הבאה.");
+add("cl.fwd.none", "The forward record starts with the next daily run.", "התיעוד מכאן והלאה מתחיל בריצה היומית הבאה.");
 add("cl.fwd.head", { one: "Forward record since {since}: {count} snapshot written, {scored} scored.", other: "Forward record since {since}: {count} snapshots written, {scored} scored." },
   { one: "תיעוד מכאן והלאה מאז {since}: נכתבה תמונת מצב אחת, {scored} כבר נבדקו.", other: "תיעוד מכאן והלאה מאז {since}: נכתבו {count} תמונות מצב, {scored} כבר נבדקו." });
 add("cl.fwd.first", "The first is scored {days} trading days after it was written.", "הראשונה נבדקת {days} ימי מסחר אחרי שנכתבה.");
-add("cl.gate.noFile", "Risk plan: the technical checklist appears after the next daily run", "תוכנית הסיכון: רשימת הבדיקה הטכנית תופיע אחרי ההרצה היומית הבאה");
+add("cl.gate.noFile", "Risk plan: the technical checklist appears after the next daily run", "תוכנית הסיכון: רשימת הבדיקה הטכנית תופיע אחרי הריצה היומית הבאה");
 add("cl.gate.noRow", "Risk plan: no checklist for this name (not enough data)", "תוכנית הסיכון: אין רשימת בדיקה למניה הזאת (אין מספיק נתונים)");
 add("cl.gate.sample", "Risk plan: computed from sample prices here, so it cannot count", "תוכנית הסיכון: חושבה כאן ממחירים לדוגמה, ולכן היא לא נחשבת");
 add("cl.gate.older", "Risk plan: the checklist is from the {date} close, older than the last close; wait for it to update",
   "תוכנית הסיכון: רשימת הבדיקה היא מהסגירה של {date}, ישנה מהסגירה האחרונה. צריך לחכות לעדכון");
 add("cl.gate.byConstruction", "Risk plan: no resistance in the past year, so TP1 sits at {rr}× the risk by construction (need {min} or more). It fits, but that is arithmetic, not upside",
-  "תוכנית הסיכון: אין רמת התנגדות בשנה האחרונה, ולכן יעד 1 נקבע בפי {rr} מהסיכון מעצם החישוב (נדרש {min} או יותר). זה עומד בכלל, אבל זה חשבון, לא סיכוי לעלייה");
+  "תוכנית הסיכון: אין רמת התנגדות בשנה האחרונה, ולכן יעד 1 נקבע במרחק פי {rr} מהסיכון מעצם החישוב (נדרש {min} או יותר). זה עומד בכלל, אבל זה חשבון, לא סיכוי לעלייה");
 add("cl.gate.rr", "Risk plan: reward-to-risk to TP1 is {rr} (need {min} or more)", "תוכנית הסיכון: יחס הסיכוי-סיכון עד יעד 1 הוא {rr} (נדרש {min} או יותר)");
 
 /* ========================================================== lib/candles.js: the candles chart's words */
 
-add("cd.range.3m", "3M", "3 ח׳");
-add("cd.range.6m", "6M", "6 ח׳");
+add("cd.range.3m", "3M", "3 חודשים");
+add("cd.range.6m", "6M", "6 חודשים");
 add("cd.range.w", "Weekly", "שבועי");
 add("cd.overlay.volume", "Volume vs average", "מחזור מול הממוצע");
 add("cd.overlay.ma20", "20-day average", "ממוצע 20 הימים");
@@ -295,7 +295,7 @@ add("cd.line.resistance", { one: "Resistance · {count} touch", other: "Resistan
   { one: "התנגדות · נגיעה אחת", two: "התנגדות · שתי נגיעות", other: "התנגדות · {count} נגיעות" });
 add("cd.line.gapAbove", "Open gap above", "פער פתוח מעל");
 add("cd.line.gapBelow", "Open gap below", "פער פתוח מתחת");
-add("cd.month.jan", "Jan ’{yy}", "ינו׳ ’{yy}");
+add("cd.month.jan", "Jan ’{yy}", "ינו׳ {yy}");
 ["Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].forEach((m, i) =>
   add(`cd.month.${i + 1}`, m, ["פבר׳", "מרץ", "אפר׳", "מאי", "יוני", "יולי", "אוג׳", "ספט׳", "אוק׳", "נוב׳", "דצמ׳"][i]));
 add("cd.vol.day", "{x}× its 20-day average", "פי {x} מממוצע 20 הימים");
@@ -325,8 +325,8 @@ add("fu.sales.grew", "Grew {pct} over {period}", "גדלו ב-{pct} במהלך {
 add("fu.sales.shrank", "Shrank {pct} over {period}", "קטנו ב-{pct} במהלך {period}");
 add("fu.sales.year", "its latest year", "השנה האחרונה שדווחה");
 add("fu.sales.ttm", "the last twelve months", "12 החודשים האחרונים");
-add("fu.sales.qUp", "; the latest quarter was up {pct} on a year before.", "; ברבעון האחרון הן עלו ב-{pct} לעומת שנה קודם.");
-add("fu.sales.qDown", "; the latest quarter was down {pct} on a year before.", "; ברבעון האחרון הן ירדו ב-{pct} לעומת שנה קודם.");
+add("fu.sales.qUp", "; the latest quarter was up {pct} on a year before.", "; ברבעון האחרון הן עלו ב-{pct} לעומת הרבעון המקביל אשתקד.");
+add("fu.sales.qDown", "; the latest quarter was down {pct} on a year before.", "; ברבעון האחרון הן ירדו ב-{pct} לעומת הרבעון המקביל אשתקד.");
 add("fu.op.pos", "Keeps {c} cents of operating profit from each dollar of sales.", "נשארים לה {c} סנט רווח תפעולי מכל דולר של מכירות.");
 add("fu.op.neg", "Lost {c} cents on each dollar of sales from running the business.", "הפסידה {c} סנט על כל דולר של מכירות מהפעילות עצמה.");
 add("fu.net.pos", "{c} cents of each dollar of sales was left as profit after everything.", "מכל דולר של מכירות נשארו {c} סנט רווח אחרי כל ההוצאות.");
@@ -348,8 +348,8 @@ add("ol.tomorrow", "tomorrow", "מחר");
 add("ol.yesterday", "yesterday", "אתמול");
 add("ol.in", { one: "in {count} day", other: "in {count} days" }, { one: "בעוד יום", two: "בעוד יומיים", other: "בעוד {count} ימים" });
 add("ol.ago", { one: "{count} day ago", other: "{count} days ago" }, { one: "לפני יום", two: "לפני יומיים", other: "לפני {count} ימים" });
-add("ol.growth.up", "up {pct} from a year earlier", "עלייה של {pct} לעומת שנה קודם");
-add("ol.growth.down", "down {pct} from a year earlier", "ירידה של {pct} לעומת שנה קודם");
+add("ol.growth.up", "up {pct} from a year earlier", "עלייה של {pct} לעומת שנה קודם לכן");
+add("ol.growth.down", "down {pct} from a year earlier", "ירידה של {pct} לעומת שנה קודם לכן");
 add("ol.kind.product", "Product", "מוצר");
 add("ol.kind.finance", "Finance", "כספים");
 add("ol.kind.regulatory", "Regulatory", "רגולציה");
@@ -410,7 +410,7 @@ add("bw.rank.notEligible", "Not a full year of prices yet", "עדיין אין �
 add("bw.rank.of", "Ranks {rank} of {of} by {rw}", "מקום {rank} מתוך {of} לפי {rw}");
 add("bw.rank.none", "No rank today", "אין דירוג היום");
 add("bw.lead.leadsButMisses", "; leads its group, but {name} gets the place while this one misses a check",
-  "; מובילה את הקבוצה שלה, אבל {name} מקבלת את המקום כל עוד המניה הזאת לא עוברת בדיקה");
+  "; מובילה את הקבוצה שלה, אבל {name} מקבלת את המקום כי המניה הזאת נכשלת באחת הבדיקות");
 add("bw.lead.takerAlso", "; {name} also holds its group's place", "; גם {name} מחזיקה במקום של הקבוצה");
 add("bw.lead.taker", "; {name} holds its group's place", "; {name} מחזיקה במקום של הקבוצה");
 add("bw.lead.keeps", "; keeps its group's place", "; שומרת על המקום של הקבוצה שלה");
@@ -418,7 +418,7 @@ add("bw.lead.wins", "; wins its group's place", "; זוכה במקום של הק
 add("bw.lead.slotsGone", "; all {slots} places go to stronger names", "; כל {slots} המקומות הולכים למניות חזקות יותר");
 add("bw.lead.leads", "; leads its group", "; מובילה את הקבוצה שלה");
 add("bw.lead.leaderMisses", "; {name} ranks higher in its group but misses a check, so the group's place is open",
-  "; {name} מדורגת גבוה יותר בקבוצה אבל לא עוברת בדיקה, ולכן המקום של הקבוצה פנוי");
+  "; {name} מדורגת גבוה יותר בקבוצה אבל נכשלת באחת הבדיקות, ולכן המקום של הקבוצה פנוי");
 add("bw.lead.leader", "; {name} leads its group", "; {name} מובילה את הקבוצה");
 add("bw.leader.labelKept", "Keeps its place: still in the top {keep} of the list by {rw}", "שומרת על המקום: עדיין בין {keep} הראשונות ברשימה לפי {rw}");
 add("bw.leader.label", "Strongest {rw} in its group (one per group, {slots} places in all)", "החזקה ביותר בקבוצה שלה לפי {rw} (אחת מכל קבוצה, {slots} מקומות בסך הכול)");
@@ -498,11 +498,11 @@ add("bw.setup.need", "3 or more", "3 או יותר");
 add("bw.setup.wait", "Wait until at least 3 of the 4 quick checks pass.", "לחכות שלפחות 3 מתוך 4 הבדיקות המהירות יעברו.");
 add("bw.main.notAvailable", "Wait. The rules' look is not available yet.", "לחכות. הבדיקה של הכללים עדיין לא זמינה.");
 add("bw.main.nextLook", "The weekly game looks on the first trading day of each week (pretend money). Its look at this name appears after the next daily run.",
-  "המשחק השבועי בודק ביום המסחר הראשון של כל שבוע (בכסף מדומה). הבדיקה שלו למניה הזאת תופיע אחרי ההרצה היומית הבאה.");
+  "המשחק השבועי בודק ביום המסחר הראשון של כל שבוע (בכסף מדומה). הבדיקה שלו למניה הזאת תופיע אחרי הריצה היומית הבאה.");
 add("bw.main.nextLookBuy", "The weekly game looks on the first trading day of each week (pretend money); the next one is {buy}. Its look at this name appears after the next daily run.",
-  "המשחק השבועי בודק ביום המסחר הראשון של כל שבוע (בכסף מדומה); הבדיקה הבאה: {buy}. הבדיקה שלו למניה הזאת תופיע אחרי ההרצה היומית הבאה.");
-add("bw.main.waitStale", "The rules' look is from an older close than this page; wait for the next daily run.", "הבדיקה של הכללים היא מסגירה ישנה יותר מהדף הזה; לחכות להרצה היומית הבאה.");
-add("bw.main.waitRun", "Wait for the next daily run, which writes the rules' look.", "לחכות להרצה היומית הבאה, שכותבת את הבדיקה של הכללים.");
+  "המשחק השבועי בודק ביום המסחר הראשון של כל שבוע (בכסף מדומה); הבדיקה הבאה: {buy}. הבדיקה שלו למניה הזאת תופיע אחרי הריצה היומית הבאה.");
+add("bw.main.waitStale", "The rules' look is from an older close than this page; wait for the next daily run.", "הבדיקה של הכללים היא מסגירה ישנה יותר מהדף הזה; לחכות לריצה היומית הבאה.");
+add("bw.main.waitRun", "Wait for the next daily run, which writes the rules' look.", "לחכות לריצה היומית הבאה, שכותבת את הבדיקה של הכללים.");
 add("bw.main.allowEarned", "The plan acts only on the rule's review day, never between review days, and only within its limits.",
   "התוכנית פועלת רק ביום הבדיקה של הכלל, אף פעם לא בין ימי בדיקה, ורק בתוך המגבלות שלה.");
 add("bw.main.allowPaper", "Every check passes, but only on paper. Real money still waits until a stock rule passes its history test and earns trust; today none has.",
@@ -542,10 +542,10 @@ add("mb.cond.narrow", "A few giants carry the index", "כמה ענקיות סו�
 add("mb.cond.high", "{symbol} is at a 1-year high", "{symbol} בשיא של שנה");
 add("mb.cond.stretched", { one: "{list} stretched above trend", other: "{list} stretched above trend" }, { one: "{list} מתוחה מעל המגמה", other: "{list} מתוחות מעל המגמה" });
 add("mb.cond.indexStretched", "The index is stretched above its trend", "המדד מתוח מעל המגמה שלו");
-add("mb.cond.stressed", "Volatility is stressed", "התנודתיות גבוהה ולחוצה");
+add("mb.cond.stressed", "Volatility is stressed", "התנודתיות גבוהה במיוחד");
 add("mb.cond.down", "The trend is down", "המגמה יורדת");
 add("mb.cond.filterOff", "The core's slow trend filter is off", "מסנן המגמה האיטי של קרן הליבה כבוי");
-add("mb.cond.goal", "The goal: a diverse 4–5 stock portfolio", "המטרה: תיק השקעות מגוון של 4–5 מניות");
+add("mb.cond.goal", "The goal: a diverse 4–5 stock portfolio", "המטרה: תיק השקעות מגוון של 4 עד 5 מניות");
 add("mb.eyebrow", "From the site's library · picked by code, not made up", "מהספרייה של האתר · נבחר בקוד, לא הומצא");
 add("mb.lessons.title", "Lessons that fit today", "שיעורים שמתאימים להיום");
 add("mb.lessons.link", "Lessons", "שיעורים");
@@ -555,7 +555,7 @@ add("mb.lessons.none", "No condition stands out today.", "שום מצב לא ב�
 add("mb.claims.title", "What others said about the list's companies", "מה אחרים אמרו על החברות ברשימה");
 add("mb.claims.count", { one: "{count} unexpired", other: "{count} unexpired" }, { one: "אחת בתוקף", other: "{count} בתוקף" });
 add("mb.claims.lede", "In simple words: things people said, like a weather forecast with a date. Nobody has checked them, so never act on one alone.",
-  "במילים פשוטות: דברים שאנשים אמרו, כמו תחזית מזג אוויר עם תאריך. אף אחד לא בדק אותם, ולכן לא לפעול לפי אחד מהם לבד.");
+  "במילים פשוטות: דברים שאנשים אמרו, כמו תחזית מזג אוויר עם תאריך. אף אחד לא בדק אותם, ולכן אף אחד מהם לא מספיק לבדו כסיבה לפעול.");
 add("mb.claims.none", "No unexpired claims about the list.", "אין טענות בתוקף על הרשימה.");
 
 /* ===================================================== components/checklist.jsx: the chart checklist card */
@@ -586,7 +586,7 @@ add("ckc.risk.fits", "Fits this site's rule (you might win at least {min} times 
 add("ckc.yes", "yes", "כן");
 add("ckc.no", "no", "לא");
 add("ckc.risk.byConstruction", "There was no ceiling (resistance) above it in the past year, so target 1 was simply set at twice the possible loss. It fits by arithmetic, not because the stock is likely to get there.",
-  "בשנה האחרונה לא הייתה מעליה תקרה (רמת התנגדות), ולכן יעד 1 נקבע פשוט בפעמיים ההפסד האפשרי. היא עומדת בכלל בגלל החשבון, לא כי סביר שהמניה תגיע לשם.");
+  "בשנה האחרונה לא הייתה מעליה תקרה (רמת התנגדות), ולכן יעד 1 נקבע פשוט במרחק כפול מההפסד האפשרי. היא עומדת בכלל בגלל החשבון, לא כי סביר שהמניה תגיע לשם.");
 add("ckc.risk.paper", "Pretend money only: a written plan for a make-believe purchase at the last closing price, made before any pretend entry. On a normal day it moves about {atr} (its ATR).",
   "כסף מדומה בלבד: תוכנית כתובה לקנייה דמיונית במחיר הסגירה האחרון, שנכתבת לפני כל כניסה מדומה. ביום רגיל המניה זזה בערך {atr} (ה-ATR שלה).");
 add("ckc.title", "Chart checklist", "רשימת הבדיקה של הגרף");
@@ -606,7 +606,7 @@ add("ckc.says", "What it says · seven steps", "מה זה אומר · שבעה �
 add("ckc.score", "score {net} of 7", "ציון {net} מתוך 7");
 add("ckc.counts", "{up} lean up · {down} lean down · {none} no lean", "{up} לעלייה · {down} לירידה · {none} בלי נטייה");
 add("ckc.checks.lede", "In simple words: eight things a trading video says to look at on a stock's chart, read by a program from each day's closing prices up to {date}. Seven of them say \"up\", \"down\" or \"no lean\"; the eighth is a safety plan. It describes the chart, like a weather report of the past weeks, not a forecast. Unproven: the site uses it to learn, not to decide.",
-  "במילים פשוטות: שמונה דברים שסרטון מסחר אומר לבדוק בגרף של מניה, שתוכנה קוראת ממחירי הסגירה של כל יום עד {date}. שבעה מהם אומרים \"למעלה\", \"למטה\" או \"בלי נטייה\"; השמיני הוא תוכנית ביטחון. זה מתאר את הגרף, כמו דוח מזג אוויר של השבועות האחרונים, לא תחזית. לא מוכח: האתר משתמש בזה כדי ללמוד, לא כדי להחליט.");
+  "במילים פשוטות: שמונה דברים שסרטון מסחר אומר לבדוק בגרף של מניה, שתוכנה קוראת ממחירי הסגירה של כל יום עד {date}. שבעה מהם אומרים ״למעלה״, ״למטה״ או ״בלי נטייה״; השמיני הוא תוכנית ביטחון. זה מתאר את הגרף, כמו דוח מזג אוויר של השבועות האחרונים, לא תחזית. לא מוכח: האתר משתמש בזה כדי ללמוד, לא כדי להחליט.");
 add("ckc.safetyPlan", "Safety plan (pretend money)", "תוכנית ביטחון (כסף מדומה)");
 add("ckc.changes", "What changed since the day before", "מה השתנה מאז היום הקודם");
 add("ckc.good.title", "Is it any good? Unproven.", "האם זה עובד? לא מוכח.");
@@ -621,9 +621,9 @@ add("ckc.good.how", "How each step works", "איך כל שלב עובד");
 /* ================================================================ components/candles.jsx: the candles view */
 
 add("cdv.loading", "Loading the candles…", "טוענים את הנרות…");
-add("cdv.none", "The candles appear after the next daily run.", "הנרות יופיעו אחרי ההרצה היומית הבאה.");
+add("cdv.none", "The candles appear after the next daily run.", "הנרות יופיעו אחרי הריצה היומית הבאה.");
 add("cdv.noneWhy", "They are written by the same run as the checklist, from the same end-of-day bars. The Checks view has every number meanwhile.",
-  "הם נכתבים באותה הרצה כמו רשימת הבדיקה, מאותם נתוני סוף יום. בינתיים כל המספרים נמצאים בתצוגת הבדיקות.");
+  "הם נכתבים באותה ריצה כמו רשימת הבדיקה, מאותם נתוני סוף יום. בינתיים כל המספרים נמצאים בתצוגת הבדיקות.");
 add("cdv.error", "The candles did not load.", "הנרות לא נטענו.");
 add("cdv.retry", "Try again", "לנסות שוב");
 add("cdv.window", "Candles window", "טווח הנרות");
@@ -659,17 +659,17 @@ add("zm.showAll", "← Show all {range}", "→ חזרה לתצוגה המלאה 
 add("zm.noCandles", "No candles for this one yet.", "עדיין אין נרות למניה הזאת.");
 add("zm.green", "Green", "ירוק");
 add("zm.red", "Red", "אדום");
-add("zm.legend.up", "{word}: closed higher than it opened", "{word}: נסגר גבוה ממה שנפתח");
-add("zm.legend.down", "{word}: closed lower", "{word}: נסגר נמוך יותר");
+add("zm.legend.up", "{word}: closed higher than it opened", "{word}: נסגר גבוה יותר ממחיר הפתיחה");
+add("zm.legend.down", "{word}: closed lower", "{word}: נסגר נמוך יותר ממחיר הפתיחה");
 add("zm.legend.wicks", "Thin lines: the day's highest and lowest", "קווים דקים: הגבוה והנמוך של היום");
 add("zm.spots", "Candles to notice", "נרות ששווה לשים לב אליהם");
 add("zm.daily", "The site's prices arrive once a day after the close, so this cannot see moves inside a trading day.",
   "המחירים של האתר מגיעים פעם ביום אחרי הסגירה, ולכן אי אפשר לראות כאן תנועות בתוך יום המסחר.");
 add("zm.full", "The full chart with numbers →", "הגרף המלא עם המספרים ←");
-add("zm.spot.zoomed", "Zoomed in · tap to go back", "בתצוגה מקרוב · הקשה חוזרת אחורה");
-add("zm.spot.zoom", "Tap to zoom in", "הקשה מתקרבת");
-add("zm.spot.shown", "Shown on the chart · tap to clear", "מסומן על הגרף · הקשה מנקה");
-add("zm.spot.show", "Tap to see it on the chart", "הקשה מראה אותו על הגרף");
+add("zm.spot.zoomed", "Zoomed in · tap to go back", "בתצוגה מקרוב · הקשה לחזרה");
+add("zm.spot.zoom", "Tap to zoom in", "הקשה להגדלה");
+add("zm.spot.shown", "Shown on the chart · tap to clear", "מסומן על הגרף · הקשה לביטול הסימון");
+add("zm.spot.show", "Tap to see it on the chart", "הקשה להצגה על הגרף");
 add("zm.aria", { one: "{name}: {n} daily candles with {count} marked.", other: "{name}: {n} daily candles with {count} marked." },
   { one: "{name}: {n} נרות יומיים, אחד מהם מסומן.", other: "{name}: {n} נרות יומיים, {count} מהם מסומנים." });
 add("zm.spotAria", "{n}: {title}. Zoom in.", "{n}: {title}. התקרבות.");
@@ -685,7 +685,7 @@ add("ch.excess.diff", "difference {pct}", "הפרש {pct}");
 add("ch.excess.both", "stock {stock} · market {market}", "מניה {stock} · שוק {market}");
 add("ch.cost.target", "target {usd}", "יעד {usd}");
 add("ch.cost.warn", "warn {usd}", "אזהרה {usd}");
-add("ch.cost.aria", "What each run cost in US dollars, with the target line and the warning line", "כמה עלתה כל הרצה בדולרים, עם קו היעד וקו האזהרה");
+add("ch.cost.aria", "What each run cost in US dollars, with the target line and the warning line", "כמה עלתה כל ריצה בדולרים, עם קו היעד וקו האזהרה");
 add("ch.cost.usdMin", "{usd} · {min} min", "{usd} · {min} דק׳");
 add("ch.cost.pack", "pack {tokens} / {cap} tokens", "חבילה {tokens} / {cap} טוקנים");
 add("ch.cost.over", "over the warning line", "מעל קו האזהרה");
@@ -713,15 +713,15 @@ add("bwc.rules", "This site's rules", "כללי האתר");
 /* ===================================================================== tabs/Watchlist.jsx: the Stocks list */
 
 add("wl.wait.eyebrow", "Stocks · {label}", "מניות · {label}");
-add("wl.wait.loading", "Loading {label}…", "טוענים את {label}…");
-add("wl.wait.error", "{label} could not load just now.", "לא הצלחנו לטעון את {label} כרגע.");
+add("wl.wait.loading", "Loading {label}…", "{label} בטעינה…");
+add("wl.wait.error", "{label} could not load just now.", "הטעינה של {label} נכשלה כרגע.");
 add("wl.noPrices", "no prices yet", "עדיין אין מחירים");
-add("wl.live", "live · {provider}", "חי · {provider}");
+add("wl.live", "live · {provider}", "מחירים מתעדכנים · {provider}");
 add("wl.title.names", "{n} names,", "{n} מניות,");
 add("wl.title.funds", "{n} funds,", "{n} קרנות,");
 add("wl.title.accent", "one whole market to compare with.", "ושוק שלם אחד להשוואה.");
 add("wl.lede", "In simple words: these are the companies this site keeps an eye on, and how each did lately. {note}{up} of {n} ended the day higher. Each small line shows the last {days} trading days, starting at 100 so they are easy to compare. The site only watches and learns here, with pretend money; this is not a shopping list. It shows how much things went up or down, not raw prices (the price provider's rule).",
-  "במילים פשוטות: אלה החברות שהאתר עוקב אחריהן, ואיך כל אחת עשתה לאחרונה. {note}{up} מתוך {n} סיימו את היום בעלייה. כל קו קטן מראה את {days} ימי המסחר האחרונים, ומתחיל ב-100 כדי שיהיה קל להשוות. כאן האתר רק צופה ולומד, בכסף מדומה; זו לא רשימת קניות. הוא מראה בכמה דברים עלו או ירדו, לא מחירים (הכלל של ספק המחירים).");
+  "במילים פשוטות: אלה החברות שהאתר עוקב אחריהן, ומה עבר על כל אחת מהן לאחרונה. {note}{up} מתוך {n} סיימו את היום בעלייה. כל קו קטן מראה את {days} ימי המסחר האחרונים, ומתחיל ב-100 כדי שיהיה קל להשוות. כאן האתר רק צופה ולומד, בכסף מדומה; זו לא רשימת קניות. האתר מראה בכמה המחירים עלו או ירדו, ולא את המחירים עצמם (זה הכלל של ספק המחירים).");
 add("wl.sort", "Sort", "מיון");
 add("wl.sort.list", "List order", "סדר הרשימה");
 add("wl.sort.gainers", "Gainers", "עולות");
@@ -735,11 +735,11 @@ add("wl.col.days", "{days} days, indexed", "{days} ימים, מ-100");
 add("wl.col.checks", "Quick checks · chart checklist · rule", "בדיקות מהירות · רשימת בדיקה · כלל");
 add("wl.col.today", "Today", "היום");
 add("wl.foot.live", "Quick checks: four yes-or-no questions, like a report card (out of 4). Chart checklist: eight steps from a trading video, read by a program. Unproven: it describes the chart, it does not predict. Rule: what the pretend-money practice rule does with it. Open a name to see more.",
-  "בדיקות מהירות: ארבע שאלות של כן או לא, כמו תעודה (מתוך 4). רשימת הבדיקה של הגרף: שמונה שלבים מסרטון מסחר, שתוכנה קוראת. לא מוכח: זה מתאר את הגרף, לא חוזה. כלל: מה כלל התרגול בכסף מדומה עושה איתה. אפשר לפתוח שם כדי לראות עוד.");
+  "בדיקות מהירות: ארבע שאלות של כן או לא, כמו תעודה (מתוך 4). רשימת הבדיקה של הגרף: שמונה שלבים מסרטון מסחר, שתוכנה קוראת. לא מוכח: זה מתאר את הגרף, לא חוזה. כלל: מה כלל התרגול בכסף מדומה עושה איתה. אפשר לפתוח כל שורה כדי לראות עוד.");
 add("wl.foot.sample", "Quick checks: four yes-or-no questions, like a report card (out of 4). Chart checklist: eight steps from a trading video, read by a program from sample prices. Unproven: it describes the chart, it does not predict. Rule: what the pretend-money practice rule does with it. Open a name to see more.",
-  "בדיקות מהירות: ארבע שאלות של כן או לא, כמו תעודה (מתוך 4). רשימת הבדיקה של הגרף: שמונה שלבים מסרטון מסחר, שתוכנה קוראת ממחירים לדוגמה. לא מוכח: זה מתאר את הגרף, לא חוזה. כלל: מה כלל התרגול בכסף מדומה עושה איתה. אפשר לפתוח שם כדי לראות עוד.");
+  "בדיקות מהירות: ארבע שאלות של כן או לא, כמו תעודה (מתוך 4). רשימת הבדיקה של הגרף: שמונה שלבים מסרטון מסחר, שתוכנה קוראת ממחירים לדוגמה. לא מוכח: זה מתאר את הגרף, לא חוזה. כלל: מה כלל התרגול בכסף מדומה עושה איתה. אפשר לפתוח כל שורה כדי לראות עוד.");
 add("wl.foot.none", "Quick checks: four yes-or-no questions, like a report card (out of 4). Chart checklist leans (up, mixed, down) appear after the next daily update.",
-  "בדיקות מהירות: ארבע שאלות של כן או לא, כמו תעודה (מתוך 4). הנטיות של רשימת הבדיקה (עלייה, מעורב, ירידה) יופיעו אחרי העדכון היומי הבא.");
+  "בדיקות מהירות: ארבע שאלות של כן או לא, כמו תעודה (מתוך 4). הנטיות של רשימת הבדיקה (עלייה, תמונה מעורבת, ירידה) יופיעו אחרי העדכון היומי הבא.");
 add("wl.open", "Open {symbol}", "פתיחת {symbol}");
 add("wl.wholeMarket", "whole market", "כל השוק");
 add("wl.wholeMarketDot", "Whole market · ", "כל השוק · ");
@@ -755,16 +755,16 @@ add("wl.mood.label", "market mood · {bench}", "מצב הרוח בשוק · {ben
 add("wl.mood.desc", "Like a weather report for the whole market ({bench}): calm, normal or stormy. As of {date}, worked out by a program from the whole market's closing values.",
   "כמו תחזית מזג אוויר לכל השוק ({bench}): רגוע, רגיל או סוער. נכון ל-{date}, חושב בתוכנה מערכי הסגירה של כל השוק.");
 add("wl.dir.up", "up", "עולה");
-add("wl.dir.sideways", "sideways", "הצידה");
+add("wl.dir.sideways", "sideways", "מדשדש");
 add("wl.dir.down", "down", "יורד");
 add("wl.dir.label", "direction · {days} days", "כיוון · {days} ימים");
 add("wl.dir.descRising", "The whole market is {dist} from its usual level lately (its {days}-day average), and that level is rising {slope} over {slopeDays} days.",
-  "כל השוק נמצא {dist} מהרמה הרגילה שלו לאחרונה (ממוצע {days} הימים), והרמה הזאת עולה {slope} ב-{slopeDays} ימים.");
+  "המרחק של כל השוק מהרמה הרגילה שלו לאחרונה (ממוצע {days} הימים) הוא {dist}, והרמה הזאת עולה ({slope} ב-{slopeDays} ימים).");
 add("wl.dir.descFalling", "The whole market is {dist} from its usual level lately (its {days}-day average), and that level is falling {slope} over {slopeDays} days.",
-  "כל השוק נמצא {dist} מהרמה הרגילה שלו לאחרונה (ממוצע {days} הימים), והרמה הזאת יורדת {slope} ב-{slopeDays} ימים.");
+  "המרחק של כל השוק מהרמה הרגילה שלו לאחרונה (ממוצע {days} הימים) הוא {dist}, והרמה הזאת יורדת ({slope} ב-{slopeDays} ימים).");
 add("wl.vol.label", "how much it jumps around", "כמה הוא קופץ");
 add("wl.vol.desc", "How bumpy the whole market's daily moves were over the last {days} days, scaled to a year (its volatility). Higher means a bumpier ride.",
-  "כמה היו קופצניות התנועות היומיות של כל השוק ב-{days} הימים האחרונים, בחישוב שנתי (התנודתיות שלו). גבוה יותר אומר נסיעה קופצנית יותר.");
+  "עד כמה היו חדות התנועות היומיות של כל השוק ב-{days} הימים האחרונים, בחישוב שנתי (התנודתיות שלו). מספר גבוה יותר פירושו נסיעה קופצנית יותר.");
 add("wl.dd.label", "from its high", "מהשיא");
 add("wl.dd.desc", "How far the whole market is below its highest close of the last {days} trading days.", "כמה כל השוק נמצא מתחת לסגירה הגבוהה ביותר שלו ב-{days} ימי המסחר האחרונים.");
 add("wl.above.value", "{above} of {total}", "{above} מתוך {total}");
@@ -772,32 +772,32 @@ add("wl.above.label", "above their usual level", "מעל הרמה הרגילה �
 add("wl.above.desc", "How many of the list's names sit above their usual level lately (their 50-day average). Only the list's names: the wider picture is on Today.",
   "כמה מהמניות ברשימה נמצאות מעל הרמה הרגילה שלהן לאחרונה (ממוצע 50 הימים). רק המניות ברשימה: התמונה הרחבה נמצאת בדף היום.");
 // The practice portfolio rule's status (components/goal.jsx STATUS, English there)
-add("st.status.kept", "Held", "מוחזקת");
+add("st.status.kept", "Held", "בתיק");
 add("st.status.added", "New this month", "חדשה החודש");
 add("st.status.fails_checks", "Did not pass the checks", "לא עברה את הבדיקות");
-add("st.status.stretched", "Rose too fast: wait", "עלתה מהר מדי: לחכות");
-add("st.status.slots_full", "No free seat", "אין מקום פנוי");
+add("st.status.stretched", "Rose too fast: wait", "עלתה מהר מדי: ממתינה");
+add("st.status.slots_full", "No free seat", "אין מושב פנוי");
 add("st.status.sector_cap", "Its industry already has 2", "בענף שלה כבר יש 2");
-add("st.status.too_correlated", "Moves like one already held", "זזה כמו מניה שכבר מוחזקת");
+add("st.status.too_correlated", "Moves like one already held", "זזה כמו מניה שכבר בתיק");
 add("st.status.no_history", "Too new to judge", "חדשה מדי כדי לשפוט");
 
 /* ======================================================================== tabs/Stock.jsx: one stock's page */
 
 // "In plain words" (assembled by code from the numbers)
-add("sp.pw.monthUp", "Over the last month {symbol} went up {pct}.", "בחודש האחרון {symbol} עלתה {pct}.");
-add("sp.pw.monthDown", "Over the last month {symbol} went down {pct}.", "בחודש האחרון {symbol} ירדה {pct}.");
-add("sp.pw.better", "That is {pts} points better than the whole market (the {bench}).", "זה טוב ב-{pts} נקודות מכל השוק ({bench}).");
-add("sp.pw.worse", "That is {pts} points worse than the whole market (the {bench}).", "זה חלש ב-{pts} נקודות מכל השוק ({bench}).");
+add("sp.pw.monthUp", "Over the last month {symbol} went up {pct}.", "בחודש האחרון {symbol} עלתה ב-{pct}.");
+add("sp.pw.monthDown", "Over the last month {symbol} went down {pct}.", "בחודש האחרון {symbol} ירדה ב-{pct}.");
+add("sp.pw.better", "That is {pts} points better than the whole market (the {bench}).", "זה יותר מכל השוק ({bench}) ב-{pts} נקודות אחוז.");
+add("sp.pw.worse", "That is {pts} points worse than the whole market (the {bench}).", "זה פחות מכל השוק ({bench}) ב-{pts} נקודות אחוז.");
 add("sp.pw.above", "It sits above its usual level lately (its average over the last 50 days), so the trend is up.",
   "היא נמצאת מעל הרמה הרגילה שלה לאחרונה (הממוצע של 50 הימים האחרונים), ולכן המגמה עולה.");
 add("sp.pw.below", "It sits below its usual level lately (its average over the last 50 days), so the trend is weak.",
   "היא נמצאת מתחת לרמה הרגילה שלה לאחרונה (הממוצע של 50 הימים האחרונים), ולכן המגמה חלשה.");
 add("sp.pw.stretched", "It ran up too fast: it is {pct} above that usual level. Like a ball thrown up high, a stock that sprints often slips back for a while, so getting in now often means getting in just before a dip.",
-  "היא עלתה מהר מדי: היא נמצאת {pct} מעל הרמה הרגילה הזאת. כמו כדור שנזרק גבוה, מניה שדוהרת חוזרת לעיתים קרובות קצת אחורה, ולכן כניסה עכשיו היא לעיתים קרובות כניסה רגע לפני ירידה.");
+  "היא עלתה מהר מדי: היא גבוהה ב-{pct} מהרמה הרגילה הזאת. כמו כדור שנזרק גבוה, מניה שדוהרת חוזרת לעיתים קרובות קצת אחורה, ולכן כניסה עכשיו היא לעיתים קרובות כניסה רגע לפני ירידה.");
 add("sp.pw.nearHigh", "It is close to its highest point of the past year. That alone is not a reason to sell, or to buy.",
   "היא קרובה לנקודה הגבוהה ביותר שלה בשנה האחרונה. זו לבדה לא סיבה למכור, וגם לא לקנות.");
 add("sp.pw.farBelow", "It sits {pct} below its highest point of the past year. A big fall alone is not a reason to buy: cheap things can get cheaper.",
-  "היא נמצאת {pct} מתחת לנקודה הגבוהה ביותר שלה בשנה האחרונה. ירידה גדולה לבדה היא לא סיבה לקנות: דברים זולים יכולים להיות עוד יותר זולים.");
+  "היא נמוכה ב-{pct} מהנקודה הגבוהה ביותר שלה בשנה האחרונה. ירידה גדולה לבדה היא לא סיבה לקנות: דברים זולים יכולים להיות עוד יותר זולים.");
 add("sp.pw.checks4", "All four quick checks pass. Think of a good report card: nice to see, but not a reason to buy on its own.",
   "כל ארבע הבדיקות המהירות עוברות. כמו תעודה טובה: נעים לראות, אבל זו לא סיבה לקנות בפני עצמה.");
 add("sp.pw.checks3", "Three of the four quick checks pass.", "שלוש מתוך ארבע הבדיקות המהירות עוברות.");
@@ -807,24 +807,24 @@ add("sp.pw.rateBetter", {
   one: "Looking back at {from}–{to}, stocks with {n} of 4 went on to do {pts} points better than the whole market over the next {days} days, on average ({count} case). The past is a hint, not a promise.",
   other: "Looking back at {from}–{to}, stocks with {n} of 4 went on to do {pts} points better than the whole market over the next {days} days, on average ({count} cases). The past is a hint, not a promise.",
 }, {
-  one: "במבט לאחור על {from}–{to}, מניות עם {n} מתוך 4 עשו אחר כך טוב מכל השוק ב-{pts} נקודות בממוצע ב-{days} הימים שאחרי (מקרה אחד). העבר הוא רמז, לא הבטחה.",
-  other: "במבט לאחור על {from}–{to}, מניות עם {n} מתוך 4 עשו אחר כך טוב מכל השוק ב-{pts} נקודות בממוצע ב-{days} הימים שאחרי ({count} מקרים). העבר הוא רמז, לא הבטחה.",
+  one: "במבט לאחור על התקופה מ-{from} עד {to}, מניות עם {n} מתוך 4 הצליחו אחר כך יותר מכל השוק ב-{pts} נקודות אחוז בממוצע ב-{days} הימים שאחרי (מקרה אחד). העבר הוא רמז, לא הבטחה.",
+  other: "במבט לאחור על התקופה מ-{from} עד {to}, מניות עם {n} מתוך 4 הצליחו אחר כך יותר מכל השוק ב-{pts} נקודות אחוז בממוצע ב-{days} הימים שאחרי ({count} מקרים). העבר הוא רמז, לא הבטחה.",
 });
 add("sp.pw.rateWorse", {
   one: "Looking back at {from}–{to}, stocks with {n} of 4 went on to do {pts} points worse than the whole market over the next {days} days, on average ({count} case). The past is a hint, not a promise.",
   other: "Looking back at {from}–{to}, stocks with {n} of 4 went on to do {pts} points worse than the whole market over the next {days} days, on average ({count} cases). The past is a hint, not a promise.",
 }, {
-  one: "במבט לאחור על {from}–{to}, מניות עם {n} מתוך 4 עשו אחר כך פחות טוב מכל השוק ב-{pts} נקודות בממוצע ב-{days} הימים שאחרי (מקרה אחד). העבר הוא רמז, לא הבטחה.",
-  other: "במבט לאחור על {from}–{to}, מניות עם {n} מתוך 4 עשו אחר כך פחות טוב מכל השוק ב-{pts} נקודות בממוצע ב-{days} הימים שאחרי ({count} מקרים). העבר הוא רמז, לא הבטחה.",
+  one: "במבט לאחור על התקופה מ-{from} עד {to}, מניות עם {n} מתוך 4 הצליחו אחר כך פחות מכל השוק ב-{pts} נקודות אחוז בממוצע ב-{days} הימים שאחרי (מקרה אחד). העבר הוא רמז, לא הבטחה.",
+  other: "במבט לאחור על התקופה מ-{from} עד {to}, מניות עם {n} מתוך 4 הצליחו אחר כך פחות מכל השוק ב-{pts} נקודות אחוז בממוצע ב-{days} הימים שאחרי ({count} מקרים). העבר הוא רמז, לא הבטחה.",
 });
 add("sp.pw.claims", { one: "{count} recent claim from the people the site learns from mentions it (not checked yet, see below).", other: "{count} recent claims from the people the site learns from mention it (not checked yet, see below)." },
   { one: "טענה אחת מהזמן האחרון, מהאנשים שהאתר לומד מהם, מזכירה אותה (עוד לא נבדקה, פירוט למטה).", other: "{count} טענות מהזמן האחרון, מהאנשים שהאתר לומד מהם, מזכירות אותה (עוד לא נבדקו, פירוט למטה)." });
 
 // "Would the rules allow it?" (pretend money)
 add("st.stage.0", "Observe", "צפייה");
-add("st.stage.1", "Paper", "על הנייר");
-add("st.stage.2", "Small money", "כסף קטן");
-add("st.stage.3", "Trusted", "אמון מלא");
+add("st.stage.1", "Paper", "כסף מדומה");
+add("st.stage.2", "Small money", "סכום קטן");
+add("st.stage.3", "Trusted", "אמון");
 add("sp.gate.trusted", "Trust stage {stage} ({name}): the brain has earned some trust, but the site still only watches and learns here",
   "שלב אמון {stage} ({name}): המוח זכה לקצת אמון, אבל כאן האתר עדיין רק צופה ולומד");
 add("sp.gate.untrusted", "Trust stage {stage} ({name}): the brain has not earned trust yet, so pretend money only",
@@ -834,8 +834,8 @@ add("sp.gate.left", "The pretend-money portfolio rule leaves it out: {status}", 
 add("sp.gate.noRule", "The pretend-money portfolio rule has not run yet", "כלל התיק בכסף מדומה עוד לא רץ");
 add("sp.gate.stretched", "It ran up too fast: the rules say no new pretend buys", "היא עלתה מהר מדי: הכללים אומרים שאין קניות מדומות חדשות");
 add("sp.gate.checks", "{passed} of 4 quick checks pass (the rules need 3)", "{passed} מתוך 4 הבדיקות המהירות עוברות (הכללים דורשים 3)");
-add("sp.gate.title", "Would the rules allow it? (pretend money)", "האם הכללים היו מאפשרים? (כסף מדומה)");
-add("sp.gate.titleOther", "Would the rules allow it?", "האם הכללים היו מאפשרים?");
+add("sp.gate.title", "Would the rules allow it? (pretend money)", "האם הכללים היו מאפשרים קנייה? (כסף מדומה)");
+add("sp.gate.titleOther", "Would the rules allow it?", "האם הכללים היו מאפשרים קנייה?");
 add("sp.gate.yes", "On paper, yes.", "על הנייר, כן.");
 add("sp.gate.no", "Not yet.", "עוד לא.");
 add("sp.gate.lede", "The site only watches and learns with pretend money here. The plan's real money follows the Brain's verdicts page, usually one fund that holds the whole market.",
@@ -852,8 +852,8 @@ add("sp.sure.low", "not very sure", "בלי הרבה ביטחון");
 add("sp.sure.medium", "fairly sure", "בביטחון בינוני");
 add("sp.sure.high", "quite sure", "בביטחון גבוה");
 add("sp.range.21", "1M", "חודש");
-add("sp.range.63", "3M", "3 ח׳");
-add("sp.range.126", "6M", "6 ח׳");
+add("sp.range.63", "3M", "3 חודשים");
+add("sp.range.126", "6M", "6 חודשים");
 add("sp.range.252", "1Y", "שנה");
 
 // the four quick checks
@@ -865,7 +865,7 @@ add("sp.setup.rs6", "Doing better than the whole market ({bench}) · 6 months", 
 add("sp.setup.rsDetail", "{pct} over {days} days", "{pct} ב-{days} ימים");
 add("sp.setup.calm", "Has not run up too fast", "לא עלתה מהר מדי");
 add("sp.setup.calmDetail", "{d50} above its 50-day average (limit {limit})", "{d50} מעל ממוצע 50 הימים (הגבול: {limit})");
-add("sp.setup.calmDetailVeto", "{d50} above its 50-day average (limit {limit}). Failing this blocks new pretend buys", "{d50} מעל ממוצע 50 הימים (הגבול: {limit}). מי שלא עוברת את זה לא נכנסת לקניות מדומות חדשות");
+add("sp.setup.calmDetailVeto", "{d50} above its 50-day average (limit {limit}). Failing this blocks new pretend buys", "{d50} מעל ממוצע 50 הימים (הגבול: {limit}). מניה שנכשלת בבדיקה הזאת לא נכנסת לקניות מדומות חדשות");
 add("sp.lesson.ranUp", "Ran up too fast", "עלתה מהר מדי");
 add("sp.lesson.below", "Below its usual level lately", "מתחת לרמה הרגילה שלה לאחרונה");
 add("sp.lesson.better6", "Doing better than the whole market over 6 months", "מצליחה יותר מכל השוק ב-6 חודשים");
@@ -876,8 +876,8 @@ add("sp.lesson.farBelow", "Far below its high point", "רחוק מתחת לשי�
 // opening a page
 add("sp.thisMarket", "this market", "השוק הזה");
 add("sp.opening", "Opening {symbol}…", "פותחים את {symbol}…");
-add("sp.loadError", "{label} could not load just now", "לא הצלחנו לטעון את {label} כרגע");
-add("sp.nightly", "Its numbers appear after the next nightly run.", "המספרים שלה יופיעו אחרי ההרצה הלילית הבאה.");
+add("sp.loadError", "{label} could not load just now", "הטעינה של {label} נכשלה כרגע");
+add("sp.nightly", "Its numbers appear after the next nightly run.", "המספרים שלה יופיעו אחרי הריצה הלילית הבאה.");
 add("sp.notListed.title", "{symbol} is not on any of the site's lists", "{symbol} לא נמצאת באף אחת מהרשימות של האתר");
 add("sp.notListed.body", "The site only shows stocks on its lists. Once it is added to one, it shows up here the morning after.",
   "האתר מציג רק מניות שברשימות שלו. אחרי שהיא תתווסף לאחת מהן, היא תופיע כאן למחרת בבוקר.");
@@ -903,9 +903,9 @@ add("sp.strip.drop", "its biggest drop, past year", "הירידה הגדולה �
 add("sp.strip.fromHigh", "from its high of the past year", "מהשיא של השנה האחרונה");
 add("sp.strip.vol", "how much it jumps around (a year)", "כמה היא קופצת (בשנה)");
 add("sp.long.title", "Against the {goal} a year goal", "מול היעד של {goal} בשנה");
-add("sp.long.span", "{from} to {to} · looking back is easy", "{from} עד {to} · קל להסתכל אחורה");
+add("sp.long.span", "{from} to {to} · looking back is easy", "{from} עד {to} · בדיעבד הכול נראה קל");
 add("sp.long.lede", "In simple words: how this stock did in the past, year by year. Like old weather records, it tells you what has happened, not what will.",
-  "במילים פשוטות: איך המניה הזאת עשתה בעבר, שנה אחרי שנה. כמו רישומי מזג אוויר ישנים, זה מספר מה קרה, לא מה יקרה.");
+  "במילים פשוטות: מה עבר על המניה הזאת בעבר, שנה אחרי שנה. כמו רישומי מזג אוויר ישנים, זה מספר מה קרה, לא מה יקרה.");
 add("sp.long.cagr", "a year, on average", "בשנה, בממוצע");
 add("sp.long.hit", "of 12-month stretches made {goal} or more", "מתקופות של 12 חודשים הרוויחו {goal} או יותר");
 add("sp.long.loss", "of 12-month stretches lost money", "מתקופות של 12 חודשים הפסידו כסף");
@@ -924,7 +924,8 @@ add("sp.lessons.title", "Lessons in play", "שיעורים שרלוונטיים 
 add("sp.lessons.lede", "Ideas from the books and people the site learns from that fit how this stock looks right now.", "רעיונות מהספרים ומהאנשים שהאתר לומד מהם, שמתאימים לאיך שהמניה נראית עכשיו.");
 add("sp.lessons.none", "No lesson fits how this stock looks right now.", "אין שיעור שמתאים לאיך שהמניה נראית עכשיו.");
 add("sp.guess.eyebrow", "The brain's guess", "הניחוש של המוח");
-add("sp.guess.sampleA", "Guesses start with", "הניחושים מתחילים ב-");
+// {m} is the stage name (an element); English keeps its period inside it, Hebrew puts it after the isolated name.
+add("sp.guess.sampleHead", "Guesses start with {m}", "הניחושים מתחילים ב-{m}.");
 add("sp.guess.noneA", "No guess", "אין ניחוש");
 add("sp.guess.noneB", "yet.", "עדיין.");
 add("sp.guess.conviction", "{level} conviction", "רמת ביטחון: {level}");
@@ -984,16 +985,16 @@ add("sp.inside.none", "No fund card for {symbol} yet. A fund is one basket holdi
   "עדיין אין כרטיס קרן ל-{symbol}. קרן היא סל אחד שמחזיק הרבה חברות. הכרטיסים נכתבים מהדף של כל קרן: מה יש בסל, איזו רשימה היא מעתיקה וכמה היא עולה בכל שנה.");
 add("sp.inside.holds", "It holds", "מה היא מחזיקה");
 add("sp.inside.index", "The list it copies (its index)", "הרשימה שהיא מעתיקה (המדד שלה)");
-add("sp.inside.cost", "Yearly cost", "עלות שנתית");
-add("sp.inside.notListed", "Not listed", "לא מפורסם");
-add("sp.inside.costWhat", "The share of the money the fund keeps each year to run itself; lower is better.", "החלק מהכסף שהקרן לוקחת בכל שנה כדי לנהל את עצמה; נמוך יותר עדיף.");
+add("sp.inside.cost", "Yearly cost", "דמי ניהול שנתיים");
+add("sp.inside.notListed", "Not listed", "לא פורסמו");
+add("sp.inside.costWhat", "The share of the money the fund keeps each year to run itself; lower is better.", "דמי הניהול: החלק מהכסף שהקרן לוקחת בכל שנה כדי לנהל את עצמה; נמוך יותר עדיף.");
 add("sp.inside.from", "From the fund's own page", "מהדף של הקרן עצמה");
 add("sp.inside.foot", "A fund card describes the fund, like the label on a food packet. It is not a forecast and not a reason to buy or sell.", "כרטיס קרן מתאר את הקרן, כמו התווית על אריזת מזון. הוא לא תחזית ולא סיבה לקנות או למכור.");
 add("sp.numbers.title", "How the business is doing, by its own numbers", "איך העסק מתפקד, לפי המספרים שלו");
 add("sp.numbers.stale", "These are old: no newer filing was found.", "המספרים האלה ישנים: לא נמצא דיווח רשמי חדש יותר.");
 add("sp.numbers.foot", "This is about the business, not the stock. A great bakery can still be a bad deal if you pay far too much for it.", "זה על העסק, לא על המניה. גם מאפייה מצוינת יכולה להיות עסקה גרועה אם משלמים עליה הרבה יותר מדי.");
 add("sp.news.title", "Official news from the company", "חדשות רשמיות מהחברה");
-add("sp.news.lede", "What it told regulators lately (its SEC filings). Straight from the company, not rumours: tap one to read the filing itself.", "מה היא דיווחה לרגולטורים לאחרונה (הדיווחים הרשמיים שלה ל-SEC). ישר מהחברה, לא שמועות: הקשה על אחד פותחת את הדיווח עצמו.");
+add("sp.news.lede", "What it told regulators lately (its SEC filings). Straight from the company, not rumours: tap one to read the filing itself.", "מה היא דיווחה לאחרונה לרשות הפיקוח (הדיווחים הרשמיים שלה ל-SEC). ישר מהחברה, לא שמועות: הקשה על אחד פותחת את הדיווח עצמו.");
 add("sp.news.form", "{day} · form {form} ↗", "{day} · טופס {form} ↗");
 add("sp.news.foot", "News explains a move after it happens; it is not a reason to buy or sell on its own.", "חדשות מסבירות תנועה אחרי שהיא קורית; הן לא סיבה לקנות או למכור בפני עצמן.");
 add("sp.why.title", "Why it moved", "למה המניה זזה");

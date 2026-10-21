@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   detectLang, deviceLang, dirOf, fmtDate, fmtList, fmtNum, fmtPct, fmtShort, fmtUsd, formatters, interpolate, LANG_KEY,
-  plural, pluralForm, readLang, relDays, saveLang, stripBidi, translate,
+  isolate, plural, pluralForm, readLang, relDays, saveLang, stripBidi, translate,
 } from "./i18n.js";
 import * as format from "./format.js";
 
@@ -117,4 +117,11 @@ test("Hebrew formatters: isolated numbers, Hebrew dates, Hebrew relative words",
   assert.equal(stripBidi(f.pct(0)), "0.00%");
   assert.equal(f.numWord(3), "3");
   assert.equal(formatters("en").date("2026-10-16"), "Fri, 16 Oct 2026");
+});
+
+test("isolate: a value with letters follows its first letter, a letterless one reads left to right", () => {
+  assert.equal(isolate("AAA"), "⁨AAA⁩");
+  assert.equal(isolate("+4"), "⁦+4⁩");
+  assert.equal(isolate("-3.0"), "⁦-3.0⁩");
+  assert.equal(translate({ en: { k: "score {n}" }, he: { k: "ציון {n}" } }, "he")("k", { n: "+4" }), "ציון ⁦+4⁩");
 });

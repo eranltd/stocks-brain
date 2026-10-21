@@ -206,7 +206,7 @@ test("a stop close to the last close keeps its name; the last close's name gives
 const HE = /[\u0590-\u05FF]/;
 
 test("Hebrew: window and overlay labels, line names, month ticks", () => {
-  assert.deepEqual(RANGES.map((r) => rangeLabel(r, "he")), ["3 ח׳", "6 ח׳", "שבועי"]);
+  assert.deepEqual(RANGES.map((r) => rangeLabel(r, "he")), ["3 חודשים", "6 חודשים", "שבועי"]);
   assert.deepEqual(RANGES.map((r) => rangeLabel(r)), ["3M", "6M", "Weekly"]);
   for (const o of OVERLAYS) assert.match(overlayLabel(o, "he"), HE);
   const { lines } = overlayLines(doc.overlays, ALL_ON, "he");
@@ -220,7 +220,7 @@ test("Hebrew: window and overlay labels, line names, month ticks", () => {
   // the value tags stay plain numbers in both languages
   assert.deepEqual(lines.map((l) => l.tag), overlayLines(doc.overlays).lines.map((l) => l.tag));
   const ticks = monthTicks(["2025-12-30", "2026-01-02", "2026-02-02", "2026-03-02"], (i) => i * 100, 34, "he");
-  assert.deepEqual(ticks.map((m) => stripBidi(m.label)), ["ינו׳ ’26", "פבר׳", "מרץ"]);
+  assert.deepEqual(ticks.map((m) => stripBidi(m.label)), ["ינו׳ 26", "פבר׳", "מרץ"]);
 });
 
 test("Hebrew: tooltip rows, volume words and the screen-reader summary", () => {

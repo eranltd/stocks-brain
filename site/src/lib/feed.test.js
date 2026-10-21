@@ -245,7 +245,7 @@ test("Hebrew: brain, company, people and checklist items", () => {
   assert.equal(d.title, "הריצה של המוח נכשלה");
 
   const { items, ahead } = companyItems(outlook, "2026-10-09", 45, "he");
-  assert.equal(S(items.find((i) => i.id === "report:AAA:2026-09-01").title), "AAA פרסמה תוצאות: הכנסות של $1.0 billion, עלייה של 12% לעומת שנה קודם");
+  assert.equal(S(items.find((i) => i.id === "report:AAA:2026-09-01").title), "AAA פרסמה תוצאות: הכנסות של $1.0 billion, עלייה של 12% לעומת שנה קודם לכן");
   assert.equal(S(items.find((i) => i.id === "results:BBB:2026-10-01").title), "מועד התוצאות של BBB כבר עבר");
   assert.equal(S(ahead[1].title), "AAA מפרסמת תוצאות");
   assert.equal(S(ahead[1].body[0]), "Aye Inc, התאריך אושר.");
@@ -254,8 +254,8 @@ test("Hebrew: brain, company, people and checklist items", () => {
   const scores = { calls: [{ id: "c1", w26: { end_date: "2026-07-03", right: false, signed_excess_pct: -7.19 } }] };
   const people = peopleItems(cfg, scores, 26, "he");
   assert.equal(S(people[0].title), "Pat Smith, דיווח 13F: עמדה פסימית לגבי AAA");
-  assert.equal(S(people[1].title), "התחזית של Pat Smith על AAA נבדקה אחרי 26 שבועות: טעתה");
-  assert.equal(S(people[1].body[0]), "−7.2% לתחזית, בהשוואה לקרן הליבה על מדד S&P 500.");
+  assert.equal(S(people[1].title), "העמדה של Pat Smith לגבי AAA נבדקה אחרי 26 שבועות: טעתה");
+  assert.equal(S(people[1].body[0]), "−7.2% לעמדה, בהשוואה לקרן הליבה על מדד S&P 500.");
   assert.equal(people[1].value.text, "טעתה");
 
   const checks = checklistItems(checklist, "he");

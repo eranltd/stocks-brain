@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { stripBidi } from "./i18n.js";
 import { callerName, callStatus, callsTouching, edgarUrl, groupPeople, isFirmCall, joinCalls, ownLinks, recordLine, shortVia, statusPhrase } from "./people.js";
 
 test("shortVia drops legal suffixes and 'Capital/Investment Management'", () => {
@@ -82,4 +83,28 @@ test("callsTouching matches tickers and sorts newest first", () => {
   const calls = [{ ticker: "AAA", date: "2026-05-15" }, { ticker: "BBB", date: "2026-05-15" }, { ticker: "CCC", date: "2026-02-17" }];
   assert.deepEqual(callsTouching(calls, ["CCC", "AAA", "DDD"]).map((c) => c.ticker), ["AAA", "CCC"]);
   assert.deepEqual(callsTouching(calls, []), []);
+});
+
+test("in Hebrew the record, status and phrase sentences are whole Hebrew templates with isolated numbers", () => {
+  const p = { status: "following" };
+  const s = (x) => stripBidi(x);
+  assert.equal(s(recordLine({ status: "principles_only" }, null, 26, 10, [], "he")), "רעיונות בלבד: אין עמדות לנקד.");
+  assert.equal(s(recordLine(p, null, 26, 10, [], "he")), "עדיין לא נרשמו עמדות.");
+  assert.equal(s(recordLine(p, { n: 3, matured_26w: 2, enough: false }, 26, 10, [], "he")), "נרשמו 3 עמדות, 2 מהן בנות חצי שנה: מעט מדי כדי לשפוט (צריך 10).");
+  assert.equal(s(recordLine(p, { n: 12, matured_26w: 10, enough: true, right_26w_pct: 60, median_signed_excess_26w: -1.25 }, 26, 10, [], "he")),
+    "נרשמו 12 עמדות, 10 מהן בנות חצי שנה: צדקו ב-60% מהפעמים, עמדה טיפוסית −1.3% לעומת השוק כולו.");
+  assert.equal(s(recordLine(p, { n: 4, matured_26w: 1, enough: false }, 13, 10, [], "he")), "נרשמו 4 עמדות, 1 מהן בנות 13 שבועות: מעט מדי כדי לשפוט (צריך 10).");
+  const firm = [{ via: "Alpha Capital Management LLC" }, { via: "Alpha Capital Management LLC" }];
+  assert.equal(s(recordLine(p, undefined, 26, 10, firm, "he")), "נרשמו 2 עמדות של Alpha, והן מנוקדות כשל הקרן, לא כבחירות אישיות.");
+  // numbers and percents sit inside isolation marks, so they keep their direction in a right-to-left line
+  assert.match(recordLine(p, { n: 12, matured_26w: 10, enough: true, right_26w_pct: 60, median_signed_excess_26w: -1.25 }, 26, 10, [], "he"), /⁦−1\.3%⁩/);
+  assert.deepEqual(callStatus({ scored: true, w26: null, weeks_since: 19 }, 26, "he"), { kind: "maturing", label: "מבשילה", detail: "⁦19⁩ מתוך ⁦26⁩ שבועות" });
+  assert.equal(callStatus({ scored: true, w26: { right: true } }, 26, "he").label, "צדקה");
+  assert.equal(s(statusPhrase({ scored: true, w26: { right: false, signed_excess_pct: -20.06 } }, 26, "he")), "נשפטה אחרי 26 שבועות: טעתה, −20.1% לטובת העמדה לעומת השוק כולו");
+  assert.equal(s(statusPhrase({ scored: true, w26: null, weeks_since: 19 }, 26, "he")), "מבשילה, 19 מתוך 26 שבועות");
+  assert.equal(s(statusPhrase({ scored: false, reason: "not on the list" }, 26, "he")), "לא נוקדה: not on the list");
+  assert.equal(s(statusPhrase({ scored: false }, 26, "he")), "לא נוקדה");
+  const cfg = { calls: [{ id: "x", date: "2026-01-02", ticker: "AAA" }] };
+  assert.equal(joinCalls(cfg, null, "he")[0].reason, "תנוקד אחרי הריצה היומית הבאה");
+  assert.equal(joinCalls(cfg, { calls: [] }, "he")[0].reason, "עוד לא נוקדה");
 });

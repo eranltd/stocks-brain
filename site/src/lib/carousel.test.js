@@ -128,7 +128,7 @@ test("Hebrew: the screen-reader sentence and the cards' tags", async () => {
   assert.doesNotMatch(s, /\d/);
   assert.equal(stripBidi(miniSummary("Alpha", null, "he")), "Alpha: עדיין אין גרף.");
   const top = topStocks({ held: ["AAA"], picked: [], day: day(), outlook, checklist, names, bench: "IDX", lang: "he" });
-  assert.equal(top[0].tag, "בתיק ההשקעות המדומה");
+  assert.equal(top[0].tag, "בתיק המדומה");
   assert.equal(top[0].chip.word, "נטייה לעלייה");
   assert.equal(top[0].plain, "Microsoft: its cloud business is growing fast.", "the company card's own words stay as written");
 });

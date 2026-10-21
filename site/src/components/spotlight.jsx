@@ -3,6 +3,7 @@ import { loadMarket } from "../lib/data.js";
 import { notYet } from "../lib/markets.js";
 import { Auto, useLang } from "../lib/lang.jsx";
 import dict from "../i18n/home.js";
+import shell from "../i18n/shell.js";
 import { SPOTLIGHTS, spotlightItems } from "../lib/spotlight.js";
 import { TopStocks } from "./topstocks.jsx";
 import { buyLine, buyWindowFor, mainListOf, mainWatchlistOf, sp500Of } from "../lib/buywindow.js";
@@ -27,8 +28,10 @@ function Spotlight({ id, data, earned, openTo, seeCandles }) {
     return () => { live = false; };
   }, [id, data]);
   if (!view) return null; // loading, or it failed: the rest of the home does not wait for it
-  // The list's name comes from config/markets.json (English for now); dir="auto" keeps it readable in a Hebrew page.
-  const title = <Auto>{view.entry?.name ?? id}</Auto>;
+  // The list's name comes from config/markets.json (English for now); in Hebrew, the market switch's own words for the
+  // list (i18n/shell.js "market.what.*") when it has them. dir="auto" keeps either readable in a Hebrew page.
+  const name = (lang === "he" && shell.he[`market.what.${id}`]) || view.entry?.name || id;
+  const title = <Auto>{name}</Auto>;
   if (!view.available) {
     return (
       <section className="mx-auto w-full max-w-[1040px] px-4 pt-10">
@@ -49,7 +52,7 @@ function Spotlight({ id, data, earned, openTo, seeCandles }) {
   return (
     <div className="pt-4">
       <TopStocks items={items} manifest={data.manifest} marketId={id} news={data.secNews} title={title} headingId={`top-${id}-title`}
-        subtitle={t("spotc.subtitle")} label={view.entry?.name ?? id}
+        subtitle={t("spotc.subtitle")} label={name}
         fallback={t("spotc.fallback")} openTo={openTo} seeCandles={seeCandles} />
     </div>
   );

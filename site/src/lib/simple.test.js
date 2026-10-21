@@ -265,7 +265,7 @@ test("Hebrew: why it moved and official news in the news card", () => {
 test("Hebrew: companies to know, chips and the plan", () => {
   const checklist = { symbols: [ck("AAA", "lean_up"), ck("CCC", "lean_down")] };
   const list = companiesToKnow({ held: ["AAA"], picked: ["CCC"], day: day(), outlook, checklist, names, bench: "IDX", today: TODAY, lang: "he" });
-  assert.deepEqual(list.map((c) => c.tag), ["בתיק ההשקעות המדומה", "המוח עוקב אחריה", "עלתה אתמול"]);
+  assert.deepEqual(list.map((c) => c.tag), ["בתיק המדומה", "המוח עוקב אחריה", "עלתה אתמול"]);
   assert.deepEqual(list.map((c) => c.chip?.word ?? null), ["נטייה לעלייה", "נטייה לירידה", null]);
   assert.equal(companiesToKnow({ held: [], picked: [], day: day(), outlook, names, lang: "he" })[0].tag, "מהיורדות הבולטות של יום המסחר");
   assert.equal(watchWhy(ck("A", "mixed", { rsi: { zone: "overbought" } }), "he"), "חמה מדי");

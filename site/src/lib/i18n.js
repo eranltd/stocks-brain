@@ -81,8 +81,12 @@ export function detectLang(storage, navigatorLanguages) {
 export const HEBREW = /[֐-׿יִ-ﭏ]/;
 export const hasHebrew = (s) => HEBREW.test(String(s ?? ""));
 const LRI = "⁦", FSI = "⁨", PDI = "⁩";
-/** Isolate a value whose direction should come from its own first letter (tickers, names, mixed text). */
-export const isolate = (s) => FSI + String(s) + PDI;
+/**
+ * Isolate a value whose direction should come from its own first letter (tickers, names, mixed text). A value with no
+ * letter at all ("+4", "-3.0", "8%", "2026-10-20") is isolated left to right: browsers resolve a letterless first-strong
+ * isolate to the page's direction, which would show "+4" as "4+" in a Hebrew page.
+ */
+export const isolate = (s) => (/\p{L}/u.test(String(s)) ? FSI : LRI) + String(s) + PDI;
 /** Isolate a value that always reads left to right (numbers, percents, money). */
 export const ltr = (s) => LRI + String(s) + PDI;
 export const stripBidi = (s) => String(s).replace(/[⁦-⁩‎‏]/g, "");

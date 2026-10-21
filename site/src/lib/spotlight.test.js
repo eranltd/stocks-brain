@@ -45,7 +45,7 @@ test("Hebrew: ranks, tags and the year line in words", async () => {
   };
   const items = spotlightItems(view, {}, "he");
   assert.deepEqual(items.map((x) => x.tag), ["העלייה הגדולה ביותר בשנה האחרונה", "העלייה השנייה בגודלה בשנה האחרונה", "נמוכה יותר מלפני שנה", "עדיין אין מחירים של שנה שלמה"]);
-  assert.equal(stripBidi(items[0].plain), "בשנה האחרונה היא עלתה יותר מאשר יצרניות השבבים כקבוצה. עלייה בעבר אינה מבטיחה עלייה נוספת.");
+  assert.equal(stripBidi(items[0].plain), "בשנה האחרונה היא עלתה יותר מאשר יצרניות השבבים כקבוצה. עלייה בעבר אינה מבטיחה עלייה בעתיד.");
   assert.match(items[1].plain, /הצליחה פחות מאשר/);
   assert.equal(items[0].chip.word, "נטייה לעלייה");
   for (const it of items) assert.doesNotMatch(`${it.tag} ${it.plain ?? ""}`, /\d/);

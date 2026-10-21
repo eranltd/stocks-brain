@@ -5,7 +5,7 @@
 // Every sentence code writes here is in i18n/plan.js ("v.*"); each function takes `lang` last (default English). The
 // brain's own words (eli5, summary, thesis, letter) are data and stay in the language the brain wrote them in.
 
-import { fmtDate, translate } from "./i18n.js";
+import { translate } from "./i18n.js";
 import { joinNames, shortName, whenWords } from "./simple.js";
 import dict from "../i18n/plan.js";
 
@@ -19,6 +19,10 @@ const COUNT = ["no", "one", "two", "three", "four", "five", "six", "seven", "eig
 /** English number words ("three"); Hebrew gets digits (its number words depend on the noun's gender). */
 const count = (n, lang = "en") => (lang === "en" ? COUNT[n] ?? String(n) : String(n));
 const sureWord = (t, conviction) => (t.has(`v.sure.${conviction}`) ? t(`v.sure.${conviction}`) : conviction);
+
+const HE_DAY = new Intl.DateTimeFormat("he-IL", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+/** A calendar date for a sentence: ISO in English (as before), "30 באוקטובר 2026" in Hebrew. */
+const dayWords = (iso, lang) => (lang === "en" ? iso : HE_DAY.format(new Date(`${iso}T00:00:00Z`)));
 
 const firstSentence = (t) => (String(t ?? "").match(/^.*?[.!?](\s|$)/) || [t ?? ""])[0].trim();
 const callOf = (p) => `${p.pick.stance}/${p.pick.conviction}`;
@@ -121,7 +125,7 @@ export function scorecard(runs, outcomes = [], horizon = 20, today = null, lang 
   const first = runs.filter((r) => r.status === "ok" && r.picks?.length).map((r) => r.date).sort()[0];
   if (!first) return { scored: 0, right: 0, line: t("v.score.noGuess"), next: null };
   const next = addTradingDays(first, horizon);
-  const when = today ? whenWords(next, today, lang) : t("v.score.onDate", { date: lang === "en" ? next : fmtDate(next, lang) });
+  const when = today ? whenWords(next, today, lang) : t("v.score.onDate", { date: dayWords(next, lang) });
   return { scored: 0, right: 0, next, line: t("v.score.early", { when }, { bidi: false }) };
 }
 

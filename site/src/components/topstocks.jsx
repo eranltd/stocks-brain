@@ -216,7 +216,7 @@ function StockCard({ it, i, n, chart, openTo, seeCandles, fallback, onZoom, head
         </button>
       )}
       {/* A company card's own summary is English data for now; dir="auto" lets it read left to right in a Hebrew page. */}
-      <p dir="auto" className="mt-4 line-clamp-3 text-[17px] leading-relaxed text-ink">{it.plain ?? fallback}</p>
+      <p dir="auto" lang={it.plain ? "en" : undefined} className="mt-4 line-clamp-3 text-[17px] leading-relaxed text-ink">{it.plain ?? fallback}</p>
       {headline && (
         <a href={headline.url} target="_blank" rel="noreferrer" className="mt-4 block rounded-2xl border border-line-2 px-4 py-3 transition hover:border-ink-3">
           <span className="meta block normal-case tracking-[0.04em]">{t("top.official", { day: headline.day })}</span>

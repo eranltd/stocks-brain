@@ -5,8 +5,20 @@ import { useInView } from "../lib/motion.js";
 import { ExcessChart } from "../components/charts.jsx";
 import { Accent, Chip, Container, Conviction, Empty, Reveal, SectionHead, Strip } from "../components/ui.jsx";
 import { TrustLadder } from "../components/trust.jsx";
+import { Bdi, useLang } from "../lib/lang.jsx";
+import dict from "../i18n/plan.js";
+
+// Every text here is in i18n/plan.js ("tr.*").
+
+/** A headline template with an {accent} slot, as the plain array Headline animates word by word. */
+const accented = (text, accent) => {
+  const [a, b = ""] = text.split("{accent}");
+  return [a, <Accent key="accent">{accent}</Accent>, b].filter((x) => x !== "");
+};
 
 export default function TrackRecord({ data }) {
+  const { t: tr, fmt } = useLang();
+  const t = tr(dict);
   const { outcomes, settings, bench, kb, calibration } = data;
   const [all, setAll] = useState(false);
   const s = summarize(outcomes);
@@ -14,9 +26,9 @@ export default function TrackRecord({ data }) {
   if (!s.n)
     return (
       <Container className="pt-20">
-        <SectionHead eyebrow="Track record" title={<>Marked by <Accent>the computer.</Accent></>}
-          lede="In simple words: every guess the brain makes is checked about a month later, like marking homework." />
-        <Empty title="Nothing marked yet">Each guess is checked {settings.scoring.horizon_days} market days after it was made. {pending} waiting to be checked.</Empty>
+        <SectionHead eyebrow={t("tr.eyebrow")} title={accented(t("tr.titleEmpty"), t("tr.computer"))}
+          lede={t("tr.ledeShort")} />
+        <Empty title={t("tr.emptyTitle")}>{t("tr.emptyBody", { days: settings.scoring.horizon_days, pending })}</Empty>
       </Container>
     );
   const rows = [...outcomes].sort((a, b) => b.run_date.localeCompare(a.run_date) || a.ticker.localeCompare(b.ticker));
@@ -27,53 +39,49 @@ export default function TrackRecord({ data }) {
   return (
     <Container className="pt-20">
       <SectionHead
-        eyebrow={`Track record · compared with ${bench.symbol}, the whole market`}
-        title={<>Every guess, marked by <Accent>the computer.</Accent></>}
-        lede={`In simple words: every guess the brain makes is checked about a month later, like marking homework. Each stock it talked about is compared with ${bench.label} (the whole market) over the next ${settings.scoring.horizon_days} market days. If the guess was right by more than ${settings.scoring.flat_band_pct}%, it is a hit; wrong by more than that, a miss; anything closer is "flat", too small to count. A plain computer program does the marking, not the AI, so it cannot be talked into a better grade. These are guesses to learn from, not things we buy.`}
+        eyebrow={t("tr.eyebrowFull", { bench: bench.symbol })}
+        title={accented(t("tr.titleFull"), t("tr.computer"))}
+        lede={t("tr.lede", { bench: bench.label, days: settings.scoring.horizon_days, band: `${settings.scoring.flat_band_pct}%` })}
       />
       <div className="mb-6"><TrustLadder data={data} go={() => {}} compact /></div>
-      {data.sample && <p className="mb-6 rounded-2xl border border-dashed border-people/50 px-5 py-4 text-[15px] text-ink-2"><span className="pill me-3 border-dashed border-people/60 text-people">sample</span>The numbers below are made up, to show what the page will look like. They do not count.</p>}
+      {data.sample && <p className="mb-6 rounded-2xl border border-dashed border-people/50 px-5 py-4 text-[15px] text-ink-2"><span className="pill me-3 border-dashed border-people/60 text-people">{t("tr.samplePill")}</span>{t("tr.sample")}</p>}
       <Strip
         cells={[
-          { value: s.n, label: "guesses marked", desc: `${pending} more still waiting for their month to pass.` },
-          { value: `${fmtNum(s.hitRate, 0)}%`, label: "right (hit rate)", desc: `${s.hits} hits · ${s.flats} flat · ${s.misses} misses.` },
-          { value: fmtPct(s.avgExcess, 1), label: "average lead over the market", tone: s.avgExcess >= 0 ? "accent" : "down", desc: `How far ahead of ${bench.symbol} the guesses ended, on average. A right "down" guess counts as a plus.` },
-          { value: s.best ? fmtPct(s.best.excess_pct, 1) : "—", label: `best guess · ${s.best?.ticker ?? ""}`, tone: "flat", desc: s.worst ? `Worst guess: ${s.worst.ticker} ${fmtPct(s.worst.excess_pct, 1)}.` : "" },
+          { value: s.n, label: t("tr.cell.marked"), desc: t("tr.cell.markedDesc", { pending }) },
+          { value: <bdi dir="ltr">{fmtNum(s.hitRate, 0)}%</bdi>, label: t("tr.cell.right"), desc: t("tr.cell.rightDesc", { hits: s.hits, flats: s.flats, misses: s.misses }) },
+          { value: <bdi dir="ltr">{fmtPct(s.avgExcess, 1)}</bdi>, label: t("tr.cell.lead"), tone: s.avgExcess >= 0 ? "accent" : "down", desc: t("tr.cell.leadDesc", { bench: bench.symbol }) },
+          { value: s.best ? <bdi dir="ltr">{fmtPct(s.best.excess_pct, 1)}</bdi> : "—", label: t("tr.cell.best", { ticker: s.best?.ticker ?? "" }), tone: "flat", desc: s.worst ? t("tr.cell.worst", { ticker: s.worst.ticker, pct: fmt.pct(s.worst.excess_pct, 1) }) : "" },
         ]}
       />
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         <Reveal className="card p-6 sm:p-8">
           <div className="mb-6 flex flex-wrap items-baseline justify-between gap-3">
-            <h3 className="text-[19px] font-semibold tracking-[-0.02em]">How far each guess beat or trailed the market</h3>
+            <h3 className="text-[19px] font-semibold tracking-[-0.02em]">{t("tr.chartTitle")}</h3>
             <div className="flex gap-4 text-[12.5px] text-ink-2">
-              <span className="inline-flex items-center gap-1.5"><i className="size-2.5 rounded-sm bg-accent" />hit</span>
-              <span className="inline-flex items-center gap-1.5"><i className="size-2.5 rounded-sm bg-flat" />flat</span>
-              <span className="inline-flex items-center gap-1.5"><i className="size-2.5 rounded-sm bg-down" />miss</span>
+              <span className="inline-flex items-center gap-1.5"><i className="size-2.5 rounded-sm bg-accent" />{t("tr.hit")}</span>
+              <span className="inline-flex items-center gap-1.5"><i className="size-2.5 rounded-sm bg-flat" />{t("tr.flat")}</span>
+              <span className="inline-flex items-center gap-1.5"><i className="size-2.5 rounded-sm bg-down" />{t("tr.miss")}</span>
             </div>
           </div>
           <ExcessChart outcomes={outcomes} />
         </Reveal>
         <Reveal delay={120} className="card p-6 sm:p-8">
-          <h3 className="text-[19px] font-semibold tracking-[-0.02em]">Hits, flats and misses</h3>
+          <h3 className="text-[19px] font-semibold tracking-[-0.02em]">{t("tr.splitTitle")}</h3>
           <Split s={s} />
           {calibration && (
             <p className="mt-8 rounded-2xl border border-line bg-bg/40 px-4 py-3 text-[13.5px] text-ink-2">
-              <span className="meta me-2 text-ink">Does "very sure" mean anything?</span>
-              {{
-                informative: "Guesses the brain was very sure about did better than the ones it was unsure about. Its confidence means something.",
-                not_informative: "Guesses it was very sure about did not do better than unsure ones yet. Ignore how sure it says it is.",
-                insufficient_data: `Not enough marked guesses at each level of sureness yet (need ${calibration.min_n} each) to tell.`,
-              }[calibration.conviction_verdict]}
+              <span className="meta me-2 text-ink">{t("tr.calib.title")}</span>
+              {t.has(`tr.calib.${calibration.conviction_verdict}`) ? t(`tr.calib.${calibration.conviction_verdict}`, { min: calibration.min_n }) : null}
             </p>
           )}
-          <div className="mt-8 meta mb-3">By direction (up, down, flat) and how sure</div>
+          <div className="mt-8 meta mb-3">{t("tr.byDir")}</div>
           <div className="grid gap-2">
             {groups.map((g) => (
               <div key={g.st + g.cv} className="grid grid-cols-[1fr_auto_auto] items-center gap-3 text-[13.5px]">
                 <span className="flex items-center gap-2"><Chip kind={g.st} className="py-1 text-[11px]" /><Conviction level={g.cv} showLabel={false} /></span>
-                <span className="num font-mono text-ink-3">{g.n}×</span>
-                <span className="num w-14 text-end font-mono">{fmtNum(g.hitRate, 0)}%</span>
+                <span dir="ltr" className="num font-mono text-ink-3">{g.n}×</span>
+                <span dir="ltr" className="num w-14 text-end font-mono">{fmtNum(g.hitRate, 0)}%</span>
               </div>
             ))}
           </div>
@@ -85,21 +93,21 @@ export default function TrackRecord({ data }) {
           <table className="w-full min-w-[760px] text-[13.5px]">
             <thead>
               <tr className="meta border-b border-line text-start">
-                {["Day", "Stock", "Guess", "How sure", "Stock moved", "Market moved", "Difference", "Mark"].map((h, i) => (
-                  <th key={h} className={`px-5 py-4 font-medium ${i >= 4 && i <= 6 ? "text-end" : ""}`}>{h}</th>
+                {["day", "stock", "guess", "sure", "stockMoved", "marketMoved", "diff", "mark"].map((h, i) => (
+                  <th key={h} className={`px-5 py-4 font-medium ${i >= 4 && i <= 6 ? "text-end" : ""}`}>{t(`tr.th.${h}`)}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {(all ? rows : rows.slice(0, 15)).map((o) => (
                 <tr key={o.pick_id} className="border-b border-line transition-colors last:border-0 hover:bg-ink/[0.03]">
-                  <td className="px-5 py-3.5 font-mono text-ink-2">{o.run_date}</td>
-                  <td className="px-5 py-3.5 font-semibold">{o.ticker}</td>
+                  <td dir="ltr" className="whitespace-nowrap px-5 py-3.5 text-start font-mono text-ink-2">{o.run_date}</td>
+                  <td className="px-5 py-3.5 font-semibold"><Bdi>{o.ticker}</Bdi></td>
                   <td className="px-5 py-3.5"><Chip kind={o.stance} className="py-1 text-[11px]" /></td>
                   <td className="px-5 py-3.5"><Conviction level={o.conviction} /></td>
-                  <td className="num px-5 py-3.5 text-end font-mono">{fmtPct(o.return_pct)}</td>
-                  <td className="num px-5 py-3.5 text-end font-mono text-ink-3">{fmtPct(o.benchmark_return_pct)}</td>
-                  <td className="num px-5 py-3.5 text-end font-mono font-semibold">{fmtPct(o.excess_pct)}</td>
+                  <td className="num px-5 py-3.5 text-end font-mono">{fmt.pct(o.return_pct)}</td>
+                  <td className="num px-5 py-3.5 text-end font-mono text-ink-3">{fmt.pct(o.benchmark_return_pct)}</td>
+                  <td className="num px-5 py-3.5 text-end font-mono font-semibold">{fmt.pct(o.excess_pct)}</td>
                   <td className="px-5 py-3.5"><Chip kind={o.verdict} className="py-1 text-[11px]" /></td>
                 </tr>
               ))}
@@ -109,7 +117,7 @@ export default function TrackRecord({ data }) {
       </Reveal>
       {rows.length > 15 && (
         <div className="mt-6 flex justify-center">
-          <button type="button" className="btn" onClick={() => setAll(!all)}>{all ? "Show fewer" : `Show all ${rows.length}`}</button>
+          <button type="button" className="btn" onClick={() => setAll(!all)}>{all ? t("tr.fewer") : t("tr.all", { n: rows.length })}</button>
         </div>
       )}
     </Container>
@@ -117,6 +125,7 @@ export default function TrackRecord({ data }) {
 }
 
 function Split({ s }) {
+  const t = useLang().t(dict);
   const [ref, inView] = useInView();
   const parts = [
     { k: "hit", v: s.hits, c: "bg-accent" },
@@ -136,7 +145,7 @@ function Split({ s }) {
       </div>
       <div className="mt-4 flex flex-wrap gap-4 text-[13px] text-ink-2">
         {parts.map((p) => (
-          <span key={p.k} className="inline-flex items-center gap-1.5"><i className={`size-2 rounded-full ${p.c}`} />{p.k} <b className="num font-mono text-ink">{p.v}</b></span>
+          <span key={p.k} className="inline-flex items-center gap-1.5"><i className={`size-2 rounded-full ${p.c}`} />{t(`tr.${p.k}`)} <b className="num font-mono text-ink">{p.v}</b></span>
         ))}
       </div>
     </div>

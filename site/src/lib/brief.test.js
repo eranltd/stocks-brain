@@ -158,7 +158,7 @@ function hebrew(s) {
 
 test("Hebrew: the verdict word and the checklist's own summary said whole", () => {
   const d = direction(row(), "he");
-  assert.equal(d.word, "נוטה לעלות");
+  assert.equal(d.word, "נטייה לעלייה");
   assert.equal(d.summary, "בעד הקריאה: הקונים מנצחים בנרות האחרונים, מגמת עלייה, מחזור המסחר תומך בעלייה. הרווח האפשרי גדול מספיק ביחס לסיכון.");
   assert.equal(plainSummary("Mixed: an uptrend; against it, bearish candles, RSI overbought. Reward-to-risk is below the house rule.", "he"),
     "בעד הקריאה: מגמת עלייה. נגדה: המוכרים מנצחים בנרות האחרונים, מדד RSI מראה התחממות יתר. הרווח האפשרי קטן מדי ביחס לסיכון.");
@@ -189,15 +189,15 @@ test("Hebrew: the eight checks, step names in Hebrew, every row in Hebrew", () =
 });
 
 test("Hebrew: whole percents, and where to invest on paper", () => {
-  assert.equal(aboutPct(3.4, "he"), "בערך ⁨3%⁩");
+  assert.equal(aboutPct(3.4, "he"), "בערך ⁦3%⁩");
   assert.equal(aboutPct(0.2, "he"), "פחות מאחוז אחד");
   assert.equal(stripBidi(aboutTimes(2.53, "he")), "בערך 2.5");
   const w = wherePaper({ row: row(), setup: setupOk, lang: "he" });
   assert.equal(w.head, "בתוך כללי האתר לכניסה על הנייר");
   assert.deepEqual(w.plan.map(stripBidi), [
-    "נקודת יציאה: מכירה אם היא יורדת בערך 3% (קצת מתחת לרמת התמיכה)",
-    "יעד ראשון: מימוש חלק מהרווח בערך 9% גבוה יותר (ברמת ההתנגדות)",
-    "יעד שני: בערך 14% גבוה יותר",
+    "נקודת יציאה: מכירה אחרי ירידה של בערך 3% (קצת מתחת לרמת התמיכה)",
+    "יעד ראשון: מימוש חלק מהרווח אחרי עלייה של בערך 9% (ברמת ההתנגדות)",
+    "יעד שני: אחרי עלייה של בערך 14%",
     "על כל 1 בסיכון, רווח אפשרי של בערך 2.5",
   ]);
   const weak = wherePaper({ row: row({ trend: { direction: "down" }, risk_plan: { ...row().risk_plan, fits_house_rule: false } }), lang: "he",

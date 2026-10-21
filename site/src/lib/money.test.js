@@ -63,7 +63,7 @@ test("Hebrew: the honest action and the lump-sum steps, in infinitives, with the
   assert.match(S(f.fundName), /כמו IDX\)$/);
   const medium = honestAction("medium", f, "he");
   assert.equal(S(medium.steps[0]), "לשים חלק בחיסכון ממשלתי לטווח קצר (T-bills, כמו CSH). התשואה כרגע היא בערך 3.6% בשנה.");
-  assert.match(medium.steps[0], /⁨3\.6%⁩/, "the percent stays with its number");
+  assert.match(medium.steps[0], /⁦3\.6%⁩/, "the percent stays with its number");
   assert.match(S(medium.risk), /הפסיד 20%\.$/);
   const long = honestAction("long", {}, "he");
   assert.equal(long.title, "לקנות את השוק כולו, קצת בכל שבוע, ולא לגעת.");

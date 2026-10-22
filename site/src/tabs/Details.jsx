@@ -1,9 +1,7 @@
 import { Fragment } from "react";
 import { addTradingDays } from "../lib/data.js";
 import { daysBetween } from "../lib/stats.js";
-import { fmtDate, fmtNum, pad2, signTone } from "../lib/format.js";
-import { ltr, translate } from "../lib/i18n.js";
-import { Auto, Bdi, En, EnglishNote, useLang } from "../lib/lang.jsx";
+import { fmtDate, fmtNum, pad2, signTone, fmtPct } from "../lib/format.js";
 import { BriefSections, marketBrief } from "../components/brief.jsx";
 import { BaseRates, GoalSection, MarketContext, PortfolioNow, nextRebalance } from "../components/goal.jsx";
 import { TrustLadder, trustStage } from "../components/trust.jsx";
@@ -13,11 +11,13 @@ import { comingUp, inDays, todayISO } from "../lib/outlook.js";
 import { Accent, ArrowRight, Chip, Container, Conviction, Headline, Reveal, SectionHead, Strip } from "../components/ui.jsx";
 import { isBehind, notesForDay, noteView, usableWhy } from "../lib/why.js";
 import { WhyFooter, WhyNote } from "../components/why.jsx";
-import dict from "../i18n/home.js";
+import dict from "../text/home.js";
+import { strings } from "../lib/text.js";
+import { rich } from "../lib/rich.jsx";
 
-// Every text on this page is in i18n/home.js ("det.*"; goal.jsx's sections use "goal.*"), in English and Hebrew.
-/** A whole percent ("62%"), kept left to right inside a Hebrew line. */
-const wholePct = (v, lang = "en") => { const s = `${fmtNum(v, 0)}%`; return lang === "he" ? ltr(s) : s; };
+// Every text on this page is in text/home.js ("det.*"; goal.jsx's sections use "goal.*").
+/** A whole percent ("62%"). */
+const wholePct = (v) => `${fmtNum(v, 0)}%`;
 
 const TONE = { bullish: "var(--accent)", bearish: "var(--down)", neutral: "var(--flat)" };
 
@@ -27,8 +27,7 @@ const TONE = { bullish: "var(--accent)", bearish: "var(--down)", neutral: "var(-
  * the rules work, and the trust ladder.
  */
 export default function Details({ data, go }) {
-  const { lang, t: tr } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const brief = marketBrief(data);
   const run = data.sample ? null : data.lastOk;
   return (
@@ -52,10 +51,9 @@ export default function Details({ data, go }) {
         <BriefSections data={data} brief={brief} go={go} />
         {run && run.picks.length > 0 && (
           <section id="picks" className="scroll-mt-28 pt-24">
-            <SectionHead eyebrow={t("det.picks.eyebrow", { date: fmtDate(run.date, lang) }, { bidi: false })} title={<>{t("det.picks.titleA")} <Accent>{t("det.picks.titleB")}</Accent></>}
+            <SectionHead eyebrow={t("det.picks.eyebrow", { date: fmtDate(run.date) })} title={<>{t("det.picks.titleA")} <Accent>{t("det.picks.titleB")}</Accent></>}
               lede={t("det.picks.lede")} size="md" />
-            {/* each pick's reason, risks and test are the brain's own words (English for now) */}
-            <EnglishNote />
+            {/* each pick's reason, risks and test are the brain's own words */}
             <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
               {run.picks.map((p, i) => <PickCard key={p.id} item={p} i={i} name={data.names[p.pick.ticker]} horizon={data.settings.scoring.horizon_days} />)}
             </div>
@@ -77,21 +75,18 @@ export function heldAndPicked(data) {
 
 const jumpToMarket = (e) => { e.preventDefault(); document.getElementById("market-today")?.scrollIntoView({ behavior: "smooth", block: "start" }); };
 const upDown = (v) => (v == null ? "" : v >= 0.05 ? "text-accent" : v <= -0.05 ? "text-down" : "text-ink-2"); // as shown, to one decimal
-const day = (iso, lang = "en") => fmtDate(iso, lang).replace(/\s\d{4}$/, ""); // "Thu, 22 Oct" ("יום ה׳, 22 באוקטובר")
-/** A sector in the page's language: English keeps the data's own name. */
-const sectorName = (s, lang = "en") => (lang === "en" ? s : shortSector(s, lang));
+const day = (iso) => fmtDate(iso).replace(/\s\d{4}$/, ""); // "Thu, 22 Oct"
 
 /** One of the day's biggest movers on the list: tap to open its Stock page. */
 function Mover({ m, name, go }) {
-  const { fmt } = useLang();
   return (
     <li>
       <button type="button" onClick={() => go(`stock/${m.symbol}`)} className="flex w-full min-h-[44px] items-center justify-between gap-2 rounded-xl border border-line px-3 py-2 text-start hover:border-ink-3">
         <span className="min-w-0">
-          <bdi className="font-mono text-[14px] font-semibold">{m.symbol}</bdi>
-          <span dir="auto" className="block truncate text-[12px] text-ink-3">{name}</span>
+          <span className="font-mono text-[14px] font-semibold">{m.symbol}</span>
+          <span className="block truncate text-[12px] text-ink-3">{name}</span>
         </span>
-        <span className={`num shrink-0 font-mono text-[14px] ${upDown(m.pct)}`}>{fmt.pct(m.pct, 1)}</span>
+        <span className={`num shrink-0 font-mono text-[14px] ${upDown(m.pct)}`}>{fmtPct(m.pct, 1)}</span>
       </button>
     </li>
   );
@@ -115,15 +110,15 @@ function goTo(go, to) {
  * The "why it moved" notes of one market day (lib/why.js): this list's names, sectors and context funds first, then
  * notes from the other lists (labelled). Each: {v, lead, tag, to}.
  */
-function dayNotes(data, why, date, lang = "en") {
-  const t = translate(dict, lang);
+function dayNotes(data, why, date) {
+  const t = strings(dict);
   const marketId = data.marketId ?? data.markets?.find((m) => m.default)?.id ?? null;
   const labels = Object.fromEntries((data.markets ?? []).map((m) => [m.id, m.label ?? m.id]));
   const mine = new Set([...(data.watchlist?.symbols ?? []).map((s) => s.symbol), ...(data.watchlist?.context ?? []).map((c) => c.symbol), data.bench?.symbol]);
   const ours = (n) => (n.kind === "sector" ? !n.market || n.market === marketId : n.symbols.some((t) => mine.has(t)));
   const notes = notesForDay(why, date);
   return [...notes.filter(ours), ...notes.filter((n) => !ours(n))].map((n) => {
-    const v = noteView(n, { names: data.names, groups: data.sectors ?? {}, short: (s) => shortSector(s, lang), lang });
+    const v = noteView(n, { names: data.names, groups: data.sectors ?? {}, short: shortSector });
     const one = n.kind !== "sector" && n.symbols.length === 1 ? n.symbols[0] : null;
     return { v, lead: v.who, tag: !ours(n) && n.market && labels[n.market] ? t("det.md.onList", { list: labels[n.market] }) : null, to: one ? `stock/${one}#why-it-moved` : null };
   });
@@ -131,34 +126,33 @@ function dayNotes(data, why, date, lang = "en") {
 
 /** What the market did at the last close: index moves, our names' moves, sectors, and why (when a note exists). */
 function MarketDay({ data, go }) {
-  const { lang, t: tr, fmt } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const d = marketDay(data.market, data.watchlist, data.bench);
   if (!d || !d.names) return null;
   const why = usableWhy(data.why, Boolean(data.livePrices));
-  const notes = why ? dayNotes(data, why, d.date, lang) : [];
+  const notes = why ? dayNotes(data, why, d.date) : [];
   const lead = d.spx?.pct ?? d.bench?.pct ?? null;
   const who = t(d.spx?.pct != null ? "det.md.who.market" : "det.md.who.ndx"); // the S&P 500 leads; older data has only the benchmark's move
   const verb = lead == null ? null : lead > 0.05 ? "up" : lead < -0.05 ? "down" : "flat";
   const verbTone = verb === "up" ? "text-accent" : verb === "down" ? "text-down" : "text-ink-2"; // a fall never shows in the up colour
-  // The verbs are the home's move words in their masculine form (the market, an index): "rose" / "עלה".
-  const verbWord = verb && t(`size.${verb}.m`);
-  const pctOr = (v) => (v == null ? "–" : fmt.pct(v, 2));
+  // The verbs are the home's move words ("rose").
+  const verbWord = verb && t(`size.${verb}`);
+  const pctOr = (v) => (v == null ? "–" : fmtPct(v, 2));
   const tone = (v) => signTone(v, 2); // as shown, to two decimals
   const ink = (key, count) => <span className="text-ink">{t(key, { count })}</span>;
   const counted = d.flat
-    ? t.rich("det.md.countedFlat", { n: d.names, up: ink("det.md.up", d.rose), down: ink("det.md.down", d.fell), flat: t("det.md.andFlat", { count: d.flat }) })
-    : t.rich("det.md.counted", { n: d.names, up: ink("det.md.up", d.rose), down: ink("det.md.andDown", d.fell) });
+    ? rich(t, "det.md.countedFlat", { n: d.names, up: ink("det.md.up", d.rose), down: ink("det.md.down", d.fell), flat: t("det.md.andFlat", { count: d.flat }) })
+    : rich(t, "det.md.counted", { n: d.names, up: ink("det.md.up", d.rose), down: ink("det.md.andDown", d.fell) });
   return (
     <section id="market-today" className="scroll-mt-28 pt-16 sm:pt-24">
-      <SectionHead eyebrow={t(data.livePrices ? "det.md.eyebrowLive" : "det.md.eyebrowSample", { date: fmtDate(d.date, lang) }, { bidi: false })} size="md"
+      <SectionHead eyebrow={t(data.livePrices ? "det.md.eyebrowLive" : "det.md.eyebrowSample", { date: fmtDate(d.date) })} size="md"
         title={verbWord ? <>{who} <span className={verbTone}>{verbWord}.</span></> : <>{t("det.md.lastA")} <Accent>{t("det.md.lastB")}</Accent></>}
         lede={<>{d.counted ? counted : t("det.md.notCounted")} {t("det.md.ledeTail")}</>} />
       <Strip dense cells={[
-        { value: pctOr(d.spx?.pct), label: <Bdi>{d.spx?.name ?? "S&P 500"}</Bdi>, tone: tone(d.spx?.pct), desc: t(d.spx?.pct == null ? "det.md.spxLater" : "det.md.spxDesc") },
-        { value: pctOr(d.bench?.pct), label: <Bdi>{d.bench ? `Nasdaq-100 (${d.bench.symbol})` : "Nasdaq-100"}</Bdi>, tone: tone(d.bench?.pct), desc: t("det.md.benchDesc") },
-        { value: d.counted ? (lang === "he" ? ltr(`${d.rose}/${d.fell}`) : `${d.rose}/${d.fell}`) : "–", label: t("det.md.upDown"), tone: "flat", desc: t("det.md.upDownDesc", { counted: d.counted, n: d.names }) },
-        { value: d.breadth == null ? "–" : wholePct(d.breadth, lang), label: t("det.md.breadth"), tone: "flat", desc: t("det.md.breadthDesc") },
+        { value: pctOr(d.spx?.pct), label: <span>{d.spx?.name ?? "S&P 500"}</span>, tone: tone(d.spx?.pct), desc: t(d.spx?.pct == null ? "det.md.spxLater" : "det.md.spxDesc") },
+        { value: pctOr(d.bench?.pct), label: <span>{d.bench ? `Nasdaq-100 (${d.bench.symbol})` : "Nasdaq-100"}</span>, tone: tone(d.bench?.pct), desc: t("det.md.benchDesc") },
+        { value: d.counted ? `${d.rose}/${d.fell}` : "–", label: t("det.md.upDown"), tone: "flat", desc: t("det.md.upDownDesc", { counted: d.counted, n: d.names }) },
+        { value: d.breadth == null ? "–" : wholePct(d.breadth), label: t("det.md.breadth"), tone: "flat", desc: t("det.md.breadthDesc") },
       ]} />
       {(d.risers.length > 0 || d.fallers.length > 0) && (
         <Reveal className="card mt-4 p-5 sm:p-6">
@@ -176,7 +170,7 @@ function MarketDay({ data, go }) {
             <p className="mt-5 text-[13.5px] leading-relaxed text-ink-2">
               <span className="meta me-2">{t("det.md.bySector")}</span>
               {d.sectors.map((x, i) => (
-                <Fragment key={x.sector}>{i ? " · " : ""}<span className="whitespace-nowrap">{shortSector(x.sector, lang)} <span className={`num font-mono ${upDown(x.avg)}`}>{fmt.pct(x.avg, 1)}</span></span></Fragment>
+                <Fragment key={x.sector}>{i ? " · " : ""}<span className="whitespace-nowrap">{shortSector(x.sector)} <span className={`num font-mono ${upDown(x.avg)}`}>{fmtPct(x.avg, 1)}</span></span></Fragment>
               ))}
             </p>
           )}
@@ -185,8 +179,6 @@ function MarketDay({ data, go }) {
       {notes.length > 0 && (
         <Reveal id="market-why" className="card mt-4 scroll-mt-28 p-5 sm:p-6">
           <div className="meta mb-3 text-accent">{t("det.md.why")}</div>
-          {/* the notes' headlines and explanations are written in English for now */}
-          <EnglishNote />
           <ul className="grid gap-3">
             {notes.map((x) => <WhyNote key={x.v.key} v={x.v} tag={x.tag}
               lead={x.to ? <button type="button" onClick={() => goTo(go, x.to)} className="text-start underline decoration-line-2 underline-offset-2 hover:text-ink-2">{x.lead}</button> : x.lead} />)}
@@ -212,8 +204,7 @@ function MarketDay({ data, go }) {
  * rest of the list, each by date; held or picked names with no date yet are named below. Hidden when there is nothing.
  */
 function ComingUp({ data, go }) {
-  const { lang, t: tr } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const today = todayISO();
   const { held, picked } = heldAndPicked(data);
   const DAYS = 30;
@@ -235,13 +226,13 @@ function ComingUp({ data, go }) {
               <li key={r.ticker}>
                 <button type="button" onClick={() => go(`stock/${r.ticker}`)} className="flex w-full min-h-[44px] items-center justify-between gap-3 rounded-xl border border-line px-3 py-2 text-start hover:border-ink-3">
                   <span className="min-w-0">
-                    <bdi className="font-mono text-[14px] font-semibold">{r.ticker}</bdi>
+                    <span className="font-mono text-[14px] font-semibold">{r.ticker}</span>
                     {r.first && <span className="pill ms-2 whitespace-nowrap py-0.5 text-[10.5px] text-people">{tag(r.ticker)}</span>}
-                    <span dir="auto" className="block truncate text-[12px] text-ink-3">{data.names[r.ticker] ?? r.name}</span>
+                    <span className="block truncate text-[12px] text-ink-3">{data.names[r.ticker] ?? r.name}</span>
                   </span>
                   <span className="shrink-0 text-end text-[13px]">
-                    <span className="block text-ink">{day(r.date, lang)}</span>
-                    <span className="block text-[12px] text-ink-3">{inDays(r.days, lang)}{r.confirmed ? "" : t("today.expected")}</span>
+                    <span className="block text-ink">{day(r.date)}</span>
+                    <span className="block text-[12px] text-ink-3">{inDays(r.days)}{r.confirmed ? "" : t("today.expected")}</span>
                   </span>
                 </button>
               </li>
@@ -253,7 +244,7 @@ function ComingUp({ data, go }) {
         <p className="mt-3 text-[13.5px] leading-relaxed text-ink-2">
           {t("det.cu.undated")}{" "}
           {undated.map((u, i) => (
-            <Fragment key={u.ticker}>{i ? ", " : ""}<button type="button" onClick={() => go(`stock/${u.ticker}`)} className="font-mono text-ink underline decoration-line-2 underline-offset-2 hover:decoration-ink"><bdi>{u.ticker}</bdi></button> ({tag(u.ticker)})</Fragment>
+            <Fragment key={u.ticker}>{i ? ", " : ""}<button type="button" onClick={() => go(`stock/${u.ticker}`)} className="font-mono text-ink underline decoration-line-2 underline-offset-2 hover:decoration-ink">{u.ticker}</button> ({tag(u.ticker)})</Fragment>
           ))}
         </p>
       )}
@@ -264,9 +255,8 @@ function ComingUp({ data, go }) {
 
 /** One line linking to People when a logged public call touches a name the paper record holds or the brain picked. */
 function PeopleNote({ data, go }) {
-  const { lang, t: tr } = useLang();
-  const t = tr(dict);
-  const calls = joinCalls(data.people, data.peopleScores, lang);
+  const t = strings(dict);
+  const calls = joinCalls(data.people, data.peopleScores);
   if (!calls.length) return null;
   const judge = data.peopleScores?.judge_at_weeks ?? 26;
   const { held, picked } = heldAndPicked(data);
@@ -279,14 +269,13 @@ function PeopleNote({ data, go }) {
         <p className="text-[15px] leading-relaxed text-ink-2">
           {t("det.people.lead", { count: touching.length })}{" "}
           {touching.map((c, i) => (
-            // statusPhrase (lib/people.js) takes the language last once it speaks Hebrew; until then it writes English.
-            <span key={c.id}>{i ? "; " : ""}{t.rich("det.people.item", {
+            <span key={c.id}>{i ? "; " : ""}{rich(t, "det.people.item", {
               t: <span className="font-mono text-ink">{c.ticker}</span>,
               stance: t.has(`feed.people.${c.stance}`) ? t(`feed.people.${c.stance}`) : c.stance,
               via: shortVia(c.via),
               kind: t(c.source_kind === "13f" ? "det.people.13f" : "det.people.public"),
-              date: fmtDate(c.date, lang).replace(/^[^,]+,\s*/, ""),
-              status: <Auto>{statusPhrase(c, judge, lang)}</Auto>,
+              date: fmtDate(c.date).replace(/^[^,]+,\s*/, ""),
+              status: <span>{statusPhrase(c, judge)}</span>,
             })}</span>
           ))}{t("det.people.tail")}
         </p>
@@ -296,10 +285,9 @@ function PeopleNote({ data, go }) {
   );
 }
 
-/** What to do today, computed once for both the Today post and the full dashboard's verdict. `head` and `accent` are in
- *  `lang` (default English). */
-export function todayCall(data, lang = "en") {
-  const t = translate(dict, lang);
+/** What to do today, computed once for both the Today post and the full dashboard's verdict. */
+export function todayCall(data) {
+  const t = strings(dict);
   const { stage, small } = trustStage(data);
   const asOf = data.market.as_of;
   const age = daysBetween(asOf, todayISO()); // New York date: market days follow its calendar
@@ -322,10 +310,9 @@ export function todayCall(data, lang = "en") {
 }
 
 function Verdict({ data, go }) {
-  const { lang, t: tr, fmt } = useLang();
-  const t = tr(dict);
-  const { stage, small, asOf, age, stale, lr, rec, held, corePct, met, v1res, head, accent } = todayCall(data, lang);
-  const heldList = <span className="text-ink">{held.length ? <bdi>{held.join(", ")}</bdi> : t("det.v.noStocks")}</span>;
+  const t = strings(dict);
+  const { stage, small, asOf, age, stale, lr, rec, held, corePct, met, v1res, head, accent } = todayCall(data);
+  const heldList = <span className="text-ink">{held.length ? <span>{held.join(", ")}</span> : t("det.v.noStocks")}</span>;
   const goalPct = `+${data.settings.goal.annual_return_pct}%`;
 
   return (
@@ -334,19 +321,19 @@ function Verdict({ data, go }) {
         <a href="#market-today" onClick={jumpToMarket} title={t("det.v.jump")}
           className={`pill mb-10 min-h-[36px] hover:bg-surface ${stale ? "border-down/50 text-down" : data.livePrices ? "border-accent/40 text-accent" : "border-dashed border-people/60 text-people"}`}>
           <span className="size-2 rounded-full bg-current" />
-          {t(data.livePrices ? "det.v.close" : "det.v.sample", { date: fmtDate(asOf, lang) }, { bidi: false })}{stale ? t("det.v.daysOld", { count: age }) : ""}
+          {t(data.livePrices ? "det.v.close" : "det.v.sample", { date: fmtDate(asOf) })}{stale ? t("det.v.daysOld", { count: age }) : ""}
           <span aria-hidden="true">↓</span>
         </a>
       </Reveal>
       <Headline size="xl" className="max-w-[15ch]">{head} <Accent>{accent}</Accent></Headline>
       <Reveal delay={350} as="p" className="mx-auto mt-8 max-w-[58ch] text-[clamp(17px,1.8vw,21px)] leading-relaxed text-ink-2">
         {stale ? (
-          <>{t("det.v.stale", { date: fmtDate(asOf, lang) }, { bidi: false })}</>
+          <>{t("det.v.stale", { date: fmtDate(asOf) })}</>
         ) : (
           <>
             {t("det.v.real")}{" "}
-            {lr || rec ? <>{t("det.v.game")} {t.rich(rec ? "det.v.holds" : "det.v.wouldHold", { list: heldList })}{corePct > 0 ? t("det.v.andCore", { pct: wholePct(corePct, lang) }) : null}{t("det.v.looksAgain", { date: fmtDate(nextRebalance(asOf), lang) }, { bidi: false })} {v1res ? <>{t.rich("det.v.tested", { word: <span className="text-ink">{t.has(`det.v.word.${v1res.verdict}`) ? t(`det.v.word.${v1res.verdict}`) : v1res.verdict}</span>, pct: wholePct(v1res.percentile, lang) })} </> : null}</> : null}
-            {stage >= 2 ? t("det.v.stage", { stage }) : t.rich("det.v.notYet", { met: <span className="text-ink">{t("det.v.metOf", { met, n: small.length })}</span> })}
+            {lr || rec ? <>{t("det.v.game")} {rich(t, rec ? "det.v.holds" : "det.v.wouldHold", { list: heldList })}{corePct > 0 ? t("det.v.andCore", { pct: wholePct(corePct) }) : null}{t("det.v.looksAgain", { date: fmtDate(nextRebalance(asOf)) })} {v1res ? <>{rich(t, "det.v.tested", { word: <span className="text-ink">{t.has(`det.v.word.${v1res.verdict}`) ? t(`det.v.word.${v1res.verdict}`) : v1res.verdict}</span>, pct: wholePct(v1res.percentile) })} </> : null}</> : null}
+            {stage >= 2 ? t("det.v.stage", { stage }) : rich(t, "det.v.notYet", { met: <span className="text-ink">{t("det.v.metOf", { met, n: small.length })}</span> })}
           </>
         )}
       </Reveal>
@@ -385,7 +372,7 @@ function HeroWall({ items }) {
   const columns = Array.from({ length: COLS }, (_, c) => pool.filter((_, i) => i % COLS === c).slice(0, 5));
   if (!pool.length) return null;
   return (
-    <div aria-hidden="true" lang="en" dir="ltr" className="pointer-events-none absolute inset-0 -z-10">
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
       <div className="absolute top-1/2 left-1/2 flex w-[190%] -translate-x-1/2 -translate-y-1/2 rotate-[-13deg] gap-6 sm:w-[150%]">
         {columns.map((col, c) => (
           <div key={c} className={`min-w-0 flex-1 flex-col gap-6 ${c >= 4 ? "hidden sm:flex" : "flex"}`} style={{ animation: `${c % 2 ? "wall-down" : "wall-up"} ${70 + c * 9}s linear infinite` }}>
@@ -430,8 +417,7 @@ function WallCard({ k }) {
 }
 
 export function PickCard({ item, i, name, horizon }) {
-  const { lang, t: tr } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const { pick } = item;
   const tone = TONE[pick.stance];
   return (
@@ -442,8 +428,8 @@ export function PickCard({ item, i, name, horizon }) {
           <Conviction level={pick.conviction} />
         </div>
         <div className="absolute bottom-6 start-7 end-7">
-          <bdi className="block font-mono text-[32px] leading-none font-medium tracking-[-0.02em]" style={{ color: tone }}>{pick.ticker}</bdi>
-          <div className="meta mt-3">{t.has(`det.pick.stance.${pick.stance}`) && lang !== "en" ? t(`det.pick.stance.${pick.stance}`) : pick.stance} · <bdi>{name}</bdi></div>
+          <span className="block font-mono text-[32px] leading-none font-medium tracking-[-0.02em]" style={{ color: tone }}>{pick.ticker}</span>
+          <div className="meta mt-3">{pick.stance} · <span>{name}</span></div>
         </div>
       </div>
       <div className="p-7">
@@ -451,25 +437,25 @@ export function PickCard({ item, i, name, horizon }) {
           <Chip kind={pick.stance} />
           <span className="meta">{t("det.pick.checked", { n: horizon })}</span>
         </div>
-        <En as="p" className="mt-5 text-[16px] leading-relaxed text-ink">{pick.thesis}</En>
+        <p className="mt-5 text-[16px] leading-relaxed text-ink">{pick.thesis}</p>
         <div className="mt-6 grid gap-4 text-[14px]">
           <div>
             <div className="meta mb-2">{t("det.pick.risks")}</div>
-            <En as="ul" className="grid gap-1 text-ink-2">
+            <ul className="grid gap-1 text-ink-2">
               {pick.risks.map((r) => <li key={r} className="relative ps-4 before:absolute before:start-0 before:top-[0.7em] before:h-px before:w-2 before:bg-ink-3">{r}</li>)}
-            </En>
+            </ul>
           </div>
           <div>
             <div className="meta mb-2">{t("det.pick.wrongIf")}</div>
-            <En as="p" className="text-ink-2">{pick.invalidation}</En>
+            <p className="text-ink-2">{pick.invalidation}</p>
           </div>
         </div>
-        <En className="mt-6 flex flex-wrap gap-1.5">
+        <div className="mt-6 flex flex-wrap gap-1.5">
           {pick.evidence.map((e) => <span key={e} className="rounded-full border border-line-2 px-2.5 py-1 font-mono text-[11.5px] text-ink-2">{e}</span>)}
-        </En>
+        </div>
         <div className="meta mt-6 flex items-center justify-between border-t border-line pt-5">
-          <span className="text-ink">{item.ref_price != null ? t.rich("det.pick.priceThen", { price: <span className="num">{fmtNum(item.ref_price, 2, lang)}</span> }) : t("det.pick.fromClose")}</span>
-          <span dir="ltr" className="num">{item.ref_date} → {addTradingDays(item.ref_date, horizon)}</span>
+          <span className="text-ink">{item.ref_price != null ? rich(t, "det.pick.priceThen", { price: <span className="num">{fmtNum(item.ref_price, 2)}</span> }) : t("det.pick.fromClose")}</span>
+          <span className="num">{item.ref_date} → {addTradingDays(item.ref_date, horizon)}</span>
         </div>
       </div>
     </Reveal>

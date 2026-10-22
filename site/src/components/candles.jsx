@@ -1,17 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { topSpots, spotCaveat } from "../lib/spots.js";
+import { topSpots, SPOT_CAVEAT } from "../lib/spots.js";
 import { SpotList, SPOT_TONE } from "./zoom.jsx";
 import { loadMarketCandles } from "../lib/data.js";
 import { useReducedMotion } from "../lib/motion.js";
-import {
-  ALL_ON, bands, candleGeom, chartSummary, fitDomain, indexAt, keepClear, levelWeight, linePath, monthTicks, niceTicks, OVERLAYS,
-  overlayLabel, overlayLines, RANGES, RANGE_VALUES, rangeLabel, scaleLinear, spreadLabels, tickLabel, tipRows, volTop, windowOf,
-} from "../lib/candles.js";
-import { patternName, stepLabel } from "../lib/checklist.js";
-import { isolate } from "../lib/i18n.js";
-import { useLang } from "../lib/lang.jsx";
-import dict from "../i18n/stock.js";
+import { ALL_ON, bands, candleGeom, chartSummary, fitDomain, indexAt, keepClear, levelWeight, linePath, monthTicks, niceTicks, OVERLAYS, overlayLines, RANGES, RANGE_VALUES, scaleLinear, spreadLabels, tickLabel, tipRows, volTop, windowOf } from "../lib/candles.js";
+import dict from "../text/stock.js";
 import { Segmented } from "./ui.jsx";
+import { strings } from "../lib/text.js";
+import { fmtDate } from "../lib/format.js";
 
 /* A per-device choice in localStorage. Storage can be missing or blocked (private mode): the control still works. */
 export function useStoredChoice(key, initial, allowed) {
@@ -55,8 +51,7 @@ function Key({ id }) {
  * from anywhere but the site's own data.
  */
 export function CandlesView({ data, symbol, row, cfg }) {
-  const { lang, t: tr, fmt } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const [state, setState] = useState({ status: "loading", doc: null });
   const [attempt, setAttempt] = useState(0);
   useEffect(() => {
@@ -108,12 +103,12 @@ export function CandlesView({ data, symbol, row, cfg }) {
   const doc = state.doc;
   const win = windowOf(doc, range);
   const pattern = win?.weekly ? row?.candle?.weekly : row?.candle?.daily;
-  const spots = win ? topSpots(win, 5, lang) : [];
+  const spots = win ? topSpots(win, 5) : [];
   return (
     <div>
-      <Segmented label={t("cdv.window")} value={range} onChange={setRange} options={RANGES.map((r) => ({ value: r.value, label: rangeLabel(r, lang) }))} />
+      <Segmented label={t("cdv.window")} value={range} onChange={setRange} options={RANGES.map((r) => ({ value: r.value, label: r.label }))} />
       {doc.as_of !== row?.as_of && row?.as_of && (
-        <p className="mt-3 text-[13px] text-people">{t("cdv.older", { candles: fmt.date(doc.as_of), checklist: fmt.date(row.as_of) })}</p>
+        <p className="mt-3 text-[13px] text-people">{t("cdv.older", { candles: fmtDate(doc.as_of), checklist: fmtDate(row.as_of) })}</p>
       )}
       <div className="mt-4">
         {win ? <CandleChart key={range} win={win} doc={doc} on={on} pattern={pattern} symbol={symbol} rsiCfg={step("rsi").params} spots={spots} sel={sel} onSpot={pickSpot} /> : <p className="text-[14px] text-ink-3">{t("cdv.noWindow")}</p>}
@@ -125,7 +120,7 @@ export function CandlesView({ data, symbol, row, cfg }) {
           {spots.length ? <p className="mt-1 text-[14.5px] text-ink-2">{t("cdv.spots.lede")}</p>
             : <p className="mt-1 text-[15px] text-ink-2">{t("cdv.spots.none")}</p>}
           <SpotList spots={spots} focus={sel} onPick={pickSpot} reduced={false} />
-          {spots.length > 0 && <p className="mt-3 text-[13.5px] leading-relaxed text-ink-3">{spotCaveat(lang)}</p>}
+          {spots.length > 0 && <p className="mt-3 text-[13.5px] leading-relaxed text-ink-3">{SPOT_CAVEAT}</p>}
         </section>
       )}
 
@@ -139,7 +134,7 @@ export function CandlesView({ data, symbol, row, cfg }) {
               className={`flex min-h-[48px] min-w-0 items-center gap-2 rounded-xl border px-2.5 py-1.5 text-start transition duration-200 ${pressed ? "border-line-2 bg-surface-2" : "border-line opacity-55 hover:opacity-80"}`}>
               <Key id={o.id} />
               <span className="min-w-0">
-                <span className="block text-[12.5px] leading-tight text-ink"><span className="num me-1 font-mono text-[11px] text-ink-3">{s.n}</span>{o.step === "risk_plan" ? overlayLabel(o, lang) : stepLabel(s, lang)}</span>
+                <span className="block text-[12.5px] leading-tight text-ink"><span className="num me-1 font-mono text-[11px] text-ink-3">{s.n}</span>{o.step === "risk_plan" ? o.label : s.name}</span>
               </span>
             </button>
           );
@@ -174,10 +169,7 @@ export function CandleMark({ g, partial = false, opacity }) {
 }
 
 function CandleChart({ win, doc, on, pattern, symbol, rsiCfg, spots = [], sel = null, onSpot = () => {} }) {
-  const { lang, t: tr, fmt } = useLang();
-  const t = tr(dict);
-  // Words drawn inside this left-to-right chart: in Hebrew each is isolated, so it reads right to left on its own.
-  const say = (s) => (lang === "en" ? s : isolate(s));
+  const t = strings(dict);
   const box = useRef(null);
   const svg = useRef(null);
   const [W, setW] = useState(340);
@@ -215,13 +207,13 @@ function CandleChart({ win, doc, on, pattern, symbol, rsiCfg, spots = [], sel = 
   const x1 = W - R;
 
   const ov = doc.overlays;
-  const { lines, bands: gapBands } = overlayLines(ov, on, lang);
+  const { lines, bands: gapBands } = overlayLines(ov, on);
   const extras = [...lines.map((l) => l.v), ...gapBands.flatMap((b) => [b.from, b.to]), ...(on.ma20 ? win.ma20 : [])];
   const dom = fitDomain(win, extras);
   const y = scaleLinear(dom.lo, dom.hi, T + PH, T);
   const lay = bands(win.n, L, x1);
   const { step, ticks } = niceTicks(dom.lo, dom.hi, narrow ? 4 : 6);
-  const months = monthTicks(win.dates, lay.cx, narrow ? 34 : 44, lang);
+  const months = monthTicks(win.dates, lay.cx, narrow ? 34 : 44);
   const inDom = (v) => v >= dom.lo && v <= dom.hi;
 
   // Value tags in the right gutter (lines in view, plus arrows for the ones off the chart) and names inside the plot.
@@ -233,7 +225,7 @@ function CandleChart({ win, doc, on, pattern, symbol, rsiCfg, spots = [], sel = 
   ], 12, T + 4, T + PH - 2);
   const names = keepClear([
     ...shownLines.map((l) => ({ ...l, y: y(l.v) })),
-    ...gapBands.filter((b) => inDom(b.to) || inDom(b.from)).map((b, k) => ({ id: b.id, y: (y(Math.min(dom.hi, b.to)) + y(Math.max(dom.lo, b.from))) / 2, name: say(t(b.where === "below" ? "cd.line.gapBelow" : "cd.line.gapAbove")), prio: 10 + k, kind: "gap" })),
+    ...gapBands.filter((b) => inDom(b.to) || inDom(b.from)).map((b, k) => ({ id: b.id, y: (y(Math.min(dom.hi, b.to)) + y(Math.max(dom.lo, b.from))) / 2, name: t(b.where === "below" ? "cd.line.gapBelow" : "cd.line.gapAbove"), prio: 10 + k, kind: "gap" })),
   ], 12);
   const gridTicks = ticks.filter((t) => tags.every((g) => Math.abs(g.ty - y(t)) >= 11));
 
@@ -268,22 +260,22 @@ function CandleChart({ win, doc, on, pattern, symbol, rsiCfg, spots = [], sel = 
     e.preventDefault();
     setHi(Math.max(0, Math.min(n - 1, hi == null ? n - 1 : next)));
   };
-  const tip = hi != null ? tipRows(win, hi, lang) : null;
+  const tip = hi != null ? tipRows(win, hi) : null;
   const tipLeft = hi != null && xi(hi) > (L + x1) / 2;
 
   const lastRsi = [...win.rsi].reverse().find((v) => v != null);
   const lastVol = win.vol_rel.at(-1);
   const soFar = t("cdv.weekSoFar");
   const patternText = pattern
-    ? `${LEAN_GLYPH[pattern.lean] ?? ""} ${say(win.partial ? t("cdv.weekPattern", { pattern: patternName(pattern.pattern, lang) }, { bidi: false }) : patternName(pattern.pattern, lang))}`
-    : win.partial ? say(soFar) : null;
+    ? `${LEAN_GLYPH[pattern.lean] ?? ""} ${win.partial ? t("cdv.weekPattern", { pattern: pattern.pattern }) : pattern.pattern}`
+    : win.partial ? soFar : null;
 
   return (
-    <div ref={box} dir="ltr" className="relative select-none">
+    <div ref={box} className="relative select-none">
       <svg ref={svg} width={W} height={H} viewBox={`0 0 ${W} ${H}`} className="block max-w-full touch-pan-y" tabIndex={0}
         style={{ outline: kbd ? "2px solid var(--accent)" : "none", outlineOffset: 4, borderRadius: 8 }}
         onFocus={() => { if (!byPointer.current) setKbd(true); }}
-        role="img" aria-label={chartSummary(symbol, win, lang)}
+        role="img" aria-label={chartSummary(symbol, win)}
         onPointerDown={onDown} onPointerMove={onMove} onPointerLeave={(e) => e.pointerType === "mouse" && setHi(null)}
         onKeyDown={onKey} onBlur={() => { byPointer.current = false; setKbd(false); setHi(null); }}>
         <defs>
@@ -367,7 +359,7 @@ function CandleChart({ win, doc, on, pattern, symbol, rsiCfg, spots = [], sel = 
             ))}
             <line x1={L} x2={x1} y1={rsiTop + 0.5} y2={rsiTop + 0.5} stroke="var(--line)" />
             <path d={linePath(win.rsi, xi, yR)} fill="none" stroke="var(--ink-2)" strokeWidth="1.5" strokeLinejoin="round" />
-            <text x={L} y={rsiTop - 5} className="fill-ink-3 text-[10.5px]">{say(t(win.weekly ? "cdv.rsiWeeks" : "cdv.rsiDays"))}{lastRsi != null ? ` · ${lastRsi.toFixed(1)}` : ""}</text>
+            <text x={L} y={rsiTop - 5} className="fill-ink-3 text-[10.5px]">{t(win.weekly ? "cdv.rsiWeeks" : "cdv.rsiDays")}{lastRsi != null ? ` · ${lastRsi.toFixed(1)}` : ""}</text>
           </g>
         )}
 
@@ -384,7 +376,7 @@ function CandleChart({ win, doc, on, pattern, symbol, rsiCfg, spots = [], sel = 
             <line x1={L} x2={x1} y1={Math.round(yV(1)) + 0.5} y2={Math.round(yV(1)) + 0.5} stroke="var(--ink-3)" />
             <line x1={L} x2={x1} y1={Math.round(yV(0)) + 0.5} y2={Math.round(yV(0)) + 0.5} stroke="var(--line-2)" />
             <text x={W - 2} y={yV(1) + 3.5} textAnchor="end" className="num fill-ink-3 font-mono text-[10.5px]">1×</text>
-            <text x={L} y={volTopY - 5} className="fill-ink-3 text-[10.5px]">{say(t(win.weekly ? "cdv.volWeeks" : "cdv.volDays"))}{lastVol != null ? ` · ${lastVol.toFixed(2)}×` : ""}</text>
+            <text x={L} y={volTopY - 5} className="fill-ink-3 text-[10.5px]">{t(win.weekly ? "cdv.volWeeks" : "cdv.volDays")}{lastVol != null ? ` · ${lastVol.toFixed(2)}×` : ""}</text>
           </g>
         )}
 
@@ -397,9 +389,9 @@ function CandleChart({ win, doc, on, pattern, symbol, rsiCfg, spots = [], sel = 
       </svg>
 
       {tip && (
-        <div role="status" dir="auto" className="pointer-events-none absolute top-1 z-10 w-[176px] rounded-xl border border-line-2 bg-surface px-3 py-2 text-[12px] shadow-[0_20px_40px_-12px_rgb(0_0_0/0.45)]"
+        <div role="status" className="pointer-events-none absolute top-1 z-10 w-[176px] rounded-xl border border-line-2 bg-surface px-3 py-2 text-[12px] shadow-[0_20px_40px_-12px_rgb(0_0_0/0.45)]"
           style={tipLeft ? { left: 4 } : { right: R + 4 }}>
-          <div className="meta mb-1 normal-case tracking-[0.04em]">{fmt.date(tip.date)}{tip.partial ? ` · ${soFar}` : ""}</div>
+          <div className="meta mb-1 normal-case tracking-[0.04em]">{fmtDate(tip.date)}{tip.partial ? ` · ${soFar}` : ""}</div>
           <div className="text-[10.5px] text-ink-3">{t("cdv.tip.from")}</div>
           <dl className="mt-0.5 grid grid-cols-[auto_1fr] gap-x-3">
             {tip.ohlc.flatMap(([k, v]) => [<dt key={`k${k}`} className="text-ink-3">{k}</dt>, <dd key={`v${k}`} className="num text-end font-mono font-semibold text-ink">{v}</dd>])}
@@ -408,7 +400,7 @@ function CandleChart({ win, doc, on, pattern, symbol, rsiCfg, spots = [], sel = 
             <dt className="text-ink-3">{tip.moveLabel}</dt>
             <dd className={`num text-end font-mono font-semibold ${tip.move ? { accent: "text-accent", down: "text-down", flat: "text-ink" }[tip.move.tone] : "text-ink-3"}`}>{tip.move?.text ?? "–"}</dd>
             <dt className="text-ink-3">{t("cdv.tip.volume")}</dt>
-            <dd className="num text-end font-mono text-ink"><bdi>{tip.vol ? t("cdv.tip.avg", { x: tip.vol }) : "–"}</bdi></dd>
+            <dd className="num text-end font-mono text-ink">{tip.vol ? t("cdv.tip.avg", { x: tip.vol }) : "–"}</dd>
             <dt className="text-ink-3">RSI</dt>
             <dd className="num text-end font-mono text-ink">{tip.rsi ?? "–"}</dd>
           </dl>

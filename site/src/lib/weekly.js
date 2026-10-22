@@ -3,24 +3,16 @@
 // (data/portfolio/paper_rules.json) and judged against random picks in the history test (data/market/rules.json).
 // Pure functions, no React; tested in weekly.test.js.
 
-import { translate } from "./i18n.js";
-import dict from "../i18n/home.js";
+import { strings } from "./text.js";
+import dict from "../text/home.js";
 
-/** The two weekly rules, with their English name and line (other languages: weeklyRule(id, lang)). */
+/** The two weekly rules, with their name and line. */
 export const WEEKLY_RULES = [
   { id: "weekly_swing", name: "Weekly Swing", what: "Each week: the five names that beat the market most over the last month." },
   { id: "five_leaders_weekly", name: "Five Leaders, weekly", what: "Each week: the strongest steady climbers of the past year." },
 ];
 
 const isNum = (v) => typeof v === "number" && Number.isFinite(v);
-
-/** A weekly rule's {id, name, what} in a language. */
-export function weeklyRule(id, lang = "en") {
-  const r = WEEKLY_RULES.find((x) => x.id === id);
-  if (!r || lang === "en") return r ?? null;
-  const t = translate(dict, lang);
-  return { ...r, name: t(`wk.rule.${id}.name`), what: t(`wk.rule.${id}.what`) };
-}
 
 /** The coming Monday (today if it is Monday), as an ISO date: the fallback when no published date can be used. */
 export function nextBuyDay(todayIso) {
@@ -47,8 +39,8 @@ export function weeklyBuyDay(todayIso, bw = null, siteSample = false) {
 }
 
 /** How a rule did on the history test, in words: passed, rejected, or not tested yet. */
-export function historyWords(rulesResult, id, lang = "en") {
-  const t = translate(dict, lang);
+export function historyWords(rulesResult, id) {
+  const t = strings(dict);
   const row = (rulesResult?.satellite?.rules ?? []).find((r) => r.id === id);
   if (!row || !isNum(row.percentile)) return { tested: false, line: t("wk.hist.none") };
   const p = Math.round(row.percentile);
@@ -74,8 +66,8 @@ export function gameRow(ledger, id, names = {}) {
 }
 
 /** The scoreboard line for a row, in words. */
-export function scoreLine(row, lang = "en") {
-  const t = translate(dict, lang);
+export function scoreLine(row) {
+  const t = strings(dict);
   if (!row) return t("wk.score.none");
   if (!isNum(row.ahead) || row.weeks < 2) return t("wk.score.early", { weeks: row.weeks });
   const a = Math.abs(row.ahead);

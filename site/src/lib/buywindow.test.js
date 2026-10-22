@@ -1,7 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buyLine, buyWindow, buyWindowFor, CARD_RULES, cardRules, dayWords, isCoreFundCard, lookRules, lookState, mainListOf, sp500Of } from "./buywindow.js";
-import { stripBidi } from "./i18n.js";
+import { buyLine, buyWindow, buyWindowFor, CARD_RULES, dayWords, isCoreFundCard, lookRules, lookState, mainListOf, sp500Of } from "./buywindow.js";
 
 const names = { AAA: "Alpha Corp", BBB: "Beta Inc", CCC: "Gamma Co", DDD: "Delta Ltd" };
 const FORBIDDEN = /buy signal|recommend|you should buy/i;
@@ -404,77 +403,4 @@ test("a name that misses a check is told when all the places would still go to s
   assert.equal(gcond(b, "weekly_swing", "leader").ok, true);
   assert.match(gcond(b, "weekly_swing", "leader").now, /Beta Inc ranks higher in its group but misses a check, so the group's place is open/);
   assert.equal(game(b, "weekly_swing").why, "below its 50-day line");
-});
-
-/* ------------------------------------------------------------------------------------------------ Hebrew */
-
-const HE = /[\u0590-\u05FF]/;
-const ADVICE_HE = /buy signal|recommend|you should buy|מומלץ לקנות|כדאי לקנות|המלצ/i;
-/** Every sentence of a Hebrew answer: Hebrew letters, no English left over, no missing key, no advice. */
-function hebrewAnswer(a) {
-  const all = say(a);
-  assert.doesNotMatch(all, ADVICE_HE);
-  assert.doesNotMatch(all, /undefined|null|NaN|\[bw\./);
-  for (const s of [a.headline, a.realMoney, a.nextLook, a.note, ...a.waitFor, ...a.conditions.flatMap((c) => [c.label, c.now, c.need])]) {
-    assert.match(s, HE, s);
-    // English words that would mean a sentence was left half translated
-    assert.doesNotMatch(stripBidi(s), /\b(the|wait|with|would|rule|rules|money|week)\b/i, s);
-  }
-}
-const heMain = (over = {}) => main({ lang: "he", ...over });
-
-test("Hebrew: dates, rule names and the main answers", () => {
-  assert.equal(dayWords("2026-11-02", "he"), "יום ב׳, 2 בנוב׳");
-  assert.equal(dayWords("2026-11-02"), "Mon 2 Nov");
-  assert.deepEqual(cardRules("he").map((r) => r.name), ["חמש המובילות, שבועי", "התנופה השבועית", "חמש המובילות, חודשי", "חמש המובילות, כל שלושה חודשים"]);
-  const a = heMain();
-  hebrewAnswer(a);
-  assert.equal(a.tone, "rules_allow");
-  assert.equal(stripBidi(a.headline), "המשחק השבועי היה בוחר בה ביום ב׳, 19 באוק׳, אם שום דבר לא ישתנה. הכסף האמיתי עדיין מחכה.");
-  assert.match(a.realMoney, /^בכסף אמיתי: לא כמניה בודדת, לא היום\./);
-  assert.match(stripBidi(a.realMoney), /הקנייה השבועית הבאה: יום ב׳, 19 באוק׳\.$/);
-  assert.ok(a.games.every((g) => g.line === "הייתה נבחרת"));
-  assert.equal(buyLine(a, "2026-10-17", "he").text, "המשחק השבועי היה בוחר בה ביום שני בשבוע הבא, אם שום דבר לא ישתנה");
-  // the same answer in English is untouched
-  assert.equal(main().headline, "The weekly game would pick it on Mon 19 Oct if nothing changes. Real money still waits.");
-});
-
-test("Hebrew: why not, joined reasons and per-rule wait lines", () => {
-  const bw = contract({
-    five_leaders_weekly: { AAA: { rank: 7, sector_leader: "BBB", would_hold_if_today: false, blockers: ["sector_taken"] }, BBB: { rank: 2, sector_leader: "BBB", would_hold_if_today: false, blockers: ["stretched"], stretched: true, dist_sma50_pct: 11 } },
-    weekly_swing: { AAA: { rank: 4, above_50: false, dist_sma50_pct: -2.4, would_hold_if_today: false, blockers: ["below_50"] } },
-  });
-  const a = heMain({ bw });
-  hebrewAnswer(a);
-  assert.equal(stripBidi(a.headline), "לא השבוע. המשחק השבועי לא היה בוחר בה.");
-  assert.equal(stripBidi(game(a, "five_leaders_weekly").why), "Beta Inc מובילה את הקבוצה");
-  assert.equal(stripBidi(gcond(a, "weekly_swing", "above50").now), "2.4% מתחתיו");
-  assert.match(stripBidi(gcond(a, "five_leaders_weekly", "leader").now), /^מקום 7 מתוך 21 לפי העלייה בשנה האחרונה; Beta Inc מובילה את הקבוצה$/);
-  assert.ok(a.waitFor.map(stripBidi).includes("התנופה השבועית: לחכות שהיא תחזור מעל ממוצע 50 הימים."));
-  const two = heMain({ symbol: "BBB", bw: group("five_leaders_weekly", { rank: 2, held_now: false }, { rank: 6, blockers: ["below_200", "falling_200"], above_200: false, rising_200: false, stretched: false, dist_sma50_pct: 2 }) });
-  assert.equal(stripBidi(game(two, "five_leaders_weekly").why), "Alpha Corp מדורגת גבוה יותר בקבוצה, וגם היא מתחת לממוצע 200 הימים, והוא יורד");
-  assert.deepEqual(buyLine(a, "2026-10-17", "he"), { text: "מתי קונים: לא השבוע (ההסבר בפנים)", tone: "flat" });
-});
-
-test("Hebrew: funds, names the rules do not read, and a missing look", () => {
-  const core = buyWindow({ today: "2026-10-17", symbol: "DDD", isFund: true, isCoreFund: true, bw: contract(), lang: "he" });
-  hebrewAnswer(core);
-  assert.equal(core.headline, "זה סוג הקרן שהקנייה השבועית נכנסת אליה.");
-  const fund = buyWindow({ today: "2026-10-17", symbol: "DDD", isFund: true, bw: contract(), lang: "he" });
-  hebrewAnswer(fund);
-  for (const sp500 of [true, false, null]) {
-    const look = buyWindow({ today: "2026-10-17", symbol: "CCC", onMainList: false, sp500, names, bw: contract(), setup: setup({ checks: { trend: false }, dist_sma50_pct: -2.5, dist_long_pct: 3 }), checklist: ck(0.8, "resistance"), lang: "he" });
-    hebrewAnswer(look);
-    assert.equal(stripBidi(cond(look, "trend").now), "2.5% מתחת לממוצע 50 הימים, 3.0% מעל ממוצע 200 הימים");
-    assert.equal(stripBidi(cond(look, "reward").now), "0.8 ל-1");
-  }
-  for (const bw of [null, contract({}, { as_of: "2026-10-15" })]) {
-    const m = heMain({ bw });
-    hebrewAnswer(m);
-    assert.equal(m.headline, "לחכות. הבדיקה של הכללים עדיין לא זמינה.");
-  }
-  const earned = heMain({ stocksEarned: true, verdicts: { weekly_swing: "passes_history" } });
-  hebrewAnswer(earned);
-  assert.equal(stripBidi(earned.headline), "הכללים היו מאפשרים סכום קטן ביום ב׳, 19 באוק׳, אם שום דבר לא ישתנה.");
-  assert.equal(buyLine(core, null, "he").text, "מתי קונים: בכל שבוע, לפי התוכנית");
 });

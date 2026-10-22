@@ -3,11 +3,10 @@ import { Sparkline } from "../components/charts.jsx";
 import { STATUS } from "../components/goal.jsx";
 import { Accent, Container, Reveal, SectionHead, Segmented, Strip } from "../components/ui.jsx";
 import { VerdictPill } from "../components/checklist.jsx";
-import { shortSector } from "../lib/marketday.js";
-import { marketNote, notYet } from "../lib/markets.js";
-import { ltr } from "../lib/i18n.js";
-import { Auto, useLang } from "../lib/lang.jsx";
-import dict from "../i18n/stock.js";
+import { marketNote, NOT_YET } from "../lib/markets.js";
+import dict from "../text/stock.js";
+import { strings } from "../lib/text.js";
+import { fmtDate, fmtNum, fmtPct, numWord } from "../lib/format.js";
 
 /** The Stocks page: the chosen market's list (the header switch), or a calm line while it loads or before its numbers. */
 export default function Watchlist({ data, market: mk, go }) {
@@ -16,16 +15,15 @@ export default function Watchlist({ data, market: mk, go }) {
 }
 
 function MarketWaitPage({ market }) {
-  const { lang, t: tr } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const label = market.entry?.label ?? market.id;
-  const note = marketNote(market.entry, lang);
+  const note = marketNote(market.entry);
   return (
     <Container className="pt-20">
       <SectionHead eyebrow={t("wl.wait.eyebrow", { label })} title={<>{label}: <Accent>{market.choices.find((c) => c.id === market.id)?.what ?? market.entry?.name}.</Accent></>} lede={note ?? undefined} />
       <div className="card p-6 sm:p-8" role={market.state === "loading" ? "status" : undefined}>
         {market.state === "loading" && <p className="text-[18px] text-ink-2">{t("wl.wait.loading", { label })}</p>}
-        {market.state === "none" && <p className="text-[19px] leading-relaxed text-ink">{notYet(lang)}</p>}
+        {market.state === "none" && <p className="text-[19px] leading-relaxed text-ink">{NOT_YET}</p>}
         {market.state === "error" && (
           <>
             <p className="text-[18px] text-ink">{t("wl.wait.error", { label })}</p>
@@ -38,12 +36,11 @@ function MarketWaitPage({ market }) {
 }
 
 function List({ data, go }) {
-  const { lang, t: tr, fmt } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const { watchlist, prices, bench, settings, regime, livePrices, market, longrun, checklist, sectors } = data;
   const entry = data.marketEntry ?? null;
   const funds = entry?.kind === "funds";
-  const note = marketNote(entry, lang);
+  const note = marketNote(entry);
   const ruleOf = Object.fromEntries((longrun?.now.status ?? []).map((x) => [x.symbol, x.status]));
   // Technical checklist reading per name (unproven): null until the first daily run that computes it.
   const ckOf = useMemo(() => Object.fromEntries((checklist?.symbols ?? []).map((x) => [x.symbol, x.score])), [checklist]);
@@ -66,9 +63,9 @@ function List({ data, go }) {
   return (
     <Container className="pt-20">
       <SectionHead
-        eyebrow={`${entry?.label ?? "Nasdaq"} · ${market.as_of ? fmt.date(market.as_of) : t("wl.noPrices")} · ${livePrices ? t("wl.live", { provider: market.provider }) : t("ckc.samplePrices")}`}
-        title={<>{t(funds ? "wl.title.funds" : "wl.title.names", { n: fmt.numWord(rows.length) })} <Accent>{t("wl.title.accent")}</Accent></>}
-        lede={t("wl.lede", { note: note ? `${note} ` : "", up, n: rows.length, days }, { bidi: false })}
+        eyebrow={`${entry?.label ?? "Nasdaq"} · ${market.as_of ? fmtDate(market.as_of) : t("wl.noPrices")} · ${livePrices ? t("wl.live", { provider: market.provider }) : t("ckc.samplePrices")}`}
+        title={<>{t(funds ? "wl.title.funds" : "wl.title.names", { n: numWord(rows.length) })} <Accent>{t("wl.title.accent")}</Accent></>}
+        lede={t("wl.lede", { note: note ? `${note} ` : "", up, n: rows.length, days })}
         right={
           <Segmented
             label={t("wl.sort")}
@@ -94,11 +91,8 @@ function List({ data, go }) {
 }
 
 function Row({ r, i, bench = false, go, rule, ck, hasChecklist, group = null }) {
-  const { fmt, lang, t: tr } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const m = r.m;
-  // A sector's name in Hebrew (the home area's sector words); English, and a fund's category, stay as written.
-  const groupName = group && lang !== "en" ? shortSector(group, lang) : group;
   const tone = (m?.ret_20d_pct ?? 0) < 0 ? "down" : "accent";
   return (
     <Reveal
@@ -115,16 +109,16 @@ function Row({ r, i, bench = false, go, rule, ck, hasChecklist, group = null }) 
           <span className="text-[22px] font-semibold tracking-[-0.03em]">{r.symbol}</span>
           {bench && <span className="pill hidden py-1 text-[11px] text-ink-3 sm:inline-flex">{t("wl.wholeMarket")}</span>}
         </div>
-        <div className="line-clamp-3 text-[13px] leading-snug text-ink-3 sm:line-clamp-none sm:truncate">{bench ? <span className="sm:hidden">{t("wl.wholeMarketDot")}</span> : null}<Auto>{r.name}</Auto></div>
-        {group && <div dir="auto" className="mt-0.5 text-[12.5px] leading-snug text-ink-3 sm:mt-0 sm:truncate">{groupName}</div>}
+        <div className="line-clamp-3 text-[13px] leading-snug text-ink-3 sm:line-clamp-none sm:truncate">{bench ? <span className="sm:hidden">{t("wl.wholeMarketDot")}</span> : null}{r.name}</div>
+        {group && <div className="mt-0.5 text-[12.5px] leading-snug text-ink-3 sm:mt-0 sm:truncate">{group}</div>}
       </div>
       <div className="row-span-2 sm:row-span-1">
         {m?.bars?.length > 1 ? <Sparkline bars={m.bars} tone={tone} delay={i * 60} indexed /> : <span className="meta">{t("wl.noData")}</span>}
       </div>
       <div className="order-last text-end text-[13px] sm:order-none" title={m?.setup ? t("wl.checksTitle", { n: m.setup.passed }) : ""}>
-        {bench ? <span className="num font-mono text-ink-2 sm:text-[16px]">{m ? fmt.pct(m.ret_20d_pct, 1) : "—"}<span className="ms-1 text-[11px] text-ink-3">{t("wl.20days")}</span></span> : (
+        {bench ? <span className="num font-mono text-ink-2 sm:text-[16px]">{m ? fmtPct(m.ret_20d_pct, 1) : "—"}<span className="ms-1 text-[11px] text-ink-3">{t("wl.20days")}</span></span> : (
           <>
-            <span className="num font-mono sm:text-[16px]"><bdi>{m?.setup ? `${m.setup.passed}/4` : "—"}</bdi></span>
+            <span className="num font-mono sm:text-[16px]">{m?.setup ? `${m.setup.passed}/4` : "—"}</span>
             {m?.setup?.stretched && <span className="ms-1.5 text-[11px] text-people" title={t("wl.ranUpTitle")}>{t("wl.ranUp")}</span>}
             {hasChecklist && <div className="mt-1"><VerdictPill verdict={ck?.verdict} /></div>}
             {rule && <div className={`hidden truncate text-[11.5px] sm:block ${STATUS[rule].tone}`}>{t.has(`st.status.${rule}`) ? t(`st.status.${rule}`) : STATUS[rule].label}</div>}
@@ -135,7 +129,7 @@ function Row({ r, i, bench = false, go, rule, ck, hasChecklist, group = null }) 
         {m && (
           <span className={`pill num ${m.change_1d_pct >= 0 ? "border-accent/25 bg-accent/12 text-accent" : "border-down/25 bg-down/12 text-down"}`}>
             <span aria-hidden="true" className="text-[9px]">{m.change_1d_pct >= 0 ? "▲" : "▼"}</span>
-            {fmt.pct(m.change_1d_pct)}
+            {fmtPct(m.change_1d_pct)}
           </span>
         )}
       </div>
@@ -147,8 +141,7 @@ const STATE_TONE = { calm: "accent", normal: "flat", stressed: "down" };
 const TREND_TONE = { up: "accent", sideways: "flat", down: "down" };
 
 function Regime({ regime, above, total }) {
-  const { he, t: tr, fmt } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const m = regime.metrics;
   const p = regime.params;
   const word = (k) => (t.has(k) ? t(k) : k.split(".").pop());
@@ -157,10 +150,10 @@ function Regime({ regime, above, total }) {
       <Strip
         dense
         cells={[
-          { value: word(`wl.mood.${regime.state}`), label: t("wl.mood.label", { bench: regime.benchmark }), tone: STATE_TONE[regime.state], desc: t("wl.mood.desc", { bench: regime.benchmark, date: fmt.date(regime.as_of) }) },
-          { value: word(`wl.dir.${regime.trend}`), label: t("wl.dir.label", { days: p.trend_sma_days }), tone: TREND_TONE[regime.trend], desc: t(m.sma_slope_pct >= 0 ? "wl.dir.descRising" : "wl.dir.descFalling", { dist: fmt.pct(m.dist_sma_pct, 1), days: p.trend_sma_days, slope: fmt.pct(m.sma_slope_pct), slopeDays: p.slope_days }) },
-          { value: he ? ltr(`${m.vol_ann_pct.toFixed(1)}%`) : `${fmt.num(m.vol_ann_pct, 1)}%`, label: t("wl.vol.label"), tone: "flat", desc: t("wl.vol.desc", { days: p.vol_days }) },
-          { value: fmt.pct(m.drawdown_pct, 1), label: t("wl.dd.label"), tone: m.drawdown_pct < -10 ? "down" : "flat", desc: t("wl.dd.desc", { days: p.drawdown_days }) },
+          { value: word(`wl.mood.${regime.state}`), label: t("wl.mood.label", { bench: regime.benchmark }), tone: STATE_TONE[regime.state], desc: t("wl.mood.desc", { bench: regime.benchmark, date: fmtDate(regime.as_of) }) },
+          { value: word(`wl.dir.${regime.trend}`), label: t("wl.dir.label", { days: p.trend_sma_days }), tone: TREND_TONE[regime.trend], desc: t(m.sma_slope_pct >= 0 ? "wl.dir.descRising" : "wl.dir.descFalling", { dist: fmtPct(m.dist_sma_pct, 1), days: p.trend_sma_days, slope: fmtPct(m.sma_slope_pct), slopeDays: p.slope_days }) },
+          { value: `${fmtNum(m.vol_ann_pct, 1)}%`, label: t("wl.vol.label"), tone: "flat", desc: t("wl.vol.desc", { days: p.vol_days }) },
+          { value: fmtPct(m.drawdown_pct, 1), label: t("wl.dd.label"), tone: m.drawdown_pct < -10 ? "down" : "flat", desc: t("wl.dd.desc", { days: p.drawdown_days }) },
           ...(total ? [{ value: t("wl.above.value", { above, total }), label: t("wl.above.label"), tone: "flat", desc: t("wl.above.desc") }] : []),
         ]}
       />

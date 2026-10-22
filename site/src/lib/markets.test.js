@@ -115,35 +115,9 @@ test("the Sectors list reads like the other fund lists", () => {
   assert.equal(marketNote({ id: "sectors" }), null);
 });
 
-test("the market words in Hebrew: switch lines, nouns, notes, who the market is and the yearly cost", async () => {
-  const { hasHebrew, stripBidi } = await import("./i18n.js");
-  const { marketWho, notYet } = await import("./markets.js");
-  const he = switchChoices(MARKETS, "he");
-  assert.deepEqual(he.map((c) => [c.id, c.label, c.available]), [["nasdaq", "Nasdaq", true], ["tlv", "TLV", true], ["ishares", "iShares", false]]);
-  assert.deepEqual(he.map((c) => c.what), ["החברות המובילות בארה״ב", "חברות ישראליות שנסחרות בארה״ב", "קרנות מחקות"]);
-  for (const id of ["chips", "tech", "energy", "sectors"]) assert.ok(hasHebrew(switchChoices([{ id }], "he")[0].what), id);
-  assert.deepEqual(switchChoices([{ id: "lse", label: "LSE", name: "London" }], "he")[0].what, "London"); // no words of its own: the config name
-  assert.deepEqual(switchChoices(MARKETS), switchChoices(MARKETS, "en"));
-  assert.deepEqual(nounsFor({ kind: "funds" }, "he"), { one: "קרן", many: "קרנות" });
-  assert.deepEqual(nounsFor(null, "he"), { one: "חברה", many: "חברות" });
-  assert.match(marketNote({ id: "tlv" }, "he"), /^חברות ישראליות שנסחרות גם בארה״ב\./);
-  assert.equal(marketNote({ id: "nasdaq" }, "he"), null);
-  assert.equal(notYet(), NOT_YET);
-  assert.equal(notYet("he"), "המספרים של השוק הזה יופיעו אחרי הריצה הלילית הבאה.");
-  assert.equal(marketWho("tlv"), MARKET_WHO.tlv);
-  assert.equal(marketWho("tlv", "he"), "השוק הישראלי");
-  assert.equal(marketWho("tech", "he"), "מדד Nasdaq-100");
-  for (const id of Object.keys(MARKET_WHO)) assert.ok(hasHebrew(marketWho(id, "he")), id);
-  assert.equal(marketWho("nasdaq", "he"), undefined);
-  // The list's name sits inside the Hebrew sentence as its own left-to-right piece.
-  const line = nasdaqOnlyLine("TLV", "he");
-  assert.ok(line.includes("⁨TLV⁩"));
-  assert.match(stripBidi(line), /^העמוד הזה עוסק רק ברשימת Nasdaq.*הרשימה TLV נועדה להתבוננות בלבד/);
-  assert.equal(nasdaqOnlyLine("TLV"), nasdaqOnlyLine("TLV", "en"));
-  // The yearly cost: the percent is one left-to-right piece, so "%" stays on the number's right in Hebrew.
-  assert.equal(costWords(0.03, "he"), "⁦0.03%⁩ בשנה");
-  assert.equal(stripBidi(costWords(0.2, "he")), "0.2% בשנה");
-  assert.equal(costWords(null, "he"), null);
-  assert.equal(costWords(0.15, "en"), "0.15% a year");
+test("the market words: a list without words of its own keeps its config name; the yearly cost; any reader", () => {
+  assert.deepEqual(switchChoices([{ id: "lse", label: "LSE", name: "London" }])[0].what, "London");
+  assert.equal(costWords(0.15), "0.15% a year");
+  assert.equal(costWords(null), null);
   assert.doesNotMatch(TLV_NOTE, /\bour\b/);
 });

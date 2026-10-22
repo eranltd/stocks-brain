@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -18,16 +18,6 @@
   <meta name="format-detection" content="telephone=no">
   <script>
     try { var t = localStorage.getItem("sb-theme"); if (t) document.documentElement.dataset.theme = t; } catch (_) {}
-    // Language before the first paint (the same rule as detectLang in src/lib/i18n.js): a choice made with the switch,
-    // else the device's first language. English stays the default; LangProvider keeps <html lang dir> in step after.
-    (function () {
-      var l = null;
-      try { l = localStorage.getItem("sb:lang"); } catch (_) {}
-      if (l !== "he" && l !== "en") {
-        try { l = /^(he|iw)(-|_|$)/i.test((navigator.languages && navigator.languages[0]) || navigator.language || "") ? "he" : "en"; } catch (_) { l = "en"; }
-      }
-      if (l === "he") { document.documentElement.lang = "he"; document.documentElement.dir = "rtl"; }
-    })();
   </script>
 </head>
 <body>

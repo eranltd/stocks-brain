@@ -26,15 +26,10 @@ test("newerBundle reports a different deployed bundle only", async () => {
   assert.equal(await newerBundle({ doc: docWith("/src/main.jsx"), fetchFn: fetchOf(html("assets/index-new.js")) }), null);
 });
 
-test("the footer's data line: unchanged in English, whole sentences in Hebrew with the time left to right", async () => {
+test("the footer's data line", async () => {
   const { buildLine } = await import("./appversion.js");
-  const { stripBidi } = await import("./i18n.js");
   const live = { price_source: "live", price_provider: "tiingo", source: "sample", built_at: "2026-10-18T05:39:51Z" };
   assert.equal(buildLine(live), "Prices live · tiingo · picks sample · built 2026-10-18 05:39:51 UTC");
-  assert.equal(buildLine({ ...live, price_source: "sample", source: "live" }, "en"), "Prices sample · picks live · built 2026-10-18 05:39:51 UTC");
-  const he = buildLine(live, "he");
-  assert.equal(stripBidi(he), "מחירים מתעדכנים · tiingo · בחירות לדוגמה · נבנה ב-2026-10-18 05:39:51 UTC");
-  assert.ok(he.includes("⁦2026-10-18 05:39:51 UTC⁩"));
-  assert.equal(stripBidi(buildLine({ ...live, price_source: "sample", source: "live" }, "he")), "מחירים לדוגמה · בחירות אמיתיות · נבנה ב-2026-10-18 05:39:51 UTC");
-  assert.equal(stripBidi(buildLine({ ...live, source: "other" }, "he")), "מחירים מתעדכנים · tiingo · בחירות other · נבנה ב-2026-10-18 05:39:51 UTC");
+  assert.equal(buildLine({ ...live, price_source: "sample", source: "live" }), "Prices sample · picks live · built 2026-10-18 05:39:51 UTC");
+  assert.equal(buildLine({ ...live, source: "other" }), "Prices live · tiingo · picks other · built 2026-10-18 05:39:51 UTC");
 });

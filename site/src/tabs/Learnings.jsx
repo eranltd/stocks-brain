@@ -1,7 +1,7 @@
-import { pad2 } from "../lib/format.js";
-import { useLang, En, EnglishNote } from "../lib/lang.jsx";
-import dict from "../i18n/learn.js";
+import { pad2, fmtDate } from "../lib/format.js";
+import dict from "../text/learn.js";
 import { Accent, ArrowRight, Chip, Container, Empty, Reveal, SectionHead, Strip } from "../components/ui.jsx";
+import { strings } from "../lib/text.js";
 
 export default function Learnings({ data, openKB }) {
   const { learnings, outcomes, manifest } = data;
@@ -9,8 +9,7 @@ export default function Learnings({ data, openKB }) {
   const active = items.filter((l) => l.status === "active");
   const evidence = new Set(items.flatMap((l) => l.evidence));
   const byId = Object.fromEntries(outcomes.map((o) => [o.pick_id, o]));
-  const { t: tr, fmt } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
 
   return (
     <Container className="pt-20">
@@ -24,7 +23,7 @@ export default function Learnings({ data, openKB }) {
       />
       <Strip
         cells={[
-          { value: items.length, label: t("lrn.s.lessons"), desc: t("lrn.s.updated", { date: fmt.date(learnings.updated_at) }) },
+          { value: items.length, label: t("lrn.s.lessons"), desc: t("lrn.s.updated", { date: fmtDate(learnings.updated_at) }) },
           { value: active.length, label: t("lrn.s.inUse"), desc: t("lrn.s.inUseDesc") },
           { value: items.length - active.length, label: t("lrn.s.retired"), tone: "flat", desc: t("lrn.s.retiredDesc") },
           { value: t("lrn.s.people"), label: t("lrn.s.write"), tone: "people", dashed: true, desc: t("lrn.s.writeDesc") },
@@ -32,7 +31,6 @@ export default function Learnings({ data, openKB }) {
       />
       <div className="mt-10 grid gap-5">
         {items.length === 0 && <Empty title={t("lrn.empty.title")}>{t("lrn.empty.body")}</Empty>}
-        {items.length > 0 && <EnglishNote className="mb-0" />}
         {items.map((l, i) => (
           <Reveal key={l.id} delay={i * 80} as="article" className={`card grid gap-6 p-7 sm:p-9 md:grid-cols-[180px_minmax(0,1fr)] ${l.status === "retired" ? "border-dashed opacity-70" : "card-hover"}`}>
             <div>
@@ -41,7 +39,7 @@ export default function Learnings({ data, openKB }) {
             </div>
             <div className="min-w-0">
               <Chip kind={l.status} icon={false}>{t.has(`lrn.status.${l.status}`) ? t(`lrn.status.${l.status}`) : l.status}</Chip>
-              <En as="p" className="mt-4 text-[clamp(18px,2vw,23px)] leading-snug font-medium tracking-[-0.02em]">{l.lesson}</En>
+              <p className="mt-4 text-[clamp(18px,2vw,23px)] leading-snug font-medium tracking-[-0.02em]">{l.lesson}</p>
               <div className="mt-6 border-t border-line pt-5">
                 <div className="meta mb-3">{t("lrn.proof", { count: l.evidence.length })}</div>
                 <div className="flex flex-wrap gap-2">

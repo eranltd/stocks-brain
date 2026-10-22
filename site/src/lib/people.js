@@ -1,9 +1,8 @@
 // View helpers for the People tab (config/people.json + data/people/scores.json).
-// Every number comes from scripts/people.py; nothing here computes a return. Sentences take `lang` last ("en" by default,
-// so old callers and tests keep English); the words are in i18n/learn.js.
+// Every number comes from scripts/people.py; nothing here computes a return. The words are in text/learn.js.
 
-import { translate } from "./i18n.js";
-import dict from "../i18n/learn.js";
+import { strings } from "./text.js";
+import dict from "../text/learn.js";
 
 /** "Pershing Square Capital Management, L.P." -> "Pershing Square"; "Berkshire Hathaway Inc" -> "Berkshire Hathaway". */
 export function shortVia(via) {
@@ -46,8 +45,8 @@ const pct1 = (v) => `${v >= 0 ? "+" : "−"}${Math.abs(v).toFixed(1)}%`;
  * One plain line for a person's record, e.g. "3 calls logged, 2 half a year old: too few to judge (needs 10)".
  * firmCalls: calls on this person's fund that are the firm's own (scored for the fund, never for the person).
  */
-export function recordLine(person, rec, judgeWeeks = 26, minMatured = 10, firmCalls = [], lang = "en") {
-  const t = translate(dict, lang);
+export function recordLine(person, rec, judgeWeeks = 26, minMatured = 10, firmCalls = []) {
+  const t = strings(dict);
   if (person.status === "principles_only") return t("rec.principlesOnly");
   if (!rec || !rec.n) {
     if (firmCalls.length) return t("rec.firm", { count: firmCalls.length, firm: shortVia(firmCalls[0].via) });
@@ -61,8 +60,8 @@ export function recordLine(person, rec, judgeWeeks = 26, minMatured = 10, firmCa
 }
 
 /** Where a scored call stands at the judging horizon: right, wrong, maturing, or not scored. */
-export function callStatus(c, judgeWeeks = 26, lang = "en") {
-  const t = translate(dict, lang);
+export function callStatus(c, judgeWeeks = 26) {
+  const t = strings(dict);
   if (!c.scored) return { kind: "unscored", label: t("status.unscored"), detail: c.reason ?? "" };
   const leg = c[`w${judgeWeeks}`];
   if (leg) return leg.right ? { kind: "right", label: t("status.right") } : { kind: "wrong", label: t("status.wrong") };
@@ -70,13 +69,13 @@ export function callStatus(c, judgeWeeks = 26, lang = "en") {
 }
 
 /** Where a call stands, in words, e.g. "judged wrong at 26 weeks, −20.1% for the call vs the core". */
-export function statusPhrase(c, judgeWeeks = 26, lang = "en") {
-  const t = translate(dict, lang);
-  const st = callStatus(c, judgeWeeks, lang);
+export function statusPhrase(c, judgeWeeks = 26) {
+  const t = strings(dict);
+  const st = callStatus(c, judgeWeeks);
   const leg = c[`w${judgeWeeks}`];
   if (st.kind === "right" || st.kind === "wrong")
     return t(st.kind === "right" ? "status.judgedRight" : "status.judgedWrong", { weeks: judgeWeeks, pct: pct1(leg.signed_excess_pct) });
-  if (st.kind === "maturing") return t("status.maturingPhrase", { detail: st.detail }, { bidi: false });
+  if (st.kind === "maturing") return t("status.maturingPhrase", { detail: st.detail });
   return st.detail ? t("status.notScoredPhrase", { detail: st.detail }) : st.label;
 }
 
@@ -90,8 +89,8 @@ export function callsTouching(calls, tickers) {
  * Join the config's calls with their scores (by id); a call without a score row still shows.
  * `note` stays the config's note (context about the call); `reason` is why code did not score it.
  */
-export function joinCalls(cfg, scores, lang = "en") {
-  const t = translate(dict, lang);
+export function joinCalls(cfg, scores) {
+  const t = strings(dict);
   const byId = Object.fromEntries((scores?.calls ?? []).map((s) => [s.id, s]));
   return (cfg?.calls ?? [])
     .map((c) => {

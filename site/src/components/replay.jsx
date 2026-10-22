@@ -3,17 +3,17 @@ import { loadMarketCandles } from "../lib/data.js";
 import { useReducedMotion } from "../lib/motion.js";
 import { bands, candleGeom, fitDomain, linePath, monthTicks, niceTicks, scaleLinear, tickLabel } from "../lib/candles.js";
 import { advance, endSummary, frameAt, MODES, monthsSpanned, REPLAY_MS, replaySeries, sinceWords, SPEEDS } from "../lib/replay.js";
-import { Ltr, useLang } from "../lib/lang.jsx";
-import dict from "../i18n/stock.js";
+import dict from "../text/stock.js";
 import { Reveal, Segmented } from "./ui.jsx";
 import { CandleMark } from "./candles.jsx";
+import { strings } from "../lib/text.js";
+import { fmtDate, fmtPct } from "../lib/format.js";
 
 /*
  * The replay on a Stock page: the name's real candles of the past six months (or about a year of weeks) appear one at a
  * time from the left, the 20-period average drawing along, with a big date and a running "since April" counter. It
  * never starts by itself, pauses when it scrolls out of view or the tab is hidden, and under reduced motion "Play"
- * simply shows the whole period. The chart is a left-to-right island in both languages; the controls and words follow
- * the page. Numbers are percent from the replay's first close (lib/replay.js), never prices.
+ * simply shows the whole period. Numbers are percent from the replay's first close (lib/replay.js), never prices.
  *
  * usePlayer and PlayerControls are shared with the race on Home (components/race.jsx).
  */
@@ -137,8 +137,7 @@ export function PosterPlay({ onClick, label }) {
 }
 
 /**
- * Play or pause, restart, the speed, and a slider to any step. The slider runs left to right in both languages, like the
- * chart above it; the buttons follow the page. `words` = { play, resume, pause, restart, speed, scrub }.
+ * Play or pause, restart, the speed, and a slider to any step. `words` = { play, resume, pause, restart, speed, scrub }.
  */
 export function PlayerControls({ player, words, valueText, startLabel, endLabel, reduced = false }) {
   const { pos, playing, started, ended, speed, setSpeed, play, pause, restart, scrub, last } = player;
@@ -147,14 +146,14 @@ export function PlayerControls({ player, words, valueText, startLabel, endLabel,
   const resume = started && !ended && !playing && k < last;
   return (
     <div className="mt-3">
-      <Ltr>
+      <div>
         <input type="range" min={0} max={last} step={1} value={k} onChange={(e) => scrub(Number(e.target.value))}
           aria-label={words.scrub} aria-valuetext={valueText} className="scrub" style={{ "--p": `${pct}%` }} />
         <div className="flex justify-between gap-3 font-mono text-[11.5px] text-ink-3">
-          <span dir="auto">{startLabel}</span>
-          <span dir="auto">{endLabel}</span>
+          <span>{startLabel}</span>
+          <span>{endLabel}</span>
         </div>
-      </Ltr>
+      </div>
       <div className="mt-3 flex flex-wrap items-center gap-2.5">
         <button type="button" onClick={playing ? pause : play} data-role="play"
           className="inline-flex min-h-[48px] min-w-[120px] items-center justify-center gap-2 rounded-full bg-ink px-5 text-[16px] font-semibold text-bg transition active:scale-[0.97]">
@@ -168,7 +167,7 @@ export function PlayerControls({ player, words, valueText, startLabel, endLabel,
         {!reduced && (
           <div className="ms-auto">
             <Segmented label={words.speed} value={String(speed)} onChange={(v) => setSpeed(Number(v))}
-              options={SPEEDS.map((x) => ({ value: String(x), label: <span dir="ltr" className="num font-mono">{`${x}×`}</span> }))} />
+              options={SPEEDS.map((x) => ({ value: String(x), label: <span className="num font-mono">{`${x}×`}</span> }))} />
           </div>
         )}
       </div>
@@ -176,16 +175,15 @@ export function PlayerControls({ player, words, valueText, startLabel, endLabel,
   );
 }
 
-/** The month and year of a date, short ("Apr 2026" / "אפר׳ 2026"), for the ends of a slider. */
-export function monthYear(iso, lang) {
-  return new Date(`${iso}T00:00:00Z`).toLocaleDateString(lang === "he" ? "he-IL" : "en-GB", { month: "short", year: "numeric", timeZone: "UTC" });
+/** The month and year of a date, short ("Apr 2026"), for the ends of a slider. */
+export function monthYear(iso) {
+  return new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-GB", { month: "short", year: "numeric", timeZone: "UTC" });
 }
 
 /* ------------------------------------------------------------------ the Stock page card */
 
 export function StockReplay({ data, symbol }) {
-  const { lang, t: tr, fmt } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const reduced = useReducedMotion();
   const uid = useId();
   const [state, setState] = useState({ status: "loading", doc: null });
@@ -207,9 +205,9 @@ export function StockReplay({ data, symbol }) {
   if (state.status === "none" || (state.status === "ok" && !s && mode === "daily")) return null;
 
   const f = s ? frameAt(s, player.pos) : null;
-  const dateText = !f ? "" : s.weekly ? (f.partial ? t("rp.weekSoFar") : t("rp.weekTo", { date: fmt.date(f.date) })) : fmt.date(f.date);
-  const moveText = !f ? "" : f.move == null ? t(`rp.first.${s.mode}`) : t(`rp.move.${s.mode}`, { pct: fmt.pct(f.move, 1) });
-  const summary = s && player.ended ? endSummary(s, symbol, lang) : "";
+  const dateText = !f ? "" : s.weekly ? (f.partial ? t("rp.weekSoFar") : t("rp.weekTo", { date: fmtDate(f.date) })) : fmtDate(f.date);
+  const moveText = !f ? "" : f.move == null ? t(`rp.first.${s.mode}`) : t(`rp.move.${s.mode}`, { pct: fmtPct(f.move, 1) });
+  const summary = s && player.ended ? endSummary(s, symbol) : "";
   const announce = summary || (f && player.started && !player.playing ? t("rp.paused", { date: dateText }) : "");
   const words = { play: t("rp.play"), resume: t("rp.resume"), pause: t("rp.pause"), restart: t("rp.restart"), speed: t("rp.speed"), scrub: t(`rp.scrub.${mode}`) };
 
@@ -240,9 +238,9 @@ export function StockReplay({ data, symbol }) {
           {/* Phone: the counter, then the date and that day's move on one line; wider: the date block at the end. */}
           <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between sm:gap-5">
             <div className="min-w-0">
-              <div className="text-[13.5px] text-ink-3">{sinceWords(s.dates, lang)}</div>
+              <div className="text-[13.5px] text-ink-3">{sinceWords(s.dates)}</div>
               <div className={`num text-[clamp(36px,10vw,52px)] font-semibold leading-none tracking-[-0.03em] transition-colors duration-200 motion-reduce:transition-none ${TONE_TEXT[f.tone]}`}>
-                <bdi>{fmt.pct(f.change, 1)}</bdi>
+                <span>{fmtPct(f.change, 1)}</span>
               </div>
             </div>
             <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5 sm:flex-col sm:items-end">
@@ -256,14 +254,14 @@ export function StockReplay({ data, symbol }) {
           </div>
 
           <div ref={watch} className="relative mt-3">
-            <ReplayChart s={s} pos={player.pos} poster={!player.started} label={t(`rp.aria.${s.mode}`, { name: symbol, from: fmt.date(s.dates[0]), to: fmt.date(f.date), change: fmt.pct(f.change, 1) })} />
+            <ReplayChart s={s} pos={player.pos} poster={!player.started} label={t(`rp.aria.${s.mode}`, { name: symbol, from: fmtDate(s.dates[0]), to: fmtDate(f.date), change: fmtPct(f.change, 1) })} />
             {!player.started && <PosterPlay onClick={player.play} label={words.play} />}
           </div>
 
           {summary && <p className="mt-4 rounded-2xl border border-line-2 bg-surface-2 px-4 py-3 text-[16.5px] leading-relaxed text-ink">{summary}</p>}
 
           <PlayerControls player={player} words={words} reduced={reduced} valueText={dateText}
-            startLabel={monthYear(s.dates[0], lang)} endLabel={monthYear(s.dates.at(-1), lang)} />
+            startLabel={monthYear(s.dates[0])} endLabel={monthYear(s.dates.at(-1))} />
 
           <p className="sr-only" aria-live="polite">{announce}</p>
 
@@ -293,7 +291,6 @@ export function StockReplay({ data, symbol }) {
  * nothing jumps while it plays. Before the first play (`poster`) it shows the full chart, faded under the Play button.
  */
 function ReplayChart({ s, pos, poster, label }) {
-  const { lang, fmt } = useLang();
   const box = useRef(null);
   const W = Math.max(260, useWidth(box));
   const narrow = W < 560;
@@ -310,9 +307,9 @@ function ReplayChart({ s, pos, poster, label }) {
     return {
       y, lay, step, ticks,
       geoms: s.c.map((_, i) => candleGeom(s, i, y, lay)),
-      months: monthTicks(s.dates, lay.cx, narrow ? 36 : 46, lang),
+      months: monthTicks(s.dates, lay.cx, narrow ? 36 : 46),
     };
-  }, [s, x1, PH, narrow, lang]);
+  }, [s, x1, PH, narrow]);
 
   const f = frameAt(s, pos);
   const k = f.i;
@@ -331,12 +328,12 @@ function ReplayChart({ s, pos, poster, label }) {
     ma += `L${xm.toFixed(1)},${ym.toFixed(1)}`;
   }
   const headX = geo.lay.cx(k), headY = geo.y(s.c[k]);
-  const tagText = fmt.pct(f.change, 1);
+  const tagText = fmtPct(f.change, 1);
   const ticks = geo.ticks.filter((v) => Math.abs(geo.y(v) - headY) >= 13);
   const col = TONE_VAR[f.moveTone];
 
   return (
-    <div ref={box} dir="ltr" className="select-none">
+    <div ref={box} className="select-none">
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} className="block max-w-full" role="img" aria-label={label} data-pos={pos.toFixed(3)}>
         {geo.ticks.map((v) => <line key={v} x1={L} x2={x1} y1={Math.round(geo.y(v)) + 0.5} y2={Math.round(geo.y(v)) + 0.5} stroke="var(--line)" />)}
         {ticks.map((v) => <text key={v} x={W - 2} y={geo.y(v) + 3.5} textAnchor="end" className="num fill-ink-3 font-mono text-[10.5px]">{tickLabel(v, geo.step)}</text>)}

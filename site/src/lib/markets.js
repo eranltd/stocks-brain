@@ -2,39 +2,32 @@
 // market-aware pages (Home, Stocks, a stock page) read for it. Pure functions, no React; tested in markets.test.js.
 // loadMarket (lib/data.js) fetches a market's view; this file only picks and reshapes.
 
-import { ltr, translate } from "./i18n.js";
-import text from "../i18n/shell.js";
+import { strings } from "./text.js";
+import text from "../text/shell.js";
 
 export const DEFAULT_MARKET = "nasdaq";
-// Every sentence here takes `lang` last (default "en", so old callers and tests keep English); the words are in
-// i18n/shell.js ("market.*"). Hebrew nouns (חברה/חברות, קרן/קרנות) are all feminine, and every Hebrew MARKET_WHO phrase
-// is masculine singular (השוק הישראלי, תחום השבבים כולו, מדד Nasdaq-100), so a caller's template can agree with either.
-const T = { en: translate(text, "en"), he: translate(text, "he") };
-const tr = (lang) => T[lang] ?? T.en;
+// The words are in text/shell.js ("market.*").
+const t = strings(text);
 const MARKET_IDS = ["nasdaq", "tlv", "ishares", "chips", "tech", "energy", "sectors"];
 const WHO_IDS = ["tlv", "ishares", "chips", "tech", "energy", "sectors"];
-const byId = (ids, prefix, lang) => Object.fromEntries(ids.map((id) => [id, tr(lang)(`${prefix}.${id}`)]));
+const byId = (ids, prefix) => Object.fromEntries(ids.map((id) => [id, t(`${prefix}.${id}`)]));
 
 /** One line under each choice in the switch. */
-export const SWITCH_WORDS = byId(MARKET_IDS, "market.what", "en");
-const SWITCH_HE = byId(MARKET_IDS, "market.what", "he");
+export const SWITCH_WORDS = byId(MARKET_IDS, "market.what");
 
-export const TLV_NOTE = T.en("market.tlvNote");
-export const NOT_YET = T.en("market.notYet");
-/** NOT_YET in a language. */
-export const notYet = (lang = "en") => tr(lang)("market.notYet");
+export const TLV_NOTE = t("market.tlvNote");
+export const NOT_YET = t("market.notYet");
 
 /** Pages that read the Nasdaq list only (the daily brain, the practice portfolio, the rules, the people, the record). */
 export const NASDAQ_ONLY = ["details", "people", "portfolio", "playbook", "track", "kb", "learnings", "runs"];
 
 /** The calm line such a page shows while another market is chosen. */
-export const nasdaqOnlyLine = (label, lang = "en") => tr(lang)("market.nasdaqOnly", { label });
+export const nasdaqOnlyLine = (label) => t("market.nasdaqOnly", { label });
 
-/** The switch's choices, in config order: {id, label, what, available}; `what` in `lang` (a market this file has no
- * words for falls back to its config name, which is English). */
-export function switchChoices(markets = [], lang = "en") {
-  const words = lang === "he" ? SWITCH_HE : SWITCH_WORDS;
-  return markets.map((m) => ({ id: m.id, label: m.label ?? m.id, what: words[m.id] ?? m.name ?? "", available: Boolean(m.available) }));
+/** The switch's choices, in config order: {id, label, what, available} (a market this file has no words for falls back to
+ * its config name). */
+export function switchChoices(markets = []) {
+  return markets.map((m) => ({ id: m.id, label: m.label ?? m.id, what: SWITCH_WORDS[m.id] ?? m.name ?? "", available: Boolean(m.available) }));
 }
 
 /** The default market's id: the config default, else the first, else "nasdaq". */
@@ -46,20 +39,15 @@ export function pickMarket(markets = [], wanted = null) {
 }
 
 /** "company"/"companies" or, for a funds market, "fund"/"funds". */
-/** In Hebrew: { one: "קרן", many: "קרנות" } or { one: "חברה", many: "חברות" } (both feminine). */
-export function nounsFor(entry, lang = "en") {
-  const t = tr(lang);
+export function nounsFor(entry) {
   return entry?.kind === "funds" ? { one: t("market.noun.fund"), many: t("market.noun.funds") } : { one: t("market.noun.company"), many: t("market.noun.companies") };
 }
 
 /** The market's own note in plain words, shown once on its pages (TLV only: what is and is not included). */
-export const marketNote = (entry, lang = "en") => (entry?.id === "tlv" ? tr(lang)("market.tlvNote") : null);
+export const marketNote = (entry) => (entry?.id === "tlv" ? TLV_NOTE : null);
 
 /** Who "the market" is in the home's sentence, without digits: the benchmark of that market in everyday words. */
-export const MARKET_WHO = byId(WHO_IDS, "market.who", "en");
-const WHO_HE = byId(WHO_IDS, "market.who", "he");
-/** MARKET_WHO in a language (Hebrew phrases are masculine singular: "השוק הישראלי"), or undefined for another id. */
-export const marketWho = (id, lang = "en") => (lang === "he" ? WHO_HE : MARKET_WHO)[id];
+export const MARKET_WHO = byId(WHO_IDS, "market.who");
 
 /** The symbols on a market view's list (not the benchmark). */
 export const membersOf = (view) => (view?.watchlist?.symbols ?? []).map((s) => s.symbol);
@@ -134,10 +122,9 @@ export function candlesOf(data) {
 /** A fund's card from config/funds.json, or null. */
 export const fundCard = (funds, ticker) => (funds?.funds ?? []).find((f) => f.ticker === ticker) ?? null;
 
-/** A fund's yearly cost in words: "0.03% a year" / "0.03% בשנה" (the share of the money the fund keeps each year). */
-export function costWords(pct, lang = "en") {
+/** A fund's yearly cost in words: "0.03% a year" (the share of the money the fund keeps each year). */
+export function costWords(pct) {
   if (typeof pct !== "number" || !Number.isFinite(pct)) return null;
   const p = `${pct.toFixed(2).replace(/0$/, "")}%`;
-  // In Hebrew the percent is one left-to-right piece, so "%" stays on the number's right side.
-  return tr(lang)("market.costYear", { pct: lang === "he" ? ltr(p) : p }, { bidi: false });
+  return t("market.costYear", { pct: p });
 }

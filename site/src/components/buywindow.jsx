@@ -1,14 +1,14 @@
 import { dayWords } from "../lib/buywindow.js";
-import { useLang } from "../lib/lang.jsx";
-import dict from "../i18n/stock.js";
+import dict from "../text/stock.js";
 import { ArrowRight, Reveal } from "./ui.jsx";
+import { strings } from "../lib/text.js";
 
 /*
  * "When would the rules allow a buy?": what this site's own rules say about one company or fund, in this order: real
  * money first (the weekly buy of the whole-market fund), then the weekly game (its next look, and for each weekly rule
  * whether it would pick the name if today were its decision day, and why), then the monthly rule (folded away), the
- * site's checks, what to wait for, and one honest line. Wording: lib/buywindow.js (pass it the page's `lang`), the
- * card's own words: i18n/stock.js "bwc.*". Made for a phone: one column, big plain headline, rows that wrap.
+ * site's checks, what to wait for, and one honest line. Wording: lib/buywindow.js, the
+ * card's own words: text/stock.js "bwc.*". Made for a phone: one column, big plain headline, rows that wrap.
  */
 
 const TONE = {
@@ -28,14 +28,14 @@ function Head({ children }) {
 }
 
 function Mark({ ok, small = false }) {
-  const t = useLang().t(dict);
+  const t = strings(dict);
   const m = MARK[String(ok)] ?? MARK.null;
   return <span className={`grid shrink-0 place-items-center rounded-full font-semibold ${small ? "mt-0.5 size-6 text-[12px]" : "mt-0.5 size-8 text-[14px]"} ${m.cls}`} role="img" aria-label={t(m.label)}>{m.glyph}</span>;
 }
 
 /** Full rows: a check, its value now and what it needs. */
 function Rows({ rows }) {
-  const t = useLang().t(dict);
+  const t = strings(dict);
   return (
     <ul className="grid gap-2">
       {rows.map((c) => (
@@ -58,15 +58,14 @@ function Rows({ rows }) {
 
 /** One rule's look, compact: "<rule>: would pick it" or "would not pick it: why", then its checks in one line each. */
 function RuleBlock({ r, showDate = false }) {
-  const { lang, t: tr } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   return (
     <li className="rounded-2xl border border-line-2 p-4">
       <div className="flex items-start gap-3">
         <Mark ok={r.would} />
         <p className="min-w-0 flex-1 pt-1 text-[16.5px] leading-snug text-ink">
           <span className="font-semibold">{r.name}:</span> {r.line}{!r.would && r.why ? `: ${r.why}` : ""}.
-          {showDate && r.nextReview && <span className="block text-[14px] text-ink-3">{t("bwc.nextLook", { date: dayWords(r.nextReview, lang) })}</span>}
+          {showDate && r.nextReview && <span className="block text-[14px] text-ink-3">{t("bwc.nextLook", { date: dayWords(r.nextReview) })}</span>}
         </p>
       </div>
       <ul className="mt-3 grid gap-1.5 border-t border-line pt-3">
@@ -84,7 +83,7 @@ function RuleBlock({ r, showDate = false }) {
 }
 
 export function BuyWindowCard({ a, go }) {
-  const t = useLang().t(dict);
+  const t = strings(dict);
   if (!a) return null;
   const tone = TONE[a.tone] ?? TONE.wait;
   const hasGame = a.games?.length > 0;
@@ -164,7 +163,7 @@ export function BuyWindowCard({ a, go }) {
 const LINE_DOT = { accent: "var(--accent)", flat: "var(--people)" };
 
 /** The one short line on a home company card ("When to buy: not this week (see why)"), tappable to the Stock page's card.
- *  Its words come from buyLine(a, today, lang) in lib/buywindow.js. */
+ *  Its words come from buyLine(a, today) in lib/buywindow.js. */
 export function BuyLine({ line, onClick }) {
   if (!line) return null;
   return (

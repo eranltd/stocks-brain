@@ -1,15 +1,13 @@
-import { translate } from "../lib/i18n.js";
-import { Bdi, En, useLang } from "../lib/lang.jsx";
-import dict from "../i18n/stock.js";
+import { strings } from "../lib/text.js";
+import dict from "../text/stock.js";
 import { ArrowRight, Reveal } from "./ui.jsx";
 
 /**
  * Lessons and claims for today, built by code from derived prices, the regime and the library.
- * No model involved: conditions map to library tags, and the principles carrying those tags are shown. Each lesson's
- * `why` is in `lang` ("en" by default); `whyKey`/`whyVars` let a component say it again in the page's language.
+ * No model involved: conditions map to library tags, and the principles carrying those tags are shown.
  */
-export function marketBrief(data, lang = "en") {
-  const t = translate(dict, lang);
+export function marketBrief(data) {
+  const t = strings(dict);
   const { market, regime, bench, library, observations, watchlist } = data;
   const members = market.symbols.filter((s) => s.symbol !== bench.symbol);
   const dd = regime?.metrics.drawdown_pct ?? -100;
@@ -38,7 +36,7 @@ export function marketBrief(data, lang = "en") {
       .sort((a, b) => b.score - a.score || (b.p.source.published ?? "").localeCompare(a.p.source.published ?? ""))[0];
     if (!best) return null;
     used.add(best.p.id);
-    return { why: c.why, whyKey: c.key, whyVars: c.vars, p: best.p };
+    return { why: c.why, p: best.p };
   }).filter(Boolean).slice(0, 3);
 
   // Claims only about the watchlist itself (aliases included), never about the benchmark.
@@ -52,8 +50,7 @@ export function marketBrief(data, lang = "en") {
 }
 
 export function BriefSections({ data, brief, go }) {
-  const { t: tr } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const titleOf = (s) => (s.title.match(/\(([^()]*)\)\s*$/) || [, s.title])[1];
   return (
     <section id="brief" className="scroll-mt-28 pt-24">
@@ -66,13 +63,13 @@ export function BriefSections({ data, brief, go }) {
           </div>
           <p className="mt-1 text-[14px] text-ink-3">{t("mb.lessons.lede")}</p>
           <ol className="mt-6 grid gap-5">
-            {brief.lessons.map(({ why, whyKey, whyVars, p }, i) => (
+            {brief.lessons.map(({ why, p }, i) => (
               <li key={p.id} className="border-t border-line pt-5 first:border-0 first:pt-0">
-                <div className="meta text-accent">{whyKey ? t(whyKey, whyVars) : why}</div>
-                <En note={i === 0} className="mt-2 text-[16px] leading-relaxed">
+                <div className="meta text-accent">{why}</div>
+                <div className="mt-2 text-[16px] leading-relaxed">
                   <p>{p.text}</p>
                   <div className="meta mt-2 truncate normal-case tracking-[0.04em]" title={p.source.title}>{p.id} · {titleOf(p.source)}</div>
-                </En>
+                </div>
               </li>
             ))}
             {!brief.lessons.length && <li className="text-ink-3">{t("mb.lessons.none")}</li>}
@@ -89,9 +86,9 @@ export function BriefSections({ data, brief, go }) {
               <li key={c.id} className="border-t border-line pt-4 first:border-0 first:pt-0">
                 <div className="flex flex-wrap items-center gap-2">
                   {c.tickers.map((x) => <span key={x} className="font-mono text-[13px] font-medium text-ink-2">{x}</span>)}
-                  <span className="meta ms-auto"><Bdi>{c.as_of} → {c.expires}</Bdi></span>
+                  <span className="meta ms-auto"><span>{c.as_of} → {c.expires}</span></span>
                 </div>
-                <En as="p" note={i === 0} className="mt-1.5 text-[14.5px] leading-relaxed text-ink-2">{c.text}</En>
+                <p className="mt-1.5 text-[14.5px] leading-relaxed text-ink-2">{c.text}</p>
               </li>
             ))}
             {!brief.claims.length && <li className="text-[14px] text-ink-3">{t("mb.claims.none")}</li>}

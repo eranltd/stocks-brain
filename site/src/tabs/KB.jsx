@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react";
 import { addTradingDays } from "../lib/data.js";
-import { useLang, Auto, En, EnglishNote } from "../lib/lang.jsx";
-import dict from "../i18n/learn.js";
+import dict from "../text/learn.js";
 import { Accent, ArrowRight, Chip, Container, Conviction, Empty, Reveal, SectionHead, Segmented, Dot } from "../components/ui.jsx";
+import { strings } from "../lib/text.js";
+import { fmtPct } from "../lib/format.js";
 
-// Labels are i18n/learn.js "kb.v.<value>".
+// Labels are text/learn.js "kb.v.<value>".
 const VERDICTS = [
   { value: "all" },
   { value: "hit", dot: <Dot tone="accent" /> },
@@ -15,8 +16,7 @@ const VERDICTS = [
 
 export default function KB({ data, query, setQuery, go }) {
   const { kb, settings } = data;
-  const { t: tr } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const [verdict, setVerdict] = useState("all");
   const [stance, setStance] = useState("all");
   const [sort, setSort] = useState("newest");
@@ -55,7 +55,6 @@ export default function KB({ data, query, setQuery, go }) {
             value={query}
             onChange={(e) => { setQuery(e.target.value); setLimit(24); }}
             placeholder={t("kb.search")}
-            dir="auto"
             className="w-full bg-transparent text-[15px] outline-none placeholder:text-ink-3"
             aria-label={t("kb.searchLabel")}
           />
@@ -74,7 +73,6 @@ export default function KB({ data, query, setQuery, go }) {
         <span className="meta ms-auto">{t("kb.count", { n: filtered.list.length, total: kb.length })}</span>
       </Reveal>
 
-      {filtered.list.length > 0 && <EnglishNote className="mt-8" />}
       <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         {filtered.list.slice(0, limit).map((k, i) => <KBCard key={k.id} k={k} i={i % 12} horizon={settings.scoring.horizon_days} />)}
       </div>
@@ -97,8 +95,7 @@ export default function KB({ data, query, setQuery, go }) {
 }
 
 function KBCard({ k, i, horizon }) {
-  const { t: tr, fmt } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const tone = { hit: "var(--accent)", miss: "var(--down)", flat: "var(--flat)", pending: "var(--line-2)" }[k.verdict];
   return (
     <Reveal delay={i * 40} as="article" className="card card-hover flex flex-col overflow-hidden p-6 sm:p-7">
@@ -108,17 +105,17 @@ function KBCard({ k, i, horizon }) {
         <Conviction level={k.conviction} tone="flat" />
       </div>
       <h3 className="mt-4 text-[20px] leading-snug font-semibold tracking-[-0.02em]">
-        <Auto>{k.name}</Auto> <bdi className="font-mono text-[15px] font-normal text-ink-3">{k.ticker}</bdi>
+        {k.name} <span className="font-mono text-[15px] font-normal text-ink-3">{k.ticker}</span>
       </h3>
-      <En as="p" className="mt-2 line-clamp-3 text-[14.5px] leading-relaxed text-ink-2">{k.thesis}</En>
+      <p className="mt-2 line-clamp-3 text-[14.5px] leading-relaxed text-ink-2">{k.thesis}</p>
       <div className="mt-4 flex flex-wrap gap-1.5">
         <Chip kind={k.stance} className="py-1 text-[11px]" />
-        {k.evidence.slice(0, 2).map((e) => <span key={e} lang="en" dir="ltr" className="rounded-full border border-line-2 px-2.5 py-1 font-mono text-[11.5px] text-ink-2">{e}</span>)}
-        {k.evidence.length > 2 && <span dir="ltr" className="rounded-full border border-line-2 px-2.5 py-1 font-mono text-[11.5px] text-ink-3">+{k.evidence.length - 2}</span>}
+        {k.evidence.slice(0, 2).map((e) => <span key={e} className="rounded-full border border-line-2 px-2.5 py-1 font-mono text-[11.5px] text-ink-2">{e}</span>)}
+        {k.evidence.length > 2 && <span className="rounded-full border border-line-2 px-2.5 py-1 font-mono text-[11.5px] text-ink-3">+{k.evidence.length - 2}</span>}
       </div>
       <div className="mt-auto flex items-center justify-between gap-3 pt-6">
-        <Chip kind={k.verdict}>{k.verdict === "pending" ? t("kb.chip.pending") : t(`kb.chip.${k.verdict}`, { pct: fmt.pct(k.outcome.excess_pct, 1) })}</Chip>
-        <span dir="ltr" className="meta num text-end">{k.date} → {k.outcome?.scored_date ?? addTradingDays(k.date, horizon)}</span>
+        <Chip kind={k.verdict}>{k.verdict === "pending" ? t("kb.chip.pending") : t(`kb.chip.${k.verdict}`, { pct: fmtPct(k.outcome.excess_pct, 1) })}</Chip>
+        <span className="meta num text-end">{k.date} → {k.outcome?.scored_date ?? addTradingDays(k.date, horizon)}</span>
       </div>
     </Reveal>
   );

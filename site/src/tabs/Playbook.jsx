@@ -3,24 +3,23 @@ import { fmtDate, fmtNum, fmtPct, signTone } from "../lib/format.js";
 import { LinesChart } from "../components/lines.jsx";
 import { Accent, ArrowRight, Chip, Container, Empty, Headline, Reveal, SectionHead, Segmented } from "../components/ui.jsx";
 import { BaseRates } from "../components/checklist.jsx";
-import { edgeWords, fillNote, forwardWords, stepLabel } from "../lib/checklist.js";
-import { translate } from "../lib/i18n.js";
-import { Bdi, En, EnglishNote, useLang } from "../lib/lang.jsx";
-import dict from "../i18n/plan.js";
+import { edgeWords, fillNote, forwardWords } from "../lib/checklist.js";
+import { strings } from "../lib/text.js";
+import dict from "../text/plan.js";
+import { rich } from "../lib/rich.jsx";
 
-// Every text code writes here is in i18n/plan.js ("pb.*"). The rule book itself (config/rules.json: rule names, plain
-// words, definitions, sets, experiments, open questions), the chart checklist's config and the engine's reasons are data
-// in English for now: they sit in <En> blocks, with the one-line "written in English for now" note once per section in
-// Hebrew.
+// Every text code writes here is in text/plan.js ("pb.*"). The rule book itself (config/rules.json: rule names, plain
+// words, definitions, sets, experiments, open questions), the chart checklist's config and the engine's reasons are data,
+// shown as written.
 
 const FAMILIES = ["savings", "entry", "exit", "sizing", "risk", "fundamental", "process"];
 /** A status or verdict in words ("passed the past test"); an unknown one shows as itself. */
 const labelOf = (t, k) => (t.has(`pb.label.${k}`) ? t(`pb.label.${k}`) : k);
 const EVIDENCE = { replicated: "text-accent", mixed: "text-people", weak: "text-ink-2", untested: "text-ink-3", contradicted: "text-down" };
 const DOT = { passes_history: "var(--accent)", candidate: "var(--people)", inconclusive: "var(--ink-3)", rejected: "var(--down)" };
-/** A study length: whole years when it divides, else weeks ("2 years", "26 weeks"; "שנתיים", "26 שבועות"). */
-const HORIZON = (w, lang = "en") => {
-  const t = translate(dict, lang);
+/** A study length: whole years when it divides, else weeks ("2 years", "26 weeks"). */
+const HORIZON = (w) => {
+  const t = strings(dict);
   return w % 52 === 0 ? t("pb.years", { count: w / 52, n: w / 52 }) : t("pb.weeks", { count: w, n: w });
 };
 /** A headline template with an {accent} slot, as the plain array Headline animates word by word. */
@@ -28,21 +27,21 @@ const accented = (text, accent) => {
   const [a, b = ""] = text.split("{accent}");
   return [a, <Accent key="accent">{accent}</Accent>, b].filter((x) => x !== "");
 };
-/** "+12 bp" / "‎+12 נק׳ בסיס": basis points with their sign. */
+/** "+12 bp": basis points with their sign. */
 const bpText = (t, d) => t("pb.bp", { v: `${d > 0 ? "+" : ""}${fmtNum(d, 0)}` });
-/** "62%": a whole percent, left to right inside a Hebrew line. */
-const wholePct = (v, lang) => (lang === "en" ? `${fmtNum(v, 0)}%` : fmtPct(v, 0, lang).replace("+", ""));
+/** "62%": a whole percent. */
+const wholePct = (v) => `${fmtNum(v, 0)}%`;
 
 // "[engine]" = computed by the program on every daily run; "[planned]" = written down, not built yet, people check it by hand.
 const TAG = /^\[(engine|planned)[^\]]*\]\s*/;
 function Tagged({ text }) {
-  const t = useLang().t(dict);
+  const t = strings(dict);
   const m = text.match(TAG);
   const body = m ? text.slice(m[0].length) : text;
   return (
     <>
       {m && <span className={`me-1.5 inline-block rounded-full border px-2 py-0.5 align-middle font-mono text-[10.5px] uppercase tracking-[0.06em] ${m[1] === "engine" ? "border-accent/50 text-accent" : "border-dashed border-people/60 text-people"}`}>{t(m[1] === "engine" ? "pb.tag.program" : "pb.tag.planned")}</span>}
-      <En as="span">{body}</En>
+      {body}
     </>
   );
 }
@@ -59,15 +58,14 @@ function Stat({ k, v, tone = "", sub }) {
   return (
     <div className="min-w-0">
       <div className="meta">{k}</div>
-      <div className={`num mt-1 font-mono text-[15px] ${tone}`}><bdi>{v}</bdi></div>
-      {sub && <div className="text-[11.5px] text-ink-3"><bdi>{sub}</bdi></div>}
+      <div className={`num mt-1 font-mono text-[15px] ${tone}`}>{v}</div>
+      {sub && <div className="text-[11.5px] text-ink-3">{sub}</div>}
     </div>
   );
 }
 
 export default function Playbook({ data, go }) {
-  const { lang, t: tr } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const rb = data.rulebook;
   const res = data.rulesResult;
   if (!rb) {
@@ -88,16 +86,15 @@ export default function Playbook({ data, go }) {
   return (
     <Container className="pt-14">
       <Reveal className="eyebrow mb-4">{[
-        t("pb.eyebrow", { v: rb.version, date: fmtDate(rb.updated_at, lang) }, { bidi: false }),
-        res ? (res.sample ? t("pb.samplePrices") : t("pb.testedTo", { date: fmtDate(res.as_of, lang) }, { bidi: false })) : null,
+        t("pb.eyebrow", { v: rb.version, date: fmtDate(rb.updated_at) }),
+        res ? (res.sample ? t("pb.samplePrices") : t("pb.testedTo", { date: fmtDate(res.as_of) })) : null,
       ].filter(Boolean).join(" · ")}</Reveal>
       <Headline size="xl" className="max-w-[16ch]">{accented(t("pb.headline"), t("pb.headlineAccent"))}</Headline>
       <Reveal delay={200} as="p" className="mt-6 max-w-[64ch] text-[clamp(17px,1.7vw,20px)] leading-relaxed text-ink">
         <b className="font-semibold">{t("pb.simple")}</b> {t("pb.intro1")}{allRejected ? ` ${t("pb.introRejected")}` : ""} {t("pb.intro2")}
       </Reveal>
       <div className="mt-6 grid max-w-[64ch] gap-4">
-        <EnglishNote />
-        {rb.trader.split("\n\n").map((para, i) => <Reveal key={i} delay={250 + i * 90} as="p" lang="en" dir="ltr" className="text-[clamp(17px,1.7vw,20px)] leading-relaxed text-ink-2">{para}</Reveal>)}
+        {rb.trader.split("\n\n").map((para, i) => <Reveal key={i} delay={250 + i * 90} as="p" className="text-[clamp(17px,1.7vw,20px)] leading-relaxed text-ink-2">{para}</Reveal>)}
       </div>
       <Reveal delay={350} className="mt-8 flex flex-wrap gap-2 text-[13px]">
         <span className="pill">{t("pb.pill.rules", { count: rb.rules.length, n: rb.rules.length })}</span>
@@ -109,10 +106,10 @@ export default function Playbook({ data, go }) {
       <p className="mt-3 max-w-[64ch] text-[13px] leading-relaxed text-ink-3">{t("pb.tryNote")}</p>
       <Reveal className="card mt-8 border-people/40 p-5 text-[14.5px] leading-relaxed text-ink-2 sm:p-6">
         <span className="text-people">{t("pb.read.head")}</span> {t("pb.read.p1")}
-        {" "}{t.rich("pb.read.p2", { random: <span className="text-ink">{t("pb.read.random")}</span>, goal: `+${goal}%` })}
+        {" "}{rich(t, "pb.read.p2", { random: <span className="text-ink">{t("pb.read.random")}</span>, goal: `+${goal}%` })}
         {" "}{t("pb.read.p3")}
         <span className="mt-3 block text-ink-3">
-          {t.rich("pb.read.sure", Object.fromEntries(["replicated", "mixed", "weak", "untested", "contradicted"].map((k) => [k, <b key={k} className="font-medium text-ink-2">{t(`pb.ev.${k}`)}</b>])))}
+          {rich(t, "pb.read.sure", Object.fromEntries(["replicated", "mixed", "weak", "untested", "contradicted"].map((k) => [k, <b key={k} className="font-medium text-ink-2">{t(`pb.ev.${k}`)}</b>])))}
         </span>
       </Reveal>
 
@@ -132,8 +129,7 @@ export default function Playbook({ data, go }) {
 }
 
 function FrozenNote({ res, name }) {
-  const { lang, t: tr } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const differs = [
     ...(res.satellite?.rules ?? []).filter((r) => r.verdict_today && r.verdict_today !== r.verdict).map((r) => ({ id: r.id, now: r.verdict_today, frozen: r.verdict })),
     ...(res.savings?.horizons ?? []).flatMap((h) => h.rows.filter((r) => r.verdict_today && r.verdict_today !== r.verdict).map((r) => ({ id: r.id, now: r.verdict_today, frozen: r.verdict, weeks: h.weeks }))),
@@ -141,17 +137,17 @@ function FrozenNote({ res, name }) {
   return (
     <Reveal className="card mt-5 p-5 text-[14.5px] leading-relaxed text-ink-2 sm:p-6">
       <span className="text-accent">{t("pb.frozen.head")}</span> {t("pb.frozen.when", {
-        date: fmtDate(res.frozen.as_of, lang),
+        date: fmtDate(res.frozen.as_of),
         which: res.frozen.superseded?.length ? t("pb.frozen.latest", { count: res.frozen.superseded.length, n: res.frozen.superseded.length }) : t("pb.frozen.first"),
-      }, { bidi: false })}
+      })}
       {" "}{t("pb.frozen.body")}
       {differs.length > 0 && (
         <span className="mt-3 block text-ink-3">
           {t("pb.frozen.differs", {
             list: differs.map((d) => (d.weeks
-              ? t("pb.frozen.itemH", { name: name(d.id), h: HORIZON(d.weeks, lang), now: labelOf(t, d.now), frozen: labelOf(t, d.frozen) })
+              ? t("pb.frozen.itemH", { name: name(d.id), h: HORIZON(d.weeks), now: labelOf(t, d.now), frozen: labelOf(t, d.frozen) })
               : t("pb.frozen.item", { name: name(d.id), now: labelOf(t, d.now), frozen: labelOf(t, d.frozen) }))).join(", "),
-          }, { bidi: false })}
+          })}
         </span>
       )}
     </Reveal>
@@ -161,15 +157,14 @@ function FrozenNote({ res, name }) {
 /* ------------------------------------------------------------------ sets */
 
 function Sets({ rb, name, satVerdict }) {
-  const t = useLang().t(dict);
+  const t = strings(dict);
   return (
     <section className="pt-20">
       <SectionHead eyebrow={t("pb.sets.eyebrow")} title={accented(t("pb.sets.title"), t("pb.sets.accent"))} size="md"
         lede={t("pb.sets.lede")} />
-      <EnglishNote />
       <div className="grid gap-4 md:grid-cols-2">
         {rb.sets.map((s, i) => (
-          <Reveal key={s.id} delay={i * 70} lang="en" dir="ltr" className="card p-6 sm:p-7">
+          <Reveal key={s.id} delay={i * 70} className="card p-6 sm:p-7">
             <div className="flex items-center justify-between gap-3">
               <span className="meta">{s.role.replace("_", " ")}</span>
             </div>
@@ -193,8 +188,7 @@ function Sets({ rb, name, satVerdict }) {
 /* --------------------------------------------------------------- savings */
 
 function Savings({ rb, res, name }) {
-  const { lang, t: tr } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const sv = res?.savings;
   const [hw, setHw] = useState(null);
   if (!sv?.horizons?.length) {
@@ -216,12 +210,12 @@ function Savings({ rb, res, name }) {
   const maxBps = Math.max(0, ...stream.filter((r) => r.vs_baseline_irr_bps_median != null).map((r) => Math.abs(r.vs_baseline_irr_bps_median)));
   return (
     <section className="pt-24">
-      <SectionHead eyebrow={t("pb.sav.eyebrowFull", { h: HORIZON(h.weeks, lang), windows: h.windows, independent: h.independent }, { bidi: false })} title={accented(t("pb.sav.title"), t("pb.sav.accent"))} size="md"
+      <SectionHead eyebrow={t("pb.sav.eyebrowFull", { h: HORIZON(h.weeks), windows: h.windows, independent: h.independent })} title={accented(t("pb.sav.title"), t("pb.sav.accent"))} size="md"
         lede={<>{t("pb.sav.lede")}{" "}
           {tooFew || clear.length === 0
-            ? t.rich(tooFew ? "pb.sav.tooFew" : "pb.sav.noClear", { pick: <span className="text-ink">{t("pb.sav.pick")}</span> })
+            ? rich(t, tooFew ? "pb.sav.tooFew" : "pb.sav.noClear", { pick: <span className="text-ink">{t("pb.sav.pick")}</span> })
             : t("pb.sav.some")}</>}
-        right={sv.horizons.length > 1 ? <Segmented label={t("pb.sav.howLong")} value={h.weeks} onChange={setHw} options={sv.horizons.map((x) => ({ value: x.weeks, label: HORIZON(x.weeks, lang) }))} /> : null} />
+        right={sv.horizons.length > 1 ? <Segmented label={t("pb.sav.howLong")} value={h.weeks} onChange={setHw} options={sv.horizons.map((x) => ({ value: x.weeks, label: HORIZON(x.weeks) }))} /> : null} />
       <Reveal className="card hidden overflow-x-auto md:block">
         <table className="w-full min-w-[820px] text-start text-[14px]">
           <thead className="meta">
@@ -250,11 +244,11 @@ function Savings({ rb, res, name }) {
               <tbody>
                 {windfall.map((r) => (
                   <tr key={r.id} className="border-b border-line last:border-0">
-                    <td className="px-4 py-3 font-medium"><En as="span">{name(r.id)}</En></td>
-                    <td className="num px-4 py-3 font-mono">{fmtPct(r.irr_median_pct, 1, lang)}</td>
+                    <td className="px-4 py-3 font-medium">{name(r.id)}</td>
+                    <td className="num px-4 py-3 font-mono">{fmtPct(r.irr_median_pct, 1)}</td>
                     <td className="num px-4 py-3 font-mono">{r.vs_baseline_irr_bps_median != null ? t("pb.bp", { v: fmtNum(r.vs_baseline_irr_bps_median, 0) }) : "–"}</td>
-                    <td className="num px-4 py-3 font-mono">{r.vs_baseline_better_pct != null ? wholePct(r.vs_baseline_better_pct, lang) : "–"}</td>
-                    <td className="num px-4 py-3 font-mono text-down">{fmtPct(r.worst_vs_paid_p10_pct, 0, lang)}</td>
+                    <td className="num px-4 py-3 font-mono">{r.vs_baseline_better_pct != null ? wholePct(r.vs_baseline_better_pct) : "–"}</td>
+                    <td className="num px-4 py-3 font-mono text-down">{fmtPct(r.worst_vs_paid_p10_pct, 0)}</td>
                     <td className="px-4 py-3"><Chip kind={r.verdict} icon={false}>{labelOf(t, r.verdict)}</Chip></td>
                   </tr>
                 ))}
@@ -268,12 +262,12 @@ function Savings({ rb, res, name }) {
 }
 
 function SavingsCard({ r, name }) {
-  const t = useLang().t(dict);
+  const t = strings(dict);
   const d = r.vs_baseline_irr_bps_median;
   const fee = r.breakeven_fee_pct_of_weekly;
   return (
     <div className="card p-5">
-      <div className="flex items-start justify-between gap-3"><En as="span" className="font-medium">{name(r.id)}</En><Chip kind={r.verdict} icon={false}>{labelOf(t, r.verdict)}</Chip></div>
+      <div className="flex items-start justify-between gap-3"><span className="font-medium">{name(r.id)}</span><Chip kind={r.verdict} icon={false}>{labelOf(t, r.verdict)}</Chip></div>
       <div className="mt-4 grid grid-cols-3 gap-4">
         <Stat k={t("pb.th.buys")} v={fmtNum(r.trades_per_year, 0)} />
         <Stat k={t("pb.th.typicalShort")} v={fmtPct(r.irr_median_pct, 1)} />
@@ -287,20 +281,19 @@ function SavingsCard({ r, name }) {
 }
 
 function SavingsRow({ r, name }) {
-  const { lang, t: tr } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const d = r.vs_baseline_irr_bps_median;
   const fee = r.breakeven_fee_pct_of_weekly;
   return (
     <tr className="border-b border-line last:border-0 hover:bg-ink/[0.03]">
-      <td className="px-4 py-3 font-medium"><En as="span">{name(r.id)}</En></td>
+      <td className="px-4 py-3 font-medium">{name(r.id)}</td>
       <td className="num px-4 py-3 font-mono">{fmtNum(r.trades_per_year, 0)}</td>
-      <td className="num px-4 py-3 font-mono">{fmtPct(r.irr_median_pct, 1, lang)}</td>
+      <td className="num px-4 py-3 font-mono">{fmtPct(r.irr_median_pct, 1)}</td>
       <td className={`num px-4 py-3 font-mono ${d == null ? "text-ink-3" : d >= 0 ? "text-accent" : "text-down"}`}>{d != null ? bpText(t, d) : labelOf(t, "baseline")}</td>
-      <td className="num px-4 py-3 font-mono">{r.vs_baseline_better_pct != null ? wholePct(r.vs_baseline_better_pct, lang) : "–"}</td>
-      <td className="num px-4 py-3 font-mono text-down">{fmtPct(r.worst_vs_paid_p10_pct, 0, lang)}</td>
-      <td className="num px-4 py-3 font-mono text-ink-2">{wholePct(r.cash_share_median_pct, lang)}</td>
-      <td className="num px-4 py-3 font-mono text-ink-2">{fee != null ? (fee > 0 ? fmtPct(fee, 1, lang).replace("+", "") : t("pb.never")) : "–"}</td>
+      <td className="num px-4 py-3 font-mono">{r.vs_baseline_better_pct != null ? wholePct(r.vs_baseline_better_pct) : "–"}</td>
+      <td className="num px-4 py-3 font-mono text-down">{fmtPct(r.worst_vs_paid_p10_pct, 0)}</td>
+      <td className="num px-4 py-3 font-mono text-ink-2">{wholePct(r.cash_share_median_pct)}</td>
+      <td className="num px-4 py-3 font-mono text-ink-2">{fee != null ? (fee > 0 ? fmtPct(fee, 1).replace("+", "") : t("pb.never")) : "–"}</td>
       <td className="px-4 py-3"><Chip kind={r.verdict} icon={false}>{labelOf(t, r.verdict)}</Chip></td>
     </tr>
   );
@@ -309,8 +302,7 @@ function SavingsRow({ r, name }) {
 /* ------------------------------------------------------------- satellite */
 
 function Satellite({ res, name, data }) {
-  const { lang, t: tr, fmt } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const sat = res?.satellite;
   const [shown, setShown] = useState(null);
   const goal = data.settings.goal.annual_return_pct;
@@ -334,8 +326,8 @@ function Satellite({ res, name, data }) {
   const colors = ["var(--accent)", "var(--ai)", "var(--people)", "var(--down)", "var(--ink)"];
   return (
     <section className="pt-24">
-      <SectionHead eyebrow={t("pb.sat.eyebrowFull", { from: fmtDate(sat.from, lang), to: fmtDate(sat.to, lang), years: fmtNum(sat.years, 1) }, { bidi: false })} title={accented(t("pb.sat.title"), t("pb.sat.accent"))} size="md"
-        lede={<>{t.rich("pb.sat.lede", { n: fmtNum(n, 0), same: <span className="text-ink">{t("pb.sat.same")}</span>, which: <em>{t("pb.sat.which")}</em> })}{rows.length > 0 && rows.every((r) => r.verdict === "rejected") ? ` ${t("pb.sat.allRejected")}` : ""}</>} />
+      <SectionHead eyebrow={t("pb.sat.eyebrowFull", { from: fmtDate(sat.from), to: fmtDate(sat.to), years: fmtNum(sat.years, 1) })} title={accented(t("pb.sat.title"), t("pb.sat.accent"))} size="md"
+        lede={<>{rich(t, "pb.sat.lede", { n: fmtNum(n, 0), same: <span className="text-ink">{t("pb.sat.same")}</span>, which: <em>{t("pb.sat.which")}</em> })}{rows.length > 0 && rows.every((r) => r.verdict === "rejected") ? ` ${t("pb.sat.allRejected")}` : ""}</>} />
       <Reveal className="card p-5 sm:p-8">
         <div className="meta mb-5 flex flex-wrap gap-x-6 gap-y-2 normal-case tracking-[0.04em]">
           <span><i className="me-2 inline-block h-3 w-8 rounded bg-line-2 align-middle" />{t("pb.sat.lg.random")}</span>
@@ -346,19 +338,19 @@ function Satellite({ res, name, data }) {
         <div className="grid gap-3">
           {rows.map((r) => (
             <div key={r.id} className="grid grid-cols-[96px_minmax(0,1fr)_64px] items-center gap-3 sm:grid-cols-[200px_minmax(0,1fr)_72px]">
-              <button type="button" lang="en" className="min-w-0 truncate text-start text-[13px] text-ink-2 hover:text-ink sm:text-[14px]" title={name(r.id)} onClick={() => document.getElementById(`rule-${r.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" })}>{name(r.id)}</button>
-              <div dir="ltr" className="relative h-7">
+              <button type="button" className="min-w-0 truncate text-start text-[13px] text-ink-2 hover:text-ink sm:text-[14px]" title={name(r.id)} onClick={() => document.getElementById(`rule-${r.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" })}>{name(r.id)}</button>
+              <div className="relative h-7">
                 <i className="absolute top-0 h-full w-px bg-ink" style={{ left: `${axis.pos(sat.controls.core.cagr_pct)}%` }} />
                 <i className="absolute top-0 h-full border-s border-dashed border-ink-2" style={{ left: `${axis.pos(sat.controls.equal_weight.cagr_pct)}%` }} />
                 <i className="absolute top-1/2 h-2 -translate-y-1/2 rounded bg-line-2" style={{ left: `${axis.pos(r.null_cagr_pct.p05)}%`, width: `${axis.pos(r.null_cagr_pct.p95) - axis.pos(r.null_cagr_pct.p05)}%` }} />
                 <i className="absolute top-1/2 h-4 w-px -translate-y-1/2 bg-ink-3" style={{ left: `${axis.pos(r.null_cagr_pct.p50)}%` }} />
                 <i className="absolute top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-surface" style={{ left: `${axis.pos(r.stats.cagr_pct)}%`, background: DOT[r.verdict] }} />
               </div>
-              <span className="num text-end font-mono text-[13px]">{fmt.pct(r.stats.cagr_pct, 1)}</span>
+              <span className="num text-end font-mono text-[13px]">{fmtPct(r.stats.cagr_pct, 1)}</span>
             </div>
           ))}
         </div>
-        <div dir="ltr" className="meta mt-4 flex justify-between normal-case tracking-[0.04em]"><span>{lang === "en" ? `${axis.lo}% a year` : <span dir="rtl">{t("pb.sat.aYearV", { v: `${axis.lo}%` })}</span>}</span><span>{axis.hi}%</span></div>
+        <div className="meta mt-4 flex justify-between normal-case tracking-[0.04em]"><span>{`${axis.lo}% a year`}</span><span>{axis.hi}%</span></div>
       </Reveal>
 
       <Reveal className="card mt-5 hidden overflow-x-auto md:block">
@@ -369,17 +361,17 @@ function Satellite({ res, name, data }) {
           <tbody>
             {rows.map((r) => (
               <tr key={r.id} className="border-b border-line last:border-0 align-top hover:bg-ink/[0.03]">
-                <td className="px-4 py-3 font-medium"><En as="span">{name(r.id)}</En></td>
-                <td className={`num px-4 py-3 font-mono ${r.stats.cagr_pct >= goal ? "text-accent" : ""}`}>{fmt.pct(r.stats.cagr_pct, 1)}</td>
-                <td className={`num px-4 py-3 font-mono ${r.vs_core_cagr_pts >= 0 ? "text-accent" : "text-down"}`}>{fmt.pct(r.vs_core_cagr_pts, 1)}</td>
-                <td className="num px-4 py-3 font-mono">{wholePct(r.percentile, lang)}<div className="text-[11.5px] text-ink-3">{t("pb.sat.luck", { p: fmtNum(r.p_value, 3), adj: fmtNum(r.p_adjusted, 2) })}</div></td>
-                <td className="num px-4 py-3 font-mono"><bdi dir="ltr">{fmtNum(r.percentile_halves[0], 0)}% / {fmtNum(r.percentile_halves[1], 0)}%</bdi></td>
-                <td className="num px-4 py-3 font-mono text-down">{fmt.pct(r.stats.max_dd_pct, 0)}<div className="text-[11.5px] text-ink-3">{t("pb.sat.coreDrop", { v: fmtPct(sat.controls.core.max_dd_pct, 0) })}</div></td>
-                <td className="num px-4 py-3 font-mono">{wholePct(r.turnover_pct_year, lang)}<div className="text-[11.5px] text-ink-3">{t("pb.sat.aYear")}{r.stops ? `, ${t("pb.sat.stops", { count: r.stops, n: r.stops })}` : ""}</div></td>
+                <td className="px-4 py-3 font-medium">{name(r.id)}</td>
+                <td className={`num px-4 py-3 font-mono ${r.stats.cagr_pct >= goal ? "text-accent" : ""}`}>{fmtPct(r.stats.cagr_pct, 1)}</td>
+                <td className={`num px-4 py-3 font-mono ${r.vs_core_cagr_pts >= 0 ? "text-accent" : "text-down"}`}>{fmtPct(r.vs_core_cagr_pts, 1)}</td>
+                <td className="num px-4 py-3 font-mono">{wholePct(r.percentile)}<div className="text-[11.5px] text-ink-3">{t("pb.sat.luck", { p: fmtNum(r.p_value, 3), adj: fmtNum(r.p_adjusted, 2) })}</div></td>
+                <td className="num px-4 py-3 font-mono"><span>{fmtNum(r.percentile_halves[0], 0)}% / {fmtNum(r.percentile_halves[1], 0)}%</span></td>
+                <td className="num px-4 py-3 font-mono text-down">{fmtPct(r.stats.max_dd_pct, 0)}<div className="text-[11.5px] text-ink-3">{t("pb.sat.coreDrop", { v: fmtPct(sat.controls.core.max_dd_pct, 0) })}</div></td>
+                <td className="num px-4 py-3 font-mono">{wholePct(r.turnover_pct_year)}<div className="text-[11.5px] text-ink-3">{t("pb.sat.aYear")}{r.stops ? `, ${t("pb.sat.stops", { count: r.stops, n: r.stops })}` : ""}</div></td>
                 <td className="num px-4 py-3 font-mono">{fmtNum(r.avg_names, 1)}</td>
                 <td className="px-4 py-3">
                   <Chip kind={r.verdict} icon={false}>{labelOf(t, r.verdict)}</Chip>
-                  <En as="ul" className="mt-2 max-w-[260px] text-[11.5px] leading-snug text-ink-3">{r.reasons.map((x) => <li key={x}>{x}</li>)}</En>
+                  <ul className="mt-2 max-w-[260px] text-[11.5px] leading-snug text-ink-3">{r.reasons.map((x) => <li key={x}>{x}</li>)}</ul>
                 </td>
               </tr>
             ))}
@@ -389,7 +381,7 @@ function Satellite({ res, name, data }) {
       <div className="mt-5 grid gap-3 md:hidden">
         {rows.map((r) => (
           <div key={r.id} className="card p-5">
-            <div className="flex items-start justify-between gap-3"><En as="span" className="font-medium">{name(r.id)}</En><Chip kind={r.verdict} icon={false}>{labelOf(t, r.verdict)}</Chip></div>
+            <div className="flex items-start justify-between gap-3"><span className="font-medium">{name(r.id)}</span><Chip kind={r.verdict} icon={false}>{labelOf(t, r.verdict)}</Chip></div>
             <div className="mt-4 grid grid-cols-3 gap-4">
               <Stat k={t("pb.th.growth")} v={fmtPct(r.stats.cagr_pct, 1)} tone={r.stats.cagr_pct >= goal ? "text-accent" : ""} />
               <Stat k={t("pb.th.vsCore")} v={fmtPct(r.vs_core_cagr_pts, 1)} tone={r.vs_core_cagr_pts >= 0 ? "text-accent" : "text-down"} />
@@ -398,7 +390,7 @@ function Satellite({ res, name, data }) {
               <Stat k={t("pb.th.drop")} v={fmtPct(r.stats.max_dd_pct, 0)} tone="text-down" sub={t("pb.sat.coreDrop", { v: fmtPct(sat.controls.core.max_dd_pct, 0) })} />
               <Stat k={t("pb.th.swaps")} v={`${fmtNum(r.turnover_pct_year, 0)}%`} sub={`${t("pb.sat.nStocks", { n: fmtNum(r.avg_names, 1) })}${r.stops ? `, ${t("pb.sat.stops", { count: r.stops, n: r.stops })}` : ""}`} />
             </div>
-            <En as="ul" className="mt-4 grid gap-1 text-[12px] leading-snug text-ink-3">{r.reasons.map((x) => <li key={x}>{x}</li>)}</En>
+            <ul className="mt-4 grid gap-1 text-[12px] leading-snug text-ink-3">{r.reasons.map((x) => <li key={x}>{x}</li>)}</ul>
           </div>
         ))}
       </div>
@@ -412,7 +404,7 @@ function Satellite({ res, name, data }) {
             const on = sel.includes(r.id);
             return (
               <button key={r.id} type="button" aria-pressed={on} onClick={() => setShown(on ? sel.filter((x) => x !== r.id) : [...sel, r.id])}
-                lang="en" className={`min-h-[36px] rounded-full border px-3.5 text-[13px] ${on ? "border-accent/60 bg-accent/10 text-ink" : "border-line-2 text-ink-3 hover:text-ink"}`}>{name(r.id)}</button>
+                className={`min-h-[36px] rounded-full border px-3.5 text-[13px] ${on ? "border-accent/60 bg-accent/10 text-ink" : "border-line-2 text-ink-3 hover:text-ink"}`}>{name(r.id)}</button>
             );
           })}
         </div>
@@ -430,8 +422,7 @@ function Satellite({ res, name, data }) {
 /* --------------------------------------------------------------- forward */
 
 function Forward({ rb, data, name }) {
-  const { lang, t: tr } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const led = data.ledger && !data.ledger.sample ? data.ledger : null;
   const rows = Object.entries(led?.rules ?? {});
   const min = rb.acceptance.min_paper_days;
@@ -453,16 +444,16 @@ function Forward({ rb, data, name }) {
                 const ret = r.values.at(-1) - 100;
                 return (
                   <tr key={id} className="border-b border-line last:border-0">
-                    <td className="px-4 py-3 font-medium"><En as="span">{name(id)}</En></td>
-                    <td className="num px-4 py-3 font-mono text-ink-2"><Bdi>{r.started}</Bdi></td>
-                    <td className="num px-4 py-3 font-mono"><bdi dir="ltr">{last}{last < min ? <span className="text-ink-3"> / {min}</span> : null}</bdi></td>
+                    <td className="px-4 py-3 font-medium">{name(id)}</td>
+                    <td className="num px-4 py-3 font-mono text-ink-2">{r.started}</td>
+                    <td className="num px-4 py-3 font-mono"><span>{last}{last < min ? <span className="text-ink-3"> / {min}</span> : null}</span></td>
                     <td className="num px-4 py-3 font-mono">{r.decisions}</td>
-                    <td className={`num px-4 py-3 font-mono ${ret >= 0 ? "text-accent" : "text-down"}`}>{fmtPct(ret, 1, lang)}</td>
-                    <td className="num px-4 py-3 font-mono text-ink-2">{fmtPct(coreRet, 1, lang)}</td>
+                    <td className={`num px-4 py-3 font-mono ${ret >= 0 ? "text-accent" : "text-down"}`}>{fmtPct(ret, 1)}</td>
+                    <td className="num px-4 py-3 font-mono text-ink-2">{fmtPct(coreRet, 1)}</td>
                     <td className="num px-4 py-3 font-mono">{r.forward_percentile != null
-                      ? <>{wholePct(r.forward_percentile, lang)}{last < min ? <span className="text-ink-3"> {t("pb.fwd.early")}</span> : null}</>
+                      ? <>{wholePct(r.forward_percentile)}{last < min ? <span className="text-ink-3"> {t("pb.fwd.early")}</span> : null}</>
                       : <span className="text-ink-3">{t(r.decisions < 6 ? "pb.fwd.after6" : "pb.fwd.after126")}</span>}{r.stale ? <span className="block text-[11.5px] text-people">{t("pb.fwd.stale")}</span> : null}</td>
-                    <td className="px-4 py-3 font-mono text-[13px]">{r.rebalances.at(-1).holdings.length ? <Bdi>{r.rebalances.at(-1).holdings.join(" · ")}</Bdi> : <span className="text-ink-3">{t("pb.fwd.allCore")}</span>}</td>
+                    <td className="px-4 py-3 font-mono text-[13px]">{r.rebalances.at(-1).holdings.length ? <span>{r.rebalances.at(-1).holdings.join(" · ")}</span> : <span className="text-ink-3">{t("pb.fwd.allCore")}</span>}</td>
                   </tr>
                 );
               })}
@@ -480,21 +471,19 @@ const STEP_TONE = { accent: "text-accent", down: "text-down", flat: "text-ink-2"
 
 /** The eight-step checklist from the video: each step, how code computes it, the paper-entry rule and what history says. */
 function TechChecklist({ data }) {
-  const { lang, t: tr } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const cfg = data.checklistCfg;
   if (!cfg) return null;
   const ck = data.checklist;
   const br = ck?.base_rates ?? null;
   const hr = cfg.house_rule;
   const bench = data.bench.label;
-  const edge = edgeWords(br, lang);
-  const stepName = Object.fromEntries(cfg.steps.map((s) => [s.id, stepLabel(s, lang)]));
+  const edge = edgeWords(br);
+  const stepName = Object.fromEntries(cfg.steps.map((s) => [s.id, s.name]));
   return (
     <section id="checklist" className="scroll-mt-28 pt-24">
-      <SectionHead eyebrow={t("pb.ck.eyebrow", { v: cfg.version })} title={accented(t("pb.ck.title"), t("pb.ck.accent"))} size="md" lede={<En as="span">{cfg.purpose}</En>} />
-      <EnglishNote />
-      <Reveal lang="en" dir="ltr" className="card border-people/40 p-5 text-[14.5px] leading-relaxed text-ink-2 sm:p-6">
+      <SectionHead eyebrow={t("pb.ck.eyebrow", { v: cfg.version })} title={accented(t("pb.ck.title"), t("pb.ck.accent"))} size="md" lede={cfg.purpose} />
+      <Reveal className="card border-people/40 p-5 text-[14.5px] leading-relaxed text-ink-2 sm:p-6">
         <span className="pill mb-3 border-dashed border-people/60 text-people">{cfg.status}</span>
         <ul className="grid gap-2">
           {cfg.how_to_read.map((t) => <li key={t} className="relative ps-4 before:absolute before:start-0 before:top-[0.75em] before:h-px before:w-2 before:bg-people">{t}</li>)}
@@ -505,25 +494,25 @@ function TechChecklist({ data }) {
         {cfg.steps.map((s, i) => (
           <Reveal as="li" key={s.id} delay={(i % 2) * 60} className="card p-5 sm:p-6">
             <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-              <span className="text-[17px] font-semibold"><span className="num me-2 font-mono text-[13px] font-normal text-ink-3">{s.n}</span>{stepLabel(s, lang)}</span>
+              <span className="text-[17px] font-semibold"><span className="num me-2 font-mono text-[13px] font-normal text-ink-3">{s.n}</span>{s.name}</span>
             </div>
-            <En as="p" className="mt-2 text-[14.5px] leading-relaxed text-ink">{s.checks}</En>
+            <p className="mt-2 text-[14.5px] leading-relaxed text-ink">{s.checks}</p>
             <div className="meta mt-3 mb-1 normal-case tracking-[0.04em]">{t("pb.ck.how")}{s.directional ? "" : ` · ${t("pb.ck.notDir")}`}</div>
-            <En as="p" className="text-[13.5px] leading-relaxed text-ink-2">{s.computes}</En>
+            <p className="text-[13.5px] leading-relaxed text-ink-2">{s.computes}</p>
           </Reveal>
         ))}
       </ol>
 
       <Reveal className="card mt-5 border-accent/40 p-5 sm:p-6">
         <div className="meta mb-2 text-accent">{t("pb.ck.entry")}</div>
-        <En as="p" className="text-[15.5px] leading-relaxed text-ink">{hr.text}</En>
-        <p className="mt-3 text-[14px] leading-relaxed text-ink-2"><En as="span">{cfg.verdict.text}</En> {t("pb.ck.tp")}</p>
+        <p className="text-[15.5px] leading-relaxed text-ink">{hr.text}</p>
+        <p className="mt-3 text-[14px] leading-relaxed text-ink-2">{cfg.verdict.text} {t("pb.ck.tp")}</p>
       </Reveal>
 
       <Reveal className="card mt-5 p-5 sm:p-6">
         <div className="flex flex-wrap items-baseline justify-between gap-3">
           <h3 className="text-[20px] font-semibold tracking-[-0.02em]">{t("pb.ck.history")}</h3>
-          {br && <span className="meta normal-case tracking-[0.04em]">{t("pb.ck.histMeta", { from: fmtDate(br.from, lang), to: fmtDate(br.to, lang), n: br.names }, { bidi: false })}{ck.sample ? ` · ${t("pb.samplePrices")}` : ""}</span>}
+          {br && <span className="meta normal-case tracking-[0.04em]">{t("pb.ck.histMeta", { from: fmtDate(br.from), to: fmtDate(br.to), n: br.names })}{ck.sample ? ` · ${t("pb.samplePrices")}` : ""}</span>}
         </div>
         {br ? (
           <>
@@ -546,7 +535,7 @@ function TechChecklist({ data }) {
                         <td className="py-2 pe-2">{stepName[c.check] ?? c.check}</td>
                         {["bullish", "bearish"].map((k) => (
                           <td key={k} className={`num whitespace-nowrap py-2 ps-2 text-end font-mono ${c[k]?.n ? STEP_TONE[signTone(c[k].mean, 1)] : "text-ink-3"}`}>
-                            <bdi dir="ltr">{c[k]?.n ? fmtPct(c[k].mean, 1) : "–"}<span className="ms-1 text-[11px] text-ink-3">{c[k]?.n ?? 0}</span></bdi>
+                            <span>{c[k]?.n ? fmtPct(c[k].mean, 1) : "–"}<span className="ms-1 text-[11px] text-ink-3">{c[k]?.n ?? 0}</span></span>
                           </td>
                         ))}
                       </tr>
@@ -556,14 +545,14 @@ function TechChecklist({ data }) {
                 <p className="mt-2 text-[12.5px] leading-relaxed text-ink-3">{t("pb.ck.ifWorked")}</p>
               </div>
             )}
-            <En as="p" className="mt-4 text-[13px] leading-relaxed text-ink-3">{fillNote(br.note, br)}</En>
+            <p className="mt-4 text-[13px] leading-relaxed text-ink-3">{fillNote(br.note, br)}</p>
           </>
         ) : (
-          <p className="mt-2 text-[14px] leading-relaxed text-ink-2">{t("pb.ck.later")} <En as="span">{cfg.measure.text}</En></p>
+          <p className="mt-2 text-[14px] leading-relaxed text-ink-2">{t("pb.ck.later")} {cfg.measure.text}</p>
         )}
-        <p className="mt-3 text-[14px] leading-relaxed text-ink-2">{forwardWords(ck?.forward, lang)}</p>
+        <p className="mt-3 text-[14px] leading-relaxed text-ink-2">{forwardWords(ck?.forward)}</p>
       </Reveal>
-      <ul lang="en" dir="ltr" className="mt-5 grid gap-2 text-[13.5px] leading-relaxed text-ink-3">
+      <ul className="mt-5 grid gap-2 text-[13.5px] leading-relaxed text-ink-3">
         {cfg.notes.map((n) => <li key={n} className="relative ps-4 before:absolute before:start-0 before:top-[0.75em] before:h-px before:w-2 before:bg-ink-3">{n}</li>)}
       </ul>
     </section>
@@ -573,12 +562,11 @@ function TechChecklist({ data }) {
 /* ----------------------------------------------------------------- rules */
 
 function Rules({ rb, satVerdict, go }) {
-  const t = useLang().t(dict);
+  const t = strings(dict);
   return (
     <section className="pt-24">
       <SectionHead eyebrow={t("pb.rules.eyebrow")} title={accented(t("pb.rules.title"), t("pb.rules.accent"))} size="md"
         lede={t("pb.rules.lede")} />
-      <EnglishNote />
       {FAMILIES.map((fam) => {
         const list = rb.rules.filter((r) => r.family === fam);
         if (!list.length) return null;
@@ -596,7 +584,7 @@ function Rules({ rb, satVerdict, go }) {
 }
 
 function RuleCard({ r, verdict, i, go }) {
-  const t = useLang().t(dict);
+  const t = strings(dict);
   const [open, setOpen] = useState(false);
   const chipKind = verdict ?? r.status;
   return (
@@ -605,20 +593,20 @@ function RuleCard({ r, verdict, i, go }) {
         <Chip kind={chipKind} icon={false}>{labelOf(t, chipKind)}</Chip>
         <span className={`meta ${EVIDENCE[r.evidence]}`}>{t("pb.rc.sure", { ev: t.has(`pb.ev.${r.evidence}`) ? t(`pb.ev.${r.evidence}`) : r.evidence })}</span>
       </div>
-      <En as="h4" className="mt-3 text-[19px] font-semibold tracking-[-0.02em]">{r.name}</En>
-      <En as="p" className="mt-2 text-[15px] leading-relaxed">{r.plain}</En>
+      <h4 className="mt-3 text-[19px] font-semibold tracking-[-0.02em]">{r.name}</h4>
+      <p className="mt-2 text-[15px] leading-relaxed">{r.plain}</p>
       <button type="button" onClick={() => setOpen(!open)} aria-expanded={open} className="meta mt-4 inline-flex min-h-[32px] items-center gap-1 hover:text-ink">{t(open ? "pb.rc.hide" : "pb.rc.open")} <ArrowRight className={`size-3.5 transition ${open ? "rotate-90" : ""}`} /></button>
       {open && (
         <div className="mt-4 grid gap-4 text-[14px] leading-relaxed">
-          <div><div className="meta mb-1">{t("pb.rc.exact")}</div><En as="p" className="text-ink-2">{r.definition}</En></div>
+          <div><div className="meta mb-1">{t("pb.rc.exact")}</div><p className="text-ink-2">{r.definition}</p></div>
           {r.params.length > 0 && (
             <div><div className="meta mb-1">{t("pb.rc.params")}</div>
-              <En as="dl" className="grid gap-1.5">{r.params.map((p) => <div key={p.name} className="grid grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)] gap-3 border-t border-line pt-1.5"><dt className="font-mono text-[12.5px]">{p.name} = {p.value}</dt><dd className="text-ink-3">{p.why}</dd></div>)}</En></div>
+              <dl className="grid gap-1.5">{r.params.map((p) => <div key={p.name} className="grid grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)] gap-3 border-t border-line pt-1.5"><dt className="font-mono text-[12.5px]">{p.name} = {p.value}</dt><dd className="text-ink-3">{p.why}</dd></div>)}</dl></div>
           )}
-          <div><div className="meta mb-1">{t("pb.rc.why")}</div><En as="p" className="text-ink-2">{r.why_included}</En></div>
+          <div><div className="meta mb-1">{t("pb.rc.why")}</div><p className="text-ink-2">{r.why_included}</p></div>
           <div className="grid gap-3 sm:grid-cols-2">
-            <div><div className="meta mb-1 text-accent">{t(adoptLabel(r))}</div><En as="p" className="text-ink-2">{r.adopt_if}</En></div>
-            <div><div className="meta mb-1 text-down">{t("pb.rc.dropped")}</div><En as="p" className="text-ink-2">{r.reject_if}</En></div>
+            <div><div className="meta mb-1 text-accent">{t(adoptLabel(r))}</div><p className="text-ink-2">{r.adopt_if}</p></div>
+            <div><div className="meta mb-1 text-down">{t("pb.rc.dropped")}</div><p className="text-ink-2">{r.reject_if}</p></div>
           </div>
           {r.library_refs.length > 0 && (
             <div className="flex flex-wrap items-center gap-1.5"><span className="meta me-1">{t("pb.rc.source")}</span>
@@ -634,7 +622,7 @@ function RuleCard({ r, verdict, i, go }) {
 /* --------------------------------------------------------------- process */
 
 function Process({ rb }) {
-  const t = useLang().t(dict);
+  const t = strings(dict);
   const byId = Object.fromEntries(rb.rules.map((r) => [r.id, r]));
   const monthly = ["savings_monthly_autopilot", "drawdown_playbook", "precommit_no_override"].map((id) => byId[id]).filter(Boolean);
   const yearly = ["rule_change_protocol", "stock_pot_size"].map((id) => byId[id]).filter(Boolean);
@@ -652,7 +640,7 @@ function Process({ rb }) {
         <li key={r.id} className="border-b border-line last:border-0">
           <button type="button" onClick={() => toggle(r.id)} aria-pressed={done.includes(r.id)} className="flex min-h-[56px] w-full items-start gap-4 px-2 py-3 text-start">
             <span className={`mt-0.5 grid size-6 shrink-0 place-items-center rounded-full border text-[12px] ${done.includes(r.id) ? "border-accent bg-accent text-bg" : "border-line-2 text-transparent"}`}>✓</span>
-            <span lang="en" dir="ltr" className="text-start"><span className="block font-medium">{r.name}</span><span className="block text-[14px] leading-relaxed text-ink-2">{r.plain}</span></span>
+            <span className="text-start"><span className="block font-medium">{r.name}</span><span className="block text-[14px] leading-relaxed text-ink-2">{r.plain}</span></span>
           </button>
         </li>
       ))}
@@ -662,7 +650,6 @@ function Process({ rb }) {
     <section className="pt-24">
       <SectionHead eyebrow={t("pb.proc.eyebrow", { month })} title={accented(t("pb.proc.title"), t("pb.proc.accent"))} size="md"
         lede={t("pb.proc.lede")} />
-      <EnglishNote />
       <Reveal className="card p-3 sm:p-5"><List list={monthly} /></Reveal>
       {yearly.length > 0 && (
         <>
@@ -678,7 +665,7 @@ function Process({ rb }) {
 /* --------------------------------------------------------------- testing */
 
 function Testing({ rb }) {
-  const t = useLang().t(dict);
+  const t = strings(dict);
   const a = rb.acceptance;
   const alpha = (100 - a.satellite.null_percentile_min) / 100;
   const maxAbove = Math.max(0, Math.floor((alpha * (a.null_runs + 1)) / rb.tries_counted - 1));
@@ -693,7 +680,6 @@ function Testing({ rb }) {
         {t("pb.test.programText")} <span className="mx-1.5 inline-block rounded-full border border-dashed border-people/60 px-2 py-0.5 align-middle font-mono text-[10.5px] uppercase tracking-[0.06em] text-people">{t("pb.tag.planned")}</span>
         {t("pb.test.plannedText")}
       </Reveal>
-      <EnglishNote />
       <div className="grid gap-4 lg:grid-cols-3">
         {[["adopt", "text-accent"], ["candidate", "text-people"], ["reject", "text-down"]].map(([k, c]) => {
           const now = a.text[k].filter((x) => !isPlanned(x));
@@ -721,16 +707,16 @@ function Testing({ rb }) {
       <div className="mt-6 grid gap-3">
         {rb.experiments.map((e) => (
           <Reveal key={e.id} className="card p-5">
-            <div className="font-medium"><span className="meta me-2 normal-case tracking-[0.04em]">{e.id.split("_")[0]}</span><En as="span">{e.question}</En></div>
-            <En as="p" className="mt-2 text-[14px] leading-relaxed text-ink-2">{e.method}</En>
-            <p className="meta mt-3 normal-case tracking-[0.04em]">{t("pb.test.comparedWith")} <En as="span">{e.null_model}</En> · {t("pb.test.passesIf")} <En as="span">{e.pass_criteria}</En></p>
+            <div className="font-medium"><span className="meta me-2 normal-case tracking-[0.04em]">{e.id.split("_")[0]}</span>{e.question}</div>
+            <p className="mt-2 text-[14px] leading-relaxed text-ink-2">{e.method}</p>
+            <p className="meta mt-3 normal-case tracking-[0.04em]">{t("pb.test.comparedWith")} {e.null_model} · {t("pb.test.passesIf")} {e.pass_criteria}</p>
           </Reveal>
         ))}
       </div>
       {rb.not_supported.length > 0 && (
         <>
           <h3 className="mt-14 text-[22px] font-semibold tracking-[-0.02em]">{t("pb.test.left")}</h3>
-          <ul lang="en" dir="ltr" className="mt-4 grid gap-3 md:grid-cols-2">
+          <ul className="mt-4 grid gap-3 md:grid-cols-2">
             {rb.not_supported.map((x) => <li key={x.name} className="card p-5"><div className="font-medium">{x.name}</div><p className="mt-1 text-[14px] leading-relaxed text-ink-2">{x.why}</p></li>)}
           </ul>
         </>
@@ -742,7 +728,7 @@ function Testing({ rb }) {
 /* ------------------------------------------------------------- decisions */
 
 function Decisions({ rb, go }) {
-  const t = useLang().t(dict);
+  const t = strings(dict);
   const owner = rb.open_questions.filter((q) => q.owner_decision);
   const housekeeping = rb.open_questions.filter((q) => !q.owner_decision);
   if (!owner.length && !housekeeping.length) return null;
@@ -750,19 +736,18 @@ function Decisions({ rb, go }) {
     <section className="pt-24">
       <SectionHead eyebrow={t("pb.dec.eyebrow")} title={accented(t("pb.dec.title"), t("pb.dec.accent"))} size="md"
         lede={t("pb.dec.lede")} />
-      <EnglishNote />
       <ul className="grid gap-3 md:grid-cols-2">
         {owner.map((q) => (
           <li key={q.question} className="card border-people/40 p-5">
             <span className="pill mb-3 border-dashed border-people/60 text-people">{t("pb.dec.call")}</span>
-            <En as="p" className="text-[15px] leading-relaxed">{q.question}</En>
+            <p className="text-[15px] leading-relaxed">{q.question}</p>
           </li>
         ))}
       </ul>
       {housekeeping.length > 0 && (
         <details className="mt-6">
           <summary className="meta cursor-pointer hover:text-ink">{t("pb.dec.tidy", { n: housekeeping.length })}</summary>
-          <ul lang="en" dir="ltr" className="mt-3 grid gap-3 md:grid-cols-2">{housekeeping.map((q) => <li key={q.question} className="card p-5 text-[14.5px] leading-relaxed text-ink-2">{q.question}</li>)}</ul>
+          <ul className="mt-3 grid gap-3 md:grid-cols-2">{housekeeping.map((q) => <li key={q.question} className="card p-5 text-[14.5px] leading-relaxed text-ink-2">{q.question}</li>)}</ul>
         </details>
       )}
       <button type="button" onClick={() => go("admin")} className="meta mt-5 inline-flex items-center gap-1 hover:text-ink">{t("pb.dec.past")} <ArrowRight className="size-3.5" /></button>

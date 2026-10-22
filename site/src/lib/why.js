@@ -5,17 +5,17 @@
 // published. The size of each move (move_pct) and the names it covers (symbols) come from our own data, never from the
 // model. A note explains a move after it happened; it is never a reason to trade and never enters the brain's pack.
 
-import { fmtShort, translate } from "./i18n.js";
-import dict from "../i18n/home.js";
+import { strings } from "./text.js";
+import dict from "../text/home.js";
+
+const t = strings(dict);
 
 /** The line every note carries wherever it is shown (config/rules.json: the plan does not buy on headlines). */
 export const NOT_A_TRADE = "This explains a move; it is not a reason to trade.";
-export const notATrade = (lang = "en") => translate(dict, lang)("why.notATrade");
 /** How far back a Stock page lists a name's notes (why.json itself keeps about thirty days). */
 export const WHY_DAYS = 30;
 
-/** Each confidence in words (English): a short label for a chip and the word the news line uses before the headline.
- *  Other languages: confidenceWord(conf, lang). */
+/** Each confidence in words: a short label for a chip and the word the news line uses before the headline. */
 export const CONFIDENCE = {
   clear: { word: "Clear cause", lead: "why", tone: "accent" },
   likely: { word: "Likely cause", lead: "likely why", tone: "flat" },
@@ -27,14 +27,8 @@ const DAY = 86400000;
 const utc = (iso) => Date.parse(`${iso}T00:00:00Z`);
 const isDate = (s) => typeof s === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s);
 const num = (v) => (typeof v === "number" && Number.isFinite(v) ? v : null);
-export const confidenceWord = (conf, lang = "en") => translate(dict, lang)(`why.conf.${CONFIDENCE[conf] ? conf : "unclear"}`);
-/** "Oct 9" for a YYYY-MM-DD date ("9 באוק׳" in Hebrew). */
-export const noteDay = (iso, lang = "en") => {
-  if (!isDate(iso)) return "";
-  if (lang !== "en") return fmtShort(iso, lang);
-  const d = new Date(utc(iso));
-  return `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`;
-};
+/** "Oct 9" for a YYYY-MM-DD date. */
+export const noteDay = (iso) => { if (!isDate(iso)) return ""; const d = new Date(utc(iso)); return `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`; };
 const trimEnd = (s) => String(s ?? "").trim().replace(/[.;:,\s]+$/, "");
 
 /**
@@ -107,21 +101,19 @@ export function isBehind(doc, latestDate) {
 
 /**
  * The words a news line adds after the move: "why: SpaceX agreed to buy phone airwaves", "likely why: ...", or for an
- * unclear note "no clear cause has been found yet". No trailing full stop. The headline is the note's own (English)
- * text; in Hebrew it is isolated so it reads left to right inside the line.
+ * unclear note "no clear cause has been found yet". No trailing full stop.
  */
-export function whyClause(note, lang = "en") {
+export function whyClause(note) {
   if (!note) return "";
   const conf = confidenceOf(note);
-  const t = translate(dict, lang);
   return CONFIDENCE[conf].lead ? t(`why.lead.${conf}`, { headline: trimEnd(note.headline) }) : t("why.none");
 }
 
 /** A note's sources for display, in the order given: {url, publisher, day}. Only https links are kept. */
-export function sourcesOf(note, lang = "en") {
+export function sourcesOf(note) {
   return (note?.sources ?? [])
     .filter((s) => typeof s?.url === "string" && /^https:\/\//.test(s.url))
-    .map((s) => ({ url: s.url, publisher: String(s.publisher ?? "").trim() || hostOf(s.url), day: noteDay(s.published, lang) }));
+    .map((s) => ({ url: s.url, publisher: String(s.publisher ?? "").trim() || hostOf(s.url), day: noteDay(s.published) }));
 }
 
 function hostOf(url) {
@@ -145,13 +137,12 @@ export function sectorOf(note, groups = {}) {
  * Who a note is about, in words: the stock or fund itself (its first symbol; any others are funds that moved with it),
  * from `names`, else the note's own name (filled from the site's config by record_why, so funds of other lists read as
  * words too), else the ticker; "Communication companies on the list" for a sector average. `names` maps symbol to name,
- * `short(sector, lang)` shortens a sector name (lib/marketday.js shortSector), `lang` the language.
+ * `short` shortens a sector name (lib/marketday.js shortSector).
  */
-export function whoOf(note, { names = {}, groups = {}, short = (s) => s, lang = "en" } = {}) {
-  const t = translate(dict, lang);
+export function whoOf(note, { names = {}, groups = {}, short = (s) => s } = {}) {
   if (note?.kind === "sector") {
     const sector = sectorOf(note, groups);
-    return sector ? t("why.who.sector", { sector: short(sector, lang) }) : t("why.who.group");
+    return sector ? t("why.who.sector", { sector: short(sector) }) : t("why.who.group");
   }
   const first = note?.symbols?.[0];
   const named = (first && names[first]) || note?.name || first;
@@ -163,26 +154,25 @@ export const plainName = (s) => String(s ?? "").replace(/\s*\([A-Z0-9.^-]+ proxy
 
 /**
  * A note ready to show: {key, kind, date, day, who, headline, why, confidence, word, tone, sources, move_pct,
- * symbols}. `why` is the longer own-words explanation (may be empty, English like the headline); `word` the confidence
- * in words. `opts`: whoOf's options, with `lang` for the words the site writes (who, word, day).
+ * symbols}. `why` is the longer own-words explanation (may be empty); `word` the confidence in words. `opts`: whoOf's
+ * options.
  */
 export function noteView(note, opts = {}) {
   const conf = confidenceOf(note);
-  const lang = opts.lang ?? "en";
   return {
     key: `${note.market_date}:${note.key ?? (note.symbols ?? []).join(",")}`, // a name can have notes on several days
     kind: note.kind,
     market: note.market ?? null,
     date: note.market_date,
-    day: noteDay(note.market_date, lang),
+    day: noteDay(note.market_date),
     who: whoOf(note, opts),
     headline: trimEnd(note.headline),
     why: String(note.why ?? "").trim(),
     confidence: conf,
-    word: confidenceWord(conf, lang),
+    word: CONFIDENCE[conf].word,
     tone: CONFIDENCE[conf].tone,
     unclear: conf === "unclear",
-    sources: sourcesOf(note, lang),
+    sources: sourcesOf(note),
     move_pct: num(note.move_pct),
     symbols: note.symbols ?? [],
   };

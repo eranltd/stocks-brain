@@ -1,11 +1,10 @@
 import { useMemo, useState } from "react";
-import { pad2 } from "../lib/format.js";
-import { useLang, En, EnglishNote } from "../lib/lang.jsx";
+import { pad2, fmtDate, fmtUsd } from "../lib/format.js";
 import { Accent, ArrowRight, Chip, Container, Empty, Reveal, SectionHead, Strip } from "../components/ui.jsx";
-import { translate, fmtList, fmtUsd } from "../lib/i18n.js";
-import dict from "../i18n/learn.js";
+import dict from "../text/learn.js";
+import { strings } from "../lib/text.js";
 
-// Labels are i18n/learn.js "rt.cad.<id>"; weekdays "rt.dow.<0-6>" (0 is Sunday).
+// Labels are text/learn.js "rt.cad.<id>"; weekdays "rt.dow.<0-6>" (0 is Sunday).
 const CADENCE = ["all", "daily", "weekly", "monthly", "on_demand"];
 // Who starts a routine: a GitHub Actions schedule in the repo, or a scheduled Claude Code session (a Claude routine).
 // Label "rt.runner.<runner>", hover text "rt.runner.<runner>.title".
@@ -20,39 +19,39 @@ const NOTE = new Set(["close_run"]);
 const WHEN = new Set(["close_run"]);
 
 /** "05:23, 08:23 and 11:23 UTC (08:23, 11:23 and 14:23 your time)": UTC from the cron, and the reader's own clock. */
-export function timesLabel(h, m, tz = undefined, lang = "en") {
-  const t = translate(dict, lang);
+export function timesLabel(h, m, tz = undefined) {
+  const t = strings(dict);
   const hours = h.split(",").map(Number);
-  const list = (xs) => (lang !== "en" ? fmtList(xs, lang) : xs.length > 1 ? `${xs.slice(0, -1).join(", ")} and ${xs.at(-1)}` : xs[0]);
+  const list = (xs) => (xs.length > 1 ? `${xs.slice(0, -1).join(", ")} and ${xs.at(-1)}` : xs[0]);
   const utc = list(hours.map((x) => `${pad2(x)}:${pad2(+m)}`));
   const now = new Date();
   const local = list(hours.map((x) => new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), x, +m)).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: tz })));
   return local === utc ? t("rt.utc", { times: utc }) : t("rt.utcLocal", { times: utc, local });
 }
 
-function when(r, lang) {
-  const t = translate(dict, lang);
+function when(r) {
+  const t = strings(dict);
   if (!r.cron) return WHEN.has(r.id) ? t(`rt.when.${r.id}`) : t("rt.whenAsked");
   const [m, h, dom, , dow] = r.cron.split(" ");
-  const tl = timesLabel(h, m, undefined, lang);
+  const tl = timesLabel(h, m);
   if (WHEN.has(r.id)) return `${t(`rt.when.${r.id}`)} · ${tl}`;
-  if (r.cadence === "daily") return `${days(dow, lang)} · ${tl}`;
-  if (r.cadence === "weekly") return `${t.has(`rt.dow.${+dow}`) ? t("rt.weekly", { day: t(`rt.dow.${+dow}`) }, { bidi: false }) : dow} · ${tl}`;
+  if (r.cadence === "daily") return `${days(dow)} · ${tl}`;
+  if (r.cadence === "weekly") return `${t.has(`rt.dow.${+dow}`) ? t("rt.weekly", { day: t(`rt.dow.${+dow}`) }) : dow} · ${tl}`;
   return `${t("rt.monthly", { dom })} · ${tl}`;
 }
 
 /** Scheduled Claude sessions run on the subscription ($0 per run); the other model routines carry a cost cap. */
-function llmDesc(llm, lang) {
-  const t = translate(dict, lang);
+function llmDesc(llm) {
+  const t = strings(dict);
   const capped = llm.filter((r) => r.runner !== "claude_routine");
   const sub = llm.length - capped.length;
-  const usd = capped.length ? fmtUsd(Math.max(...capped.map((r) => r.max_cost_usd)), lang) : null;
+  const usd = capped.length ? fmtUsd(Math.max(...capped.map((r) => r.max_cost_usd))) : null;
   const cap = usd ? t(sub ? "rt.llm.capOthers" : "rt.llm.capEach", { usd }) : "";
   return [sub ? t("rt.llm.sub", { count: sub }) : "", cap].filter(Boolean).join("; ").replace(/^./, (c) => c.toUpperCase()) + ".";
 }
 
-function days(dow, lang) {
-  const t = translate(dict, lang);
+function days(dow) {
+  const t = strings(dict);
   const name = (d) => (t.has(`rt.dow.${d}`) ? t(`rt.dow.${d}`) : d);
   if (dow === "*") return t("rt.everyDay");
   const [a, b] = dow.split("-").map(Number);
@@ -77,17 +76,16 @@ function nextRun(cron, from = new Date()) {
   return null;
 }
 
-function relTime(d, lang) {
+function relTime(d) {
   if (!d) return "";
-  const t = translate(dict, lang);
+  const t = strings(dict);
   const hrs = Math.round((d - new Date()) / 36e5);
   return hrs < 24 ? t("rt.inHours", { count: hrs }) : t("rt.inDays", { count: Math.round(hrs / 24) });
 }
 
-const HE_UTC = new Intl.DateTimeFormat("he-IL", { weekday: "short", day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "UTC" });
-/** A fire time in UTC: "Tue, 20 Oct 2026 05:23 UTC" / its Hebrew form. */
-const utcStamp = (d, lang) => (lang === "he" ? `${HE_UTC.format(d)} UTC` : d.toUTCString().replace(":00 GMT", " UTC"));
-/** A status or outcome word, or the raw value when the dictionary has none. */
+/** A fire time in UTC: "Tue, 20 Oct 2026 05:23 UTC". */
+const utcStamp = (d) => d.toUTCString().replace(":00 GMT", " UTC");
+/** A status or outcome word, or the raw value when text/learn.js has none. */
 const word = (t, prefix, v) => (t.has(`${prefix}.${v}`) ? t(`${prefix}.${v}`) : v);
 
 export default function Routines({ data }) {
@@ -106,8 +104,7 @@ export default function Routines({ data }) {
   }, [runs]);
   const next = active.map((r) => ({ r, at: nextRun(r.cron) })).filter((x) => x.at).sort((a, b) => a.at - b.at)[0];
   const repo = `https://github.com/${manifest.repo}`;
-  const { lang, fmt, t: tr } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
 
   return (
     <Container className="pt-20">
@@ -127,10 +124,10 @@ export default function Routines({ data }) {
       />
       <Strip
         cells={[
-          { value: <bdi dir="ltr">{active.length}/{all.length}</bdi>, label: t("rt.s.on"), desc: t("rt.s.onDesc") },
-          { value: next ? relTime(next.at, lang) : "—", label: next ? t("rt.s.next", { name: next.r.name }) : t("rt.s.nothing"), tone: "flat", desc: next ? utcStamp(next.at, lang) : "" },
-          { value: last ? word(t, "rt.out", last.status) : t("rt.s.noneYet"), label: t("rt.s.lastRun"), tone: !last ? "flat" : last.status === "success" ? "accent" : last.status === "partial" ? "people" : "down", desc: last ? `${fmt.date(last.finished_at.slice(0, 10))} · ${last.trigger}` : t("rt.s.firstRun") },
-          { value: llm.length, label: t("rt.s.ai"), tone: "ai", desc: llmDesc(llm, lang) },
+          { value: <span>{active.length}/{all.length}</span>, label: t("rt.s.on"), desc: t("rt.s.onDesc") },
+          { value: next ? relTime(next.at) : "—", label: next ? t("rt.s.next", { name: next.r.name }) : t("rt.s.nothing"), tone: "flat", desc: next ? utcStamp(next.at) : "" },
+          { value: last ? word(t, "rt.out", last.status) : t("rt.s.noneYet"), label: t("rt.s.lastRun"), tone: !last ? "flat" : last.status === "success" ? "accent" : last.status === "partial" ? "people" : "down", desc: last ? `${fmtDate(last.finished_at.slice(0, 10))} · ${last.trigger}` : t("rt.s.firstRun") },
+          { value: llm.length, label: t("rt.s.ai"), tone: "ai", desc: llmDesc(llm) },
         ]}
       />
 
@@ -146,7 +143,6 @@ export default function Routines({ data }) {
         })}
       </Reveal>
 
-      <EnglishNote className="mt-6" />
       <div key={cad} className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         {list.map((r, i) => {
           const lr = lastByRoutine[r.id];
@@ -154,25 +150,25 @@ export default function Routines({ data }) {
           return (
             <article key={r.id} className={`card card-hover flex animate-rise flex-col p-7 ${r.status !== "active" ? "border-dashed" : ""} ${r.human_gate ? "border-people/50" : ""}`} style={{ animationDelay: `${i * 50}ms` }}>
               <div className="flex items-center justify-between gap-3">
-                <span className="meta num">{when(r, lang)}</span>
+                <span className="meta num">{when(r)}</span>
                 <Chip kind={r.status === "active" ? "active" : "planned"} icon={false}>{word(t, "rt.status", r.status)}</Chip>
               </div>
-              <En as="h3" className="mt-5 text-[21px] font-semibold tracking-[-0.02em]">{r.name}</En>
+              <h3 className="mt-5 text-[21px] font-semibold tracking-[-0.02em]">{r.name}</h3>
               {NOTE.has(r.id) && r.status === "active"
                 ? <p className="mt-3 border-s-2 border-ai/50 ps-3 text-[14.5px] leading-relaxed text-ink">{t(`rt.note.${r.id}`)}</p>
-                : <En as="p" className="mt-3 text-[14.5px] leading-relaxed text-ink-2">{r.why}</En>}
+                : <p className="mt-3 text-[14.5px] leading-relaxed text-ink-2">{r.why}</p>}
               <dl className="mt-5 grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1.5 border-t border-line pt-4 text-[13px]">
-                <dt className="meta">{t("rt.dl.step")}</dt><dd><bdi>{r.milestone}</bdi></dd>
-                <dt className="meta">{t("rt.dl.reads")}</dt>{r.inputs.length ? <dd dir="ltr" className="truncate text-start font-mono text-[12px]">{r.inputs.join(", ")}</dd> : <dd>{t("rt.dl.ownOutputs")}</dd>}
-                <dt className="meta">{t("rt.dl.saves")}</dt><dd dir="ltr" className="truncate text-start font-mono text-[12px]" title={r.outputs.join(", ")}>{r.outputs.join(", ")}</dd>
-                {at && (<><dt className="meta">{t("rt.dl.next")}</dt><dd>{relTime(at, lang)}</dd></>)}
+                <dt className="meta">{t("rt.dl.step")}</dt><dd>{r.milestone}</dd>
+                <dt className="meta">{t("rt.dl.reads")}</dt>{r.inputs.length ? <dd className="truncate text-start font-mono text-[12px]">{r.inputs.join(", ")}</dd> : <dd>{t("rt.dl.ownOutputs")}</dd>}
+                <dt className="meta">{t("rt.dl.saves")}</dt><dd className="truncate text-start font-mono text-[12px]" title={r.outputs.join(", ")}>{r.outputs.join(", ")}</dd>
+                {at && (<><dt className="meta">{t("rt.dl.next")}</dt><dd>{relTime(at)}</dd></>)}
                 <dt className="meta">{t("rt.dl.last")}</dt>
-                <dd>{lr ? <a href={lr.url} target="_blank" rel="noreferrer" className={`hover:underline ${lr.outcome === "success" ? "text-accent" : "text-down"}`}>{word(t, "rt.out", lr.outcome)} · <bdi>{lr.at.slice(0, 10)}</bdi></a> : <span className="text-ink-3">{t("rt.dl.never")}</span>}</dd>
+                <dd>{lr ? <a href={lr.url} target="_blank" rel="noreferrer" className={`hover:underline ${lr.outcome === "success" ? "text-accent" : "text-down"}`}>{word(t, "rt.out", lr.outcome)} · <span>{lr.at.slice(0, 10)}</span></a> : <span className="text-ink-3">{t("rt.dl.never")}</span>}</dd>
               </dl>
               <div className="mt-auto flex flex-wrap items-center gap-2 pt-5 [margin-top:max(1.25rem,auto)]">
                 {RUNNER[r.runner] && <span className={`pill py-1 text-[11px] ${RUNNER[r.runner].cls}`} title={t(`rt.runner.${r.runner}.title`)}>{t(`rt.runner.${r.runner}`)}</span>}
                 {r.uses_llm
-                  ? <span className="pill border-ai/40 bg-ai/10 py-1 text-[11px] text-ai">{r.runner === "claude_routine" ? t("rt.pill.sub") : t("rt.pill.cap", { usd: fmt.usd(r.max_cost_usd) })}</span>
+                  ? <span className="pill border-ai/40 bg-ai/10 py-1 text-[11px] text-ai">{r.runner === "claude_routine" ? t("rt.pill.sub") : t("rt.pill.cap", { usd: fmtUsd(r.max_cost_usd) })}</span>
                   : <span className="pill py-1 text-[11px] text-ink-2">{t("rt.pill.code")}</span>}
                 {r.human_gate && <span className="pill border-dashed border-people/60 py-1 text-[11px] text-people">{t("rt.pill.gate")}</span>}
               </div>
@@ -203,9 +199,9 @@ export default function Routines({ data }) {
                 <tbody>
                   {runs.slice(0, 60).map((r) => (
                     <tr key={r.run_id} className="border-b border-line last:border-0 hover:bg-ink/[0.03]">
-                      <td className="px-5 py-3.5 font-mono"><bdi dir="ltr">{r.finished_at.replace("T", " ").replace("Z", "")}</bdi></td>
-                      <td className="px-5 py-3.5"><bdi>{r.workflow}</bdi></td>
-                      <td className="px-5 py-3.5 text-ink-2"><bdi>{r.trigger}</bdi></td>
+                      <td className="px-5 py-3.5 font-mono">{r.finished_at.replace("T", " ").replace("Z", "")}</td>
+                      <td className="px-5 py-3.5">{r.workflow}</td>
+                      <td className="px-5 py-3.5 text-ink-2">{r.trigger}</td>
                       <td className="px-5 py-3.5"><Chip kind={r.status === "success" ? "ok" : r.status === "partial" ? "planned" : r.status === "skipped" ? "retired" : "failed"} icon={false}>{word(t, "rt.out", r.status)}</Chip></td>
                       <td className="px-5 py-3.5">
                         <div className="flex flex-wrap gap-1.5">
@@ -214,7 +210,7 @@ export default function Routines({ data }) {
                           ))}
                         </div>
                       </td>
-                      <td className="px-5 py-3.5"><a href={r.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-ink-2 hover:text-accent"><bdi>#{r.run_id.slice(-6)}</bdi> <ArrowRight className="size-3.5 -rotate-45" /></a></td>
+                      <td className="px-5 py-3.5"><a href={r.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-ink-2 hover:text-accent"><span>#{r.run_id.slice(-6)}</span> <ArrowRight className="size-3.5 -rotate-45" /></a></td>
                     </tr>
                   ))}
                 </tbody>

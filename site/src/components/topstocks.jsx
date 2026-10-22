@@ -6,9 +6,9 @@ import { lastCandle } from "../lib/spotlight.js";
 import { headlineFor } from "../lib/secnews.js";
 import { CandleZoom } from "./zoom.jsx";
 import { ArrowRight, Chevron } from "./ui.jsx";
-import { EnglishNote, useLang } from "../lib/lang.jsx";
 import { BuyLine } from "./buywindow.jsx";
-import dict from "../i18n/home.js";
+import dict from "../text/home.js";
+import { strings } from "../lib/text.js";
 
 /*
  * "Top stocks": the simple home's first thing, a carousel of big calm cards, one per name, each with a small candle
@@ -39,14 +39,11 @@ const RETRY_MS = 20000;
 /**
  * The carousel. `items` from topStocks() (lib/carousel.js); `openTo(route)` opens a page and its section. `title` may be
  * an element; `label` is its plain text for the screen-reader labels (defaults to `title`). `one` is "company" or
- * "fund". `englishNote` shows the one-line "written in English for now" note in Hebrew (the cards' own summaries come
- * from data).
+ * "fund".
  */
-export function TopStocks({ items, manifest, marketId = "nasdaq", title, label = null, subtitle = null, headingId = "top-stocks-title", news = null, one = "company", fallback = null, englishNote = false, openTo, seeCandles }) {
+export function TopStocks({ items, manifest, marketId = "nasdaq", title, label = null, subtitle = null, headingId = "top-stocks-title", news = null, one = "company", fallback = null, openTo, seeCandles }) {
   const reduced = useReducedMotion();
-  const { dir, lang, t: tr } = useLang();
-  const t = tr(dict);
-  const rtl = dir === "rtl";
+  const t = strings(dict);
   const heading = title ?? t("top.title");
   const name = label ?? (typeof heading === "string" ? heading : t("top.title"));
   const noun = one === "fund" ? "fund" : "company";
@@ -94,7 +91,7 @@ export function TopStocks({ items, manifest, marketId = "nasdaq", title, label =
     const stops = snapStops(count, step, max), width = el.clientWidth;
     // Only a real change of size: a card growing or shrinking in height (a chart that loads or fails) must not count,
     // or every failed fetch would re-measure, retry and fail again.
-    setGeo((g) => (g.step === step && g.width === width && g.stops.join() === stops.join() ? g : { step, stops, left: Math.abs(el.scrollLeft), width }));
+    setGeo((g) => (g.step === step && g.width === width && g.stops.join() === stops.join() ? g : { step, stops, left: el.scrollLeft, width }));
   }, [count]);
 
   useEffect(() => {
@@ -117,19 +114,17 @@ export function TopStocks({ items, manifest, marketId = "nasdaq", title, label =
     raf.current = requestAnimationFrame(() => {
       const el = rail.current;
       if (!el) return;
-      setGeo((g) => ({ ...g, left: Math.abs(el.scrollLeft) }));
-      if (!swiped && Math.abs(el.scrollLeft) > 24) { setSwiped(true); saveSwiped(); }
+      setGeo((g) => ({ ...g, left: el.scrollLeft }));
+      if (!swiped && el.scrollLeft > 24) { setSwiped(true); saveSwiped(); }
     });
   };
   useEffect(() => () => cancelAnimationFrame(raf.current), []);
 
-  // Offsets are distances from the start; on a right-to-left page the browser counts scrollLeft down from 0.
-  const goTo = (x) => rail.current?.scrollTo({ left: rtl ? -x : x, behavior: reduced ? "auto" : "smooth" });
+  const goTo = (x) => rail.current?.scrollTo({ left: x, behavior: reduced ? "auto" : "smooth" });
   const step = (dir) => goTo(stepStop(geo.stops, geo.left, dir));
   const onKey = (e) => {
     if (e.target !== e.currentTarget) return; // keys inside a card's buttons stay theirs
-    const fwd = rtl ? "ArrowLeft" : "ArrowRight", back = rtl ? "ArrowRight" : "ArrowLeft";
-    const to = { [fwd]: () => step(1), [back]: () => step(-1), Home: () => goTo(0), End: () => goTo(geo.stops.at(-1)) }[e.key];
+    const to = { ArrowRight: () => step(1), ArrowLeft: () => step(-1), Home: () => goTo(0), End: () => goTo(geo.stops.at(-1)) }[e.key];
     if (to) { e.preventDefault(); to(); }
   };
 
@@ -151,7 +146,6 @@ export function TopStocks({ items, manifest, marketId = "nasdaq", title, label =
           <ArrowRight className="size-4 shrink-0 text-ink" />
         </p>
       </div>
-      {englishNote && <EnglishNote className="mt-2" />}
 
       <div
         ref={rail}
@@ -160,11 +154,11 @@ export function TopStocks({ items, manifest, marketId = "nasdaq", title, label =
         tabIndex={0}
         role="region"
         aria-roledescription="carousel"
-        aria-label={t("top.region", { title: name }, { bidi: false })}
+        aria-label={t("top.region", { title: name })}
         className="no-scrollbar -mx-4 mt-4 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto overscroll-x-contain px-4 pb-1"
       >
         {items.map((it, i) => (
-          <StockCard key={it.ticker} it={it} i={i} n={count} chart={charts[it.ticker]} openTo={openTo} seeCandles={seeCandles} fallback={fallbackLine} onZoom={() => setZoom(it)} headline={headlineFor(news, it.ticker, lang)} />
+          <StockCard key={it.ticker} it={it} i={i} n={count} chart={charts[it.ticker]} openTo={openTo} seeCandles={seeCandles} fallback={fallbackLine} onZoom={() => setZoom(it)} headline={headlineFor(news, it.ticker)} />
         ))}
       </div>
 
@@ -173,7 +167,7 @@ export function TopStocks({ items, manifest, marketId = "nasdaq", title, label =
         {geo.stops.length > 1 && (
           <div className="flex flex-wrap items-center justify-center" role="group" aria-label={t(`top.choose.${noun}`)}>
             {geo.stops.map((s, k) => (
-              <button key={k} type="button" onClick={() => goTo(s)} aria-label={t("top.show", { name: items[cardAt(s)]?.name ?? t(`top.one.${noun}`) }, { bidi: false })} aria-current={k === active ? "true" : undefined}
+              <button key={k} type="button" onClick={() => goTo(s)} aria-label={t("top.show", { name: items[cardAt(s)]?.name ?? t(`top.one.${noun}`) })} aria-current={k === active ? "true" : undefined}
                 className="grid size-11 place-items-center rounded-full">
                 <span className={`block h-2.5 rounded-full transition-all duration-300 motion-reduce:transition-none ${k === active ? "w-7 bg-ink" : "w-2.5 bg-ink-3/70"}`} />
               </button>
@@ -197,12 +191,12 @@ function RoundButton({ label, dir, onClick, disabled }) {
 }
 
 function StockCard({ it, i, n, chart, openTo, seeCandles, fallback, onZoom, headline }) {
-  const t = useLang().t(dict);
+  const t = strings(dict);
   return (
-    <article role="group" aria-roledescription="slide" aria-label={t("top.slide", { name: it.name, i: i + 1, n }, { bidi: false })}
+    <article role="group" aria-roledescription="slide" aria-label={t("top.slide", { name: it.name, i: i + 1, n })}
       className="card top-card flex shrink-0 snap-start flex-col p-6 sm:p-7">
-      <h3 dir="auto" className="line-clamp-2 text-[clamp(24px,6.6vw,28px)] leading-tight font-semibold tracking-[-0.02em] text-ink">{it.name}</h3>
-      <p className="mt-1 text-[14.5px] text-ink-2"><bdi className="font-mono text-ink-3">{it.ticker}</bdi> · {it.tag}</p>
+      <h3 className="line-clamp-2 text-[clamp(24px,6.6vw,28px)] leading-tight font-semibold tracking-[-0.02em] text-ink">{it.name}</h3>
+      <p className="mt-1 text-[14.5px] text-ink-2"><span className="font-mono text-ink-3">{it.ticker}</span> · {it.tag}</p>
       {it.chip && (
         <p className={`mt-4 inline-flex items-center gap-2 self-start rounded-full border px-4 py-1.5 text-[19px] font-semibold tracking-[-0.01em] ${CHIP[it.chip.tone]}`}>
           <span aria-hidden="true" className="text-[13px]">{CHIP_MARK[it.chip.tone]}</span>{it.chip.word}
@@ -215,12 +209,11 @@ function StockCard({ it, i, n, chart, openTo, seeCandles, fallback, onZoom, head
           {t("top.zoom")}
         </button>
       )}
-      {/* A company card's own summary is English data for now; dir="auto" lets it read left to right in a Hebrew page. */}
-      <p dir="auto" lang={it.plain ? "en" : undefined} className="mt-4 line-clamp-3 text-[17px] leading-relaxed text-ink">{it.plain ?? fallback}</p>
+      <p className="mt-4 line-clamp-3 text-[17px] leading-relaxed text-ink">{it.plain ?? fallback}</p>
       {headline && (
         <a href={headline.url} target="_blank" rel="noreferrer" className="mt-4 block rounded-2xl border border-line-2 px-4 py-3 transition hover:border-ink-3">
           <span className="meta block normal-case tracking-[0.04em]">{t("top.official", { day: headline.day })}</span>
-          <span dir="auto" className="mt-1 block text-[16px] font-semibold leading-snug text-ink">{headline.title} <span className="font-normal text-ink-3">↗</span></span>
+          <span className="mt-1 block text-[16px] font-semibold leading-snug text-ink">{headline.title} <span className="font-normal text-ink-3">↗</span></span>
         </a>
       )}
       {it.buy && <BuyLine line={it.buy} onClick={() => openTo(it.buyTo)} />}
@@ -257,8 +250,7 @@ const UP = "var(--accent)", DOWN = "var(--down)", AVG = "var(--ai)";
  * at the chart's right edge it read as a scrollbar.)
  */
 function MiniCandles({ name, ticker, chart }) {
-  const { lang, t: tr } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const [ref, w] = useBoxWidth();
   const win = chart?.state === "ok" ? chart.win : null;
   const g = useMemo(() => (win && w ? miniGeometry(win, w, CHART_H) : null), [win, w]);
@@ -266,7 +258,7 @@ function MiniCandles({ name, ticker, chart }) {
   let body;
   if (!chart || chart.state === "loading" || (win && !g)) {
     body = (
-      <div className="relative h-full overflow-hidden rounded-2xl bg-surface-2" role="img" aria-label={t("top.loading", { name }, { bidi: false })}>
+      <div className="relative h-full overflow-hidden rounded-2xl bg-surface-2" role="img" aria-label={t("top.loading", { name })}>
         <div className="absolute inset-x-6 bottom-8 top-8 flex items-end gap-[6%] opacity-60 motion-safe:animate-pulse">
           {[38, 55, 46, 70, 58, 80, 64].map((h, k) => <span key={k} className="flex-1 rounded-sm bg-line-2" style={{ height: `${h}%` }} />)}
         </div>
@@ -281,7 +273,7 @@ function MiniCandles({ name, ticker, chart }) {
   } else {
     const last = g.last;
     body = (
-      <svg width={w} height={CHART_H} viewBox={`0 0 ${w} ${CHART_H}`} role="img" aria-label={miniSummary(name, win, lang)} className="block">
+      <svg width={w} height={CHART_H} viewBox={`0 0 ${w} ${CHART_H}`} role="img" aria-label={miniSummary(name, win)} className="block">
         <defs><clipPath id={clip}><rect x="0" y="0" width={w} height={CHART_H} /></clipPath></defs>
         <g clipPath={`url(#${clip})`}>
           {g.candles.map((k) => {
@@ -305,7 +297,7 @@ function MiniCandles({ name, ticker, chart }) {
   return (
     <figure>
       {win && <LastDay win={win} />}
-      <div ref={ref} dir="ltr" style={{ height: CHART_H }}>{body}</div>
+      <div ref={ref} style={{ height: CHART_H }}>{body}</div>
       <figcaption className="mt-2.5">
       </figcaption>
     </figure>
@@ -314,7 +306,7 @@ function MiniCandles({ name, ticker, chart }) {
 
 /** The newest candle, big and plain: a green day (it closed higher than it opened) or a red one. */
 function LastDay({ win }) {
-  const t = useLang().t(dict);
+  const t = strings(dict);
   const day = lastCandle(win);
   if (!day) return null;
   const green = day === "green";

@@ -3,16 +3,14 @@
 // invents a path, fills in a day that did not happen or looks ahead. The candles come from
 // data/market/candles/<SYMBOL>.json (percent from the last close) and the race from the derived file's indexed series
 // (100 = the start of the window); both are turned into percent from the replay's first close, never into prices.
-// Sentences take `lang` last ("en" by default): the replay's texts are in i18n/stock.js ("rp.*"), the race's in
-// i18n/home.js ("race.*").
+// The replay's texts are in text/stock.js ("rp.*"), the race's in text/home.js ("race.*").
 
 import { moveBetween } from "./candles.js";
-import { isolate, ltr, translate } from "./i18n.js";
-import stockDict from "../i18n/stock.js";
-import homeDict from "../i18n/home.js";
+import { strings } from "./text.js";
+import stockDict from "../text/stock.js";
+import homeDict from "../text/home.js";
 
 const isNum = (v) => typeof v === "number" && Number.isFinite(v);
-const L = (lang) => (lang === "he" ? "he" : "en");
 
 /** The speeds a reader can pick (1× plays the whole replay in REPLAY_MS, the race in RACE_MS). */
 export const SPEEDS = [1, 2, 4];
@@ -103,28 +101,27 @@ export function monthsSpanned(dates) {
   return Math.max(1, Math.round(ms / (30.44 * 86400000)));
 }
 
-/** A month's full name ("April", "אפריל"), with its year when asked ("September 2025"). */
-export function monthWord(iso, lang = "en", withYear = false) {
-  const name = translate(stockDict, L(lang))(`fu.month.${Number(String(iso).slice(5, 7)) - 1}`);
+/** A month's full name ("April"), with its year when asked ("September 2025"). */
+export function monthWord(iso, withYear = false) {
+  const name = strings(stockDict)(`fu.month.${Number(String(iso).slice(5, 7)) - 1}`);
   return withYear ? `${name} ${String(iso).slice(0, 4)}` : name;
 }
 
 /** The first and last month of a series in words; both carry their year when the series crosses a new year. */
-export function spanWords(dates, lang = "en") {
+export function spanWords(dates) {
   const years = dates[0].slice(0, 4) !== dates.at(-1).slice(0, 4);
-  return { from: monthWord(dates[0], lang, years), to: monthWord(dates.at(-1), lang, years) };
+  return { from: monthWord(dates[0], years), to: monthWord(dates.at(-1), years) };
 }
 
-/** "since April" / "מאז אפריל": what the running counter counts from. */
-export function sinceWords(dates, lang = "en") {
-  return translate(stockDict, L(lang))("rp.since", { when: spanWords(dates, lang).from }, { bidi: false });
+/** "since April": what the running counter counts from. */
+export function sinceWords(dates) {
+  return strings(stockDict)("rp.since", { when: spanWords(dates).from });
 }
 
-/** A percent without its sign ("18%", "4.3%", "9%"): whole percents from 10 up. Left to right inside a Hebrew line. */
-export function pctWords(v, lang = "en") {
+/** A percent without its sign ("18%", "4.3%", "9%"): whole percents from 10 up. */
+export function pctWords(v) {
   const a = Math.abs(v);
-  const s = `${a.toFixed(a >= 9.95 ? 0 : 1).replace(/\.0$/, "")}%`;
-  return L(lang) === "he" ? ltr(s) : s;
+  return `${a.toFixed(a >= 9.95 ? 0 : 1).replace(/\.0$/, "")}%`;
 }
 
 /** The smallest drop the end line names; a smaller one is told as "no drop of 1% or more". */
@@ -134,26 +131,23 @@ export const DROP_FLOOR = 1;
  * The one plain line at the end of a replay, from the data: what happened over the whole period and its biggest drop.
  * "From April to October AAA rose 18%, with its biggest drop of 9% in August."
  */
-export function endSummary(s, name, lang = "en") {
+export function endSummary(s, name) {
   if (!s?.n) return "";
-  const t = translate(stockDict, L(lang));
-  const he = L(lang) === "he";
-  const { from, to } = spanWords(s.dates, lang);
+  const t = strings(stockDict);
+  const { from, to } = spanWords(s.dates);
   const total = s.c.at(-1);
   const dir = toneOf(total, 0) === "flat" ? "flat" : total > 0 ? "up" : "down";
-  const pct = dir === "flat" ? (he ? ltr(fmtSigned(total)) : fmtSigned(total)) : pctWords(total, lang);
+  const pct = dir === "flat" ? fmtSigned(total) : pctWords(total);
   const drop = biggestDrop(s.c);
   let tail;
-  if (drop.pct < DROP_FLOOR || drop.trough == null) tail = t("rp.end.noDrop", { pct: pctWords(DROP_FLOOR, lang) }, { bidi: false });
+  if (drop.pct < DROP_FLOOR || drop.trough == null) tail = t("rp.end.noDrop", { pct: pctWords(DROP_FLOOR) });
   else {
-    const a = monthWord(s.dates[drop.peak], lang), b = monthWord(s.dates[drop.trough], lang);
+    const a = monthWord(s.dates[drop.peak]), b = monthWord(s.dates[drop.trough]);
     tail = a === b
-      ? t("rp.end.dropIn", { pct: pctWords(drop.pct, lang), month: b }, { bidi: false })
-      : t("rp.end.dropBetween", { pct: pctWords(drop.pct, lang), a, b }, { bidi: false });
+      ? t("rp.end.dropIn", { pct: pctWords(drop.pct), month: b })
+      : t("rp.end.dropBetween", { pct: pctWords(drop.pct), a, b });
   }
-  // Every value is placed as it is: the percents are already isolated in Hebrew, the name is isolated here and the
-  // month words and the tail are Hebrew themselves (an isolation mark inside "מאפריל" would not help it read).
-  return t(`rp.end.${dir}`, { from, to, name: he ? isolate(name) : name, pct, tail }, { bidi: false });
+  return t(`rp.end.${dir}`, { from, to, name, pct, tail });
 }
 
 const fmtSigned = (v) => `${v > 0 ? "+" : v < 0 ? "−" : ""}${Math.abs(v).toFixed(1)}%`;
@@ -219,29 +213,26 @@ export const tipLabel = (name, ticker, max = 11) => (name && name.length <= max 
  * The race's line at the end: who finished first and last, where the benchmark ended and how many finished ahead of it.
  * `benchName` is the benchmark's plain name ("Nasdaq-100").
  */
-export function raceSummary(race, benchName, lang = "en") {
+export function raceSummary(race, benchName) {
   if (!race?.lines?.length) return "";
-  const t = translate(homeDict, L(lang));
-  const he = L(lang) === "he";
+  const t = strings(homeDict);
   const end = race.n - 1;
   const ranked = standings(race, end);
   const first = ranked[0], last = ranked.at(-1);
-  const signed = (v) => (he ? ltr(fmtSigned(v)) : fmtSigned(v));
-  const nm = (s) => (he ? isolate(s) : s);
-  const { from, to } = raceSpan(race.dates, lang);
-  const head = t("race.end.head", { from, to, first: nm(first.name), firstPct: signed(first.rise), last: nm(last.name), lastPct: signed(last.rise) }, { bidi: false });
+  const { from, to } = raceSpan(race.dates);
+  const head = t("race.end.head", { from, to, first: first.name, firstPct: fmtSigned(first.rise), last: last.name, lastPct: fmtSigned(last.rise) });
   if (!race.bench) return head;
   const b = race.bench.values[end];
   const ahead = ranked.filter((r) => r.rise > b).length;
   const benchLine = t(toneOf(b, 0) === "flat" ? "race.end.benchFlat" : b > 0 ? "race.end.benchUp" : "race.end.benchDown",
-    { bench: nm(benchName), pct: toneOf(b, 0) === "flat" ? signed(b) : pctWords(b, lang) }, { bidi: false });
-  const aheadLine = t("race.end.ahead", { count: ahead, total: he ? ltr(ranked.length) : ranked.length }, { bidi: false });
+    { bench: benchName, pct: toneOf(b, 0) === "flat" ? fmtSigned(b) : pctWords(b) });
+  const aheadLine = t("race.end.ahead", { count: ahead, total: ranked.length });
   return `${head} ${benchLine} ${aheadLine}`;
 }
 
-/** The race's first and last month in words (home dictionary), years when it crosses a new year. */
-function raceSpan(dates, lang) {
-  const t = translate(homeDict, L(lang));
+/** The race's first and last month in words (text/home.js), years when it crosses a new year. */
+function raceSpan(dates) {
+  const t = strings(homeDict);
   const years = dates[0].slice(0, 4) !== dates.at(-1).slice(0, 4);
   const w = (iso) => `${t(`month.${Number(iso.slice(5, 7)) - 1}`)}${years ? ` ${iso.slice(0, 4)}` : ""}`;
   return { from: w(dates[0]), to: w(dates.at(-1)) };

@@ -3,9 +3,10 @@ import { createPortal } from "react-dom";
 import { bands, candleGeom, fitDomain, linePath, monthTicks, scaleLinear } from "../lib/candles.js";
 import { loadMarketCandles } from "../lib/data.js";
 import { useReducedMotion } from "../lib/motion.js";
-import { spotCaveat, topSpots, zoomAround } from "../lib/spots.js";
-import { useLang } from "../lib/lang.jsx";
-import dict from "../i18n/stock.js";
+import { topSpots, zoomAround, SPOT_CAVEAT } from "../lib/spots.js";
+import dict from "../text/stock.js";
+import { strings } from "../lib/text.js";
+import { rich } from "../lib/rich.jsx";
 
 /*
  * The zoom view: a big candle chart that opens from a card's mini chart. The candles grow in one after another, the
@@ -41,8 +42,7 @@ function useWidth() {
 }
 
 export function CandleZoom({ it, manifest, marketId, onClose, openTo }) {
-  const { lang, t: tr } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const reduced = useReducedMotion();
   const [doc, setDoc] = useState(undefined);
   const [range, setRange] = useState("3m");
@@ -69,7 +69,7 @@ export function CandleZoom({ it, manifest, marketId, onClose, openTo }) {
   const r = RANGES.find((x) => x.id === range);
   const series = doc?.daily;
   const win = useMemo(() => (series?.dates?.length ? slice(series, Math.max(0, series.dates.length - r.n), series.dates.length) : null), [series, r.n]);
-  const spots = useMemo(() => (win ? topSpots(win, 5, lang) : []), [win, lang]);
+  const spots = useMemo(() => (win ? topSpots(win, 5) : []), [win]);
   const [from, to] = focus == null || !win ? [0, win?.n ?? 0] : zoomAround(focus, win.n, 15);
   const view = win ? slice(win, from, to) : null;
   const shown = spots.filter((s) => s.i >= from && s.i < to).map((s) => ({ ...s, j: s.i - from }));
@@ -98,7 +98,7 @@ export function CandleZoom({ it, manifest, marketId, onClose, openTo }) {
           ))}
           {focus != null && (
             <button type="button" onClick={() => setFocus(null)} className="min-h-[40px] rounded-full border border-accent/50 bg-accent/10 px-4 text-[15px] font-medium text-accent">
-              {t("zm.showAll", { range: t(`zm.range.${r.id}`) }, { bidi: false })}
+              {t("zm.showAll", { range: t(`zm.range.${r.id}`) })}
             </button>
           )}
         </div>
@@ -111,8 +111,8 @@ export function CandleZoom({ it, manifest, marketId, onClose, openTo }) {
 
         {view && (
           <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[14.5px] text-ink-2">
-            <span>{t.rich("zm.legend.up", { word: <span className="font-semibold" style={{ color: UP }}>{t("zm.green")}</span> })}</span>
-            <span>{t.rich("zm.legend.down", { word: <span className="font-semibold" style={{ color: DOWN }}>{t("zm.red")}</span> })}</span>
+            <span>{rich(t, "zm.legend.up", { word: <span className="font-semibold" style={{ color: UP }}>{t("zm.green")}</span> })}</span>
+            <span>{rich(t, "zm.legend.down", { word: <span className="font-semibold" style={{ color: DOWN }}>{t("zm.red")}</span> })}</span>
             <span>{t("zm.legend.wicks")}</span>
           </p>
         )}
@@ -122,7 +122,7 @@ export function CandleZoom({ it, manifest, marketId, onClose, openTo }) {
             <h3 className="text-[20px] font-bold tracking-[-0.01em] text-ink">{t("zm.spots")}</h3>
             {!spots.length && <p className="mt-2 text-[16.5px] leading-relaxed text-ink-2">{t("cdv.spots.none")}</p>}
             <SpotList spots={spots} focus={focus} onPick={(s) => setFocus(focus === s.i ? null : s.i)} reduced={reduced} zoomWords />
-            <p className="mt-4 text-[14.5px] leading-relaxed text-ink-3">{spotCaveat(lang)} {t("zm.daily")}</p>
+            <p className="mt-4 text-[14.5px] leading-relaxed text-ink-3">{SPOT_CAVEAT} {t("zm.daily")}</p>
             {openTo && (
               <button type="button" onClick={() => { onClose(); openTo(it.candlesTo); }} className="btn mt-4 min-h-[48px] justify-center">{t("zm.full")}</button>
             )}
@@ -136,8 +136,7 @@ export function CandleZoom({ it, manifest, marketId, onClose, openTo }) {
 
 /** The numbered "candles to notice", each with its plain reason; tapping one calls onPick (zoom in, or point at it). */
 export function SpotList({ spots, focus, onPick, reduced, zoomWords = false }) {
-  const { lang, t: tr } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   return (
     <ol className="mt-3 grid gap-2.5">
       {spots.map((s, k) => {
@@ -148,7 +147,7 @@ export function SpotList({ spots, focus, onPick, reduced, zoomWords = false }) {
               className={`flex w-full gap-3 rounded-2xl border p-4 text-start transition-colors ${on ? "border-accent/60 bg-accent/10" : "border-line-2 hover:border-ink-3"}`}>
               <span className="grid size-8 shrink-0 place-items-center rounded-full text-[15px] font-bold text-bg" style={{ background: TONE[s.tone] }}>{s.n}</span>
               <span className="min-w-0">
-                <span className="block text-[17px] font-semibold text-ink">{s.title} <span className="font-normal text-ink-3">· <bdi>{dayWords(s.date, lang)}</bdi></span></span>
+                <span className="block text-[17px] font-semibold text-ink">{s.title} <span className="font-normal text-ink-3">· <span>{dayWords(s.date)}</span></span></span>
                 <span className="mt-1 block text-[15.5px] leading-relaxed text-ink-2">{s.why}</span>
                 <span className="mt-1.5 block text-[14px] font-medium text-accent">{t(zoomWords ? (on ? "zm.spot.zoomed" : "zm.spot.zoom") : (on ? "zm.spot.shown" : "zm.spot.show"))}</span>
               </span>
@@ -162,15 +161,11 @@ export function SpotList({ spots, focus, onPick, reduced, zoomWords = false }) {
 
 export const SPOT_TONE = TONE;
 
-const DAY = {
-  en: new Intl.DateTimeFormat("en-US", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" }),
-  he: new Intl.DateTimeFormat("he-IL", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" }),
-};
-const dayWords = (iso, lang = "en") => (DAY[lang] ?? DAY.en).format(new Date(`${iso}T00:00:00Z`));
+const DAY = new Intl.DateTimeFormat("en-US", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
+const dayWords = (iso) => DAY.format(new Date(`${iso}T00:00:00Z`));
 
 export function BigChart({ view, spots, chosen, reduced, onSpot, name }) {
-  const { lang, t: tr } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const [ref, w] = useWidth();
   const g = useMemo(() => {
     if (!w) return null;
@@ -180,11 +175,11 @@ export function BigChart({ view, spots, chosen, reduced, onSpot, name }) {
     const y = scaleLinear(dom.lo, dom.hi, H - PAD_BOT, PAD_TOP);
     const layout = bands(view.n, PAD_X, w - PAD_X, { maxBody: 22 });
     const candles = view.dates.map((_, i) => (ok[i] ? candleGeom(view, i, y, layout) : null));
-    return { y, layout, candles, ma: linePath(view.ma20, layout.cx, y), ticks: monthTicks(view.dates, layout.cx, 48, lang) };
-  }, [view, w, lang]);
+    return { y, layout, candles, ma: linePath(view.ma20, layout.cx, y), ticks: monthTicks(view.dates, layout.cx, 48) };
+  }, [view, w]);
   const step = reduced ? 0 : Math.min(28, 700 / Math.max(1, view.n));
   return (
-    <div ref={ref} dir="ltr" className="relative overflow-hidden rounded-2xl bg-surface-2" style={{ height: H }}>
+    <div ref={ref} className="relative overflow-hidden rounded-2xl bg-surface-2" style={{ height: H }}>
       {g && (
         <svg width={w} height={H} viewBox={`0 0 ${w} ${H}`} role="img" aria-label={t("zm.aria", { name, n: view.n, count: spots.length })} className="block">
           {Number.isFinite(chosen) && g.candles[chosen] && (

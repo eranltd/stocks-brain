@@ -36,29 +36,3 @@ test("recentFilings: current reports of our names in the last few days, newest p
   assert.deepEqual(recentFilings(d, { today: "2026-10-20" }), []);
   assert.deepEqual(recentFilings(null, { today: "2026-10-10" }), []);
 });
-
-test("Hebrew: the badge word, the short day and the title", async () => {
-  const { kindOf } = await import("./secnews.js");
-  const h = headlineFor(doc, "AAA", "he");
-  assert.equal(h.word, "תוצאות");
-  assert.equal(h.day, "1 באוק׳");
-  assert.equal(h.title, "תוצאות רבעוניות");
-  assert.equal(h.tone, "accent");
-  assert.equal(newsRows(doc, "AAA", 1, "he")[0].word, "עדכון");
-  assert.equal(shortDay("2026-01-05", "he"), "5 בינו׳");
-  assert.deepEqual(kindOf("nope", "he"), {});
-});
-
-test("Hebrew: the fixed filing titles by item code or form; unknown ones stay as published", async () => {
-  const { titlesIn } = await import("./secnews.js");
-  assert.deepEqual(titlesIn(doc.companies[0].filings[1], "he"), ["תוצאות רבעוניות", "עדכון למשקיעים"]);
-  assert.deepEqual(titlesIn(doc.companies[0].filings[1]), ["Quarterly results", "Shared an update with investors"]);
-  assert.deepEqual(titlesIn({ form: "10-K", items: [], titles: ["Yearly report"] }, "he"), ["דוח שנתי"]);
-  assert.deepEqual(titlesIn({ form: "8-K/A", items: ["5.02"], titles: ["Correction to an earlier filing: a leadership change (an executive or board member)"] }, "he"),
-    ["תיקון לדיווח קודם: שינוי בהנהלה (מנהל בכיר או חבר דירקטוריון)"]);
-  assert.deepEqual(titlesIn({ form: "8-K", items: ["9.99"], titles: ["Something new"] }, "he"), ["Something new"]);
-  assert.deepEqual(titlesIn({ form: "8-K", titles: ["No codes"] }, "he"), ["No codes"]);
-  assert.equal(headlineFor(doc, "AAA", "he").title, "תוצאות רבעוניות");
-  assert.equal(newsRows(doc, "AAA", 2, "he")[1].title, "תוצאות רבעוניות · עדכון למשקיעים");
-  assert.equal(recentFilings(doc, { today: "2026-10-10", lang: "he" })[0].title, "עדכון למשקיעים");
-});

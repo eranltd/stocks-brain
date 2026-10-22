@@ -4,10 +4,11 @@ import { monthTicks, niceTicks, scaleLinear, spreadLabels, tickLabel } from "../
 import { highlights, leaders, lerp, RACE_MS, raceData, raceSummary, tipLabel, toneOf } from "../lib/replay.js";
 import { mainListOf } from "../lib/buywindow.js";
 import { shortName } from "../lib/simple.js";
-import { useLang } from "../lib/lang.jsx";
-import dict from "../i18n/home.js";
+import dict from "../text/home.js";
 import { Reveal } from "./ui.jsx";
 import { monthYear, PlayerControls, PosterPlay, TONE_TEXT, usePlayer, useWidth } from "./replay.jsx";
+import { strings } from "../lib/text.js";
+import { fmtDate, fmtPct, fmtList } from "../lib/format.js";
 
 /*
  * "The race" on Home's Details view: the main list's indexed lines over the past year (the derived file's published
@@ -22,8 +23,7 @@ const ROW = 34; // the leaderboard's row pitch in pixels
 const SLOTS = 8; // --race-1 … --race-8 in index.css: a categorical palette checked for colour-blind separation
 
 export function MarketRace({ data }) {
-  const { lang, t: tr, fmt } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const reduced = useReducedMotion();
   const uid = useId();
   const watch = useRef(null);
@@ -42,8 +42,8 @@ export function MarketRace({ data }) {
   const date = race.dates[k];
   const top = leaders(race, k, 5);
   const benchNow = race.bench ? race.bench.values[k] : null;
-  const summary = player.ended ? raceSummary(race, benchName, lang) : "";
-  const announce = summary || (player.started && !player.playing ? t("race.paused", { date: fmt.date(date) }) : "");
+  const summary = player.ended ? raceSummary(race, benchName) : "";
+  const announce = summary || (player.started && !player.playing ? t("race.paused", { date: fmtDate(date) }) : "");
   const words = { play: t("race.play"), resume: t("race.resume"), pause: t("race.pause"), restart: t("race.restart"), speed: t("race.speed"), scrub: t("race.scrub") };
   const faint = race.lines.length - hl.length;
   const half = Math.ceil(hl.length / 2);
@@ -55,12 +55,12 @@ export function MarketRace({ data }) {
       <p className="mt-2 text-[15px] leading-relaxed text-ink-2">{t("race.lede")}</p>
 
       <div className="mt-5">
-        <div className="num text-[clamp(20px,5.6vw,26px)] font-semibold leading-tight text-ink">{fmt.date(date)}</div>
+        <div className="num text-[clamp(20px,5.6vw,26px)] font-semibold leading-tight text-ink">{fmtDate(date)}</div>
         <div className="mt-1 flex flex-wrap items-baseline gap-x-4 gap-y-0.5 text-[13.5px] text-ink-3">
           <span>{t("race.day", { i: k + 1, n: race.n })}</span>
           {race.bench && (
             <span>{t("race.benchSoFar", { bench: benchName })}{" "}
-              <bdi className={`num font-mono text-[14px] font-semibold ${TONE_TEXT[toneOf(benchNow)]}`}>{fmt.pct(benchNow, 1)}</bdi>
+              <span className={`num font-mono text-[14px] font-semibold ${TONE_TEXT[toneOf(benchNow)]}`}>{fmtPct(benchNow, 1)}</span>
             </span>
           )}
         </div>
@@ -74,8 +74,8 @@ export function MarketRace({ data }) {
               style={{ transform: `translateY(${rank * ROW}px)`, transition: reduced ? "none" : "transform 260ms cubic-bezier(.2,.8,.2,1)" }}>
               <span className="num w-4 shrink-0 font-mono text-[12.5px] text-ink-3">{rank + 1}</span>
               <span className="size-2.5 shrink-0 rounded-full" style={{ background: colorOf[r.symbol] ?? "var(--ink-3)", opacity: colorOf[r.symbol] ? 1 : 0.5 }} aria-hidden="true" />
-              <span dir="auto" className="min-w-0 flex-1 truncate text-[14.5px] text-ink">{r.name}</span>
-              <span className={`num shrink-0 font-mono text-[13.5px] font-semibold ${TONE_TEXT[toneOf(r.rise)]}`}><bdi>{fmt.pct(r.rise, 1)}</bdi></span>
+              <span className="min-w-0 flex-1 truncate text-[14.5px] text-ink">{r.name}</span>
+              <span className={`num shrink-0 font-mono text-[13.5px] font-semibold ${TONE_TEXT[toneOf(r.rise)]}`}>{fmtPct(r.rise, 1)}</span>
             </li>
           ))}
         </ol>
@@ -83,14 +83,14 @@ export function MarketRace({ data }) {
 
       <div ref={watch} className="relative mt-3">
         <RaceChart race={race} pos={player.pos} poster={!player.started} W={W} hl={hl} colorOf={colorOf} benchName={benchName}
-          label={t("race.aria", { count: race.lines.length, from: fmt.date(race.dates[0]), to: fmt.date(date), leaders: fmt.list(top.slice(0, 3).map((r) => r.name)) })} />
+          label={t("race.aria", { count: race.lines.length, from: fmtDate(race.dates[0]), to: fmtDate(date), leaders: fmtList(top.slice(0, 3).map((r) => r.name)) })} />
         {!player.started && <PosterPlay onClick={player.play} label={words.play} />}
       </div>
 
       {summary && <p className="mt-4 rounded-2xl border border-line-2 bg-surface-2 px-4 py-3 text-[16px] leading-relaxed text-ink">{summary}</p>}
 
-      <PlayerControls player={player} words={words} reduced={reduced} valueText={fmt.date(date)}
-        startLabel={monthYear(race.dates[0], lang)} endLabel={monthYear(race.dates.at(-1), lang)} />
+      <PlayerControls player={player} words={words} reduced={reduced} valueText={fmtDate(date)}
+        startLabel={monthYear(race.dates[0])} endLabel={monthYear(race.dates.at(-1))} />
 
       <p className="sr-only" aria-live="polite">{announce}</p>
 
@@ -101,7 +101,7 @@ export function MarketRace({ data }) {
             return (
               <span key={sym} className="inline-flex items-center gap-1.5">
                 <span className="h-[3px] w-4 rounded-full" style={{ background: colorOf[sym] }} aria-hidden="true" />
-                <span dir="auto">{l?.name ?? sym}</span>
+                <span>{l?.name ?? sym}</span>
               </span>
             );
           })}
@@ -119,7 +119,7 @@ export function MarketRace({ data }) {
             <span>{t("race.legendFaint", { count: faint })}</span>
           </p>
         )}
-        <p className="text-[12.5px] text-ink-3">{t("race.axis", { date: fmt.date(race.dates[0]) })}</p>
+        <p className="text-[12.5px] text-ink-3">{t("race.axis", { date: fmtDate(race.dates[0]) })}</p>
       </div>
 
       <p className="mt-4 text-[14px] leading-relaxed text-ink-2">{t("race.frame")}</p>
@@ -133,7 +133,6 @@ export function MarketRace({ data }) {
  * moves one rectangle, the tips and their names). Faint lines first, then the dashed benchmark, then the coloured ones.
  */
 function RaceChart({ race, pos, poster, W, hl, colorOf, benchName, label }) {
-  const { lang } = useLang();
   const clip = `race-clip-${useId().replace(/\W/g, "")}`;
   const narrow = W < 560;
   const L = narrow ? 34 : 46, R = narrow ? 84 : 100, T = 12;
@@ -151,8 +150,8 @@ function RaceChart({ race, pos, poster, W, hl, colorOf, benchName, label }) {
     const x = (i) => L + (i / Math.max(1, race.n - 1)) * (x1 - L);
     const path = (vals) => vals.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join("");
     const { step, ticks } = niceTicks(lo, hi, narrow ? 5 : 6);
-    return { x, y, step, ticks, months: monthTicks(race.dates, x, narrow ? 40 : 52, lang), path };
-  }, [race, x1, L, PH, narrow, lang]);
+    return { x, y, step, ticks, months: monthTicks(race.dates, x, narrow ? 40 : 52), path };
+  }, [race, x1, L, PH, narrow]);
 
   // The drawn lines never change during a replay: build them once per size.
   const lines = useMemo(() => (
@@ -175,7 +174,7 @@ function RaceChart({ race, pos, poster, W, hl, colorOf, benchName, label }) {
   })), 13, T + 6, T + PH - 4);
 
   return (
-    <div dir="ltr" className="select-none">
+    <div className="select-none">
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} className="block max-w-full" role="img" aria-label={label} data-pos={pos.toFixed(3)}>
         <defs><clipPath id={clip}><rect x="0" y="0" width={Math.max(0, tipX + 1)} height={H} /></clipPath></defs>
         {geo.ticks.map((v) => (

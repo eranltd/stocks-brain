@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { HORIZONS, honestAction, horizons, lumpSum, moneyFacts } from "../lib/money.js";
-import { useLang } from "../lib/lang.jsx";
+import { HORIZONS, honestAction, lumpSum, moneyFacts } from "../lib/money.js";
 import { Reveal } from "./ui.jsx";
-import dict from "../i18n/home.js";
+import dict from "../text/home.js";
+import { strings } from "../lib/text.js";
 
 const KEY = "sb:horizon";
 const read = () => { try { return window.localStorage.getItem(KEY); } catch { return null; } };
@@ -15,10 +15,9 @@ export function useHorizon() {
 }
 
 function Picker({ horizon, setHorizon }) {
-  const { lang, t: tr } = useLang();
   return (
-    <div role="radiogroup" aria-label={tr(dict)("moneyc.when")} className="mt-4 grid gap-2 sm:grid-cols-3">
-      {horizons(lang).map((h) => {
+    <div role="radiogroup" aria-label={strings(dict)("moneyc.when")} className="mt-4 grid gap-2 sm:grid-cols-3">
+      {HORIZONS.map((h) => {
         const on = horizon === h.id;
         return (
           <button key={h.id} type="button" role="radio" aria-checked={on} onClick={() => setHorizon(h.id)}
@@ -37,10 +36,9 @@ function Picker({ horizon, setHorizon }) {
  * a place, which today none has.
  */
 export function MoneyAction({ data, compact = false }) {
-  const { lang, t: tr } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const [horizon, setHorizon] = useHorizon();
-  const a = horizon ? honestAction(horizon, moneyFacts(data, lang), lang) : null;
+  const a = horizon ? honestAction(horizon, moneyFacts(data)) : null;
   return (
     <Reveal as="section" id="money-action" className="card scroll-mt-28 overflow-hidden">
       <div className="h-1.5" style={{ background: "var(--accent)" }} />
@@ -76,9 +74,8 @@ export function MoneyAction({ data, compact = false }) {
 
 /** "Got a lump sum?": five steps for money already in hand, then the questions to settle before moving a big sum. */
 export function LumpSum({ data }) {
-  const { lang, t: tr } = useLang();
-  const t = tr(dict);
-  const g = lumpSum(data.rulesResult, null, lang);
+  const t = strings(dict);
+  const g = lumpSum(data.rulesResult, null);
   return (
     <details id="lump-sum" className="card scroll-mt-28 p-6 sm:p-8">
       <summary className="cursor-pointer text-[19px] font-semibold text-ink">{g.title} <span className="font-normal text-ink-3">{t("moneyc.lumpKinds")}</span></summary>

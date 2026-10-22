@@ -1,11 +1,11 @@
-import { translate } from "./i18n.js";
-import text from "../i18n/shell.js";
+import { strings } from "./text.js";
+import text from "../text/shell.js";
 
 // The site's menu: Today, the Brain's verdicts (one page, always one tap), Experiments and Learn, each opening into its pages, and the hash routes behind
 // them. Pure functions, no React; tested in nav.test.js. Every old route keeps working (#insights still opens Lessons),
 // and a market other than the default rides along in the hash (#today?m=tlv) so a link opens the same view.
 
-/** The menu's shape: subjects in order, each with its pages (routes); the words live in i18n/shell.js ("nav.*"). */
+/** The menu's shape: subjects in order, each with its pages (routes); the words live in text/shell.js ("nav.*"). */
 const MENU = [
   { id: "today", pages: ["today", "watchlist", "details", "people"] },
   // One page, always one tap: what the daily brain decided, told simply. The bar shows it as its own tab.
@@ -14,31 +14,22 @@ const MENU = [
   { id: "learn", pages: ["insights", "quiz", "kb", "learnings", "how", { route: "runs", group: "behind" }, { route: "routines", group: "behind" }, { route: "admin", group: "behind" }] },
 ];
 
-const built = {};
-/** The subjects in menu order in a language; each page has a route (the hash), a label and a one-line "what's this". */
-export function subjectsIn(lang = "en") {
-  const L = lang === "he" ? "he" : "en";
-  if (built[L]) return built[L];
-  const t = translate(text, L);
-  built[L] = MENU.map((m) => ({
-    id: m.id,
-    label: t(`nav.s.${m.id}`),
-    ...(m.short ? { short: t(`nav.s.${m.id}.short`) } : {}),
-    ...(m.direct ? { direct: m.direct } : {}),
-    what: t(`nav.s.${m.id}.what`),
-    pages: m.pages.map((p) => {
-      const { route, group } = typeof p === "string" ? { route: p } : p;
-      return { route, label: t(`nav.p.${route}`), what: t(`nav.p.${route}.what`), ...(group ? { group } : {}) };
-    }),
-  }));
-  return built[L];
-}
+const t = strings(text);
 
-/** The subjects in English (the menu in Hebrew: subjectsIn("he")). */
-export const SUBJECTS = subjectsIn("en");
+/** The subjects in menu order; each page has a route (the hash), a label and a one-line "what's this". */
+export const SUBJECTS = MENU.map((m) => ({
+  id: m.id,
+  label: t(`nav.s.${m.id}`),
+  ...(m.short ? { short: t(`nav.s.${m.id}.short`) } : {}),
+  ...(m.direct ? { direct: m.direct } : {}),
+  what: t(`nav.s.${m.id}.what`),
+  pages: m.pages.map((p) => {
+    const { route, group } = typeof p === "string" ? { route: p } : p;
+    return { route, label: t(`nav.p.${route}`), what: t(`nav.p.${route}.what`), ...(group ? { group } : {}) };
+  }),
+}));
 
-export const GROUP_LABEL = { behind: text.en["nav.group.behind"] };
-const groupLabel = (id, lang) => (lang === "he" ? text.he[`nav.group.${id}`] : GROUP_LABEL[id]) ?? null;
+export const GROUP_LABEL = { behind: t("nav.group.behind") };
 
 /** Every page route, in menu order. */
 export const ROUTES = SUBJECTS.flatMap((s) => s.pages.map((p) => p.route));
@@ -49,10 +40,10 @@ const MARKET_ID = /^[a-z0-9_-]{1,24}$/;
 /** True for a page route or a stock page ("stock/NVDA"). */
 export const isRoute = (r) => typeof r === "string" && (ROUTES.includes(r) || STOCK.test(r));
 
-/** The menu entry of a route (words in `lang`); a stock page belongs to Stocks. Null for an unknown route. */
-export function pageOf(route, lang = "en") {
+/** The menu entry of a route; a stock page belongs to Stocks. Null for an unknown route. */
+export function pageOf(route) {
   const r = typeof route === "string" && route.startsWith("stock/") ? "watchlist" : route;
-  for (const s of subjectsIn(lang)) {
+  for (const s of SUBJECTS) {
     const p = s.pages.find((x) => x.route === r);
     if (p) return { ...p, subject: s.id };
   }
@@ -62,15 +53,15 @@ export function pageOf(route, lang = "en") {
 /** The subject a route sits under (a stock page is under Today, with Stocks); "today" for anything unknown. */
 export const subjectOf = (route) => pageOf(route)?.subject ?? "today";
 
-/** A subject's pages in groups for its menu (words in `lang`): the main pages first (label null), then "Behind the scenes". */
-export function menuGroups(subjectId, lang = "en") {
-  const s = subjectsIn(lang).find((x) => x.id === subjectId);
+/** A subject's pages in groups for its menu: the main pages first (label null), then "Behind the scenes". */
+export function menuGroups(subjectId) {
+  const s = SUBJECTS.find((x) => x.id === subjectId);
   if (!s) return [];
   const out = [];
   for (const p of s.pages) {
     const id = p.group ?? "main";
     let g = out.find((x) => x.id === id);
-    if (!g) out.push((g = { id, label: id === "main" ? null : groupLabel(id, lang), pages: [] }));
+    if (!g) out.push((g = { id, label: id === "main" ? null : GROUP_LABEL[id] ?? null, pages: [] }));
     g.pages.push(p);
   }
   return out.sort((a, b) => (a.id === "main" ? -1 : b.id === "main" ? 1 : 0));

@@ -1,7 +1,14 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "@fontsource-variable/inter/opsz.css";
-import "@fontsource-variable/jetbrains-mono";
+// The display face (headlines) and the number face, latin only and only the weights the kit uses. Bundled as hashed
+// assets, so the service worker's cache-first rule for /assets/ keeps them working offline.
+import "@fontsource/barlow-condensed/latin-600.css";
+import "@fontsource/barlow-condensed/latin-700.css";
+import "@fontsource/barlow-condensed/latin-800.css";
+import "@fontsource/jetbrains-mono/latin-400.css";
+import "@fontsource/jetbrains-mono/latin-600.css";
+import "@fontsource/jetbrains-mono/latin-700.css";
 import "./index.css";
 import App from "./App.jsx";
 

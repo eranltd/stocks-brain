@@ -119,7 +119,7 @@ function SourceCard({ s, n, principles, claims, filtered, delay }) {
     <Reveal delay={delay} as="article" className="card overflow-hidden">
       <div className="stripes grid gap-6 border-b border-line p-6 sm:p-8 md:grid-cols-[150px_minmax(0,1fr)_auto] md:items-start" style={{ "--tone": "var(--accent)" }}>
         <div>
-          <div className="display num text-[64px] leading-[0.85] font-medium tracking-[-0.06em]">{pad2(n)}</div>
+          <div className="display num text-[64px] leading-[0.85] font-medium">{pad2(n)}</div>
           <div className="meta mt-3">{t("ins.source")}</div>
         </div>
         <div className="min-w-0">

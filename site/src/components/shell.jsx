@@ -2,8 +2,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { bottomTap, menuGroups, pageOf, subjectOf, SUBJECTS } from "../lib/nav.js";
 import { NASDAQ_ONLY } from "../lib/markets.js";
 import { useReducedMotion } from "../lib/motion.js";
-import { Container } from "./ui.jsx";
+import { Container, Delta } from "./ui.jsx";
 import { buildLine } from "../lib/appversion.js";
+import { mainListOf } from "../lib/buywindow.js";
+import { tapeItems, tapeSeconds } from "../lib/tape.js";
+import { fmtPct, fmtShort } from "../lib/format.js";
 import shellText from "../text/shell.js";
 import { strings } from "../lib/text.js";
 
@@ -28,92 +31,29 @@ export function Loader({ progress, done }) {
         <svg viewBox="0 0 120 40" className="h-10 w-[120px] overflow-visible">
           <polyline
             points="2,30 18,24 30,28 46,12 60,18 74,6 88,14 102,8 118,2"
-            fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+            fill="none" stroke="var(--desk)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
             strokeDasharray="200" strokeDashoffset="200"
-            style={{ animation: "dash 1.4s cubic-bezier(.16,1,.3,1) forwards", filter: "drop-shadow(0 0 8px var(--glow))" }}
+            style={{ animation: "dash 1.4s cubic-bezier(.16,1,.3,1) forwards", filter: "drop-shadow(0 0 8px var(--desk-glow))" }}
           />
         </svg>
-        <div className="num font-mono text-[clamp(56px,14vw,112px)] leading-none font-semibold tracking-[-0.06em]">
+        <div className="font-num text-[clamp(56px,14vw,112px)] leading-none font-bold tracking-[-0.06em]">
           {Math.round(progress * 100)}
-          <sup className="ms-1 align-top text-[0.3em] text-ink-3">%</sup>
+          <sup className="ms-1 align-top text-[0.3em] text-desk">%</sup>
         </div>
-        <div className="meta tracking-[0.3em]">{t("loader.text")}</div>
+        <div className="kicker tracking-[0.3em]">{t("loader.text")}</div>
       </div>
     </div>
   );
 }
 
-/* --------------------------------------------- animated "price field" canvas */
+/* ------------------------------------------------------------- the canvas */
 
+/**
+ * The canvas behind every page: a near-black field with a faint 24px grid that fades toward the edges, a warm orange
+ * glow at the top and a soft vignette (index.css .backdrop). Static, so it costs nothing and needs no reduced-motion care.
+ */
 export function Field() {
-  const ref = useRef(null);
-  const reduced = useReducedMotion();
-  useEffect(() => {
-    const canvas = ref.current;
-    const ctx = canvas.getContext("2d");
-    let w = 0, h = 0, raf = 0, t = 0;
-    const pointer = { x: -1e4, y: -1e4, tx: -1e4, ty: -1e4 };
-    const LINES = 16;
-    const seeds = Array.from({ length: LINES }, (_, i) => ({ a: 0.6 + ((i * 37) % 11) / 10, b: (i * 1.7) % 6.28, s: 0.25 + ((i * 13) % 7) / 20 }));
-    const rgb = () => getComputedStyle(document.documentElement).getPropertyValue("--field").trim() || "110 227 154";
-
-    const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      w = canvas.clientWidth; h = canvas.clientHeight;
-      canvas.width = w * dpr; canvas.height = h * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    };
-    const draw = () => {
-      const color = rgb().split(/\s+/).join(",");
-      ctx.clearRect(0, 0, w, h);
-      pointer.x += (pointer.tx - pointer.x) * 0.08;
-      pointer.y += (pointer.ty - pointer.y) * 0.08;
-      for (let i = 0; i < LINES; i++) {
-        const { a, b, s } = seeds[i];
-        const base = h * (0.12 + (i / LINES) * 0.8);
-        ctx.beginPath();
-        for (let x = 0; x <= w + 10; x += 12) {
-          const n = Math.sin(x * 0.004 * a + t * s + b) * 18 + Math.sin(x * 0.011 + t * s * 1.7 + i) * 7 + Math.sin(x * 0.0017 - t * 0.2 + b) * 26;
-          const dx = x - pointer.x, dy = base + n - pointer.y;
-          const lens = Math.exp(-(dx * dx + dy * dy) / 16000) * 38 * Math.sign(dy || 1);
-          const y = base + n + lens;
-          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-        }
-        const alpha = 0.035 + (i % 4 === 0 ? 0.07 : 0.02);
-        ctx.strokeStyle = `rgba(${color},${alpha})`;
-        ctx.lineWidth = i % 4 === 0 ? 1.4 : 1;
-        ctx.stroke();
-      }
-    };
-    const loop = () => { t += 0.006; draw(); raf = requestAnimationFrame(loop); };
-    const onMove = (e) => { pointer.tx = e.clientX; pointer.ty = e.clientY + window.scrollY * 0; };
-    const onVis = () => { cancelAnimationFrame(raf); if (!document.hidden && !reduced) loop(); };
-
-    resize();
-    window.addEventListener("resize", resize);
-    window.addEventListener("pointermove", onMove, { passive: true });
-    document.addEventListener("visibilitychange", onVis);
-    reduced ? draw() : loop();
-    canvas.style.opacity = 1;
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("resize", resize);
-      window.removeEventListener("pointermove", onMove);
-      document.removeEventListener("visibilitychange", onVis);
-    };
-  }, [reduced]);
-  return (
-    <>
-      <canvas
-        ref={ref}
-        aria-hidden="true"
-        className="pointer-events-none fixed inset-0 -z-10 h-full w-full opacity-0 transition-opacity duration-[1600ms]"
-        style={{ maskImage: "linear-gradient(180deg,#000 0%,#000 55%,transparent 100%)", WebkitMaskImage: "linear-gradient(180deg,#000 0%,#000 55%,transparent 100%)" }}
-      />
-      <div aria-hidden="true" className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-[70vh] bg-[radial-gradient(60%_60%_at_20%_0%,var(--glow),transparent_70%)]" />
-      <div aria-hidden="true" className="grain" />
-    </>
-  );
+  return <div aria-hidden="true" className="backdrop" />;
 }
 
 /* ----------------------------------------------------------------- header */
@@ -141,7 +81,7 @@ function onListKeys(e) {
 }
 
 const Caret = ({ open }) => (
-  <svg viewBox="0 0 24 24" aria-hidden="true" className={`size-4 shrink-0 transition-transform duration-300 ${open ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg viewBox="0 0 24 24" aria-hidden="true" className={`size-3.5 shrink-0 transition-transform duration-300 ${open ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
     <path d="m6 9 6 6 6-6" />
   </svg>
 );
@@ -182,8 +122,8 @@ export function MarketSwitch({ market, locked = false }) {
   if (locked) {
     const main = choices.find((c) => c.id === market.defaultId) ?? choices[0];
     return (
-      <span className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-line-2 px-4 text-[15px] font-semibold text-ink-2" title={t("market.locked")}>
-        <span className="hidden font-normal text-ink-3 min-[400px]:inline lg:hidden">{t("market.word")}</span>{main.label}
+      <span className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-line px-3.5 font-display text-[15px] font-bold tracking-[0.08em] text-ink-2 uppercase" title={t("market.locked")}>
+        <span aria-hidden="true" className="size-1.5 rounded-full bg-ink-3" />{main.label}
       </span>
     );
   }
@@ -195,30 +135,29 @@ export function MarketSwitch({ market, locked = false }) {
         onPointerDown={() => { viaKeys.current = false; }}
         onClick={() => setOpen((o) => !o)}
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown") viaKeys.current = true; if (e.key === "ArrowDown" && !open) { e.preventDefault(); setOpen(true); } }}
-        className={`inline-flex min-h-[44px] items-center gap-2 rounded-full border px-4 text-[15px] font-semibold transition-colors ${open ? "border-accent bg-accent/15 text-accent" : "border-accent/45 bg-accent/10 text-accent hover:border-accent"}`}>
-        {/* The word "Market" is left out where the header is tight: a narrow phone, and laptop width and up, where the
-            menu shares the row (the button's accessible name still says it). */}
-        <span className="hidden font-normal text-ink-2 min-[400px]:inline lg:hidden">{t("market.word")}</span>
+        className={`inline-flex min-h-[44px] items-center gap-2 rounded-full border ps-3.5 pe-3 font-display text-[15px] font-bold tracking-[0.08em] uppercase transition-colors ${open ? "border-desk/70 bg-desk/10 text-ink" : "border-line-2 bg-surface-2/80 text-ink hover:border-line-3"}`}>
+        {/* A live dot and the market's name; the word "Market" stays in the accessible name only. */}
+        <span aria-hidden="true" className="size-1.5 rounded-full bg-up shadow-[0_0_8px_var(--up)]" />
         {current.label}
-        <Caret open={open} />
+        <span className="text-ink-3"><Caret open={open} /></span>
       </button>
       {open && (
         <div ref={panel} id="market-menu" role="group" aria-label={t("market.menu")} onKeyDown={onListKeys}
-          className="absolute top-full end-4 start-4 z-50 mt-2 animate-pop rounded-3xl border border-line-2 bg-surface p-2 shadow-2xl motion-reduce:animate-none sm:end-auto sm:start-0 sm:w-[340px]">
-          <p className="px-3 pt-2 pb-1 text-[14px] leading-snug text-ink-2">{t("market.intro")}</p>
+          className="absolute top-full end-4 start-4 z-50 mt-2 animate-pop rounded-panel border border-line-2 bg-surface p-2 shadow-2xl motion-reduce:animate-none sm:end-auto sm:start-0 sm:w-[340px]">
+          <p className="px-3 pt-2 pb-1 text-[13.5px] leading-snug text-ink-2">{t("market.intro")}</p>
           <ul className="mt-1 grid gap-1">
             {choices.map((c) => {
               const on = c.id === current.id;
               return (
                 <li key={c.id}>
                   <button type="button" data-item="" data-current={on ? "" : undefined} aria-pressed={on} onClick={() => pick(c.id)}
-                    className={`flex min-h-[60px] w-full items-center gap-3 rounded-2xl px-4 py-3 text-start transition-colors ${on ? "bg-surface-2 text-ink" : "text-ink hover:bg-surface-2"}`}>
+                    className={`flex min-h-[60px] w-full items-center gap-3 rounded-[10px] px-4 py-3 text-start transition-colors ${on ? "bg-surface-3 text-ink shadow-[inset_2px_0_0_var(--desk)]" : "text-ink hover:bg-surface-2"}`}>
                     <span className="min-w-0 flex-1">
-                      <span className="block text-[17px] font-semibold tracking-[-0.01em]">{c.label}</span>
+                      <span className="block font-display text-[18px] font-bold tracking-[0.06em] uppercase">{c.label}</span>
                       <span className="block text-[14.5px] leading-snug text-ink-2">{c.what}</span>
                       {!c.available && <span className="mt-0.5 block text-[13px] text-ink-3">{t("market.later")}</span>}
                     </span>
-                    <span className={on ? "text-accent" : "invisible"}><Check /></span>
+                    <span className={on ? "text-desk" : "invisible"}><Check /></span>
                   </button>
                 </li>
               );
@@ -235,13 +174,13 @@ function PageItem({ page, on, sample, onClick, big = true }) {
   const t = strings(shellText);
   return (
     <button type="button" data-item="" data-current={on ? "" : undefined} aria-current={on ? "page" : undefined} onClick={onClick}
-      className={`flex w-full items-center gap-3 rounded-2xl px-4 text-start transition-colors ${big ? "min-h-[60px] py-3" : "min-h-[48px] py-2"} ${on ? "bg-ink text-bg" : "text-ink hover:bg-surface-2"}`}>
+      className={`flex w-full items-center gap-3 rounded-[10px] px-4 text-start transition-colors ${big ? "min-h-[60px] py-3" : "min-h-[48px] py-2"} ${on ? "bg-surface-3 text-ink shadow-[inset_2px_0_0_var(--desk)]" : "text-ink hover:bg-surface-2"}`}>
       <span className="min-w-0 flex-1">
-        <span className={`flex items-center gap-2 font-semibold tracking-[-0.01em] ${big ? "text-[17px]" : "text-[15.5px]"}`}>
+        <span className={`flex items-center gap-2 font-display font-bold tracking-[0.06em] uppercase ${big ? "text-[18px]" : "text-[16px]"} ${on ? "text-desk" : ""}`}>
           {page.label}
-          {sample && <span className={`font-mono text-[9.5px] font-medium tracking-[0.12em] uppercase ${on ? "text-bg/60" : "text-people"}`}>{t("menu.sample")}</span>}
+          {sample && <span className="font-mono text-[9.5px] font-semibold tracking-[0.12em] text-people uppercase">{t("menu.sample")}</span>}
         </span>
-        {big && <span className={`block text-[14.5px] leading-snug ${on ? "text-bg/75" : "text-ink-2"}`}>{page.what}</span>}
+        {big && <span className="block text-[13.5px] leading-snug text-ink-2">{page.what}</span>}
       </span>
     </button>
   );
@@ -252,7 +191,7 @@ function SubjectList({ subject, route, sampleRoutes, onPick }) {
   const here = pageOf(route)?.route;
   return menuGroups(subject.id).map((g) => (
     <div key={g.id} className={g.label ? "mt-2 border-t border-line pt-2" : ""}>
-      {g.label && <div className="meta px-4 pt-1 pb-1.5">{g.label}</div>}
+      {g.label && <div className="micro px-4 pt-1 pb-1.5">{g.label}</div>}
       <ul className="grid gap-1">
         {g.pages.map((p) => (
           <li key={p.route}><PageItem page={p} on={here === p.route} sample={sampleRoutes.includes(p.route)} big={!g.label} onClick={() => onPick(p.route)} /></li>
@@ -262,7 +201,11 @@ function SubjectList({ subject, route, sampleRoutes, onPick }) {
   ));
 }
 
-/** iPad and desktop: one large button per subject; it opens a panel listing its pages. */
+/** A header tab: condensed uppercase, full header height on a laptop so the orange underline sits on the edge. */
+const TAB = "relative inline-flex h-full min-h-[48px] items-center gap-1.5 px-3 font-display text-[15px] font-bold tracking-[0.1em] whitespace-nowrap uppercase transition-colors duration-300 lg:min-h-[64px] lg:px-4";
+const TabLine = () => <span aria-hidden="true" className="absolute inset-x-3 bottom-0 h-[2px] rounded-full bg-desk shadow-[0_0_12px_var(--desk)] lg:inset-x-4" />;
+
+/** iPad and desktop: one tab per subject; it opens a panel listing its pages. */
 function SubjectMenu({ subject, current, open, setOpen, route, onNav, sampleRoutes }) {
   const t = strings(shellText);
   const btn = useRef(null);
@@ -274,19 +217,20 @@ function SubjectMenu({ subject, current, open, setOpen, route, onNav, sampleRout
   useFocusOnOpen(open, panel, viaKeys);
   const id = `menu-${subject.id}`;
   return (
-    <div className="relative">
+    <div className="relative flex self-stretch">
       <button ref={btn} type="button" aria-expanded={open} aria-controls={id}
         onPointerDown={() => { viaKeys.current = false; }}
         onClick={() => setOpen(open ? null : subject.id)}
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown") viaKeys.current = true; if (e.key === "ArrowDown" && !open) { e.preventDefault(); setOpen(subject.id); } }}
-        className={`inline-flex min-h-[48px] items-center gap-2 rounded-full border px-5 text-[16px] font-semibold tracking-[-0.01em] whitespace-nowrap transition-colors duration-300 ${current ? "border-transparent bg-ink text-bg" : open ? "border-ink-3 text-ink" : "border-line-2 text-ink hover:border-ink-3"}`}>
+        className={`${TAB} ${current || open ? "text-ink" : "text-ink-2 hover:text-ink"}`}>
         {subject.label}
-        <Caret open={open} />
+        <span className="text-ink-3"><Caret open={open} /></span>
+        {current && <TabLine />}
       </button>
       {open && (
         <div ref={panel} id={id} role="group" aria-label={t("menu.pages", { label: subject.label })} onKeyDown={onListKeys}
-          className="absolute top-[calc(100%+10px)] left-1/2 z-50 w-[min(380px,calc(100vw-32px))] -translate-x-1/2 animate-pop rounded-3xl border border-line-2 bg-surface p-2 shadow-2xl motion-reduce:animate-none">
-          <p className="px-4 pt-2 pb-2 text-[14px] leading-snug text-ink-2">{subject.what}</p>
+          className="absolute top-[calc(100%+6px)] left-1/2 z-50 w-[min(380px,calc(100vw-32px))] -translate-x-1/2 animate-pop rounded-panel border border-line-2 bg-surface p-2 shadow-2xl motion-reduce:animate-none">
+          <p className="px-4 pt-2 pb-2 text-[13.5px] leading-snug text-ink-2">{subject.what}</p>
           <SubjectList subject={subject} route={route} sampleRoutes={sampleRoutes} onPick={(r) => { setOpen(null); onNav(r); }} />
         </div>
       )}
@@ -308,19 +252,20 @@ export function Header({ route, onNav, sample, livePrices, theme, onTheme, marke
   useEffect(() => setOpenSubject(null), [route]);
 
   return (
-    <header className={`sticky top-0 z-40 border-b border-line pt-[env(safe-area-inset-top)] backdrop-blur-xl transition-colors duration-500 ${scrolled ? "bg-bg/80" : "bg-bg/60"}`}>
-      <Container className="relative flex flex-wrap items-center gap-x-3 gap-y-3 py-3 sm:gap-x-4 sm:py-4">
-        <a href="#today" aria-label={t("header.home")} className="flex shrink-0 items-center gap-3" onClick={(e) => { e.preventDefault(); onNav("today"); }}>
+    <header className={`sticky top-0 z-40 border-b pt-[env(safe-area-inset-top)] backdrop-blur-xl transition-colors duration-500 ${scrolled ? "border-line-2 bg-bg/85" : "border-line bg-bg/70"}`}>
+      <Container className="relative flex flex-wrap items-center gap-x-2.5 sm:gap-x-4">
+        <a href="#today" aria-label={t("header.home")} className="flex min-h-[56px] shrink-0 items-center gap-2.5 lg:min-h-[64px]" onClick={(e) => { e.preventDefault(); onNav("today"); }}>
           <Logo />
-          <span className="hidden text-[20px] font-semibold tracking-[-0.03em] min-[420px]:inline">stocks·brain</span>
+          <Wordmark />
         </a>
         <MarketSwitch market={market} locked={NASDAQ_ONLY.includes(route)} />
 
-        <nav aria-label={t("header.sections")} className="order-3 hidden w-full justify-center gap-2 sm:flex lg:order-none lg:w-auto lg:flex-1">
+        <nav aria-label={t("header.sections")} className="order-3 -mx-1 hidden w-full items-stretch gap-1 border-t border-line sm:flex lg:order-none lg:mx-0 lg:w-auto lg:flex-1 lg:justify-center lg:self-stretch lg:border-t-0">
           {SUBJECTS.map((s) => s.direct ? (
             <button key={s.id} type="button" onClick={() => onNav(s.direct)} aria-current={subject === s.id ? "page" : undefined}
-              className={`inline-flex min-h-[48px] items-center gap-2 rounded-full border px-5 text-[16px] font-semibold tracking-[-0.01em] whitespace-nowrap transition-colors duration-300 ${subject === s.id ? "border-transparent bg-ink text-bg" : "border-[color:var(--ai)] text-ink hover:bg-ink/5"}`}>
-              <span className="size-2 rounded-full" style={{ background: "var(--ai)" }} aria-hidden="true" />{s.label}
+              className={`${TAB} ${subject === s.id ? "text-ink" : "text-ink-2 hover:text-ink"}`}>
+              <span className="size-1.5 rounded-full bg-ai shadow-[0_0_8px_var(--ai)]" aria-hidden="true" />{s.label}
+              {subject === s.id && <TabLine />}
             </button>
           ) : (
             <SubjectMenu key={s.id} subject={s} current={subject === s.id} open={openSubject === s.id} setOpen={setOpenSubject}
@@ -338,7 +283,7 @@ export function Header({ route, onNav, sample, livePrices, theme, onTheme, marke
             type="button"
             onClick={onTheme}
             aria-label={theme === "dark" ? t("header.toLight") : t("header.toDark")}
-            className="grid size-11 place-items-center rounded-full border border-line-2 transition duration-500 hover:rotate-45 hover:border-ink-3"
+            className="grid size-11 place-items-center rounded-full border border-line-2 bg-surface-2/80 text-ink-2 transition duration-500 hover:rotate-45 hover:border-line-3 hover:text-ink"
           >
             <svg viewBox="0 0 24 24" className="size-[17px]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
               {theme === "dark" ? (
@@ -355,6 +300,46 @@ export function Header({ route, onNav, sample, livePrices, theme, onTheme, marke
 }
 
 /**
+ * The ticker tape under the header: the main list's day moves (ticker and percent, never a price), marching left and
+ * pausing on hover or focus; tapping a name opens its page. Under reduced motion it is one still row that scrolls
+ * sideways. The second copy that makes the loop seamless is hidden from screen readers and the keyboard.
+ */
+export function TickerTape({ data, onOpen }) {
+  const t = strings(shellText);
+  const reduced = useReducedMotion();
+  const items = useMemo(() => tapeItems({ market: data?.market, members: mainListOf(data), names: data?.names }), [data]);
+  if (!items.length) return null;
+  const date = data.market?.as_of ? fmtShort(data.market.as_of) : "";
+  const row = (copy) => items.map((x) => (
+    <li key={`${copy}-${x.ticker}`} className="shrink-0" aria-hidden={copy ? true : undefined}>
+      <button type="button" onClick={() => onOpen(`stock/${x.ticker}`)} tabIndex={copy ? -1 : undefined}
+        aria-label={copy ? undefined : t("tape.item", { name: x.name, move: fmtPct(x.move, 2) })}
+        className="flex h-11 items-center gap-2 px-3 text-[12.5px] transition-colors hover:bg-surface-2 sm:px-4">
+        <span className="font-num font-bold tracking-[0.02em] text-ink">{x.ticker}</span>
+        <Delta value={x.move} d={2} arrow />
+      </button>
+    </li>
+  ));
+  return (
+    <section aria-label={t("tape.aria", { date })} className="tape relative border-b border-line bg-surface/60 backdrop-blur-md">
+      <div className="mx-auto flex w-full max-w-[1600px] items-stretch">
+        <p className="flex shrink-0 items-center gap-2 border-e border-line ps-4 pe-3 sm:ps-8 lg:ps-12">
+          <span aria-hidden="true" className="size-1.5 rounded-full bg-desk shadow-[0_0_8px_var(--desk)] motion-safe:animate-[beacon_2.4s_ease-in-out_infinite]" />
+          <span className="kicker text-[12px]">{t("tape.label")}</span>
+          <span className="font-num text-[11px] text-ink-3 uppercase">{date}</span>
+        </p>
+        <div className={`min-w-0 flex-1 ${reduced ? "no-scrollbar overflow-x-auto" : "tape-fade overflow-hidden"}`}>
+          <ul className={`flex w-max ${reduced ? "" : "tape-track"}`} style={{ "--tape-s": `${tapeSeconds(items.length)}s` }}>
+            {row(0)}
+            {!reduced && row(1)}
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/**
  * Under the header on every page but Home and a stock page: where you are and a one-line "what's this". A page that
  * reads Nasdaq only shows Nasdaq in the header's switch instead of a notice.
  */
@@ -363,20 +348,31 @@ export function PageIntro({ route, market }) {
   if (!page || route === "today" || route === "verdicts" || route.startsWith("stock/")) return null;
   const subject = SUBJECTS.find((s) => s.id === page.subject);
   return (
-    <Container className="pt-8 sm:pt-10">
-      <p className="meta normal-case tracking-[0.06em]"><span className="uppercase tracking-[0.16em]">{subject.label}</span> · {page.label}</p>
-      <p className="mt-1.5 max-w-[60ch] text-[16px] leading-snug text-ink-2">{page.what}</p>
+    <Container className="pt-7 sm:pt-9">
+      <p className="kicker flex flex-wrap items-center gap-x-2 gap-y-1">
+        <span aria-hidden="true" className="h-px w-6 bg-desk" />{subject.label}<span aria-hidden="true" className="text-ink-3">/</span><span className="text-ink-2">{page.label}</span>
+      </p>
+      <p className="mt-2 max-w-[60ch] text-[15px] leading-snug text-ink-2">{page.what}</p>
     </Container>
   );
 }
 
+/** The mark: an orange pulse line in a small glowing square. */
 function Logo() {
   return (
-    <span className="relative grid size-9 place-items-center">
-      <svg viewBox="0 0 36 36" className="absolute inset-0 animate-[spin-slow_14s_linear_infinite]">
-        <circle cx="18" cy="18" r="13" fill="none" stroke="var(--accent)" strokeWidth="2.5" strokeDasharray="62 20" strokeLinecap="round" />
+    <span aria-hidden="true" className="relative grid size-8 shrink-0 place-items-center rounded-[9px] border border-desk/60 bg-desk/10 shadow-[0_0_20px_-4px_var(--desk-glow)]">
+      <svg viewBox="0 0 20 20" className="size-[18px]" fill="none" stroke="var(--desk)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M2 13.5h3l2.2-6 3.4 9 2.4-6.5H18" />
       </svg>
-      <span className="size-2 animate-pulse-ring rounded-full bg-accent" />
+    </span>
+  );
+}
+
+/** STOCKS·BRAIN in the display face (the name itself is not translated). */
+function Wordmark() {
+  return (
+    <span aria-hidden="true" className="font-display text-[21px] leading-none font-extrabold tracking-[0.06em] uppercase">
+      stocks<span className="text-desk">·</span>brain
     </span>
   );
 }
@@ -392,15 +388,18 @@ export function NotAdvice({ compact = false, className = "" }) {
   const t = strings(shellText);
   if (compact) {
     return (
-      <p role="note" className={`max-w-[72ch] text-[14px] leading-relaxed text-ink-3 ${className}`}>
+      <p role="note" className={`max-w-[72ch] text-[12.5px] leading-relaxed text-ink-3 ${className}`}>
         <span className="font-semibold text-ink-2">{t("notAdvice.title")}.</span> {t("notAdvice.compact")}
       </p>
     );
   }
   return (
-    <section role="note" aria-label={t("notAdvice.title")} className={`max-w-[80ch] ${className}`}>
-      <p className="m-0 font-semibold tracking-[-0.01em]">{t("notAdvice.title")}</p>
-      <p className="mt-1.5 mb-0 text-[14.5px] leading-relaxed text-ink-2">{t("notAdvice.body", { site: "stocks·brain" })} {t("notAdvice.delayed")}</p>
+    <section role="note" aria-label={t("notAdvice.title")} className={`max-w-[84ch] ${className}`}>
+      <p className="m-0 flex items-center gap-2 font-display text-[13px] font-bold tracking-[0.14em] text-ink-2 uppercase">
+        <svg viewBox="0 0 16 16" className="size-3.5 text-ink-3" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><circle cx="8" cy="8" r="6.2" /><path d="M8 7.2v4M8 4.8v.1" strokeLinecap="round" /></svg>
+        {t("notAdvice.title")}
+      </p>
+      <p className="mt-1.5 mb-0 text-[12.5px] leading-relaxed text-ink-3">{t("notAdvice.body", { site: "stocks·brain" })} {t("notAdvice.delayed")}</p>
     </section>
   );
 }
@@ -408,10 +407,10 @@ export function NotAdvice({ compact = false, className = "" }) {
 export function Footer({ data }) {
   const { manifest } = data;
   return (
-    <footer className="relative mt-24 border-t border-line">
-      <Container className="flex flex-wrap items-end justify-between gap-x-10 gap-y-4 py-8 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:pb-[calc(2rem+env(safe-area-inset-bottom))]">
+    <footer className="relative mt-16 border-t border-line bg-bg/60">
+      <Container className="flex flex-wrap items-end justify-between gap-x-10 gap-y-4 py-7 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:pb-[calc(1.75rem+env(safe-area-inset-bottom))]">
         <NotAdvice />
-        <p className="meta m-0 normal-case tracking-[0.04em]">
+        <p className="m-0 font-num text-[11px] tracking-[0.02em] text-ink-3">
           {buildLine(manifest)}
         </p>
       </Container>
@@ -422,10 +421,14 @@ export function Footer({ data }) {
 /* ------------------------------------------------- phone bottom bar */
 
 const ICONS = {
-  today: <path d="M4 12.5 12 5l8 7.5M6.5 10.5V19h11v-8.5" />,
-  plan: <><path d="M5 4.5h11a3 3 0 0 1 3 3V20H8a3 3 0 0 1-3-3V4.5Z" /><path d="M8.5 9h7M8.5 12.5h7M8.5 16h4" /></>,
-  verdicts: <><path d="M12 3.5 14 8.5l5.2.4-4 3.4 1.3 5.1L12 14.6l-4.5 2.8 1.3-5.1-4-3.4 5.2-.4Z" /></>,
-  learn: <><path d="M9 18h6M10 21h4" /><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3Z" /></>,
+  // two candles: the desk
+  today: <><path d="M7.5 3.5v3M7.5 16v4.5M16.5 6v3.5M16.5 17.5v3" /><rect x="5" y="6.5" width="5" height="9.5" rx="1.2" /><rect x="14" y="9.5" width="5" height="8" rx="1.2" /></>,
+  // a flask: tests with pretend money
+  plan: <><path d="M9 3.5h6M10 3.5v5.8L4.8 18a1.8 1.8 0 0 0 1.6 2.6h11.2a1.8 1.8 0 0 0 1.6-2.6L14 9.3V3.5" /><path d="M7.2 15h9.6" /></>,
+  // a spark: the brain's verdicts
+  verdicts: <><path d="M12 3.5 13.9 9l5.6 1.9-5.6 1.9L12 18.5l-1.9-5.7-5.6-1.9L10.1 9Z" /><path d="M19 3.5v3M17.5 5h3" /></>,
+  // an open book: lessons
+  learn: <><path d="M3.5 5.5c2.6-1.4 5.6-1.3 8.5.6 2.9-1.9 5.9-2 8.5-.6v13c-2.6-1.4-5.6-1.3-8.5.6-2.9-1.9-5.9-2-8.5-.6Z" /><path d="M12 6.1v13" /></>,
 };
 
 /**
@@ -456,17 +459,16 @@ export function MobileNav({ route, onNav, sampleRoutes = [] }) {
   const open = subjects.find((s) => s.id === sheet);
   return (
     <>
-      <nav aria-label={t("header.sections")} className="fixed inset-x-0 bottom-0 z-50 border-t border-line bg-bg/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl sm:hidden">
+      <nav aria-label={t("header.sections")} className="fixed inset-x-0 bottom-0 z-50 border-t border-line-2 bg-bg/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl sm:hidden">
         <div className="grid grid-cols-4">
           {subjects.map((s) => {
             const on = sheet ? sheet === s.id : subject === s.id;
             return (
               <button key={s.id} type="button" onClick={(e) => tap(s.id, e)} aria-expanded={sheet === s.id} aria-current={subject === s.id ? "true" : undefined}
-                className={`flex min-h-[60px] flex-col items-center justify-center gap-1 text-[13px] font-semibold transition-colors ${on ? "text-ink" : "text-ink-3"}`}>
-                <span className={`grid h-8 w-14 place-items-center rounded-full transition-colors duration-300 ${on ? "bg-ink text-bg" : ""}`}>
-                  <svg viewBox="0 0 24 24" className="size-[20px]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{ICONS[s.id]}</svg>
-                </span>
-                {s.short ?? s.label}
+                className={`relative flex min-h-[60px] flex-col items-center justify-center gap-1 transition-colors ${on ? "text-desk" : "text-ink-3 active:text-ink"}`}>
+                {on && <span aria-hidden="true" className="absolute inset-x-5 top-0 h-[2px] rounded-b-full bg-desk shadow-[0_0_14px_var(--desk)]" />}
+                <svg viewBox="0 0 24 24" className={`size-[22px] ${on ? "drop-shadow-[0_0_8px_var(--desk-glow)]" : ""}`} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{ICONS[s.id]}</svg>
+                <span className="font-display text-[12.5px] leading-none font-bold tracking-[0.1em] uppercase">{s.short ?? s.label}</span>
               </button>
             );
           })}
@@ -476,10 +478,10 @@ export function MobileNav({ route, onNav, sampleRoutes = [] }) {
         <div className="fixed inset-0 z-40 sm:hidden" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
           <button type="button" aria-label={t("menu.close")} tabIndex={-1} onClick={() => setSheet(null)} className="absolute inset-0 bg-black/55 backdrop-blur-sm" />
           <div ref={panel} onKeyDown={onListKeys}
-            className="absolute inset-x-0 bottom-0 max-h-[85vh] animate-rise overflow-y-auto rounded-t-3xl border-t border-line-2 bg-surface px-3 pt-3 pb-[calc(76px+env(safe-area-inset-bottom))]">
-            <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-line-2" />
-            <h2 id="sheet-title" className="px-4 text-[22px] font-semibold tracking-[-0.02em]">{open.label}</h2>
-            <p className="px-4 pt-1 pb-3 text-[15px] leading-snug text-ink-2">{open.what}</p>
+            className="absolute inset-x-0 bottom-0 max-h-[85vh] animate-rise overflow-y-auto rounded-t-[20px] border-t border-line-2 bg-surface px-3 pt-3 pb-[calc(76px+env(safe-area-inset-bottom))]">
+            <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-line-3" />
+            <h2 id="sheet-title" className="headline px-4 text-[30px]">{open.label}</h2>
+            <p className="px-4 pt-1.5 pb-3 text-[14px] leading-snug text-ink-2">{open.what}</p>
             <SubjectList subject={open} route={route} sampleRoutes={sampleRoutes} onPick={(r) => { setSheet(null); onNav(r); }} />
           </div>
         </div>

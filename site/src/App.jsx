@@ -5,7 +5,7 @@ import { loadAll, loadManifest, loadMarket } from "./lib/data.js";
 import { hashFor, parseHash } from "./lib/nav.js";
 import { DEFAULT_MARKET, defaultId, marketData, nasdaqData, pickMarket, switchChoices } from "./lib/markets.js";
 import { newerBundle } from "./lib/appversion.js";
-import { Field, Footer, Header, Loader, MobileNav, PageIntro } from "./components/shell.jsx";
+import { Field, Footer, Header, Loader, MobileNav, PageIntro, TickerTape } from "./components/shell.jsx";
 import { Container } from "./components/ui.jsx";
 import shellText from "./text/shell.js";
 import Today from "./tabs/Today.jsx";
@@ -195,6 +195,8 @@ export default function App() {
       <Loader progress={progress} done={Boolean(data || error)} />
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:start-2 focus:z-50 focus:rounded-lg focus:bg-ink focus:px-3 focus:py-2 focus:text-bg">{t("app.skip")}</a>
       <Header route={tab} onNav={go} sample={data?.sample} livePrices={data?.livePrices} theme={theme} onTheme={toggleTheme} market={market} sampleRoutes={sampleRoutes} />
+      {/* The main list's day moves (percent only), under the header on every page. */}
+      {data && <TickerTape data={base} onOpen={go} />}
       <main id="main" className="relative min-h-[70vh] [view-transition-name:main]">
         {error && (
           <Container className="py-24">
@@ -220,8 +222,8 @@ export default function App() {
       {data && <Footer data={data} />}
       {update && (
         <button type="button" onClick={() => window.location.reload()} role="status"
-          className="fixed inset-x-4 bottom-[calc(env(safe-area-inset-bottom)+92px)] z-50 mx-auto max-w-[420px] rounded-2xl border border-accent/60 bg-surface px-5 py-4 text-start text-[16px] leading-snug text-ink shadow-xl sm:bottom-6">
-          <span className="block font-semibold text-accent">{t("app.updateTitle")}</span>
+          className="glow fixed inset-x-4 bottom-[calc(env(safe-area-inset-bottom)+84px)] z-50 mx-auto max-w-[420px] rounded-panel border border-desk/60 bg-surface px-5 py-4 text-start text-[15px] leading-snug text-ink sm:bottom-6">
+          <span className="block font-display text-[17px] font-bold tracking-[0.06em] text-desk uppercase">{t("app.updateTitle")}</span>
           <span className="block text-ink-2">{t("app.updateTap")}</span>
         </button>
       )}

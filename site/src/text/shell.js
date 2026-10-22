@@ -65,7 +65,7 @@ export default {
 
   // the menu (lib/nav.js): subjects, then pages by route
   "nav.s.today": "Today",
-  "nav.s.today.what": "The day in simple words: the market, the stocks on the list and the news.",
+  "nav.s.today.what": "The day at a glance: the desk, the stocks on the list and the news.",
   "nav.s.verdicts": "Brain's verdicts",
   "nav.s.verdicts.short": "Brain",
   "nav.s.verdicts.what": "What the brain decided today, told simply, and what the plan does this week.",
@@ -74,7 +74,7 @@ export default {
   "nav.s.learn": "Learn",
   "nav.s.learn.what": "Lessons about money, and how this site works.",
   "nav.p.today": "Home",
-  "nav.p.today.what": "The day in simple words. The Details switch shows everything that happened, newest first.",
+  "nav.p.today.what": "The desk: six agents read the list and code makes a pretend-money call on each name. The Details switch shows everything that happened, newest first.",
   "nav.p.watchlist": "Stocks",
   "nav.p.watchlist.what": "The companies on the list, and how each did lately.",
   "nav.p.details": "Market details",

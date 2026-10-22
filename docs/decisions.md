@@ -1,7 +1,7 @@
 ---
-version: 0.25.0
-updated_at: 2026-10-21
-change_note: Hebrew removed; the site is English only again (the not-advice notice and the any-reader wording stay).
+version: 0.26.0
+updated_at: 2026-10-22
+change_note: Home is a trading desk of six agents (Research, News, Strategy, Execution, Risk, Boss) with code-made BUY (paper) / WAIT / REJECT calls.
 ---
 # Decision log
 
@@ -18,6 +18,26 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Market file size**: `derived.json` is written one line per symbol (compact) and is about 330 KB with 21 names.
   Past roughly 35 names it would hit lint's 512 KB cap and the daily run would fail closed; before that, move the
   per-point dates into one shared array.
+
+## 2026-10-22
+- **Home is a trading desk: six agents, one final call.** The owner asked for the site to look like a trading
+  platform, with far less text, after a post showing six agents in a pipeline (Research, News, Strategy, Execution,
+  Risk, Boss). Home's default view is now the Desk (`site/src/lib/desk.js`, `components/desk.jsx`); Details stays as
+  the full dashboard and the words-only Simple view is gone. Each agent is a panel over data we already publish:
+  Research is a scanner of the main list (day and 20-day moves, volume against its 20-day average, volatility,
+  momentum against the benchmark, the checklist score; percents only, never prices); News is the why-it-moved notes,
+  recent SEC filings and results due within a week; Strategy is each checklist risk plan (entry near support, stop,
+  two targets, reward-to-risk) plus the brain's latest stance; Execution reads three unproven rules of thumb from the
+  checklist (LEVEL, VOLUME, CLOSE) into ENTER, WAIT or SKIP; Risk applies the house limits; the Boss combines them.
+- **The Boss's call is made by code, never by a model, and is paper only.** First match wins: a hard Risk failure
+  (no written plan, or a stop wider than the limit), a bearish brain stance, or a downtrend is REJECT; a reward-to-risk
+  under 2 or a stock stretched above its 50-day average is WAIT, because the house rules say to wait those out ("if it
+  is thinner, wait"; "never chase a stretched stock"); a neutral brain, missing confirmations or fewer than five fresh
+  reports is WAIT; only an up-leaning brain with Risk passing, all three confirmations and five fresh reports is
+  BUY (paper). On its first day the Desk read 0 BUY, 18 WAIT and 3 REJECT (the three in a downtrend). Every screen
+  carries PAPER TRADING · SIMULATED; real money stays the weekly whole-market buy until a rule earns its place.
+- **Not copied from the post:** its headline result (a few hundred dollars multiplied overnight) was made with ten
+  times leverage. The Risk panel states the house limit plainly: leverage 1×, never borrowed.
 
 ## 2026-10-21
 - **Hebrew removed.** The owner judged the Hebrew version not good enough and asked to remove it entirely; the site is

@@ -96,7 +96,8 @@ test("plain words: nouns, the TLV note, the not-yet line, the Nasdaq-only line, 
   assert.equal(NOT_YET, "This market's numbers appear after the next nightly run.");
   assert.match(nasdaqOnlyLine("TLV"), /Nasdaq list only.*TLV is for looking/);
   for (const r of NASDAQ_ONLY) assert.ok(ROUTES.includes(r), r);
-  assert.ok(!NASDAQ_ONLY.includes("watchlist") && !NASDAQ_ONLY.includes("today"));
+  // Home's Desk and live feed read the main list only; the stocks page switches markets.
+  assert.ok(!NASDAQ_ONLY.includes("watchlist") && NASDAQ_ONLY.includes("today"));
   const funds = { funds: [{ ticker: "FFF", plain: "A low-cost way." }] };
   assert.equal(fundCard(funds, "FFF").plain, "A low-cost way.");
   assert.equal(fundCard(funds, "GGG"), null);

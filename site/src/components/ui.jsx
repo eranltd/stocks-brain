@@ -199,7 +199,8 @@ export function Conviction({ level, showLabel = true, tone = "accent" }) {
 
 /* ------------------------------------------------------------- controls */
 
-export function Segmented({ options, value, onChange, label }) {
+/** `tall`: 44px buttons, for a control that is a page's main switch (Home's Desk | Details). */
+export function Segmented({ options, value, onChange, label, tall = false }) {
   return (
     <div role="group" aria-label={label} className="no-scrollbar inline-flex max-w-full overflow-x-auto rounded-full border border-line bg-surface p-1">
       {options.map((o) => (
@@ -208,7 +209,7 @@ export function Segmented({ options, value, onChange, label }) {
           type="button"
           aria-pressed={value === o.value}
           onClick={() => onChange(o.value)}
-          className={`flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-[13.5px] font-medium transition duration-300 ${value === o.value ? "bg-ink text-bg" : "text-ink-2 hover:text-ink"}`}
+          className={`flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-[13.5px] font-medium transition duration-300 ${tall ? "min-h-[44px] px-5" : ""} ${value === o.value ? "bg-ink text-bg" : "text-ink-2 hover:text-ink"}`}
         >
           {o.dot}
           {o.label}

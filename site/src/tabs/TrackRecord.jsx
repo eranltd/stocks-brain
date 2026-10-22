@@ -5,10 +5,10 @@ import { useInView } from "../lib/motion.js";
 import { ExcessChart } from "../components/charts.jsx";
 import { Accent, Chip, Container, Conviction, Empty, Reveal, SectionHead, Strip } from "../components/ui.jsx";
 import { TrustLadder } from "../components/trust.jsx";
-import { Bdi, useLang } from "../lib/lang.jsx";
-import dict from "../i18n/plan.js";
+import dict from "../text/plan.js";
+import { strings } from "../lib/text.js";
 
-// Every text here is in i18n/plan.js ("tr.*").
+// Every text here is in text/plan.js ("tr.*").
 
 /** A headline template with an {accent} slot, as the plain array Headline animates word by word. */
 const accented = (text, accent) => {
@@ -17,8 +17,7 @@ const accented = (text, accent) => {
 };
 
 export default function TrackRecord({ data }) {
-  const { t: tr, fmt } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const { outcomes, settings, bench, kb, calibration } = data;
   const [all, setAll] = useState(false);
   const s = summarize(outcomes);
@@ -48,9 +47,9 @@ export default function TrackRecord({ data }) {
       <Strip
         cells={[
           { value: s.n, label: t("tr.cell.marked"), desc: t("tr.cell.markedDesc", { pending }) },
-          { value: <bdi dir="ltr">{fmtNum(s.hitRate, 0)}%</bdi>, label: t("tr.cell.right"), desc: t("tr.cell.rightDesc", { hits: s.hits, flats: s.flats, misses: s.misses }) },
-          { value: <bdi dir="ltr">{fmtPct(s.avgExcess, 1)}</bdi>, label: t("tr.cell.lead"), tone: s.avgExcess >= 0 ? "accent" : "down", desc: t("tr.cell.leadDesc", { bench: bench.symbol }) },
-          { value: s.best ? <bdi dir="ltr">{fmtPct(s.best.excess_pct, 1)}</bdi> : "—", label: t("tr.cell.best", { ticker: s.best?.ticker ?? "" }), tone: "flat", desc: s.worst ? t("tr.cell.worst", { ticker: s.worst.ticker, pct: fmt.pct(s.worst.excess_pct, 1) }) : "" },
+          { value: <span>{fmtNum(s.hitRate, 0)}%</span>, label: t("tr.cell.right"), desc: t("tr.cell.rightDesc", { hits: s.hits, flats: s.flats, misses: s.misses }) },
+          { value: <span>{fmtPct(s.avgExcess, 1)}</span>, label: t("tr.cell.lead"), tone: s.avgExcess >= 0 ? "accent" : "down", desc: t("tr.cell.leadDesc", { bench: bench.symbol }) },
+          { value: s.best ? <span>{fmtPct(s.best.excess_pct, 1)}</span> : "—", label: t("tr.cell.best", { ticker: s.best?.ticker ?? "" }), tone: "flat", desc: s.worst ? t("tr.cell.worst", { ticker: s.worst.ticker, pct: fmtPct(s.worst.excess_pct, 1) }) : "" },
         ]}
       />
 
@@ -80,8 +79,8 @@ export default function TrackRecord({ data }) {
             {groups.map((g) => (
               <div key={g.st + g.cv} className="grid grid-cols-[1fr_auto_auto] items-center gap-3 text-[13.5px]">
                 <span className="flex items-center gap-2"><Chip kind={g.st} className="py-1 text-[11px]" /><Conviction level={g.cv} showLabel={false} /></span>
-                <span dir="ltr" className="num font-mono text-ink-3">{g.n}×</span>
-                <span dir="ltr" className="num w-14 text-end font-mono">{fmtNum(g.hitRate, 0)}%</span>
+                <span className="num font-mono text-ink-3">{g.n}×</span>
+                <span className="num w-14 text-end font-mono">{fmtNum(g.hitRate, 0)}%</span>
               </div>
             ))}
           </div>
@@ -101,13 +100,13 @@ export default function TrackRecord({ data }) {
             <tbody>
               {(all ? rows : rows.slice(0, 15)).map((o) => (
                 <tr key={o.pick_id} className="border-b border-line transition-colors last:border-0 hover:bg-ink/[0.03]">
-                  <td dir="ltr" className="whitespace-nowrap px-5 py-3.5 text-start font-mono text-ink-2">{o.run_date}</td>
-                  <td className="px-5 py-3.5 font-semibold"><Bdi>{o.ticker}</Bdi></td>
+                  <td className="whitespace-nowrap px-5 py-3.5 text-start font-mono text-ink-2">{o.run_date}</td>
+                  <td className="px-5 py-3.5 font-semibold">{o.ticker}</td>
                   <td className="px-5 py-3.5"><Chip kind={o.stance} className="py-1 text-[11px]" /></td>
                   <td className="px-5 py-3.5"><Conviction level={o.conviction} /></td>
-                  <td className="num px-5 py-3.5 text-end font-mono">{fmt.pct(o.return_pct)}</td>
-                  <td className="num px-5 py-3.5 text-end font-mono text-ink-3">{fmt.pct(o.benchmark_return_pct)}</td>
-                  <td className="num px-5 py-3.5 text-end font-mono font-semibold">{fmt.pct(o.excess_pct)}</td>
+                  <td className="num px-5 py-3.5 text-end font-mono">{fmtPct(o.return_pct)}</td>
+                  <td className="num px-5 py-3.5 text-end font-mono text-ink-3">{fmtPct(o.benchmark_return_pct)}</td>
+                  <td className="num px-5 py-3.5 text-end font-mono font-semibold">{fmtPct(o.excess_pct)}</td>
                   <td className="px-5 py-3.5"><Chip kind={o.verdict} className="py-1 text-[11px]" /></td>
                 </tr>
               ))}
@@ -125,7 +124,7 @@ export default function TrackRecord({ data }) {
 }
 
 function Split({ s }) {
-  const t = useLang().t(dict);
+  const t = strings(dict);
   const [ref, inView] = useInView();
   const parts = [
     { k: "hit", v: s.hits, c: "bg-accent" },

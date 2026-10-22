@@ -1,8 +1,8 @@
 // Is a newer build of the site deployed than the one running? The page's own script is a hashed bundle
 // (assets/index-<hash>.js); the deployed index.html names the current one. Different names mean a new version is out.
 
-import { ltr, translate } from "./i18n.js";
-import text from "../i18n/shell.js";
+import { strings } from "./text.js";
+import text from "../text/shell.js";
 
 const BUNDLE = /assets\/index-[\w-]+\.js/;
 
@@ -32,14 +32,11 @@ export async function newerBundle({ fetchFn = globalThis.fetch, doc = globalThis
   }
 }
 
-/**
- * The footer's line about the data this page shows: "Prices live · tiingo · picks sample · built 2026-10-18 05:39:51 UTC",
- * or in Hebrew "מחירים מתעדכנים · tiingo · בחירות לדוגמה · נבנה ב-2026-10-18 05:39:51 UTC" (the time kept left to right).
- */
-export function buildLine(manifest, lang = "en") {
-  const t = translate(text, lang);
+/** The footer's line about the data this page shows: "Prices live · tiingo · picks sample · built 2026-10-18 05:39:51 UTC". */
+export function buildLine(manifest) {
+  const t = strings(text);
   const prices = manifest.price_source === "live" ? t("footer.pricesLive", { provider: manifest.price_provider }) : t("footer.pricesSample");
   const source = t.has(`footer.source.${manifest.source}`) ? t(`footer.source.${manifest.source}`) : manifest.source;
   const when = String(manifest.built_at ?? "").replace("T", " ").replace("Z", " UTC");
-  return [prices, t("footer.picks", { source }), t("footer.built", { when: t.lang === "he" ? ltr(when) : when }, { bidi: false })].join(" · ");
+  return [prices, t("footer.picks", { source }), t("footer.built", { when })].join(" · ");
 }

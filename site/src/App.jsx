@@ -7,8 +7,7 @@ import { DEFAULT_MARKET, defaultId, marketData, nasdaqData, pickMarket, switchCh
 import { newerBundle } from "./lib/appversion.js";
 import { Field, Footer, Header, Loader, MobileNav, PageIntro } from "./components/shell.jsx";
 import { Container } from "./components/ui.jsx";
-import { En, useLang } from "./lib/lang.jsx";
-import shellText from "./i18n/shell.js";
+import shellText from "./text/shell.js";
 import Today from "./tabs/Today.jsx";
 import Details from "./tabs/Details.jsx";
 import Quiz from "./tabs/Quiz.jsx";
@@ -26,6 +25,8 @@ import Routines from "./tabs/Routines.jsx";
 import HowItWorks from "./tabs/HowItWorks.jsx";
 import Admin from "./tabs/Admin.jsx";
 import Stock from "./tabs/Stock.jsx";
+import { strings } from "./lib/text.js";
+import { rich } from "./lib/rich.jsx";
 
 // Every page by its route. The menu (three subjects and their pages) lives in lib/nav.js; routes stay as they were, so
 // old links (#insights, #playbook) still open the right page. Routes: a page id, or "stock/<SYMBOL>" for a stock page,
@@ -41,10 +42,7 @@ const POLL_MS = 10 * 60 * 1000;
 const FOCUS_MIN_MS = 60 * 1000;
 
 export default function App() {
-  // The whole page re-renders when the language changes (the header switch), so every component and every lib
-  // sentence built during render follows it, not only the ones that read useLang() themselves.
-  const { lang, t: tr } = useLang();
-  const t = tr(shellText);
+  const t = strings(shellText);
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [progress, setProgress] = useState(0);
@@ -173,10 +171,10 @@ export default function App() {
     const st = isDefault ? { state: entry?.available === false ? "none" : "ready", data: base }
       : other.key === otherKey ? { state: other.state, data: otherData } : { state: "loading", data: null };
     return {
-      id: marketId, entry, isDefault, defaultId: defId, choices: switchChoices(data.markets, lang), ...st,
+      id: marketId, entry, isDefault, defaultId: defId, choices: switchChoices(data.markets), ...st,
       choose: chooseMarket, adopt: adoptMarket, retry: () => setAttempt((n) => n + 1),
     };
-  }, [data, marketId, defId, base, other, otherKey, otherData, chooseMarket, adoptMarket, lang]);
+  }, [data, marketId, defId, base, other, otherKey, otherData, chooseMarket, adoptMarket]);
 
   const toggleTheme = () => {
     const next = theme === "dark" ? "light" : "dark";
@@ -202,11 +200,10 @@ export default function App() {
           <Container className="py-24">
             <div className="card p-8">
               <div className="eyebrow mb-3 text-down">{t("app.loadError")}</div>
-              {/* The browser's own error message (English). */}
-              <En as="p" className="text-ink-2">{String(error.message || error)}</En>
-              <p className="mt-3 text-ink-2">{t.rich("app.loadHelp", {
-                build: <code dir="ltr" className="font-mono text-ink">python3 scripts/build_site.py</code>,
-                dev: <code dir="ltr" className="font-mono text-ink">cd site && npm run dev</code>,
+              <p className="text-ink-2">{String(error.message || error)}</p>
+              <p className="mt-3 text-ink-2">{rich(t, "app.loadHelp", {
+                build: <code className="font-mono text-ink">python3 scripts/build_site.py</code>,
+                dev: <code className="font-mono text-ink">cd site && npm run dev</code>,
               })}</p>
             </div>
           </Container>
@@ -215,7 +212,7 @@ export default function App() {
         {data && (
           // Under the page's own heading line the page starts closer to the top.
           <div className={intro ? "[&>*:first-child]:pt-10" : ""}>
-            <Active key={tab} lang={lang} data={base} market={market} go={go} query={query} setQuery={setQuery} openKB={openKB} symbol={symbol} live={live} checkNow={checkNow} />
+            <Active key={tab} data={base} market={market} go={go} query={query} setQuery={setQuery} openKB={openKB} symbol={symbol} live={live} checkNow={checkNow} />
           </div>
         )}
         {data && tab !== "today" && <KeepExploring key={`ke-${tab}`} data={base} route={tab} go={go} />}

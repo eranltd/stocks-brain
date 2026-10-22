@@ -3,33 +3,29 @@ import { fmtDate, fmtNum, fmtPct } from "../lib/format.js";
 import { avgPairCorr, basketSeries, goalPath, portfolioVol, weeklyStats, weightsFor } from "../lib/stats.js";
 import { COLORS, LABELS, STATUS, nextRebalance, statusLabel, universeConcentration } from "../components/goal.jsx";
 import { LinesChart } from "../components/lines.jsx";
-import { MEASURES, bestChanges, halvesCheck, measureLabel as measureName, prepare, rank, scoreMix, searchMixes, standing } from "../lib/mix.js";
-import { shortSector } from "../lib/marketday.js";
+import { MEASURES, bestChanges, halvesCheck, prepare, rank, scoreMix, searchMixes, standing } from "../lib/mix.js";
 import { Accent, ArrowRight, Container, Empty, Headline, Reveal, SectionHead, Segmented } from "../components/ui.jsx";
-import { Bdi, useLang } from "../lib/lang.jsx";
-import dict from "../i18n/plan.js";
+import dict from "../text/plan.js";
+import { strings } from "../lib/text.js";
+import { rich } from "../lib/rich.jsx";
 
-// Every text here is in i18n/plan.js ("pf.*"). Numbers inside Hebrew sentences go through fmt.* (or t(), which isolates
-// what it fills in); numbers alone in a cell or a chart stay in their own left-to-right box.
+// Every text here is in text/plan.js ("pf.*").
 
 /** A headline template with an {accent} slot, as the plain array Headline animates word by word. */
 const accented = (text, accent) => {
   const [a, b = ""] = text.split("{accent}");
   return [a, <Accent key="accent">{accent}</Accent>, b].filter((x) => x !== "");
 };
-/** A sector's short name: English keeps this page's own short forms, Hebrew uses the site's sector words. */
 const SHORT = (s) => (s ?? "").replace("Information Technology", "Tech").replace("Communication Services", "Comms").replace("Consumer ", "Cons. ");
-const sectorShort = (s, lang) => (lang === "en" ? SHORT(s) : shortSector(s, lang));
-/** "62%": a whole percent, left to right inside a Hebrew line. */
-const wholePct = (fmt, v) => (fmt.lang === "en" ? `${fmtNum(v, 0)}%` : fmt.pct(v, 0).replace("+", ""));
+/** "62%": a whole percent. */
+const wholePct = (v) => `${fmtNum(v, 0)}%`;
 
 const KEY = "sb-portfolio-v1"; // this device only; never sent anywhere
 const load = () => { try { return JSON.parse(localStorage.getItem(KEY) || "null"); } catch { return null; } };
 const save = (v) => { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch { /* storage may be unavailable */ } };
 
 export default function Portfolio({ data, go }) {
-  const { lang, t: tr, fmt } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const lr = data.longrun;
   const goal = data.settings.goal.annual_return_pct;
   const slots = data.settings.portfolio.slots;
@@ -64,7 +60,7 @@ export default function Portfolio({ data, go }) {
     );
   }
 
-  const L = LABELS(data, lang);
+  const L = LABELS(data);
   const goalText = `+${goal}%`;
   const range = `${minNames}–${slots}`;
   const ruleStats = weeklyStats(lr.weekly.rule, goal);
@@ -74,7 +70,7 @@ export default function Portfolio({ data, go }) {
   const status = Object.fromEntries(lr.now.status.map((x) => [x.symbol, x]));
   const warnings = [
     picked.length < minNames && t("pf.warn.few", { count: picked.length, n: picked.length, range }),
-    ...Object.entries(bySector).filter(([, n]) => n > lr.rule.max_per_sector).map(([sec, n]) => t("pf.warn.sector", { n, sector: lang === "en" ? sec : shortSector(sec, lang), max: lr.rule.max_per_sector })),
+    ...Object.entries(bySector).filter(([, n]) => n > lr.rule.max_per_sector).map(([sec, n]) => t("pf.warn.sector", { n, sector: sec, max: lr.rule.max_per_sector })),
     view?.corr != null && view.corr > 0.6 && t("pf.warn.corr", { score: fmtNum(view.corr, 2) }),
     ...picked.filter((s) => status[s]?.status === "stretched").map((s) => t("pf.warn.stretched", { s })),
     ...picked.filter((s) => status[s]?.status === "fails_checks").map((s) => t("pf.warn.fails", { s, passed: status[s].passed })),
@@ -83,7 +79,7 @@ export default function Portfolio({ data, go }) {
 
   return (
     <Container className="pt-14">
-      <Reveal className="eyebrow mb-4">{t("pf.eyebrow", { prices: lr.sample ? t("pf.samplePrices") : t("pf.realYears", { years: fmtNum(lr.years, 1) }), date: fmtDate(lr.as_of, lang) }, { bidi: false })}</Reveal>
+      <Reveal className="eyebrow mb-4">{t("pf.eyebrow", { prices: lr.sample ? t("pf.samplePrices") : t("pf.realYears", { years: fmtNum(lr.years, 1) }), date: fmtDate(lr.as_of) })}</Reveal>
       <Headline size="xl" className="max-w-[18ch]">{accented(t("pf.headline"), t("pf.headlineAccent"))}</Headline>
       <Reveal delay={250} as="p" className="mt-6 max-w-[62ch] text-[clamp(16px,1.6vw,19px)] leading-relaxed text-ink">
         <b className="font-semibold">{t("pf.simple")}</b> {t("pf.intro")}
@@ -107,8 +103,8 @@ export default function Portfolio({ data, go }) {
               <button key={s.symbol} type="button" onClick={() => toggle(s.symbol)} aria-pressed={on}
                 className={`min-h-[44px] rounded-2xl border px-4 py-2 text-start transition ${on ? "border-accent/60 bg-accent/10" : "border-line-2 hover:border-ink-3"} ${!on && picked.length >= slots ? "opacity-40" : ""}`}>
                 <span className={`font-mono text-[15px] font-semibold ${on ? "text-accent" : ""}`}>{s.symbol}</span>
-                <span className="ms-2 text-[12.5px] text-ink-3">{sectorShort(s.sector, lang)}</span>
-                {on && view && <span dir="ltr" className="num ms-2 inline-block font-mono text-[12.5px] text-ink-2">{fmtNum(view.w[s.symbol] * 100, 0)}%</span>}
+                <span className="ms-2 text-[12.5px] text-ink-3">{SHORT(s.sector)}</span>
+                {on && view && <span className="num ms-2 inline-block font-mono text-[12.5px] text-ink-2">{fmtNum(view.w[s.symbol] * 100, 0)}%</span>}
               </button>
             );
           })}
@@ -131,7 +127,7 @@ export default function Portfolio({ data, go }) {
             ].map((x, i) => (
               <Reveal key={x.k} delay={i * 60} className={`card p-4 sm:p-6 ${x.you ? "border-accent/40" : ""}`}>
                 <div className="meta truncate">{x.k}</div>
-                <div className={`display num mt-3 text-[clamp(30px,4vw,48px)] leading-none ${x.s.cagr >= goal ? "text-accent" : ""}`}>{fmt.pct(x.s.cagr, 1)}</div>
+                <div className={`display num mt-3 text-[clamp(30px,4vw,48px)] leading-none ${x.s.cagr >= goal ? "text-accent" : ""}`}>{fmtPct(x.s.cagr, 1)}</div>
                 <div className="meta mt-1 normal-case tracking-[0.04em]">{t("pf.avgGrowth")}</div>
                 <dl className="mt-4 grid gap-1 text-[13px]">
                   <Row k={t("pf.row.hitGoal", { goal: goalText })} v={`${fmtNum(x.s.hitGoal, 0)}%`} />
@@ -147,7 +143,7 @@ export default function Portfolio({ data, go }) {
                 <Row k={t("pf.row.bumpy")} v={view.vol != null ? `${fmtNum(view.vol, 0)}%` : "–"} />
                 <Row k={t("pf.row.badMonth")} v={view.vol != null ? fmtPct(-1.645 * view.vol * Math.sqrt(20 / 252), 0) : "–"} tone="text-down" />
                 <Row k={t("pf.row.together")} v={view.corr != null ? fmtNum(view.corr, 2) : "–"} />
-                <Row k={t("pf.row.kinds")} v={t("pf.kindsOf", { n: Object.keys(bySector).length, total: picked.length }, { bidi: false })} />
+                <Row k={t("pf.row.kinds")} v={t("pf.kindsOf", { n: Object.keys(bySector).length, total: picked.length })} />
               </dl>
               <p className="mt-4 text-[12.5px] leading-relaxed text-ink-3">{t("pf.mixNote")}</p>
             </Reveal>
@@ -169,13 +165,13 @@ export default function Portfolio({ data, go }) {
       <section className="pt-24">
         <SectionHead eyebrow={t("pf.corr.eyebrow")} title={accented(t("pf.corr.title"), t("pf.corr.accent"))}
           lede={<>{t("pf.corr.lede")} {u.concentrated ? t("pf.corr.concentrated", { count: u.sectors, n: u.sectors }) : ""}</>} size="md" />
-        <Reveal dir="ltr" className="card overflow-x-auto p-4 sm:p-6">
+        <Reveal className="card overflow-x-auto p-4 sm:p-6">
           <CorrMap corr={lr.corr_1y} picked={picked} />
         </Reveal>
       </section>
 
       <section className="pt-24">
-        <SectionHead eyebrow={t("pf.each.eyebrow", { from: fmtDate(lr.from, lang), to: fmtDate(lr.to, lang) }, { bidi: false })} title={accented(t("pf.each.title"), t("pf.each.accent"))} size="md"
+        <SectionHead eyebrow={t("pf.each.eyebrow", { from: fmtDate(lr.from), to: fmtDate(lr.to) })} title={accented(t("pf.each.title"), t("pf.each.accent"))} size="md"
           lede={t("pf.each.lede")} />
         <Reveal className="card overflow-x-auto">
           <table className="w-full min-w-[720px] text-start text-[14px]">
@@ -188,14 +184,14 @@ export default function Portfolio({ data, go }) {
               {lr.members.map((m) => (
                 <tr key={m.symbol} className="border-b border-line last:border-0 hover:bg-ink/[0.03]">
                   <td className="px-4 py-3"><button type="button" onClick={() => go(`stock/${m.symbol}`)} className="font-mono font-semibold hover:text-accent">{m.symbol}</button></td>
-                  <td className="px-4 py-3 text-ink-2">{lang === "en" ? m.sector : shortSector(m.sector, lang)}</td>
-                  <td className={`num px-4 py-3 font-mono ${m.cagr_pct >= goal ? "text-accent" : ""}`}>{fmt.pct(m.cagr_pct, 1)}</td>
-                  <td className="num px-4 py-3 font-mono">{wholePct(fmt, m.hit_goal_12m_pct)}</td>
-                  <td className="num px-4 py-3 font-mono text-down">{fmt.pct(m.worst_12m_pct, 0)}</td>
-                  <td className="num px-4 py-3 font-mono text-down">{fmt.pct(m.max_dd_pct, 0)}</td>
-                  <td className="num px-4 py-3 font-mono">{volOf(m.symbol) != null ? wholePct(fmt, volOf(m.symbol)) : "–"}</td>
-                  <td className="num px-4 py-3 font-mono">{wholePct(fmt, m.held_pct)}</td>
-                  <td className={`px-4 py-3 ${STATUS[status[m.symbol]?.status]?.tone ?? ""}`}>{status[m.symbol]?.status && STATUS[status[m.symbol].status] ? statusLabel(status[m.symbol].status, lang) : "–"}</td>
+                  <td className="px-4 py-3 text-ink-2">{m.sector}</td>
+                  <td className={`num px-4 py-3 font-mono ${m.cagr_pct >= goal ? "text-accent" : ""}`}>{fmtPct(m.cagr_pct, 1)}</td>
+                  <td className="num px-4 py-3 font-mono">{wholePct(m.hit_goal_12m_pct)}</td>
+                  <td className="num px-4 py-3 font-mono text-down">{fmtPct(m.worst_12m_pct, 0)}</td>
+                  <td className="num px-4 py-3 font-mono text-down">{fmtPct(m.max_dd_pct, 0)}</td>
+                  <td className="num px-4 py-3 font-mono">{volOf(m.symbol) != null ? wholePct(volOf(m.symbol)) : "–"}</td>
+                  <td className="num px-4 py-3 font-mono">{wholePct(m.held_pct)}</td>
+                  <td className={`px-4 py-3 ${STATUS[status[m.symbol]?.status]?.tone ?? ""}`}>{status[m.symbol]?.status && STATUS[status[m.symbol].status] ? statusLabel(status[m.symbol].status) : "–"}</td>
                 </tr>
               ))}
             </tbody>
@@ -204,7 +200,7 @@ export default function Portfolio({ data, go }) {
       </section>
 
       <section className="pt-24">
-        <SectionHead eyebrow={t("pf.held.eyebrow", { version: lr.rule.version, n: lr.rebalances_total, date: fmtDate(nextRebalance(lr.as_of), lang) })}
+        <SectionHead eyebrow={t("pf.held.eyebrow", { version: lr.rule.version, n: lr.rebalances_total, date: fmtDate(nextRebalance(lr.as_of)) })}
           title={accented(t("pf.held.title"), t("pf.held.accent"))}
           lede={t("pf.held.lede", { avg: fmtNum(lr.avg_names_held, 1), turn: `${fmtNum(lr.traded_per_year_pct / 2, 0)}%`, bps: lr.rule.cost_bps })} size="md" />
         <Reveal className="card overflow-x-auto">
@@ -213,10 +209,10 @@ export default function Portfolio({ data, go }) {
             <tbody>
               {[...lr.rebalances].reverse().map((r) => (
                 <tr key={r.date} className="border-b border-line last:border-0">
-                  <td className="num px-4 py-2.5 font-mono text-ink-2"><Bdi>{r.date.slice(0, 7)}</Bdi></td>
-                  <td className="px-4 py-2.5 font-mono">{r.holdings.length ? <Bdi>{r.holdings.join(" · ")}</Bdi> : <span className="text-ink-3">{t("pf.held.none")}</span>}</td>
-                  <td className="num px-4 py-2.5 font-mono text-ink-2">{wholePct(fmt, r.core_pct)}</td>
-                  <td className="num px-4 py-2.5 font-mono text-ink-3">{wholePct(fmt, r.traded_pct)}</td>
+                  <td className="num px-4 py-2.5 font-mono text-ink-2">{r.date.slice(0, 7)}</td>
+                  <td className="px-4 py-2.5 font-mono">{r.holdings.length ? <span>{r.holdings.join(" · ")}</span> : <span className="text-ink-3">{t("pf.held.none")}</span>}</td>
+                  <td className="num px-4 py-2.5 font-mono text-ink-2">{wholePct(r.core_pct)}</td>
+                  <td className="num px-4 py-2.5 font-mono text-ink-3">{wholePct(r.traded_pct)}</td>
                 </tr>
               ))}
             </tbody>
@@ -241,12 +237,11 @@ function B({ children, className = "" }) {
 }
 
 function MixChips({ names, sectors, picked }) {
-  const { lang } = useLang();
   return (
     <div className="flex flex-wrap gap-1.5">
       {names.map((s) => (
         <span key={s} className={`rounded-full border px-2.5 py-1 font-mono text-[12.5px] ${picked.includes(s) ? "border-accent/60 text-accent" : "border-line-2"}`}>
-          {s}<span className="ms-1.5 font-sans text-[11px] text-ink-3">{sectorShort(sectors[s], lang)}</span>
+          {s}<span className="ms-1.5 font-sans text-[11px] text-ink-3">{SHORT(sectors[s])}</span>
         </span>
       ))}
     </div>
@@ -254,8 +249,7 @@ function MixChips({ names, sectors, picked }) {
 }
 
 function MixAndMatch({ data, lr, picked, useMix, slots, minNames, go }) {
-  const { lang, t: tr, fmt } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const [measure, setMeasure] = useState("profit");
   const [size, setSize] = useState(String(slots));
   const [limit, setLimit] = useState(true);
@@ -274,7 +268,7 @@ function MixAndMatch({ data, lr, picked, useMix, slots, minNames, go }) {
     const best = m.idx.reduce((a, b) => (solo[b] > solo[a] ? b : a));
     return { name: symbols[best], score: scoreMix(prep, m.idx.filter((i) => i !== best)) };
   };
-  const measureLabel = lang === "en" ? MEASURES[measure].label.toLowerCase() : measureName(measure, lang);
+  const measureLabel = MEASURES[measure].label.toLowerCase();
   const sizes = Array.from({ length: slots - minNames + 1 }, (_, i) => String(minNames + i));
   const rejected = (data.rulesResult?.satellite?.rules ?? []).filter((r) => r.verdict === "rejected");
   const rejLo = rejected.length ? Math.min(...rejected.map((r) => r.percentile)) : null;
@@ -290,7 +284,7 @@ function MixAndMatch({ data, lr, picked, useMix, slots, minNames, go }) {
         lede={t("pf.mm.lede", { range: `${minNames}–${slots}`, n: symbols.length })} />
       <Reveal className="card p-5 sm:p-7">
         <div className="flex flex-wrap items-center gap-3">
-          <Segmented label={t("pf.mm.sortBy")} value={measure} onChange={setMeasure} options={Object.keys(MEASURES).map((value) => ({ value, label: measureName(value, lang) }))} />
+          <Segmented label={t("pf.mm.sortBy")} value={measure} onChange={setMeasure} options={Object.keys(MEASURES).map((value) => ({ value, label: MEASURES[value].label }))} />
           {sizes.length > 1 && <Segmented label={t("pf.mm.inGroup")} value={size} onChange={setSize} options={sizes.map((s) => ({ value: s, label: t("pf.mm.nStocks", { n: s }) }))} />}
           <button type="button" aria-pressed={limit} onClick={() => setLimit(!limit)} className={`pill max-w-full whitespace-normal text-start ${limit ? "border-accent/50 text-accent" : "text-ink-2"}`}>{limit ? t("pf.mm.capOn", { max: lr.rule.max_per_sector }) : t("pf.mm.capOff")}</button>
         </div>
@@ -308,11 +302,11 @@ function MixAndMatch({ data, lr, picked, useMix, slots, minNames, go }) {
             <Reveal className="card mt-4 p-5 sm:p-7">
               <div className="meta mb-2">{t("pf.mm.rankTitle")}</div>
               <p className="text-[16px] leading-relaxed">
-                {t.rich("pf.mm.grew", { names: <B>{picked.join(" · ")}</B>, cagr: <B>{fmtPct(mine.cagr, 1)}</B>, dd: <B className="text-down">{fmtPct(mine.dd, 0)}</B> })}
+                {rich(t, "pf.mm.grew", { names: <B>{picked.join(" · ")}</B>, cagr: <B>{fmtPct(mine.cagr, 1)}</B>, dd: <B className="text-down">{fmtPct(mine.dd, 0)}</B> })}
                 {" "}{picked.length === k
-                  ? t.rich("pf.mm.beat", { measure: measureLabel, pct: <B>{fmtNum(standing(all, measure, f(mine)), 0)}%</B>, n: fmtNum(all.length, 0) })
+                  ? rich(t, "pf.mm.beat", { measure: measureLabel, pct: <B>{fmtNum(standing(all, measure, f(mine)), 0)}%</B>, n: fmtNum(all.length, 0) })
                   : t("pf.mm.size", { n: picked.length, k })}
-                {" "}{t("pf.mm.middle", { mid: fmt.pct(med.cagr, 1), best: fmt.pct(top[0].cagr, 1) }, { bidi: false })}
+                {" "}{t("pf.mm.middle", { mid: fmtPct(med.cagr, 1), best: fmtPct(top[0].cagr, 1) })}
               </p>
             </Reveal>
           )}
@@ -344,8 +338,8 @@ function MixAndMatch({ data, lr, picked, useMix, slots, minNames, go }) {
                 {changes.changes.map((c) => (
                   <li key={c.names.join("-")} className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-3 first:border-0 first:pt-0">
                     <div>
-                      <div className="font-mono text-[15px]"><bdi dir="ltr">{c.kind === "swap" ? <>{c.drop} → <span className="text-accent">{c.add}</span></> : <>+ <span className="text-accent">{c.add}</span></>}</bdi> <span className="font-sans text-[12.5px] text-ink-3">{sectorShort(data.sectors[c.add], lang)}</span></div>
-                      <div className="mt-0.5 text-[13px] text-ink-3">{t("pf.mm.change", { cagr: fmt.pct(c.score.cagr, 1), delta: fmt.pct(delta(c.score), 1), dd: fmt.pct(c.score.dd, 0) }, { bidi: false })}</div>
+                      <div className="font-mono text-[15px]"><span>{c.kind === "swap" ? <>{c.drop} → <span className="text-accent">{c.add}</span></> : <>+ <span className="text-accent">{c.add}</span></>}</span> <span className="font-sans text-[12.5px] text-ink-3">{SHORT(data.sectors[c.add])}</span></div>
+                      <div className="mt-0.5 text-[13px] text-ink-3">{t("pf.mm.change", { cagr: fmtPct(c.score.cagr, 1), delta: fmtPct(delta(c.score), 1), dd: fmtPct(c.score.dd, 0) })}</div>
                     </div>
                     <button type="button" className="pill text-ink-2 hover:text-ink" onClick={() => useMix(c.names)}>{t("pf.mm.tryIt")}</button>
                   </li>
@@ -358,7 +352,7 @@ function MixAndMatch({ data, lr, picked, useMix, slots, minNames, go }) {
             <div className="meta mb-3 text-people">{t("pf.mm.reality")}</div>
             <ul className="grid gap-3">
               <li><b className="font-medium text-ink">{t("pf.mm.r1b")}</b> {t("pf.mm.r1", { n: fmtNum(all.length, 0) })}</li>
-              <li><b className="font-medium text-ink">{t("pf.mm.r2b")}</b> {t("pf.mm.r2", { n: symbols.length, date: fmtDate(dates[prep.mid], lang), pct: fmtNum(halves.medianPercentile, 0), lo: "-1", hi: "1", corr: fmtNum(halves.rankCorrelation, 2) })}</li>
+              <li><b className="font-medium text-ink">{t("pf.mm.r2b")}</b> {t("pf.mm.r2", { n: symbols.length, date: fmtDate(dates[prep.mid]), pct: fmtNum(halves.medianPercentile, 0), lo: "-1", hi: "1", corr: fmtNum(halves.rankCorrelation, 2) })}</li>
               {rejLo != null && <li><b className="font-medium text-ink">{t("pf.mm.r3b")}</b> {t("pf.mm.r3", { lo: `${fmtNum(rejLo, 0)}%`, hi: `${fmtNum(rejHi, 0)}%` })} <button type="button" className="underline hover:text-ink" onClick={() => go("playbook")}>{t("pf.mm.r3link")}</button>.</li>}
               <li><b className="font-medium text-ink">{t("pf.mm.r4b")}</b> {t("pf.mm.r4", { dd: fmtPct(top[0].dd, 0), wo: fmtPct(withoutBest(top[0]).score.cagr, 1), cagr: fmtPct(top[0].cagr, 1) })}</li>
               <li>{t("pf.mm.r5", { years: fmtNum(lr.years, 1) })}</li>
@@ -374,7 +368,7 @@ function Row({ k, v, tone = "" }) {
   return (
     <div className="flex items-baseline justify-between gap-3 border-t border-line pt-1">
       <dt className="text-ink-3">{k}</dt>
-      <dd dir="ltr" className={`num font-mono ${tone}`}>{v}</dd>
+      <dd className={`num font-mono ${tone}`}>{v}</dd>
     </div>
   );
 }
@@ -406,8 +400,7 @@ function CorrMap({ corr, picked }) {
 }
 
 function PaperRecord({ data }) {
-  const { lang, t: tr } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const paper = data.paper && !data.paper.sample ? data.paper : null;
   return (
     <section className="pt-24">
@@ -422,7 +415,7 @@ function PaperRecord({ data }) {
               { key: "rule", label: t("pf.paper.rule"), values: paper.track.map((x) => x.v), color: COLORS.rule, width: 2.6 },
             ]} />
           <p className="meta mt-3 normal-case tracking-[0.04em]">{t("pf.paper.meta", {
-            date: fmtDate(paper.started, lang),
+            date: fmtDate(paper.started),
             picks: t("pf.paper.picks", { count: paper.rebalances.length, n: paper.rebalances.length }),
             holdings: paper.rebalances.at(-1).holdings.join(", ") || t("pf.paper.none"),
           })}</p>

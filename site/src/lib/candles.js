@@ -1,13 +1,13 @@
 // Geometry and wording for the candles chart (components/candles.jsx). Pure functions, tested in candles.test.js.
 // Every price-like number here is percent from the last close (the last close is 0) and volume is a ratio to its own
 // 20-period average, as published in data/market/candles/<SYMBOL>.json. Nothing in this file turns them back into prices.
-// The words (labels, names, tooltips) take `lang` last ("en" by default); the texts are in i18n/stock.js ("cd.*").
+// The words (labels, names, tooltips) are in text/stock.js ("cd.*").
 
 import { fmtPct } from "./format.js";
-import { isolate, translate } from "./i18n.js";
-import dict from "../i18n/stock.js";
+import { strings } from "./text.js";
+import dict from "../text/stock.js";
 
-const tr = (lang) => translate(dict, typeof lang === "string" ? lang : "en");
+const t = strings(dict);
 
 /** The three windows: 3 months of days (the default), 6 months of days, about a year of weeks. */
 export const RANGES = [
@@ -16,8 +16,6 @@ export const RANGES = [
   { value: "w", label: "Weekly", series: "weekly", n: 52 },
 ];
 export const RANGE_VALUES = RANGES.map((r) => r.value);
-/** A window's button label in a language ("3M" / "3 ח׳"). */
-export const rangeLabel = (r, lang = "en") => (lang === "en" ? r.label : tr(lang)(`cd.range.${r.value}`));
 
 /** The overlays a reader can toggle, each tied to its checklist step. Order is the legend order. */
 export const OVERLAYS = [
@@ -29,12 +27,7 @@ export const OVERLAYS = [
   { id: "risk", step: "risk_plan", label: "Risk plan" },
 ];
 export const ALL_ON = Object.fromEntries(OVERLAYS.map((o) => [o.id, true]));
-/** An overlay's label in a language. */
-export const overlayLabel = (o, lang = "en") => (lang === "en" ? o.label : tr(lang)(`cd.overlay.${o.id}`));
 
-/** A Hebrew calendar day without its weekday ("2 באוקטובר 2026"), for dates inside a sentence. */
-const HE_DAY = new Intl.DateTimeFormat("he-IL", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
-const heDay = (iso) => HE_DAY.format(new Date(`${String(iso).slice(0, 10)}T00:00:00Z`));
 const isNum = (v) => typeof v === "number" && Number.isFinite(v);
 const KEYS = ["dates", "o", "h", "l", "c", "vol_rel", "ma20", "rsi"];
 
@@ -110,30 +103,27 @@ export function fitDomain(win, extras = [], { grow = 0.6, pad = 0.06 } = {}) {
  * The horizontal lines and bands each overlay adds, from the doc's overlays (that day's checklist numbers). A target
  * set at a resistance is one line, not two: it is drawn as the target and named "at resistance".
  */
-export function overlayLines(ov, on = ALL_ON, lang = "en") {
+export function overlayLines(ov, on = ALL_ON) {
   const lines = [], bands = [];
   if (!ov) return { lines, bands };
-  const t = tr(lang);
-  // Names are drawn inside a left-to-right chart: in Hebrew each is isolated so it reads right to left on its own.
-  const say = (key, vars) => (lang === "en" ? t(key, vars) : isolate(t(key, vars)));
   const same = (a, b) => isNum(a) && isNum(b) && Math.abs(a - b) < 0.05;
   const merged = new Set();
   if (on.risk) {
     // The stop is named first: when it sits close to the last close (a tight stop on a long window) the "Last close" name
     // is the one dropped, since the 0% tick already marks that line.
-    lines.push({ id: "close", kind: "close", v: 0, name: say("cd.line.close"), tag: "0%", prio: 1 });
-    if (isNum(ov.stop_pct)) lines.push({ id: "stop", kind: "stop", v: -ov.stop_pct, name: say("cd.line.stop"), tag: fmtPct(-ov.stop_pct, 1), prio: 0 });
+    lines.push({ id: "close", kind: "close", v: 0, name: t("cd.line.close"), tag: "0%", prio: 1 });
+    if (isNum(ov.stop_pct)) lines.push({ id: "stop", kind: "stop", v: -ov.stop_pct, name: t("cd.line.stop"), tag: fmtPct(-ov.stop_pct, 1), prio: 0 });
     [["tp1", ov.tp1_pct, 2], ["tp2", ov.tp2_pct, 3]].forEach(([id, v, prio]) => {
       if (!isNum(v)) return;
       const k = on.levels ? (ov.resistance ?? []).findIndex((r) => !merged.has(r) && same(r.pct, v)) : -1;
       const r = k >= 0 ? ov.resistance[k] : null;
       if (r) merged.add(r);
-      lines.push({ id, kind: "tp", v, name: say(r ? `cd.line.${id}Res` : `cd.line.${id}`, r ? { count: r.touches } : undefined), tag: fmtPct(v, 1), prio });
+      lines.push({ id, kind: "tp", v, name: t(r ? `cd.line.${id}Res` : `cd.line.${id}`, r ? { count: r.touches } : undefined), tag: fmtPct(v, 1), prio });
     });
   }
   if (on.levels) {
-    (ov.support ?? []).forEach((s, i) => lines.push({ id: `s${i}`, kind: "level", v: s.pct, touches: s.touches, name: say("cd.line.support", { count: s.touches }), tag: fmtPct(s.pct, 1), prio: 4 + i * 2 }));
-    (ov.resistance ?? []).forEach((r, i) => !merged.has(r) && lines.push({ id: `r${i}`, kind: "level", v: r.pct, touches: r.touches, name: say("cd.line.resistance", { count: r.touches }), tag: fmtPct(r.pct, 1), prio: 5 + i * 2 }));
+    (ov.support ?? []).forEach((s, i) => lines.push({ id: `s${i}`, kind: "level", v: s.pct, touches: s.touches, name: t("cd.line.support", { count: s.touches }), tag: fmtPct(s.pct, 1), prio: 4 + i * 2 }));
+    (ov.resistance ?? []).forEach((r, i) => !merged.has(r) && lines.push({ id: `r${i}`, kind: "level", v: r.pct, touches: r.touches, name: t("cd.line.resistance", { count: r.touches }), tag: fmtPct(r.pct, 1), prio: 5 + i * 2 }));
   }
   if (on.gaps) (ov.gaps ?? []).forEach((g, i) => bands.push({ id: `g${i}`, from: g.from_pct, to: g.to_pct, where: g.where, since: g.since_date }));
   return { lines, bands };
@@ -182,8 +172,7 @@ const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "
  * Month labels for the x axis: the first candle of each new month, thinned so neighbours stay `minGap` pixels apart.
  * A January label carries its year ("Jan ’26"), so a year of weeks reads unambiguously.
  */
-export function monthTicks(dates, cx, minGap = 34, lang = "en") {
-  const t = lang === "en" ? null : tr(lang);
+export function monthTicks(dates, cx, minGap = 34) {
   const out = [];
   let last = -Infinity;
   for (let i = 1; i < dates.length; i++) {
@@ -191,8 +180,7 @@ export function monthTicks(dates, cx, minGap = 34, lang = "en") {
     const x = cx(i);
     if (x - last < minGap) continue;
     const m = Number(dates[i].slice(5, 7)) - 1;
-    const yy = dates[i].slice(2, 4);
-    out.push({ i, x, label: t ? (m === 0 ? t("cd.month.jan", { yy }) : t(`cd.month.${m}`)) : m === 0 ? `Jan ’${yy}` : MONTHS[m] });
+    out.push({ i, x, label: m === 0 ? `Jan ’${dates[i].slice(2, 4)}` : MONTHS[m] });
     last = x;
   }
   return out;
@@ -238,20 +226,19 @@ export function volTop(vols) {
 }
 
 /** "0.84× its 20-day average" (or "20-week" for weeks); null during warm-up. */
-export function volWords(v, weekly = false, lang = "en") {
-  return isNum(v) ? tr(lang)(weekly ? "cd.vol.week" : "cd.vol.day", { x: v.toFixed(2) }) : null;
+export function volWords(v, weekly = false) {
+  return isNum(v) ? t(weekly ? "cd.vol.week" : "cd.vol.day", { x: v.toFixed(2) }) : null;
 }
 
 /** The tooltip's rows for candle i: values lead, all percent from the last close. */
-export function tipRows(win, i, lang = "en") {
-  const t = tr(lang);
-  const f = (v) => (isNum(v) ? (Math.abs(v) < 0.005 ? fmtPct(0, 2, lang) : fmtPct(v, 2, lang)) : "–");
+export function tipRows(win, i) {
+  const f = (v) => (isNum(v) ? (Math.abs(v) < 0.005 ? fmtPct(0, 2) : fmtPct(v, 2)) : "–");
   const mv = win.move[i];
   return {
     date: win.dates[i],
     partial: win.partial && i === win.n - 1,
     ohlc: [[t("cd.tip.open"), f(win.o[i])], [t("cd.tip.high"), f(win.h[i])], [t("cd.tip.low"), f(win.l[i])], [t("cd.tip.close"), f(win.c[i])]],
-    move: isNum(mv) ? { text: fmtPct(mv, 1, lang), tone: Math.abs(mv) < 0.05 ? "flat" : mv > 0 ? "accent" : "down" } : null,
+    move: isNum(mv) ? { text: fmtPct(mv, 1), tone: Math.abs(mv) < 0.05 ? "flat" : mv > 0 ? "accent" : "down" } : null,
     moveLabel: t(win.weekly ? "cd.tip.weekMove" : "cd.tip.dayMove"),
     vol: isNum(win.vol_rel[i]) ? `${win.vol_rel[i].toFixed(2)}×` : null,
     volLabel: t(win.weekly ? "cd.tip.volWeek" : "cd.tip.volDay"),
@@ -260,10 +247,10 @@ export function tipRows(win, i, lang = "en") {
 }
 
 /** One sentence for screen readers: what the chart shows, ending on the latest candle. */
-export function chartSummary(symbol, win, lang = "en") {
+export function chartSummary(symbol, win) {
   if (!win) return "";
   const lo = Math.min(...win.l.filter(isNum)), hi = Math.max(...win.h.filter(isNum));
-  return tr(lang)(win.weekly ? "cd.summary.weekly" : "cd.summary.daily", {
-    symbol, n: win.n, from: lang === "en" ? win.dates[0] : heDay(win.dates[0]), to: lang === "en" ? win.dates.at(-1) : heDay(win.dates.at(-1)), lo: fmtPct(lo, 1, lang), hi: fmtPct(hi, 1, lang),
+  return t(win.weekly ? "cd.summary.weekly" : "cd.summary.daily", {
+    symbol, n: win.n, from: win.dates[0], to: win.dates.at(-1), lo: fmtPct(lo, 1), hi: fmtPct(hi, 1),
   });
 }

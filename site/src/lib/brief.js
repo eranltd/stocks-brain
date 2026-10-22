@@ -2,39 +2,31 @@
 // checklist (config/checklist.json, data/market/checklist.json), the setup checks and the outlook card. Pure functions,
 // no React. Every number comes from Python; this file only words it. Percent distances only, rounded to whole percents:
 // never a price or a level. It never says "buy": a paper entry is either within this site's rules or not, and why.
-// Every function that writes words takes `lang` ("en" by default); the texts are in i18n/stock.js ("br.*").
+// The texts are in text/stock.js ("br.*").
 
-import { translate } from "./i18n.js";
-import dict from "../i18n/stock.js";
+import { strings } from "./text.js";
+import dict from "../text/stock.js";
 
-const tr = (lang) => translate(dict, lang);
+const t = strings(dict);
 
-/** The checklist verdict as a big plain word (English; verdictPlain(lang) for another language). */
+/** The checklist verdict as a big plain word. */
 export const VERDICT_PLAIN = {
   lean_up: { word: "Going up", tone: "accent", mark: "up" },
   mixed: { word: "Mixed", tone: "flat", mark: "neutral" },
   lean_down: { word: "Going down", tone: "down", mark: "down" },
 };
-/** VERDICT_PLAIN in a language. */
-export function verdictPlain(lang = "en") {
-  const t = tr(lang);
-  return Object.fromEntries(Object.entries(VERDICT_PLAIN).map(([k, v]) => [k, { ...v, word: t(`br.verdict.${k}`) }]));
-}
 const MARK = { bullish: "up", bearish: "down", neutral: "neutral" };
 const num = (v) => (typeof v === "number" && Number.isFinite(v) ? v : null);
 
-export const briefFooter = (lang = "en") => tr(lang)("br.footer");
-export const noChecklist = (lang = "en") => tr(lang)("br.noChecklist");
-export const BRIEF_FOOTER = briefFooter("en");
-export const NO_CHECKLIST = noChecklist("en");
+export const BRIEF_FOOTER = t("br.footer");
+export const NO_CHECKLIST = t("br.noChecklist");
 
 /**
  * Whether a checklist row can be read for this name today: {ok, why}. A checklist from sample prices on a live site, or
  * a row from an older close than the one the page shows, is not today's reading.
  */
-export function readable(checklist, row, lastClose = null, { sampleSite = false, lang = "en" } = {}) {
-  const t = tr(lang);
-  if (!checklist) return { ok: false, why: noChecklist(lang) };
+export function readable(checklist, row, lastClose = null, { sampleSite = false } = {}) {
+  if (!checklist) return { ok: false, why: NO_CHECKLIST };
   if (checklist.sample && !sampleSite) return { ok: false, why: t("br.read.sample") };
   if (!row) return { ok: false, why: t("br.read.noRow") };
   if (lastClose && row.as_of && row.as_of < lastClose) return { ok: false, why: t("br.read.older") };
@@ -51,54 +43,17 @@ const EVERYDAY = [
   [/\bReward-to-risk is below the house rule\./g, "The possible gain is too small for the risk."],
 ];
 
-// scripts/market.py PHRASE: the summary is built from these few phrases only, so another language can say it whole.
-const PHRASE_KEY = {
-  "bullish candles": "candle.up", "bearish candles": "candle.down", "an uptrend": "trend.up", "a downtrend": "trend.down",
-  "volume backs the rise": "volume.up", "volume does not back the move": "volume.down",
-  "above a rising twenty-day average": "ma20.up", "below a falling twenty-day average": "ma20.down",
-  "an open gap above": "gaps.up", "an open gap below": "gaps.down", "room up to resistance": "levels.up",
-  "pressed under resistance": "levels.down", "RSI oversold": "rsi.up", "RSI overbought": "rsi.down",
-};
-const SUMMARY = /^(?:Leans up|Leans down|Mixed)(?::\s*([^;.]*))?(?:;\s*against it,\s*([^.]*))?\.\s*(?:Reward-to-risk (fits|is below) the house rule\.)?\s*$/;
-
-/** The summary said whole in another language, from its known phrases; null when it holds anything else. */
-function translatedSummary(summary, lang) {
-  const m = SUMMARY.exec(String(summary ?? "").trim());
-  if (!m) return null;
-  const t = tr(lang);
-  const say = (list) => {
-    const xs = (list ?? "").split(",").map((s) => s.trim()).filter(Boolean);
-    if (xs.some((x) => !PHRASE_KEY[x])) return null;
-    return xs.map((x) => t(`br.phrase.${PHRASE_KEY[x]}`));
-  };
-  const pro = say(m[1]), con = say(m[2]);
-  if (!pro || !con) return null;
-  const parts = [];
-  if (pro.length && con.length) parts.push(t("br.sum.both", { pro: pro.join(", "), con: con.join(", ") }, { bidi: false }));
-  else if (pro.length) parts.push(t("br.sum.pro", { pro: pro.join(", ") }, { bidi: false }));
-  else if (con.length) parts.push(t("br.sum.con", { con: con.join(", ") }, { bidi: false }));
-  if (m[3]) parts.push(t(m[3] === "fits" ? "br.sum.rrFits" : "br.sum.rrBelow"));
-  return parts.join(" ");
-}
-
-/**
- * The checklist's own summary without its leading verdict word (the brief shows the verdict big above it), in everyday
- * words. In another language it is said whole when it is made of the known phrases, else it stays English.
- */
-export function plainSummary(summary, lang = "en") {
-  if (lang !== "en" && summary) {
-    const s = translatedSummary(summary, lang);
-    if (s != null) return s;
-  }
+/** The checklist's own summary without its leading verdict word (the brief shows the verdict big above it), in everyday words. */
+export function plainSummary(summary) {
   let s = String(summary ?? "").replace(/^(Leans up|Leans down|Mixed)\s*[:.]\s*/, "").trim();
   for (const [re, to] of EVERYDAY) s = s.replace(re, to);
   return s ? s.charAt(0).toUpperCase() + s.slice(1) : "";
 }
 
 /** "Going up or down?": {word, tone, mark, summary}, or null without a reading. */
-export function direction(row, lang = "en") {
-  const v = verdictPlain(lang)[row?.score?.verdict];
-  return v ? { ...v, summary: plainSummary(row.score.summary, lang) } : null;
+export function direction(row) {
+  const v = VERDICT_PLAIN[row?.score?.verdict];
+  return v ? { ...v, summary: plainSummary(row.score.summary) } : null;
 }
 
 function candleRow(c, t) {
@@ -145,15 +100,8 @@ function riskRow(rp, min, t) {
   return { mark: "up", text: t("br.row.risk.yes"), note: t("br.row.risk.yesNote", { min }) };
 }
 
-/** A step's name: the config's (English), or this site's own words for it in another language. */
-export function stepName(s, lang = "en") {
-  const t = tr(lang);
-  return lang !== "en" && t.has(`step.${s.id}`) ? t(`step.${s.id}`) : s.name;
-}
-
 /** "The eight checks": [{id, n, name, mark: up|down|neutral, text, note?}] in the checklist's order. */
-export function eightChecks(row, cfg, lang = "en") {
-  const t = tr(lang);
+export function eightChecks(row, cfg) {
   const step = (id, i) => cfg?.steps?.find((s) => s.id === id) ?? { id, n: i + 1, name: id };
   const lean = (id) => row?.score?.leans?.[id] ?? row?.[id]?.lean ?? "neutral";
   const min = cfg?.house_rule?.min_reward_to_risk ?? 2;
@@ -165,24 +113,22 @@ export function eightChecks(row, cfg, lang = "en") {
   };
   return ["candle", "trend", "volume", "ma20", "gaps", "levels", "rsi", "risk_plan"].map((id, i) => {
     const s = step(id, i);
-    const base = { id, n: s.n ?? i + 1, name: stepName(s, lang) };
+    const base = { id, n: s.n ?? i + 1, name: s.name };
     return id === "risk_plan" ? { ...base, ...risk } : { ...base, mark: MARK[lean(id)] ?? "neutral", text: text[id] };
   });
 }
 
 /** A percent distance as a rounded whole number for the brief: "about 4%", or "less than 1%". */
-export function aboutPct(v, lang = "en") {
+export function aboutPct(v) {
   const x = Math.abs(Number(v));
   if (!Number.isFinite(x)) return "";
-  const t = typeof lang === "string" ? tr(lang) : tr("en"); // also safe as a .map() callback
   return x < 0.5 ? t("br.lessThan1") : t("br.aboutPct", { pct: `${Math.round(x)}%` });
 }
 
 /** "about 2.4": reward-to-risk, one decimal below ten, whole above. */
-export function aboutTimes(v, lang = "en") {
+export function aboutTimes(v) {
   const x = Number(v);
   if (!Number.isFinite(x)) return "";
-  const t = typeof lang === "string" ? tr(lang) : tr("en");
   return t("br.aboutTimes", { x: x < 10 ? x.toFixed(1).replace(/\.0$/, "") : String(Math.round(x)) });
 }
 
@@ -195,8 +141,7 @@ const STOP_WHY = { support: "br.stopWhy.support", atr: "br.stopWhy.atr", min_atr
  * the checklist read state from readable(), the site's minimum and the benchmark label. Never "buy now".
  * Returns {ok, head, plan: [lines], why: [lines], wait: [lines]}.
  */
-export function wherePaper({ row, setup, read = { ok: true }, min = 2, benchLabel = "the Nasdaq-100", lang = "en" }) {
-  const t = tr(lang);
+export function wherePaper({ row, setup, read = { ok: true }, min = 2, benchLabel = "the Nasdaq-100" }) {
   const passed = setup?.passed ?? 0, stretched = Boolean(setup?.stretched);
   const rp = read.ok ? row?.risk_plan ?? null : null;
   const why = [], wait = [];
@@ -220,10 +165,10 @@ export function wherePaper({ row, setup, read = { ok: true }, min = 2, benchLabe
   const ok = !why.length;
   const plan = ok
     ? [
-        t("br.plan.stop", { pct: aboutPct(rp.stop_pct, lang), why: t(STOP_WHY[rp.stop_basis] ?? "br.stopWhy.entry") }, { bidi: false }),
-        t(rp.tp1_basis === "resistance" ? "br.plan.tp1Res" : "br.plan.tp1Risk", { pct: aboutPct(rp.tp1_pct, lang) }, { bidi: false }),
-        t("br.plan.tp2", { pct: aboutPct(rp.tp2_pct, lang) }, { bidi: false }),
-        t("br.plan.rr", { x: aboutTimes(rp.rr_tp1, lang) }, { bidi: false }),
+        t("br.plan.stop", { pct: aboutPct(rp.stop_pct), why: t(STOP_WHY[rp.stop_basis] ?? "br.stopWhy.entry") }),
+        t(rp.tp1_basis === "resistance" ? "br.plan.tp1Res" : "br.plan.tp1Risk", { pct: aboutPct(rp.tp1_pct) }),
+        t("br.plan.tp2", { pct: aboutPct(rp.tp2_pct) }),
+        t("br.plan.rr", { x: aboutTimes(rp.rr_tp1) }),
       ]
     : [];
   return {

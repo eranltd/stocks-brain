@@ -5,25 +5,20 @@
 // These are descriptions of what happened, not signals: the prices are end of day only, and in this site's own tests
 // candle readings did not beat chance. Every reason says so in its own words.
 
-import { translate } from "./i18n.js";
-import dict from "../i18n/home.js";
+import { strings } from "./text.js";
+import dict from "../text/home.js";
 
 const isNum = (v) => typeof v === "number" && Number.isFinite(v);
 const okAt = (w, i) => [w.o[i], w.h[i], w.l[i], w.c[i]].every(isNum);
 
 const TONES = { big_green: "up", big_red: "down", gap_up: "up", gap_down: "down", hammer: "up", shooting_star: "down", engulf_up: "up", engulf_down: "down", busy: "flat" };
 
-/** The kinds of candle pointed at, in a language: a title, a tone, and why people notice it. */
-export function spotKinds(lang = "en") {
-  const t = translate(dict, lang);
-  return Object.fromEntries(Object.entries(TONES).map(([k, tone]) => [k, { title: t(`spots.${k}.title`), tone, why: t(`spots.${k}.why`) }]));
-}
-/** The kinds in English (lib/quiz.js and the Quiz page read these). */
-export const SPOT_KINDS = spotKinds("en");
+const t = strings(dict);
+/** The kinds of candle pointed at: a title, a tone, and why people notice it (lib/quiz.js and the Quiz page read these). */
+export const SPOT_KINDS = Object.fromEntries(Object.entries(TONES).map(([k, tone]) => [k, { title: t(`spots.${k}.title`), tone, why: t(`spots.${k}.why`) }]));
 
 /** The honest caveat under any list of these candles. */
-export const spotCaveat = (lang = "en") => translate(dict, lang)("spots.caveat");
-export const SPOT_CAVEAT = spotCaveat("en");
+export const SPOT_CAVEAT = t("spots.caveat");
 
 const median = (xs) => {
   const s = xs.filter(isNum).sort((a, b) => a - b);
@@ -76,13 +71,12 @@ export function findSpots(w) {
  * The candles worth pointing at in a window: at most `max`, the strongest, a little in favour of recent ones, shown in
  * date order and numbered. Each carries its date, title, tone and reason.
  */
-export function topSpots(w, max = 5, lang = "en") {
-  const kinds = lang === "en" ? SPOT_KINDS : spotKinds(lang);
+export function topSpots(w, max = 5) {
   const all = findSpots(w);
   const n = w?.dates?.length ?? 0;
   const ranked = [...all].sort((a, b) => b.score * (1 + a.i / n / 2) - a.score * (1 + b.i / n / 2) || b.i - a.i);
   return ranked.slice(0, max).sort((a, b) => a.i - b.i).map((s, k) => ({
-    ...s, n: k + 1, date: w.dates[s.i], ...kinds[s.kind],
+    ...s, n: k + 1, date: w.dates[s.i], ...SPOT_KINDS[s.kind],
   }));
 }
 

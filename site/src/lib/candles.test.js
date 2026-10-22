@@ -2,9 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   ALL_ON, bands, candleGeom, chartSummary, fitDomain, indexAt, keepClear, levelWeight, linePath, monthTicks, moveBetween, niceStep,
-  niceTicks, overlayLabel, overlayLines, OVERLAYS, RANGES, rangeLabel, scaleLinear, spreadLabels, tickLabel, tipRows, volTop, volWords, windowOf,
+  niceTicks, overlayLines, RANGES, scaleLinear, spreadLabels, tickLabel, tipRows, volTop, volWords, windowOf,
 } from "./candles.js";
-import { stripBidi } from "./i18n.js";
 
 // A small doc in the published shape: percent from the last close, last close 0.
 function mkSeries(n, { start = "2026-01-02", weekly = false } = {}) {
@@ -199,41 +198,4 @@ test("a stop close to the last close keeps its name; the last close's name gives
   const kept = keepClear(lines.map((l) => ({ ...l, y: y(l.v) })), 12).map((l) => l.id);
   assert.ok(kept.includes("stop"));
   assert.ok(!kept.includes("close"));
-});
-
-/* ------------------------------------------------------------------------------------------------ Hebrew */
-
-const HE = /[\u0590-\u05FF]/;
-
-test("Hebrew: window and overlay labels, line names, month ticks", () => {
-  assert.deepEqual(RANGES.map((r) => rangeLabel(r, "he")), ["3 חודשים", "6 חודשים", "שבועי"]);
-  assert.deepEqual(RANGES.map((r) => rangeLabel(r)), ["3M", "6M", "Weekly"]);
-  for (const o of OVERLAYS) assert.match(overlayLabel(o, "he"), HE);
-  const { lines } = overlayLines(doc.overlays, ALL_ON, "he");
-  const names = Object.fromEntries(lines.map((l) => [l.id, stripBidi(l.name)]));
-  assert.equal(names.close, "סגירה אחרונה = כניסה");
-  assert.equal(names.stop, "נקודת יציאה");
-  assert.equal(names.s0, "תמיכה · שתי נגיעות");
-  assert.equal(names.s1, "תמיכה · נגיעה אחת");
-  // names are drawn inside a left-to-right chart, so each Hebrew name is isolated
-  assert.ok(lines.every((l) => l.name.startsWith("\u2068") && l.name.endsWith("\u2069")));
-  // the value tags stay plain numbers in both languages
-  assert.deepEqual(lines.map((l) => l.tag), overlayLines(doc.overlays).lines.map((l) => l.tag));
-  const ticks = monthTicks(["2025-12-30", "2026-01-02", "2026-02-02", "2026-03-02"], (i) => i * 100, 34, "he");
-  assert.deepEqual(ticks.map((m) => stripBidi(m.label)), ["ינו׳ 26", "פבר׳", "מרץ"]);
-});
-
-test("Hebrew: tooltip rows, volume words and the screen-reader summary", () => {
-  const win = windowOf(doc, "3m");
-  const tip = tipRows(win, win.n - 2, "he");
-  assert.deepEqual(tip.ohlc.map(([k]) => k), ["פתיחה", "גבוה", "נמוך", "סגירה"]);
-  assert.equal(tip.moveLabel, "תנועת היום");
-  assert.equal(tip.volLabel, "מחזור מול ממוצע 20 ימים");
-  assert.equal(stripBidi(tip.ohlc[3][1]), tipRows(win, win.n - 2).ohlc[3][1]);
-  assert.equal(stripBidi(volWords(0.84, false, "he")), "פי 0.84 מממוצע 20 הימים");
-  assert.equal(stripBidi(volWords(1.2, true, "he")), "פי 1.20 מממוצע 20 השבועות");
-  const sum = stripBidi(chartSummary("AAA", win, "he"));
-  assert.match(sum, /^AAA: 63 נרות יומיים, באחוזים מהסגירה האחרונה, מ-\d/);
-  assert.match(sum, /מקשי החצים/);
-  assert.doesNotMatch(sum, /undefined|NaN|\[cd\./);
 });

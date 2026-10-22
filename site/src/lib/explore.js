@@ -2,15 +2,15 @@
 // Pure functions, no React; tested in explore.test.js. Curiosity, not tricks: every hole is a real question the site
 // can answer honestly, with a rough reading time.
 
-import { translate } from "./i18n.js";
-import text from "../i18n/shell.js";
+import { strings } from "./text.js";
+import text from "../text/shell.js";
 
-const T = { en: translate(text, "en"), he: translate(text, "he") };
+const t = strings(text);
 
 /**
  * The rabbit holes. `to` is a route, with an optional "#section"; "stock" asks for the stock of the day (chosen from
- * the data, so no ticker is written in code). Minutes are rough reading times. `q` is the English question; the
- * words of every language are in i18n/shell.js ("hole.<id>"), read with holeQuestion(hole, lang).
+ * the data, so no ticker is written in code). Minutes are rough reading times. `q` is the question (text/shell.js
+ * "hole.<id>").
  */
 const SHAPE = [
   { id: "people", to: "people", minutes: 5 },
@@ -25,13 +25,7 @@ const SHAPE = [
   { id: "mistakes", to: "learnings", minutes: 5 },
   { id: "machine", to: "how", minutes: 6 },
 ];
-export const HOLES = SHAPE.map((h) => ({ id: h.id, q: T.en(`hole.${h.id}`), to: h.to, minutes: h.minutes }));
-
-/** A hole's question in a language (a hole without words of its own keeps its `q`). */
-export function holeQuestion(hole, lang = "en") {
-  const t = T[lang] ?? T.en;
-  return t.has(`hole.${hole.id}`) ? t(`hole.${hole.id}`) : hole.q;
-}
+export const HOLES = SHAPE.map((h) => ({ id: h.id, q: t(`hole.${h.id}`), to: h.to, minutes: h.minutes }));
 
 const routeOf = (to) => to.split("#")[0];
 

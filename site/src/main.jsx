@@ -4,13 +4,10 @@ import "@fontsource-variable/inter/opsz.css";
 import "@fontsource-variable/jetbrains-mono";
 import "./index.css";
 import App from "./App.jsx";
-import { LangProvider } from "./lib/lang.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <LangProvider>
-      <App />
-    </LangProvider>
+    <App />
   </StrictMode>,
 );
 

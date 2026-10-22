@@ -1,7 +1,7 @@
 ---
-version: 0.24.1
-updated_at: 2026-10-17
-change_note: Why notes: the allow-list now holds only hosts our research tools can use (outlets that block them listed apart), the routine finds a blocked story on a listed host that opens, and a move it cannot explain is recorded as an honest unclear note.
+version: 0.25.0
+updated_at: 2026-10-21
+change_note: Hebrew removed; the site is English only again (the not-advice notice and the any-reader wording stay).
 ---
 # Decision log
 
@@ -18,6 +18,11 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Market file size**: `derived.json` is written one line per symbol (compact) and is about 330 KB with 21 names.
   Past roughly 35 names it would hit lint's 512 KB cap and the daily run would fail closed; before that, move the
   per-point dates into one shared array.
+
+## 2026-10-21
+- **Hebrew removed.** The owner judged the Hebrew version not good enough and asked to remove it entirely; the site is
+  English only again. Kept: the not-advice notice and the any-reader wording. Gone: the HE | EN switch, the language
+  detection, the right-to-left layout and every Hebrew text; the English texts stay in `site/src/text/`.
 
 ## 2026-10-17
 - **Why notes: an allow-list our tools can actually use, and honest unclear notes.** The first test fire of

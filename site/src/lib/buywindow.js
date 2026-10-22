@@ -2,45 +2,39 @@
 // Pure functions, no React; tested in buywindow.test.js. Every number is computed in Python and read from published
 // files: each stock rule's look (data/market/buy_window.json, contract version 2, written by the Nasdaq daily run for the
 // main list only), the setup checks (derived.json) and the chart checklist's risk plan (checklist.json). This file only
-// words them; the words are in i18n/stock.js ("bw.*") and every function that writes them takes `lang` ("en" by default).
+// words them; the words are in text/stock.js ("bw.*").
 //
 // The plan acts weekly (docs/household.md 0.5.0). Real money: the whole-market fund (an S&P 500 fund) is bought every
 // week; no single stock gets real money until THAT stock rule passes its history test AND the trust ladder reaches Small
 // money (stocksEarned in lib/money.js). Pretend money: the weekly game (two weekly rules) and the monthly Five Leaders
 // with its quarterly variant. So the answer always says what happens with real money first, then the weekly game, then
 // the monthly rule; it never says a name is a buy for real money while that is not earned, and never uses the words
-// "buy signal", "recommend" or "you should buy" (or their Hebrew).
+// "buy signal", "recommend" or "you should buy".
 
 import { readable } from "./brief.js";
 import { rowFor } from "./checklist.js";
-import { fmtList, translate } from "./i18n.js";
 import { whenWords } from "./simple.js";
-import { weeklyBuyDay, weeklyRule } from "./weekly.js";
-import dict from "../i18n/stock.js";
+import { strings } from "./text.js";
+import { weeklyBuyDay, WEEKLY_RULES } from "./weekly.js";
+import dict from "../text/stock.js";
 
-const tr = (lang) => translate(dict, typeof lang === "string" ? lang : "en");
+const t = strings(dict);
 const num = (v) => (typeof v === "number" && Number.isFinite(v) ? v : null);
 const WD = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MO = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const HE_DAY = new Intl.DateTimeFormat("he-IL", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
 
-/** "Mon 2 Nov" ("יום ב׳, 2 בנוב׳") from "2026-11-02"; "" for anything else. */
-export function dayWords(iso, lang = "en") {
+/** "Mon 2 Nov" from "2026-11-02"; "" for anything else. */
+export function dayWords(iso) {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso ?? ""));
   if (!m) return "";
   const d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]));
-  if (lang === "he") return HE_DAY.format(d);
   return `${WD[d.getUTCDay()]} ${d.getUTCDate()} ${MO[d.getUTCMonth()]}`;
 }
 
-/** The rules the card reads, in its order (scripts/buy_window.py RULE_ORDER), with their plain names in a language. */
+/** The rules the card reads, in its order (scripts/buy_window.py RULE_ORDER), with their plain names. */
 const RULE_IDS = ["five_leaders_weekly", "weekly_swing", "five_leaders", "five_leaders_quarterly"];
-export function cardRules(lang = "en") {
-  const t = tr(lang);
-  return RULE_IDS.map((id) => ({ id, name: weeklyRule(id, lang)?.name ?? t(`bw.rule.${id}`) }));
-}
-export const CARD_RULES = cardRules("en");
-const ruleName = (id, rd, lang) => cardRules(lang).find((r) => r.id === id)?.name ?? rd?.label ?? id;
+export const CARD_RULES = RULE_IDS.map((id) => ({ id, name: WEEKLY_RULES.find((r) => r.id === id)?.name ?? t(`bw.rule.${id}`) }));
+const ruleName = (id, rd) => CARD_RULES.find((r) => r.id === id)?.name ?? rd?.label ?? id;
 
 /** A percent distance with one decimal and no sign ("6.0%"). */
 const pct1 = (v) => `${Math.abs(v).toFixed(1)}%`;
@@ -103,7 +97,7 @@ function rrWait(rp, min, t) {
 /** What real money does with this name, and the weekly buy's date in words ("" when unknown). */
 function realMoneyWords({ kind, sp500, earned, buy }, t) {
   const when = buy ? t("bw.rm.when", { buy }) : "";
-  const say = (key, vars = {}) => t(key, { ...vars, when }, { bidi: false });
+  const say = (key, vars = {}) => t(key, { ...vars, when });
   if (kind === "core") return say("bw.rm.core");
   if (kind === "fund") return say("bw.rm.fund");
   if (earned) return say("bw.rm.earned");
@@ -114,7 +108,7 @@ function realMoneyWords({ kind, sp500, earned, buy }, t) {
 /** The first two reasons in words: a lone reason bare, two as full clauses (a plain string counts as both forms). */
 function whyWords(why, t) {
   const two = why.slice(0, 2).map((w) => (Array.isArray(w) ? w : [w, w]));
-  return two.length === 1 ? two[0][0] : two.length ? t("bw.and", { a: two[0][1], b: two[1][1] }, { bidi: false }) : "";
+  return two.length === 1 ? two[0][0] : two.length ? t("bw.and", { a: two[0][1], b: two[1][1] }) : "";
 }
 
 const RANK_KEY = { rs_12_1: "bw.rw.rs_12_1", rs_1m: "bw.rw.rs_1m" };
@@ -130,8 +124,7 @@ const both = (t, key, vars) => [t(key, vars), t(`${key}.clause`, vars)];
  * One rule's look at one name: {id, name, cadence, nextReview, held, would, earned, line, why, conditions, waitFor}.
  * `rd` is the rule's block of the contract, `n` its row for the name.
  */
-function ruleLook(rd, n, { symbol, nameOf, earnedRule, lang }) {
-  const t = tr(lang);
+function ruleLook(rd, n, { symbol, nameOf, earnedRule }) {
   const blockers = new Set(n.blockers ?? []);
   const held = Boolean(n.held_now);
   const would = Boolean(n.would_hold_if_today);
@@ -220,7 +213,7 @@ function ruleLook(rd, n, { symbol, nameOf, earnedRule, lang }) {
 
   const line = t(would ? (held ? "bw.answer.keep" : "bw.answer.pick") : held ? "bw.answer.letGo" : "bw.answer.notPick");
   return {
-    id: rd.id, name: ruleName(rd.id, rd, lang), cadence: rd.cadence, nextReview: rd.next_review ?? null, held, would,
+    id: rd.id, name: ruleName(rd.id, rd), cadence: rd.cadence, nextReview: rd.next_review ?? null, held, would,
     earned: Boolean(earnedRule(rd.id)), line, why: whyWords(why, t), conditions, waitFor,
   };
 }
@@ -230,15 +223,15 @@ function ruleLook(rd, n, { symbol, nameOf, earnedRule, lang }) {
  * Swing: wait until it is back above its 50-day line."), so a check one rule does not have is never read as needed for
  * all; a line every rule needs stays bare, once.
  */
-function ruleWaits(looks, lang) {
+function ruleWaits(looks) {
   if (looks.length < 2) return looks.flatMap((l) => l.waitFor);
   const out = [];
   for (const w of [...new Set(looks.flatMap((l) => l.waitFor))]) {
     const who = looks.filter((l) => l.waitFor.includes(w)).map((l) => l.name);
     if (who.length === looks.length) { out.push(w); continue; }
-    // English lowers the line's first word after the rule's name; Hebrew has no capitals.
-    const line = lang === "en" && /^(Wait|It|All|Another)\b/.test(w) ? w[0].toLowerCase() + w.slice(1) : w;
-    out.push(`${lang === "en" ? who.join(" and ") : fmtList(who, lang)}: ${line}`); // "<rule>: <line>" reads the same in both languages
+    // The line's first word is lowered after the rule's name.
+    const line = /^(Wait|It|All|Another)\b/.test(w) ? w[0].toLowerCase() + w.slice(1) : w;
+    out.push(`${who.join(" and ")}: ${line}`);
   }
   return out;
 }
@@ -253,14 +246,13 @@ function ruleWaits(looks, lang) {
  * `setup`: the derived.json setup of the name ({checks, passed, stretched, dist_sma50_pct, dist_long_pct}) plus `as_of`
  * (its last close); `checklist`: today's checklist row (with risk_plan), or null when it cannot be read; `bw`: the
  * buy_window.json contract; `verdicts`: rule id -> its frozen history verdict; `sp500`: true / false / null (unknown);
- * `names`: ticker -> name; `lang`: the language of the words ("en" by default).
+ * `names`: ticker -> name.
  */
-export function buyWindow({ today = null, symbol, onMainList = false, isFund = false, isCoreFund = false, sp500 = null, bw = null, setup = null, checklist = null, stocksEarned = false, verdicts = {}, names = {}, minRR = 2, stretchPct = 8, siteSample = false, lang = "en" }) {
-  const t = tr(lang);
+export function buyWindow({ today = null, symbol, onMainList = false, isFund = false, isCoreFund = false, sp500 = null, bw = null, setup = null, checklist = null, stocksEarned = false, verdicts = {}, names = {}, minRR = 2, stretchPct = 8, siteSample = false }) {
   const nameOf = (x) => names?.[x] ?? x;
   const rp = checklist?.risk_plan ?? null;
   const nextBuy = today ? weeklyBuyDay(today, bw, siteSample) : bw?.next_weekly_buy ?? null;
-  const buy = dayWords(nextBuy, lang);
+  const buy = dayWords(nextBuy);
   const empty = { games: [], monthly: [], held: false, earned: false, nextReview: null, nextBuy };
   const note = t("bw.note"), fundNote = t("bw.fundNote");
 
@@ -333,7 +325,7 @@ export function buyWindow({ today = null, symbol, onMainList = false, isFund = f
   if (setupRow && !setupRow.ok) houseWait.push(t("bw.setup.wait"));
   const rw = rrWait(rp, minRR, t);
   if (rw) houseWait.push(rw);
-  const looks = state === "ok" ? all.filter((r) => r.names[symbol]).map((r) => ruleLook(r, r.names[symbol], { symbol, nameOf, earnedRule, lang })) : [];
+  const looks = state === "ok" ? all.filter((r) => r.names[symbol]).map((r) => ruleLook(r, r.names[symbol], { symbol, nameOf, earnedRule })) : [];
 
   if (!looks.length) {
     return {
@@ -358,7 +350,7 @@ export function buyWindow({ today = null, symbol, onMainList = false, isFund = f
   // one date from one source (weeklyBuyDay), so the card never names two different weeks, nor a past one on the sample
   // site, whose fixed sample close ends weeks ago. On a live look in date they are the same day.
   const nextReview = games.length && nextBuy ? nextBuy : lead[0].nextReview;
-  const date = dayWords(nextReview, lang);
+  const date = dayWords(nextReview);
   const who = t(games.length ? "bw.who.game" : "bw.who.monthly");
   const span = games.length ? "Week" : "Month";
   const heldLead = lead.some((l) => l.held);
@@ -368,7 +360,7 @@ export function buyWindow({ today = null, symbol, onMainList = false, isFund = f
   else if (picking.length) headline = t("bw.head.pickButChecks", { who });
   else headline = t(heldLead ? `bw.head.letGo${span}` : `bw.head.notPick${span}`, { who });
 
-  const waitFor = [...new Set([...ruleWaits(lead, lang), ...houseWait])];
+  const waitFor = [...new Set([...ruleWaits(lead), ...houseWait])];
   if (allow) waitFor.push(t(earned ? "bw.main.allowEarned" : "bw.main.allowPaper"));
   const nextLook = games.length
     ? t("bw.main.nextWeekly", { date: date || t("bw.main.nextWeekFallback") })
@@ -407,10 +399,9 @@ export const isCoreFundCard = (card) => /^\s*S&P 500(\s+Index)?\s*$/i.test(Strin
  * buyWindow() for a symbol from a page's data: `derived` (that market's derived.json), `checklist` (its checklist.json),
  * `bw` (buy_window.json), `mainList` (tickers), `fund` (the fund card, {} for a fund without one, null for a stock),
  * `stocksEarned`, `rulesResult` (market/rules.json: each rule's own frozen verdict), `sp500` (true / false / null),
- * `names`, `siteSample`, `minRR`, `stretchPct`, `today` (the New York date, for the weekly buy day and the stale check),
- * `lang` (the language of the words).
+ * `names`, `siteSample`, `minRR`, `stretchPct`, `today` (the New York date, for the weekly buy day and the stale check).
  */
-export function buyWindowFor(symbol, { today = null, derived = null, checklist = null, bw = null, mainList = [], fund = null, stocksEarned = false, rulesResult = null, sp500 = null, names = {}, siteSample = false, minRR = 2, stretchPct = 8, lang = "en" } = {}) {
+export function buyWindowFor(symbol, { today = null, derived = null, checklist = null, bw = null, mainList = [], fund = null, stocksEarned = false, rulesResult = null, sp500 = null, names = {}, siteSample = false, minRR = 2, stretchPct = 8 } = {}) {
   const row = (derived?.symbols ?? []).find((s) => s.symbol === symbol) ?? null;
   const st = row?.setup ?? null;
   const setup = row ? {
@@ -422,7 +413,7 @@ export function buyWindowFor(symbol, { today = null, derived = null, checklist =
   const verdicts = Object.fromEntries(Object.entries(rulesResult?.frozen?.satellite ?? {}).map(([id, v]) => [id, v?.verdict ?? null]));
   return buyWindow({
     today, symbol, onMainList: mainList.includes(symbol), isFund: fund != null, isCoreFund: fund != null && isCoreFundCard(fund),
-    sp500, bw, setup, checklist: read.ok ? ck : null, stocksEarned, verdicts, names, minRR, stretchPct, siteSample, lang,
+    sp500, bw, setup, checklist: read.ok ? ck : null, stocksEarned, verdicts, names, minRR, stretchPct, siteSample,
   });
 }
 
@@ -430,18 +421,17 @@ export function buyWindowFor(symbol, { today = null, derived = null, checklist =
  * The one short line on the home's company cards, in words only (no digits, like the rest of the simple home):
  * {text, tone}. `today` is the New York date (YYYY-MM-DD).
  */
-export function buyLine(a, today, lang = "en") {
+export function buyLine(a, today) {
   if (!a) return null;
-  const t = tr(lang);
   if (a.kind === "core") return { text: t("bw.line.core"), tone: "accent" };
   if (a.kind === "fund" || a.kind === "look") return { text: t("bw.line.notPlan"), tone: "flat" };
   if (!a.available) return { text: t("bw.line.wait"), tone: "flat" };
   const who = t(a.games?.length ? "bw.who.game" : "bw.who.monthly");
   if (a.tone === "rules_allow") {
-    const when = (a.nextReview && today ? whenWords(a.nextReview, today, lang) : "") || t("bw.line.nextLook");
-    if (a.earned) return { text: a.held ? t("bw.line.earnedHeld") : t("bw.line.earned", { when }, { bidi: false }), tone: "accent" };
+    const when = (a.nextReview && today ? whenWords(a.nextReview, today) : "") || t("bw.line.nextLook");
+    if (a.earned) return { text: a.held ? t("bw.line.earnedHeld") : t("bw.line.earned", { when }), tone: "accent" };
     if (a.held) return { text: t("bw.line.held", { who }), tone: "accent" };
-    return { text: t("bw.line.pick", { who, when }, { bidi: false }), tone: "accent" };
+    return { text: t("bw.line.pick", { who, when }), tone: "accent" };
   }
   return { text: t(a.games?.length ? "bw.line.notWeek" : "bw.line.notMonth"), tone: "flat" };
 }

@@ -3,17 +3,15 @@
 // every item is {id, kind, date, title, body: [lines], to, tone, value?: {text, tone}, upcoming?}.
 // `to` is where a tap goes: a tab id, "stock/<T>", "<route>#<section id>", or "filter:<kind>" for a digest.
 
-// Every builder takes `lang` last ("en" by default, "he" for Hebrew): the words around the data are the site's own;
-// text copied from data (a company card's highlight, the brain's summary, a checklist change) stays as published.
+// The words around the data are the site's own (text/home.js "feed.*"); text copied from data (a company card's
+// highlight, the brain's summary, a checklist change) stays as published.
 
 import { fmtPct, signTone } from "./format.js";
-import { isolate, translate } from "./i18n.js";
-import dict from "../i18n/home.js";
+import { strings } from "./text.js";
+import dict from "../text/home.js";
 
 export const KINDS = ["market", "companies", "brain", "people", "checklist"];
 export const KIND_LABEL = { all: "All", market: "Market", companies: "Companies", brain: "Brain", people: "People", checklist: "Checklist" };
-/** A filter's label in a language. */
-export const kindLabel = (k, lang = "en") => (lang === "en" ? KIND_LABEL[k] : translate(dict, lang)(`feed.kind.${k}`));
 // Market days shown (trading days back from the last close) and how unusual a single day must be to get its own item.
 export const MARKET_DAYS = 15;
 export const UNUSUAL = { lookback: 60, min_sd: 3, min_pct: 3 };
@@ -52,9 +50,9 @@ function spxMoves(market) {
 }
 
 /** One item per recent market close: the benchmark (and S&P 500) day move, how many names rose, the biggest mover. */
-export function marketItems(market, watchlist, bench, names = {}, days = MARKET_DAYS, lang = "en") {
+export function marketItems(market, watchlist, bench, names = {}, days = MARKET_DAYS) {
   if (!market) return [];
-  const t = translate(dict, lang);
+  const t = strings(dict);
   const members = (watchlist?.symbols ?? []).map((s) => s.symbol);
   const rows = Object.fromEntries((market.symbols ?? []).map((r) => [r.symbol, r]));
   const benchRow = rows[bench?.symbol] ?? null;
@@ -70,16 +68,15 @@ export function marketItems(market, watchlist, bench, names = {}, days = MARKET_
     const top = [...day].sort((a, b) => Math.abs(b.pct) - Math.abs(a.pct) || a.symbol.localeCompare(b.symbol))[0] ?? null;
     const b = num(bm[date]), sp = num(spx.moves[date]);
     const lead = sp ?? b;
-    // the S&P 500 leads, as the figure on the right; a name and its move read the same in both languages
-    const nm = (x) => (lang === "he" ? isolate(x) : x); // a Latin name with brackets keeps its shape in a Hebrew line
-    const parts = [sp != null && `${nm(spx.name)} ${fmtPct(sp, 1, lang)}`, b != null && `${nm(label)} ${fmtPct(b, 1, lang)}`].filter(Boolean);
+    // the S&P 500 leads, as the figure on the right
+    const parts = [sp != null && `${spx.name} ${fmtPct(sp, 1)}`, b != null && `${label} ${fmtPct(b, 1)}`].filter(Boolean);
     const body = [];
     if (day.length) body.push(t("feed.rose", { rose, n: day.length, fell }));
-    if (top) body.push(t(names[top.symbol] ? "feed.biggestNamed" : "feed.biggest", { sym: top.symbol, pct: fmtPct(top.pct, 1, lang), name: names[top.symbol] }));
+    if (top) body.push(t(names[top.symbol] ? "feed.biggestNamed" : "feed.biggest", { sym: top.symbol, pct: fmtPct(top.pct, 1), name: names[top.symbol] }));
     return {
       id: `market:${date}`, kind: "market", date, latest: date === market.as_of,
       title: parts.length ? parts.join(", ") : t("feed.close"),
-      body, to: "details#market-today", tone: toneOf(lead), value: lead != null ? { text: fmtPct(lead, 1, lang), tone: toneOf(lead) } : null,
+      body, to: "details#market-today", tone: toneOf(lead), value: lead != null ? { text: fmtPct(lead, 1), tone: toneOf(lead) } : null,
       stats: { rose, fell, counted: day.length, top },
     };
   });
@@ -95,9 +92,9 @@ const sd = (xs) => {
  * A name's day move well beyond its normal range: at least `min_sd` standard deviations of its daily moves over the
  * `lookback` days before (that day excluded) and at least `min_pct` percent. Only for the last `days` closes.
  */
-export function unusualItems(market, watchlist, names = {}, days = MARKET_DAYS, opts = UNUSUAL, lang = "en") {
+export function unusualItems(market, watchlist, names = {}, days = MARKET_DAYS, opts = UNUSUAL) {
   if (!market) return [];
-  const t = translate(dict, lang);
+  const t = strings(dict);
   const members = new Set((watchlist?.symbols ?? []).map((s) => s.symbol));
   const out = [];
   for (const row of market.symbols ?? []) {
@@ -116,7 +113,7 @@ export function unusualItems(market, watchlist, names = {}, days = MARKET_DAYS, 
         id: `move:${row.symbol}:${dates[k]}`, kind: "market", date: dates[k], unusual: true,
         title: t(v > 0 ? "feed.jumped" : "feed.dropped", { sym: row.symbol, pct: `${Math.abs(v).toFixed(1)}%` }),
         body: [t(names[row.symbol] ? "feed.timesNamed" : "feed.times", { times: times >= 10 ? Math.round(times) : times.toFixed(1), sd: `${s.toFixed(1)}%`, n: prev.length, name: names[row.symbol] })],
-        to: `stock/${row.symbol}`, tone: toneOf(v), value: { text: fmtPct(v, 1, lang), tone: toneOf(v) },
+        to: `stock/${row.symbol}`, tone: toneOf(v), value: { text: fmtPct(v, 1), tone: toneOf(v) },
       });
     }
   }
@@ -128,9 +125,9 @@ export function unusualItems(market, watchlist, names = {}, days = MARKET_DAYS, 
 const STANCES = ["bullish", "bearish", "neutral"];
 const stanceKey = (s) => (STANCES.includes(s) ? s : "neutral");
 
-/** One item per brain run: its picks with stances and the first sentence of its summary (the brain's own, English). */
-export function brainItems(runs, lang = "en") {
-  const t = translate(dict, lang);
+/** One item per brain run: its picks with stances and the first sentence of its summary. */
+export function brainItems(runs) {
+  const t = strings(dict);
   return (runs ?? []).map((r) => {
     if (r.status !== "ok") {
       return { id: `run:${r.date}`, kind: "brain", date: r.date, title: t("feed.brain.failed"), body: [t("feed.brain.failedBody")], to: "runs", tone: "down" };
@@ -142,7 +139,7 @@ export function brainItems(runs, lang = "en") {
     const title = !picks.length
       ? t("feed.brain.none")
       : same
-        ? t("feed.brain.same", { count: picks.length, stance: stance(same) }, { bidi: false })
+        ? t("feed.brain.same", { count: picks.length, stance: stance(same) })
         : t("feed.brain.mixed", { count: picks.length });
     const list = picks.map((p) => (same ? p.pick.ticker : `${p.pick.ticker} ${stance(p.pick.stance)}`)).join(" · ");
     return {
@@ -161,8 +158,8 @@ const growth = (pct, t) => (num(pct) == null ? "" : t(pct >= 0 ? "feed.growth.up
  * From the outlook cards: each latest report, each dated "what's next" item and each next results date. Dated today or
  * earlier goes in `items`; later (within `windowDays`) goes in `ahead`, soonest first.
  */
-export function companyItems(outlook, today, windowDays = 45, lang = "en") {
-  const t = translate(dict, lang);
+export function companyItems(outlook, today, windowDays = 45) {
+  const t = strings(dict);
   const items = [], ahead = [];
   const put = (it) => {
     if (!it.date) return;
@@ -176,7 +173,7 @@ export function companyItems(outlook, today, windowDays = 45, lang = "en") {
       put({
         id: `report:${tk}:${lt.reported_on}`, kind: "companies", date: lt.reported_on, ticker: tk,
         title: t("feed.reported", { t: tk, revenue: lt.revenue }) + growth(lt.revenue_growth_yoy_pct, t),
-        body: [lt.period, lt.highlights?.[0]].filter(Boolean), to: `stock/${tk}#whats-next`, tone: "flat", english: Boolean(lt.highlights?.[0]),
+        body: [lt.period, lt.highlights?.[0]].filter(Boolean), to: `stock/${tk}#whats-next`, tone: "flat",
       });
     }
     const ne = c.next_earnings;
@@ -192,7 +189,7 @@ export function companyItems(outlook, today, windowDays = 45, lang = "en") {
       if (!w.date) continue;
       put({
         id: `next:${tk}:${w.date}:${w.item.slice(0, 24)}`, kind: "companies", date: w.date, ticker: tk,
-        title: `${tk}: ${firstSentence(w.item)}`, body: [w.when].filter(Boolean), to: `stock/${tk}#whats-next`, tone: "flat", english: true,
+        title: `${tk}: ${firstSentence(w.item)}`, body: [w.when].filter(Boolean), to: `stock/${tk}#whats-next`, tone: "flat",
       });
     }
   }
@@ -209,8 +206,8 @@ function dayDiff(a, b) {
 const shortVia = (via) => String(via ?? "").replace(/,?\s+(Inc\.?|LLC|LLP|L\.P\.|LP)$/i, "").replace(/\s+(Capital|Investment)\s+Management$/i, "").trim();
 
 /** Each logged call on its public (or 13F filing) date, and each call judged at `judgeWeeks` on the day it was judged. */
-export function peopleItems(peopleCfg, scores, judgeWeeks = 26, lang = "en") {
-  const t = translate(dict, lang);
+export function peopleItems(peopleCfg, scores, judgeWeeks = 26) {
+  const t = strings(dict);
   const who = Object.fromEntries((peopleCfg?.people ?? []).map((p) => [p.id, p.name]));
   const scored = Object.fromEntries((scores?.calls ?? []).map((s) => [s.id, s]));
   const out = [];
@@ -221,7 +218,7 @@ export function peopleItems(peopleCfg, scores, judgeWeeks = 26, lang = "en") {
     out.push({
       id: `call:${c.id}`, kind: "people", date: c.date, ticker: c.ticker,
       title: t(c.source_kind === "13f" ? "feed.people.filed" : "feed.people.said", { name, stance, t: c.ticker }),
-      body: [c.what].filter(Boolean), to: "people", english: Boolean(c.what),
+      body: [c.what].filter(Boolean), to: "people",
       tone: c.stance === "bullish" ? "accent" : c.stance === "bearish" ? "down" : "flat",
     });
     const leg = scored[c.id]?.[`w${judgeWeeks}`];
@@ -230,7 +227,7 @@ export function peopleItems(peopleCfg, scores, judgeWeeks = 26, lang = "en") {
       out.push({
         id: `judged:${c.id}`, kind: "people", date: leg.end_date, ticker: c.ticker,
         title: t(leg.right ? "feed.people.right" : "feed.people.wrong", { name, t: c.ticker, weeks: judgeWeeks }),
-        body: [t("feed.people.vs", { pct: fmtPct(v, 1, lang) })], to: "people",
+        body: [t("feed.people.vs", { pct: fmtPct(v, 1) })], to: "people",
         tone: leg.right ? "accent" : "down", value: { text: t(leg.right ? "feed.right" : "feed.wrong"), tone: leg.right ? "accent" : "down" },
       });
     }
@@ -241,8 +238,6 @@ export function peopleItems(peopleCfg, scores, judgeWeeks = 26, lang = "en") {
 /* --------------------------------------------------------------- checklist */
 
 export const VERDICT_WORD = { lean_up: "lean up", mixed: "mixed", lean_down: "lean down" };
-/** A checklist verdict in a language (VERDICT_WORD is the English). */
-export const verdictWord = (v, lang = "en") => (lang === "en" || !VERDICT_WORD[v] ? VERDICT_WORD[v] ?? v : translate(dict, lang)(`feed.verdict.${v}`));
 export const VERDICT_TONE = { lean_up: "accent", mixed: "flat", lean_down: "down" };
 const TONE = { bullish: "accent", bearish: "down", neutral: "flat" };
 
@@ -259,9 +254,8 @@ export function changeHeadline(c) {
   return /^[A-Z][a-z]/.test(t) ? t.charAt(0).toLowerCase() + t.slice(1) : t; // keep "RSI"
 }
 
-/** One item per name and day whose checklist changed in a way worth a line (see headlineChange). The change texts come
- *  from the checklist file (English). */
-export function checklistItems(checklist, lang = "en") {
+/** One item per name and day whose checklist changed in a way worth a line (see headlineChange). */
+export function checklistItems(checklist) {
   const out = [];
   for (const s of checklist?.symbols ?? []) {
     for (const h of s.history ?? []) {
@@ -271,8 +265,8 @@ export function checklistItems(checklist, lang = "en") {
       out.push({
         id: `check:${s.symbol}:${h.date}`, kind: "checklist", date: h.date, ticker: s.symbol,
         title: `${s.symbol}: ${changeHeadline(head)}`, body: rest.length ? [rest.join(" · ")] : [],
-        to: `stock/${s.symbol}#checklist`, tone: TONE[head.tone] ?? "flat", english: true,
-        value: { text: verdictWord(h.verdict, lang), tone: VERDICT_TONE[h.verdict] ?? "flat" },
+        to: `stock/${s.symbol}#checklist`, tone: TONE[head.tone] ?? "flat",
+        value: { text: VERDICT_WORD[h.verdict] ?? h.verdict, tone: VERDICT_TONE[h.verdict] ?? "flat" },
       });
     }
   }
@@ -283,8 +277,8 @@ export function checklistItems(checklist, lang = "en") {
  * For the "All" view: days with more than `max` checklist items collapse into one digest item that opens the
  * Checklist filter, so twenty names' daily flips do not bury the market and the brain.
  */
-export function collapseChecklist(items, max = 2, lang = "en") {
-  const t = translate(dict, lang);
+export function collapseChecklist(items, max = 2) {
+  const t = strings(dict);
   const byDay = {};
   for (const it of items) if (it.kind === "checklist") (byDay[it.date] ??= []).push(it);
   const out = [];
@@ -298,7 +292,7 @@ export function collapseChecklist(items, max = 2, lang = "en") {
     out.push({
       id: `check-day:${it.date}`, kind: "checklist", date: it.date, digest: true, count: day.length,
       title: t("feed.digest", { count: day.length }), body: [day.length > 3 ? t("feed.digestMore", { shown, more: day.length - 3 }) : `${shown}.`],
-      to: "filter:checklist", tone: "flat", english: true,
+      to: "filter:checklist", tone: "flat",
     });
   }
   return out;
@@ -312,23 +306,23 @@ const byNewest = (a, b) => b.date.localeCompare(a.date) || (KIND_ORDER[a.kind] -
  * The whole feed: `items` newest first (today and earlier), `ahead` soonest first (company dates still to come).
  * `sample`: picks are sample data, so brain runs are left out.
  */
-export function buildFeed(data, today, lang = "en") {
+export function buildFeed(data, today) {
   const { market, watchlist, bench, names, runs, sample, outlook, people, peopleScores, checklist } = data;
-  const comp = companyItems(outlook, today, 45, lang);
+  const comp = companyItems(outlook, today, 45);
   const items = [
-    ...marketItems(market, watchlist, bench, names, MARKET_DAYS, lang),
-    ...unusualItems(market, watchlist, names, MARKET_DAYS, UNUSUAL, lang),
-    ...(sample ? [] : brainItems(runs, lang)),
+    ...marketItems(market, watchlist, bench, names, MARKET_DAYS),
+    ...unusualItems(market, watchlist, names, MARKET_DAYS, UNUSUAL),
+    ...(sample ? [] : brainItems(runs)),
     ...comp.items,
-    ...peopleItems(people, peopleScores, peopleScores?.judge_at_weeks ?? 26, lang),
-    ...checklistItems(checklist, lang),
+    ...peopleItems(people, peopleScores, peopleScores?.judge_at_weeks ?? 26),
+    ...checklistItems(checklist),
   ].filter((it) => it.date && it.date <= today).sort(byNewest);
   return { items, ahead: comp.ahead };
 }
 
 /** Items for one filter ("all" collapses busy checklist days), with a count per filter for the chips. */
-export function filterFeed(feed, filter = "all", lang = "en") {
-  const list = filter === "all" ? collapseChecklist(feed.items, 2, lang) : feed.items.filter((it) => it.kind === filter);
+export function filterFeed(feed, filter = "all") {
+  const list = filter === "all" ? collapseChecklist(feed.items, 2) : feed.items.filter((it) => it.kind === filter);
   const counts = Object.fromEntries([["all", feed.items.length], ...KINDS.map((k) => [k, feed.items.filter((it) => it.kind === k).length])]);
   return { list, counts };
 }
@@ -346,10 +340,10 @@ export function byDay(list) {
 /* ------------------------------------------------------------------- live */
 
 /** "just now", "5 minutes ago", "3 hours ago", "yesterday", "4 days ago" for an ISO timestamp. */
-export function ago(iso, now = new Date(), lang = "en") {
+export function ago(iso, now = new Date()) {
   const at = Date.parse(iso);
   if (!Number.isFinite(at)) return "";
-  const t = translate(dict, lang);
+  const t = strings(dict);
   const min = Math.floor((now.getTime() - at) / 60000);
   if (min < 1) return t("ago.now");
   if (min < 60) return t("ago.min", { count: min });

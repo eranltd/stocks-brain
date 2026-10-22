@@ -1,9 +1,10 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useInView, useReducedMotion } from "../lib/motion.js";
 import { pad2 } from "../lib/format.js";
-import { useLang } from "../lib/lang.jsx";
-import dict from "../i18n/learn.js";
+import dict from "../text/learn.js";
 import { Accent, Chevron, CodeBlock, Container, Dot, Headline, IconButton, Reveal, SectionHead, Strip } from "../components/ui.jsx";
+import { strings } from "../lib/text.js";
+import { rich } from "../lib/rich.jsx";
 
 const ROUTE = "M70,150 H920 Q940,150 940,170 V390 Q940,410 920,410 H400 Q380,410 380,390 V150";
 const BRANCHES = {
@@ -13,7 +14,7 @@ const BRANCHES = {
 const LOOP = "M540,410 H400 Q380,410 380,390 V170";
 
 // kind: data | code | ai | people. `on` = which path the station sits on. Each stop's label and description are
-// i18n/learn.js "how.st.<id>.label" and ".text"; kinds are "how.kind.<kind>".
+// text/learn.js "how.st.<id>.label" and ".text"; kinds are "how.kind.<kind>".
 const STATIONS = [
   { id: "watchlist", kind: "data", x: 70, y: 150, lx: 0, ly: -30, glyph: "≡", file: "config/watchlist.json", m: "M1" },
   { id: "fetch", kind: "code", x: 210, y: 150, lx: 0, ly: -30, glyph: "↓", file: "scripts/fetch_prices.py", m: "M2" },
@@ -52,15 +53,13 @@ export default function HowItWorks({ data }) {
   );
 }
 
-// The five story steps are i18n/learn.js "how.story.<n>.head" and ".body".
+// The five story steps are text/learn.js "how.story.<n>.head" and ".body".
 const STORY = [1, 2, 3, 4, 5];
 
-/** The page's words: the area dictionary bound to the reader's language. */
-const useWords = () => useLang().t(dict);
+const t = strings(dict);
 
 /** The whole system in five plain steps, before the detailed map. */
 function Story() {
-  const t = useWords();
   return (
     <div>
       <SectionHead
@@ -89,7 +88,6 @@ function Story() {
 }
 
 function MapShowcase() {
-  const t = useWords();
   const label = (s) => t(`how.st.${s.id}.label`);
   const reduced = useReducedMotion();
   const [wrapRef, inView] = useInView({ threshold: 0.3 });
@@ -164,7 +162,7 @@ function MapShowcase() {
   return (
     <div ref={wrapRef} className="card brackets overflow-hidden">
       <div className="flex items-center justify-between border-b border-line px-6 py-5 sm:px-10">
-        <span className="meta flex items-center gap-2"><Dot /> <bdi>stocks·brain</bdi> / <span className="text-ink">{t("how.map.title")}</span></span>
+        <span className="meta flex items-center gap-2"><Dot /> <span>stocks·brain</span> / <span className="text-ink">{t("how.map.title")}</span></span>
         <span className="meta">{t("how.map.stops", { n: STATIONS.length })}</span>
       </div>
       <div className="grid gap-10 p-6 sm:p-10 xl:grid-cols-[minmax(0,5fr)_minmax(0,8fr)]">
@@ -172,7 +170,7 @@ function MapShowcase() {
           <div className="eyebrow mb-6 flex items-center gap-2"><Dot /> {t("how.map.eyebrow")}</div>
           <Headline size="md">{t("how.map.head.a")} <Accent>{t("how.map.head.b")}</Accent></Headline>
           <p className="mt-6 max-w-[46ch] text-[17px] leading-relaxed text-ink-2">
-            {t.rich("how.map.body", {
+            {rich(t, "how.map.body", {
               a: <span className="text-ink">{t("how.map.a")}</span>,
               b: <span className="text-ink">{t("how.map.b")}</span>,
               c: <span className="text-ink">{t("how.map.c")}</span>,
@@ -189,14 +187,14 @@ function MapShowcase() {
           <div className="mt-8 flex flex-wrap gap-3">
             <button type="button" onClick={replay} className="btn btn-primary whitespace-nowrap">
               <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5" /></svg>
-              {t("how.map.replay")} <span className="num font-mono font-normal opacity-60">· <bdi>{clock(totalS)}</bdi></span>
+              {t("how.map.replay")} <span className="num font-mono font-normal opacity-60">· <span>{clock(totalS)}</span></span>
             </button>
             <button type="button" onClick={() => goTo(step < 0 ? 0 : step + 1)} className="btn whitespace-nowrap">{t("how.map.step")}</button>
           </div>
         </div>
 
         <div className="min-w-0">
-          <div dir="ltr" className="no-scrollbar -mx-6 overflow-x-auto px-6 sm:mx-0 sm:px-0">
+          <div className="no-scrollbar -mx-6 overflow-x-auto px-6 sm:mx-0 sm:px-0">
             <svg viewBox="0 0 1000 470" className="block h-auto w-full min-w-[680px] md:min-w-0" role="img" aria-label={t("how.map.aria")}>
               <defs>
                 <pattern id="dotgrid" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="var(--line)" /></pattern>
@@ -261,7 +259,7 @@ function MapShowcase() {
                 <span className="pill py-1 text-[11px] text-ink-3">{cur.m === "you" ? t("how.map.people") : cur.m}</span>
               </div>
               <p className="mt-2 text-[15px] leading-relaxed text-ink-2">{t(`how.st.${cur.id}.text`)}</p>
-              <code dir="ltr" className="mt-3 inline-block font-mono text-[12.5px] text-accent">{cur.file}</code>
+              <code className="mt-3 inline-block font-mono text-[12.5px] text-accent">{cur.file}</code>
             </div>
           </div>
         </div>
@@ -277,17 +275,16 @@ function MapShowcase() {
             </button>
           ))}
         </div>
-        <span dir="ltr" className="meta num hidden sm:inline">{clock(elapsed)} / {clock(totalS)}</span>
+        <span className="meta num hidden sm:inline">{clock(elapsed)} / {clock(totalS)}</span>
       </div>
     </div>
   );
 }
 
-// Each milestone's label and description are i18n/learn.js "how.ms.<id>.label" and ".desc".
+// Each milestone's label and description are text/learn.js "how.ms.<id>.label" and ".desc".
 const MILESTONES = ["M1", "M2", "M3", "M4", "M5"].map((id) => ({ id }));
 
 function RunIt({ data }) {
-  const t = useWords();
   const done = 4;
   return (
     <div className="grid gap-12 xl:grid-cols-[minmax(0,7fr)_minmax(0,4fr)]">
@@ -320,7 +317,6 @@ function RunIt({ data }) {
 }
 
 function Ring({ done }) {
-  const t = useWords();
   const R = 150, C = 200;
   const pts = MILESTONES.map((m, i) => {
     const a = -Math.PI / 2 + (i / MILESTONES.length) * Math.PI * 2;
@@ -328,7 +324,7 @@ function Ring({ done }) {
   });
   const arc = (2 * Math.PI * R) * (done / MILESTONES.length);
   return (
-    <svg viewBox="0 0 400 400" direction="ltr" className="w-full max-w-[420px] overflow-visible" role="img" aria-label={t("how.ring.aria", { done, total: MILESTONES.length })}>
+    <svg viewBox="0 0 400 400" className="w-full max-w-[420px] overflow-visible" role="img" aria-label={t("how.ring.aria", { done, total: MILESTONES.length })}>
       <circle cx={C} cy={C} r={R} fill="none" stroke="var(--line-2)" strokeWidth="1.5" />
       <circle cx={C} cy={C} r={R} fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round"
         strokeDasharray={`${arc} ${2 * Math.PI * R}`} transform={`rotate(-90 ${C} ${C})`} />

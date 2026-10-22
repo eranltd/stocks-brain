@@ -1,11 +1,11 @@
 // View helpers for the company outlook cards (config/outlook.json). The file may hold no companies, or only some;
 // every helper here returns something sensible for a missing card. Dates are ISO days compared in UTC.
-// The helpers that write words take `lang` last ("en" by default); the texts are in i18n/stock.js ("ol.*").
+// The texts are in text/stock.js ("ol.*").
 
-import { translate } from "./i18n.js";
-import dict from "../i18n/stock.js";
+import { strings } from "./text.js";
+import dict from "../text/stock.js";
 
-const tr = (lang) => translate(dict, typeof lang === "string" ? lang : "en");
+const t = strings(dict);
 
 const DAY = 86400000;
 const utc = (iso) => Date.parse(`${iso}T00:00:00Z`);
@@ -64,9 +64,8 @@ export function splitWhatsNext(items, today) {
 }
 
 /** "in 12 days", "tomorrow", "today", "3 days ago". */
-export function inDays(n, lang = "en") {
+export function inDays(n) {
   if (n == null) return "";
-  const t = tr(lang);
   if (n === 0) return t("ol.today");
   if (n === 1) return t("ol.tomorrow");
   if (n === -1) return t("ol.yesterday");
@@ -74,10 +73,10 @@ export function inDays(n, lang = "en") {
 }
 
 /** Revenue growth against the same quarter a year earlier, in words, or "" when the card has none. */
-export function growthWords(pct, lang = "en") {
+export function growthWords(pct) {
   if (typeof pct !== "number" || !Number.isFinite(pct)) return "";
   const r = Math.abs(pct) < 10 ? Math.abs(pct).toFixed(1) : Math.round(Math.abs(pct)).toString();
-  return tr(lang)(pct >= 0 ? "ol.growth.up" : "ol.growth.down", { pct: `${r}%` });
+  return t(pct >= 0 ? "ol.growth.up" : "ol.growth.down", { pct: `${r}%` });
 }
 
 /**
@@ -101,5 +100,3 @@ export function comingUp(outlook, today, windowDays = 30, first = []) {
 }
 
 export const KIND_LABEL = { product: "Product", finance: "Finance", regulatory: "Regulatory", deal: "Deal", other: "Other" };
-/** A "what's next" item's kind in a language; an unknown kind stays as written. */
-export const kindLabel = (k, lang = "en") => (KIND_LABEL[k] ? (lang === "en" ? KIND_LABEL[k] : tr(lang)(`ol.kind.${k}`)) : k);

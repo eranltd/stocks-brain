@@ -3,10 +3,10 @@
 // from its run's close to the next bet's run, or to the latest close while it is open, on the published indexed series
 // (data/market/derived.json symbols[].series: 100 = start of window, so ratios are returns and no price is published).
 // Pure functions, no React; tested in bets.test.js. The pack's copy for the brain is scripts/build_pack.py bets_block.
-// The record's sentence is in i18n/plan.js ("bets.*"); betRecord takes `lang` last (default English).
+// The record's sentence is in text/plan.js ("bets.*").
 
-import { translate } from "./i18n.js";
-import dict from "../i18n/plan.js";
+import { strings } from "./text.js";
+import dict from "../text/plan.js";
 
 const isNum = (v) => typeof v === "number" && Number.isFinite(v);
 
@@ -82,8 +82,8 @@ export function luckOdds(won, n) {
 export const MIN_WEEKS = 12; // under a quarter of weekly results, a coin does as well too often to tell
 
 /** The scoreboard in words: weeks won, against luck. */
-export function betRecord(scored, lang = "en") {
-  const t = translate(dict, lang);
+export function betRecord(scored) {
+  const t = strings(dict);
   const done = scored.filter((b) => !b.open && b.won !== null);
   const won = done.filter((b) => b.won).length;
   const n = done.length;

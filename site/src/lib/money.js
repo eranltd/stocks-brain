@@ -1,22 +1,15 @@
 // What to do with real money, told simply. The site's plan (docs/household.md): real money follows this honest action,
 // and depends first on when the money may be needed. Stock picks are not in it unless the evidence ever earns them a
-// place. Pure functions, no React; numbers come from published data, never the model. Every text function takes
-// `lang` last ("en" by default, "he" for Hebrew).
+// place. Pure functions, no React; numbers come from published data, never the model. The texts are in text/home.js.
 
-import { translate } from "./i18n.js";
-import dict from "../i18n/home.js";
+import { strings } from "./text.js";
+import dict from "../text/home.js";
 
 export const HORIZONS = [
   { id: "long", label: "Not for 5 years or more", short: "5+ years" },
   { id: "medium", label: "In 1 to 5 years", short: "1-5 years" },
   { id: "short", label: "Within a year", short: "Under a year" },
 ];
-/** The horizons with their labels in a language. */
-export function horizons(lang = "en") {
-  if (lang === "en") return HORIZONS;
-  const t = translate(dict, lang);
-  return HORIZONS.map((h) => ({ ...h, label: t(`money.h.${h.id}`), short: t(`money.h.${h.id}.short`) }));
-}
 
 const num = (v) => (typeof v === "number" && Number.isFinite(v) ? v : null);
 const pct = (v, d = 0) => `${Math.abs(v).toFixed(d)}%`;
@@ -32,11 +25,10 @@ export function stocksEarned(rulesResult, stage) {
 /**
  * The honest action for one time horizon: a headline, a few short steps, why, and what can go wrong, with today's
  * numbers from the data (the cash rate, the whole-market fund's past growth and its biggest drop).
- * `facts`: {fundName, cashName, cashYield, cagr, years, maxDrop, worstYear} (moneyFacts, in the same language).
+ * `facts`: {fundName, cashName, cashYield, cagr, years, maxDrop, worstYear} (moneyFacts).
  */
-export function honestAction(horizon, facts = {}, lang = "en") {
-  const t = translate(dict, lang);
-  const plain = { bidi: false }; // the pieces joined here are whole sentences of the same language
+export function honestAction(horizon, facts = {}) {
+  const t = strings(dict);
   const fund = facts.fundName ?? t("money.fund");
   const cash = facts.cashName ?? t("money.cash");
   const y = num(facts.cashYield), g = num(facts.cagr), drop = num(facts.maxDrop), worst = num(facts.worstYear);
@@ -46,30 +38,30 @@ export function honestAction(horizon, facts = {}, lang = "en") {
   if (horizon === "short") {
     return {
       title: t("money.short.title"),
-      steps: [t("money.short.s1", { cash, pays: cashPays }, plain), t("money.short.s2")],
-      why: t("money.short.why", { scary }, plain),
+      steps: [t("money.short.s1", { cash, pays: cashPays }), t("money.short.s2")],
+      why: t("money.short.why", { scary }),
       risk: t("money.short.risk"),
     };
   }
   if (horizon === "medium") {
     return {
       title: t("money.medium.title"),
-      steps: [t("money.medium.s1", { cash, pays: cashPays }, plain), t("money.medium.s2", { fund }, plain), t("money.medium.s3")],
-      why: t("money.medium.why", { history }, plain),
+      steps: [t("money.medium.s1", { cash, pays: cashPays }), t("money.medium.s2", { fund }), t("money.medium.s3")],
+      why: t("money.medium.why", { history }),
       risk: worst != null ? t("money.medium.riskWorst", { pct: pct(worst) }) : t("money.medium.risk"),
     };
   }
   return {
     title: t("money.long.title"),
-    steps: [t("money.long.s1", { fund }, plain), t("money.long.s2"), t("money.long.s3")],
-    why: t("money.long.why", { history }, plain),
-    risk: t("money.long.risk", { scary }, plain),
+    steps: [t("money.long.s1", { fund }), t("money.long.s2"), t("money.long.s3")],
+    why: t("money.long.why", { history }),
+    risk: t("money.long.risk", { scary }),
   };
 }
 
 /** The facts honestAction uses, from the site's data (no tickers written in code: names come from config). */
-export function moneyFacts(data, lang = "en") {
-  const t = translate(dict, lang);
+export function moneyFacts(data) {
+  const t = strings(dict);
   const ctx = data?.market?.context ?? {};
   const cash = (ctx.instruments ?? []).find((i) => i.role === "cash");
   const core = data?.longrun?.stats?.core ?? null;
@@ -91,9 +83,8 @@ export function moneyFacts(data, lang = "en") {
  * come from the savings history test (data/market/rules.json): the lump sum against spreading the same money over half
  * a year, one year after each start date. `rulesResult` may be missing: the steps still hold.
  */
-export function lumpSum(rulesResult, fund = null, lang = "en") {
-  const t = translate(dict, lang);
-  const plain = { bidi: false };
+export function lumpSum(rulesResult, fund = null) {
+  const t = strings(dict);
   const rows = (rulesResult?.savings?.horizons ?? []).find((h) => h.weeks === 52)?.rows ?? [];
   const lump = rows.find((r) => r.id === "windfall_lump_sum");
   const half = rows.find((r) => r.id === "windfall_spread_26w");
@@ -106,7 +97,7 @@ export function lumpSum(rulesResult, fund = null, lang = "en") {
     : t("lump.studies");
   return {
     title: t("lump.title"),
-    steps: [t("lump.s1"), t("lump.s2"), t("lump.s3", { fund: fund ?? t("lump.fund"), test }, plain), t("lump.s4"), t("lump.s5")],
+    steps: [t("lump.s1"), t("lump.s2"), t("lump.s3", { fund: fund ?? t("lump.fund"), test }), t("lump.s4"), t("lump.s5")],
     before: [t("lump.b1"), t("lump.b2"), t("lump.b3")],
     adviser: t("lump.adviser"),
   };

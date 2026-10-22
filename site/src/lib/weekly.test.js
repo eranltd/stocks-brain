@@ -41,19 +41,3 @@ test("historyWords: not tested, rejected, passed", () => {
   assert.match(historyWords(rr, "a").line, /beat only 12 out of 100/);
   assert.equal(historyWords(rr, "b").passed, true);
 });
-
-test("Hebrew: the scoreboard and history lines, with the dual for two weeks", async () => {
-  const { stripBidi } = await import("./i18n.js");
-  const { weeklyRule, WEEKLY_RULES } = await import("./weekly.js");
-  assert.equal(scoreLine(null, "he"), "הציון יתחיל בסקירה השבועית הבאה.");
-  assert.equal(stripBidi(scoreLine({ weeks: 1, ahead: null }, "he")), "שבוע 1: מוקדם מדי לתת ציון. הבדיקה חוזרת כל שבוע.");
-  assert.match(stripBidi(scoreLine({ weeks: 2, ahead: 2 }, "he")), /^אחרי שבועיים הכלל מקדים את השוק כולו ב-2\.0 נקודות אחוז\./);
-  assert.match(stripBidi(scoreLine({ weeks: 6, ahead: -1.34 }, "he")), /^אחרי 6 שבועות הכלל מפגר אחרי השוק כולו ב-1\.3 נקודות אחוז\./);
-  assert.match(scoreLine({ weeks: 3, ahead: 0.2 }, "he"), /בערך שווה לשוק כולו/);
-  const rr = { satellite: { rules: [{ id: "a", percentile: 12.4, verdict: "rejected" }, { id: "b", percentile: 97, verdict: "passes_history" }] } };
-  assert.match(stripBidi(historyWords(rr, "a", "he").line), /ניצח רק 12 מתוך 100 בחירות אקראיות/);
-  assert.match(stripBidi(historyWords(rr, "b", "he").line), /ניצח 97 מתוך 100/);
-  assert.equal(weeklyRule("weekly_swing").name, WEEKLY_RULES[0].name);
-  assert.equal(weeklyRule("weekly_swing", "he").name, "התנופה השבועית");
-  assert.equal(weeklyRule("nope", "he"), null);
-});

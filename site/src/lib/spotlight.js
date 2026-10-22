@@ -2,14 +2,14 @@
 // by how much they rose over the past year, in words (no digits, like the rest of the simple home). Pure functions, no
 // React; tested in spotlight.test.js. The lists are config/markets.json markets; nothing here reads prices back.
 
-import { translate } from "./i18n.js";
+import { strings } from "./text.js";
 import { verdictChip } from "./simple.js";
-import dict from "../i18n/home.js";
+import dict from "../text/home.js";
 
 /** The markets shown as spotlights on the home, in this order (only those the site publishes). */
 export const SPOTLIGHTS = ["chips", "tech", "energy"];
 
-/** Who each list is measured against, in everyday words (English; the "spot.who.<id>" texts in other languages). */
+/** The lists that have their own "measured against" words (text/home.js "spot.who.<id>"). */
 export const SPOTLIGHT_WHO = { chips: "chip makers as a group", tech: "the Nasdaq-100", energy: "energy companies as a group" };
 const RANKS = 10; // "Biggest" to "Tenth-biggest" ("spot.rank.0" to "spot.rank.9"), then "A rise of the past year"
 const isNum = (v) => typeof v === "number" && Number.isFinite(v);
@@ -33,8 +33,8 @@ export function lastCandle(win) {
  * One spotlight's carousel items (the shape TopStocks takes), strongest rise first. `view` is loadMarket's view of the
  * list; `candles` its published candle files ({SYMBOL: path}).
  */
-export function spotlightItems(view, candles = {}, lang = "en") {
-  const t = translate(dict, lang);
+export function spotlightItems(view, candles = {}) {
+  const t = strings(dict);
   const rows = view?.market?.symbols ?? [];
   const bench = yearRise(rows.find((r) => r.symbol === view?.benchmark));
   const who = SPOTLIGHT_WHO[view?.id] ? t(`spot.who.${view.id}`) : t("spot.who.other");
@@ -46,8 +46,8 @@ export function spotlightItems(view, candles = {}, lang = "en") {
     const vs = rise == null || bench == null ? null : rise >= bench ? "more" : "worse";
     return {
       ticker: sym, name, tag,
-      plain: vs ? t(`spot.${vs}`, { who }, { bidi: false }) : null,
-      chip: verdictChip(view.checklist, sym, lang),
+      plain: vs ? t(`spot.${vs}`, { who }) : null,
+      chip: verdictChip(view.checklist, sym),
       hasChart: Boolean(candles?.[sym]),
       candlesTo: `stock/${sym}#checklist`,
       to: `stock/${sym}#brief`,

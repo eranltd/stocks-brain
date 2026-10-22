@@ -1,17 +1,16 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { bottomTap, menuGroups, pageOf, subjectOf, subjectsIn } from "../lib/nav.js";
+import { bottomTap, menuGroups, pageOf, subjectOf, SUBJECTS } from "../lib/nav.js";
 import { NASDAQ_ONLY } from "../lib/markets.js";
 import { useReducedMotion } from "../lib/motion.js";
 import { Container } from "./ui.jsx";
-import { LANGS } from "../lib/i18n.js";
 import { buildLine } from "../lib/appversion.js";
-import { useLang } from "../lib/lang.jsx";
-import shellText from "../i18n/shell.js";
+import shellText from "../text/shell.js";
+import { strings } from "../lib/text.js";
 
 /* ----------------------------------------------------------------- loader */
 
 export function Loader({ progress, done }) {
-  const t = useLang().t(shellText);
+  const t = strings(shellText);
   const [gone, setGone] = useState(false);
   useEffect(() => {
     if (!done) return;
@@ -34,7 +33,7 @@ export function Loader({ progress, done }) {
             style={{ animation: "dash 1.4s cubic-bezier(.16,1,.3,1) forwards", filter: "drop-shadow(0 0 8px var(--glow))" }}
           />
         </svg>
-        <div dir="ltr" className="num font-mono text-[clamp(56px,14vw,112px)] leading-none font-semibold tracking-[-0.06em]">
+        <div className="num font-mono text-[clamp(56px,14vw,112px)] leading-none font-semibold tracking-[-0.06em]">
           {Math.round(progress * 100)}
           <sup className="ms-1 align-top text-[0.3em] text-ink-3">%</sup>
         </div>
@@ -167,7 +166,7 @@ function useFocusOnOpen(open, panel, viaKeys) {
  * one line. The choice applies to this visit (and rides in the link); the site always opens on the default.
  */
 export function MarketSwitch({ market, locked = false }) {
-  const t = useLang().t(shellText);
+  const t = strings(shellText);
   const [open, setOpen] = useState(false);
   const btn = useRef(null);
   const panel = useRef(null);
@@ -197,8 +196,8 @@ export function MarketSwitch({ market, locked = false }) {
         onClick={() => setOpen((o) => !o)}
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown") viaKeys.current = true; if (e.key === "ArrowDown" && !open) { e.preventDefault(); setOpen(true); } }}
         className={`inline-flex min-h-[44px] items-center gap-2 rounded-full border px-4 text-[15px] font-semibold transition-colors ${open ? "border-accent bg-accent/15 text-accent" : "border-accent/45 bg-accent/10 text-accent hover:border-accent"}`}>
-        {/* The word "Market" makes room for the language switch where the header is tight: a narrow phone, and laptop
-            width and up, where the menu shares the row (the button's accessible name still says it). */}
+        {/* The word "Market" is left out where the header is tight: a narrow phone, and laptop width and up, where the
+            menu shares the row (the button's accessible name still says it). */}
         <span className="hidden font-normal text-ink-2 min-[400px]:inline lg:hidden">{t("market.word")}</span>
         {current.label}
         <Caret open={open} />
@@ -233,7 +232,7 @@ export function MarketSwitch({ market, locked = false }) {
 
 /** One page row in a subject's menu or sheet. */
 function PageItem({ page, on, sample, onClick, big = true }) {
-  const t = useLang().t(shellText);
+  const t = strings(shellText);
   return (
     <button type="button" data-item="" data-current={on ? "" : undefined} aria-current={on ? "page" : undefined} onClick={onClick}
       className={`flex w-full items-center gap-3 rounded-2xl px-4 text-start transition-colors ${big ? "min-h-[60px] py-3" : "min-h-[48px] py-2"} ${on ? "bg-ink text-bg" : "text-ink hover:bg-surface-2"}`}>
@@ -250,9 +249,8 @@ function PageItem({ page, on, sample, onClick, big = true }) {
 
 /** A subject's pages in groups (Learn adds a small "Behind the scenes" group). */
 function SubjectList({ subject, route, sampleRoutes, onPick }) {
-  const { lang } = useLang();
   const here = pageOf(route)?.route;
-  return menuGroups(subject.id, lang).map((g) => (
+  return menuGroups(subject.id).map((g) => (
     <div key={g.id} className={g.label ? "mt-2 border-t border-line pt-2" : ""}>
       {g.label && <div className="meta px-4 pt-1 pb-1.5">{g.label}</div>}
       <ul className="grid gap-1">
@@ -266,7 +264,7 @@ function SubjectList({ subject, route, sampleRoutes, onPick }) {
 
 /** iPad and desktop: one large button per subject; it opens a panel listing its pages. */
 function SubjectMenu({ subject, current, open, setOpen, route, onNav, sampleRoutes }) {
-  const t = useLang().t(shellText);
+  const t = strings(shellText);
   const btn = useRef(null);
   const panel = useRef(null);
   const viaKeys = useRef(false);
@@ -286,7 +284,7 @@ function SubjectMenu({ subject, current, open, setOpen, route, onNav, sampleRout
         <Caret open={open} />
       </button>
       {open && (
-        <div ref={panel} id={id} role="group" aria-label={t("menu.pages", { label: subject.label }, { bidi: false })} onKeyDown={onListKeys}
+        <div ref={panel} id={id} role="group" aria-label={t("menu.pages", { label: subject.label })} onKeyDown={onListKeys}
           className="absolute top-[calc(100%+10px)] left-1/2 z-50 w-[min(380px,calc(100vw-32px))] -translate-x-1/2 animate-pop rounded-3xl border border-line-2 bg-surface p-2 shadow-2xl motion-reduce:animate-none">
           <p className="px-4 pt-2 pb-2 text-[14px] leading-snug text-ink-2">{subject.what}</p>
           <SubjectList subject={subject} route={route} sampleRoutes={sampleRoutes} onPick={(r) => { setOpen(null); onNav(r); }} />
@@ -296,38 +294,8 @@ function SubjectMenu({ subject, current, open, setOpen, route, onNav, sampleRout
   );
 }
 
-/** Each language's name in that language (never translated), the short form for a phone, and its own lang tag. */
-export const LANG_NAMES = { he: { name: "עברית", short: "עב" }, en: { name: "English", short: "EN" } };
-
-/**
- * The HE | EN switch: a real button group (aria-pressed), 44px targets, short labels ("עב" / "EN") where the header is
- * tight (phone, laptop width) and the full names elsewhere. Hebrew first: it is the side a right-to-left reader meets first.
- */
-export function LangSwitch() {
-  const { lang, setLang, t: tr } = useLang();
-  const t = tr(shellText);
-  return (
-    <div role="group" aria-label={t("lang.group")} className="inline-flex shrink-0 items-center rounded-full border border-line-2 p-0.5">
-      {[...LANGS].reverse().map((l) => {
-        const on = l === lang;
-        return (
-          <button key={l} type="button" lang={l} dir={l === "he" ? "rtl" : "ltr"} aria-pressed={on}
-            title={on ? undefined : t(l === "he" ? "lang.toHe" : "lang.toEn")}
-            onClick={() => { if (!on) setLang(l); }}
-            className={`inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full px-3 text-[14.5px] font-semibold transition-colors sm:px-3.5 ${on ? "bg-ink text-bg" : "text-ink-2 hover:text-ink"}`}>
-            {/* Short on a phone and from laptop width, where the menu shares the row; full names on a tablet. */}
-            <span aria-hidden="true" className="sm:hidden lg:inline">{LANG_NAMES[l].short}</span>
-            <span className="sr-only sm:not-sr-only lg:sr-only">{LANG_NAMES[l].name}</span>
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
 export function Header({ route, onNav, sample, livePrices, theme, onTheme, market, sampleRoutes = [] }) {
-  const { lang, t: tr } = useLang();
-  const t = tr(shellText);
+  const t = strings(shellText);
   const [scrolled, setScrolled] = useState(false);
   const [openSubject, setOpenSubject] = useState(null);
   const subject = subjectOf(route);
@@ -347,10 +315,9 @@ export function Header({ route, onNav, sample, livePrices, theme, onTheme, marke
           <span className="hidden text-[20px] font-semibold tracking-[-0.03em] min-[420px]:inline">stocks·brain</span>
         </a>
         <MarketSwitch market={market} locked={NASDAQ_ONLY.includes(route)} />
-        <LangSwitch />
 
         <nav aria-label={t("header.sections")} className="order-3 hidden w-full justify-center gap-2 sm:flex lg:order-none lg:w-auto lg:flex-1">
-          {subjectsIn(lang).map((s) => s.direct ? (
+          {SUBJECTS.map((s) => s.direct ? (
             <button key={s.id} type="button" onClick={() => onNav(s.direct)} aria-current={subject === s.id ? "page" : undefined}
               className={`inline-flex min-h-[48px] items-center gap-2 rounded-full border px-5 text-[16px] font-semibold tracking-[-0.01em] whitespace-nowrap transition-colors duration-300 ${subject === s.id ? "border-transparent bg-ink text-bg" : "border-[color:var(--ai)] text-ink hover:bg-ink/5"}`}>
               <span className="size-2 rounded-full" style={{ background: "var(--ai)" }} aria-hidden="true" />{s.label}
@@ -392,10 +359,9 @@ export function Header({ route, onNav, sample, livePrices, theme, onTheme, marke
  * reads Nasdaq only shows Nasdaq in the header's switch instead of a notice.
  */
 export function PageIntro({ route, market }) {
-  const { lang } = useLang();
-  const page = pageOf(route, lang);
+  const page = pageOf(route);
   if (!page || route === "today" || route === "verdicts" || route.startsWith("stock/")) return null;
-  const subject = subjectsIn(lang).find((s) => s.id === page.subject);
+  const subject = SUBJECTS.find((s) => s.id === page.subject);
   return (
     <Container className="pt-8 sm:pt-10">
       <p className="meta normal-case tracking-[0.06em]"><span className="uppercase tracking-[0.16em]">{subject.label}</span> · {page.label}</p>
@@ -418,13 +384,12 @@ function Logo() {
 /* ----------------------------------------------------------------- footer */
 
 /**
- * The not-advice notice, in the reader's language. Full in the footer of every page; `compact` once on Home.
+ * The not-advice notice. Full in the footer of every page; `compact` once on Home.
  * Educational research notebook; not investment advice, investment marketing or portfolio management; no licence from
  * the Israel Securities Authority; past results do not promise future results; check with a licensed adviser.
  */
 export function NotAdvice({ compact = false, className = "" }) {
-  const { t: tr } = useLang();
-  const t = tr(shellText);
+  const t = strings(shellText);
   if (compact) {
     return (
       <p role="note" className={`max-w-[72ch] text-[14px] leading-relaxed text-ink-3 ${className}`}>
@@ -441,14 +406,13 @@ export function NotAdvice({ compact = false, className = "" }) {
 }
 
 export function Footer({ data }) {
-  const { lang } = useLang();
   const { manifest } = data;
   return (
     <footer className="relative mt-24 border-t border-line">
       <Container className="flex flex-wrap items-end justify-between gap-x-10 gap-y-4 py-8 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:pb-[calc(2rem+env(safe-area-inset-bottom))]">
         <NotAdvice />
         <p className="meta m-0 normal-case tracking-[0.04em]">
-          {buildLine(manifest, lang)}
+          {buildLine(manifest)}
         </p>
       </Container>
     </footer>
@@ -469,9 +433,8 @@ const ICONS = {
  * you are in, or Experiments or Learn, opens a sheet of its pages.
  */
 export function MobileNav({ route, onNav, sampleRoutes = [] }) {
-  const { lang, t: tr } = useLang();
-  const t = tr(shellText);
-  const subjects = subjectsIn(lang);
+  const t = strings(shellText);
+  const subjects = SUBJECTS;
   const [sheet, setSheet] = useState(null);
   const panel = useRef(null);
   const opener = useRef(null);

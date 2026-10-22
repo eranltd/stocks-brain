@@ -81,34 +81,8 @@ test("hashFor leaves the default market out and round-trips with parseHash", () 
   for (const [r, m] of [["watchlist", "tlv"], ["stock/EIS", "ishares"], ["kb", null]]) assert.deepEqual(parseHash(hashFor(r, m)), { route: r, market: m });
 });
 
-test("the menu in Hebrew: the same subjects, pages and routes, every word Hebrew; English stays the default", async () => {
-  const { subjectsIn } = await import("./nav.js");
-  const { hasHebrew } = await import("./i18n.js");
-  assert.equal(subjectsIn(), SUBJECTS);
-  assert.equal(subjectsIn("en"), SUBJECTS);
-  const he = subjectsIn("he");
-  assert.deepEqual(he.map((s) => [s.id, s.direct ?? null, s.pages.map((p) => [p.route, p.group ?? null])]),
-    SUBJECTS.map((s) => [s.id, s.direct ?? null, s.pages.map((p) => [p.route, p.group ?? null])]));
-  assert.deepEqual(he.map((s) => s.label), ["היום", "הכרעות המוח", "ניסויים", "למידה"]);
-  assert.equal(he[1].short, "המוח");
-  for (const s of he) {
-    assert.ok(hasHebrew(s.label) && hasHebrew(s.what) && s.what.endsWith("."), s.id);
-    for (const p of s.pages) assert.ok(hasHebrew(p.label) && hasHebrew(p.what) && p.what.endsWith("."), p.route);
-  }
-  // Short enough for the header row on a laptop (the core's note: keep the Hebrew menu labels short).
-  for (const s of he) assert.ok(s.label.length <= 12, s.label);
-  assert.equal(pageOf("insights", "he").label, "שיעורים");
-  assert.equal(pageOf("stock/AAA", "he").route, "watchlist");
-  assert.equal(pageOf("insights").label, "Lessons");
-  const learn = menuGroups("learn", "he");
-  assert.deepEqual(learn.map((g) => g.label), [null, "מאחורי הקלעים"]);
-  assert.deepEqual(learn[1].pages.map((p) => p.route), ["runs", "routines", "admin"]);
-  assert.deepEqual(menuGroups("nope", "he"), []);
-});
-
-test("the shell's words speak to any reader: no household phrasing and no advice, in either language", async () => {
-  const { default: text } = await import("../i18n/shell.js");
-  const all = (d) => Object.values(d).map((v) => (typeof v === "string" ? v : Object.values(v).join(" "))).join("\n");
-  assert.doesNotMatch(all(text.en), /household|our family|the wife|\bour\b|what to do with your money|you should/i);
-  assert.doesNotMatch(all(text.he), /משק הבית|המשפחה שלנו|האישה|שלנו|מומלץ|המלצ|כדאי לקנות|כדאי למכור/);
+test("the shell's words speak to any reader: no household phrasing and no advice", async () => {
+  const { default: text } = await import("../text/shell.js");
+  const all = Object.values(text).map((v) => (typeof v === "string" ? v : Object.values(v).join(" "))).join("\n");
+  assert.doesNotMatch(all, /household|our family|the wife|\bour\b|what to do with your money|you should/i);
 });

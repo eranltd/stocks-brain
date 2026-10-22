@@ -1,23 +1,18 @@
 import { fmtDate, fmtNum, fmtPct } from "../lib/format.js";
-import { ltr, translate } from "../lib/i18n.js";
-import { Bdi, useLang } from "../lib/lang.jsx";
-import { shortSector } from "../lib/marketday.js";
 import { goalPath } from "../lib/stats.js";
 import { LinesChart } from "./lines.jsx";
 import { Accent, ArrowRight, Empty, Reveal, SectionHead } from "./ui.jsx";
-import dict from "../i18n/home.js";
+import dict from "../text/home.js";
+import { strings } from "../lib/text.js";
+import { rich } from "../lib/rich.jsx";
 
-// Every text here is in i18n/home.js ("goal.*"), in English and Hebrew.
-/** A whole percent ("62%"), kept left to right inside a Hebrew line. */
-const whole = (v, lang = "en") => { const s = `${fmtNum(v, 0)}%`; return lang === "he" ? ltr(s) : s; };
-/** "+15%": the goal, kept left to right inside a Hebrew line. */
-const goalText = (goal, lang = "en") => (lang === "he" ? ltr(`+${goal}%`) : `+${goal}%`);
-/** A short left-to-right token ("×1.9", "3/4") inside a Hebrew line. */
-const ltrIf = (s, lang = "en") => (lang === "he" ? ltr(s) : s);
-/** A sector in the page's language: English keeps the data's own name. */
-const sectorName = (s, lang = "en") => (lang === "en" ? s : shortSector(s, lang));
+// Every text here is in text/home.js ("goal.*").
+/** A whole percent ("62%"). */
+const whole = (v) => `${fmtNum(v, 0)}%`;
+/** "+15%": the goal. */
+const goalText = (goal) => `+${goal}%`;
 
-/** Why a name is in or out of the pretend portfolio. `label` is the English; statusLabel(key, lang) gives either language. */
+/** Why a name is in or out of the pretend portfolio. */
 export const STATUS = {
   kept: { label: "Held", tone: "text-accent" },
   added: { label: "New this month", tone: "text-accent" },
@@ -29,8 +24,8 @@ export const STATUS = {
   no_history: { label: "Too new to judge", tone: "text-ink-3" },
 };
 
-/** A STATUS label in a language ("Held" / "בתיק"). */
-export const statusLabel = (key, lang = "en") => (lang === "en" || !STATUS[key] ? STATUS[key]?.label ?? key : translate(dict, lang)(`goal.status.${key}`));
+/** A STATUS label ("Held"); an unknown key shows as itself. */
+export const statusLabel = (key) => STATUS[key]?.label ?? key;
 
 /** First weekday of the month after `iso` (holidays ignored): when the rule next rebalances. */
 export function nextRebalance(iso) {
@@ -40,9 +35,9 @@ export function nextRebalance(iso) {
   return n.toISOString().slice(0, 10);
 }
 
-/** The four lines' names, in `lang` (default English). */
-export const LABELS = (data, lang = "en") => {
-  const t = translate(dict, lang);
+/** The four lines' names. */
+export const LABELS = (data) => {
+  const t = strings(dict);
   return {
     rule: t("goal.label.rule", { range: "4–5" }),
     equal_weight: t("goal.label.equal", { n: data.watchlist.symbols.length }),
@@ -54,19 +49,18 @@ export const COLORS = { rule: "var(--accent)", equal_weight: "var(--ai)", core: 
 
 /** `what` is "goal" or "portfolio". */
 function Pending({ what }) {
-  const t = useLang().t(dict);
+  const t = strings(dict);
   return <Empty title={t("goal.pending.title")}>{t(`goal.pending.${what}`)}</Empty>;
 }
 
 /* ------------------------------------------------------------------ goal */
 
 export function GoalSection({ data }) {
-  const { lang, t: tr, fmt } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const lr = data.longrun;
   const goal = data.settings.goal.annual_return_pct;
-  const g = goalText(goal, lang);
-  const title = <>{t("goal.titleA", { goal: g }, { bidi: false })} <Accent>{t("goal.titleB")}</Accent></>;
+  const g = goalText(goal);
+  const title = <>{t("goal.titleA", { goal: g })} <Accent>{t("goal.titleB")}</Accent></>;
   if (!lr) {
     return (
       <section id="goal" className="scroll-mt-28 pt-24">
@@ -75,12 +69,12 @@ export function GoalSection({ data }) {
       </section>
     );
   }
-  const L = LABELS(data, lang);
+  const L = LABELS(data);
   const s = lr.stats;
   const keys = ["rule", "equal_weight", "core", "bench"];
   const w = lr.weekly;
   const series = [
-    { key: "goal", label: t("goal.series", { goal: g }, { bidi: false }), values: goalPath(w.dates.length, goal), color: COLORS.goal, dash: true, width: 1.5 },
+    { key: "goal", label: t("goal.series", { goal: g }), values: goalPath(w.dates.length, goal), color: COLORS.goal, dash: true, width: 1.5 },
     { key: "core", label: L.core, values: w.core, color: COLORS.core, width: 1.6 },
     { key: "bench", label: L.bench, values: w.bench, color: COLORS.bench, dash: true, width: 1.6 },
     { key: "equal_weight", label: L.equal_weight, values: w.equal_weight, color: COLORS.equal_weight, width: 1.8 },
@@ -92,13 +86,13 @@ export function GoalSection({ data }) {
   return (
     <section id="goal" className="scroll-mt-28 pt-24">
       <SectionHead
-        eyebrow={lr.sample ? t("goal.eyebrowSample") : t("goal.eyebrowYears", { years: fmt.num(lr.years, 1) }, { bidi: false })}
+        eyebrow={lr.sample ? t("goal.eyebrowSample") : t("goal.eyebrowYears", { years: fmtNum(lr.years, 1) })}
         title={title}
-        lede={t.rich("goal.lede", {
+        lede={rich(t, "goal.lede", {
           ten: <span className="text-ink">{t("goal.tenPct")}</span>, goal: g,
           years: <span className="text-ink">{t("goal.nYears", { n: lr.goal.years_to_double })}</span>,
-          m5: ltrIf(`×${lr.goal.multiple_5y}`, lang), m10: ltrIf(`×${lr.goal.multiple_10y}`, lang),
-          from: fmtDate(lr.from, lang), to: fmtDate(lr.to, lang),
+          m5: `×${lr.goal.multiple_5y}`, m10: `×${lr.goal.multiple_10y}`,
+          from: fmtDate(lr.from), to: fmtDate(lr.to),
         })}
       />
       <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
@@ -107,14 +101,14 @@ export function GoalSection({ data }) {
           const hit = x.cagr_pct >= goal;
           return (
             <Reveal key={k} delay={i * 70} className={`card p-4 sm:p-6 ${k === "rule" ? "border-accent/40" : ""}`}>
-              <div className="meta flex items-center gap-2 truncate"><i className="inline-block h-[3px] w-4 shrink-0 rounded" style={{ background: COLORS[k] }} /><bdi>{L[k]}</bdi></div>
-              <div className={`display num mt-3 text-[clamp(30px,4vw,52px)] leading-none ${hit ? "text-accent" : ""}`}>{fmt.pct(x.cagr_pct, 1)}</div>
+              <div className="meta flex items-center gap-2 truncate"><i className="inline-block h-[3px] w-4 shrink-0 rounded" style={{ background: COLORS[k] }} />{L[k]}</div>
+              <div className={`display num mt-3 text-[clamp(30px,4vw,52px)] leading-none ${hit ? "text-accent" : ""}`}>{fmtPct(x.cagr_pct, 1)}</div>
               <div className="meta mt-1 normal-case tracking-[0.04em]">{t("goal.perYearAvg")}</div>
               <dl className="mt-4 grid gap-1.5 text-[13px] sm:mt-5 sm:text-[13.5px]">
-                <Row k={t("goal.row.hit", { goal: g }, { bidi: false })} v={whole(x.hit_goal_12m_pct, lang)} tone={x.hit_goal_12m_pct >= 50 ? "text-accent" : ""} />
-                <Row k={t("goal.row.loss")} v={whole(x.loss_12m_pct, lang)} />
-                <Row k={t("goal.row.worst")} v={fmt.pct(x.worst_12m_pct, 0)} tone={x.worst_12m_pct < 0 ? "text-down" : ""} />
-                <Row k={t("goal.row.dd")} v={fmt.pct(x.max_dd_pct, 0)} tone="text-down" />
+                <Row k={t("goal.row.hit", { goal: g })} v={whole(x.hit_goal_12m_pct)} tone={x.hit_goal_12m_pct >= 50 ? "text-accent" : ""} />
+                <Row k={t("goal.row.loss")} v={whole(x.loss_12m_pct)} />
+                <Row k={t("goal.row.worst")} v={fmtPct(x.worst_12m_pct, 0)} tone={x.worst_12m_pct < 0 ? "text-down" : ""} />
+                <Row k={t("goal.row.dd")} v={fmtPct(x.max_dd_pct, 0)} tone="text-down" />
               </dl>
             </Reveal>
           );
@@ -123,18 +117,18 @@ export function GoalSection({ data }) {
       <p className="meta mt-3 normal-case tracking-[0.04em]">{t("goal.yearNote", { n: s.rule.windows_12m })}</p>
       <Reveal className="card mt-5 p-5 sm:p-8">
         <LinesChart dates={w.dates} series={series} ariaLabel={t("goal.chartLabel", { from: lr.from })} />
-        <p className="meta mt-3 normal-case tracking-[0.04em]">{t("goal.chartNote", { goal: g, bps: lr.rule.cost_bps }, { bidi: false })}</p>
+        <p className="meta mt-3 normal-case tracking-[0.04em]">{t("goal.chartNote", { goal: g, bps: lr.rule.cost_bps })}</p>
       </Reveal>
       <div className="mt-5 grid gap-5 lg:grid-cols-2">
         <Reveal className="card p-6 sm:p-8">
           <div className="eyebrow mb-3">{t("goal.means")}</div>
           <ul className="grid gap-3 text-[15.5px] leading-relaxed">
-            <li>{t.rich("goal.coreMade", { core: lr.core, cagr: <span className="text-ink">{t("goal.perYear", { pct: fmt.pct(s.core.cagr_pct, 1) }, { bidi: false })}</span>, goal: g, hit: whole(coreHit, lang) })} {t(s.core.cagr_pct < goal ? "goal.coreBelow" : "goal.coreStrong")}</li>
-            <li>{t.rich(ruleVsAll >= 0 ? "goal.better" : "goal.worse", { n: data.watchlist.symbols.length, gap: <span className="text-ink">{t("goal.ptsYear", { pts: fmt.num(Math.abs(ruleVsAll), 1) }, { bidi: false })}</span>, a: fmt.pct(s.rule.max_dd_pct, 0), b: fmt.pct(s.equal_weight.max_dd_pct, 0) })}</li>
+            <li>{rich(t, "goal.coreMade", { core: lr.core, cagr: <span className="text-ink">{t("goal.perYear", { pct: fmtPct(s.core.cagr_pct, 1) })}</span>, goal: g, hit: whole(coreHit) })} {t(s.core.cagr_pct < goal ? "goal.coreBelow" : "goal.coreStrong")}</li>
+            <li>{rich(t, ruleVsAll >= 0 ? "goal.better" : "goal.worse", { n: data.watchlist.symbols.length, gap: <span className="text-ink">{t("goal.ptsYear", { pts: fmtNum(Math.abs(ruleVsAll), 1) })}</span>, a: fmtPct(s.rule.max_dd_pct, 0), b: fmtPct(s.equal_weight.max_dd_pct, 0) })}</li>
             {winners.length > 0 ? (
-              <li>{t("goal.winners", { goal: g, dd: fmt.pct(Math.max(...winners.map((k) => s[k].max_dd_pct)), 0) })}</li>
+              <li>{t("goal.winners", { goal: g, dd: fmtPct(Math.max(...winners.map((k) => s[k].max_dd_pct)), 0) })}</li>
             ) : (
-              <li>{t("goal.noWinners", { goal: g, a: fmt.pct(Math.max(...keys.map((k) => s[k].max_dd_pct)), 0), b: fmt.pct(Math.min(...keys.map((k) => s[k].max_dd_pct)), 0) })}</li>
+              <li>{t("goal.noWinners", { goal: g, a: fmtPct(Math.max(...keys.map((k) => s[k].max_dd_pct)), 0), b: fmtPct(Math.min(...keys.map((k) => s[k].max_dd_pct)), 0) })}</li>
             )}
           </ul>
         </Reveal>
@@ -142,7 +136,7 @@ export function GoalSection({ data }) {
           <div className="eyebrow mb-3 text-people">{t("goal.caveats")}</div>
           <ul className="grid gap-3 text-[15px] leading-relaxed text-ink-2">
             <li><span className="text-ink">{t("goal.hindsight.b")}</span> {t("goal.hindsight")}</li>
-            <li><span className="text-ink">{t("goal.oneStretch.b")}</span> {t("goal.oneStretch", { years: fmt.num(lr.years, 1) })}</li>
+            <li><span className="text-ink">{t("goal.oneStretch.b")}</span> {t("goal.oneStretch", { years: fmtNum(lr.years, 1) })}</li>
             <li><span className="text-ink">{t("goal.pretendOnly.b")}</span> {t("goal.pretendOnly")}</li>
           </ul>
         </Reveal>
@@ -163,8 +157,7 @@ function Row({ k, v, tone = "" }) {
 /* ------------------------------------------------------------- portfolio */
 
 export function PortfolioNow({ data, go }) {
-  const { lang, t: tr, fmt } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const lr = data.longrun;
   const slots = data.settings.portfolio.slots;
   if (!lr) {
@@ -196,27 +189,27 @@ export function PortfolioNow({ data, go }) {
   return (
     <section id="portfolio" className="scroll-mt-28 pt-24">
       <SectionHead
-        eyebrow={<>{t("goal.pf.eyebrow", { v: lr.rule.version })}{rec ? t("goal.pf.record") : ""}{t("goal.pf.since", { date: fmtDate(rec ? rec.date : now.last_rebalance, lang) }, { bidi: false })}{t("goal.pf.nextLook", { date: fmtDate(nextRebalance(lr.as_of), lang) }, { bidi: false })}</>}
-        title={<>{t("goal.pf.companies", { count: holdings.length })}{holdings.length < slots ? <>, <Accent>{t("goal.pf.core", { pct: whole(corePct, lang) }, { bidi: false })}</Accent></> : <Accent>{t("goal.pf.full")}</Accent>}</>}
+        eyebrow={<>{t("goal.pf.eyebrow", { v: lr.rule.version })}{rec ? t("goal.pf.record") : ""}{t("goal.pf.since", { date: fmtDate(rec ? rec.date : now.last_rebalance) })}{t("goal.pf.nextLook", { date: fmtDate(nextRebalance(lr.as_of)) })}</>}
+        title={<>{t("goal.pf.companies", { count: holdings.length })}{holdings.length < slots ? <>, <Accent>{t("goal.pf.core", { pct: whole(corePct) })}</Accent></> : <Accent>{t("goal.pf.full")}</Accent>}</>}
         lede={t("goal.pf.lede", { slots, max: lr.rule.max_per_sector, entry: lr.rule.entry_min_checks, keep: lr.rule.keep_min_checks })}
         right={<button type="button" onClick={() => go("portfolio")} className="btn">{t("goal.pf.mix")} <ArrowRight /></button>}
       />
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         {cells.map(({ s }, i) => s ? (
           <Reveal key={s} delay={i * 60} as="button" type="button" onClick={() => go(`stock/${s}`)} className="card card-hover p-5 text-start">
-            <div className="meta">{t("goal.pf.seat", { i: i + 1, pct: whole(100 / slots, lang) }, { bidi: false })}</div>
-            <bdi className="mt-3 block font-mono text-[26px] font-medium text-accent">{s}</bdi>
-            <div dir="auto" className="mt-1 truncate text-[13.5px] text-ink-2">{data.names[s]}</div>
-            <div className="meta mt-3 truncate normal-case tracking-[0.04em]">{data.sectors[s] ? sectorName(data.sectors[s], lang) : ""}</div>
+            <div className="meta">{t("goal.pf.seat", { i: i + 1, pct: whole(100 / slots) })}</div>
+            <span className="mt-3 block font-mono text-[26px] font-medium text-accent">{s}</span>
+            <div className="mt-1 truncate text-[13.5px] text-ink-2">{data.names[s]}</div>
+            <div className="meta mt-3 truncate normal-case tracking-[0.04em]">{data.sectors[s]}</div>
             <div className="mt-3 flex items-center justify-between text-[12.5px]">
-              <span className="num font-mono">{t("goal.pf.passed", { frac: ltrIf(`${st[s]?.passed ?? "–"}/4`, lang) }, { bidi: false })}</span>
-              <span className={`num font-mono ${(st[s]?.vs_bench_long_pct ?? 0) >= 0 ? "text-accent" : "text-down"}`}>{st[s]?.vs_bench_long_pct != null ? fmt.pct(st[s].vs_bench_long_pct, 0) : ""}</span>
+              <span className="num font-mono">{t("goal.pf.passed", { frac: `${st[s]?.passed ?? "–"}/4` })}</span>
+              <span className={`num font-mono ${(st[s]?.vs_bench_long_pct ?? 0) >= 0 ? "text-accent" : "text-down"}`}>{st[s]?.vs_bench_long_pct != null ? fmtPct(st[s].vs_bench_long_pct, 0) : ""}</span>
             </div>
           </Reveal>
         ) : (
           <Reveal key={`core-${i}`} delay={i * 60} className="card border-dashed p-5">
-            <div className="meta">{t("goal.pf.seat", { i: i + 1, pct: whole(100 / slots, lang) }, { bidi: false })}</div>
-            <bdi className="mt-3 block font-mono text-[26px] font-medium text-ink-2">{lr.core}</bdi>
+            <div className="meta">{t("goal.pf.seat", { i: i + 1, pct: whole(100 / slots) })}</div>
+            <span className="mt-3 block font-mono text-[26px] font-medium text-ink-2">{lr.core}</span>
             <div className="mt-1 text-[13.5px] text-ink-3">{t("goal.pf.coreSeat")}</div>
           </Reveal>
         ))}
@@ -225,10 +218,10 @@ export function PortfolioNow({ data, go }) {
         <Reveal className="card p-6 sm:p-8">
           <div className="eyebrow mb-4">{t("goal.pf.bumpy")}</div>
           {div ? <div className="grid grid-cols-2 gap-5">
-            <Big v={whole(div.vol_1y_pct, lang)} l={t("goal.pf.swing")} />
-            <Big v={fmt.pct(div.loss_95_20d_pct, 0)} l={t("goal.pf.badMonth")} tone="text-down" />
-            <Big v={div.avg_pair_corr != null ? fmt.num(div.avg_pair_corr, 2) : "–"} l={t("goal.pf.together")} />
-            <Big v={`${div.sectors}`} l={t("goal.pf.ind", { count: div.sectors, cos: t("goal.pf.cos", { count: div.names }) }, { bidi: false })} />
+            <Big v={whole(div.vol_1y_pct)} l={t("goal.pf.swing")} />
+            <Big v={fmtPct(div.loss_95_20d_pct, 0)} l={t("goal.pf.badMonth")} tone="text-down" />
+            <Big v={div.avg_pair_corr != null ? fmtNum(div.avg_pair_corr, 2) : "–"} l={t("goal.pf.together")} />
+            <Big v={`${div.sectors}`} l={t("goal.pf.ind", { count: div.sectors, cos: t("goal.pf.cos", { count: div.names }) })} />
           </div> : <p className="text-[15px] text-ink-2">{t("goal.pf.later")}</p>}
           <p className="mt-5 text-[14px] leading-relaxed text-ink-3">{t("goal.pf.corrNote")}</p>
         </Reveal>
@@ -237,12 +230,12 @@ export function PortfolioNow({ data, go }) {
           <ul className="grid gap-4">
             {Object.entries(out.reduce((g, x) => ((g[x.status] ??= []).push(x), g), {})).map(([k, xs]) => (
               <li key={k}>
-                <div className={`text-[14px] font-medium ${STATUS[k].tone}`}>{statusLabel(k, lang)} <span className="text-ink-3">· {xs.length}</span></div>
+                <div className={`text-[14px] font-medium ${STATUS[k].tone}`}>{statusLabel(k)} <span className="text-ink-3">· {xs.length}</span></div>
                 <div className="mt-2 flex flex-wrap gap-1.5">
                   {xs.map((x) => (
-                    <button key={x.symbol} type="button" onClick={() => go(`stock/${x.symbol}`)} title={x.passed != null ? t("goal.pf.ofChecks", { n: x.passed }, { bidi: false }) : ""}
+                    <button key={x.symbol} type="button" onClick={() => go(`stock/${x.symbol}`)} title={x.passed != null ? t("goal.pf.ofChecks", { n: x.passed }) : ""}
                       className="min-h-[34px] rounded-full border border-line-2 px-3 font-mono text-[12.5px] hover:border-ink-3 hover:text-ink">
-                      <bdi>{x.symbol}</bdi>{x.passed != null && <bdi className="ms-1.5 text-ink-3">{x.passed}/4</bdi>}
+                      <span>{x.symbol}</span>{x.passed != null && <span className="ms-1.5 text-ink-3">{x.passed}/4</span>}
                     </button>
                   ))}
                 </div>
@@ -250,7 +243,7 @@ export function PortfolioNow({ data, go }) {
             ))}
             {!out.length && <li className="text-ink-3">{t("goal.pf.allIn")}</li>}
           </ul>
-          {pathOnly.length > 0 && <p className="mt-4 text-[14px] text-ink-3">{t("goal.pf.pathOnly", { list: pathOnly.join(", "), keep: lr.rule.keep_min_checks, date: fmtDate(paper.started, lang), entry: lr.rule.entry_min_checks })}</p>}
+          {pathOnly.length > 0 && <p className="mt-4 text-[14px] text-ink-3">{t("goal.pf.pathOnly", { list: pathOnly.join(", "), keep: lr.rule.keep_min_checks, date: fmtDate(paper.started), entry: lr.rule.entry_min_checks })}</p>}
           {changes > 0 && <p className="mt-4 text-[14px] text-people">{t("goal.pf.changes", { count: changes })}</p>}
         </Reveal>
       </div>
@@ -259,8 +252,8 @@ export function PortfolioNow({ data, go }) {
           <div className="eyebrow mb-2">{t("goal.pf.recordTitle")}</div>
           {paper && last ? (
             <p className="text-[16px] leading-relaxed">
-              {t.rich("goal.pf.recordLine", {
-                date: fmtDate(paper.started, lang), decisions: t("goal.pf.decisions", { count: paper.rebalances.length }),
+              {rich(t, "goal.pf.recordLine", {
+                date: fmtDate(paper.started), decisions: t("goal.pf.decisions", { count: paper.rebalances.length }),
                 a: <b className={`num font-mono ${last.v >= 100 ? "text-accent" : "text-down"}`}>{fmtPct(last.v - 100, 1)}</b>,
                 b: <b className="num font-mono">{fmtPct(last.core_v - 100, 1)}</b>,
                 sym: data.bench.symbol,
@@ -304,16 +297,15 @@ export function universeConcentration(data) {
 }
 
 function DiversityNote({ data, go }) {
-  const { lang, t: tr, fmt } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const u = universeConcentration(data);
   if (!u.concentrated) return null;
   return (
     <Reveal className="card mt-5 border-people/40 p-6 sm:p-8">
       <div className="eyebrow mb-3 text-people">{t("goal.div.title")}</div>
       <p className="text-[15.5px] leading-relaxed text-ink-2">
-        {t.rich("goal.div.lead", { n: u.n, ind: <span className="text-ink">{t("goal.div.ind", { count: u.sectors })}</span>, k: u.top[1], sector: sectorName(u.top[0], lang) })}
-        {u.avg != null ? t.rich("goal.div.together", { avg: <span className="text-ink">{fmt.num(u.avg, 2)}</span> }) : null}.{" "}
+        {rich(t, "goal.div.lead", { n: u.n, ind: <span className="text-ink">{t("goal.div.ind", { count: u.sectors })}</span>, k: u.top[1], sector: u.top[0] })}
+        {u.avg != null ? rich(t, "goal.div.together", { avg: <span className="text-ink">{fmtNum(u.avg, 2)}</span> }) : null}.{" "}
         {t(u.avg != null && u.avg < 0.4 ? "goal.div.independent" : "goal.div.oneBet", { range: "4–5" })} {t("goal.div.spread")}
       </p>
       <button type="button" onClick={() => go("portfolio")} className="meta mt-4 inline-flex items-center gap-1 hover:text-ink">{t("goal.div.see")} <ArrowRight className="size-3.5" /></button>
@@ -324,8 +316,7 @@ function DiversityNote({ data, go }) {
 /* --------------------------------------------------------------- context */
 
 export function MarketContext({ data }) {
-  const { lang, t: tr, fmt } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const ctx = data.market.context;
   if (!ctx) return null;
   const tf = ctx.core?.trend_filter;
@@ -334,26 +325,26 @@ export function MarketContext({ data }) {
   const cards = [
     tf && {
       k: t("goal.ctx.tf.k"), v: t(tf.on ? "goal.ctx.tf.up" : "goal.ctx.tf.notUp"), tone: tf.on ? "text-accent" : "text-people",
-      d: t(tf.above_10m_avg ? "goal.ctx.tf.above" : "goal.ctx.tf.below", { sym: ctx.core.symbol, pct: fmt.pct(tf.dist_10m_avg_pct ?? 0, 1) })
-        + (tf.ret_12m_pct != null ? t("goal.ctx.tf.made", { r: fmt.pct(tf.ret_12m_pct, 1) }) + (tf.cash_12m_pct != null ? t("goal.ctx.tf.cash", { c: fmt.pct(tf.cash_12m_pct, 1) }) : "") : "")
+      d: t(tf.above_10m_avg ? "goal.ctx.tf.above" : "goal.ctx.tf.below", { sym: ctx.core.symbol, pct: fmtPct(tf.dist_10m_avg_pct ?? 0, 1) })
+        + (tf.ret_12m_pct != null ? t("goal.ctx.tf.made", { r: fmtPct(tf.ret_12m_pct, 1) }) + (tf.cash_12m_pct != null ? t("goal.ctx.tf.cash", { c: fmtPct(tf.cash_12m_pct, 1) }) : "") : "")
         + t("goal.ctx.tf.tail"),
     },
     ctx.cash_yield_pct != null && {
-      k: t("goal.ctx.cash.k"), v: ltrIf(`${fmtNum(ctx.cash_yield_pct, 1)}%`, lang), tone: "",
+      k: t("goal.ctx.cash.k"), v: `${fmtNum(ctx.cash_yield_pct, 1)}%`, tone: "",
       d: t("goal.ctx.cash.d"),
     },
     p && {
       k: t("goal.ctx.p.k"), v: t(p.state === "narrow" ? "goal.ctx.p.few" : p.state === "broad" ? "goal.ctx.p.many" : "goal.ctx.p.some"), tone: p.state === "narrow" ? "text-people" : p.state === "broad" ? "text-accent" : "",
-      d: t("goal.ctx.p.d", { a: fmt.pct(p.eq_vs_cap_60d_pct, 1) }) + (ps ? t("goal.ctx.p.spx", { b: fmt.pct(ps.eq_vs_cap_60d_pct, 1) }) : "") + t("goal.ctx.p.tail"),
+      d: t("goal.ctx.p.d", { a: fmtPct(p.eq_vs_cap_60d_pct, 1) }) + (ps ? t("goal.ctx.p.spx", { b: fmtPct(ps.eq_vs_cap_60d_pct, 1) }) : "") + t("goal.ctx.p.tail"),
     },
     ctx.credit_vs_treasuries_60d_pct != null && {
       k: t("goal.ctx.credit.k"), v: t(ctx.credit_vs_treasuries_60d_pct >= 0 ? "goal.ctx.credit.calm" : "goal.ctx.credit.nervous"), tone: ctx.credit_vs_treasuries_60d_pct >= 0 ? "text-accent" : "text-people",
-      d: t("goal.ctx.credit.d", { pct: fmt.pct(ctx.credit_vs_treasuries_60d_pct, 1) }),
+      d: t("goal.ctx.credit.d", { pct: fmtPct(ctx.credit_vs_treasuries_60d_pct, 1) }),
     },
   ].filter(Boolean);
   return (
     <section className="pt-24">
-      <SectionHead eyebrow={t("goal.ctx.eyebrow", { date: fmtDate(data.market.as_of, lang) }, { bidi: false })} title={<>{t("goal.ctx.titleA")} <Accent>{t("goal.ctx.titleB")}</Accent></>} size="md"
+      <SectionHead eyebrow={t("goal.ctx.eyebrow", { date: fmtDate(data.market.as_of) })} title={<>{t("goal.ctx.titleA")} <Accent>{t("goal.ctx.titleB")}</Accent></>} size="md"
         lede={t("goal.ctx.lede")} />
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {cards.map((c, i) => (
@@ -371,8 +362,7 @@ export function MarketContext({ data }) {
 /* ------------------------------------------------------------ base rates */
 
 export function BaseRates({ data }) {
-  const { lang, t: tr, fmt } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const br = data.market.base_rates;
   if (!br) return null;
   const g = br.gate;
@@ -394,17 +384,17 @@ export function BaseRates({ data }) {
           <div className="grid grid-cols-2 gap-5">
             <div>
               <div className="meta text-accent">{t("goal.br.passed")}</div>
-              <div className={`display num mt-2 text-[40px] leading-none ${g.pass.mean >= 0 ? "text-accent" : "text-down"}`}>{fmt.pct(g.pass.mean ?? 0, 2)}</div>
-              <p className="mt-2 text-[13px] text-ink-3">{t("goal.br.passNote", { h: br.horizon_days, sym: data.bench.symbol, hit: whole(g.pass.hit_pct ?? 0, lang), n: g.pass.n })}</p>
+              <div className={`display num mt-2 text-[40px] leading-none ${g.pass.mean >= 0 ? "text-accent" : "text-down"}`}>{fmtPct(g.pass.mean ?? 0, 2)}</div>
+              <p className="mt-2 text-[13px] text-ink-3">{t("goal.br.passNote", { h: br.horizon_days, sym: data.bench.symbol, hit: whole(g.pass.hit_pct ?? 0), n: g.pass.n })}</p>
             </div>
             <div>
               <div className="meta">{t("goal.br.failed")}</div>
-              <div className={`display num mt-2 text-[40px] leading-none ${g.fail.mean >= 0 ? "" : "text-down"}`}>{fmt.pct(g.fail.mean ?? 0, 2)}</div>
-              <p className="mt-2 text-[13px] text-ink-3">{t("goal.br.failNote", { hit: whole(g.fail.hit_pct ?? 0, lang), n: g.fail.n })}</p>
+              <div className={`display num mt-2 text-[40px] leading-none ${g.fail.mean >= 0 ? "" : "text-down"}`}>{fmtPct(g.fail.mean ?? 0, 2)}</div>
+              <p className="mt-2 text-[13px] text-ink-3">{t("goal.br.failNote", { hit: whole(g.fail.hit_pct ?? 0), n: g.fail.n })}</p>
             </div>
           </div>
           <p className="mt-6 text-[14.5px] leading-relaxed text-ink-2">
-            {t("goal.br.range", { a: fmt.pct(g.pass.ci_low ?? 0, 2), b: fmt.pct(g.pass.ci_high ?? 0, 2) })} {t(edge ? "goal.br.aboveZero" : "goal.br.luck")} {t("goal.br.ladder")}
+            {t("goal.br.range", { a: fmtPct(g.pass.ci_low ?? 0, 2), b: fmtPct(g.pass.ci_high ?? 0, 2) })} {t(edge ? "goal.br.aboveZero" : "goal.br.luck")} {t("goal.br.ladder")}
           </p>
         </Reveal>
         <Reveal delay={80} className="card p-6 sm:p-8">
@@ -413,7 +403,7 @@ export function BaseRates({ data }) {
             {br.by_score.map((r) => (
               <div key={r.passed} className="grid grid-cols-[64px_minmax(0,1fr)_72px] items-center gap-3 text-[13.5px]">
                 <span className="font-mono">{t("goal.br.of4", { n: r.passed })}</span>
-                <div dir="ltr" className="relative h-5">
+                <div className="relative h-5">
                   <div className="absolute top-1/2 left-1/2 h-4 w-px -translate-y-1/2 bg-line-2" />
                   {r.n >= MIN_N && (
                     <>
@@ -421,9 +411,9 @@ export function BaseRates({ data }) {
                       <div className={`absolute top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 rounded-full ${r.mean >= 0 ? "bg-accent" : "bg-down"}`} style={{ left: `${pos(r.mean)}%` }} />
                     </>
                   )}
-                  {r.n > 0 && r.n < MIN_N && <span dir="auto" className="absolute inset-0 grid place-items-center text-[11.5px] text-ink-3">{t("goal.br.tooFew")}</span>}
+                  {r.n > 0 && r.n < MIN_N && <span className="absolute inset-0 grid place-items-center text-[11.5px] text-ink-3">{t("goal.br.tooFew")}</span>}
                 </div>
-                <span dir="ltr" className="num text-end font-mono text-ink-2">{r.n ? fmtPct(r.mean, 2) : "–"} <span className="text-ink-3">n{r.n}</span></span>
+                <span className="num text-end font-mono text-ink-2">{r.n ? fmtPct(r.mean, 2) : "–"} <span className="text-ink-3">n{r.n}</span></span>
               </div>
             ))}
           </div>

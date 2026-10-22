@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { loadMarket } from "../lib/data.js";
-import { notYet } from "../lib/markets.js";
-import { Auto, useLang } from "../lib/lang.jsx";
-import dict from "../i18n/home.js";
-import shell from "../i18n/shell.js";
+import dict from "../text/home.js";
 import { SPOTLIGHTS, spotlightItems } from "../lib/spotlight.js";
 import { TopStocks } from "./topstocks.jsx";
 import { buyLine, buyWindowFor, mainListOf, mainWatchlistOf, sp500Of } from "../lib/buywindow.js";
 import { todayISO } from "../lib/outlook.js";
+import { strings } from "../lib/text.js";
+import { NOT_YET } from "../lib/markets.js";
 
 /**
  * The home's sector spotlights: one bold carousel per list (chip makers, tech giants, energy), names ranked by their
@@ -19,8 +18,7 @@ export function SectorSpotlights({ data, earned = false, openTo, seeCandles }) {
 }
 
 function Spotlight({ id, data, earned, openTo, seeCandles }) {
-  const { lang, t: tr } = useLang();
-  const t = tr(dict);
+  const t = strings(dict);
   const [view, setView] = useState(null);
   useEffect(() => {
     let live = true;
@@ -28,15 +26,13 @@ function Spotlight({ id, data, earned, openTo, seeCandles }) {
     return () => { live = false; };
   }, [id, data]);
   if (!view) return null; // loading, or it failed: the rest of the home does not wait for it
-  // The list's name comes from config/markets.json (English for now); in Hebrew, the market switch's own words for the
-  // list (i18n/shell.js "market.what.*") when it has them. dir="auto" keeps either readable in a Hebrew page.
-  const name = (lang === "he" && shell.he[`market.what.${id}`]) || view.entry?.name || id;
-  const title = <Auto>{name}</Auto>;
+  // The list's name comes from config/markets.json.
+  const name = view.entry?.name || id;
   if (!view.available) {
     return (
       <section className="mx-auto w-full max-w-[1040px] px-4 pt-10">
-        <h2 className="text-[clamp(26px,7vw,34px)] leading-tight font-bold tracking-[-0.025em] text-ink">{title}</h2>
-        <p className="mt-2 text-[16px] text-ink-2">{notYet(lang)}</p>
+        <h2 className="text-[clamp(26px,7vw,34px)] leading-tight font-bold tracking-[-0.025em] text-ink">{name}</h2>
+        <p className="mt-2 text-[16px] text-ink-2">{NOT_YET}</p>
       </section>
     );
   }
@@ -46,12 +42,11 @@ function Spotlight({ id, data, earned, openTo, seeCandles }) {
     today, derived: view.market, checklist: view.checklist, bw: data.buyWindow, mainList: mainListOf(data), stocksEarned: earned, rulesResult: data.rulesResult, names: view.names,
     siteSample: Boolean(view.market?.sample), minRR: data.checklistCfg?.house_rule?.min_reward_to_risk ?? 2, stretchPct: data.settings?.setup?.stretch_pct ?? 8,
   };
-  // buyLine takes the language last once lib/buywindow.js speaks Hebrew; until then it writes English.
-  const items = spotlightItems(view, data.manifest?.markets?.[id]?.candles ?? {}, lang)
-    .map((it) => ({ ...it, buy: buyLine(buyWindowFor(it.ticker, { ...ctx, sp500: sp500Of(it.ticker, view.watchlist, mainWatchlistOf(data)) }), today, lang), buyTo: `stock/${it.ticker}#buy-window` }));
+  const items = spotlightItems(view, data.manifest?.markets?.[id]?.candles ?? {})
+    .map((it) => ({ ...it, buy: buyLine(buyWindowFor(it.ticker, { ...ctx, sp500: sp500Of(it.ticker, view.watchlist, mainWatchlistOf(data)) }), today), buyTo: `stock/${it.ticker}#buy-window` }));
   return (
     <div className="pt-4">
-      <TopStocks items={items} manifest={data.manifest} marketId={id} news={data.secNews} title={title} headingId={`top-${id}-title`}
+      <TopStocks items={items} manifest={data.manifest} marketId={id} news={data.secNews} title={name} headingId={`top-${id}-title`}
         subtitle={t("spotc.subtitle")} label={name}
         fallback={t("spotc.fallback")} openTo={openTo} seeCandles={seeCandles} />
     </div>

@@ -1,14 +1,14 @@
 import { useMemo, useState } from "react";
-import { pad2 } from "../lib/format.js";
-import { useLang, Auto, En, EnglishNote } from "../lib/lang.jsx";
-import dict from "../i18n/learn.js";
+import { pad2, fmtDate } from "../lib/format.js";
+import dict from "../text/learn.js";
 import { Accent, ArrowRight, Container, Empty, Reveal, SectionHead, Segmented, Strip } from "../components/ui.jsx";
+import { strings } from "../lib/text.js";
+import { rich } from "../lib/rich.jsx";
 
 const today = () => new Date().toISOString().slice(0, 10);
-/** A theme tag from the library, as words ("risk_management" -> "risk management"); tags are English data. */
+/** A theme tag from the library, as words ("risk_management" -> "risk management"). */
 const tagWords = (tag) => tag.replaceAll("_", " ");
-/** The page's words: the area dictionary bound to the reader's language, and the formatters. */
-const useWords = () => { const { t, fmt } = useLang(); return { t: t(dict), fmt }; };
+const t = strings(dict);
 
 function youtubeUrl(ref) {
   const [kind, id] = (ref || "").split(":");
@@ -22,7 +22,6 @@ export default function Insights({ data }) {
   const [q, setQ] = useState("");
   const [tag, setTag] = useState(null);
   const now = today();
-  const { t } = useWords();
 
   const sources = useMemo(
     () => [...library].sort((a, b) => (b.published ?? b.added).localeCompare(a.published ?? a.added) || b.id.localeCompare(a.id)),
@@ -58,7 +57,7 @@ export default function Insights({ data }) {
         title={<>{t("ins.title.a")} <Accent>{t("ins.title.b")}</Accent></>}
         lede={<>
           <span className="block text-ink">{t("ins.lede1")}</span>
-          <span className="mt-3 block">{t.rich("ins.lede2", { principle: <span className="text-ink">{t("ins.word.principle")}</span>, claim: <span className="text-ink">{t("ins.word.claim")}</span> })}</span>
+          <span className="mt-3 block">{rich(t, "ins.lede2", { principle: <span className="text-ink">{t("ins.word.principle")}</span>, claim: <span className="text-ink">{t("ins.word.claim")}</span> })}</span>
         </>}
       />
       <Strip
@@ -73,7 +72,7 @@ export default function Insights({ data }) {
       <Reveal className="mt-10 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto]">
         <label className="flex items-center gap-3 rounded-full border border-line-2 bg-surface px-5 py-3.5 focus-within:border-accent">
           <svg viewBox="0 0 24 24" className="size-[18px] text-ink-3" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="11" cy="11" r="6.5" /><path d="m20 20-4.2-4.2" /></svg>
-          <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("ins.search")} dir="auto"
+          <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("ins.search")}
             aria-label={t("ins.searchLabel")} className="w-full bg-transparent text-[15px] outline-none placeholder:text-ink-3" />
         </label>
         <Segmented label={t("ins.view")} value={view} onChange={setView}
@@ -83,15 +82,14 @@ export default function Insights({ data }) {
       <Reveal delay={80} className="no-scrollbar mt-4 flex gap-2 overflow-x-auto pb-1">
         <button type="button" onClick={() => setTag(null)} className={`pill shrink-0 py-2.5 ${!tag ? "border-transparent bg-ink text-bg" : "text-ink-2"}`}>{t("ins.allThemes")}</button>
         {tags.map(([x, n]) => (
-          <button key={x} type="button" onClick={() => setTag(x === tag ? null : x)} lang="en"
+          <button key={x} type="button" onClick={() => setTag(x === tag ? null : x)}
             className={`pill shrink-0 py-2.5 ${x === tag ? "border-transparent bg-ink text-bg" : "text-ink-2 hover:text-ink"}`}>
-            <bdi>{tagWords(x)}</bdi> <span className="num opacity-60">{n}</span>
+            <span>{tagWords(x)}</span> <span className="num opacity-60">{n}</span>
           </button>
         ))}
       </Reveal>
 
       <div className="mt-8">
-        <EnglishNote />
         {view === "sources" && (
           shownSources.length ? (
             <div className="grid gap-6">
@@ -117,7 +115,6 @@ function SourceCard({ s, n, principles, claims, filtered, delay }) {
   const url = youtubeUrl(s.ref);
   const now = today();
   const liveClaims = claims.filter((c) => c.expires >= now).length;
-  const { t, fmt } = useWords();
   return (
     <Reveal delay={delay} as="article" className="card overflow-hidden">
       <div className="stripes grid gap-6 border-b border-line p-6 sm:p-8 md:grid-cols-[150px_minmax(0,1fr)_auto] md:items-start" style={{ "--tone": "var(--accent)" }}>
@@ -128,10 +125,10 @@ function SourceCard({ s, n, principles, claims, filtered, delay }) {
         <div className="min-w-0">
           <div className="meta flex flex-wrap items-center gap-x-3 gap-y-1">
             <span className="text-accent">{t.has(`ins.kind.${s.kind}`) ? t(`ins.kind.${s.kind}`) : s.kind}</span>
-            <span>{s.published ? fmt.date(s.published) : s.year}</span>
-            <Auto className="normal-case tracking-[0.04em]">{s.author}</Auto>
+            <span>{s.published ? fmtDate(s.published) : s.year}</span>
+            <span className="normal-case tracking-[0.04em]">{s.author}</span>
           </div>
-          <En as="h3" className="mt-3 text-[clamp(20px,2.4vw,28px)] leading-snug font-semibold tracking-[-0.02em]">{s.title}</En>
+          <h3 className="mt-3 text-[clamp(20px,2.4vw,28px)] leading-snug font-semibold tracking-[-0.02em]">{s.title}</h3>
         </div>
         {url && (
           <a href={url} target="_blank" rel="noreferrer" className="btn shrink-0 self-start px-5 py-3 text-[14px]">
@@ -147,9 +144,9 @@ function SourceCard({ s, n, principles, claims, filtered, delay }) {
               <li key={p.id} className="grid grid-cols-[auto_minmax(0,1fr)] gap-4">
                 <span className="num pt-0.5 font-mono text-[12px] text-ink-3">{p.id.split(".")[1]}</span>
                 <div>
-                  <En as="p" className="text-[15.5px] leading-relaxed text-ink">{p.text}</En>
+                  <p className="text-[15.5px] leading-relaxed text-ink">{p.text}</p>
                   <div className="mt-2 flex flex-wrap gap-1.5">
-                    {p.tags.map((x) => <span key={x} lang="en" dir="ltr" className="rounded-full border border-line px-2 py-0.5 font-mono text-[11px] text-ink-3">{tagWords(x)}</span>)}
+                    {p.tags.map((x) => <span key={x} className="rounded-full border border-line px-2 py-0.5 font-mono text-[11px] text-ink-3">{tagWords(x)}</span>)}
                   </div>
                 </div>
               </li>
@@ -172,7 +169,7 @@ function SourceCard({ s, n, principles, claims, filtered, delay }) {
             </ul>
           )}
           {!open && claims.length > 0 && (
-            <En as="p" className="mt-4 line-clamp-3 text-[14px] text-ink-3">{claims[0].text}</En>
+            <p className="mt-4 line-clamp-3 text-[14px] text-ink-3">{claims[0].text}</p>
           )}
         </div>
       </div>
@@ -182,20 +179,18 @@ function SourceCard({ s, n, principles, claims, filtered, delay }) {
 
 function ClaimRow({ c }) {
   const expired = c.expires < today();
-  const { t } = useWords();
   return (
     <li className={`rounded-2xl border border-line bg-bg/40 p-4 ${expired ? "opacity-60" : ""}`}>
       <div className="flex flex-wrap items-center gap-2">
-        {c.tickers.map((x) => <bdi key={x} className="font-mono text-[13px] font-medium text-accent">{x}</bdi>)}
-        <span className="meta ms-auto"><bdi dir="ltr">{c.as_of} → {expired ? t("ins.expired") : c.expires}</bdi></span>
+        {c.tickers.map((x) => <span key={x} className="font-mono text-[13px] font-medium text-accent">{x}</span>)}
+        <span className="meta ms-auto"><span>{c.as_of} → {expired ? t("ins.expired") : c.expires}</span></span>
       </div>
-      <En as="p" className="mt-2 text-[14px] leading-relaxed text-ink-2">{c.text}</En>
+      <p className="mt-2 text-[14px] leading-relaxed text-ink-2">{c.text}</p>
     </li>
   );
 }
 
 function Themes({ principles, tags }) {
-  const { t } = useWords();
   const groups = tags
     .map(([t]) => [t, principles.filter((p) => p.tags.includes(t))])
     .filter(([, list]) => list.length)
@@ -206,15 +201,15 @@ function Themes({ principles, tags }) {
       {groups.map(([x, list]) => (
         <section key={x}>
           <Reveal className="mb-4 flex items-baseline justify-between gap-4 border-b border-line pb-3">
-            <h3 lang="en" dir="ltr" className="text-[24px] font-semibold tracking-[-0.03em] capitalize">{tagWords(x)}</h3>
+            <h3 className="text-[24px] font-semibold tracking-[-0.03em] capitalize">{tagWords(x)}</h3>
             <span className="meta">{t("ins.themeCount", { count: list.length })}</span>
           </Reveal>
           <div className="grid gap-4 md:grid-cols-2">
             {list.map((p, i) => (
               <Reveal key={p.id} delay={(i % 4) * 40} className="card brackets p-6">
                 <span className="meta">{p.id}</span>
-                <En as="p" className="mt-3 text-[16px] leading-relaxed">{p.text}</En>
-                <div lang="en" dir="ltr" className="meta mt-4 truncate border-t border-line pt-3 text-start normal-case tracking-[0.04em]" title={p.source.title}>
+                <p className="mt-3 text-[16px] leading-relaxed">{p.text}</p>
+                <div className="meta mt-4 truncate border-t border-line pt-3 text-start normal-case tracking-[0.04em]" title={p.source.title}>
                   {p.source.title} · {p.source.published ?? p.source.year}
                 </div>
               </Reveal>
@@ -229,7 +224,6 @@ function Themes({ principles, tags }) {
 function Claims({ claims, sources }) {
   const [showExpired, setShowExpired] = useState(false);
   const now = today();
-  const { t } = useWords();
   const titles = Object.fromEntries(sources.map((s) => [s.id, s]));
   const live = claims.filter((c) => c.expires >= now);
   const shown = (showExpired ? claims : live).sort((a, b) => b.as_of.localeCompare(a.as_of) || a.id.localeCompare(b.id));
@@ -247,16 +241,16 @@ function Claims({ claims, sources }) {
           return (
             <Reveal key={o.id} delay={(i % 6) * 40} as="article" className={`card flex flex-col p-6 ${expired ? "border-dashed opacity-60" : ""}`}>
               <div className="flex items-center justify-between gap-3">
-                <span className="meta"><bdi>{o.id}</bdi> · <bdi>{o.kind}</bdi></span>
+                <span className="meta"><span>{o.id}</span> · <span>{o.kind}</span></span>
                 <span className={`pill py-1 text-[11px] ${o.status === "confirmed" ? "border-accent/40 text-accent" : o.status === "contradicted" ? "border-down/40 text-down" : "border-dashed border-people/60 text-people"}`}>{t.has(`ins.status.${o.status}`) ? t(`ins.status.${o.status}`) : o.status}</span>
               </div>
               {o.tickers.length > 0 && (
-                <div className="mt-4 flex flex-wrap gap-2">{o.tickers.map((x) => <bdi key={x} className="font-mono text-[15px] font-medium text-accent">{x}</bdi>)}</div>
+                <div className="mt-4 flex flex-wrap gap-2">{o.tickers.map((x) => <span key={x} className="font-mono text-[15px] font-medium text-accent">{x}</span>)}</div>
               )}
-              <En as="p" className="mt-3 text-[15px] leading-relaxed text-ink">{o.text}</En>
+              <p className="mt-3 text-[15px] leading-relaxed text-ink">{o.text}</p>
               <div className="meta mt-auto flex items-center justify-between gap-3 border-t border-line pt-4 normal-case tracking-[0.04em] [margin-top:max(1.25rem,auto)]">
-                <span lang="en" dir="ltr" className="truncate" title={titles[o.source_id]?.title}>{o.source_id} · {titles[o.source_id]?.title ?? ""}</span>
-                <span className="num shrink-0"><bdi dir="ltr">{o.as_of} → {expired ? t("ins.expired") : o.expires}</bdi></span>
+                <span className="truncate" title={titles[o.source_id]?.title}>{o.source_id} · {titles[o.source_id]?.title ?? ""}</span>
+                <span className="num shrink-0"><span>{o.as_of} → {expired ? t("ins.expired") : o.expires}</span></span>
               </div>
             </Reveal>
           );

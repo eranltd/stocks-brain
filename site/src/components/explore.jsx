@@ -1,11 +1,10 @@
 import { todayISO } from "../lib/outlook.js";
-import { dayNumber, holeQuestion, HOLES, nextFor, stockOfDay, targetOf, totalMinutes } from "../lib/explore.js";
+import { dayNumber, HOLES, nextFor, stockOfDay, targetOf, totalMinutes } from "../lib/explore.js";
 import { verdictHistory } from "../lib/verdict.js";
 import { weeklyBuyDay } from "../lib/weekly.js";
 import { ArrowRight, Reveal } from "./ui.jsx";
-import { useLang } from "../lib/lang.jsx";
-import { localeOf } from "../lib/i18n.js";
-import shellText from "../i18n/shell.js";
+import shellText from "../text/shell.js";
+import { strings } from "../lib/text.js";
 
 /** Open a route and scroll to its "#section" once it has rendered. */
 function openAt(go, to) {
@@ -21,24 +20,23 @@ function openAt(go, to) {
   setTimeout(seek, 50);
 }
 
-// The weekday's name ("Friday" / "יום שישי"), read as a UTC calendar day like every market day on the site.
-const dayShort = (iso, lang) => new Date(`${iso}T00:00:00Z`).toLocaleDateString(lang === "he" ? localeOf(lang) : "en-US", { weekday: "long", timeZone: "UTC" });
+// The weekday's name ("Friday"), read as a UTC calendar day like every market day on the site.
+const dayShort = (iso) => new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", { weekday: "long", timeZone: "UTC" });
 
 /**
  * The two-minute read at the top of Home: the brain's answer, this week's action and the market, one line each,
  * then a clear "that is all you need today" so a busy reader can leave informed.
  */
 export function QuickRead({ data, market, go }) {
-  const { lang, t: tr } = useLang();
-  const t = tr(shellText);
+  const t = strings(shellText);
   const today = todayISO();
-  const v = data.sample ? null : verdictHistory(data.runs, { today, lang })[0];
+  const v = data.sample ? null : verdictHistory(data.runs, { today })[0];
   const buy = weeklyBuyDay(today, data.buyWindow, data.sample);
-  // The headline is the site's own short sentence about the brain's answer (lib/verdict.js headline), in the reader's language.
+  // The headline is the site's own short sentence about the brain's answer (lib/verdict.js headline).
   const brain = v ? v.headline : t("explore.quickNoAnswer");
   const rows = [
     { id: "brain", k: t("explore.quickBrain"), t: brain, to: "verdicts" },
-    { id: "plan", k: t("explore.quickPlan"), t: buy === today ? t("explore.quickBuyToday") : t("explore.quickBuyOn", { day: dayShort(buy, lang) }), to: "verdicts#money-action" },
+    { id: "plan", k: t("explore.quickPlan"), t: buy === today ? t("explore.quickBuyToday") : t("explore.quickBuyOn", { day: dayShort(buy) }), to: "verdicts#money-action" },
     ...(market ? [{ id: "market", k: t("explore.quickMarket"), t: market, to: "details" }] : []),
   ];
   return (
@@ -66,17 +64,16 @@ export function QuickRead({ data, market, go }) {
 }
 
 function HoleCard({ hole, stock, go, big = false }) {
-  const { lang, t: tr } = useLang();
-  const t = tr(shellText);
+  const t = strings(shellText);
   const to = targetOf(hole, stock);
   if (!to) return null;
   return (
     <button type="button" onClick={() => openAt(go, to)}
       className={`group flex h-full w-full flex-col justify-between gap-3 rounded-2xl border border-line-2 bg-surface p-4 text-start transition hover:-translate-y-0.5 hover:border-ink-3 motion-reduce:transform-none ${big ? "sm:p-5" : ""}`}>
-      <span className={`block font-semibold leading-snug text-ink ${big ? "text-[18px]" : "text-[16.5px]"}`}>{holeQuestion(hole, lang)}</span>
+      <span className={`block font-semibold leading-snug text-ink ${big ? "text-[18px]" : "text-[16.5px]"}`}>{hole.q}</span>
       <span className="flex items-center justify-between text-[14px] text-ink-3">
         <span>{t("explore.minutes", { n: hole.minutes })}</span>
-        <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5" />
+        <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
       </span>
     </button>
   );
@@ -84,7 +81,7 @@ function HoleCard({ hole, stock, go, big = false }) {
 
 /** The rabbit holes on Home: every question the site can answer, with reading times, for whoever has time. */
 export function RabbitHoles({ data, go }) {
-  const t = useLang().t(shellText);
+  const t = strings(shellText);
   const stock = stockOfDay(data);
   return (
     <Reveal as="section" aria-labelledby="rabbit-holes">
@@ -101,7 +98,7 @@ export function RabbitHoles({ data, go }) {
 
 /** At the end of every page: three next questions, none from this page, changing day by day. */
 export function KeepExploring({ data, route, go }) {
-  const t = useLang().t(shellText);
+  const t = strings(shellText);
   const stock = stockOfDay(data);
   const next = nextFor(route, dayNumber(todayISO())).filter((h) => targetOf(h, stock));
   if (!next.length) return null;

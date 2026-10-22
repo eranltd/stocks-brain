@@ -19,6 +19,10 @@
   --flat: #8d918d;
   --glow: rgb(110 227 154 / 0.10);
   --field: 110 227 154;
+  /* The Desk (components/desk.jsx): orange for its chrome (agent titles, the active pipeline step), amber for WAIT.
+     Green and red stay the up/down and pass/fail colours (--accent, --down). */
+  --desk: #ff8a1f;
+  --wait: #f2b544;
   --grain: 0.05;
   /* The race's line colours (components/race.jsx): a categorical palette in a fixed order, checked for colour-blind
      separation on this surface (adjacent pairs; each line is also named at its tip). */
@@ -32,6 +36,7 @@
   --ink: #0c0d0c; --ink-2: #4a4d4a; --ink-3: #7d817d;
   --accent: #138a48; --ai: #5a45d4; --people: #9a6500; --down: #c63d33; --flat: #6f736f;
   --glow: rgb(19 138 72 / 0.08); --field: 19 138 72; --grain: 0.03;
+  --desk: #b84a00; --wait: #946200;
   --race-1: #2a78d6; --race-2: #eb6834; --race-3: #1baf7a; --race-4: #eda100;
   --race-5: #e87ba4; --race-6: #008300; --race-7: #6250d6; --race-8: #e34948;
 }
@@ -50,6 +55,8 @@
   --color-people: var(--people);
   --color-down: var(--down);
   --color-flat: var(--flat);
+  --color-desk: var(--desk);
+  --color-wait: var(--wait);
   /* Glyphs the two web fonts lack (arrows, symbols) fall back to the system's own font. */
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   --font-mono: "JetBrains Mono Variable", ui-monospace, "SF Mono", Menlo, Consolas, system-ui, -apple-system, "Segoe UI", monospace;
@@ -152,6 +159,13 @@
   .scrub:focus-visible { outline: none; }
   .scrub:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px var(--accent); }
   .scrub:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px var(--accent); }
+
+  /* The Desk: thin bordered panels, bold uppercase agent titles, small mono labels and tabular numbers. */
+  .desk-panel { @apply relative rounded-xl border border-line-2 bg-surface; }
+  .desk-title { @apply text-[13px] leading-tight font-extrabold uppercase tracking-[0.16em] text-desk; }
+  .desk-label { @apply font-mono text-[10.5px] font-semibold uppercase tracking-[0.14em] text-ink-3; }
+  .desk-chip { @apply inline-flex items-center gap-1.5 rounded-md border px-2 py-1 font-mono text-[11px] leading-none font-bold uppercase tracking-[0.08em] whitespace-nowrap; }
+  .desk-num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 
   /* markdown */
   .md { @apply max-w-[72ch] text-ink-2; }

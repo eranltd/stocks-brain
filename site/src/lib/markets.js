@@ -18,8 +18,9 @@ export const SWITCH_WORDS = byId(MARKET_IDS, "market.what");
 export const TLV_NOTE = t("market.tlvNote");
 export const NOT_YET = t("market.notYet");
 
-/** Pages that read the Nasdaq list only (the daily brain, the practice portfolio, the rules, the people, the record). */
-export const NASDAQ_ONLY = ["details", "people", "portfolio", "playbook", "track", "kb", "learnings", "runs"];
+/** Pages that read the Nasdaq list only (Home's Desk and live feed, the daily brain, the practice portfolio, the rules, the
+ * people, the record). */
+export const NASDAQ_ONLY = ["today", "details", "people", "portfolio", "playbook", "track", "kb", "learnings", "runs"];
 
 /** The calm line such a page shows while another market is chosen. */
 export const nasdaqOnlyLine = (label) => t("market.nasdaqOnly", { label });

@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-21",
+  "as_of": "2026-10-22",
   "sample": false,
   "source": "SEC EDGAR filings index (company submissions)",
   "window_days": 120,
@@ -279,6 +279,22 @@
       "name": "Meta Platforms, Inc.",
       "filings": [
         {
+          "date": "2026-10-21",
+          "form": "8-K",
+          "items": [
+            "2.02",
+            "1.01",
+            "8.01"
+          ],
+          "titles": [
+            "Quarterly results",
+            "Signed a major agreement",
+            "Other company news"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066700/meta-20261019.htm"
+        },
+        {
           "date": "2026-07-30",
           "form": "10-Q",
           "items": [],
@@ -456,6 +472,16 @@
       "cik": 1035267,
       "name": "INTUITIVE SURGICAL INC",
       "filings": [
+        {
+          "date": "2026-10-21",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1035267/000103526726000071/isrg-20260930.htm"
+        },
         {
           "date": "2026-10-20",
           "form": "8-K",
@@ -802,18 +828,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/72903/000007290326000144/xel-20260713.htm"
-        },
-        {
-          "date": "2026-06-23",
-          "form": "8-K",
-          "items": [
-            "8.01"
-          ],
-          "titles": [
-            "Other company news"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/72903/000007290326000109/xel-20260622.htm"
         }
       ]
     },
@@ -938,6 +952,18 @@
       "cik": 1156375,
       "name": "CME GROUP INC.",
       "filings": [
+        {
+          "date": "2026-10-21",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1156375/000115637526000065/cme-20261021.htm"
+        },
         {
           "date": "2026-09-25",
           "form": "8-K",
@@ -2443,18 +2469,6 @@
           ],
           "kind": "results",
           "url": "https://www.sec.gov/Archives/edgar/data/1163165/000116316526000030/cop-20260806.htm"
-        },
-        {
-          "date": "2026-06-23",
-          "form": "8-K",
-          "items": [
-            "5.02"
-          ],
-          "titles": [
-            "A leadership change (an executive or board member)"
-          ],
-          "kind": "people",
-          "url": "https://www.sec.gov/Archives/edgar/data/1163165/000110465926076836/tm2618585d1_8k.htm"
         }
       ]
     },

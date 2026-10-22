@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-21",
+  "as_of": "2026-10-22",
   "sample": false,
   "source": "SEC XBRL company facts: trailing twelve months, or the latest year for yearly filers",
   "companies": [
@@ -24,7 +24,7 @@
     {
       "symbol": "MSFT",
       "cik": 789019,
-      "name": "MICROSOFT CORPORATION",
+      "name": "Microsoft Corporation",
       "status": "ok",
       "basis": "ttm",
       "period_end": "2026-06-30",
@@ -171,16 +171,16 @@
       "name": "Intuitive Surgical, Inc.",
       "status": "ok",
       "basis": "ttm",
-      "period_end": "2026-06-30",
-      "filed": "2026-07-21",
+      "period_end": "2026-09-30",
+      "filed": "2026-10-21",
       "revenue_concept": "RevenueFromContractWithCustomerExcludingAssessedTax",
-      "revenue_ttm": 11034400000,
-      "revenue_growth_yoy_pct": 20.7,
-      "quarter_revenue_growth_yoy_pct": 18.5,
-      "operating_margin_pct": 31.3,
-      "net_margin_pct": 28.4,
-      "free_cash_flow_ttm": 3222600000,
-      "fcf_margin_pct": 29.2,
+      "revenue_ttm": 11578000000,
+      "revenue_growth_yoy_pct": 20.5,
+      "quarter_revenue_growth_yoy_pct": 21.7,
+      "operating_margin_pct": 28.4,
+      "net_margin_pct": 25.5,
+      "free_cash_flow_ttm": 3598000000,
+      "fcf_margin_pct": 31.1,
       "missing": []
     },
     {

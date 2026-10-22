@@ -1,29 +1,55 @@
 @import "tailwindcss";
 
-/* Theme tokens. Change these to reskin; components only use the semantic names.
-   Dark is the brand default; light is opt-in via the toggle (data-theme="light"). */
+/* Theme tokens. Change these to reskin; components only use the semantic names (Tailwind: bg-surface, text-ink-2,
+   border-line, text-desk, bg-up/12 ...). Dark is the brand default and the hero; light is opt-in via the toggle
+   (data-theme="light"). Older names stay as aliases so every page keeps working: --accent is the up/pass green (--up),
+   --desk is the orange brand (--brand). The kit that uses these lives in components/ui.jsx (see its top comment). */
 :root {
   color-scheme: dark;
-  --bg: #0a0b0c;
-  --surface: #121416;
-  --surface-2: #181a1d;
-  --line: rgb(255 255 255 / 0.07);
+  /* canvas: near-black, a faint 24px grid and a soft vignette (drawn by Field in components/shell.jsx) */
+  --bg: #07080a;
+  --grid: rgb(255 255 255 / 0.045);
+  --vignette: rgb(0 0 0 / 0.6);
+  /* surfaces, three levels: panel, raised (tiles, rows, inputs), hover / pressed / active */
+  --surface: #0d0f12;
+  --surface-2: #13161a;
+  --surface-3: #1b1f24;
+  /* hairlines */
+  --line: rgb(255 255 255 / 0.075);
   --line-2: rgb(255 255 255 / 0.13);
-  --ink: #f3f4f2;
-  --ink-2: #a6aaa6;
-  --ink-3: #6c706c;
-  --accent: #6ee39a;
+  --line-3: rgb(255 255 255 / 0.22);
+  --hl: rgb(255 255 255 / 0.05); /* a panel's lit top edge */
+  /* text */
+  --ink: #f5f6f4;
+  --ink-2: #a8aeb4;
+  --ink-3: #7d848c;
+  /* the orange brand: titles, the active tab, the hero panel, connectors; --desk-glow only in shadows */
+  --desk: #ff8a1f;
+  --desk-2: #ffb066;
+  --desk-glow: rgb(255 138 31 / 0.42);
+  --brand: var(--desk);
+  /* market colours: up / pass / BUY (paper) / ENTER, down / fail / REJECT / SKIP, WAIT */
+  --up: #2fe38b;
+  --down: #ff5a5f;
+  --wait: #f6b73c;
+  --up-glow: rgb(47 227 139 / 0.35);
+  --down-glow: rgb(255 90 95 / 0.35);
+  --wait-glow: rgb(246 183 60 / 0.35);
+  --accent: var(--up);
   --ai: #a08cff;
   --people: #e7b24c;
-  --down: #f2766b;
-  --flat: #8d918d;
-  --glow: rgb(110 227 154 / 0.10);
-  --field: 110 227 154;
-  /* The Desk (components/desk.jsx): orange for its chrome (agent titles, the active pipeline step), amber for WAIT.
-     Green and red stay the up/down and pass/fail colours (--accent, --down). */
-  --desk: #ff8a1f;
-  --wait: #f2b544;
-  --grain: 0.05;
+  --flat: #8d939a;
+  --glow: rgb(47 227 139 / 0.12);
+  --field: 255 138 31;
+  --grain: 0;
+  /* radii: sharp panels, sharper chips */
+  --r-panel: 14px;
+  --r-tile: 10px;
+  --r-chip: 8px;
+  /* shadows: a lit hairline for every panel; the glow only on the hero / active element */
+  --shadow-panel: inset 0 1px 0 0 var(--hl), 0 18px 40px -28px rgb(0 0 0 / 0.9);
+  --shadow-glow: 0 0 0 1px color-mix(in srgb, var(--desk) 22%, transparent), 0 0 46px -12px var(--desk-glow), inset 0 0 44px -26px var(--desk-glow);
+  --ring: var(--desk);
   /* The race's line colours (components/race.jsx): a categorical palette in a fixed order, checked for colour-blind
      separation on this surface (adjacent pairs; each line is also named at its tip). */
   --race-1: #3987e5; --race-2: #d95926; --race-3: #199e70; --race-4: #c98500;
@@ -31,12 +57,16 @@
 }
 :root[data-theme="light"] {
   color-scheme: light;
-  --bg: #f4f4f0; --surface: #ffffff; --surface-2: #efefea;
-  --line: rgb(0 0 0 / 0.08); --line-2: rgb(0 0 0 / 0.15);
-  --ink: #0c0d0c; --ink-2: #4a4d4a; --ink-3: #7d817d;
-  --accent: #138a48; --ai: #5a45d4; --people: #9a6500; --down: #c63d33; --flat: #6f736f;
-  --glow: rgb(19 138 72 / 0.08); --field: 19 138 72; --grain: 0.03;
-  --desk: #b84a00; --wait: #946200;
+  --bg: #f1f0ec; --grid: rgb(0 0 0 / 0.05); --vignette: rgb(60 40 20 / 0.07);
+  --surface: #ffffff; --surface-2: #f7f6f3; --surface-3: #edece7;
+  --line: rgb(0 0 0 / 0.08); --line-2: rgb(0 0 0 / 0.14); --line-3: rgb(0 0 0 / 0.26); --hl: rgb(255 255 255 / 0.9);
+  --ink: #0b0c0d; --ink-2: #474c52; --ink-3: #6e747b;
+  --desk: #c25000; --desk-2: #e2680f; --desk-glow: rgb(255 122 26 / 0.26);
+  --up: #0b8a4a; --down: #d02c33; --wait: #9a6100;
+  --up-glow: rgb(11 138 74 / 0.22); --down-glow: rgb(208 44 51 / 0.22); --wait-glow: rgb(154 97 0 / 0.2);
+  --ai: #5a45d4; --people: #9a6500; --flat: #6f747a;
+  --glow: rgb(11 138 74 / 0.08); --field: 194 80 0;
+  --shadow-panel: inset 0 1px 0 0 var(--hl), 0 1px 2px rgb(0 0 0 / 0.04), 0 12px 32px -24px rgb(0 0 0 / 0.25);
   --race-1: #2a78d6; --race-2: #eb6834; --race-3: #1baf7a; --race-4: #eda100;
   --race-5: #e87ba4; --race-6: #008300; --race-7: #6250d6; --race-8: #e34948;
 }
@@ -45,21 +75,33 @@
   --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
   --color-line: var(--line);
   --color-line-2: var(--line-2);
+  --color-line-3: var(--line-3);
   --color-ink: var(--ink);
   --color-ink-2: var(--ink-2);
   --color-ink-3: var(--ink-3);
   --color-accent: var(--accent);
+  --color-up: var(--up);
   --color-ai: var(--ai);
   --color-people: var(--people);
   --color-down: var(--down);
   --color-flat: var(--flat);
   --color-desk: var(--desk);
+  --color-desk-2: var(--desk-2);
+  --color-brand: var(--desk);
   --color-wait: var(--wait);
-  /* Glyphs the two web fonts lack (arrows, symbols) fall back to the system's own font. */
+  --radius-panel: var(--r-panel);
+  --radius-tile: var(--r-tile);
+  --radius-chip: var(--r-chip);
+  /* Body text stays the sans; headlines are the condensed display face; numbers are mono with tabular figures. All
+     three are bundled (main.jsx, latin only) and cached by the service worker with the other hashed assets, so they
+     work offline. Glyphs the web fonts lack (arrows, symbols) fall back to the system's own font. */
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-  --font-mono: "JetBrains Mono Variable", ui-monospace, "SF Mono", Menlo, Consolas, system-ui, -apple-system, "Segoe UI", monospace;
+  --font-display: "Barlow Condensed", "Arial Narrow", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-num: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, system-ui, -apple-system, "Segoe UI", monospace;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, system-ui, -apple-system, "Segoe UI", monospace;
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --animate-rise: rise 900ms var(--ease-out-expo) both;
@@ -81,6 +123,10 @@
 @keyframes ping { 0% { transform: scale(1); opacity: .55; } 80%, 100% { transform: scale(2.2); opacity: 0; } }
 @keyframes pop-in { 0% { transform: scale(0); opacity: 0; } 70% { transform: scale(1.15); } 100% { transform: scale(1); opacity: 1; } }
 @keyframes draw { from { stroke-dashoffset: 3000; } to { stroke-dashoffset: 0; } }
+@keyframes tape { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes shimmer { from { background-position: 150% 0; } to { background-position: -50% 0; } }
+@keyframes flow { to { stroke-dashoffset: -20; } }
+@keyframes beacon { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
 .zoom-candle { transform-box: fill-box; transform-origin: center; animation: grow 420ms cubic-bezier(.2,.8,.2,1) both; }
 .zoom-ping { transform-box: fill-box; transform-origin: center; animation: ping 2.4s ease-out infinite; }
 .zoom-pop { transform-box: fill-box; transform-origin: center; animation: pop-in 420ms cubic-bezier(.2,.8,.2,1) both; }
@@ -98,36 +144,71 @@
     -webkit-font-smoothing: antialiased;
     transition: background-color 500ms, color 500ms;
   }
-  ::selection { background: var(--accent); color: var(--bg); }
-  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
+  ::selection { background: var(--desk); color: var(--bg); }
+  /* Focus ring: the brand orange, offset from the element so it reads on any fill. */
+  :focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; border-radius: 6px; }
   button { cursor: pointer; }
   /* Grids without explicit columns get one shrinkable track, so nowrap content can't widen the page. */
   [class~="grid"] { grid-template-columns: minmax(0, 1fr); }
 }
 
 @layer components {
-  /* mono uppercase label */
-  .eyebrow { @apply font-mono text-[13px] font-medium uppercase tracking-[0.24em] text-accent; }
-  .meta { @apply font-mono text-[12px] uppercase tracking-[0.18em] text-ink-3; }
-  .display { @apply font-semibold tracking-[-0.045em] leading-[0.98]; }
-  .card { @apply relative rounded-3xl border border-line bg-surface transition-[border-color,transform,box-shadow] duration-500; }
-  .card-hover { @apply hover:border-line-2 hover:-translate-y-0.5; }
-  .pill { @apply inline-flex items-center gap-1.5 rounded-full border border-line-2 px-3 py-1.5 font-mono text-[11.5px] font-medium uppercase tracking-[0.14em] whitespace-nowrap; }
-  .btn { @apply inline-flex items-center gap-3 rounded-full border border-line-2 px-7 py-4 text-[17px] font-medium tracking-[-0.01em] transition duration-300 hover:-translate-y-0.5 hover:border-ink-3; }
-  .btn-primary { @apply border-transparent bg-ink text-bg shadow-[0_18px_60px_-12px_rgb(255_255_255/0.25)]; }
+  /* ---- type ---- */
+  /* small uppercase label: the brand colour over a section (mono, wide tracking) */
+  .eyebrow { @apply font-mono text-[12px] font-semibold uppercase tracking-[0.22em] text-desk; }
+  .meta { @apply font-mono text-[11.5px] uppercase tracking-[0.16em] text-ink-3; }
+  /* page headlines (Headline, SectionHead and older .display titles): the condensed display face, uppercase */
+  .display { font-family: var(--font-display); font-weight: 800; text-transform: uppercase; letter-spacing: 0; line-height: 0.94; }
+  /* the condensed display face: HeroTitle, SectionTitle, call buttons, tabs */
+  .headline { font-family: var(--font-display); font-weight: 800; text-transform: uppercase; letter-spacing: 0.005em; line-height: 0.9; }
+  /* condensed uppercase label in the brand colour ("AGENT 3 ·") */
+  .kicker, .desk-title { font-family: var(--font-display); font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; font-size: 13px; line-height: 1.1; color: var(--desk); }
+  /* tiny mono uppercase label (column heads, tile labels) */
+  .micro, .desk-label { @apply font-mono text-[10.5px] leading-tight font-semibold uppercase tracking-[0.14em] text-ink-3; }
+  /* wide letter-spaced subtitle under a HeroTitle */
+  .spaced { @apply text-[11.5px] leading-[1.7] font-semibold uppercase tracking-[0.16em] text-ink-2 sm:text-[12.5px] sm:tracking-[0.2em]; }
   .num { font-variant-numeric: tabular-nums; }
-  /* "Top stocks" cards: one card and about a sixth of the next on a phone; two and a peek from tablet width. */
+  .font-num { font-variant-numeric: tabular-nums slashed-zero; }
+  /* a number that glows a little (the hero's N/5) */
+  .text-glow { text-shadow: 0 0 24px var(--desk-glow); }
+  .hero-glow { text-shadow: 0 0 44px var(--desk-glow); }
+  /* light: glows become plain colour (a blur on white reads as a smudge) */
+  :root[data-theme="light"] .text-glow, :root[data-theme="light"] .hero-glow { text-shadow: none; }
+
+  /* ---- surfaces ---- */
+  .card { @apply relative rounded-panel border border-line bg-surface transition-[border-color,transform,box-shadow] duration-500; box-shadow: var(--shadow-panel); }
+  .card-hover { @apply hover:border-line-3 hover:-translate-y-0.5; }
+  /* The kit's Panel (components/ui.jsx): a hairline box with a lit top edge. */
+  .panel, .desk-panel { @apply relative min-w-0 rounded-panel border border-line-2 bg-surface transition-[border-color,box-shadow] duration-500; box-shadow: var(--shadow-panel); }
+  .panel-active { border-color: color-mix(in srgb, var(--desk) 45%, transparent); }
+  /* the hero / active element: an orange border, a soft outer glow and an inner one, and a bright line along the top */
+  .panel-hero { border-color: color-mix(in srgb, var(--desk) 60%, transparent); box-shadow: var(--shadow-glow); }
+  .panel-hero::before { content: ""; position: absolute; inset: -1px 12% auto; height: 1px; pointer-events: none;
+    background: linear-gradient(90deg, transparent, var(--desk-2), transparent); }
+  /* a raised tile inside a panel */
+  .tile { @apply relative min-w-0 rounded-tile border border-line bg-surface-2; }
+  .glow { box-shadow: var(--shadow-glow); }
+  .glow-up { box-shadow: 0 0 0 1px color-mix(in srgb, var(--up) 35%, transparent), 0 8px 28px -10px var(--up-glow); }
+  .glow-down { box-shadow: 0 0 0 1px color-mix(in srgb, var(--down) 35%, transparent), 0 8px 28px -10px var(--down-glow); }
+  .glow-wait { box-shadow: 0 0 0 1px color-mix(in srgb, var(--wait) 35%, transparent), 0 8px 28px -10px var(--wait-glow); }
+  .glow-brand { box-shadow: 0 0 0 1px color-mix(in srgb, var(--desk) 35%, transparent), 0 8px 28px -10px var(--desk-glow); }
+
+  /* ---- chips, buttons ---- */
+  .pill { @apply inline-flex items-center gap-1.5 rounded-chip border border-line-2 px-2.5 py-1 font-mono text-[11px] font-semibold uppercase tracking-[0.1em] whitespace-nowrap; }
+  .chip, .desk-chip { @apply inline-flex min-h-[26px] items-center gap-1.5 rounded-chip border px-2 font-mono text-[11px] leading-none font-semibold uppercase tracking-[0.08em] whitespace-nowrap; }
+  .btn { @apply inline-flex min-h-[48px] items-center gap-3 rounded-[10px] border border-line-2 bg-surface-2 px-6 py-3 text-[16px] font-semibold tracking-[-0.01em] transition duration-300 hover:-translate-y-0.5 hover:border-line-3; }
+  .btn-primary { @apply border-transparent bg-desk text-bg; box-shadow: 0 10px 34px -12px var(--desk-glow); }
   .top-card { width: calc((100% - 16px) / 1.15); }
   @media (min-width: 48rem) { .top-card { width: calc((100% - 32px) / 2.15); } }
 
   /* corner brackets */
   .brackets { position: relative; }
   .brackets::before, .brackets::after {
-    content: ""; position: absolute; width: 18px; height: 18px; pointer-events: none;
-    border-color: var(--line-2); border-style: solid;
+    content: ""; position: absolute; width: 14px; height: 14px; pointer-events: none;
+    border-color: color-mix(in srgb, var(--desk) 55%, transparent); border-style: solid;
   }
-  .brackets::before { top: 14px; left: 14px; border-width: 1.5px 0 0 1.5px; }
-  .brackets::after { bottom: 14px; right: 14px; border-width: 0 1.5px 1.5px 0; }
+  .brackets::before { top: 10px; left: 10px; border-width: 1.5px 0 0 1.5px; }
+  .brackets::after { bottom: 10px; right: 10px; border-width: 0 1.5px 1.5px 0; }
 
   /* vertical hairline stripes for card heads */
   .stripes {
@@ -142,6 +223,17 @@
     transition-delay: var(--d, 0ms); }
   .reveal.in { opacity: 1; transform: none; filter: none; }
 
+  /* The canvas behind every page (Field in components/shell.jsx): a faint 24px grid that fades out toward the edges,
+     a warm glow at the top and a vignette. */
+  .backdrop { position: fixed; inset: 0; z-index: -10; pointer-events: none;
+    background:
+      radial-gradient(70% 45% at 50% -8%, color-mix(in srgb, var(--desk) 9%, transparent), transparent 70%),
+      radial-gradient(130% 95% at 50% 30%, transparent 55%, var(--vignette) 100%); }
+  .backdrop::before { content: ""; position: absolute; inset: 0;
+    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 24px 24px; background-position: -1px -1px;
+    -webkit-mask-image: radial-gradient(120% 85% at 50% 0%, #000 35%, transparent 100%);
+    mask-image: radial-gradient(120% 85% at 50% 0%, #000 35%, transparent 100%); }
   .grain {
     position: fixed; inset: -50%; z-index: 0; pointer-events: none; opacity: var(--grain);
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
@@ -149,6 +241,34 @@
   }
   .no-scrollbar { scrollbar-width: none; }
   .no-scrollbar::-webkit-scrollbar { display: none; }
+  /* a thin scrollbar for scroll areas inside panels (tables) */
+  .thin-scroll { scrollbar-width: thin; scrollbar-color: var(--line-2) transparent; }
+  .thin-scroll::-webkit-scrollbar { height: 6px; width: 6px; }
+  .thin-scroll::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 6px; }
+
+  /* The ticker tape under the header (components/shell.jsx): a marquee that pauses on hover or focus. Under reduced
+     motion the component renders one static row that scrolls sideways instead. */
+  .tape-track { animation: tape var(--tape-s, 60s) linear infinite; }
+  .tape:hover .tape-track, .tape:focus-within .tape-track { animation-play-state: paused; }
+  .rail-fade { -webkit-mask-image: linear-gradient(90deg, transparent, #000 10px, #000 calc(100% - 10px), transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 10px, #000 calc(100% - 10px), transparent); }
+  .tape-fade { -webkit-mask-image: linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 24px), transparent); }
+
+  /* Skeleton loaders (components/ui.jsx Skeleton): a quiet shimmer; flat under reduced motion. */
+  .skeleton { border-radius: 6px; background: linear-gradient(90deg, var(--surface-2) 30%, var(--surface-3) 50%, var(--surface-2) 70%);
+    background-size: 300% 100%; animation: shimmer 1.6s linear infinite; }
+
+  /* The rubber stamp (components/ui.jsx Stamp): a double border, slightly rotated, ink worn by a noise mask. */
+  .stamp { display: inline-flex; align-items: center; gap: 0.35em; padding: 0.18em 0.5em 0.12em; border: 2.5px solid currentColor;
+    border-radius: 6px; outline: 1px solid currentColor; outline-offset: 2px; font-family: var(--font-display); font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.14em; line-height: 1; white-space: nowrap; transform: rotate(var(--stamp-r, -8deg));
+    -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='60'><filter id='s'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='4'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.4 2.05'/></filter><rect width='100%' height='100%' filter='url(%23s)'/></svg>");
+    mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='60'><filter id='s'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='4'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.4 2.05'/></filter><rect width='100%' height='100%' filter='url(%23s)'/></svg>"); }
+
+  /* The orange connector lines between panels (components/ui.jsx Connector): marching dashes over a solid glow line. */
+  .connector-line { stroke: var(--desk); stroke-width: 1.5; fill: none; vector-effect: non-scaling-stroke; filter: drop-shadow(0 0 3px var(--desk-glow)); }
+  .connector-flow { stroke: var(--desk-2); stroke-width: 1.5; fill: none; vector-effect: non-scaling-stroke; stroke-dasharray: 2 18; animation: flow 1.2s linear infinite; }
 
   /* The replay's slider (components/replay.jsx): a 44px touch target, the played part filled up to --p. */
   .scrub { -webkit-appearance: none; appearance: none; display: block; width: 100%; height: 44px; margin: 0; background: transparent; cursor: pointer; }
@@ -157,15 +277,11 @@
   .scrub::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; margin-top: -9px; border-radius: 50%; background: var(--ink); border: 3px solid var(--surface); box-shadow: 0 0 0 1px var(--line-2); }
   .scrub::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--ink); border: 3px solid var(--surface); box-shadow: 0 0 0 1px var(--line-2); }
   .scrub:focus-visible { outline: none; }
-  .scrub:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px var(--accent); }
-  .scrub:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px var(--accent); }
+  .scrub:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px var(--ring); }
+  .scrub:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px var(--ring); }
 
-  /* The Desk: thin bordered panels, bold uppercase agent titles, small mono labels and tabular numbers. */
-  .desk-panel { @apply relative rounded-xl border border-line-2 bg-surface; }
-  .desk-title { @apply text-[13px] leading-tight font-extrabold uppercase tracking-[0.16em] text-desk; }
-  .desk-label { @apply font-mono text-[10.5px] font-semibold uppercase tracking-[0.14em] text-ink-3; }
-  .desk-chip { @apply inline-flex items-center gap-1.5 rounded-md border px-2 py-1 font-mono text-[11px] leading-none font-bold uppercase tracking-[0.08em] whitespace-nowrap; }
-  .desk-num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  /* Older Desk names (.desk-panel, .desk-title, .desk-label, .desk-chip) are aliases of the kit's classes above. */
+  .desk-num { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
 
   /* markdown */
   .md { @apply max-w-[72ch] text-ink-2; }
@@ -183,6 +299,8 @@
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; transition-delay: 0ms !important; }
   .grain { display: none; }
+  .tape-track, .skeleton, .connector-flow { animation: none !important; }
+  .connector-flow { display: none; }
 }
 
 /* tab switch (View Transitions API; falls back to an instant swap) */

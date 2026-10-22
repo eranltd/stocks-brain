@@ -125,6 +125,26 @@ export default {
   "ui.conviction.low": "low",
   "ui.conviction.medium": "medium",
   "ui.conviction.high": "high",
+  // the kit (components/ui.jsx): info toggle, simulated badge, call buttons, stamps, tables, loaders
+  "ui.agent": "Agent {n}",
+  "ui.info": "What this shows",
+  "ui.sim": "Paper trading · simulated",
+  "ui.simShort": "Paper",
+  "ui.call.buy": "BUY (paper)",
+  "ui.call.enter": "Enter",
+  "ui.call.wait": "Wait",
+  "ui.call.reject": "Reject",
+  "ui.call.skip": "Skip",
+  "ui.stamp.rejected": "Rejected",
+  "ui.stamp.approved": "Approved",
+  "ui.stamp.wait": "On hold",
+  "ui.sortBy": "Sort by {col}",
+  "ui.loading": "Loading",
+
+  // the ticker tape under the header (components/shell.jsx): percent moves only, never a price
+  "tape.label": "Day",
+  "tape.aria": "The main list's moves on {date}",
+  "tape.item": "{name}: {move} on the day. Open its page",
   // the two-minute read, the rabbit holes and "Keep exploring" (components/explore.jsx, lib/explore.js)
   "explore.minutes": "{n} min",
   "explore.quickTitle": "The two-minute read",

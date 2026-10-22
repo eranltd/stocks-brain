@@ -46,7 +46,8 @@ export default function Today(props) {
   const pickView = (v) => { setView(v); window.scrollTo({ top: 0 }); };
   return (
     <>
-      <div className="mx-auto flex w-full max-w-[560px] justify-center px-4 pt-4 sm:pt-6">
+      {/* The Desk is a wide, left-aligned page; Details is a centred column: the switch lines up with each. */}
+      <div className={`mx-auto flex w-full px-4 pt-4 sm:pt-6 ${view === "desk" ? "max-w-[1280px] justify-start sm:px-8 lg:px-12" : "max-w-[560px] justify-center"}`}>
         <Segmented tall label={t("today.howMuch")} value={view} onChange={pickView}
           options={[{ value: "desk", label: t("today.desk") }, { value: "details", label: t("today.details") }]} />
       </div>
@@ -211,7 +212,7 @@ function TodayCard({ data, call, run, todayIso, go }) {
   const lastRun = data.latest?.date ?? null;
   return (
     <PinnedCard kicker={t("today.today")} tone={tone}>
-      <h2 className="display text-[clamp(28px,7.4vw,36px)] leading-[1.05] tracking-[-0.03em]">{rich(t, "today.hiDate", { date: <span className="text-accent">{noYear(todayIso)}.</span> })}</h2>
+      <h2 className="display text-[clamp(28px,7.4vw,36px)] leading-[1.05]">{rich(t, "today.hiDate", { date: <span className="text-accent">{noYear(todayIso)}.</span> })}</h2>
       <div className="mt-4">
         <Fact label={t("today.lastClose")} value={noYear(asOf)} note={stale ? t("today.closeOld", { count: call.age }) : relDays(asOf)} />
         <Fact label={t("today.lastRun")} value={lastRun ? noYear(lastRun) : t("today.notYet")} note={lastRun ? relDays(lastRun) : null} />

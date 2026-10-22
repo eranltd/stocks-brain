@@ -140,7 +140,7 @@ export function VerdictPage({ data, go }) {
         <div className="h-1.5" style={{ background: "var(--ai)" }} />
         <div className="p-6 sm:p-8">
           <p className="meta" style={{ color: "var(--ai)" }}>{v.when ? t("vp.newestWhen", { date: longDate(v.date), when: v.when }) : t("vp.newest", { date: longDate(v.date) })}</p>
-          <h2 className="display mt-3 text-[clamp(30px,8vw,46px)] leading-[1.05] tracking-[-0.03em] text-ink">{v.headline}</h2>
+          <h2 className="display mt-3 text-[clamp(30px,8vw,46px)] leading-[1.05] text-ink">{v.headline}</h2>
           <p className="mt-5 text-[19px] leading-relaxed text-ink">{v.eli5}</p>
           {steady > 1 && <p className="mt-4 text-[15.5px] text-ink-3">{t("vp.steady", { count: steady, n: steadyN })}</p>}
         </div>

@@ -34,7 +34,7 @@ export default function Learnings({ data, openKB }) {
         {items.map((l, i) => (
           <Reveal key={l.id} delay={i * 80} as="article" className={`card grid gap-6 p-7 sm:p-9 md:grid-cols-[180px_minmax(0,1fr)] ${l.status === "retired" ? "border-dashed opacity-70" : "card-hover"}`}>
             <div>
-              <div className="display text-[72px] leading-[0.85] tracking-[-0.06em]">{pad2(i + 1)}</div>
+              <div className="display text-[72px] leading-[0.85]">{pad2(i + 1)}</div>
               <div className="meta mt-3">{l.id} · {l.added}</div>
             </div>
             <div className="min-w-0">

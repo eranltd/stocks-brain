@@ -424,7 +424,7 @@ export function PickCard({ item, i, name, horizon }) {
     <Reveal delay={i * 90} as="article" className="card card-hover group overflow-hidden" style={{ "--tone": tone }}>
       <div className="stripes relative h-56 border-b-2 px-7 pt-6" style={{ borderColor: tone }}>
         <div className="flex items-start justify-between">
-          <span className="display text-[96px] leading-[0.8] font-medium tracking-[-0.06em] text-ink transition-transform duration-700 group-hover:-translate-y-1">{pad2(i + 1)}</span>
+          <span className="display text-[96px] leading-[0.8] font-medium text-ink transition-transform duration-700 group-hover:-translate-y-1">{pad2(i + 1)}</span>
           <Conviction level={pick.conviction} />
         </div>
         <div className="absolute bottom-6 start-7 end-7">

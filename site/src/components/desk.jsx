@@ -15,31 +15,36 @@ import {
 import { trustStage } from "./trust.jsx";
 import { CandleMark } from "./candles.jsx";
 import { NotAdvice } from "./shell.jsx";
+import {
+  CallButton, CallChip, Chip, Connector, CrossIcon, CheckIcon, DataTable, Delta, EmptyState, HeroTitle, InfoTip, MiniSpark, Panel, PipelineStrip,
+  SimBadge, Stamp, StatTile, StepMark,
+} from "./ui.jsx";
 import { todayCall } from "../tabs/Details.jsx";
 import dict from "../text/home.js";
 import { strings } from "../lib/text.js";
 import { rich } from "../lib/rich.jsx";
 
 /*
- * The Desk: Home's default view, a trading-platform look over the same published data. Six agents in a pipeline, each a
- * panel: the Boss's final call first, then Research, News, Strategy, Execution and Risk. Every call is made by plain code
- * in lib/desk.js (no AI decides anything here) and is pretend money: BUY is always "BUY (paper)", and the PAPER badge
- * stays on screen in the sticky pipeline strip. Percent changes only, never a price or raw volume.
+ * The Desk: Home's default view and the kit's showcase (components/ui.jsx). Six agents in a pipeline, each a panel over
+ * the same published data: the Boss's final call first (the one glowing hero panel), then Research, News, Strategy,
+ * Execution and Risk, joined by orange connectors on iPad and desktop. Every call is made by plain code in lib/desk.js
+ * (no AI decides anything here) and is pretend money: BUY is always "BUY (paper)", and the PAPER badge stays on screen
+ * in the sticky pipeline strip. Percent changes only, never a price or raw volume.
  */
 
 const NUM_AGENT = Object.fromEntries(AGENTS.map((a, i) => [a, i + 1]));
-const TONE_TEXT = { accent: "text-accent", down: "text-down", flat: "text-ink-2" };
-const CALL_TONE = {
-  buy: "border-accent/60 bg-accent/12 text-accent",
-  wait: "border-wait/60 bg-wait/12 text-wait",
-  reject: "border-down/60 bg-down/12 text-down",
+const TONE_TEXT = { accent: "text-up", down: "text-down", flat: "text-ink-2" };
+/** A report's freshness as a step state: in (done), waiting (wait), missing (fail). */
+const STEP = { fresh: "done", stale: "wait", missing: "fail" };
+const CALL_TILE = {
+  buy: "border-up/50 bg-up/10 text-up",
+  wait: "border-wait/50 bg-wait/10 text-wait",
+  reject: "border-down/50 bg-down/10 text-down",
 };
-const CALL_SOLID = { buy: "bg-accent text-bg border-accent", wait: "bg-wait text-bg border-wait", reject: "bg-down text-bg border-down" };
-const EXEC_SOLID = { enter: CALL_SOLID.buy, wait: CALL_SOLID.wait, skip: CALL_SOLID.reject };
-const STATE_TONE = { fresh: "text-accent", stale: "text-wait", missing: "text-down" };
-const STATE_MARK = { fresh: "✓", stale: "◷", missing: "✕" };
+const CALL_BAR = { buy: "bg-up", wait: "bg-wait", reject: "bg-down" };
 const BOSS_ROWS_PHONE = 8;
 const TICKETS = 4;
+const BAR_N = 12;
 
 /** "Wed, 21 Oct": a market day without its year. */
 const noYear = (iso) => (iso ? fmtDate(iso).replace(/\s\d{4}$/, "") : "–");
@@ -155,136 +160,101 @@ export function Desk({ data, go, openTo }) {
     document.getElementById(`desk-${a}-h`)?.focus({ preventScroll: true });
   };
 
+  const total = REPORTERS.length;
+  const steps = AGENTS.map((a) => ({
+    id: a, label: t(`desk.a.${a}`),
+    state: a === "boss" ? (m.fresh.received === total ? "done" : "wait") : STEP[m.fresh[a].state],
+    stateLabel: t(`desk.state.${a === "boss" ? (m.fresh.received === total ? "fresh" : "stale") : m.fresh[a].state}`),
+  }));
+
   return (
-    <div className="pb-24">
-      <h1 className="sr-only">{t("desk.title")}</h1>
-      <StatusBar data={data} m={m} openTo={open} />
-      <PipelineStrip ref={strip} top={headerH} active={active} fresh={m.fresh} onJump={jump} reduced={reduced} />
-      <div className="mx-auto w-full max-w-[1280px] px-4 pt-4 sm:px-8 lg:px-12">
-        <div className="grid gap-3 md:grid-cols-2 md:gap-4">
+    <div className="pb-6">
+      <DeskTop data={data} m={m} openTo={open} />
+      <PipelineStrip ref={strip} sticky top={headerH} className="mt-6" label={t("desk.pipeline")} steps={steps} active={active} onStep={jump}
+        lead={<SimBadge short />}
+        trail={<span className="hidden font-num text-[12px] font-bold text-ink-2 sm:inline"><span className={m.fresh.received === total ? "text-desk" : "text-wait"}>{m.fresh.received}/{total}</span></span>} />
+      <div className="mx-auto w-full max-w-[1280px] px-4 pt-5 sm:px-8 sm:pt-8 lg:px-12">
+        <div className="grid gap-4 md:grid-cols-2 md:gap-x-8 md:gap-y-10">
           <BossPanel m={m} go={go} />
-          <ResearchPanel m={m} go={go} />
-          <NewsPanel m={m} openTo={open} />
-          <StrategyPanel m={m} openTo={open} />
-          <ExecutionPanel m={m} data={data} go={go} />
-          <RiskPanel m={m} go={go} />
+          <ResearchPanel m={m} go={go} active={active === "research"} />
+          <NewsPanel m={m} openTo={open} active={active === "news"} />
+          <StrategyPanel m={m} openTo={open} active={active === "strategy"} />
+          <ExecutionPanel m={m} data={data} go={go} active={active === "execution"} />
+          <RiskPanel m={m} go={go} active={active === "risk"} />
         </div>
-        <NotAdvice compact className="mx-auto mt-10 text-center" />
+        <PipelineStrip variant="footer" className="mt-10" title={t("desk.simSystem")} label={t("desk.simSystem")}
+          steps={steps.map((s) => ({ ...s }))}
+          trail={<span className="font-num text-[11.5px] font-bold tracking-[0.08em] text-ink-2 uppercase"><span className="text-desk">{m.fresh.received}/{total}</span> {t("desk.received")}</span>} />
+        <NotAdvice compact className="mx-auto mt-8 text-center" />
       </div>
     </div>
   );
 }
 
-/* ------------------------------------------------------------- top bar */
+/* ------------------------------------------------------------------ top */
 
-function StatusBar({ data, m, openTo }) {
+function DeskTop({ data, m, openTo }) {
   const t = strings(dict);
   const call = todayCall(data);
   const sample = data.sample || Boolean(data.market?.sample);
   const state = call.stale ? "old" : sample ? "sample" : "live";
-  const tone = { old: "border-down/60 text-down", sample: "border-wait/60 text-wait", live: "border-accent/50 text-accent" }[state];
+  const tone = { old: "down", sample: "wait", live: "up" }[state];
+  const today = m.buyDay === m.todayIso;
   return (
-    <div className="mx-auto w-full max-w-[1280px] px-4 pt-3 sm:px-8 lg:px-12">
-      <div className="flex flex-wrap items-center gap-1.5">
-        <span className="desk-chip border-line-2 text-ink-3">{rich(t, "desk.market", { date: <span className="text-ink">{noYear(m.fresh.marketDate)}</span> })}</span>
-        <span className={`desk-chip ${tone}`}>
-          <span className="relative inline-flex size-1.5" aria-hidden="true">
-            {state === "live" && <span className="absolute inset-0 animate-ping rounded-full bg-current opacity-60 motion-reduce:hidden" />}
-            <span className="relative inline-block size-1.5 rounded-full bg-current" />
-          </span>
-          {state === "old" ? t("desk.old", { count: call.age }) : t(state === "sample" ? "desk.sample" : "desk.live")}
-        </span>
-        <span className="desk-chip border-desk/70 bg-desk/10 text-desk">{t("desk.paper")}</span>
+    <div className="mx-auto w-full max-w-[1280px] px-4 pt-6 sm:px-8 sm:pt-10 lg:px-12">
+      <div className="grid gap-6">
+        <HeroTitle line1={t("desk.hero1")} line2={t("desk.hero2")} sub={t("desk.heroSub")} />
+        <div className="grid gap-2.5 md:flex md:flex-wrap md:items-center md:justify-between md:gap-3">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <Chip tone={tone}>
+              <span className="relative inline-flex size-1.5" aria-hidden="true">
+                {state === "live" && <span className="absolute inset-0 animate-ping rounded-full bg-current opacity-60 motion-reduce:hidden" />}
+                <span className="relative inline-block size-1.5 rounded-full bg-current" />
+              </span>
+              {state === "old" ? t("desk.old", { count: call.age }) : t(state === "sample" ? "desk.sample" : "desk.live")}
+            </Chip>
+            <Chip tone="neutral"><span className="text-ink-3">{rich(t, "desk.market", { date: <span className="text-ink">{noYear(m.fresh.marketDate)}</span> })}</span></Chip>
+            <SimBadge />
+            <InfoTip label={t("desk.paperWhat")} align="start">{t("desk.paperInfo")}</InfoTip>
+          </div>
+          <button type="button" onClick={() => openTo("verdicts#this-week")}
+            className="group flex min-h-[48px] w-full items-center gap-3 rounded-tile border border-line-2 bg-surface-2/80 px-3.5 text-start transition-colors hover:border-line-3 md:w-auto md:min-w-[400px]">
+            <svg viewBox="0 0 24 24" className="size-[18px] shrink-0 text-ink-2" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <rect x="3.5" y="5" width="17" height="15" rx="2.5" /><path d="M3.5 10h17M8 3v4M16 3v4" />
+            </svg>
+            <span className="min-w-0 flex-1 text-[13px] leading-snug text-ink-2">{t("desk.weekly")}</span>
+            <span className="font-num shrink-0 text-[12px] font-bold text-ink uppercase">{today ? t("desk.weeklyToday") : t("desk.weeklyNext", { day: noYear(m.buyDay) })}</span>
+            <span aria-hidden="true" className="text-ink-3 transition-transform group-hover:translate-x-0.5">→</span>
+          </button>
+        </div>
       </div>
-      <button type="button" onClick={() => openTo("verdicts#this-week")}
-        className="mt-2 flex min-h-[44px] w-full items-center gap-2 rounded-lg border border-line-2 bg-surface px-3 text-start text-[13.5px] leading-snug text-ink transition-colors hover:border-ink-3">
-        <span className="size-2 shrink-0 rounded-full bg-ink-2" aria-hidden="true" />
-        <span className="min-w-0 flex-1">{m.buyDay === m.todayIso ? t("desk.realToday") : t("desk.real", { day: noYear(m.buyDay) })}</span>
-        <span aria-hidden="true" className="text-ink-3">→</span>
-      </button>
     </div>
   );
 }
 
-/* ------------------------------------------------------- pipeline strip */
-
-function StateMark({ state, className = "" }) {
-  const t = strings(dict);
-  return <span className={`font-mono font-bold ${STATE_TONE[state]} ${className}`} role="img" aria-label={t(`desk.state.${state}`)}>{STATE_MARK[state]}</span>;
-}
-
-const PipelineStrip = ({ ref, top, active, fresh, onJump, reduced }) => {
-  const t = strings(dict);
-  const rail = useRef(null);
-  // Keep the lit step in view on a narrow screen (the strip scrolls sideways inside itself, never the page).
-  useEffect(() => {
-    const el = rail.current?.querySelector(`[data-agent="${active}"]`);
-    const box = rail.current;
-    if (!el || !box) return;
-    const l = el.offsetLeft - box.offsetLeft, r = l + el.offsetWidth;
-    if (l < box.scrollLeft || r > box.scrollLeft + box.clientWidth) box.scrollTo({ left: Math.max(0, l - 24), behavior: reduced ? "auto" : "smooth" });
-  }, [active, reduced]);
-  const bossState = fresh.received === REPORTERS.length ? "fresh" : "stale";
-  return (
-    <nav ref={ref} aria-label={t("desk.pipeline")} style={{ top }}
-      className="sticky z-30 mt-3 border-y border-line-2 bg-bg/92 backdrop-blur-xl">
-      <div className="mx-auto flex w-full max-w-[1280px] items-stretch gap-2 px-4 sm:px-8 lg:px-12">
-        <span className="desk-chip my-2 shrink-0 self-center border-desk/70 bg-desk/10 text-desk" title={t("desk.paper")}>{t("desk.paperShort")}</span>
-        <ol ref={rail} className="no-scrollbar flex min-w-0 flex-1 items-stretch overflow-x-auto">
-          {AGENTS.map((a, i) => {
-            const on = a === active;
-            const state = a === "boss" ? bossState : fresh[a].state;
-            return (
-              <li key={a} className="flex shrink-0 items-center">
-                <button type="button" data-agent={a} onClick={() => onJump(a)} aria-current={on ? "step" : undefined}
-                  className={`flex min-h-[44px] items-center gap-1.5 border-b-2 px-2 text-[11.5px] font-extrabold uppercase tracking-[0.12em] transition-colors ${on ? "border-desk text-desk" : "border-transparent text-ink-2 hover:text-ink"}`}>
-                  <StateMark state={state} className="text-[11px]" />
-                  {t(`desk.a.${a}`)}
-                </button>
-                {i < AGENTS.length - 1 && <span aria-hidden="true" className="px-0.5 text-[11px] text-ink-3">→</span>}
-              </li>
-            );
-          })}
-        </ol>
-      </div>
-    </nav>
-  );
-};
-
 /* ---------------------------------------------------------------- panel */
 
-function Panel({ agent, state = null, date = null, wide = false, infoVars, children }) {
+/** An agent's panel: the kit's Panel with "AGENT n · NAME", its one-line job, a freshness chip and the (i) text. */
+function AgentPanel({ agent, state = null, date = null, wide = false, active = false, infoVars, connectors = null, className = "", children, ...rest }) {
   const t = strings(dict);
-  const [info, setInfo] = useState(false);
-  const h = `desk-${agent}-h`, tip = `desk-${agent}-info`;
   return (
-    <section id={`desk-${agent}`} aria-labelledby={h} className={`desk-panel min-w-0 ${wide ? "md:col-span-2" : ""} ${agent === "boss" ? "border-desk/60" : ""}`}>
-      <div className="flex items-start gap-2 border-b border-line px-3 py-2.5 sm:px-4">
-        <div className="min-w-0 flex-1 pt-1">
-          <h2 id={h} tabIndex={-1} className="desk-title outline-none">{t("desk.agent", { n: NUM_AGENT[agent] })} · {t(`desk.a.${agent}`)}</h2>
-          <p className="mt-0.5 text-[12.5px] leading-snug text-ink-3">{t(`desk.tag.${agent}`)}</p>
-        </div>
-        {state && (
-          <span className={`desk-chip mt-0.5 shrink-0 border-line-2 ${STATE_TONE[state]}`} title={t(`desk.state.${state}`)}>
-            <span aria-hidden="true">{STATE_MARK[state]}</span>
-            <span className="sr-only">{t(`desk.state.${state}`)}</span>
-            <span className="text-ink-2">{dayMonth(date)}</span>
-          </span>
-        )}
-        <button type="button" aria-expanded={info} aria-controls={tip} aria-label={t("desk.info")} onClick={() => setInfo((v) => !v)}
-          className="-my-1.5 -me-2 grid size-11 shrink-0 place-items-center rounded-full text-ink-3 hover:text-ink">
-          <span className={`grid size-6 place-items-center rounded-full border font-serif text-[13px] italic leading-none ${info ? "border-desk text-desk" : "border-line-2"}`} aria-hidden="true">i</span>
-        </button>
-      </div>
-      {info && <p id={tip} className="border-b border-line px-3 py-2 text-[13px] leading-snug text-ink-2 sm:px-4">{t(`desk.info.${agent}`, infoVars)}</p>}
-      <div className="p-3 sm:p-4">{children}</div>
-    </section>
+    <Panel id={`desk-${agent}`} agent={NUM_AGENT[agent]} title={t(`desk.a.${agent}`)} sub={t(`desk.tag.${agent}`)} active={active}
+      className={`${wide ? "md:col-span-2" : ""} ${className}`} info={t(`desk.info.${agent}`, infoVars)} infoLabel={t("desk.info")}
+      badge={state && <FreshChip state={state} date={date} />} {...rest}>
+      {connectors}
+      {children}
+    </Panel>
   );
 }
 
-function CallChip({ call, className = "" }) {
+function FreshChip({ state, date }) {
   const t = strings(dict);
-  return <span className={`desk-chip ${CALL_TONE[call]} ${className}`}>{t(`desk.call.${call}`)}</span>;
+  return (
+    <Chip tone="neutral" title={t(`desk.state.${state}`)}>
+      <StepMark state={STEP[state]} label={t(`desk.state.${state}`)} />
+      <span className="text-ink-2">{dayMonth(date)}</span>
+    </Chip>
+  );
 }
 
 /** "R:R 0.2 < 2": a reason in short. */
@@ -307,57 +277,74 @@ const reasonText = (t, r) => `${t(`desk.by.${r.by}`)}: ${whyText(t, r.reason)}`;
 function BossPanel({ m, go }) {
   const t = strings(dict);
   const [all, setAll] = useState(false);
+  const [only, setOnly] = useState(null);
   const total = REPORTERS.length;
   const { received } = m.fresh;
+  const full = received === total;
+  const rows = only ? m.calls.filter((r) => r.call === only) : m.calls;
   return (
-    <Panel agent="boss" wide state={received === total ? "fresh" : "stale"} date={m.fresh.marketDate}>
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
-        <p className="flex items-baseline gap-2">
-          <span className={`desk-num text-[34px] leading-none font-bold ${received === total ? "text-desk" : "text-wait"}`}>{received}/{total}</span>
-          <span className="desk-label text-ink-2">{t("desk.received")}</span>
+    <Panel id="desk-boss" hero className="md:col-span-2" info={t("desk.info.boss")} infoLabel={t("desk.info")}
+      badge={<FreshChip state={full ? "fresh" : "stale"} date={m.fresh.marketDate} />}
+      head={<HeroTitle as="h2" id="desk-boss-h" size="sm" line1={`${t("desk.agent", { n: NUM_AGENT.boss })} · ${t("desk.a.boss")}`} line2={t("desk.boss.line2")} sub={t("desk.boss.sub")} />}>
+      <div className="grid gap-4 md:grid-cols-[auto_minmax(0,1fr)] md:items-center md:gap-8">
+        <p className="flex items-end gap-3">
+          <span className={`font-num text-[64px] leading-[0.8] font-bold tracking-[-0.05em] sm:text-[80px] ${full ? "text-desk text-glow" : "text-wait"}`}>
+            {received}<span className="text-ink-3">/</span>{total}
+          </span>
+          <span className="spaced pb-1 leading-tight text-ink-2">{t("desk.received")}</span>
         </p>
         <ul className="flex flex-wrap gap-1.5" aria-label={t("desk.reportsShort", { n: received, total })}>
           {REPORTERS.map((a) => (
-            <li key={a} className={`desk-chip border-line-2 ${m.fresh[a].state === "fresh" ? "text-ink" : "text-ink-2"}`}>
-              <StateMark state={m.fresh[a].state} />
-              {t(`desk.a.${a}`)}
-              {m.fresh[a].state !== "fresh" && <span className="font-medium normal-case tracking-normal text-ink-3">{a === "strategy" && m.run?.date && m.run.date < (m.fresh.marketDate ?? "") ? t("desk.brainFrom", { date: dayMonth(m.run.date) }) : dayMonth(m.fresh[a].date)}</span>}
+            <li key={a}>
+              <Chip tone="neutral" className={m.fresh[a].state === "fresh" ? "text-ink" : ""}>
+                <StepMark state={STEP[m.fresh[a].state]} label={t(`desk.state.${m.fresh[a].state}`)} />
+                {t(`desk.a.${a}`)}
+                {m.fresh[a].state !== "fresh" && <span className="font-medium tracking-normal text-ink-3 normal-case">{a === "strategy" && m.run?.date && m.run.date < (m.fresh.marketDate ?? "") ? t("desk.brainFrom", { date: dayMonth(m.run.date) }) : dayMonth(m.fresh[a].date)}</span>}
+              </Chip>
             </li>
           ))}
         </ul>
       </div>
 
-      <div className="mt-3 grid grid-cols-3 gap-2">
-        {["buy", "wait", "reject"].map((c) => (
-          <div key={c} className={`rounded-lg border px-2 py-2.5 text-center ${m.counts[c] ? CALL_TONE[c] : "border-line-2 text-ink-3"}`}>
-            <div className="desk-num text-[26px] leading-none font-bold">{m.counts[c]}</div>
-            <div className="mt-1.5 font-mono text-[10.5px] font-bold uppercase tracking-[0.1em]">{t(`desk.call.${c}`)}</div>
-          </div>
-        ))}
+      <div className="mt-5 grid grid-cols-3 gap-2 sm:gap-3" role="group" aria-label={t("desk.a.boss")}>
+        {["buy", "wait", "reject"].map((c) => {
+          const n = m.counts[c];
+          const on = only === c;
+          return (
+            <button key={c} type="button" disabled={!n} aria-pressed={on} onClick={() => { setOnly(on ? null : c); setAll(false); }}
+              aria-label={t("desk.filter", { call: t(`desk.call.${c}`) })}
+              className={`relative min-w-0 overflow-hidden rounded-tile border px-2 pt-3 pb-2.5 text-center transition-[border-color,box-shadow,background-color] sm:px-3 sm:pt-4 ${n ? CALL_TILE[c] : "border-line bg-surface-2/60 text-ink-3"} ${on ? `glow-${c === "buy" ? "up" : c === "reject" ? "down" : "wait"}` : ""}`}>
+              {n > 0 && <span aria-hidden="true" className={`absolute inset-x-0 top-0 h-[3px] ${CALL_BAR[c]}`} />}
+              <span className="font-num block text-[34px] leading-none font-bold tracking-[-0.04em] sm:text-[44px]">{n}</span>
+              <span className="headline mt-2 block truncate text-[14px] tracking-[0.08em] sm:text-[17px]">{t(`desk.call.${c}`)}</span>
+            </button>
+          );
+        })}
       </div>
 
-      <ul className="mt-3 grid gap-1.5 md:grid-cols-2">
-        {m.calls.map((r, i) => (
+      <ul className="mt-4 grid gap-1.5 md:grid-cols-2 md:gap-2">
+        {rows.map((r, i) => (
           <li key={r.ticker} className={!all && i >= BOSS_ROWS_PHONE ? "hidden md:block" : ""}>
             <button type="button" onClick={() => go(`stock/${r.ticker}`)}
-              className="flex min-h-[52px] w-full items-center gap-2.5 rounded-lg border border-line px-3 py-1.5 text-start transition-colors hover:border-ink-3">
+              className="group flex min-h-[56px] w-full items-center gap-3 rounded-tile border border-line bg-surface-2/50 px-3 py-2 text-start transition-colors hover:border-line-3 hover:bg-surface-2">
+              <span aria-hidden="true" className={`h-8 w-[3px] shrink-0 rounded-full ${CALL_BAR[r.call]}`} />
               <span className="min-w-0 flex-1">
                 <span className="flex items-baseline gap-2">
-                  <span className="font-mono text-[14.5px] font-bold text-ink">{r.ticker}</span>
+                  <span className="font-num text-[14.5px] font-bold text-ink">{r.ticker}</span>
                   <span className="truncate text-[12.5px] text-ink-3">{r.name}</span>
                 </span>
-                <span className="mt-0.5 block truncate font-mono text-[11.5px] text-ink-2">{reasonText(t, r)}</span>
+                <span className="mt-0.5 block truncate font-num text-[11.5px] text-ink-2">{reasonText(t, r)}</span>
               </span>
               <AgentMarks r={r} />
-              <CallChip call={r.call} className="min-w-[94px] justify-center py-1.5" />
+              <CallChip call={r.call} label={t(`desk.call.${r.call}`)} className="min-w-[96px]" />
             </button>
           </li>
         ))}
       </ul>
-      {m.calls.length > BOSS_ROWS_PHONE && (
+      {rows.length > BOSS_ROWS_PHONE && (
         <button type="button" onClick={() => setAll((v) => !v)} aria-expanded={all}
-          className="mt-2 min-h-[44px] w-full rounded-lg border border-line-2 font-mono text-[12px] font-semibold uppercase tracking-[0.1em] text-ink-2 hover:text-ink md:hidden">
-          {all ? t("desk.showFewer") : t("desk.showAll", { n: m.calls.length })}
+          className="mt-2 min-h-[44px] w-full rounded-tile border border-line-2 font-display text-[14px] font-bold tracking-[0.12em] text-ink-2 uppercase hover:text-ink md:hidden">
+          {all ? t("desk.showFewer") : t("desk.showAll", { n: rows.length })}
         </button>
       )}
     </Panel>
@@ -367,126 +354,89 @@ function BossPanel({ m, go }) {
 /** Three tiny marks: the brain's lean (Strategy), Execution's confirmations, Risk's pass or fail. */
 function AgentMarks({ r }) {
   const t = strings(dict);
-  const lean = { up: ["▲", "text-accent"], down: ["▼", "text-down"], flat: ["◆", "text-ink-2"] }[r.lean] ?? ["–", "text-ink-3"];
-  const ex = { enter: "text-accent", wait: "text-wait", skip: "text-down" }[r.exec.call];
+  const lean = { up: "text-up", down: "text-down", flat: "text-ink-2" }[r.lean] ?? "text-ink-3";
+  const ex = { enter: "text-up", wait: "text-wait", skip: "text-down" }[r.exec.call];
   return (
-    <span className="hidden shrink-0 items-center gap-2 font-mono text-[11px] font-bold min-[400px]:flex" aria-hidden="true">
-      <span title={t("desk.a.strategy")}><span className="text-ink-3">S</span><span className={lean[1]}>{lean[0]}</span></span>
-      <span title={t("desk.a.execution")}><span className="text-ink-3">E</span><span className={ex}>{r.exec.n}</span></span>
-      <span title={t("desk.a.risk")}><span className="text-ink-3">R</span><span className={r.risk.pass ? "text-accent" : "text-down"}>{r.risk.pass ? "✓" : "✕"}</span></span>
+    <span className="hidden shrink-0 items-center gap-2.5 font-num text-[11px] font-bold min-[400px]:flex" aria-hidden="true">
+      <span title={t("desk.a.strategy")} className="flex items-center gap-0.5"><span className="text-ink-3">S</span>
+        <span className={lean}>{r.lean === "up" ? "▲" : r.lean === "down" ? "▼" : r.lean === "flat" ? "◆" : "–"}</span></span>
+      <span title={t("desk.a.execution")} className="flex items-center gap-0.5"><span className="text-ink-3">E</span><span className={ex}>{r.exec.n}</span></span>
+      <span title={t("desk.a.risk")} className="flex items-center gap-0.5"><span className="text-ink-3">R</span>
+        <span className={r.risk.pass ? "text-up" : "text-down"}>{r.risk.pass ? <CheckIcon className="size-2.5" /> : <CrossIcon className="size-2.5" />}</span></span>
     </span>
   );
 }
 
 /* ------------------------------------------------------------- research */
 
-const COLS = [
-  { key: "ticker", label: "desk.col.name", align: "start" },
-  { key: null, label: "desk.col.spark" },
-  { key: "day", label: "desk.col.day" },
-  { key: "d20", label: "desk.col.d20" },
-  { key: "volX", label: "desk.col.volx" },
-  { key: "vol", label: "desk.col.vol" },
-  { key: "mom", label: "desk.col.mom" },
-  { key: "score", label: "desk.col.score" },
-];
-
-function ResearchPanel({ m, go }) {
+function ResearchPanel({ m, go, active }) {
   const t = strings(dict);
   const [sort, setSort] = useState({ key: "score", dir: "desc" });
   const rows = useMemo(() => sortScanner(m.scan, sort.key, sort.dir), [m.scan, sort]);
   const by = (key) => setSort((s) => ({ key, dir: s.key === key ? (s.dir === "desc" ? "asc" : "desc") : key === "ticker" ? "asc" : "desc" }));
-  const tiles = [
-    ["volume", m.tiles.volume, (v) => `${v.toFixed(2)}×`, t("desk.tile.volumeNote")],
-    ["volatility", m.tiles.volatility, (v) => `${v.toFixed(1)}%`, t("desk.tile.volatilityNote")],
-    ["momentum", m.tiles.momentum, (v) => pct(v), t("desk.tile.momentumNote", { bench: m.bench })],
+  const top = (k) => sortScanner(m.scan.filter((r) => typeof r[k] === "number"), k, "desc").slice(0, BAR_N).map((r) => r[k]);
+  const lead = (k) => m.tiles[k];
+  const momSpark = m.scan.find((r) => r.ticker === lead("momentum")?.ticker)?.spark;
+  const tile = (id, x, value, extra) => (
+    <StatTile key={id} label={t(`desk.tile.${id}`)} value={x ? value : "–"} sub={x?.ticker} note={extra.note} disabled={!x}
+      onClick={() => x && go(`stock/${x.ticker}`)} {...extra} />
+  );
+  const cols = [
+    { key: "ticker", label: t("desk.col.name"), sortable: true, firstDir: "asc", cell: (r) => (
+      <span className="flex items-center gap-2">
+        {r.unusual && <span className="grid size-4 shrink-0 place-items-center rounded-[4px] bg-desk font-num text-[10px] font-bold text-bg shadow-[0_0_10px_var(--desk-glow)]" title={t("desk.unusual")} aria-label={t("desk.unusual")}>!</span>}
+        <span className="min-w-0">
+          <span className="block font-num text-[13.5px] font-bold text-ink">{r.ticker}</span>
+          <span className="block max-w-[110px] truncate text-[11px] leading-tight text-ink-3">{r.name}</span>
+        </span>
+      </span>
+    ) },
+    { key: "spark", label: t("desk.col.spark"), cell: (r) => <MiniSpark values={r.spark} w={72} h={24} /> },
+    { key: "day", label: t("desk.col.day"), sortable: true, num: true, className: (r) => `${toneOf(r.day)} ${r.unusual ? "font-bold" : ""}`, cell: (r) => pct(r.day) },
+    { key: "d20", label: t("desk.col.d20"), sortable: true, num: true, className: (r) => toneOf(r.d20), cell: (r) => pct(r.d20) },
+    { key: "volX", label: t("desk.col.volx"), sortable: true, num: true, className: (r) => (r.volX != null && r.volX >= 1.5 ? "font-bold text-ink" : "text-ink-2"), cell: (r) => (r.volX != null ? `${r.volX.toFixed(2)}×` : "–") },
+    { key: "vol", label: t("desk.col.vol"), sortable: true, num: true, className: "text-ink-2", cell: (r) => (r.vol != null ? `${r.vol.toFixed(1)}%` : "–") },
+    { key: "mom", label: t("desk.col.mom"), sortable: true, num: true, className: (r) => toneOf(r.mom), cell: (r) => pct(r.mom) },
+    { key: "score", label: t("desk.col.score"), sortable: true, num: true, className: (r) => `font-bold ${r.score > 0 ? "text-up" : r.score < 0 ? "text-down" : "text-ink-2"}`, cell: (r) => signed(r.score) },
   ];
   return (
-    <Panel agent="research" wide state={m.fresh.research.state} date={m.fresh.research.date} infoVars={{ bench: m.bench }}>
-      <div className="grid grid-cols-3 gap-2">
-        {tiles.map(([id, x, f, note]) => (
-          <button key={id} type="button" disabled={!x} onClick={() => x && go(`stock/${x.ticker}`)}
-            className="min-w-0 rounded-lg border border-line-2 px-2.5 py-2 text-start transition-colors hover:border-ink-3 disabled:hover:border-line-2">
-            <span className="desk-label block text-desk">{t(`desk.tile.${id}`)}</span>
-            <span className="desk-num mt-1 block text-[20px] leading-tight font-bold text-ink">{x ? f(x.value) : "–"}</span>
-            <span className="mt-0.5 block truncate font-mono text-[12px] font-bold text-ink-2">{x?.ticker ?? ""}</span>
-            <span className="hidden truncate text-[11px] text-ink-3 sm:block">{note}</span>
-          </button>
-        ))}
+    <AgentPanel agent="research" wide active={active} state={m.fresh.research.state} date={m.fresh.research.date} infoVars={{ bench: m.bench }}
+      connectors={<Connector shape="v" className="bottom-full left-1/2 hidden h-10 w-3 -translate-x-1/2 md:block" />}>
+      <div className="grid grid-cols-3 gap-2 sm:gap-3">
+        {tile("volume", lead("volume"), lead("volume") && `${lead("volume").value.toFixed(2)}×`,
+          { delta: lead("volume") ? (lead("volume").value - 1) * 100 : null, deltaD: 0, bars: top("volX"), note: t("desk.tile.volumeNote") })}
+        {tile("volatility", lead("volatility"), lead("volatility") && `${lead("volatility").value.toFixed(1)}%`,
+          { bars: top("vol"), note: t("desk.tile.volatilityNote") })}
+        {tile("momentum", lead("momentum"), lead("momentum") && <span className={toneOf(lead("momentum").value)}>{pct(lead("momentum").value)}</span>,
+          { spark: momSpark, note: t("desk.tile.momentumNote", { bench: m.bench }) })}
       </div>
-      <div className="no-scrollbar -mx-3 mt-3 overflow-x-auto sm:-mx-4">
-        <table className="w-full min-w-[640px] border-collapse text-[13px]">
-          <thead>
-            <tr className="border-b border-line">
-              {COLS.map((c, i) => (
-                <th key={c.label} scope="col" aria-sort={c.key && sort.key === c.key ? (sort.dir === "desc" ? "descending" : "ascending") : undefined}
-                  className={`desk-label px-1.5 py-0 font-semibold ${i === 0 ? "sticky left-0 z-10 bg-surface ps-3 text-start sm:ps-4" : "text-end"} ${i === COLS.length - 1 ? "pe-3 sm:pe-4" : ""}`}>
-                  {c.key ? (
-                    <button type="button" onClick={() => by(c.key)} aria-label={t("desk.sortBy", { col: t(c.label) })}
-                      className={`inline-flex min-h-[44px] items-center gap-1 uppercase ${sort.key === c.key ? "text-desk" : "hover:text-ink"}`}>
-                      {t(c.label)}<span aria-hidden="true" className="w-2">{sort.key === c.key ? (sort.dir === "desc" ? "↓" : "↑") : ""}</span>
-                    </button>
-                  ) : t(c.label)}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((r) => (
-              <tr key={r.ticker} onClick={() => go(`stock/${r.ticker}`)}
-                className={`h-11 cursor-pointer border-b border-line last:border-0 hover:bg-surface-2 ${r.unusual ? "bg-desk/8" : ""}`}>
-                <th scope="row" className={`sticky left-0 z-10 py-1 ps-3 pe-2 text-start font-normal sm:ps-4 ${r.unusual ? "bg-[color-mix(in_srgb,var(--desk)_8%,var(--surface))]" : "bg-surface"}`}>
-                  <button type="button" onClick={(e) => { e.stopPropagation(); go(`stock/${r.ticker}`); }} className="flex min-h-[40px] items-center gap-1.5 text-start">
-                    {r.unusual && <span className="grid size-4 shrink-0 place-items-center rounded-sm bg-desk font-mono text-[10px] font-bold text-bg" title={t("desk.unusual")} aria-label={t("desk.unusual")}>!</span>}
-                    <span className="min-w-0">
-                      <span className="block font-mono text-[13.5px] font-bold text-ink">{r.ticker}</span>
-                      <span className="block max-w-[110px] truncate text-[11px] leading-tight text-ink-3">{r.name}</span>
-                    </span>
-                  </button>
-                </th>
-                <td className="px-1.5 text-end"><MiniSpark values={r.spark} /></td>
-                <td className={`desk-num px-1.5 text-end ${toneOf(r.day)} ${r.unusual ? "font-bold" : ""}`}>{pct(r.day)}</td>
-                <td className={`desk-num px-1.5 text-end ${toneOf(r.d20)}`}>{pct(r.d20)}</td>
-                <td className={`desk-num px-1.5 text-end ${r.volX != null && r.volX >= 1.5 ? "font-bold text-ink" : "text-ink-2"}`}>{r.volX != null ? `${r.volX.toFixed(2)}×` : "–"}</td>
-                <td className="desk-num px-1.5 text-end text-ink-2">{r.vol != null ? `${r.vol.toFixed(1)}%` : "–"}</td>
-                <td className={`desk-num px-1.5 text-end ${toneOf(r.mom)}`}>{pct(r.mom)}</td>
-                <td className={`desk-num px-1.5 pe-3 text-end font-bold sm:pe-4 ${r.score > 0 ? "text-accent" : r.score < 0 ? "text-down" : "text-ink-2"}`}>{signed(r.score)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="mt-4">
+        <DataTable columns={cols} rows={rows} rowKey={(r) => r.ticker} sort={sort} onSort={by} minWidth={680}
+          onRowClick={(r) => go(`stock/${r.ticker}`)} rowLabel={(r) => r.ticker} rowTone={(r) => (r.unusual ? "brand" : null)}
+          scrollClassName="md:max-h-[560px] md:overflow-y-auto" caption={t("desk.a.research")} />
       </div>
-    </Panel>
-  );
-}
-
-/** A tiny line of the last 60 closes (indexed, no prices): green when it ended higher than it began. */
-function MiniSpark({ values, w = 64, h = 22 }) {
-  if (!values || values.length < 2) return <span className="text-ink-3">–</span>;
-  const lo = Math.min(...values), hi = Math.max(...values);
-  const d = values.map((v, i) => `${i ? "L" : "M"}${((i / (values.length - 1)) * (w - 2) + 1).toFixed(1)},${(1 + (1 - (v - lo) / (hi - lo || 1)) * (h - 2)).toFixed(1)}`).join("");
-  const up = values.at(-1) >= values[0];
-  return (
-    <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} className="ms-auto block" aria-hidden="true">
-      <path d={d} fill="none" stroke={up ? "var(--accent)" : "var(--down)"} strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" />
-    </svg>
+    </AgentPanel>
   );
 }
 
 /* ----------------------------------------------------------------- news */
 
-function NewsPanel({ m, openTo }) {
+function NewsPanel({ m, openTo, active }) {
   const t = strings(dict);
   const { cards, counts } = m.news;
-  const counters = [["up", "text-accent border-accent/50"], ["down", "text-down border-down/50"], ["watch", "text-wait border-wait/50"]];
-  const kindTone = { up: "text-accent", down: "text-down", filing: "text-wait", results: "text-wait" };
+  const counters = [["up", "border-up/40 bg-up/8 text-up"], ["down", "border-down/40 bg-down/8 text-down"], ["watch", "border-wait/40 bg-wait/8 text-wait"]];
+  const kindTone = { up: "text-up", down: "text-down", filing: "text-wait", results: "text-wait" };
   return (
-    <Panel agent="news" state={m.fresh.news.state} date={m.fresh.news.date}>
+    <AgentPanel agent="news" active={active} state={m.fresh.news.state} date={m.fresh.news.date}
+      connectors={<>
+        <Connector shape="v" className="bottom-full left-1/2 hidden h-10 w-3 -translate-x-1/2 md:block" />
+        <Connector shape="h" className="top-1/2 left-full hidden h-3 w-8 -translate-y-1/2 md:block" />
+      </>}>
       <div className="grid grid-cols-3 gap-2">
         {counters.map(([k, tone]) => (
-          <div key={k} className={`rounded-lg border px-2 py-2 text-center ${counts[k] ? tone : "border-line-2 text-ink-3"}`}>
-            <div className="desk-num text-[22px] leading-none font-bold">{counts[k]}</div>
-            <div className="mt-1 font-mono text-[10.5px] font-bold uppercase tracking-[0.1em]">{t(`desk.news.${k}`)}</div>
+          <div key={k} className={`tile px-2 py-2.5 text-center ${counts[k] ? tone : "text-ink-3"}`}>
+            <div className="font-num text-[24px] leading-none font-bold">{counts[k]}</div>
+            <div className="micro mt-1.5 text-current">{t(`desk.news.${k}`)}</div>
           </div>
         ))}
       </div>
@@ -495,23 +445,23 @@ function NewsPanel({ m, openTo }) {
           {cards.map((c) => (
             <li key={c.id}>
               <button type="button" onClick={() => openTo(c.to)}
-                className="flex min-h-[52px] w-full items-start gap-2.5 rounded-lg border border-line px-3 py-2 text-start transition-colors hover:border-ink-3">
-                <span className="w-[52px] shrink-0 pt-0.5">
-                  <span className="desk-num block text-[11.5px] text-ink-2">{dayMonth(c.date)}</span>
-                  <span className={`block font-mono text-[9.5px] font-bold uppercase tracking-[0.08em] ${kindTone[c.kind]}`}>{t(`desk.news.kind.${c.kind}`)}</span>
+                className="flex min-h-[56px] w-full items-start gap-3 rounded-tile border border-line bg-surface-2/50 px-3 py-2.5 text-start transition-colors hover:border-line-3 hover:bg-surface-2">
+                <span className="w-[54px] shrink-0 pt-0.5">
+                  <span className="block font-num text-[11.5px] text-ink-2">{dayMonth(c.date)}</span>
+                  <span className={`micro block text-[9.5px] ${kindTone[c.kind]}`}>{t(`desk.news.kind.${c.kind}`)}</span>
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="font-mono text-[13px] font-bold text-ink">{c.ticker}</span>{" "}
+                  <span className="font-num text-[13px] font-bold text-ink">{c.ticker}</span>{" "}
                   <span className="text-[13.5px] leading-snug text-ink">{headline(t, c)}</span>
                   {(c.kind === "up" || c.kind === "down") && <span className="mt-0.5 block text-[11px] leading-snug text-ink-3">{NOT_A_TRADE}</span>}
                 </span>
-                <span className={`desk-num shrink-0 pt-0.5 text-[12.5px] font-bold ${toneOf(c.move)}`}>{pct(c.move)}</span>
+                <Delta value={c.move} d={1} className="shrink-0 pt-0.5 text-[12.5px]" />
               </button>
             </li>
           ))}
         </ul>
-      ) : <p className="mt-3 text-[13.5px] text-ink-2">{t("desk.news.none")}</p>}
-    </Panel>
+      ) : <EmptyState compact className="mt-3" title={t("desk.news.none")} />}
+    </AgentPanel>
   );
 }
 
@@ -523,65 +473,55 @@ function headline(t, c) {
 
 /* ------------------------------------------------------------- strategy */
 
-function StrategyPanel({ m, openTo }) {
+function StrategyPanel({ m, openTo, active }) {
   const t = strings(dict);
   const min = m.limits.minRR;
-  const stance = { up: ["desk.stance.up", "text-accent border-accent/50"], down: ["desk.stance.down", "text-down border-down/50"], flat: ["desk.stance.flat", "text-ink-2 border-line-2"] };
-  const heads = ["desk.col.name", "desk.col.brain", "desk.col.entry", "desk.col.stop", "desk.col.tp1", "desk.col.tp2", "desk.col.rr", "desk.col.fits"];
+  const stance = { up: ["desk.stance.up", "up"], down: ["desk.stance.down", "down"], flat: ["desk.stance.flat", "neutral"] };
+  const cols = [
+    { key: "ticker", label: t("desk.col.name"), cell: (r) => <span className="font-num text-[13.5px] font-bold text-ink">{r.ticker}</span> },
+    { key: "brain", label: t("desk.col.brain"), align: "start", cell: (r) => {
+      const s = stance[r.lean];
+      return s ? <Chip tone={s[1]} className="min-h-[22px] px-1.5 text-[10px]">{t(s[0])}</Chip> : <span className="text-ink-3">{t("desk.stance.none")}</span>;
+    } },
+    { key: "entry", label: t("desk.col.entry"), num: true, className: "text-ink-2", cell: (r) => pct(r.entry) },
+    { key: "stop", label: t("desk.col.stop"), num: true, className: "text-down", cell: (r) => pct(-r.plan.stop_pct) },
+    { key: "tp1", label: t("desk.col.tp1"), num: true, className: "text-up", cell: (r) => pct(r.plan.tp1_pct) },
+    { key: "tp2", label: t("desk.col.tp2"), num: true, className: "text-up", cell: (r) => pct(r.plan.tp2_pct) },
+    { key: "rr", label: t("desk.col.rr"), num: true, className: (r) => `font-bold ${r.fits ? "text-up" : "text-ink"}`, cell: (r) => rrText(r.rr, min) },
+    { key: "fits", label: t("desk.col.fits", { min: min ?? 2 }), align: "center", cell: (r) => (
+      <span className={`inline-flex ${r.fits ? "text-up" : "text-down"}`} role="img" aria-label={t(r.fits ? "desk.fits.yes" : "desk.fits.no")}>
+        {r.fits ? <CheckIcon className="size-3.5" /> : <CrossIcon className="size-3.5" />}
+      </span>
+    ) },
+  ];
   return (
-    <Panel agent="strategy" state={m.fresh.strategy.state} date={m.fresh.strategy.date}>
+    <AgentPanel agent="strategy" active={active} state={m.fresh.strategy.state} date={m.fresh.strategy.date}>
       {m.strategy.length ? (
-        <div className="no-scrollbar -mx-3 overflow-x-auto sm:-mx-4">
-          <table className="w-full min-w-[520px] border-collapse text-[13px]">
-            <thead>
-              <tr className="border-b border-line">
-                {heads.map((h, i) => (
-                  <th key={h} scope="col" className={`desk-label h-9 px-1.5 font-semibold ${i === 0 ? "sticky left-0 z-10 bg-surface ps-3 text-start sm:ps-4" : i === 1 ? "text-start" : "text-end"} ${i === heads.length - 1 ? "pe-3 text-center sm:pe-4" : ""}`}>
-                    {t(h, { min: min ?? 2 })}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {m.strategy.map((r) => {
-                const s = stance[r.lean];
-                return (
-                  <tr key={r.ticker} onClick={() => openTo(`stock/${r.ticker}#checklist`)} className="h-11 cursor-pointer border-b border-line last:border-0 hover:bg-surface-2">
-                    <th scope="row" className="sticky left-0 z-10 bg-surface ps-3 pe-2 text-start sm:ps-4">
-                      <button type="button" onClick={(e) => { e.stopPropagation(); openTo(`stock/${r.ticker}#checklist`); }} className="min-h-[40px] font-mono text-[13.5px] font-bold text-ink">{r.ticker}</button>
-                    </th>
-                    <td className="px-1.5">{s ? <span className={`desk-chip px-1.5 py-0.5 text-[10px] ${s[1]}`}>{t(s[0])}</span> : <span className="text-ink-3">{t("desk.stance.none")}</span>}</td>
-                    <td className="desk-num px-1.5 text-end text-ink-2">{pct(r.entry)}</td>
-                    <td className="desk-num px-1.5 text-end text-down">{pct(-r.plan.stop_pct)}</td>
-                    <td className="desk-num px-1.5 text-end text-accent">{pct(r.plan.tp1_pct)}</td>
-                    <td className="desk-num px-1.5 text-end text-accent">{pct(r.plan.tp2_pct)}</td>
-                    <td className={`desk-num px-1.5 text-end font-bold ${r.fits ? "text-accent" : "text-ink"}`}>{rrText(r.rr, min)}</td>
-                    <td className="pe-3 text-center sm:pe-4">
-                      <span className={`font-mono text-[14px] font-bold ${r.fits ? "text-accent" : "text-down"}`} role="img" aria-label={t(r.fits ? "desk.fits.yes" : "desk.fits.no")}>{r.fits ? "✓" : "✕"}</span>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        <div className="-mt-4 sm:-mt-5">
+          <DataTable columns={cols} rows={m.strategy} rowKey={(r) => r.ticker} minWidth={540}
+            onRowClick={(r) => openTo(`stock/${r.ticker}#checklist`)} rowLabel={(r) => r.ticker} caption={t("desk.a.strategy")} />
         </div>
-      ) : <p className="text-[13.5px] text-ink-2">{t("desk.strategy.none")}</p>}
-    </Panel>
+      ) : <EmptyState compact title={t("desk.strategy.none")} />}
+    </AgentPanel>
   );
 }
 
 /* ------------------------------------------------------------ execution */
 
-function ExecutionPanel({ m, data, go }) {
+function ExecutionPanel({ m, data, go, active }) {
   const t = strings(dict);
   return (
-    <Panel agent="execution" state={m.fresh.execution.state} date={m.fresh.execution.date}>
+    <AgentPanel agent="execution" active={active} state={m.fresh.execution.state} date={m.fresh.execution.date}
+      connectors={<>
+        <Connector shape="down-left" className="bottom-full left-1/2 hidden h-10 w-[calc(100%+2rem)] md:block" />
+        <Connector shape="h" className="top-1/2 left-full hidden h-3 w-8 -translate-y-1/2 md:block" />
+      </>}>
       {m.candidates.length ? (
-        <ul className="grid grid-cols-2 gap-2">
+        <ul className="grid grid-cols-2 gap-2 sm:gap-3">
           {m.candidates.map((r) => <li key={r.ticker} className="min-w-0"><ExecCard r={r} manifest={data.manifest} go={go} /></li>)}
         </ul>
-      ) : <p className="text-[13.5px] text-ink-2">{t("desk.exec.none")}</p>}
-    </Panel>
+      ) : <EmptyState compact title={t("desk.exec.none")} />}
+    </AgentPanel>
   );
 }
 
@@ -590,25 +530,23 @@ function ExecCard({ r, manifest, go }) {
   const conf = [["level", r.exec.level], ["volume", r.exec.volume], ["close", r.exec.close]];
   return (
     <button type="button" onClick={() => go(`stock/${r.ticker}`)} aria-label={`${r.ticker}: ${t("desk.exec.now", { call: t(`desk.exec.${r.exec.call}`) })}`}
-      className="flex h-full w-full flex-col rounded-lg border border-line p-2 text-start transition-colors hover:border-ink-3">
+      className="tile flex h-full w-full flex-col p-2.5 text-start transition-colors hover:border-line-3 sm:p-3">
       <span className="flex items-baseline gap-1.5 px-0.5">
-        <span className="font-mono text-[13.5px] font-bold text-ink">{r.ticker}</span>
+        <span className="font-num text-[14px] font-bold text-ink">{r.ticker}</span>
         <span className="min-w-0 truncate text-[11px] text-ink-3">{r.name}</span>
       </span>
       <MiniCandles ticker={r.ticker} name={r.name} manifest={manifest} />
-      <span className="mt-1.5 grid gap-0.5 px-0.5">
+      <span className="mt-2 grid gap-1 px-0.5">
         {conf.map(([k, ok]) => (
-          <span key={k} className="flex items-center justify-between font-mono text-[10.5px] font-bold uppercase tracking-[0.08em]">
+          <span key={k} className="micro flex items-center justify-between">
             <span className="text-ink-2">{t(`desk.conf.${k}`)}</span>
-            <span className={ok ? "text-accent" : "text-down"}>{ok ? "✓" : "✕"}</span>
+            <span className={ok ? "text-up" : "text-down"}>{ok ? <CheckIcon /> : <CrossIcon />}</span>
           </span>
         ))}
       </span>
-      <span className="mt-2 grid grid-cols-3 gap-1" aria-hidden="true">
+      <span className="mt-2.5 grid grid-cols-3 gap-1" aria-hidden="true">
         {["enter", "wait", "skip"].map((c) => (
-          <span key={c} className={`grid h-8 place-items-center rounded-md border font-mono text-[10px] font-extrabold uppercase tracking-[0.06em] ${r.exec.call === c ? EXEC_SOLID[c] : "border-line text-ink-3"}`}>
-            {t(`desk.exec.${c}`)}
-          </span>
+          <CallButton key={c} call={c} size="sm" active={r.exec.call === c} label={t(`desk.exec.${c}`)} className="h-10 min-w-0 px-0.5 text-[13px] sm:text-[15px]" />
         ))}
       </span>
     </button>
@@ -630,13 +568,13 @@ function MiniCandles({ ticker, name, manifest }) {
   }, [manifest, ticker]);
   const g = useMemo(() => (win && w ? miniGeometry(win, w, MINI_H, { padX: 3, padY: 6, maxBody: 5 }) : null), [win, w]);
   return (
-    <span ref={ref} className="mt-1.5 block" style={{ height: MINI_H }}>
+    <span ref={ref} className="mt-2 block" style={{ height: MINI_H }}>
       {g ? (
         <svg width={w} height={MINI_H} viewBox={`0 0 ${w} ${MINI_H}`} role="img" aria-label={t("desk.exec.chart", { name, n: win.n })} className="block">
           {g.candles.map((k) => <CandleMark key={k.i} g={k} />)}
         </svg>
       ) : (
-        <span className={`grid h-full place-items-center rounded-md bg-surface-2 font-mono text-[10px] uppercase tracking-[0.1em] text-ink-3 ${win === undefined ? "motion-safe:animate-pulse" : ""}`}>
+        <span className={`grid h-full place-items-center rounded-[8px] font-mono text-[10px] tracking-[0.1em] text-ink-3 uppercase ${win === undefined ? "skeleton" : "bg-surface-3"}`}>
           {win === null ? t("desk.exec.noChart") : ""}
         </span>
       )}
@@ -646,7 +584,7 @@ function MiniCandles({ ticker, name, manifest }) {
 
 /* ----------------------------------------------------------------- risk */
 
-function RiskPanel({ m, go }) {
+function RiskPanel({ m, go, active }) {
   const t = strings(dict);
   const [all, setAll] = useState(false);
   const L = m.limits;
@@ -661,60 +599,58 @@ function RiskPanel({ m, go }) {
   const rejected = m.calls.filter((r) => !r.risk.pass);
   const shown = all ? rejected : rejected.slice(0, TICKETS);
   return (
-    <Panel agent="risk" state={m.fresh.risk.state} date={m.fresh.risk.date}>
-      <div className="rounded-lg border border-line-2">
-        <p className="desk-label border-b border-line px-3 py-2 text-desk">{t("desk.lim.title")}</p>
+    <AgentPanel agent="risk" active={active} state={m.fresh.risk.state} date={m.fresh.risk.date}>
+      <div className="tile overflow-hidden">
+        <p className="micro border-b border-line px-3 py-2.5 text-desk">{t("desk.lim.title")}</p>
         <dl className="divide-y divide-line">
           {limits.map(([id, v]) => (
-            <div key={id} className="flex items-baseline justify-between gap-3 px-3 py-1.5">
+            <div key={id} className="flex items-baseline justify-between gap-3 px-3 py-2">
               <dt className="text-[12.5px] text-ink-2">{t(`desk.lim.${id}`)}</dt>
-              <dd className="desk-num text-end text-[12.5px] font-bold text-ink">{v}</dd>
+              <dd className="font-num text-end text-[12.5px] font-bold text-ink">{v}</dd>
             </div>
           ))}
-          <div className="flex items-center justify-between gap-3 px-3 py-1.5">
+          <div className="flex items-center justify-between gap-3 px-3 py-2">
             <dt className="text-[12.5px] text-ink-2">{t("desk.lim.earned")} <span className="text-ink-3">· {t("desk.lim.earnedV")}</span></dt>
-            <dd className={`desk-chip shrink-0 ${L.earned ? "border-accent/50 text-accent" : "border-down/50 text-down"}`}>{t(L.earned ? "desk.lim.yes" : "desk.lim.notYet")}</dd>
+            <dd className="shrink-0"><Chip tone={L.earned ? "up" : "down"}>{t(L.earned ? "desk.lim.yes" : "desk.lim.notYet")}</Chip></dd>
           </div>
         </dl>
       </div>
 
       {rejected.length ? (
         <>
-          <p className="desk-label mt-3">{t("desk.risk.count", { count: rejected.length })}</p>
-          <ul className="mt-1.5 grid gap-2 sm:grid-cols-2">
+          <p className="micro mt-4">{t("desk.risk.count", { count: rejected.length })}</p>
+          <ul className="mt-2 grid gap-2 sm:grid-cols-2">
             {shown.map((r) => (
               <li key={r.ticker} className="min-w-0">
                 <button type="button" onClick={() => go(`stock/${r.ticker}`)}
-                  className="relative flex h-full w-full flex-col overflow-hidden rounded-lg border border-dashed border-line-2 bg-surface-2/40 p-2.5 text-start transition-colors hover:border-ink-3">
-                  <span className="desk-label">{t("desk.ticket")}</span>
-                  <span className="font-mono text-[15px] font-bold text-ink">{r.ticker}</span>
+                  className="relative flex h-full w-full flex-col overflow-hidden rounded-tile border border-dashed border-line-3 bg-surface-2/60 p-3 text-start transition-colors hover:border-ink-3">
+                  <span className="micro">{t("desk.ticket")}</span>
+                  <span className="font-num mt-0.5 text-[17px] font-bold text-ink">{r.ticker}</span>
                   {r.plan && (
-                    <span className="mt-1 grid grid-cols-3 gap-1 font-mono text-[10.5px]">
-                      <span><span className="block text-ink-3">{t("desk.col.stop")}</span><span className="desk-num text-down">{pct(-r.plan.stop_pct)}</span></span>
-                      <span><span className="block text-ink-3">{t("desk.col.tp1")}</span><span className="desk-num text-accent">{pct(r.plan.tp1_pct)}</span></span>
-                      <span><span className="block text-ink-3">{t("desk.col.rr")}</span><span className="desk-num text-ink">{rrText(r.plan.rr_tp1, m.limits.minRR)}</span></span>
+                    <span className="mt-2 grid grid-cols-3 gap-1 font-num text-[11px]">
+                      <span><span className="micro block text-[9.5px]">{t("desk.col.stop")}</span><span className="text-down">{pct(-r.plan.stop_pct)}</span></span>
+                      <span><span className="micro block text-[9.5px]">{t("desk.col.tp1")}</span><span className="text-up">{pct(r.plan.tp1_pct)}</span></span>
+                      <span><span className="micro block text-[9.5px]">{t("desk.col.rr")}</span><span className="text-ink">{rrText(r.plan.rr_tp1, m.limits.minRR)}</span></span>
                     </span>
                   )}
-                  <span className="mt-1.5 grid gap-0.5">
+                  <span className="mt-2 grid gap-1">
                     {r.risk.reasons.map((x) => (
-                      <span key={x.id} className="font-mono text-[11px] leading-snug text-down">✕ {whyText(t, x)}</span>
+                      <span key={x.id} className="flex items-start gap-1.5 font-num text-[11px] leading-snug text-down"><CrossIcon className="mt-[2px] size-2.5" />{whyText(t, x)}</span>
                     ))}
                   </span>
-                  <span className="pointer-events-none absolute end-2 top-2.5 rotate-[-8deg] rounded-sm border-2 border-down px-1.5 py-0.5 font-mono text-[11px] font-extrabold uppercase tracking-[0.18em] text-down opacity-90">
-                    {t("desk.rejected")}
-                  </span>
+                  <Stamp kind="rejected" size="sm" className="pointer-events-none absolute end-2.5 top-3">{t("desk.rejected")}</Stamp>
                 </button>
               </li>
             ))}
           </ul>
           {rejected.length > TICKETS && (
             <button type="button" onClick={() => setAll((v) => !v)} aria-expanded={all}
-              className="mt-2 min-h-[44px] w-full rounded-lg border border-line-2 font-mono text-[12px] font-semibold uppercase tracking-[0.1em] text-ink-2 hover:text-ink">
+              className="mt-2 min-h-[44px] w-full rounded-tile border border-line-2 font-display text-[14px] font-bold tracking-[0.12em] text-ink-2 uppercase hover:text-ink">
               {all ? t("desk.showFewer") : t("desk.showAll", { n: rejected.length })}
             </button>
           )}
         </>
-      ) : <p className="mt-3 text-[13.5px] text-ink-2">{t("desk.risk.none")}</p>}
-    </Panel>
+      ) : <EmptyState compact className="mt-4" title={t("desk.risk.none")} />}
+    </AgentPanel>
   );
 }

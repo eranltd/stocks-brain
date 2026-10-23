@@ -21,8 +21,8 @@ export function PageHero({ line1, line2, sub, chips, info, infoLabel, right, siz
       {(chips || info || right) && (
         <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2.5">
           <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+            {info && <InfoTip label={infoLabel ?? t("lx.about")} align="start" className="-ms-2.5">{info}</InfoTip>}
             {chips}
-            {info && <InfoTip label={infoLabel ?? t("lx.about")} align="start">{info}</InfoTip>}
           </div>
           {right && <div className="flex min-w-0 flex-wrap items-center gap-2">{right}</div>}
         </div>
@@ -109,6 +109,87 @@ export function Fact({ label, children, className = "" }) {
       <span className="micro shrink-0">{label}</span>
       <span className="font-num min-w-0 truncate text-[12px] font-semibold text-ink-2">{children}</span>
     </span>
+  );
+}
+
+/* ------------------------------------------------------------ the day's timeline */
+
+const nowMins = () => { const d = new Date(); return d.getUTCHours() * 60 + d.getUTCMinutes(); };
+const hhmm = (m) => `${String(Math.floor(m / 60) % 24).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
+const BAD = new Set(["failure", "failed", "cancelled"]);
+
+/** A stop's state from its jobs' last outcomes: fail when any failed, done when any ran fine, else idle (no run yet). */
+export function stopState(ids, last) {
+  const outs = ids.map((id) => last?.[id]?.outcome).filter(Boolean);
+  if (outs.some((o) => BAD.has(o))) return "fail";
+  return outs.some((o) => o === "success" || o === "partial") ? "done" : "idle";
+}
+
+const DOT = { done: "bg-up shadow-[0_0_10px_var(--up-glow)]", fail: "bg-down shadow-[0_0_10px_var(--down-glow)]", idle: "bg-ink-3" };
+const STATE_WORD = { done: "lx.ok", fail: "lx.failed", idle: "lx.never" };
+
+/** The current minute of the day in UTC, kept current. */
+export function useUtcMinute() {
+  const [m, setM] = useState(nowMins);
+  useEffect(() => {
+    const id = setInterval(() => setM(nowMins()), 30000);
+    return () => clearInterval(id);
+  }, []);
+  return m;
+}
+
+/**
+ * A weekday's timed jobs on a 24-hour UTC line: one dot per fire time (green: ran fine last time, red: failed, grey: no
+ * run yet; a purple ring when a job there uses the AI) and an orange "now" marker. A dot is a button: `onPick(stop)`.
+ * stops: lib/routines.js dayTimeline(); last: lastByRoutine().
+ */
+export function DayTrack({ stops, last, picked, onPick, nameOf = (id) => id, className = "" }) {
+  const now = useUtcMinute();
+  const latest = [...stops].reverse().find((s) => s.mins <= now) ?? stops.at(-1);
+  const at = (m) => `${(m / 1440) * 100}%`;
+  return (
+    <div className={`relative h-[78px] select-none ${className}`}>
+      <span aria-hidden="true" className="absolute inset-x-0 top-[36px] h-px bg-line-3" />
+      <span aria-hidden="true" className="absolute top-[36px] left-0 h-px bg-gradient-to-r from-desk/0 to-desk/70" style={{ width: at(now) }} />
+      {Array.from({ length: 25 }, (_, h) => (
+        <span key={h} aria-hidden="true" className="absolute top-[36px] -translate-x-1/2" style={{ left: at(h * 60) }}>
+          <span className={`block w-px ${h % 6 ? "h-1.5 bg-line-2" : "h-2.5 bg-line-3"}`} />
+          {h % 6 === 0 && <span className="font-num absolute top-3.5 left-1/2 -translate-x-1/2 text-[10px] text-ink-3">{String(h).padStart(2, "0")}</span>}
+        </span>
+      ))}
+      <span aria-hidden="true" className="absolute top-0 bottom-[30px] w-px bg-desk" style={{ left: at(now) }}>
+        <span className={`font-num absolute top-0 rounded-[4px] bg-desk px-1 text-[9.5px] leading-[15px] font-bold whitespace-nowrap text-bg uppercase ${now > 1260 ? "right-1" : now < 180 ? "left-1" : "left-1/2 -translate-x-1/2"}`}>{t("lx.now")} {hhmm(now)}</span>
+      </span>
+      {stops.map((s) => {
+        const st = stopState(s.ids, last);
+        const size = 9 + Math.min(s.ids.length, 9);
+        const on = picked === s.mins;
+        return (
+          <button key={s.mins} type="button" onClick={() => onPick?.(s)} aria-pressed={on}
+            aria-label={`${hhmm(s.mins)} ${t("lx.utc")}: ${s.ids.map(nameOf).join(", ")}. ${t(STATE_WORD[st])}${s.ai ? `, ${t("lx.usesAi")}` : ""}`}
+            className="group absolute top-[36px] grid size-7 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full" style={{ left: at(s.mins) }}>
+            {s === latest && st === "done" && <span aria-hidden="true" className="absolute size-3 animate-ping rounded-full bg-up/60 motion-reduce:hidden" />}
+            <span aria-hidden="true" className={`relative block rounded-full transition-transform group-hover:scale-125 ${DOT[st]} ${s.ai ? "ring-2 ring-ai ring-offset-2 ring-offset-surface" : ""} ${on ? "scale-125 outline-2 outline-offset-[3px] outline-desk" : ""}`}
+              style={{ width: size, height: size }} />
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/** One line about a picked stop: "05:23 UTC · Brain morning run · Ran fine last time". */
+export function StopLine({ stop, last, nameOf = (id) => id }) {
+  if (!stop) return null;
+  const st = stopState(stop.ids, last);
+  return (
+    <p className="flex min-h-[44px] flex-wrap items-center gap-x-2.5 gap-y-1 text-[13px] leading-snug text-ink-2" aria-live="polite">
+      <span className="font-num text-[14px] font-bold text-ink">{hhmm(stop.mins)}</span>
+      <span aria-hidden="true" className={`size-2 shrink-0 rounded-full ${DOT[st]}`} />
+      <span className="min-w-0">{stop.ids.map(nameOf).join(" · ")}</span>
+      {stop.ai && <span className="chip border-ai/40 bg-ai/10 text-ai">{t("how.kind.ai")}</span>}
+      <span className="text-ink-3">{t(STATE_WORD[st])}</span>
+    </p>
   );
 }
 

@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-22",
+  "as_of": "2026-10-23",
   "sample": false,
   "source": "SEC EDGAR filings index (company submissions)",
   "window_days": 120,
@@ -278,6 +278,16 @@
       "cik": 1326801,
       "name": "Meta Platforms, Inc.",
       "filings": [
+        {
+          "date": "2026-10-22",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm"
+        },
         {
           "date": "2026-10-21",
           "form": "8-K",
@@ -1879,26 +1889,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/1109138/000117891326003681/zk2635789.htm"
-        },
-        {
-          "date": "2026-06-24",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1109138/000117891326003316/zk2635600.htm"
-        },
-        {
-          "date": "2026-06-24",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1109138/000117891326003310/zk2635599.htm"
         }
       ]
     },
@@ -1936,6 +1926,16 @@
       "cik": 1046179,
       "name": "TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
       "filings": [
+        {
+          "date": "2026-10-22",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000728/tsm-monthend6kx20261022.htm"
+        },
         {
           "date": "2026-10-15",
           "form": "6-K",
@@ -2005,16 +2005,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000541/tsm-fsx20260814x6k.htm"
-        },
-        {
-          "date": "2026-08-11",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000539/sonysemiconductorsolutions.htm"
         }
       ]
     },
@@ -2176,18 +2166,6 @@
           ],
           "kind": "results",
           "url": "https://www.sec.gov/Archives/edgar/data/804328/000080432826000085/qcom-20260729.htm"
-        },
-        {
-          "date": "2026-06-24",
-          "form": "8-K",
-          "items": [
-            "3.02"
-          ],
-          "titles": [
-            "Sold new shares"
-          ],
-          "kind": "money",
-          "url": "https://www.sec.gov/Archives/edgar/data/804328/000110465926077071/tm2618522d1_8k.htm"
         }
       ]
     },
@@ -2239,18 +2217,6 @@
           ],
           "kind": "report",
           "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000015/mu-20260528.htm"
-        },
-        {
-          "date": "2026-06-24",
-          "form": "8-K",
-          "items": [
-            "2.02"
-          ],
-          "titles": [
-            "Quarterly results"
-          ],
-          "kind": "results",
-          "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000013/mu-20260624.htm"
         }
       ]
     },

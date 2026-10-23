@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-22",
+  "as_of": "2026-10-23",
   "sample": false,
   "source": "SEC XBRL company facts: trailing twelve months, or the latest year for yearly filers",
   "companies": [
@@ -99,16 +99,16 @@
       "name": "Meta Platforms, Inc.",
       "status": "ok",
       "basis": "ttm",
-      "period_end": "2026-06-30",
-      "filed": "2026-07-30",
+      "period_end": "2026-09-30",
+      "filed": "2026-10-22",
       "revenue_concept": "RevenueFromContractWithCustomerExcludingAssessedTax",
-      "revenue_ttm": 228247000000,
-      "revenue_growth_yoy_pct": 27.7,
-      "quarter_revenue_growth_yoy_pct": 28.0,
-      "operating_margin_pct": 38.1,
-      "net_margin_pct": 29.8,
-      "free_cash_flow_ttm": 40976000000,
-      "fcf_margin_pct": 18.0,
+      "revenue_ttm": 241606000000,
+      "revenue_growth_yoy_pct": 27.5,
+      "quarter_revenue_growth_yoy_pct": 26.1,
+      "operating_margin_pct": 32.9,
+      "net_margin_pct": 31.1,
+      "free_cash_flow_ttm": 28649000000,
+      "fcf_margin_pct": 11.9,
       "missing": []
     },
     {

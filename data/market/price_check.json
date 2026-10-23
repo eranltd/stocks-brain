@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-17",
+  "as_of": "2026-10-23",
   "sample": false,
   "primary": "tiingo",
   "second": "polygon",
@@ -25,8 +25,8 @@
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.5266,
-        0.526
+        0.5263,
+        0.5256
       ]
     },
     {
@@ -37,8 +37,8 @@
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.5249,
-        0.526
+        0.5256,
+        0.5267
       ]
     },
     {
@@ -49,8 +49,8 @@
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.7481,
-        0.7479
+        0.7498,
+        0.7497
       ]
     },
     {
@@ -61,8 +61,8 @@
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.6464,
-        0.647
+        0.6458,
+        0.6464
       ]
     },
     {
@@ -73,8 +73,8 @@
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.5801,
-        0.5808
+        0.5784,
+        0.5791
       ]
     },
     {
@@ -85,8 +85,8 @@
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.5773,
-        0.5765
+        0.5766,
+        0.5758
       ]
     },
     {
@@ -97,8 +97,8 @@
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.6875,
-        0.6875
+        0.6881,
+        0.6882
       ]
     },
     {
@@ -109,8 +109,8 @@
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.1633,
-        0.1637
+        0.1641,
+        0.1644
       ]
     },
     {
@@ -121,8 +121,8 @@
       "median_diff_bp": 0.0,
       "big_diff_days": 8,
       "bench_corr": [
-        0.1526,
-        0.1513
+        0.1498,
+        0.1484
       ]
     },
     {
@@ -133,8 +133,8 @@
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.4634,
-        0.4632
+        0.4676,
+        0.4673
       ]
     },
     {
@@ -145,8 +145,8 @@
       "median_diff_bp": 0.0,
       "big_diff_days": 8,
       "bench_corr": [
-        0.1442,
-        0.1421
+        0.1402,
+        0.138
       ]
     },
     {
@@ -157,8 +157,8 @@
       "median_diff_bp": 0.0,
       "big_diff_days": 8,
       "bench_corr": [
-        -0.1008,
-        -0.0963
+        -0.0983,
+        -0.0938
       ]
     },
     {
@@ -169,20 +169,20 @@
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.1614,
-        0.1613
+        0.1618,
+        0.1617
       ]
     },
     {
       "symbol": "AEP",
       "days": 500,
       "verdict": "agree",
-      "return_corr": 0.9962,
+      "return_corr": 0.9963,
       "median_diff_bp": 0.0,
       "big_diff_days": 8,
       "bench_corr": [
-        -0.1068,
-        -0.1126
+        -0.1089,
+        -0.1146
       ]
     },
     {
@@ -193,8 +193,8 @@
       "median_diff_bp": 0.0,
       "big_diff_days": 9,
       "bench_corr": [
-        0.0043,
-        0.0013
+        0.0012,
+        -0.0018
       ]
     },
     {
@@ -205,8 +205,8 @@
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.1995,
-        0.1997
+        0.1991,
+        0.1993
       ]
     },
     {
@@ -217,8 +217,8 @@
       "median_diff_bp": 0.0,
       "big_diff_days": 2,
       "bench_corr": [
-        0.4292,
-        0.4252
+        0.4282,
+        0.4241
       ]
     },
     {
@@ -229,8 +229,8 @@
       "median_diff_bp": 0.0,
       "big_diff_days": 3,
       "bench_corr": [
-        -0.213,
-        -0.2051
+        -0.2133,
+        -0.2053
       ]
     },
     {
@@ -241,8 +241,8 @@
       "median_diff_bp": 0.0,
       "big_diff_days": 3,
       "bench_corr": [
-        -0.0369,
-        -0.0369
+        -0.0406,
+        -0.0406
       ]
     },
     {
@@ -253,8 +253,8 @@
       "median_diff_bp": 0.0,
       "big_diff_days": 7,
       "bench_corr": [
-        0.2246,
-        0.227
+        0.2237,
+        0.2261
       ]
     },
     {
@@ -265,8 +265,8 @@
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.2785,
-        0.2792
+        0.2792,
+        0.28
       ]
     },
     {
@@ -289,20 +289,20 @@
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.9476,
-        0.9464
+        0.9473,
+        0.9462
       ]
     },
     {
       "symbol": "SGOV",
       "days": 500,
       "verdict": "differ",
-      "return_corr": 0.0122,
+      "return_corr": 0.0101,
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        -0.065,
-        0.0104
+        -0.0695,
+        0.0099
       ]
     },
     {
@@ -313,8 +313,8 @@
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.9336,
-        0.9333
+        0.9333,
+        0.9331
       ]
     },
     {
@@ -325,32 +325,32 @@
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.726,
-        0.7234
+        0.7244,
+        0.7218
       ]
     },
     {
       "symbol": "IEF",
       "days": 500,
       "verdict": "differ",
-      "return_corr": 0.9812,
+      "return_corr": 0.9811,
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.0432,
-        0.0458
+        0.0413,
+        0.0441
       ]
     },
     {
       "symbol": "HYG",
       "days": 500,
       "verdict": "differ",
-      "return_corr": 0.9485,
+      "return_corr": 0.9483,
       "median_diff_bp": 0.0,
       "big_diff_days": 7,
       "bench_corr": [
-        0.7387,
-        0.6937
+        0.7399,
+        0.6945
       ]
     }
   ],

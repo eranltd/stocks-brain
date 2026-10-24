@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-23",
+  "as_of": "2026-10-24",
   "sample": false,
   "source": "SEC EDGAR filings index (company submissions)",
   "window_days": 120,
@@ -962,6 +962,16 @@
       "cik": 1156375,
       "name": "CME GROUP INC.",
       "filings": [
+        {
+          "date": "2026-10-23",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1156375/000115637526000068/cme-20260930.htm"
+        },
         {
           "date": "2026-10-21",
           "form": "8-K",
@@ -2207,16 +2217,6 @@
           ],
           "kind": "people",
           "url": "https://www.sec.gov/Archives/edgar/data/723125/000110465926101067/tm2624017d1_8k.htm"
-        },
-        {
-          "date": "2026-06-25",
-          "form": "10-Q",
-          "items": [],
-          "titles": [
-            "Quarterly report"
-          ],
-          "kind": "report",
-          "url": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000015/mu-20260528.htm"
         }
       ]
     },
@@ -2510,6 +2510,20 @@
       "cik": 87347,
       "name": "SLB LIMITED/NV",
       "filings": [
+        {
+          "date": "2026-10-23",
+          "form": "8-K",
+          "items": [
+            "2.02",
+            "7.01"
+          ],
+          "titles": [
+            "Quarterly results",
+            "Shared an update with investors"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/87347/000119312526429435/d151271d8k.htm"
+        },
         {
           "date": "2026-10-06",
           "form": "8-K",

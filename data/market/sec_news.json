@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-24",
+  "as_of": "2026-10-27",
   "sample": false,
   "source": "SEC EDGAR filings index (company submissions)",
   "window_days": 120,
@@ -1422,6 +1422,16 @@
       "name": "ELBIT SYSTEMS LTD",
       "filings": [
         {
+          "date": "2026-10-26",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1027664/000117891326004828/zk2636259.htm"
+        },
+        {
           "date": "2026-10-19",
           "form": "6-K",
           "items": [],
@@ -1490,16 +1500,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/1027664/000117891326003459/zk2635672.htm"
-        },
-        {
-          "date": "2026-07-01",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1027664/000102766426000021/cover6k20260701.htm"
         }
       ]
     },

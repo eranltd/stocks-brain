@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { fmtDate } from "../lib/format.js";
+import { fmtDate, fmtNum } from "../lib/format.js";
 import { sureScore } from "../lib/ledger.js";
-import { CallChip, Chip, ClockIcon, CountUp, CrossIcon, DataTable, Delta, InfoTip, Segmented } from "./ui.jsx";
+import { useCountUp, useInView } from "../lib/motion.js";
+import { CallChip, Chip, ClockIcon, CrossIcon, DataTable, Delta, InfoTip, Segmented } from "./ui.jsx";
 import dict from "../text/plan.js";
 import { strings } from "../lib/text.js";
 
@@ -12,6 +13,8 @@ import { strings } from "../lib/text.js";
  *   StepTrack   hits minus misses, adding up over time, as a step line ("paper · past calls").
  *   SureMeter   how sure the brain is about today's calls, out of 10, as a segmented meter.
  *   BetLedger   every paper bet in a dense table: who made it, the name, the call, how sure, the result.
+ *   KpiStrip, Kpi   the KPI row itself, for any page of the Brain and Experiments sections (pctFormat for a signed %).
+ *   RangeMeter  a segmented meter of one value on a scale, with an optional marker (Portfolio's bumpiness).
  * The numbers come from lib/ledger.js (runs and their checked outcomes only). Texts: text/plan.js ("lg.*").
  */
 
@@ -53,16 +56,40 @@ function SureBars({ level, call }) {
 
 /* ------------------------------------------------------------------ KPIs */
 
-/** One number of the row: a mono label, the number counting up once in view, a short plain note. */
-function Kpi({ label, value, decimals = 0, suffix = "", tone = "text-ink", note, noteTone = "text-ink-3" }) {
+/** A number that counts up once in view (still under reduced motion), shown by `format`. */
+function Count({ value, format }) {
+  const [ref, inView] = useInView();
+  const v = useCountUp(value, inView);
+  return <span ref={ref}>{format(v)}</span>;
+}
+
+/** "+2.3%" / "−6.0%": a percent with its sign and a true minus. */
+export const pctFormat = (d = 1) => (v) => `${signed(v, d)}%`;
+
+/**
+ * One number of a KPI row: a mono label, the number counting up once in view, a short plain note. `format` turns the
+ * counted number into text (default: whole number, or `decimals`, with `suffix`).
+ */
+export function Kpi({ label, value, decimals = 0, suffix = "", format, tone = "text-ink", note, noteTone = "text-ink-3" }) {
+  const show = format ?? ((v) => `${fmtNum(v, decimals)}${suffix}`);
   return (
     <div className="min-w-0 bg-surface px-3 py-3 sm:px-4 sm:py-3.5">
       <p className="micro truncate">{label}</p>
       <p className={`font-num mt-1.5 text-[26px] leading-none font-bold tracking-[-0.04em] sm:text-[36px] ${tone}`}>
-        {isNum(value) ? <CountUp value={value} decimals={decimals} suffix={suffix} className="font-num" /> : "–"}
+        {isNum(value) ? <Count value={value} format={show} /> : "–"}
       </p>
       {note && <p className={`mt-1.5 text-[11.5px] leading-tight font-medium ${noteTone}`}>{note}</p>}
     </div>
+  );
+}
+
+/** A KPI row: hairline-split cells in one panel, three across on a phone and up to six on a wide screen. */
+export function KpiStrip({ label, cols = 6, className = "", children }) {
+  const wide = { 4: "lg:grid-cols-4", 5: "lg:grid-cols-5", 6: "lg:grid-cols-6" }[cols] ?? "lg:grid-cols-6";
+  return (
+    <section aria-label={label} className={`panel overflow-hidden ${className}`}>
+      <div className={`grid grid-cols-3 gap-px bg-line ${wide}`}>{children}</div>
+    </section>
   );
 }
 
@@ -71,16 +98,14 @@ export function BrainKpis({ s, weekly = true, className = "" }) {
   const t = strings(dict);
   const rateNote = !s.closed ? t("lg.kpi.none") : s.closed < FEW_CLOSED ? t("lg.kpi.few", { count: s.closed }) : t("lg.kpi.many", { count: s.closed });
   return (
-    <section aria-label={t("lg.kpi.label")} className={`panel overflow-hidden ${className}`}>
-      <div className="grid grid-cols-3 gap-px bg-line lg:grid-cols-6">
+    <KpiStrip label={t("lg.kpi.label")} className={className}>
         <Kpi label={t("lg.kpi.made")} value={s.made} note={weekly ? t("lg.kpi.madeSub", { calls: s.calls, weekly: s.weekly }) : t("lg.kpi.madeCalls")} />
         <Kpi label={t("lg.kpi.hits")} value={s.hits} tone="text-up" note={t("lg.kpi.hitsSub")} />
         <Kpi label={t("lg.kpi.misses")} value={s.misses} tone="text-down" note={s.flats ? t("lg.kpi.missesFlat", { n: s.flats }) : t("lg.kpi.missesSub")} />
         <Kpi label={t("lg.kpi.rate")} value={s.rate != null ? Math.round(s.rate) : null} suffix="%" tone="text-desk" note={rateNote} noteTone={s.closed < FEW_CLOSED ? "text-wait" : "text-ink-3"} />
         <Kpi label={t("lg.kpi.open")} value={s.open} tone="text-wait" note={s.nextCheck ? t("lg.kpi.openSub", { day: dayMonth(s.nextCheck) }) : t("lg.kpi.openNone")} />
         <Kpi label={t("lg.kpi.days")} value={s.days} note={s.first ? t("lg.kpi.daysSub", { day: dayMonth(s.first) }) : ""} />
-      </div>
-    </section>
+    </KpiStrip>
   );
 }
 
@@ -109,6 +134,37 @@ export function SureMeter({ convictions, className = "" }) {
         <Chip tone={SURE_TONE[s.level]}>{t(`lg.sure.${s.level}`)}</Chip>
         <InfoTip label={t("lg.sure.about")}>{t("lg.sure.info")}</InfoTip>
       </span>
+    </div>
+  );
+}
+
+/**
+ * One value on a 0..max scale as a segmented meter, green to amber to red along the scale, with an optional marker for
+ * a value to compare with: "BUMPINESS 13.8%/yr [segments | marker] CALMER". Real numbers only; the scale is the caller's.
+ */
+export function RangeMeter({ label, value, max, unit = "", decimals = 1, marker = null, markerLabel, chip, chipTone = "neutral", info, infoLabel, className = "" }) {
+  const N = 20;
+  const lit = Math.max(1, Math.round(Math.min(1, Math.max(0, value / max)) * N));
+  const m = isNum(marker) ? Math.min(1, Math.max(0, marker / max)) * 100 : null;
+  const zone = (i) => (i / N < 0.4 ? "bg-up" : i / N < 0.7 ? "bg-wait" : "bg-down");
+  return (
+    <div className={`tile flex flex-wrap items-center gap-x-3 gap-y-2.5 px-3 py-2.5 ${className}`}>
+      <p className="flex items-baseline gap-2">
+        <span className="micro text-ink-2">{label}</span>
+        <span className="font-num text-[20px] leading-none font-bold text-ink">{value.toFixed(decimals)}<span className="text-[12px] text-ink-3">{unit}</span></span>
+      </p>
+      <span role="meter" aria-valuemin={0} aria-valuemax={max} aria-valuenow={value} aria-label={label} className="relative flex min-w-[120px] flex-1 gap-[2px] py-1">
+        {Array.from({ length: N }, (_, i) => <i key={i} className={`block h-2 flex-1 rounded-[1.5px] ${i < lit ? zone(i) : "bg-line-2"}`} />)}
+        {m != null && (
+          <span aria-hidden="true" title={markerLabel} className="absolute -top-0.5 -bottom-0.5 w-[2px] -translate-x-1/2 rounded-full bg-ink shadow-[0_0_0_2px_var(--surface-2)]" style={{ left: `${m}%` }} />
+        )}
+      </span>
+      {(chip || info) && (
+        <span className="flex items-center">
+          {chip && <Chip tone={chipTone}>{chip}</Chip>}
+          {info && <InfoTip label={infoLabel}>{info}</InfoTip>}
+        </span>
+      )}
     </div>
   );
 }

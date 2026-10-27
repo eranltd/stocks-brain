@@ -4,7 +4,7 @@ import dict from "../text/stock.js";
 import { useInView, useReducedMotion } from "../lib/motion.js";
 import {
   ArrowRight, CallButton, Chevron, Chip, Container, Conviction, Delta, EmptyState, HeroTitle, InfoTip, Panel, PipelineStrip, Segmented,
-  SimBadge, Skeleton, Stamp, StatTile, StepMark,
+  MiniBars, MiniSpark, SimBadge, Skeleton, Stamp, StepMark,
 } from "../components/ui.jsx";
 import { NotAdvice } from "../components/shell.jsx";
 import { STAGES, trustStage } from "../components/trust.jsx";
@@ -184,7 +184,7 @@ function TermHead({ id, n, title, sub }) {
       <h2 id={id} tabIndex={-1} className="flex min-w-0 items-center gap-2 font-display text-[15px] leading-tight font-bold tracking-[0.14em] text-ink uppercase outline-none">
         {n != null && <span className="font-num text-[10px] font-semibold tracking-normal text-ink-3">{String(n).padStart(2, "0")}</span>}
         <span aria-hidden="true" className="size-[7px] shrink-0 rotate-45 bg-desk shadow-[0_0_8px_var(--desk-glow)]" />
-        <span className="min-w-0 truncate">{title}</span>
+        <span className="min-w-0 text-balance">{title}</span>
       </h2>
       {sub && <p className="mt-1 truncate font-num text-[11px] tracking-[0.04em] text-ink-3">{sub}</p>}
     </div>
@@ -532,7 +532,7 @@ function StockView({ data, row, symbol, go, mk }) {
     !isBench && { id: "ck-steps", label: t("sp.nav.steps"), state: reading ? VERDICT_STATE[reading.score.verdict] ?? "idle" : "idle" },
     !isBench && { id: "risk-plan", label: t("sp.nav.risk"), state: rp ? (rp.fits ? "done" : "wait") : "idle" },
     buy && { id: "buy-window", label: t("sp.nav.when"), state: buy.tone === "rules_allow" ? "done" : buy.tone === "wait" ? "wait" : "idle" },
-    !isBench && { id: "company", label: t(fund ? "sp.nav.inside" : "sp.nav.news"), state: "idle" },
+    !isBench && { id: fund ? "whats-inside" : "whats-next", label: t(fund ? "sp.nav.inside" : "sp.nav.news"), state: "idle" },
   ].filter(Boolean).filter((s) => s.id !== "desk-call" || !isBench).map((s) => ({ ...s, stateLabel: t(`sp.nav.st.${s.state}`) }));
   const line = useCallback(() => headerH + (strip.current?.offsetHeight ?? 0) + 24, [headerH]);
   const [active, setActive] = useSpy(sections.map((s) => s.id), line);
@@ -564,45 +564,38 @@ function StockView({ data, row, symbol, go, mk }) {
         trail={<span className="hidden sm:inline-flex"><Delta value={row.change_1d_pct} d={2} chip arrow /></span>} />
 
       <Container className="pt-4 sm:pt-6">
+        {/* One grid. Phone: one column in this order. iPad portrait: two. iPad landscape and up: twelve, with the key
+            numbers across the top, the chart beside the Desk's call and the checklist, then rows of three or 4 + 8. */}
         <div className="grid gap-3 sm:gap-4 md:grid-cols-2 lg:grid-flow-row-dense lg:grid-cols-12">
-          {!isBench && (desk ? <DeskCall desk={desk} go={go} n={no()} className={`md:col-span-2 ${right} lg:row-start-1 lg:self-start`} />
-            : <LookOnly isDefault={isDefault} n={no()} className={`md:col-span-2 ${right} lg:row-start-1 lg:self-start`} />)}
+          {!isBench && (desk ? <DeskCall desk={desk} go={go} n={no()} className={`md:col-span-2 ${right} lg:row-start-2`} />
+            : <LookOnly isDefault={isDefault} n={no()} className={`md:col-span-2 ${right} lg:row-start-2`} />)}
           <ChartPanel data={data} row={row} symbol={symbol} bench={bench} isBench={isBench} picks={sample ? [] : picks} reading={reading}
             tab={tab} tabs={tabs} onTab={pickTab} onZoom={() => setZoom(true)} n={no()}
-            className={`md:col-span-2 lg:col-span-8 lg:col-start-1 lg:row-start-1 ${isBench ? "" : "lg:row-span-2"}`} />
-          <KeyNumbers row={row} bench={bench} isBench={isBench} n={no()}
-            className={`md:col-span-2 ${isBench ? "lg:col-span-12" : `${right} lg:row-start-2 lg:self-start`}`} />
-          {!isBench && <StepsPanel data={data} reading={reading} read={read} cfg={cfg} seeCandles={seeCandles} n={no()} className="lg:col-span-4" />}
+            className={`md:col-span-2 lg:col-start-1 lg:row-start-2 ${isBench ? "lg:col-span-12" : "lg:col-span-8 lg:row-span-2"}`} />
+          <KeyNumbers row={row} bench={bench} isBench={isBench} className="md:col-span-2 lg:col-span-12 lg:row-start-1" />
+          {!isBench && <StepsPanel data={data} reading={reading} read={read} cfg={cfg} seeCandles={seeCandles} n={no()} className={`${right} lg:row-start-3`} />}
           {!isBench && <RiskTicket symbol={symbol} reading={reading} rp={rp} n={no()} className="lg:col-span-4" />}
           {buy && (
-            <Panel id="buy-window" className="scroll-mt-32 lg:col-span-4" info={buy.note} infoLabel={t("sp.info")}
-              head={<TermHead id="buy-window-h" n={no()} title={t("bwc.title")} />}
+            <Panel id="buy-window" className="scroll-mt-32 md:col-span-2 lg:col-span-8" info={buy.note} infoLabel={t("sp.info")}
+              head={<TermHead id="buy-window-h" n={no()} title={t("sp.when.title")} />}
               badge={<Chip tone={(BW_TONE[buy.tone] ?? BW_TONE.wait).chip}>{t((BW_TONE[buy.tone] ?? BW_TONE.wait).word)}</Chip>}>
               <BuyWindowBody a={buy} go={go} />
             </Panel>
           )}
           {!isBench && <QuickChecks checks={checks} passed={passed} gate={gate} go={go} n={no()} className="lg:col-span-4" />}
-        </div>
-
-        {!isBench && (
-          <section id="company" aria-label={t(fund ? "sp.inside" : "sp.company")} className="mt-3 grid scroll-mt-32 gap-3 sm:mt-4 sm:gap-4 md:grid-cols-2 lg:grid-cols-12">
-            {fund ? <WhatsInside fund={fund} symbol={symbol} n={no()} className="md:col-span-2 lg:col-span-8" />
-              : <WhatsNext card={cardFor(data.outlook, symbol)} symbol={symbol} today={today} hasFile={Boolean(data.outlook)} n={no()} className="md:col-span-2 lg:col-span-8" />}
-            <WhyItMoved notes={notesForSymbol(usableWhy(data.why, Boolean(data.livePrices)), symbol, { today })} names={names} n={no()} className="lg:col-span-4" />
-            {!fund && <OfficialNews rows={newsRows(data.secNews, symbol, 6)} n={no()} className="lg:col-span-4" />}
-            {!fund && <CompanyNumbers c={companyNumbers(data.fundamentals, symbol)} n={no()} className="lg:col-span-4" />}
-            {long && <LongRun long={long} data={data} row={row} bench={bench} n={no()} className="lg:col-span-4" />}
-          </section>
-        )}
-
-        <section aria-label={t("sp.notebook")} className="mt-3 grid gap-3 sm:mt-4 sm:gap-4 md:grid-cols-2 lg:grid-cols-12">
+          {!isBench && (fund ? <WhatsInside fund={fund} symbol={symbol} n={no()} className="md:col-span-2 lg:col-span-8" />
+            : <WhatsNext card={cardFor(data.outlook, symbol)} symbol={symbol} today={today} hasFile={Boolean(data.outlook)} n={no()} className="md:col-span-2 lg:col-span-8" />)}
+          {!isBench && <WhyItMoved notes={notesForSymbol(usableWhy(data.why, Boolean(data.livePrices)), symbol, { today })} names={names} n={no()} className="lg:col-span-4" />}
+          {!isBench && !fund && <OfficialNews rows={newsRows(data.secNews, symbol, 6)} n={no()} className="lg:col-span-4" />}
+          {!isBench && !fund && <CompanyNumbers c={companyNumbers(data.fundamentals, symbol)} n={no()} className="lg:col-span-4" />}
+          {long && <LongRun long={long} data={data} row={row} bench={bench} n={no()} className="lg:col-span-4" />}
           <Panel className="lg:col-span-4" info={t("sp.plain.foot")} infoLabel={t("sp.info")} head={<TermHead n={no()} title={t("sp.plain.title")} />}>
             <ReadMore text={words.join(" ")} lines={4} className="text-[14.5px] leading-relaxed text-ink" />
           </Panel>
           <Lessons lessons={lessons} go={go} n={no()} className="lg:col-span-4" />
           {!isBench && isDefault && <Guess picks={picks} sample={sample} symbol={symbol} settings={settings} n={no()} className="lg:col-span-4" />}
-          <People claims={claims} live={liveClaims.length} symbol={symbol} today={today} n={no()} className={!isBench && isDefault ? "md:col-span-2 lg:col-span-12" : "lg:col-span-4"} />
-        </section>
+          <People claims={claims} live={liveClaims.length} symbol={symbol} today={today} n={no()} className="md:col-span-2 lg:col-span-12" />
+        </div>
 
         <div className="mt-8 grid gap-3 border-t border-line pt-5">
           <p className="max-w-[90ch] text-[12.5px] leading-snug text-ink-3">{BRIEF_FOOTER} {t("sp.foot")}</p>
@@ -646,7 +639,7 @@ function StockHero({ data, row, symbol, name, group, entry, isDefault, fund, isB
       </div>
       <div className="mt-3 grid gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-8">
         <HeroTitle eyebrow={eyebrow} line1={symbol} line2={name}
-          className={long ? "[&_h1]:text-[clamp(38px,10vw,76px)]" : "[&_h1]:text-[clamp(48px,13vw,92px)]"} />
+          className={long ? "[&_h1]:text-[clamp(36px,10vw,64px)]" : "[&_h1]:text-[clamp(48px,13vw,80px)]"} />
         <div className="flex items-end gap-4 md:block md:text-end">
           <div>
             <p className="micro">{t("sp.hero.day")}</p>
@@ -690,15 +683,25 @@ function KeyNumbers({ row, bench, isBench, n, className = "" }) {
     !isBench && { id: "vs", v: row.vs_bench_60d_pct, label: t("sp.tile.vs", { bench: bench.symbol }), sub: isNum(row.vs_bench_20d_pct) ? t("sp.tile.vs20", { pct: fmtPct(row.vs_bench_20d_pct, 1) }) : null },
     isNum(risk?.max_dd_1y_pct) && { id: "dd", v: risk.max_dd_1y_pct, d: 0, sub: isNum(risk.worst_20d_1y_pct) ? t("sp.tile.worst20", { pct: fmtPct(risk.worst_20d_1y_pct, 0) }) : null },
   ].filter(Boolean);
+  // A strip of cells split by hairlines (the right and bottom edges of each cell; the box hides the outer ones).
   return (
-    <Panel id="key-numbers" className={className} info={t("sp.tile.info")} infoLabel={t("sp.info")}
+    <Panel id="key-numbers" flush className={className} info={t("sp.tile.info")} infoLabel={t("sp.info")}
       head={<TermHead id="key-numbers-h" n={n} title={t("sp.tile.title")} />} badge={<Chip tone="ghost">{t("sp.tile.pctOnly")}</Chip>}>
-      <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4 sm:gap-2 lg:grid-cols-2">
-        {tiles.map((x) => (
-          <StatTile key={x.id} label={x.label ?? t(`sp.tile.${x.id}`)} tone="brand"
-            value={<CountPct value={x.v} d={x.d ?? 1} plain={x.plain} className={x.tone ?? toneOf(x.v, x.d ?? 1)} />}
-            sub={x.sub} bars={x.bars} barsHi={x.barsHi} spark={x.spark} className="bg-surface-2/70" />
-        ))}
+      <div className="overflow-hidden rounded-b-panel">
+        <dl className="-me-px -mb-px grid grid-cols-2 sm:grid-cols-4 lg:[grid-template-columns:repeat(var(--n),minmax(0,1fr))]" style={{ "--n": tiles.length }}>
+          {tiles.map((x) => (
+            <div key={x.id} className="flex min-w-0 flex-col border-e border-b border-line px-3 pt-2.5 pb-2 sm:px-4">
+              <dt className="micro truncate text-desk">{x.label ?? t(`sp.tile.${x.id}`)}</dt>
+              <dd className="mt-1.5 text-[22px] leading-none font-bold tracking-[-0.03em] sm:text-[24px]">
+                <CountPct value={x.v} d={x.d ?? 1} plain={x.plain} className={x.tone ?? toneOf(x.v, x.d ?? 1)} />
+              </dd>
+              <dd className="font-num mt-1 h-4 truncate text-[11px] text-ink-3">{x.sub ?? ""}</dd>
+              <dd className="mt-auto pt-1.5" aria-hidden="true">
+                {x.bars?.length ? <MiniBars values={x.bars} hi={x.barsHi} h={22} /> : x.spark?.length > 1 ? <MiniSpark values={x.spark} w={120} h={22} area fluid /> : <span className="block h-[22px]" />}
+              </dd>
+            </div>
+          ))}
+        </dl>
       </div>
     </Panel>
   );
@@ -768,8 +771,8 @@ function StepsPanel({ data, reading, read, cfg, seeCandles, n, className = "" })
       {checks ? (
         <ol className="grid grid-cols-2 gap-1.5 @container sm:grid-cols-4 lg:grid-cols-2">
           {checks.map((c) => (
-            <li key={c.id} className="tile relative flex min-h-[96px] flex-col overflow-hidden px-2.5 pt-2 pb-2.5">
-              <span aria-hidden="true" className={`absolute inset-x-0 top-0 h-[2px] ${MARK_BAR[c.mark]}`} />
+            <li key={c.id} className="tile relative flex min-h-[96px] flex-col px-2.5 pt-2 pb-2.5">
+              <span aria-hidden="true" className={`absolute inset-x-3 -top-px h-[2px] rounded-full ${MARK_BAR[c.mark]}`} />
               <div className="flex items-center justify-between gap-1">
                 <span className="flex items-center gap-1.5">
                   <span className="font-num text-[10px] text-ink-3">{String(c.n).padStart(2, "0")}</span>
@@ -1041,7 +1044,7 @@ function CompanyNumbers({ c, n, className = "" }) {
   if (!w || !w.lines.length) return null;
   return (
     <Panel id="company-numbers" className={`scroll-mt-32 ${className}`} info={`${w.period} ${t("sp.numbers.foot")}`} infoLabel={t("sp.info")}
-      head={<TermHead id="company-numbers-h" n={n} title={t("sp.numbers.title")} />} badge={w.stale && <Chip tone="wait">{t("sp.numbers.old")}</Chip>}>
+      head={<TermHead id="company-numbers-h" n={n} title={t("sp.numbers.short")} />} badge={w.stale && <Chip tone="wait">{t("sp.numbers.old")}</Chip>}>
       <ul className="grid gap-1.5">
         {w.lines.map((l) => (
           <li key={l.id ?? l.label} className="tile flex gap-2.5 px-3 py-2">
@@ -1065,7 +1068,7 @@ function OfficialNews({ rows, n, className = "" }) {
   if (!rows.length) return null;
   return (
     <Panel id="official-news" className={`scroll-mt-32 ${className}`} info={`${t("sp.news.lede")} ${t("sp.news.foot")}`} infoLabel={t("sp.info")}
-      head={<TermHead id="official-news-h" n={n} title={t("sp.news.title")} />} badge={<Chip tone="ghost">{t("sp.news.sec")}</Chip>}>
+      head={<TermHead id="official-news-h" n={n} title={t("sp.news.short")} />}>
       <ul className="grid gap-1.5">
         {rows.map((r) => (
           <li key={r.url}>
@@ -1131,7 +1134,7 @@ function LongRun({ long, data, row, bench, n, className = "" }) {
         vol: pctText(row.risk.vol_1y_pct, 0), bench: bench.symbol, beta: `${row.risk.beta_1y ?? "–"}%`,
         loss: <span className="text-down">{fmtPct(row.risk.loss_95_20d_pct, 0)}</span>,
       })}</>}
-      head={<TermHead id="long-run-h" n={n} title={t("sp.long.title", { goal: `+${goal}%` })} sub={t("sp.long.span", { from: fmtDate(data.longrun.from), to: fmtDate(data.longrun.to) })} />}>
+      head={<TermHead id="long-run-h" n={n} title={t("sp.long.short", { goal: `+${goal}%` })} sub={t("sp.long.spanShort", { from: data.longrun.from.slice(0, 4), to: data.longrun.to.slice(0, 4) })} />}>
       <div className="grid grid-cols-3 gap-1.5">
         {cells.map(([k, v, plain, l, tone]) => (
           <div key={k} className="tile min-w-0 px-2.5 py-2">
@@ -1177,26 +1180,37 @@ function Guess({ picks, sample, symbol, settings, n, className = "" }) {
       head={<TermHead n={n} title={t("sp.guess.eyebrow")} />} badge={sample && <Chip tone="people">{t("sp.guess.samplePill")}</Chip>}>
       <p className="headline text-[22px] text-ink">{head}</p>
       {picks.length ? (
-        <ul className="mt-2 grid gap-1.5">
-          {picks.slice(0, 3).map((k) => (
-            <li key={k.id} className={`tile px-3 py-2.5 ${sample ? "border-dashed" : ""}`}>
-              <div className="flex items-center justify-between gap-2">
-                <span className="font-num truncate text-[10.5px] text-ink-3">{k.id}</span>
-                <Conviction level={k.conviction} />
-              </div>
-              <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-                <Chip kind={k.stance} />
-                <Chip kind={k.verdict}>{k.verdict === "pending" ? "pending" : <>{k.verdict} {fmtPct(k.outcome.excess_pct, 1)}</>}</Chip>
-              </div>
-              <ReadMore text={k.thesis} lines={2} min={110} className="mt-1.5 text-[13px] leading-snug text-ink" />
-              <ReadMore text={k.invalidation} lines={1} min={70} className="mt-1 text-[12px] leading-snug text-ink-2">
-                <span className="sr-only"> ({t("sp.guess.wrongIf")})</span>
-              </ReadMore>
-            </li>
-          ))}
-        </ul>
+        <>
+          <ul className="mt-2 grid gap-1.5"><PickCard k={picks[0]} sample={sample} /></ul>
+          {picks.length > 1 && (
+            <div className="mt-1.5">
+              <Fold title={t("sp.guess.earlier")} count={Math.min(3, picks.length - 1)}>
+                <ul className="grid gap-1.5">{picks.slice(1, 4).map((k) => <PickCard key={k.id} k={k} sample={sample} />)}</ul>
+              </Fold>
+            </div>
+          )}
+        </>
       ) : <p className="mt-1 text-[13px] text-ink-3">{t("sp.guess.emptyBody")}</p>}
     </Panel>
+  );
+}
+
+/** One of the brain's guesses: its id, how sure, which way, how it went, the thesis and what would prove it wrong. */
+function PickCard({ k, sample }) {
+  const t = strings(dict);
+  return (
+    <li className={`tile px-3 py-2.5 ${sample ? "border-dashed" : ""}`}>
+      <div className="flex items-center justify-between gap-2">
+        <span className="font-num truncate text-[10.5px] text-ink-3">{k.id}</span>
+        <Conviction level={k.conviction} />
+      </div>
+      <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+        <Chip kind={k.stance} />
+        <Chip kind={k.verdict}>{k.verdict === "pending" ? "pending" : <>{k.verdict} {fmtPct(k.outcome.excess_pct, 1)}</>}</Chip>
+      </div>
+      <ReadMore text={k.thesis} lines={2} min={110} className="mt-1.5 text-[13px] leading-snug text-ink" />
+      <p className="mt-1 line-clamp-2 text-[12px] leading-snug text-ink-2"><span className="micro me-1.5">{t("sp.guess.wrongIf")}</span>{k.invalidation}</p>
+    </li>
   );
 }
 

@@ -242,7 +242,7 @@ function CandleChart({ win, doc, on, pattern, symbol, rsiCfg, spots = [], sel = 
   const [kbd, setKbd] = useState(false);
   const byPointer = useRef(false);
   const reduced = useReducedMotion();
-  const [seen, inView] = useInView({ threshold: 0.3 });
+  const [seen, inView] = useInView({ threshold: 0.05, rootMargin: "0px" });
   const tick = useTickIn(win.n, { start: inView, reduced });
   useEffect(() => {
     const el = box.current;
@@ -257,7 +257,7 @@ function CandleChart({ win, doc, on, pattern, symbol, rsiCfg, spots = [], sel = 
 
   const narrow = W < 560;
   const L = 2, R = narrow ? 50 : 60, T = 14;
-  const PH = narrow ? 230 : 330;
+  const PH = narrow ? 230 : 380;
   const GAP = 18; // room for each lower panel's label
   const RSI_H = on.rsi ? (narrow ? 52 : 66) : 0;
   const VOL_H = on.volume ? (narrow ? 46 : 62) : 0;
@@ -342,7 +342,6 @@ function CandleChart({ win, doc, on, pattern, symbol, rsiCfg, spots = [], sel = 
   const head = geoms[k];
   const nextG = frac > 0 && k + 1 < win.n ? geoms[k + 1] : null;
   const headTone = tone(win.move[k], 1);
-  const maLast = [...cut(win.ma20)].reverse().find(isNum);
 
   return (
     <div ref={seen}>
@@ -368,7 +367,7 @@ function CandleChart({ win, doc, on, pattern, symbol, rsiCfg, spots = [], sel = 
             })}
           </dl>
         </div>
-        <div className="micro grid justify-items-end gap-1 text-end">
+        <div className="micro flex w-full flex-wrap items-center gap-x-3 gap-y-1 sm:grid sm:w-auto sm:justify-items-end sm:gap-1 sm:text-end">
           {tick.can && (
             <button type="button" onClick={tick.replay} aria-label={t("cdv.replayAria", { n: tick.count })} className="-my-1.5 inline-flex min-h-[44px] items-center">
               <span className={`chip gap-1.5 border-line-2 bg-surface-2 ${live ? "border-desk/50 text-desk" : "text-ink-2 hover:text-ink"}`}>
@@ -420,12 +419,6 @@ function CandleChart({ win, doc, on, pattern, symbol, rsiCfg, spots = [], sel = 
             {/* step 4: the 20-period average, dashed */}
             {on.ma20 && <path d={linePath(cut(win.ma20), xi, y)} fill="none" stroke="var(--ai)" strokeWidth="1.6" strokeDasharray="5 4" strokeLinejoin="round" strokeLinecap="round" />}
           </g>
-
-          {/* the average's name at its newest point */}
-          {on.ma20 && isNum(maLast) && inDom(maLast) && !live && (
-            <text x={x1 - 4} y={y(maLast) - 6} textAnchor="end" className="fill-ai font-mono text-[10px] font-semibold" style={HALO}>{t("cdv.ma")}</text>
-          )}
-
           {/* names inside the plot (dropped, not stacked, when they would collide) */}
           {names.map((nm) => (
             <g key={nm.id}>

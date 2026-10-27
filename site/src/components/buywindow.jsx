@@ -39,10 +39,12 @@ function Rows({ rows }) {
       {rows.map((c) => (
         <li key={c.id} className="flex items-start gap-2.5 px-3 py-2">
           <span className="pt-0.5"><Mark ok={c.ok} /></span>
-          <span className="min-w-0 flex-1 text-[13px] leading-snug text-ink">{c.label}</span>
-          <span className="shrink-0 text-end">
-            <span className="font-num block text-[12px] font-semibold text-ink">{c.now}</span>
-            <span className="font-num block text-[10.5px] text-ink-3">{t("bwc.needShort", { need: c.need })}</span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[13px] leading-snug text-ink">{c.label}</span>
+            <span className="font-num mt-0.5 flex flex-wrap gap-x-2 text-[11px] leading-snug">
+              <span className="font-semibold text-ink-2">{c.now}</span>
+              <span className="text-ink-3">{t("bwc.needShort", { need: c.need })}</span>
+            </span>
           </span>
         </li>
       ))}
@@ -68,8 +70,10 @@ function RuleBlock({ r, showDate = false }) {
         {r.conditions.map((c) => (
           <li key={c.id} className="flex items-start gap-2">
             <span className="pt-[3px]"><Mark ok={c.ok} className="size-3" /></span>
-            <span className="min-w-0 flex-1 text-[12.5px] leading-snug text-ink-2">{c.label}</span>
-            <span className="font-num shrink-0 text-end text-[11.5px] text-ink-3">{c.now}</span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[12.5px] leading-snug text-ink-2">{c.label}</span>
+              <span className="font-num block text-[11px] leading-snug text-ink-3">{c.now}</span>
+            </span>
           </li>
         ))}
       </ul>
@@ -93,63 +97,67 @@ export function BuyWindowBody({ a, go }) {
   const monthlyLine = new Set(mlines).size === 1 ? mlines[0] : (a.monthly ?? []).map((r) => `${r.name}: ${r.line}`).join(" · ");
   const real = firstSentence(a.realMoney);
   return (
-    <div className="grid gap-3">
+    <div className="@container">
       <p className={`text-[16.5px] leading-snug font-semibold tracking-[-0.01em] ${tone.text}`}>{a.headline}</p>
+      <div className="mt-3 grid gap-3 @2xl:grid-cols-2 @2xl:gap-4">
+        <div className="grid content-start gap-3">
+          <div className="grid gap-1.5">
+            <div className="tile flex items-start gap-2.5 px-3 py-2">
+              <span className="chip mt-0.5 shrink-0 border-desk/50 bg-desk/10 text-desk">{t("bwc.realMoney")}</span>
+              <p className="min-w-0 flex-1 pt-1 text-[13px] leading-snug text-ink">{real}</p>
+              {real !== a.realMoney && <InfoTip label={t("bwc.realMoney")} className="-my-2 -me-2">{a.realMoney}</InfoTip>}
+            </div>
+            {a.nextLook && (
+              <p className="flex items-start gap-2.5 px-1 text-[13px] leading-snug text-ink-2">
+                <span className="pt-px text-ink-3"><CalendarIcon /></span>
+                <span className="min-w-0">{a.nextLook}</span>
+              </p>
+            )}
+          </div>
 
-      <div className="grid gap-1.5">
-        <div className="tile flex items-start gap-2.5 px-3 py-2">
-          <span className="chip mt-0.5 shrink-0 border-desk/50 bg-desk/10 text-desk">{t("bwc.realMoney")}</span>
-          <p className="min-w-0 flex-1 pt-1 text-[13px] leading-snug text-ink">{real}</p>
-          {real !== a.realMoney && <InfoTip label={t("bwc.realMoney")} className="-my-2 -me-2">{a.realMoney}</InfoTip>}
+          {hasGame && (
+            <div>
+              <Head>{t("bwc.game")}</Head>
+              <ul className="grid gap-1.5">{a.games.map((r) => <RuleBlock key={r.id} r={r} />)}</ul>
+            </div>
+          )}
         </div>
-        {a.nextLook && (
-          <p className="flex items-start gap-2.5 px-1 text-[13px] leading-snug text-ink-2">
-            <span className="pt-px text-ink-3"><CalendarIcon /></span>
-            <span className="min-w-0">{a.nextLook}</span>
-          </p>
-        )}
+        <div className="grid content-start gap-3">
+          {a.monthly?.length > 0 && (
+            <details className="group rounded-tile border border-line">
+              <summary className="flex min-h-[44px] cursor-pointer list-none items-center gap-2 px-3 py-2 text-[13px] leading-snug text-ink [&::-webkit-details-marker]:hidden">
+                <span className="min-w-0 flex-1"><span className="font-semibold">{t("bwc.monthly")}</span> <span className="text-ink-2">{monthlyLine}</span></span>
+                <span aria-hidden="true" className="shrink-0 text-ink-3 transition-transform group-open:rotate-180">▾</span>
+              </summary>
+              <ul className="grid gap-1.5 px-2 pb-2">{a.monthly.map((r) => <RuleBlock key={r.id} r={r} showDate />)}</ul>
+            </details>
+          )}
+
+          {a.conditions.length > 0 && (
+            <div>
+              <Head>{condHead}</Head>
+              <Rows rows={a.conditions} />
+            </div>
+          )}
+
+          {a.waitFor.length > 0 && (
+            <div>
+              <Head>{t(a.tone === "rules_allow" ? "bwc.keepInMind" : "bwc.waitFor")}</Head>
+              <ul className="grid gap-1 text-[13px] leading-snug text-ink-2">
+                {a.waitFor.map((w) => (
+                  <li key={w} className="flex gap-2"><span aria-hidden="true" className="mt-[7px] size-[5px] shrink-0 rotate-45 bg-ink-3" /><span>{w}</span></li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {go && (
+            <button type="button" onClick={() => go("admin")} className="micro inline-flex min-h-[44px] items-center gap-1 justify-self-start text-ink-2 hover:text-ink">
+              {t("bwc.rules")} <ArrowRight className="size-3.5" />
+            </button>
+          )}
+        </div>
       </div>
-
-      {hasGame && (
-        <div>
-          <Head>{t("bwc.game")}</Head>
-          <ul className="grid gap-1.5">{a.games.map((r) => <RuleBlock key={r.id} r={r} />)}</ul>
-        </div>
-      )}
-
-      {a.monthly?.length > 0 && (
-        <details className="group rounded-tile border border-line">
-          <summary className="flex min-h-[44px] cursor-pointer list-none items-center gap-2 px-3 py-2 text-[13px] leading-snug text-ink [&::-webkit-details-marker]:hidden">
-            <span className="min-w-0 flex-1"><span className="font-semibold">{t("bwc.monthly")}</span> <span className="text-ink-2">{monthlyLine}</span></span>
-            <span aria-hidden="true" className="shrink-0 text-ink-3 transition-transform group-open:rotate-180">▾</span>
-          </summary>
-          <ul className="grid gap-1.5 px-2 pb-2">{a.monthly.map((r) => <RuleBlock key={r.id} r={r} showDate />)}</ul>
-        </details>
-      )}
-
-      {a.conditions.length > 0 && (
-        <div>
-          <Head>{condHead}</Head>
-          <Rows rows={a.conditions} />
-        </div>
-      )}
-
-      {a.waitFor.length > 0 && (
-        <div>
-          <Head>{t(a.tone === "rules_allow" ? "bwc.keepInMind" : "bwc.waitFor")}</Head>
-          <ul className="grid gap-1 text-[13px] leading-snug text-ink-2">
-            {a.waitFor.map((w) => (
-              <li key={w} className="flex gap-2"><span aria-hidden="true" className="mt-[7px] size-[5px] shrink-0 rotate-45 bg-ink-3" /><span>{w}</span></li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {go && (
-        <button type="button" onClick={() => go("admin")} className="micro inline-flex min-h-[44px] items-center gap-1 justify-self-start text-ink-2 hover:text-ink">
-          {t("bwc.rules")} <ArrowRight className="size-3.5" />
-        </button>
-      )}
     </div>
   );
 }

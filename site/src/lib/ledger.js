@@ -23,6 +23,7 @@ export function paperBets({ kb = [], bets = [], horizon = 20 } = {}) {
     return {
       kind: "call", id: k.id, date: k.date, ticker: k.ticker, name: k.name ?? k.ticker, stance: k.stance, conviction: k.conviction,
       result, closed, check: closed ?? addTradingDays(k.date, horizon), excess: isNum(k.outcome?.excess_pct) ? k.outcome.excess_pct : null,
+      ret: isNum(k.outcome?.return_pct) ? k.outcome.return_pct : null, mkt: isNum(k.outcome?.benchmark_return_pct) ? k.outcome.benchmark_return_pct : null,
     };
   });
   const weekly = bets.map((b) => {
@@ -75,6 +76,19 @@ export function stepTrack(items, today = null) {
   const last = pts.at(-1).date;
   if (today && today > last) pts.push({ date: today, v, hits: 0, misses: 0, flats: 0, end: true });
   return pts;
+}
+
+/**
+ * Does "very sure" mean anything? The hit rate of the checked calls at each level of sureness (low, medium, high),
+ * from the published calibration file when it has the level, else counted from the outcomes. [{level, n, rate}].
+ */
+export function sureLevels(outcomes = [], calibration = null) {
+  return ["low", "medium", "high"].map((level) => {
+    const row = (calibration?.by_conviction ?? []).find((r) => r.conviction === level);
+    if (row && row.n > 0 && isNum(row.hit_rate_pct)) return { level, n: row.n, rate: row.hit_rate_pct };
+    const xs = outcomes.filter((o) => o.conviction === level && o.verdict);
+    return { level, n: xs.length, rate: xs.length ? (xs.filter((o) => o.verdict === "hit").length / xs.length) * 100 : null };
+  });
 }
 
 /** How sure the brain is about a run's calls, out of 10: the average of low 1, medium 2, high 3, scaled to 10. */

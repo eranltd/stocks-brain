@@ -204,6 +204,44 @@ export function StepTrack({ points, height = 132 }) {
   );
 }
 
+/* ------------------------------------------------------------- sure chart */
+
+/**
+ * Does "very sure" mean anything? One bar per level of sureness: the hit rate of its checked calls, against a dashed
+ * line at 50% (a coin). `levels` is lib/ledger.js sureLevels. Hover or focus a row for its count.
+ */
+export function SureChart({ levels }) {
+  const t = strings(dict);
+  return (
+    <div className="grid gap-2.5">
+      {levels.map((l) => {
+        const has = isNum(l.rate);
+        return (
+          <div key={l.level} className="grid grid-cols-[64px_minmax(0,1fr)_68px] items-center gap-3" title={t("lg.cal.rowTitle", { count: l.n })}>
+            <span className="flex items-center gap-1.5">
+              <SureBars level={l.level} call="wait" />
+              <span className="micro text-ink-2">{t(`vp.conv.${l.level}`)}</span>
+            </span>
+            <span className="relative h-6 overflow-hidden rounded-[6px] bg-surface-3">
+              {has && <span className="absolute inset-y-0 start-0 rounded-[6px] bg-desk/80" style={{ width: `${Math.max(2, Math.min(100, l.rate))}%` }} />}
+              <span aria-hidden="true" className="absolute inset-y-0 start-1/2 border-s border-dashed border-ink-3" />
+            </span>
+            <span className="text-end">
+              <span className="font-num block text-[15px] leading-none font-bold text-ink">{has ? `${Math.round(l.rate)}%` : "–"}</span>
+              <span className="font-num mt-0.5 block text-[10.5px] text-ink-3">{t("lg.cal.n", { count: l.n })}</span>
+            </span>
+          </div>
+        );
+      })}
+      <p className="grid grid-cols-[64px_minmax(0,1fr)_68px] gap-3">
+        <span />
+        <span className="micro relative h-3"><span className="absolute start-1/2 -translate-x-1/2 whitespace-nowrap">{t("lg.cal.coin")}</span></span>
+        <span />
+      </p>
+    </div>
+  );
+}
+
 /* ---------------------------------------------------------------- ledger */
 
 /** A bet's result as a chip: open (with the day it is checked), hit / won, miss / lost, flat. */
@@ -226,7 +264,7 @@ function ResultChip({ x }) {
  * the result and how far it beat or trailed the market. `kinds` "all" adds a switch between calls and weekly bets.
  * A row opens its stock (a weekly bet scrolls to the weekly bet's panel, when there is one).
  */
-export function BetLedger({ items, go, switchable = true, maxHeight = "max-h-[460px] md:max-h-[520px]", caption }) {
+export function BetLedger({ items, go, switchable = true, detail = false, maxHeight = "max-h-[460px] md:max-h-[520px]", caption }) {
   const t = strings(dict);
   const [kind, setKind] = useState("all");
   const rows = kind === "all" ? items : items.filter((x) => x.kind === kind);
@@ -258,6 +296,10 @@ export function BetLedger({ items, go, switchable = true, maxHeight = "max-h-[46
       ? <span className="flex items-center gap-1.5"><SureBars level={x.conviction} call={STANCE_CALL[x.stance] ?? "wait"} /><span className="micro">{t.has(`vp.conv.${x.conviction}`) ? t(`vp.conv.${x.conviction}`) : x.conviction}</span></span>
       : <span className="text-ink-3">–</span>) },
     { key: "result", label: t("lg.col.result"), align: "start", sortable: true, sortValue: (x) => ({ hit: 0, miss: 1, flat: 2, open: 3, void: 4 })[x.result], firstDir: "asc", cell: (x) => <ResultChip x={x} /> },
+    ...(detail ? [
+      { key: "ret", label: t("lg.col.stock"), num: true, sortable: true, sortValue: (x) => x.ret, cell: (x) => <Delta value={x.ret} d={1} className="font-normal" /> },
+      { key: "mkt", label: t("lg.col.market"), num: true, sortable: true, sortValue: (x) => x.mkt, cell: (x) => <Delta value={x.mkt} d={1} className="font-normal opacity-75" /> },
+    ] : []),
     { key: "vs", label: t("lg.col.vs"), num: true, sortable: true, sortValue: (x) => (x.kind === "call" ? x.excess : x.spread), cell: (x) => (x.kind === "call"
       ? (isNum(x.excess) ? <Delta value={x.excess} d={1} /> : <span className="text-ink-3">–</span>)
       : (isNum(x.spread) ? <span className={x.spread > 0 ? "text-up" : x.spread < 0 ? "text-down" : "text-ink-2"}>{signed(x.spread)}<span className="ms-0.5 text-[10.5px] text-ink-3">{t("lg.pts")}</span></span> : <span className="text-ink-3">–</span>)) },
@@ -274,7 +316,7 @@ export function BetLedger({ items, go, switchable = true, maxHeight = "max-h-[46
             options={[{ value: "all", label: t("lg.f.all"), count: counts.all }, { value: "call", label: t("lg.f.calls"), count: counts.call }, { value: "weekly", label: t("lg.f.weekly"), count: counts.weekly }]} />
         </div>
       )}
-      <DataTable columns={cols} rows={rows} rowKey={(x) => x.id} defaultSort={{ key: "date", dir: "desc" }} minWidth={640}
+      <DataTable columns={cols} rows={rows} rowKey={(x) => x.id} defaultSort={{ key: "date", dir: "desc" }} minWidth={detail ? 760 : 640}
         onRowClick={open} rowLabel={(x) => (x.kind === "call" ? x.ticker : t("lg.weekly"))} rowTone={(x) => (x.result === "hit" ? "up" : x.result === "miss" ? "down" : null)}
         scrollClassName={`${maxHeight} overflow-y-auto`} caption={caption ?? t("lg.title")} />
     </div>

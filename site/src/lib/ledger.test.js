@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { ledgerStats, paperBets, stepTrack, sureScore } from "./ledger.js";
+import { ledgerStats, paperBets, stepTrack, sureLevels, sureScore } from "./ledger.js";
 
 const kb = [
   { id: "2026-10-01:AAA", date: "2026-10-01", ticker: "AAA", name: "Aaa", stance: "bullish", conviction: "low", verdict: "hit", outcome: { scored_date: "2026-10-29", excess_pct: 2.1 } },
@@ -39,6 +39,16 @@ test("stepTrack: hits minus misses, one step per checked day, flat to today", ()
   const pts = stepTrack(paperBets({ kb, bets }), "2026-10-31");
   assert.deepEqual(pts.map((p) => [p.date, p.v]), [["2026-10-01", 0], ["2026-10-12", -1], ["2026-10-29", -1], ["2026-10-30", -1], ["2026-10-31", -1]]);
   assert.deepEqual(stepTrack([], "2026-10-31"), []);
+});
+
+test("sureLevels: hit rate per level of sureness, from calibration or counted", () => {
+  const outcomes = [
+    { conviction: "low", verdict: "hit" }, { conviction: "low", verdict: "miss" }, { conviction: "high", verdict: "hit" },
+  ];
+  assert.deepEqual(sureLevels(outcomes), [{ level: "low", n: 2, rate: 50 }, { level: "medium", n: 0, rate: null }, { level: "high", n: 1, rate: 100 }]);
+  const cal = { by_conviction: [{ conviction: "low", n: 12, hit_rate_pct: 41.7 }, { conviction: "medium", n: 0, hit_rate_pct: null }] };
+  assert.deepEqual(sureLevels(outcomes, cal)[0], { level: "low", n: 12, rate: 41.7 });
+  assert.deepEqual(sureLevels(outcomes, cal)[1], { level: "medium", n: 0, rate: null });
 });
 
 test("sureScore: the average conviction out of 10", () => {

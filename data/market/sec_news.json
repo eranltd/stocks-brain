@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-27",
+  "as_of": "2026-10-28",
   "sample": false,
   "source": "SEC EDGAR filings index (company submissions)",
   "window_days": 120,
@@ -334,6 +334,18 @@
       "name": "Broadcom Inc.",
       "filings": [
         {
+          "date": "2026-10-27",
+          "form": "8-K",
+          "items": [
+            "2.03"
+          ],
+          "titles": [
+            "Took on new debt"
+          ],
+          "kind": "money",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000119312526434271/d148323d8k.htm"
+        },
+        {
           "date": "2026-09-10",
           "form": "10-Q",
           "items": [],
@@ -441,6 +453,18 @@
       "cik": 318154,
       "name": "AMGEN INC",
       "filings": [
+        {
+          "date": "2026-10-27",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/318154/000031815426000144/amgn-20261026.htm"
+        },
         {
           "date": "2026-08-05",
           "form": "10-Q",
@@ -933,6 +957,18 @@
       "cik": 75362,
       "name": "PACCAR INC",
       "filings": [
+        {
+          "date": "2026-10-27",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/75362/000119312526432729/pcar-20261027.htm"
+        },
         {
           "date": "2026-07-29",
           "form": "10-Q",

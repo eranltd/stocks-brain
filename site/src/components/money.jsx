@@ -1,8 +1,13 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { HORIZONS, honestAction, lumpSum, moneyFacts } from "../lib/money.js";
-import { Reveal } from "./ui.jsx";
+import { InfoTip, Panel } from "./ui.jsx";
 import dict from "../text/home.js";
+import plan from "../text/plan.js";
 import { strings } from "../lib/text.js";
+
+// Real money, the honest action (lib/money.js). Texts: text/home.js ("moneyc.*", "money.*", "lump.*") and text/plan.js
+// ("mon.*"). The kit's look: a Panel, the horizon as three tiles, the answer's steps numbered in mono, the why and the
+// risk behind an (i).
 
 const KEY = "sb:horizon";
 const read = () => { try { return window.localStorage.getItem(KEY); } catch { return null; } };
@@ -16,17 +21,33 @@ export function useHorizon() {
 
 function Picker({ horizon, setHorizon }) {
   return (
-    <div role="radiogroup" aria-label={strings(dict)("moneyc.when")} className="mt-4 grid gap-2 sm:grid-cols-3">
+    <div role="radiogroup" aria-label={strings(dict)("moneyc.when")} className="grid grid-cols-3 gap-2">
       {HORIZONS.map((h) => {
         const on = horizon === h.id;
         return (
           <button key={h.id} type="button" role="radio" aria-checked={on} onClick={() => setHorizon(h.id)}
-            className={`min-h-[52px] rounded-2xl border px-4 py-3 text-start text-[16px] font-medium transition-colors ${on ? "border-transparent bg-ink text-bg" : "border-line-2 text-ink hover:border-ink-3"}`}>
-            {h.label}
+            className={`relative min-h-[56px] overflow-hidden rounded-tile border px-2 py-2.5 text-center transition-[border-color,background-color,box-shadow] ${on ? "glow-brand border-desk bg-desk/10 text-ink" : "border-line-2 bg-surface-2 text-ink-2 hover:border-line-3 hover:text-ink"}`}>
+            {on && <span aria-hidden="true" className="absolute inset-x-0 top-0 h-[3px] bg-desk" />}
+            <span className="headline block text-[17px] leading-none tracking-[0.04em] sm:text-[19px]">{h.short}</span>
+            <span className="mt-1 hidden text-[11.5px] leading-tight text-ink-3 sm:block">{h.label}</span>
           </button>
         );
       })}
     </div>
+  );
+}
+
+/** Numbered steps: 01, 02 ... in mono, the step in plain words. */
+function Steps({ steps }) {
+  return (
+    <ol className="grid gap-2">
+      {steps.map((s, i) => (
+        <li key={s} className="flex gap-3 rounded-[10px] border border-line bg-surface-2/60 px-3 py-2.5 text-[14.5px] leading-snug text-ink">
+          <span className="font-num shrink-0 pt-px text-[12px] font-bold text-desk">{String(i + 1).padStart(2, "0")}</span>
+          <span className="min-w-0">{s}</span>
+        </li>
+      ))}
+    </ol>
   );
 }
 
@@ -35,64 +56,59 @@ function Picker({ horizon, setHorizon }) {
  * answer follows. Stock picks are not part of it (docs/household.md): they would join only if a tested rule ever earns
  * a place, which today none has.
  */
-export function MoneyAction({ data, compact = false }) {
+export function MoneyAction({ data, compact = false, className = "" }) {
   const t = strings(dict);
+  const p = strings(plan);
   const [horizon, setHorizon] = useHorizon();
   const a = horizon ? honestAction(horizon, moneyFacts(data)) : null;
   return (
-    <Reveal as="section" id="money-action" className="card scroll-mt-28 overflow-hidden">
-      <div className="h-1.5" style={{ background: "var(--accent)" }} />
-      <div className="p-6 sm:p-8">
-        <h2 className="text-[15px] font-semibold uppercase tracking-[0.12em] text-accent">{t("moneyc.title")}</h2>
-        <p className="mt-3 text-[18px] font-semibold text-ink">{t("moneyc.when")}</p>
-        <Picker horizon={horizon} setHorizon={setHorizon} />
-        {!a && <p className="mt-4 text-[16px] leading-relaxed text-ink-2">{t("moneyc.pick")}</p>}
-        {a && (
-          <>
-            <p className="mt-6 text-[clamp(24px,6.5vw,32px)] leading-[1.15] font-semibold tracking-[-0.02em] text-ink">{a.title}</p>
-            <ol className="mt-4 grid gap-3">
-              {a.steps.map((s, i) => (
-                <li key={s} className="flex gap-3 text-[17px] leading-relaxed text-ink">
-                  <span className="grid size-7 shrink-0 place-items-center rounded-full bg-accent/15 text-[14px] font-semibold text-accent">{i + 1}</span>
-                  <span className="min-w-0">{s}</span>
-                </li>
-              ))}
-            </ol>
-            {!compact && (
-              <>
-                <p className="mt-5 text-[16.5px] leading-relaxed text-ink-2"><span className="font-semibold text-ink">{t("moneyc.why")}</span> {a.why}</p>
-                <p className="mt-3 text-[16.5px] leading-relaxed text-ink-2"><span className="font-semibold text-ink">{t("moneyc.risk")}</span> {a.risk}</p>
-              </>
-            )}
-            <p className="mt-5 text-[14px] leading-relaxed text-ink-3">{t("moneyc.general")} {t("moneyc.device")}</p>
-          </>
-        )}
-      </div>
-    </Reveal>
+    <Panel id="money-action" className={`scroll-mt-28 ${className}`} eyebrow={p("mon.kicker")} title={t("moneyc.title")}
+      info={<span className="grid gap-2"><span>{t("moneyc.pick")}</span><span>{t("moneyc.general")} {t("moneyc.device")}</span></span>} infoLabel={p("mon.about")}>
+      <p className="micro mb-2 text-ink-2">{t("moneyc.when")}</p>
+      <Picker horizon={horizon} setHorizon={setHorizon} />
+      {!a && <p className="mt-3 text-[13.5px] text-ink-3">{p("mon.pick")}</p>}
+      {a && (
+        <div className="mt-4">
+          <p className="headline text-[clamp(22px,6vw,28px)] leading-[1.02] text-ink">{a.title}</p>
+          <div className="mt-3"><Steps steps={a.steps} /></div>
+          {!compact && (
+            <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
+              <span className="inline-flex items-center"><span className="micro text-up">{p("mon.why")}</span><InfoTip label={t("moneyc.why")} align="start">{a.why}</InfoTip></span>
+              <span className="inline-flex items-center"><span className="micro text-down">{p("mon.risk")}</span><InfoTip label={t("moneyc.risk")} align="start">{a.risk}</InfoTip></span>
+            </div>
+          )}
+          <p className="mt-2 text-[12px] leading-snug text-ink-3">{t("moneyc.general")}</p>
+        </div>
+      )}
+    </Panel>
   );
 }
 
 /** "Got a lump sum?": five steps for money already in hand, then the questions to settle before moving a big sum. */
-export function LumpSum({ data }) {
+export function LumpSum({ data, className = "" }) {
   const t = strings(dict);
+  const p = strings(plan);
   const g = lumpSum(data.rulesResult, null);
+  const [open, setOpen] = useState(false);
+  const id = useId();
   return (
-    <details id="lump-sum" className="card scroll-mt-28 p-6 sm:p-8">
-      <summary className="cursor-pointer text-[19px] font-semibold text-ink">{g.title} <span className="font-normal text-ink-3">{t("moneyc.lumpKinds")}</span></summary>
-      <ol className="mt-5 grid gap-3">
-        {g.steps.map((s, i) => (
-          <li key={s} className="flex gap-3 text-[17px] leading-relaxed text-ink">
-            <span className="grid size-7 shrink-0 place-items-center rounded-full bg-accent/15 text-[14px] font-semibold text-accent">{i + 1}</span>
-            <span className="min-w-0">{s}</span>
-          </li>
-        ))}
-      </ol>
-      <p className="mt-6 text-[16px] font-semibold text-ink">{t("moneyc.before")}</p>
-      <ul className="mt-2 grid gap-2">
-        {g.before.map((b) => <li key={b} className="text-[16px] leading-relaxed text-ink-2">• {b}</li>)}
-      </ul>
-      <p className="mt-4 text-[16px] leading-relaxed text-ink">{g.adviser}</p>
-      <p className="mt-4 text-[14px] leading-relaxed text-ink-3">{t("moneyc.general")}</p>
-    </details>
+    <Panel id="lump-sum" className={`scroll-mt-28 ${className}`} eyebrow={p("mon.kicker")} title={g.title} sub={t("moneyc.lumpKinds")}>
+      <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-controls={id}
+        className={`headline flex min-h-[48px] w-full items-center justify-between gap-3 rounded-tile border px-3.5 text-[15px] tracking-[0.1em] transition-colors ${open ? "border-desk/60 text-desk" : "border-line-2 text-ink hover:border-line-3"}`}>
+        {p(open ? "mon.lumpClose" : "mon.lumpOpen")}
+        <svg viewBox="0 0 24 24" className={`size-4 transition-transform duration-300 ${open ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+      </button>
+      {open && (
+        <div id={id} className="mt-3">
+          <Steps steps={g.steps} />
+          <p className="micro mt-4 mb-2 text-ink-2">{t("moneyc.before")}</p>
+          <ul className="grid gap-1.5">
+            {g.before.map((b) => <li key={b} className="relative ps-4 text-[13.5px] leading-snug text-ink-2 before:absolute before:start-0 before:top-[0.65em] before:h-px before:w-2.5 before:bg-desk">{b}</li>)}
+          </ul>
+          <p className="mt-3 text-[13.5px] leading-snug text-ink">{g.adviser}</p>
+          <p className="mt-2 text-[12px] leading-snug text-ink-3">{t("moneyc.general")}</p>
+        </div>
+      )}
+    </Panel>
   );
 }

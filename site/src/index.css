@@ -904,3 +904,14 @@ button.floor-tile:hover { transform: translateY(-1px); border-color: var(--line-
   .news-card { padding: 8px 36px 10px 12px; gap: 3px; }
   .news-title { font-size: 13px; -webkit-line-clamp: 1; }
 }
+/* STOP in the dock, and the small Start chip that brings the agent back. */
+.arena-dock-stop { display: inline-flex; height: 40px; align-items: center; gap: 7px; border-radius: 999px; padding: 0 13px; background: color-mix(in srgb, var(--down) 16%, transparent);
+  font-family: var(--font-display); font-size: 15px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--down);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--down) 45%, transparent); }
+.arena-dock-stop:hover { background: color-mix(in srgb, var(--down) 26%, transparent); }
+.arena-dock-stop-sq { width: 10px; height: 10px; border-radius: 2px; background: currentColor; }
+.arena-start { position: fixed; z-index: 46; top: calc(env(safe-area-inset-top, 0px) + 70px); right: 12px; display: inline-flex; min-height: 40px; align-items: center; gap: 7px;
+  border-radius: 999px; border: 1px solid var(--line-2); background: color-mix(in srgb, var(--surface) 92%, transparent); padding: 0 14px; font-family: var(--font-num);
+  font-size: 11.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--up); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  box-shadow: 0 10px 26px -14px rgb(0 0 0 / 0.6); animation: toast-in 400ms cubic-bezier(.2, .8, .2, 1) both; }
+@media (min-width: 640px) { .arena-start { right: 20px; top: calc(env(safe-area-inset-top, 0px) + 82px); } }

@@ -125,7 +125,7 @@ export function HeatTile({ title, move, sub, call, callLabel, onClick, label, sc
   const Tag = onClick ? "button" : "div";
   return (
     <Tag type={onClick ? "button" : undefined} onClick={onClick} aria-label={label} title={callLabel}
-      className={`heat-tile relative flex h-full min-h-[78px] w-full min-w-0 flex-col overflow-hidden rounded-[8px] border border-line px-2.5 pt-2 pb-2 text-start transition-[transform,box-shadow] duration-200 ${onClick ? "hover:z-10 hover:-translate-y-px" : ""} ${className}`}
+      className={`scan-heat relative flex h-full min-h-[78px] w-full min-w-0 flex-col overflow-hidden rounded-[8px] border border-line px-2.5 pt-2 pb-2 text-start transition-[transform,box-shadow] duration-200 ${onClick ? "hover:z-10 hover:-translate-y-px" : ""} ${className}`}
       style={{ ...heatStyle(move, scale), "--i": index }}>
       {call && CALL_CORNER[call] && <span aria-hidden="true" className={`absolute top-0 right-0 size-0 border-t-[13px] border-l-[13px] border-l-transparent ${CALL_CORNER[call]}`} />}
       <span className="truncate pe-3 font-num text-[11.5px] leading-tight font-bold tracking-[0.02em] text-ink">{title}</span>

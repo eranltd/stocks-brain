@@ -1,9 +1,12 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { STATUS } from "../components/goal.jsx";
 import { trustStage } from "../components/trust.jsx";
 import { CallChip, Chip, Container, DataTable, EmptyState, HeroTitle, InfoTip, MiniSpark, Panel, Segmented, SimBadge, SkeletonRows } from "../components/ui.jsx";
 import { BreadthBar, Count, DeskHead, HeatTile, KpiStrip, toneText } from "../components/pulse.jsx";
 import { BigBoard } from "../components/bigboard.jsx";
+import { Floor, useFloorLoop } from "../components/floor.jsx";
+import { Pairs } from "../components/pairs.jsx";
+import { floorData } from "../lib/floor.js";
 import { VERDICT } from "../lib/checklist.js";
 import { marketNote, NOT_YET } from "../lib/markets.js";
 import { deskCalls, freshness, houseLimits, unusualToday } from "../lib/desk.js";
@@ -18,11 +21,13 @@ import { fmtDate, fmtPct } from "../lib/format.js";
 /*
  * The Stocks page: a market scanner for the market chosen in the header (or in the page's own market tabs). The hero
  * names the market; a strip of big numbers picks out the day's top gainer, top loser, most unusual volume and the
- * up/down split; the main list adds its market regime. The scanner opens on the big board (CHART, the default: one
- * line per name over 1M to 1Y, components/bigboard.jsx) and also shows every name as a dense table (LIST: percent
+ * up/down split; the main list adds its market regime. The scanner opens on the floor (ARENA, the default: one square
+ * per name replaying the last 30 trading days again and again, components/floor.jsx); it also shows the big board
+ * (CHART: one line per name over 1M to 1Y, components/bigboard.jsx) and every name as a dense table (LIST: percent
  * moves, never a price or raw volume; the quick checks; the chart checklist; on the main list the Desk's paper call as
  * a coloured edge and a chip) or as a heat grid (HEAT: one tile per name, coloured by the day's move). Filters are chips;
- * long words sit behind (i) buttons. Words in text/stock.js ("wl.*"); the Desk's calls in its own words (text/home.js).
+ * long words sit behind (i) buttons. Under the scanner, pair stocks from every list (components/pairs.jsx), stepped by
+ * the floor's clock. Words in text/stock.js ("wl.*"); the Desk's calls in its own words (text/home.js).
  */
 
 const isNum = (v) => typeof v === "number" && Number.isFinite(v);
@@ -33,11 +38,11 @@ const signed = (n) => (n == null ? "–" : `${n > 0 ? "+" : n < 0 ? "−" : ""}$
 const CALL_RANK = { buy: 2, wait: 1, reject: 0 };
 const VERDICT_CHIP = { accent: "up", down: "down", flat: "neutral" };
 const UNUSUAL_VOLUME = 1.5;
-// The scanner's view (CHART | LIST | HEAT), remembered on this device only; CHART when nothing is stored.
+// The scanner's view (ARENA | CHART | LIST | HEAT), remembered on this device only; ARENA when nothing is stored.
 const VIEW_KEY = "sb:stocks-view";
-const VIEWS = ["chart", "list", "heat"];
+const VIEWS = ["arena", "chart", "list", "heat"];
 function readView() {
-  try { const v = window.localStorage.getItem(VIEW_KEY); return VIEWS.includes(v) ? v : "chart"; } catch { return "chart"; }
+  try { const v = window.localStorage.getItem(VIEW_KEY); return VIEWS.includes(v) ? v : "arena"; } catch { return "arena"; }
 }
 function saveView(v) {
   try { window.localStorage.setItem(VIEW_KEY, v); } catch { /* private mode or blocked storage */ }
@@ -46,7 +51,7 @@ function saveView(v) {
 /** The Stocks page: the chosen market's scanner, or a calm panel while it loads or before its numbers. */
 export default function Watchlist({ data, market: mk, go }) {
   if (mk && !mk.isDefault && mk.state !== "ready") return <MarketWaitPage market={mk} />;
-  return <Scanner data={mk && !mk.isDefault ? mk.data : data} market={mk} go={go} />;
+  return <Scanner data={mk && !mk.isDefault ? mk.data : data} base={data} market={mk} go={go} />;
 }
 
 /** The page's market tabs: the same choice as the header's switch. */
@@ -131,7 +136,7 @@ const FILTERS = {
 const FILTER_TONE = { up: "up", down: "down", unusual: "brand", leanUp: "up", leanDown: "down", buy: "up" };
 const missing = (v) => v == null || (typeof v === "number" && !Number.isFinite(v));
 
-function Scanner({ data, market: mk, go }) {
+function Scanner({ data, base, market: mk, go }) {
   const t = strings(dict);
   const th = strings(homeDict);
   const { watchlist, prices, bench, settings, regime, livePrices, market, longrun, checklist, sectors } = data;
@@ -155,6 +160,10 @@ function Scanner({ data, market: mk, go }) {
   const benchRow = useMemo(() => (prices[bench.symbol] ? rowOf(bench.symbol, benchName, prices[bench.symbol], null, { bench: true, i: -1 }) : null),
     [prices, bench.symbol, benchName]);
 
+  // The floor and the pair cards share one looping clock; it runs while the scanner or the pairs are on screen.
+  const floor = useMemo(() => floorData(rows), [rows]);
+  const watch = useRef(null);
+  const loop = useFloorLoop({ n: floor?.loopDates.length ?? 1, watch, resetKey: `${mk?.id ?? ""}|${floor?.loopDates[0] ?? ""}` });
   const [view, setViewState] = useState(readView);
   const setView = (v) => { setViewState(v); saveView(v); };
   const [filter, setFilter] = useState("all");
@@ -200,10 +209,7 @@ function Scanner({ data, market: mk, go }) {
         <HeroTitle line1={t("wl.hero1")} line2={label} sub={t(funds ? "wl.sub.funds" : "wl.sub.names", { count: total, what, bench: benchName })} />
         <div className="flex flex-wrap items-center gap-1.5">
           <Chip tone={livePrices ? "up" : "wait"}>
-            <span className="relative inline-flex size-1.5" aria-hidden="true">
-              {livePrices && <span className="absolute inset-0 animate-ping rounded-full bg-current opacity-60 motion-reduce:hidden" />}
-              <span className="relative inline-block size-1.5 rounded-full bg-current" />
-            </span>
+            <span aria-hidden="true" className="inline-block size-1.5 rounded-full bg-current" />
             {livePrices ? t("wl.chip.live", { provider: market.provider }) : t("wl.chip.sample")}
           </Chip>
           <Chip tone="neutral"><span className="text-ink-2">{market.as_of ? t("wl.chip.close", { date: fmtDate(market.as_of) }) : t("wl.noPrices")}</span></Chip>
@@ -217,8 +223,9 @@ function Scanner({ data, market: mk, go }) {
       <Tiles rows={rows} up={counts.up} down={counts.down} total={total} go={go} />
       {regime && main && <Regime regime={regime} benchName={benchName} above={rows.filter((r) => prices[r.symbol]?.above_sma50).length} total={total} />}
 
+      <div ref={watch}>
       <Panel id="wl-table" className="mt-4 scroll-mt-28" info={info} infoLabel={t("wl.about")}
-        head={<DeskHead id="wl-table-h" title={t("wl.panel.scan")} />}
+        head={<div className="max-[440px]:sr-only"><DeskHead id="wl-table-h" title={t("wl.panel.scan")} /></div>}
         badge={<ViewSwitch view={view} setView={setView} />}>
         <div className="-mt-2 sm:-mt-3">
           <div role="group" aria-label={t("wl.filter")} className="no-scrollbar rail-fade -mx-1 flex gap-1 overflow-x-auto px-1">
@@ -239,7 +246,9 @@ function Scanner({ data, market: mk, go }) {
             action={<button type="button" onClick={clear} className="btn min-h-[44px] justify-center">{t("wl.none.clear")}</button>}>
             {t("wl.none.body")}
           </EmptyState>
-        ) : view === "chart" ? (
+        ) : view === "arena" && floor ? (
+          <Floor floor={floor} show={filter === "all" && !group ? null : new Set(shown.map((r) => r.symbol))} loop={loop} go={go} />
+        ) : view === "chart" || view === "arena" ? (
           <BigBoard rows={shown} bench={benchRow} benchName={benchName} closeDate={market.as_of} />
         ) : view === "heat" ? (
           <HeatGrid rows={shown} calls={Boolean(calls)} go={go} />
@@ -252,11 +261,13 @@ function Scanner({ data, market: mk, go }) {
           </div>
         )}
       </Panel>
+      {floor && <Pairs base={base ?? data} loop={loop} n={floor.loopDates.length} go={go} />}
+      </div>
     </Container>
   );
 }
 
-/** CHART | LIST | HEAT. */
+/** ARENA | CHART | LIST | HEAT. */
 function ViewSwitch({ view, setView }) {
   const t = strings(dict);
   return (

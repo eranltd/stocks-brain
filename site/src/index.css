@@ -314,3 +314,11 @@
   body { overscroll-behavior-y: none; }
   header, nav, button { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 }
+
+/* === stock === */
+/* The Stock page (tabs/Stock.jsx). The risk plan's trade ticket: two half-circle notches on its sides where its dashed
+   head line runs, in the panel's own colour, so they read as punched out in both themes. */
+.stock-ticket::before, .stock-ticket::after { content: ""; position: absolute; top: 25px; width: 14px; height: 14px; border-radius: 999px;
+  background: var(--surface); border: 1px dashed var(--line-3); pointer-events: none; }
+.stock-ticket::before { left: -8px; }
+.stock-ticket::after { right: -8px; }

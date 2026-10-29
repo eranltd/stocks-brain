@@ -1,7 +1,7 @@
 ---
-version: 0.26.0
-updated_at: 2026-10-22
-change_note: Home is a trading desk of six agents (Research, News, Strategy, Execution, Risk, Boss) with code-made BUY (paper) / WAIT / REJECT calls.
+version: 0.27.0
+updated_at: 2026-10-29
+change_note: Every page restyled as a trading terminal; new Arena page, the floor (ARENA view) as the stocks list default, the big board chart, and pair stocks.
 ---
 # Decision log
 
@@ -18,6 +18,30 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Market file size**: `derived.json` is written one line per symbol (compact) and is about 330 KB with 21 names.
   Past roughly 35 names it would hit lint's 512 KB cap and the daily run would fail closed; before that, move the
   per-point dates into one shared array.
+
+## 2026-10-29
+- **Every page restyled as a trading terminal, with motion.** The owner sent screen recordings of animated trading
+  dashboards ("I wanted to build this animated UI") and asked for the site to look like the best trading app, with
+  less text. Every page now uses the phase-1 kit (dense "◆ PANEL" heads, mono numbers that count up, long text behind
+  (i)). Motion always replays real past data, never invents it, and stops under reduced motion:
+  - **The Arena** (`#arena`, `tabs/Arena.jsx`, `components/arena/*`): a year of real moves replayed like a game (bar
+    race, duel, ticker wall of every list, a $10,000 paper basket labelled "paper · past data", a heat grid and a
+    turning ball of dots). A small live-replay strip with the same pieces sits at the top of Home.
+  - **The motion kit** (`components/motion.jsx`): TickNumber (odometer digits), HeatGrid, OrbitSphere (canvas 2D, no
+    library), FlowLines. One clock per page, writes straight to the DOM, pauses off screen and when the tab is hidden.
+  - **Stocks list**: four views, ARENA | CHART | LIST | HEAT. ARENA, "the floor", is the default because the owner
+    asked for "little squares with never-ending animations" rather than lines: one square per name looping the last 30
+    trading days. CHART is the big board (every name as % change over 1M to 1Y, Mixpanel-style). The hero chip says
+    "Real data", not "Live": the data is daily closes.
+  - **Pair stocks** (`lib/pairs.js`): the owner asked for pairs "like Pepsi and Coca-Cola, when one is up the other is
+    down". Measured on our data (daily moves, last 120 shared days, all 7 lists): rivals in one industry mostly move
+    together, and Coca-Cola is not on our lists; real opposites are staples vs chips (PEP vs MU or SOXX about −0.54,
+    XLP vs XLK −0.6). So the section shows both kinds from the data: SEESAW (lowest correlation) and TWINS (highest,
+    skipping near-copies such as two funds on one index), each with "opposite on N of 10 days". A pair can stop
+    working any time; the page says so.
+  - **Stock page, Brain, Experiments and Learn**: terminal layouts (key-number strip, candles that tick in, the
+    Desk's call, a paper-bet ledger with honest "too few to tell" notes, How it works as an animated flow diagram).
+  No new dependencies; percents only on screen (the one dollar figure is the labelled paper example).
 
 ## 2026-10-22
 - **Home is a trading desk: six agents, one final call.** The owner asked for the site to look like a trading

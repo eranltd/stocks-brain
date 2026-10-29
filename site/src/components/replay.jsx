@@ -4,7 +4,7 @@ import { useReducedMotion } from "../lib/motion.js";
 import { bands, candleGeom, fitDomain, linePath, monthTicks, niceTicks, scaleLinear, tickLabel } from "../lib/candles.js";
 import { advance, endSummary, frameAt, MODES, monthsSpanned, REPLAY_MS, replaySeries, sinceWords, SPEEDS } from "../lib/replay.js";
 import dict from "../text/stock.js";
-import { Reveal, Segmented } from "./ui.jsx";
+import { Segmented } from "./ui.jsx";
 import { CandleMark } from "./candles.jsx";
 import { strings } from "../lib/text.js";
 import { fmtDate, fmtPct } from "../lib/format.js";
@@ -20,7 +20,7 @@ import { fmtDate, fmtPct } from "../lib/format.js";
 
 const END = 1e-6;
 const isNum = (v) => typeof v === "number" && Number.isFinite(v);
-export const TONE_TEXT = { accent: "text-accent", down: "text-down", flat: "text-ink" };
+export const TONE_TEXT = { accent: "text-up", down: "text-down", flat: "text-ink" };
 const TONE_VAR = { accent: "var(--accent)", down: "var(--down)", flat: "var(--ink-2)" };
 const HALO = { paintOrder: "stroke", stroke: "var(--surface)", strokeWidth: 3, strokeLinejoin: "round" };
 
@@ -129,7 +129,7 @@ export function PosterPlay({ onClick, label }) {
   return (
     <div className="absolute inset-0 grid place-items-center">
       <button type="button" onClick={onClick} data-role="poster-play"
-        className="inline-flex min-h-[56px] items-center gap-2.5 rounded-full bg-ink px-7 text-[18px] font-semibold text-bg shadow-[0_18px_50px_-12px_rgb(0_0_0/0.7)] transition active:scale-[0.97]">
+        className="inline-flex min-h-[56px] items-center gap-2.5 rounded-[12px] bg-ink px-7 font-display text-[20px] font-bold tracking-[0.08em] text-bg uppercase shadow-[0_18px_50px_-12px_rgb(0_0_0/0.7)] transition active:scale-[0.97]">
         <PlayIcon />{label}
       </button>
     </div>
@@ -149,19 +149,19 @@ export function PlayerControls({ player, words, valueText, startLabel, endLabel,
       <div>
         <input type="range" min={0} max={last} step={1} value={k} onChange={(e) => scrub(Number(e.target.value))}
           aria-label={words.scrub} aria-valuetext={valueText} className="scrub" style={{ "--p": `${pct}%` }} />
-        <div className="flex justify-between gap-3 font-mono text-[11.5px] text-ink-3">
+        <div className="font-num flex justify-between gap-3 text-[11px] tracking-[0.06em] text-ink-3 uppercase">
           <span>{startLabel}</span>
           <span>{endLabel}</span>
         </div>
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-2.5">
         <button type="button" onClick={playing ? pause : play} data-role="play"
-          className="inline-flex min-h-[48px] min-w-[120px] items-center justify-center gap-2 rounded-full bg-ink px-5 text-[16px] font-semibold text-bg transition active:scale-[0.97]">
+          className="inline-flex min-h-[48px] min-w-[120px] items-center justify-center gap-2 rounded-[10px] bg-ink px-5 font-display text-[17px] font-bold tracking-[0.08em] text-bg uppercase transition active:scale-[0.97]">
           {playing ? <PauseIcon /> : <PlayIcon />}
           {playing ? words.pause : resume ? words.resume : words.play}
         </button>
         <button type="button" onClick={restart} disabled={!started} data-role="restart"
-          className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-line-2 px-4 text-[15px] font-medium text-ink transition hover:border-ink-3 disabled:opacity-40">
+          className="inline-flex min-h-[48px] items-center gap-2 rounded-[10px] border border-line-2 bg-surface-2 px-4 font-display text-[16px] font-bold tracking-[0.08em] text-ink uppercase transition hover:border-line-3 disabled:opacity-40">
           <RestartIcon />{words.restart}
         </button>
         {!reduced && (
@@ -202,7 +202,9 @@ export function StockReplay({ data, symbol }) {
   const s = useMemo(() => (state.doc ? replaySeries(state.doc, mode) : null), [state.doc, mode]);
   const watch = useRef(null);
   const player = usePlayer(s?.n ?? 1, { totalMs: REPLAY_MS, reduced, watch, resetKey: `${symbol}|${mode}|${s?.dates?.[0] ?? ""}` });
-  if (state.status === "none" || (state.status === "ok" && !s && mode === "daily")) return null;
+  if (state.status === "none" || (state.status === "ok" && !s && mode === "daily")) {
+    return <p className="rounded-tile border border-dashed border-line-2 px-4 py-8 text-center text-[14px] text-ink-3">{t("cdv.none")}</p>;
+  }
 
   const f = s ? frameAt(s, player.pos) : null;
   const dateText = !f ? "" : s.weekly ? (f.partial ? t("rp.weekSoFar") : t("rp.weekTo", { date: fmtDate(f.date) })) : fmtDate(f.date);
@@ -212,42 +214,37 @@ export function StockReplay({ data, symbol }) {
   const words = { play: t("rp.play"), resume: t("rp.resume"), pause: t("rp.pause"), restart: t("rp.restart"), speed: t("rp.speed"), scrub: t(`rp.scrub.${mode}`) };
 
   return (
-    <Reveal as="section" id="replay" aria-labelledby={`${uid}-title`} className="card mt-6 scroll-mt-28 p-5 sm:p-8">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div className="min-w-0">
-          <div className="eyebrow mb-2">{t("rp.eyebrow")}</div>
-          <h3 id={`${uid}-title`} className="text-[22px] font-semibold leading-tight tracking-[-0.02em]">
-            {t(`rp.title.${mode}`, { count: s ? monthsSpanned(s.dates) : mode === "daily" ? 6 : 12 })}
-          </h3>
-        </div>
+    <section id="replay" aria-labelledby={`${uid}-title`} className="scroll-mt-32">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h3 id={`${uid}-title`} className="micro text-desk">
+          {t(`rp.title.${mode}`, { count: s ? monthsSpanned(s.dates) : mode === "daily" ? 6 : 12 })}
+        </h3>
         <Segmented label={t("rp.mode")} value={mode} onChange={setMode} options={MODES.map((m) => ({ value: m.value, label: t(`rp.mode.${m.value}`) }))} />
       </div>
-      <p className="mt-2 max-w-[62ch] text-[15px] leading-relaxed text-ink-2">{t(`rp.lede.${mode}`)}</p>
 
-      {state.status === "loading" && <p role="status" className="mt-6 text-[14px] text-ink-3">{t("rp.loading")}</p>}
+      {state.status === "loading" && <p role="status" className="skeleton mt-4 grid h-[260px] place-items-center rounded-tile text-[13px] text-ink-3">{t("rp.loading")}</p>}
       {state.status === "error" && (
-        <div className="mt-6">
+        <div className="mt-4">
           <p className="text-[15px] text-ink-2">{t("rp.error")}</p>
-          <button type="button" onClick={() => setAttempt((a) => a + 1)} className="pill mt-3 min-h-[40px] text-ink hover:border-ink-3">{t("cdv.retry")}</button>
+          <button type="button" onClick={() => setAttempt((a) => a + 1)} className="chip mt-3 min-h-[44px] border-line-2 px-4 text-ink hover:border-line-3">{t("cdv.retry")}</button>
         </div>
       )}
-      {state.status === "ok" && !s && <p className="mt-6 text-[14px] text-ink-3">{t("cdv.noWindow")}</p>}
+      {state.status === "ok" && !s && <p className="mt-4 text-[14px] text-ink-3">{t("cdv.noWindow")}</p>}
 
       {s && f && (
         <>
-          {/* Phone: the counter, then the date and that day's move on one line; wider: the date block at the end. */}
-          <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between sm:gap-5">
+          <div className="mt-3 flex flex-wrap items-end justify-between gap-x-5 gap-y-2">
             <div className="min-w-0">
-              <div className="text-[13.5px] text-ink-3">{sinceWords(s.dates)}</div>
-              <div className={`num text-[clamp(36px,10vw,52px)] font-semibold leading-none tracking-[-0.03em] transition-colors duration-200 motion-reduce:transition-none ${TONE_TEXT[f.tone]}`}>
+              <div className="micro">{sinceWords(s.dates)}</div>
+              <div className={`font-num mt-1 text-[clamp(36px,9vw,52px)] leading-none font-bold tracking-[-0.04em] transition-colors duration-200 motion-reduce:transition-none ${TONE_TEXT[f.tone]}`}>
                 <span>{fmtPct(f.change, 1)}</span>
               </div>
             </div>
             <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5 sm:flex-col sm:items-end">
-              <div className="num text-[clamp(17px,4.6vw,22px)] font-semibold leading-tight text-ink">{dateText}</div>
-              <div className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[13.5px] font-medium transition-colors duration-200 motion-reduce:transition-none ${
-                f.moveTone === "accent" ? "border-accent/40 bg-accent/10 text-accent" : f.moveTone === "down" ? "border-down/40 bg-down/10 text-down" : "border-line-2 text-ink-2"}`}>
-                <span aria-hidden="true" className="text-[10px]">{f.moveTone === "accent" ? "▲" : f.moveTone === "down" ? "▼" : "◆"}</span>
+              <div className="font-num text-[13px] font-semibold text-ink">{dateText}</div>
+              <div className={`chip transition-colors duration-200 motion-reduce:transition-none ${
+                f.moveTone === "accent" ? "border-up/40 bg-up/10 text-up" : f.moveTone === "down" ? "border-down/40 bg-down/10 text-down" : "border-line-2 text-ink-2"}`}>
+                <span aria-hidden="true" className="text-[9px]">{f.moveTone === "accent" ? "▲" : f.moveTone === "down" ? "▼" : "◆"}</span>
                 {moveText}
               </div>
             </div>
@@ -258,14 +255,14 @@ export function StockReplay({ data, symbol }) {
             {!player.started && <PosterPlay onClick={player.play} label={words.play} />}
           </div>
 
-          {summary && <p className="mt-4 rounded-2xl border border-line-2 bg-surface-2 px-4 py-3 text-[16.5px] leading-relaxed text-ink">{summary}</p>}
+          {summary && <p className="mt-3 rounded-tile border border-line-2 bg-surface-2 px-3.5 py-2.5 text-[14.5px] leading-snug text-ink">{summary}</p>}
 
           <PlayerControls player={player} words={words} reduced={reduced} valueText={dateText}
             startLabel={monthYear(s.dates[0])} endLabel={monthYear(s.dates.at(-1))} />
 
           <p className="sr-only" aria-live="polite">{announce}</p>
 
-          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1.5 text-[13px] text-ink-2">
+          <div className="micro mt-3 flex flex-wrap gap-x-5 gap-y-1.5">
             <span className="inline-flex items-center gap-2">
               <svg width="20" height="10" aria-hidden="true"><path d="M1 8 C7 7, 10 3, 19 2" fill="none" stroke="var(--ai)" strokeWidth="2" strokeLinecap="round" /></svg>
               {t(`rp.avg.${s.mode}`)}
@@ -275,13 +272,10 @@ export function StockReplay({ data, symbol }) {
               {t("rp.startLine")}
             </span>
           </div>
-          <p className="mt-2 text-[12.5px] leading-relaxed text-ink-3">{t("rp.axis")}</p>
+          {reduced && <p className="mt-2 text-[13px] leading-snug text-ink-3">{t("rp.reduced")}</p>}
         </>
       )}
-
-      <p className="mt-4 text-[14px] leading-relaxed text-ink-2">{t(`rp.frame.${mode}`)}</p>
-      {reduced && s && <p className="mt-2 text-[13.5px] leading-relaxed text-ink-3">{t("rp.reduced")}</p>}
-    </Reveal>
+    </section>
   );
 }
 

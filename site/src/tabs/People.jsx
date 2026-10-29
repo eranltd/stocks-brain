@@ -1,44 +1,34 @@
-import { pad2, fmtDate, fmtPct } from "../lib/format.js";
+import { useState } from "react";
+import { fmtDate, fmtShort } from "../lib/format.js";
 import dict from "../text/learn.js";
 import { callerName, callStatus, edgarUrl, groupPeople, isFirmCall, joinCalls, ownLinks, recordLine, shortVia } from "../lib/people.js";
-import { Accent, ArrowRight, Chip, Container, Empty, Headline, Reveal, SectionHead, Strip } from "../components/ui.jsx";
+import { Chip, Container, DataTable, Delta, EmptyState, InfoTip, Panel, SectionTitle, StatTile } from "../components/ui.jsx";
+import { PageHero, ReadMore, TipText } from "../lib/learnkit.jsx";
 import { strings } from "../lib/text.js";
-import { rich } from "../lib/rich.jsx";
 
-// Words live in text/learn.js: a person's kind "ppl.kind.<kind>", the groups "ppl.group.<key>" (+ "Sub"), a source
-// kind "ppl.src.<kind>", a connector's cost "ppl.cost.<cost>" and description "ppl.conn.<id>", the sections "ppl.sec.<id>".
-const GROUPS = ["investors", "teachers", "principles"];
-const STATUS_CHIP = { right: "hit", wrong: "miss", maturing: "pending", unscored: "retired" };
-// Plain words about each connector this tab depends on (Admin keeps the technical notes).
-const CONNECT = { people: "free", holdings_13f: "official", x_accounts: "paid", news: "paid" };
-const ext = { target: "_blank", rel: "noopener noreferrer" };
-const SECTIONS = ["calls", "who", "use", "research", "connected", "add"];
+/*
+ * People to learn from: famous investors and teachers, as panels. The ledger of their dated public calls, each checked
+ * against the whole market (percent changes only), then one panel per person with their hit-rate tiles and their calls,
+ * then how they are used, what studies found, the data feeds and how to add one. The scores come from scripts/people.py
+ * (data/people/scores.json); nothing here computes a return.
+ */
+
 const t = strings(dict);
-/** "15 May 2026", as on Today: the long date without its weekday. */
-const day = (iso) => fmtDate(iso).replace(/^[^,]+, /, "");
-const SECTION = "scroll-mt-28 pt-12 sm:pt-24";
-
-const scrollTo = (id) => document.getElementById(`people-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
-
-/** The small "open" marker of a disclosure row: a plus that turns into a minus. */
-function Toggle({ children }) {
-  return (
-    <span className="meta inline-flex shrink-0 items-center gap-1.5 text-ink-3 group-hover:text-ink">
-      {children}
-      <span aria-hidden="true" className="inline-block w-3 text-center font-mono text-[14px] leading-none group-open:hidden">+</span>
-      <span aria-hidden="true" className="hidden w-3 text-center font-mono text-[14px] leading-none group-open:inline-block">−</span>
-    </span>
-  );
-}
+const ext = { target: "_blank", rel: "noopener noreferrer" };
+const STATUS_TONE = { right: "up", wrong: "down", maturing: "wait", unscored: "ghost" };
+const SIDE_TONE = { bullish: "up", bearish: "down" };
+const word = (prefix, v) => (t.has(`${prefix}.${v}`) ? t(`${prefix}.${v}`) : v);
 
 export default function People({ data, go }) {
   const cfg = data.people;
   const sc = data.peopleScores;
+  const [open, setOpen] = useState(null);
   if (!cfg) {
-    return <Container className="pt-20"><Empty title={t("ppl.empty.title")}>{t("ppl.empty.body")}</Empty></Container>;
+    return <Container className="pt-8"><EmptyState title={t("ppl.empty.title")}>{t("ppl.empty.body")}</EmptyState></Container>;
   }
   const judge = sc?.judge_at_weeks ?? 26;
   const minMatured = sc?.min_matured ?? 10;
+  const horizons = sc?.horizons_weeks ?? [13, 26, 52];
   const records = Object.fromEntries((sc?.people ?? []).map((r) => [r.person, r]));
   const calls = joinCalls(cfg, sc);
   const byId = Object.fromEntries(cfg.people.map((p) => [p.id, p]));
@@ -46,332 +36,275 @@ export default function People({ data, go }) {
   const following = cfg.people.filter((p) => p.status === "following");
   const matured = calls.filter((c) => c[`w${judge}`]).length;
   const anyEnough = (sc?.people ?? []).some((r) => r.enough);
+  const picked = calls.find((c) => c.id === open);
 
   return (
-    <Container className="pt-14">
-      <Reveal className="eyebrow mb-4">
-        {t("ppl.eyebrow", { v: cfg.version, date: fmtDate(cfg.updated_at) })}{sc ? t("ppl.scoredTo", { date: fmtDate(sc.as_of) }) : ""}
-        {sc?.sample && <span className="pill ms-2 border-dashed border-people/60 text-people">{t("ppl.samplePrices")}</span>}
-      </Reveal>
-      <Headline size="xl" className="max-w-[14ch]">{t("ppl.head.a")} <Accent>{t("ppl.head.b")}</Accent></Headline>
-      <Reveal delay={250} as="p" className="mt-6 max-w-[62ch] text-[clamp(17px,1.7vw,20px)] leading-relaxed text-ink-2">
-        {t("ppl.intro1")}
-      </Reveal>
-      <Reveal delay={300} as="p" className="mt-3 max-w-[62ch] text-[15.5px] leading-relaxed text-ink-2">
-        {t("ppl.intro2")}
-      </Reveal>
-      <Reveal delay={350} as="nav" aria-label={t("ppl.onPage")} className="mt-6 flex flex-wrap gap-2">
-        {SECTIONS.map((id) => (
-          <a key={id} href={`#people-${id}`} onClick={(e) => { e.preventDefault(); scrollTo(id); }}
-            className="inline-flex min-h-[36px] items-center rounded-full border border-line-2 px-3.5 text-[13px] text-ink-2 hover:border-ink-3 hover:text-ink">{t(`ppl.sec.${id}`)}</a>
-        ))}
-      </Reveal>
+    <Container className="pt-6 pb-4 sm:pt-8">
+      <PageHero line1={t("ppl.hero1")} line2={t("ppl.hero2")} sub={t("ppl.sub")}
+        info={<TipText lead={t("ppl.about.lead")} more={t("ppl.about.more")} />}
+        chips={<>
+          <Chip tone="neutral"><span className="text-ink-2">{t("ppl.version", { v: cfg.version, date: fmtShort(cfg.updated_at) })}</span></Chip>
+          {sc && <Chip tone="neutral"><span className="text-ink-2">{t("ppl.scoredTo", { date: fmtShort(sc.as_of) })}</span></Chip>}
+          {sc?.sample && <Chip tone="people">{t("ppl.samplePrices")}</Chip>}
+        </>} />
 
-      <div className="mt-8">
-        <Strip dense cells={[
-          { value: following.length, label: t("ppl.s.following"), desc: t("ppl.s.followingDesc", { n: groups.principles.length }) },
-          { value: calls.length, label: t("ppl.s.calls"), desc: t("ppl.s.callsDesc") },
-          { value: matured, label: t("ppl.s.matured"), tone: "flat", desc: t("ppl.s.maturedDesc", { judge }) },
-          { value: minMatured, label: t("ppl.s.needed"), tone: "people", dashed: true, desc: anyEnough ? t("ppl.s.enough") : t("ppl.s.notEnough") },
-        ]} />
+      <div className="mt-7 grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
+        <StatTile label={t("ppl.s.following")} value={following.length} sub={t("ppl.s.followingSub", { n: groups.principles.length })} />
+        <StatTile label={t("ppl.s.calls")} value={calls.length} sub={t("ppl.s.callsSub")} tone="flat" />
+        <StatTile label={t("ppl.s.matured")} value={matured} unit={`/${calls.length}`} sub={t("ppl.s.maturedSub", { judge })} tone="flat" />
+        <StatTile label={t("ppl.s.needed")} value={minMatured} sub={t("ppl.s.neededSub")} tone="flat" note={anyEnough ? t("ppl.s.enough") : t("ppl.s.notEnough")} />
       </div>
 
-      <Calls calls={calls} byId={byId} names={data.names} sc={sc} judge={judge} minMatured={minMatured} />
-      <Who groups={groups} records={records} calls={calls} judge={judge} minMatured={minMatured} />
-      <HowWeUse cfg={cfg} />
-      <Research cfg={cfg} />
-      <Connected sources={data.sources} cfg={cfg} />
-      <AddOne repo={data.manifest.repo} go={go} />
+      <Panel id="people-calls" hero className="mt-4 md:mt-8" title={t("ppl.calls.title")} sub={t("ppl.calls.sub")}
+        info={t("ppl.calls.info", { judge, min: minMatured })} badge={<span className="font-num text-[12px] font-bold text-ink-2">{calls.length}</span>}>
+        {calls.length === 0 ? <EmptyState compact title={t("ppl.calls.empty.title")}>{t("ppl.calls.empty.body")}</EmptyState> : (
+          <>
+            <div className="-mt-4 sm:-mt-5">
+              <Ledger calls={calls} byId={byId} names={data.names} judge={judge} horizons={horizons} open={open} onOpen={(c) => setOpen((o) => (o === c.id ? null : c.id))} />
+            </div>
+            {picked && <CallDetail c={picked} name={data.names?.[picked.ticker]} />}
+          </>
+        )}
+      </Panel>
 
-      <p className="meta mt-16 normal-case tracking-[0.04em]">
+      <section id="people-who" className="mt-10 md:mt-14">
+        <SectionTitle title={t("ppl.who.title")} sub={t("ppl.who.sub")} size="md" />
+        {["investors", "teachers"].map((key) => groups[key].length > 0 && (
+          <div key={key} className="mt-5">
+            <p className="kicker mb-2.5 flex flex-wrap items-baseline gap-x-2">{t(`ppl.group.${key}`)}<span className="font-sans text-[12.5px] font-normal tracking-normal text-ink-3 normal-case">{t(`ppl.group.${key}Sub`)}</span></p>
+            <div className="grid gap-3 md:grid-cols-2 md:items-start md:gap-4">
+              {[...groups[key]].sort((a, b) => Number(calls.some((c) => c.person === b.id)) - Number(calls.some((c) => c.person === a.id))).map((p) => (
+                <PersonPanel key={p.id} p={p} rec={records[p.id]} calls={calls.filter((c) => c.person === p.id)} judge={judge} minMatured={minMatured} />
+              ))}
+            </div>
+          </div>
+        ))}
+        {groups.principles.length > 0 && (
+          <Panel className="mt-5" title={t("ppl.group.principles")} sub={t("ppl.group.principlesSub")} titleSize="xs" flush>
+            <ul className="divide-y divide-line">
+              {groups.principles.map((p) => (
+                <li key={p.id} id={`person-${p.id}`} className="flex min-h-[52px] items-center gap-3 px-4 py-2 sm:px-5">
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-[14.5px] font-semibold text-ink">{p.name}</span>
+                    <span className="block truncate text-[12px] text-ink-3">{p.style}</span>
+                  </span>
+                  <InfoTip label={p.name}><TipText lead={p.learn} more={<><span className="micro me-1.5 text-people">{t("ppl.careful")}</span>{p.caution}</>} /></InfoTip>
+                </li>
+              ))}
+            </ul>
+          </Panel>
+        )}
+      </section>
+
+      <div className="mt-4 grid gap-4 md:mt-8 md:grid-cols-2 md:gap-4 lg:items-start">
+        <HowUsed cfg={cfg} />
+        <Research cfg={cfg} />
+        <Feeds sources={data.sources} cfg={cfg} />
+        <AddOne repo={data.manifest.repo} go={go} />
+      </div>
+
+      <p className="micro mt-8 text-center normal-case tracking-[0.04em]">
         {sc ? t("ppl.footerScores", { v: cfg.version, core: sc.core }) : t("ppl.footer", { v: cfg.version })}
       </p>
     </Container>
   );
 }
 
-/* ------------------------------------------------------------------ calls */
+/* ----------------------------------------------------------------- ledger */
 
-const tone = (v) => (v == null ? "text-ink-3" : v >= 0 ? "text-accent" : "text-down");
+/** A leg's "vs market" percent, or how many weeks are left, or a dash. */
+function Leg({ c, w }) {
+  const leg = c[`w${w}`];
+  if (leg) return <Delta value={leg.signed_excess_pct} d={1} />;
+  const left = c.weeks_since == null ? null : w - c.weeks_since;
+  return <span className="font-num text-[11.5px] text-ink-3">{c.scored && left > 0 ? `${left}w` : "–"}</span>;
+}
 
-/** One horizon: the signed excess ("for the call"), with the name's and the core's growth underneath. */
-function Leg({ leg, weeks, since, ticker }) {
-  if (!leg) {
-    const left = since == null ? null : weeks - since;
-    return <div className="text-[12.5px] text-ink-3">{left != null && left > 0 ? t("ppl.leg.inWeeks", { n: left }) : "–"}</div>;
-  }
+function Ledger({ calls, byId, names, judge, horizons, open, onOpen, compact = false }) {
+  const cols = [
+    { key: "ticker", label: t("ppl.th.stock"), sortable: true, firstDir: "asc", cell: (c) => (
+      <span className="block py-1.5">
+        <span className={`font-num block text-[13.5px] font-bold ${open === c.id ? "text-desk" : "text-ink"}`}>{c.ticker}</span>
+        {!compact && names?.[c.ticker] && <span className="block max-w-[96px] truncate text-[10.5px] text-ink-3">{names[c.ticker]}</span>}
+      </span>
+    ) },
+    !compact && { key: "who", label: t("ppl.th.who"), align: "start", sortable: true, sortValue: (c) => callerName(c, byId[c.person]), cell: (c) => (
+      <span className="block max-w-[150px] py-1.5">
+        <span className="block truncate text-[13px] text-ink">{callerName(c, byId[c.person])}</span>
+        <span className="block truncate text-[10.5px] text-ink-3">{isFirmCall(c) ? t("ppl.call.firm") : shortVia(c.via)}</span>
+      </span>
+    ) },
+    { key: "stance", label: t("ppl.th.side"), align: "start", cell: (c) => <Chip tone={SIDE_TONE[c.stance] ?? "neutral"} className="min-h-[22px] px-1.5 text-[10px]">{word("ppl.side", c.stance)}</Chip> },
+    !compact && { key: "date", label: t("ppl.th.public"), sortable: true, align: "start", className: "font-num text-[12px] text-ink-2 whitespace-nowrap", cell: (c) => fmtShort(c.date) },
+    ...(compact ? [judge] : horizons).map((w) => ({ key: `w${w}`, label: t("ppl.th.wk", { n: w }), sortable: true, num: true, sortValue: (c) => c[`w${w}`]?.signed_excess_pct ?? null, cell: (c) => <Leg c={c} w={w} /> })),
+    { key: "so_far", label: t("ppl.th.soFar"), sortable: true, num: true, sortValue: (c) => c.so_far?.signed_excess_pct ?? null, cell: (c) => (c.so_far ? <Delta value={c.so_far.signed_excess_pct} d={1} /> : <span className="text-ink-3">–</span>) },
+    { key: "status", label: t("ppl.th.status"), align: "start", cell: (c) => {
+      const st = callStatus(c, judge);
+      return <Chip tone={STATUS_TONE[st.kind] ?? "neutral"} className="min-h-[22px] px-1.5 text-[10px]">{st.label}</Chip>;
+    } },
+  ].filter(Boolean);
   return (
-    <div className="min-w-0">
-      <div className={`num font-mono text-[15px] ${tone(leg.signed_excess_pct)}`}>{fmtPct(leg.signed_excess_pct, 1)}<span className="ms-1.5 font-sans text-[11.5px] text-ink-3">{t("ppl.leg.vsMarket")}</span></div>
-      <div className="num font-mono text-[11.5px] leading-snug text-ink-3"><div><span>{ticker}</span> {fmtPct(leg.name_pct, 1)}</div><div>{t("ppl.leg.whole", { pct: fmtPct(leg.core_pct, 1) })}</div></div>
+    <DataTable columns={cols} rows={calls} rowKey={(c) => c.id} minWidth={compact ? 320 : 760} onRowClick={onOpen} rowLabel={(c) => `${c.ticker} ${callerName(c, byId?.[c.person])}`}
+      rowTone={(c) => (c.id === open ? "brand" : null)} scrollClassName="relative" caption={t("ppl.calls.title")} />
+  );
+}
+
+function CallDetail({ c, name }) {
+  const st = callStatus(c, 26);
+  return (
+    <div key={c.id} className="tile mt-4 grid animate-pop gap-1.5 p-4 motion-reduce:animate-none" aria-live="polite">
+      <p className="flex flex-wrap items-baseline gap-x-2">
+        <span className="font-num text-[16px] font-bold text-ink">{c.ticker}</span>
+        {name && <span className="text-[13px] text-ink-3">{name}</span>}
+        <span className="font-num text-[12px] text-ink-3">· {fmtDate(c.date)}</span>
+      </p>
+      <p className="text-[14px] leading-snug text-ink-2">{c.what}</p>
+      {c.note && <p className="text-[13px] leading-snug text-people">{c.note}</p>}
+      <p className="text-[12px] text-ink-3">
+        {!c.scored ? t("ppl.call.notScored", { detail: st.detail }) : c.start_date ? t("ppl.call.counted", { date: fmtShort(c.start_date) }) : t("ppl.call.tooNew")}
+      </p>
+      <a href={c.source_url} {...ext} className="chip mt-1 min-h-[32px] w-fit border-line-2 text-ink-2 hover:text-ink">
+        {t("source", { what: word("ppl.src", c.source_kind) })} <span aria-hidden="true">↗</span>
+      </a>
     </div>
   );
 }
 
-function Calls({ calls, byId, names, sc, judge, minMatured }) {
-  const horizons = sc?.horizons_weeks ?? [13, 26, 52];
-  return (
-    <section id="people-calls" className={SECTION}>
-      <SectionHead eyebrow={t("ppl.calls.eyebrow", { count: calls.length })} title={<>{t("ppl.calls.title.a")} <Accent>{t("ppl.calls.title.b")}</Accent></>} size="md"
-        lede={rich(t, "ppl.calls.lede", { after: <span className="text-ink">{t("ppl.calls.after")}</span>, judge, min: minMatured })} />
-      {calls.length === 0 ? (
-        <Empty title={t("ppl.calls.empty.title")}>{t("ppl.calls.empty.body")}</Empty>
-      ) : (
-        <>
-        <div className="grid gap-3 md:grid-cols-2">
-          {calls.map((c) => <CallRow key={c.id} c={c} p={byId[c.person]} name={names[c.ticker]} judge={judge} horizons={horizons} />)}
-        </div>
-        </>
-      )}
-      <p className="meta mt-3 normal-case tracking-[0.04em]">
-        {t("ppl.calls.note")}
-      </p>
-    </section>
-  );
-}
+/* ------------------------------------------------------------------ people */
 
-/** One call: a compact row (name, stance, verdict, who and when, how it did vs the core); the details open on a tap. */
-function CallRow({ c, p, name, judge, horizons }) {
-  const st = callStatus(c, judge);
-  const firm = isFirmCall(c);
-  const sf = c.so_far;
-  const judged = c[`w${judge}`];
-  const pct = (v) => <span className={`num font-mono ${tone(v)}`}>{fmtPct(v, 1)}</span>;
-  return (
-    <Reveal as="article" className="card min-w-0">
-      <details className="group">
-        <summary className="flex cursor-pointer list-none flex-col gap-1.5 px-4 py-3.5 sm:p-5 [&::-webkit-details-marker]:hidden">
-          <div className="flex items-center gap-2.5">
-            <span className="font-mono text-[20px] leading-none font-medium tracking-[-0.02em]">{c.ticker}</span>
-            <Chip kind={c.stance} />
-            <span className="ms-auto flex items-center gap-2"><Chip kind={STATUS_CHIP[st.kind]}>{st.label}</Chip><Toggle /></span>
-          </div>
-          <div className="text-[13.5px] leading-snug text-ink-2">
-            <span className="text-ink">{callerName(c, p)}</span>
-            {firm ? t("ppl.call.firm") : <span title={c.via}>{t("ppl.call.via", { fund: shortVia(c.via) })}</span>}
-            <span className="text-ink-3">{t(c.source_kind === "13f" ? "ppl.call.filed" : "ppl.call.public", { date: day(c.date) })}</span>
-          </div>
-          <div className="text-[13.5px] leading-snug text-ink-3">
-            {!c.scored ? t("ppl.call.notScored", { detail: st.detail })
-              : judged ? <>{rich(t, "ppl.call.atWeeks", { judge, pct: pct(judged.signed_excess_pct) })}{sf ? rich(t, "ppl.call.soFarTail", { pct: pct(sf.signed_excess_pct) }) : null}</>
-              : sf ? rich(t, "ppl.call.soFar", { pct: pct(sf.signed_excess_pct), since: c.weeks_since, judge })
-              : t("ppl.call.tooNew")}
-          </div>
-        </summary>
-        <div className="border-t border-line px-4 pt-3 pb-4 sm:px-5 sm:pb-5">
-          {name && <div className="text-[13.5px] text-ink">{name}</div>}
-          <p className="mt-1 text-[14px] leading-relaxed text-ink-2">{c.what}</p>
-          {c.note && <p className="mt-2 text-[13px] leading-snug text-people">{c.note}</p>}
-          {c.scored && (
-            <>
-              <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3">
-                <div className="min-w-0"><div className="meta mb-1">{t("ppl.call.soFarHead", { n: c.weeks_since })}</div><Leg leg={sf} ticker={c.ticker} /></div>
-                {horizons.map((w) => <div key={w} className="min-w-0"><div className="meta mb-1">{t("ppl.call.weeks", { n: w })}</div><Leg leg={c[`w${w}`]} weeks={w} since={c.weeks_since} ticker={c.ticker} /></div>)}
-              </div>
-              <p className="mt-3 text-[12px] text-ink-3">{t("ppl.call.counted", { date: day(c.start_date), judge })}</p>
-            </>
-          )}
-          <a href={c.source_url} {...ext} className="mt-2 inline-flex min-h-[36px] items-center gap-1 text-[13.5px] text-ink-2 hover:text-accent">{t("source", { what: t.has(`ppl.src.${c.source_kind}`) ? t(`ppl.src.${c.source_kind}`) : c.source_kind })} <ArrowRight className="size-3.5 -rotate-45" /></a>
-        </div>
-      </details>
-    </Reveal>
-  );
-}
-
-/* -------------------------------------------------------------------- who */
-
-function Who({ groups, records, calls, judge, minMatured }) {
-  return (
-    <section id="people-who" className={SECTION}>
-      <SectionHead eyebrow={t("ppl.who.eyebrow")} title={<>{t("ppl.who.title.a")} <Accent>{t("ppl.who.title.b")}</Accent></>} size="md"
-        lede={t("ppl.who.lede")} />
-      {GROUPS.map((key) => groups[key].length > 0 && (
-        <div key={key} className="mb-8 sm:mb-10">
-          <div className="mb-3 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-            <h3 className="text-[18px] font-semibold tracking-[-0.02em] sm:text-[22px]">{t(`ppl.group.${key}`)}</h3>
-            <span className="text-[14px] text-ink-3">{t(`ppl.group.${key}Sub`)}</span>
-          </div>
-          {key === "principles" ? (
-            <div className="card divide-y divide-line">
-              {groups[key].map((p) => <PrinciplesRow key={p.id} p={p} />)}
-            </div>
-          ) : (
-            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-              {groups[key].map((p, i) => (
-                <PersonCard key={p.id} p={p} rec={records[p.id]} i={i} judge={judge} minMatured={minMatured} group={key}
-                  firmCalls={calls.filter((c) => c.person === p.id && isFirmCall(c))} />
-              ))}
-            </div>
-          )}
-        </div>
-      ))}
-    </section>
-  );
-}
-
-function personLinks(p, t) {
+function personLinks(p) {
   return [
-    ...ownLinks(p).map((l) => ({ href: l.url, label: <span>{l.label}</span> })),
+    ...ownLinks(p).map((l) => ({ href: l.url, label: l.label })),
     ...(p.x_handle ? [{ href: `https://x.com/${p.x_handle}`, label: t("ppl.link.x", { handle: p.x_handle }) }] : []),
     ...(p.holdings_13f ? [{ href: edgarUrl(p.holdings_13f.cik), label: t("ppl.link.13f", { filer: p.holdings_13f.filer }) }] : []),
   ];
 }
 
-function PersonCard({ p, rec, i, judge, minMatured, firmCalls, group }) {
-  const links = personLinks(p, t);
-  const hasRecord = rec?.n || firmCalls.length || p.holdings_13f;
+const pct0 = (v) => (typeof v === "number" && Number.isFinite(v) ? `${Math.round(v)}%` : "–");
+
+function PersonPanel({ p, rec, calls, judge, minMatured }) {
+  const links = personLinks(p);
+  const firm = calls.filter(isFirmCall);
+  const [open, setOpen] = useState(null);
   return (
-    <Reveal delay={(i % 3) * 60} as="article" id={`person-${p.id}`} className="card min-w-0 scroll-mt-28">
-      <details className="group">
-        <summary className="block cursor-pointer list-none px-4 py-3.5 sm:p-5 [&::-webkit-details-marker]:hidden">
-          <div className="flex items-baseline justify-between gap-3">
-            <h4 className="min-w-0 text-[19px] font-semibold tracking-[-0.02em]">{p.name}</h4>
-            <Toggle>{t("ppl.links", { count: links.length })}</Toggle>
+    <Panel id={`person-${p.id}`} className="scroll-mt-28" title={p.name} sub={p.style} titleSize="sm"
+      badge={<Chip tone="people" className="min-h-[22px] px-1.5 text-[10px]">{word("ppl.kind", p.kind)}</Chip>}>
+      {rec?.n > 0 && (
+        <div className="grid grid-cols-2 gap-2">
+          <StatTile label={t("ppl.st.calls")} value={rec.n} sub={`${rec.matured_26w}/${rec.n}`} />
+          <StatTile label={t("ppl.st.right", { judge })} value={rec.matured_26w ? pct0(rec.right_26w_pct) : "–"} tone="flat" />
+          <StatTile label={t("ppl.st.typical")} value={rec.matured_26w ? <Delta value={rec.median_signed_excess_26w} d={1} /> : "–"} tone="flat" />
+          <StatTile label={t("ppl.st.soFar")} value={pct0(rec.right_so_far_pct)} tone="flat" />
+        </div>
+      )}
+      {calls.length > 0 && (
+        <>
+          <p className="mt-3 flex flex-wrap items-center gap-1.5">
+            {rec?.n > 0 && !rec.enough && <Chip tone="ghost">{t("ppl.tooFew", { min: minMatured })}</Chip>}
+            {firm.length > 0 && (
+              <span className="micro min-w-0 leading-snug" title={recordLine(p, rec, judge, minMatured, firm)}>
+                <span className="text-people">{t("ppl.firmOnly")}</span> · {shortVia(firm[0].via)}
+              </span>
+            )}
+          </p>
+          <div className="mt-2">
+            <Ledger calls={calls} judge={judge} compact open={open} onOpen={(c) => setOpen((o) => (o === c.id ? null : c.id))} />
           </div>
-          <div className="meta mt-0.5 normal-case tracking-[0.02em]">{group === "investors" ? "" : `${t.has(`ppl.kind.${p.kind}`) ? t(`ppl.kind.${p.kind}`) : p.kind} · `}{p.style}</div>
-          {hasRecord && (
-            <div className="mt-2 flex items-start gap-2 text-[13.5px] leading-snug">
-              <i aria-hidden="true" className={`mt-[6px] inline-block size-1.5 shrink-0 rounded-full ${rec?.n || firmCalls.length ? "bg-people" : "bg-line-2"}`} />
-              <span className={rec?.n || firmCalls.length ? "text-ink" : "text-ink-3"}>{recordLine(p, rec, judge, minMatured, firmCalls)}</span>
-            </div>
-          )}
-          <p className="mt-2 line-clamp-2 text-[14px] leading-snug group-open:line-clamp-none"><span className="meta me-1.5 text-accent">{t("ppl.learn")}</span>{p.learn}</p>
-          <p className="mt-1.5 line-clamp-2 text-[14px] leading-snug text-ink-2 group-open:line-clamp-none"><span className="meta me-1.5 text-people">{t("ppl.careful")}</span>{p.caution}</p>
-        </summary>
-        <ul className="grid gap-0.5 border-t border-line px-4 pt-2 pb-3 text-[13.5px] sm:px-5">
-          {links.map((l) => <LinkRow key={l.href} href={l.href}>{l.label}</LinkRow>)}
-        </ul>
-      </details>
-    </Reveal>
-  );
-}
-
-/** Someone whose principles we keep: one compact row, the rest behind a tap. */
-function PrinciplesRow({ p }) {
-  const links = personLinks(p, t);
-  return (
-    <details id={`person-${p.id}`} className="group scroll-mt-28">
-      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 sm:px-5 [&::-webkit-details-marker]:hidden">
-        <span className="min-w-0">
-          <span className="text-[16px] font-semibold tracking-[-0.01em]">{p.name}</span>
-          <span className="meta ms-2 normal-case tracking-[0.02em]">{p.style}</span>
-        </span>
-        <Toggle />
-      </summary>
-      <div className="px-4 pb-4 sm:px-5">
-        <p className="text-[14px] leading-snug"><span className="meta me-1.5 text-accent">{t("ppl.learn")}</span>{p.learn}</p>
-        <p className="mt-2 text-[14px] leading-snug text-ink-2"><span className="meta me-1.5 text-people">{t("ppl.careful")}</span>{p.caution}</p>
-        <ul className="mt-2 grid gap-0.5 text-[13.5px]">{links.map((l) => <LinkRow key={l.href} href={l.href}>{l.label}</LinkRow>)}</ul>
+          {open && <CallDetail c={calls.find((c) => c.id === open)} />}
+        </>
+      )}
+      <p className={`${calls.length || rec?.n ? "mt-3" : ""} line-clamp-3 text-[14px] leading-snug text-ink`}>
+        <span className="micro me-1.5 text-desk">{t("ppl.learn")}</span>{p.learn}
+      </p>
+      <div className="mt-1 flex flex-wrap items-center gap-x-1">
+        <span className="micro text-people">{t("ppl.careful")}</span>
+        <InfoTip label={t("ppl.careful")} align="start">{p.caution}</InfoTip>
+        {links.length > 0 && (
+          <ReadMore label={t("ppl.links", { count: links.length })} className="ms-auto">
+            <ul className="grid gap-0.5 pt-1 text-[13px]">
+              {links.map((l) => (
+                <li key={l.href}><a href={l.href} {...ext} className="flex min-h-[36px] items-start gap-1.5 py-1.5 text-ink-2 [overflow-wrap:anywhere] hover:text-desk"><span aria-hidden="true" className="text-ink-3">↗</span>{l.label}</a></li>
+              ))}
+            </ul>
+          </ReadMore>
+        )}
       </div>
-    </details>
+    </Panel>
   );
 }
 
-function LinkRow({ href, children }) {
-  return (
-    <li>
-      <a href={href} {...ext} className="group/link flex min-h-[32px] items-start gap-1.5 py-1 text-ink-2 [overflow-wrap:anywhere] hover:text-accent">
-        <ArrowRight className="mt-[3px] size-3.5 shrink-0 -rotate-45 text-ink-3 group-hover/link:text-accent" />
-        <span>{children}</span>
-      </a>
-    </li>
-  );
-}
-
-/* --------------------------------------------------------------- how we use */
+/* --------------------------------------------------------------- the rest */
 
 const SHOWN_USES = 4;
 
-function UseItem({ x, i }) {
+function UseList({ items, from = 0 }) {
   return (
-    <li className="flex gap-3 border-b border-line px-2 py-3 last:border-0">
-      <span className="num shrink-0 font-mono text-[12.5px] leading-[22px] text-accent">{pad2(i + 1)}</span>
-      <span className="text-[14.5px] leading-snug">{x}</span>
-    </li>
+    <ol className="grid">
+      {items.map((x, i) => (
+        <li key={i} className="flex gap-3 border-b border-line py-2.5 last:border-0">
+          <span className="font-num shrink-0 text-[11.5px] leading-[20px] font-bold text-desk">{String(from + i + 1).padStart(2, "0")}</span>
+          <span className="text-[13.5px] leading-snug text-ink-2">{x}</span>
+        </li>
+      ))}
+    </ol>
   );
 }
 
-function HowWeUse({ cfg }) {
+function HowUsed({ cfg }) {
   const rest = cfg.how_we_use.slice(SHOWN_USES);
   return (
-    <section id="people-use" className={SECTION}>
-      <SectionHead eyebrow={t("ppl.use.eyebrow")} title={<>{t("ppl.use.title.a")} <Accent>{t("ppl.use.title.b")}</Accent></>} size="md"
-        lede={t("ppl.use.lede")} />
-      <Reveal className="card px-2 py-1 sm:p-4">
-        <ol className="grid">{cfg.how_we_use.slice(0, SHOWN_USES).map((x, i) => <UseItem key={i} x={x} i={i} />)}</ol>
-        {rest.length > 0 && (
-          <details className="group border-t border-line">
-            <summary className="flex min-h-[44px] cursor-pointer list-none items-center justify-between px-2 [&::-webkit-details-marker]:hidden">
-              <span className="meta">{t("ppl.use.more", { count: rest.length })}</span><Toggle />
-            </summary>
-            <ol className="grid">{rest.map((x, i) => <UseItem key={i} x={x} i={i + SHOWN_USES} />)}</ol>
-          </details>
-        )}
-      </Reveal>
-    </section>
+    <Panel id="people-use" title={t("ppl.use.title")} sub={t("ppl.use.sub")} titleSize="sm">
+      <UseList items={cfg.how_we_use.slice(0, SHOWN_USES)} />
+      {rest.length > 0 && <ReadMore label={t("ppl.use.more", { count: rest.length })} className="mt-1"><UseList items={rest} from={SHOWN_USES} /></ReadMore>}
+    </Panel>
   );
 }
-
-/* --------------------------------------------------------------- research */
 
 function Research({ cfg }) {
   return (
-    <section id="people-research" className={SECTION}>
-      <SectionHead eyebrow={t("ppl.res.eyebrow", { count: cfg.evidence.length })} title={<>{t("ppl.res.title.a")} <Accent>{t("ppl.res.title.b")}</Accent></>} size="md"
-        lede={t("ppl.res.lede")} />
-      <Reveal className="card divide-y divide-line">
+    <Panel id="people-research" title={t("ppl.res.title")} sub={t("ppl.res.sub")} titleSize="sm" flush
+      badge={<span className="font-num text-[12px] font-bold text-ink-2">{cfg.evidence.length}</span>}>
+      <ul className="divide-y divide-line">
         {cfg.evidence.map((e) => (
-          <details key={e.url} className="group">
-            <summary className="flex min-h-[48px] cursor-pointer list-none items-center justify-between gap-3 px-4 py-2.5 sm:px-5 [&::-webkit-details-marker]:hidden">
-              <span className="text-[15px] font-medium tracking-[-0.01em]">{e.topic}</span>
-              <Toggle />
-            </summary>
-            <div className="px-4 pb-4 sm:px-5">
-              <p className="text-[14.5px] leading-relaxed text-ink-2">{e.claim}</p>
-              <a href={e.url} {...ext} className="mt-3 inline-flex items-start gap-1.5 text-[13px] leading-snug text-ink-3 [overflow-wrap:anywhere] hover:text-accent">
-                <span>{e.citation}</span><ArrowRight className="mt-0.5 size-3.5 shrink-0 -rotate-45" />
-              </a>
-            </div>
-          </details>
+          <li key={e.url} className="flex min-h-[48px] items-center gap-2 px-4 py-1.5 sm:px-5">
+            <span className="min-w-0 flex-1 text-[13.5px] leading-snug text-ink">{e.topic}</span>
+            <InfoTip label={e.topic}>
+              <span className="block">{e.claim}</span>
+              <a href={e.url} {...ext} className="mt-2 block text-[12px] text-ink-3 [overflow-wrap:anywhere] hover:text-desk">{t("ppl.res.source")}: {e.citation} ↗</a>
+            </InfoTip>
+          </li>
         ))}
-      </Reveal>
-    </section>
+      </ul>
+    </Panel>
   );
 }
 
-/* -------------------------------------------------------------- connected */
+// Plain words about each connector this tab depends on (Admin keeps the technical notes).
+const CONNECT = { people: "free", holdings_13f: "official", x_accounts: "paid", news: "paid" };
 
-function Connected({ sources, cfg }) {
-  const list = ["people", "holdings_13f", "x_accounts", "news"].map((id) => sources.sources.find((s) => s.id === id)).filter(Boolean);
+function Feeds({ sources, cfg }) {
+  const list = Object.keys(CONNECT).map((id) => sources.sources.find((s) => s.id === id)).filter(Boolean);
   return (
-    <section id="people-connected" className={SECTION}>
-      <SectionHead eyebrow={t("ppl.conn.eyebrow", { v: sources.version })} title={<>{t("dataFeeds.title.a")} <Accent>{t("dataFeeds.title.b")}</Accent></>} size="md"
-        lede={t("ppl.conn.lede")} />
-      <Reveal className="card divide-y divide-line">
+    <Panel id="people-connected" title={t("ppl.conn.title")} sub={t("ppl.conn.sub")} info={t("ppl.conn.info")} titleSize="sm" flush>
+      <ul className="divide-y divide-line">
         {list.map((s) => {
-          const cost = CONNECT[s.id];
           const live = s.status === "active";
+          const cost = CONNECT[s.id];
           return (
-            <div key={s.id} className="p-4 sm:p-5">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <h3 className="text-[16px] font-semibold tracking-[-0.01em]">{s.label}</h3>
-                <Chip kind={live ? "active" : "planned"} icon={false}>{t(live ? (s.provider === "manual" ? "ppl.conn.byHand" : "ppl.conn.on") : "ppl.conn.off")}</Chip>
-              </div>
-              {cost && <p className="mt-1.5 text-[14px] leading-snug text-ink-2">{t(`ppl.conn.${s.id}`)}</p>}
-              <div className="meta mt-2 normal-case tracking-[0.04em]">
-                {cost && <span className={cost === "paid" ? "text-down" : "text-accent"}>{t(`ppl.cost.${cost}`)}</span>}
-                {live && s.provider !== "manual" ? <> · {s.cadence}</> : ""}
-                {s.id === "people" ? t("ppl.conn.counts", { people: cfg.people.length, calls: cfg.calls.length }) : ""}
-              </div>
-            </div>
+            <li key={s.id} className="flex min-h-[52px] items-center gap-2 px-4 py-1.5 sm:px-5">
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-[13.5px] font-semibold text-ink">{s.label}</span>
+                <span className={`micro block ${cost === "paid" ? "text-down" : "text-up"}`}>{t(`ppl.cost.${cost}`)}{s.id === "people" ? ` · ${cfg.people.length} · ${cfg.calls.length}` : ""}</span>
+              </span>
+              <Chip tone={live ? "up" : "ghost"} className="min-h-[22px] px-1.5 text-[10px]">{t(live ? (s.provider === "manual" ? "ppl.conn.byHand" : "ppl.conn.on") : "ppl.conn.off")}</Chip>
+              <InfoTip label={s.label}>{t(`ppl.conn.${s.id}`)}</InfoTip>
+            </li>
           );
         })}
-      </Reveal>
-    </section>
+      </ul>
+    </Panel>
   );
 }
-
-/* ----------------------------------------------------------------- add one */
 
 // [field name, its description in text/learn.js "ppl.field.<key>"]
 const CALL_FIELDS = [
@@ -379,46 +312,27 @@ const CALL_FIELDS = [
   ["credit_person", "credit_person"], ["source_kind, source_url", "source"],
 ];
 
-function AddOne({ repo, go }) {
+function AddOne({ repo }) {
   const edit = `https://github.com/${repo}/edit/main/config/people.json`;
   return (
-    <section id="people-add" className={SECTION}>
-      <SectionHead eyebrow={t("ppl.add.eyebrow")} title={<>{t("ppl.add.title.a")} <Accent>{t("ppl.add.title.b")}</Accent></>} size="md"
-        lede={t("ppl.add.lede")}
-        right={<a href={edit} {...ext} className="btn">{t("ppl.add.edit")} <ArrowRight className="size-4 -rotate-45" /></a>} />
-      <div className="grid gap-3 lg:grid-cols-2 lg:items-start">
-        <Reveal className="card">
-          <details className="group">
-            <summary className="flex min-h-[48px] cursor-pointer list-none items-center justify-between gap-3 p-4 sm:p-5 [&::-webkit-details-marker]:hidden">
-              <span className="meta">{t("ppl.add.person")}</span>
-              <Toggle />
-            </summary>
-            <ul className="grid gap-2 px-4 pb-4 text-[14.5px] leading-snug text-ink-2 sm:px-5 sm:pb-5">
-              {["p1", "p2", "p3", "p4"].map((k) => <li key={k} className="flex gap-2"><span className="text-accent">–</span><span>{t(`ppl.add.${k}`)}</span></li>)}
-            </ul>
-          </details>
-        </Reveal>
-        <Reveal className="card">
-          <details className="group">
-            <summary className="flex min-h-[48px] cursor-pointer list-none items-center justify-between gap-3 p-4 sm:p-5 [&::-webkit-details-marker]:hidden">
-              <span className="meta">{t("ppl.add.call")}</span>
-              <Toggle />
-            </summary>
-            <dl className="grid gap-2 px-4 pb-4 text-[14px] leading-snug sm:px-5 sm:pb-5">
-              {CALL_FIELDS.map(([k, v]) => (
-                <div key={k} className="grid gap-x-3 sm:grid-cols-[150px_minmax(0,1fr)]">
-                  <dt className="font-mono text-[12.5px] text-ink">{k}</dt>
-                  <dd className="text-ink-2">{t(`ppl.field.${v}`)}</dd>
-                </div>
-              ))}
-            </dl>
-          </details>
-        </Reveal>
-      </div>
-      <Reveal className="card mt-3 border-people/40 p-4 text-[14.5px] leading-relaxed text-ink-2 sm:p-5">
-        <span className="text-people">{t("ppl.own.head")}</span>{" "}
-        {rich(t, "ppl.own.body", { link: <button type="button" onClick={() => go("how")} className="text-ink underline-offset-4 hover:underline">{t("ppl.own.link")}</button> })}
-      </Reveal>
-    </section>
+    <Panel id="people-add" title={t("ppl.add.title")} sub={t("ppl.add.sub")} titleSize="sm"
+      badge={<a href={edit} {...ext} className="chip min-h-[32px] border-desk/50 bg-desk/10 text-desk">{t("ppl.add.edit")} <span aria-hidden="true">↗</span></a>}>
+      <p className="text-[13.5px] leading-snug text-ink-2">{t("ppl.own")}</p>
+      <ReadMore label={t("ppl.add.person")} className="mt-1">
+        <ul className="grid gap-1.5 pb-1 text-[13.5px] leading-snug text-ink-2">
+          {["p1", "p2", "p3", "p4"].map((k) => <li key={k} className="flex gap-2"><span aria-hidden="true" className="text-desk">–</span><span>{t(`ppl.add.${k}`)}</span></li>)}
+        </ul>
+      </ReadMore>
+      <ReadMore label={t("ppl.add.call")}>
+        <dl className="grid gap-1.5 pb-1 text-[13px] leading-snug">
+          {CALL_FIELDS.map(([k, v]) => (
+            <div key={k} className="grid gap-x-3 sm:grid-cols-[140px_minmax(0,1fr)]">
+              <dt className="font-num text-[12px] text-ink">{k}</dt>
+              <dd className="text-ink-2">{t(`ppl.field.${v}`)}</dd>
+            </div>
+          ))}
+        </dl>
+      </ReadMore>
+    </Panel>
   );
 }

@@ -7,7 +7,7 @@ import text from "../text/shell.js";
 
 /** The menu's shape: subjects in order, each with its pages (routes); the words live in text/shell.js ("nav.*"). */
 const MENU = [
-  { id: "today", pages: ["today", "watchlist", "details", "people"] },
+  { id: "today", pages: ["today", "watchlist", "details", "people", "arena"] },
   // One page, always one tap: what the daily brain decided, told simply. The bar shows it as its own tab.
   { id: "verdicts", direct: "verdicts", short: true, pages: ["verdicts"] },
   { id: "plan", pages: ["portfolio", "playbook", "track"] },

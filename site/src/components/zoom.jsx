@@ -16,7 +16,7 @@ import { rich } from "../lib/rich.jsx";
 
 const RANGES = [{ id: "1m", n: 22 }, { id: "3m", n: 63 }, { id: "6m", n: 130 }]; // labels: "zm.range.<id>"
 const H = 300, PAD_X = 10, PAD_TOP = 34, PAD_BOT = 26;
-const TONE = { up: "var(--accent)", down: "var(--down)", flat: "var(--ai)" };
+const TONE = { up: "var(--up)", down: "var(--down)", flat: "var(--ai)" };
 const UP = "var(--accent)", DOWN = "var(--down)";
 
 export function slice(s, from, to) {
@@ -80,37 +80,37 @@ export function CandleZoom({ it, manifest, marketId, onClose, openTo }) {
     <div className="fixed inset-0 z-[200] flex items-end justify-center sm:items-center" role="presentation">
       <button type="button" aria-label={t("zm.close")} onClick={onClose} className="absolute inset-0 bg-black/60 backdrop-blur-sm motion-safe:animate-[fade_200ms_ease-out]" />
       <div ref={panel} tabIndex={-1} role="dialog" aria-modal="true" aria-label={t("zm.dialog", { name: it.name })}
-        className="relative max-h-[94dvh] w-full max-w-[760px] overflow-y-auto rounded-t-[28px] border border-line-2 bg-surface p-5 shadow-2xl outline-none sm:rounded-[28px] sm:p-7 motion-safe:animate-[rise_380ms_cubic-bezier(.2,.8,.2,1)]">
+        className="panel relative max-h-[94dvh] w-full max-w-[760px] overflow-y-auto rounded-b-none p-5 shadow-2xl outline-none sm:rounded-panel sm:p-7 motion-safe:animate-[rise_380ms_cubic-bezier(.2,.8,.2,1)]">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="meta">{t("zm.title")}</p>
-            <h2 className="mt-1 text-[clamp(24px,6.5vw,32px)] leading-tight font-bold tracking-[-0.02em] text-ink">{it.name}</h2>
+            <p className="kicker flex items-center gap-2"><span aria-hidden="true" className="size-[6px] rotate-45 bg-desk" />{t("zm.title")}</p>
+            <h2 className="headline mt-1.5 text-[clamp(28px,7.5vw,40px)] text-ink">{it.name}</h2>
           </div>
-          <button type="button" onClick={onClose} aria-label={t("zm.close")} className="grid size-11 shrink-0 place-items-center rounded-full border border-line-2 text-[22px] text-ink-2 hover:text-ink">×</button>
+          <button type="button" onClick={onClose} aria-label={t("zm.close")} className="grid size-11 shrink-0 place-items-center rounded-[10px] border border-line-2 bg-surface-2 text-[22px] text-ink-2 hover:text-ink">×</button>
         </div>
 
         <div className="mt-4 flex flex-wrap items-center gap-2" role="group" aria-label={t("zm.howMuch")}>
           {RANGES.map((x) => (
             <button key={x.id} type="button" onClick={() => pickRange(x.id)} aria-pressed={range === x.id && focus == null}
-              className={`min-h-[40px] rounded-full border px-4 text-[15px] font-medium transition-colors ${range === x.id && focus == null ? "border-transparent bg-ink text-bg" : "border-line-2 text-ink-2 hover:text-ink"}`}>
+              className={`min-h-[44px] rounded-[10px] border px-4 font-display text-[15px] font-bold tracking-[0.08em] uppercase transition-colors ${range === x.id && focus == null ? "border-line-3 bg-surface-3 text-ink" : "border-line-2 text-ink-3 hover:text-ink"}`}>
               {t(`zm.range.${x.id}`)}
             </button>
           ))}
           {focus != null && (
-            <button type="button" onClick={() => setFocus(null)} className="min-h-[40px] rounded-full border border-accent/50 bg-accent/10 px-4 text-[15px] font-medium text-accent">
+            <button type="button" onClick={() => setFocus(null)} className="min-h-[44px] rounded-[10px] border border-desk/50 bg-desk/10 px-4 font-display text-[15px] font-bold tracking-[0.08em] text-desk uppercase">
               {t("zm.showAll", { range: t(`zm.range.${r.id}`) })}
             </button>
           )}
         </div>
 
         <div className="mt-4">
-          {doc === undefined && <p className="grid h-[300px] place-items-center rounded-2xl bg-surface-2 text-ink-2" role="status">{t("cdv.loading")}</p>}
-          {doc !== undefined && !view && <p className="grid h-[300px] place-items-center rounded-2xl border border-dashed border-line-2 text-ink-2">{t("zm.noCandles")}</p>}
+          {doc === undefined && <p className="skeleton grid h-[300px] place-items-center rounded-tile text-ink-2" role="status">{t("cdv.loading")}</p>}
+          {doc !== undefined && !view && <p className="grid h-[300px] place-items-center rounded-tile border border-dashed border-line-2 text-ink-2">{t("zm.noCandles")}</p>}
           {view && <BigChart key={`${range}-${focus}`} view={view} spots={shown} chosen={chosen?.i - from} reduced={reduced} onSpot={(s) => setFocus(s.i)} name={it.name} />}
         </div>
 
         {view && (
-          <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[14.5px] text-ink-2">
+          <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[13.5px] text-ink-2">
             <span>{rich(t, "zm.legend.up", { word: <span className="font-semibold" style={{ color: UP }}>{t("zm.green")}</span> })}</span>
             <span>{rich(t, "zm.legend.down", { word: <span className="font-semibold" style={{ color: DOWN }}>{t("zm.red")}</span> })}</span>
             <span>{t("zm.legend.wicks")}</span>
@@ -119,12 +119,12 @@ export function CandleZoom({ it, manifest, marketId, onClose, openTo }) {
 
         {view && (
           <section className="mt-6">
-            <h3 className="text-[20px] font-bold tracking-[-0.01em] text-ink">{t("zm.spots")}</h3>
-            {!spots.length && <p className="mt-2 text-[16.5px] leading-relaxed text-ink-2">{t("cdv.spots.none")}</p>}
+            <h3 className="headline text-[22px] text-ink">{t("zm.spots")}</h3>
+            {!spots.length && <p className="mt-2 text-[15px] leading-snug text-ink-2">{t("cdv.spots.none")}</p>}
             <SpotList spots={spots} focus={focus} onPick={(s) => setFocus(focus === s.i ? null : s.i)} reduced={reduced} zoomWords />
-            <p className="mt-4 text-[14.5px] leading-relaxed text-ink-3">{SPOT_CAVEAT} {t("zm.daily")}</p>
+            <p className="mt-3 text-[13px] leading-snug text-ink-3">{SPOT_CAVEAT} {t("zm.daily")}</p>
             {openTo && (
-              <button type="button" onClick={() => { onClose(); openTo(it.candlesTo); }} className="btn mt-4 min-h-[48px] justify-center">{t("zm.full")}</button>
+              <button type="button" onClick={() => { onClose(); openTo(it.candlesTo); }} className="btn mt-4 min-h-[48px] justify-center font-display text-[16px] font-bold tracking-[0.08em] uppercase">{t("zm.full")}</button>
             )}
           </section>
         )}
@@ -138,18 +138,21 @@ export function CandleZoom({ it, manifest, marketId, onClose, openTo }) {
 export function SpotList({ spots, focus, onPick, reduced, zoomWords = false }) {
   const t = strings(dict);
   return (
-    <ol className="mt-3 grid gap-2.5">
+    <ol className="mt-2 grid gap-1.5">
       {spots.map((s, k) => {
         const on = focus === s.i;
         return (
-          <li key={s.i} className="motion-safe:animate-[rise_420ms_ease-out_both]" style={{ animationDelay: reduced ? undefined : `${250 + k * 90}ms` }}>
+          <li key={s.i} className="motion-safe:animate-[rise_420ms_ease-out_both]" style={{ animationDelay: reduced ? undefined : `${150 + k * 70}ms` }}>
             <button type="button" onClick={() => onPick(s)} aria-pressed={on}
-              className={`flex w-full gap-3 rounded-2xl border p-4 text-start transition-colors ${on ? "border-accent/60 bg-accent/10" : "border-line-2 hover:border-ink-3"}`}>
-              <span className="grid size-8 shrink-0 place-items-center rounded-full text-[15px] font-bold text-bg" style={{ background: TONE[s.tone] }}>{s.n}</span>
-              <span className="min-w-0">
-                <span className="block text-[17px] font-semibold text-ink">{s.title} <span className="font-normal text-ink-3">· <span>{dayWords(s.date)}</span></span></span>
-                <span className="mt-1 block text-[15.5px] leading-relaxed text-ink-2">{s.why}</span>
-                <span className="mt-1.5 block text-[14px] font-medium text-accent">{t(zoomWords ? (on ? "zm.spot.zoomed" : "zm.spot.zoom") : (on ? "zm.spot.shown" : "zm.spot.show"))}</span>
+              className={`flex min-h-[44px] w-full gap-3 rounded-tile border px-3 py-2.5 text-start transition-colors ${on ? "border-desk/60 bg-desk/10" : "border-line bg-surface-2/50 hover:border-line-3"}`}>
+              <span className="grid size-6 shrink-0 place-items-center rounded-full font-mono text-[12px] font-bold text-bg" style={{ background: TONE[s.tone] }}>{s.n}</span>
+              <span className="min-w-0 flex-1">
+                <span className="flex flex-wrap items-baseline gap-x-2">
+                  <span className="text-[14.5px] font-semibold text-ink">{s.title}</span>
+                  <span className="font-num text-[11.5px] text-ink-3">{dayWords(s.date)}</span>
+                </span>
+                <span className="mt-0.5 block text-[13.5px] leading-snug text-ink-2">{s.why}</span>
+                <span className="micro mt-1 block text-desk">{t(zoomWords ? (on ? "zm.spot.zoomed" : "zm.spot.zoom") : (on ? "zm.spot.shown" : "zm.spot.show"))}</span>
               </span>
             </button>
           </li>
@@ -179,7 +182,7 @@ export function BigChart({ view, spots, chosen, reduced, onSpot, name }) {
   }, [view, w]);
   const step = reduced ? 0 : Math.min(28, 700 / Math.max(1, view.n));
   return (
-    <div ref={ref} className="relative overflow-hidden rounded-2xl bg-surface-2" style={{ height: H }}>
+    <div ref={ref} className="relative overflow-hidden rounded-tile bg-surface-2" style={{ height: H }}>
       {g && (
         <svg width={w} height={H} viewBox={`0 0 ${w} ${H}`} role="img" aria-label={t("zm.aria", { name, n: view.n, count: spots.length })} className="block">
           {Number.isFinite(chosen) && g.candles[chosen] && (

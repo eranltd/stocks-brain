@@ -1,53 +1,49 @@
 import { dayWords } from "../lib/buywindow.js";
 import dict from "../text/stock.js";
-import { ArrowRight, Reveal } from "./ui.jsx";
+import { ArrowRight, InfoTip, StepMark } from "./ui.jsx";
 import { strings } from "../lib/text.js";
 
 /*
- * "When would the rules allow a buy?": what this site's own rules say about one company or fund, in this order: real
- * money first (the weekly buy of the whole-market fund), then the weekly game (its next look, and for each weekly rule
- * whether it would pick the name if today were its decision day, and why), then the monthly rule (folded away), the
- * site's checks, what to wait for, and one honest line. Wording: lib/buywindow.js, the
- * card's own words: text/stock.js "bwc.*". Made for a phone: one column, big plain headline, rows that wrap.
+ * "When could we buy it?": what this site's own rules say about one company or fund, in this order: real money first
+ * (the weekly buy of the whole-market fund), then the weekly game (its next look, and for each weekly rule whether it
+ * would pick the name if today were its decision day, and why), then the monthly rule (folded away), the site's checks,
+ * what to wait for. Wording: lib/buywindow.js; the card's own words: text/stock.js "bwc.*". The Stock page wraps the
+ * body in its panel (title, tone chip, the honest note behind the (i)). Compact: one line per check, a tick or a cross.
  */
 
-const TONE = {
-  wait: { text: "text-people", border: "border-people/40", bar: "var(--people)" },
-  rules_allow: { text: "text-accent", border: "border-accent/50", bar: "var(--accent)" },
-  not_ours: { text: "text-ink", border: "border-line-2", bar: "var(--ink-3)" },
+/** The answer's tone as text colour and as the panel's chip. */
+export const BW_TONE = {
+  wait: { text: "text-wait", chip: "wait", word: "bwc.chip.wait" },
+  rules_allow: { text: "text-up", chip: "up", word: "bwc.chip.allow" },
+  not_ours: { text: "text-ink", chip: "neutral", word: "bwc.chip.notOurs" },
 };
 
-const MARK = {
-  true: { glyph: "✓", cls: "bg-accent/15 text-accent", label: "bwc.mark.met" },
-  false: { glyph: "✕", cls: "bg-down/15 text-down", label: "bwc.mark.notMet" },
-  null: { glyph: "?", cls: "bg-surface-2 text-ink-3", label: "bwc.mark.unknown" },
-};
+const MARK = { true: ["done", "bwc.mark.met"], false: ["fail", "bwc.mark.notMet"], null: ["idle", "bwc.mark.unknown"] };
 
-function Head({ children }) {
-  return <h3 className="meta mb-2 text-accent">{children}</h3>;
-}
-
-function Mark({ ok, small = false }) {
+function Mark({ ok, className = "size-3.5" }) {
   const t = strings(dict);
-  const m = MARK[String(ok)] ?? MARK.null;
-  return <span className={`grid shrink-0 place-items-center rounded-full font-semibold ${small ? "mt-0.5 size-6 text-[12px]" : "mt-0.5 size-8 text-[14px]"} ${m.cls}`} role="img" aria-label={t(m.label)}>{m.glyph}</span>;
+  const [state, label] = MARK[String(ok)] ?? MARK.null;
+  return <StepMark state={state} label={t(label)} className={className} />;
 }
 
-/** Full rows: a check, its value now and what it needs. */
+const Head = ({ children }) => <h3 className="micro mb-1.5 text-desk">{children}</h3>;
+
+/** The first sentence of a longer text ("With real money: not as a single stock today."). */
+const firstSentence = (s) => String(s ?? "").match(/^.*?[.!?](?=\s|$)/)?.[0] ?? String(s ?? "");
+
+/** One check per line: a mark, what it checks, its value now and (small) what it needs. */
 function Rows({ rows }) {
   const t = strings(dict);
   return (
-    <ul className="grid gap-2">
+    <ul className="divide-y divide-line rounded-tile border border-line">
       {rows.map((c) => (
-        <li key={c.id} className="flex min-h-[52px] items-start gap-3 rounded-2xl border border-line px-4 py-3">
-          <Mark ok={c.ok} />
+        <li key={c.id} className="flex items-start gap-2.5 px-3 py-2">
+          <span className="pt-0.5"><Mark ok={c.ok} /></span>
           <span className="min-w-0 flex-1">
-            <span className="block text-[16px] leading-snug text-ink">{c.label}</span>
-            <span className="mt-1 block text-[14px] leading-snug text-ink-2">
-              <span className="text-ink-3">{t("bwc.now")}</span> <span className="num">{c.now}</span>
-            </span>
-            <span className="mt-0.5 block text-[14px] leading-snug text-ink-2">
-              <span className="text-ink-3">{t("bwc.needs")}</span> <span className="num">{c.need}</span>
+            <span className="block text-[13px] leading-snug text-ink">{c.label}</span>
+            <span className="font-num mt-0.5 flex flex-wrap gap-x-2 text-[11px] leading-snug">
+              <span className="font-semibold text-ink-2">{c.now}</span>
+              <span className="text-ink-3">{t("bwc.needShort", { need: c.need })}</span>
             </span>
           </span>
         </li>
@@ -56,24 +52,27 @@ function Rows({ rows }) {
   );
 }
 
-/** One rule's look, compact: "<rule>: would pick it" or "would not pick it: why", then its checks in one line each. */
+/** One rule's look: "<rule>: would pick it" or "would not pick it" with why, then its checks one per line. */
 function RuleBlock({ r, showDate = false }) {
   const t = strings(dict);
   return (
-    <li className="rounded-2xl border border-line-2 p-4">
-      <div className="flex items-start gap-3">
-        <Mark ok={r.would} />
-        <p className="min-w-0 flex-1 pt-1 text-[16.5px] leading-snug text-ink">
-          <span className="font-semibold">{r.name}:</span> {r.line}{!r.would && r.why ? `: ${r.why}` : ""}.
-          {showDate && r.nextReview && <span className="block text-[14px] text-ink-3">{t("bwc.nextLook", { date: dayWords(r.nextReview) })}</span>}
+    <li className="rounded-tile border border-line bg-surface-2/50 px-3 py-2.5">
+      <div className="flex items-start gap-2.5">
+        <span className="pt-0.5"><Mark ok={r.would} /></span>
+        <p className="min-w-0 flex-1 text-[13.5px] leading-snug text-ink">
+          <span className="font-semibold">{r.name}</span>{" "}
+          <span className={r.would ? "text-up" : "text-ink-2"}>{r.line}</span>
+          {!r.would && r.why && <span className="block text-[12.5px] text-ink-3">{r.why}</span>}
+          {showDate && r.nextReview && <span className="font-num block text-[11.5px] text-ink-3">{t("bwc.nextLook", { date: dayWords(r.nextReview) })}</span>}
         </p>
       </div>
-      <ul className="mt-3 grid gap-1.5 border-t border-line pt-3">
+      <ul className="mt-2 grid gap-1 border-t border-line pt-2">
         {r.conditions.map((c) => (
-          <li key={c.id} className="flex items-start gap-2.5">
-            <Mark ok={c.ok} small />
-            <span className="min-w-0 flex-1 text-[14.5px] leading-snug text-ink-2">
-              <span className="text-ink">{c.label}.</span> <span className="num">{c.now}</span>
+          <li key={c.id} className="flex items-start gap-2">
+            <span className="pt-[3px]"><Mark ok={c.ok} className="size-3" /></span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[12.5px] leading-snug text-ink-2">{c.label}</span>
+              <span className="font-num block text-[11px] leading-snug text-ink-3">{c.now}</span>
             </span>
           </li>
         ))}
@@ -82,81 +81,84 @@ function RuleBlock({ r, showDate = false }) {
   );
 }
 
-export function BuyWindowCard({ a, go }) {
+const CalendarIcon = () => (
+  <svg viewBox="0 0 24 24" className="size-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5" /><path d="M3.5 10h17M8 3v4M16 3v4" /></svg>
+);
+
+/** The panel's body for one buyWindow() answer `a`. */
+export function BuyWindowBody({ a, go }) {
   const t = strings(dict);
   if (!a) return null;
-  const tone = TONE[a.tone] ?? TONE.wait;
+  const tone = BW_TONE[a.tone] ?? BW_TONE.wait;
   const hasGame = a.games?.length > 0;
   const condHead = t(a.kind === "main" ? (a.available ? "bwc.cond.main" : "bwc.cond.today") : "bwc.cond.learn");
   const mlines = (a.monthly ?? []).map((r) => r.line);
   // Both monthly versions usually agree: then one phrase; otherwise each version's own.
   const monthlyLine = new Set(mlines).size === 1 ? mlines[0] : (a.monthly ?? []).map((r) => `${r.name}: ${r.line}`).join(" · ");
+  const real = firstSentence(a.realMoney);
   return (
-    <Reveal as="section" id="buy-window" aria-labelledby="buy-window-title" className={`card mt-6 scroll-mt-28 overflow-hidden ${tone.border}`}>
-      <div className="h-1.5" style={{ background: tone.bar }} aria-hidden="true" />
-      <div className="p-6 sm:p-8">
-        <h2 id="buy-window-title" className="text-[15px] font-semibold uppercase tracking-[0.12em] text-accent">{t("bwc.title")}</h2>
-        <p className={`mt-3 text-[clamp(24px,6.5vw,32px)] leading-[1.15] font-semibold tracking-[-0.02em] ${tone.text}`}>{a.headline}</p>
-
-        <div className="mt-6 rounded-2xl border border-line-2 bg-surface-2 p-4 sm:p-5">
-          <p className="meta normal-case tracking-[0.04em] text-accent">{t("bwc.realMoney")}</p>
-          <p className="mt-1 text-[17px] leading-relaxed text-ink">{a.realMoney}</p>
-        </div>
-
-        {(hasGame || a.nextLook) && (
-          <div className="mt-7">
-            {hasGame && <Head>{t("bwc.game")}</Head>}
+    <div className="@container">
+      <p className={`text-[16.5px] leading-snug font-semibold tracking-[-0.01em] ${tone.text}`}>{a.headline}</p>
+      <div className="mt-3 grid gap-3 @2xl:grid-cols-2 @2xl:gap-4">
+        <div className="grid content-start gap-3">
+          <div className="grid gap-1.5">
+            <div className="tile flex items-start gap-2.5 px-3 py-2">
+              <span className="chip mt-0.5 shrink-0 border-desk/50 bg-desk/10 text-desk">{t("bwc.realMoney")}</span>
+              <p className="min-w-0 flex-1 pt-1 text-[13px] leading-snug text-ink">{real}</p>
+              {real !== a.realMoney && <InfoTip label={t("bwc.realMoney")} className="-my-2 -me-2">{a.realMoney}</InfoTip>}
+            </div>
             {a.nextLook && (
-              <div className="flex items-start gap-3">
-                <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-accent/12 text-accent" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><rect x="3.5" y="5" width="17" height="15" rx="2.5" /><path d="M3.5 10h17M8 3v4M16 3v4" /></svg>
-                </span>
-                <p className="min-w-0 pt-1.5 text-[16.5px] leading-relaxed text-ink">{a.nextLook}</p>
-              </div>
-            )}
-            {hasGame && (
-              <>
-                <p className="mt-3 text-[14.5px] leading-relaxed text-ink-3">{t("bwc.ifToday")}</p>
-                <ul className="mt-2 grid gap-3">{a.games.map((r) => <RuleBlock key={r.id} r={r} />)}</ul>
-              </>
+              <p className="flex items-start gap-2.5 px-1 text-[13px] leading-snug text-ink-2">
+                <span className="pt-px text-ink-3"><CalendarIcon /></span>
+                <span className="min-w-0">{a.nextLook}</span>
+              </p>
             )}
           </div>
-        )}
 
-        {a.monthly?.length > 0 && (
-          <details className="group mt-4 rounded-2xl border border-line-2">
-            <summary className="flex min-h-[52px] cursor-pointer list-none items-center gap-3 px-4 py-3 text-[16px] leading-snug text-ink">
-              <span className="min-w-0 flex-1"><span className="font-semibold">{t("bwc.monthly")}</span> <span className="text-ink-2">{monthlyLine}</span></span>
-              <ArrowRight className="size-4 shrink-0 rotate-90 text-ink-3 transition group-open:-rotate-90" />
-            </summary>
-            <ul className="grid gap-3 px-3 pb-3">{a.monthly.map((r) => <RuleBlock key={r.id} r={r} showDate />)}</ul>
-          </details>
-        )}
+          {hasGame && (
+            <div>
+              <Head>{t("bwc.game")}</Head>
+              <ul className="grid gap-1.5">{a.games.map((r) => <RuleBlock key={r.id} r={r} />)}</ul>
+            </div>
+          )}
+        </div>
+        <div className="grid content-start gap-3">
+          {a.monthly?.length > 0 && (
+            <details className="group rounded-tile border border-line">
+              <summary className="flex min-h-[44px] cursor-pointer list-none items-center gap-2 px-3 py-2 text-[13px] leading-snug text-ink [&::-webkit-details-marker]:hidden">
+                <span className="min-w-0 flex-1"><span className="font-semibold">{t("bwc.monthly")}</span> <span className="text-ink-2">{monthlyLine}</span></span>
+                <span aria-hidden="true" className="shrink-0 text-ink-3 transition-transform group-open:rotate-180">▾</span>
+              </summary>
+              <ul className="grid gap-1.5 px-2 pb-2">{a.monthly.map((r) => <RuleBlock key={r.id} r={r} showDate />)}</ul>
+            </details>
+          )}
 
-        {a.conditions.length > 0 && (
-          <div className="mt-7">
-            <Head>{condHead}</Head>
-            <Rows rows={a.conditions} />
-          </div>
-        )}
+          {a.conditions.length > 0 && (
+            <div>
+              <Head>{condHead}</Head>
+              <Rows rows={a.conditions} />
+            </div>
+          )}
 
-        {a.waitFor.length > 0 && (
-          <div className="mt-7">
-            <Head>{t(a.tone === "rules_allow" ? "bwc.keepInMind" : "bwc.waitFor")}</Head>
-            <ul className="grid gap-2 text-[16.5px] leading-relaxed text-ink">
-              {a.waitFor.map((w) => <li key={w} className="relative ps-4 before:absolute before:start-0 before:top-[0.75em] before:h-px before:w-2 before:bg-ink-3">{w}</li>)}
-            </ul>
-          </div>
-        )}
+          {a.waitFor.length > 0 && (
+            <div>
+              <Head>{t(a.tone === "rules_allow" ? "bwc.keepInMind" : "bwc.waitFor")}</Head>
+              <ul className="grid gap-1 text-[13px] leading-snug text-ink-2">
+                {a.waitFor.map((w) => (
+                  <li key={w} className="flex gap-2"><span aria-hidden="true" className="mt-[7px] size-[5px] shrink-0 rotate-45 bg-ink-3" /><span>{w}</span></li>
+                ))}
+              </ul>
+            </div>
+          )}
 
-        <p className="mt-6 border-t border-line pt-4 text-[14.5px] leading-relaxed text-ink-2">{a.note}</p>
-        {go && (
-          <button type="button" onClick={() => go("admin")} className="meta mt-3 inline-flex min-h-[44px] items-center gap-1 normal-case tracking-[0.04em] text-ink-2 hover:text-ink">
-            {t("bwc.rules")} <ArrowRight className="size-3.5" />
-          </button>
-        )}
+          {go && (
+            <button type="button" onClick={() => go("admin")} className="micro inline-flex min-h-[44px] items-center gap-1 justify-self-start text-ink-2 hover:text-ink">
+              {t("bwc.rules")} <ArrowRight className="size-3.5" />
+            </button>
+          )}
+        </div>
       </div>
-    </Reveal>
+    </div>
   );
 }
 

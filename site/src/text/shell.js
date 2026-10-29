@@ -81,6 +81,8 @@ export default {
   "nav.p.details.what": "All the numbers about the market's day, for when you want more.",
   "nav.p.people": "People to learn from",
   "nav.p.people.what": "Famous investors the site follows, and whether their public calls turned out right.",
+  "nav.p.arena": "The Arena",
+  "nav.p.arena.what": "The past year replayed like a game: a bar race, a duel and a ticker wall. Real moves only.",
   "nav.p.verdicts": "Brain's verdicts",
   "nav.p.verdicts.what": "What the brain decided today, told simply, and what the plan does this week.",
   "nav.p.portfolio": "Pretend portfolio",
@@ -170,4 +172,5 @@ export default {
   "hole.lessons": "What do the books and videos behind the lessons actually teach?",
   "hole.mistakes": "What did the site's own results teach, with proof?",
   "hole.machine": "How does a robot brain read the market every morning?",
+  "hole.arena": "Which company won the year? Watch it replayed as a race.",
 };

@@ -57,6 +57,10 @@ export default {
   "agent.toast.buy": "#{rank} hottest · {move} in {days} days · {amount} paper",
   "agent.toast.sell": "Fell to #{rank} · sold {amount} paper",
   "agent.close": "Close",
+  "agent.stop": "Stop",
+  "agent.stopAria": "Stop the agent: no more trades or pop-ups, and close the floating buttons",
+  "agent.start": "Start agent",
+  "agent.startAria": "Start the agent again",
 
   // the trade log (components/arena/tradelog.jsx)
   "log.title": "Trade log",

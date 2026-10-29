@@ -62,6 +62,28 @@ export function useFeedSwitch() {
   return [on, setOn];
 }
 
+const STOP_KEY = "sb:agent-stopped";
+const readStopped = () => { try { return window.localStorage.getItem(STOP_KEY) === "1"; } catch { return false; } };
+
+/**
+ * The big STOP: stops the demo agent everywhere (no trades, no pop-ups, the Arena paused) and closes the floating
+ * buttons and the news card; a small Start button brings it all back. This device remembers it.
+ */
+export function useAgentStop() {
+  const [stopped, setState] = useState(readStopped);
+  useEffect(() => {
+    const sync = () => setState(readStopped());
+    window.addEventListener("sb-agent-stop", sync);
+    return () => window.removeEventListener("sb-agent-stop", sync);
+  }, []);
+  const setStopped = useCallback((v) => {
+    try { window.localStorage.setItem(STOP_KEY, v ? "1" : "0"); } catch { /* storage unavailable: this visit only */ }
+    setState(v);
+    window.dispatchEvent(new Event("sb-agent-stop"));
+  }, []);
+  return [stopped, setStopped];
+}
+
 const readLevel = () => { try { const v = window.localStorage.getItem(LEVEL_KEY); return LEVEL_IDS.includes(v) ? v : "medium"; } catch { return "medium"; } };
 
 /** The agent's risk level (easy, medium, hard), shared by the Arena and the pop-ups; this device remembers it. */
@@ -99,7 +121,8 @@ export default function AgentFeed({ data, go }) {
   const reduced = useReducedMotion();
   const visible = usePageVisible();
   const [on] = useFeedSwitch();
-  const live = on && !reduced;
+  const [stopped] = useAgentStop();
+  const live = on && !stopped && !reduced;
   const [shown, setShown] = useState([]);
   const queue = useRef([]);
   const drain = useRef(0);

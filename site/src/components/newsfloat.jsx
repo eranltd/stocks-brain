@@ -5,6 +5,7 @@ import { strings } from "../lib/text.js";
 import { noteView, usableWhy } from "../lib/why.js";
 import dict from "../text/shell.js";
 import { usePageVisible } from "./motion.jsx";
+import { useAgentStop } from "./agentfeed.jsx";
 
 /*
  * The news float: one real news item at a time, bottom left (above the phone's bottom bar), changing every few
@@ -71,6 +72,7 @@ export default function NewsFloat({ data, go }) {
   const [hold, setHold] = useState(false);
   const [off, setOff] = useState(readOff);
   const [shown, setShown] = useState(false);
+  const [stopped] = useAgentStop();
 
   // Wait a few seconds after the page opens, then start.
   useEffect(() => { const id = setTimeout(() => setShown(true), 4000); return () => clearTimeout(id); }, []);
@@ -80,7 +82,7 @@ export default function NewsFloat({ data, go }) {
     return () => clearInterval(id);
   }, [shown, off, hold, visible, pool.length]);
 
-  if (reduced || off || !shown || !pool.length) return null;
+  if (reduced || off || stopped || !shown || !pool.length) return null;
   const x = pool[i % pool.length];
   const open = () => {
     go(`stock/${x.symbol}`);

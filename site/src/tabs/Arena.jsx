@@ -22,7 +22,7 @@ import { OrbitPanel } from "../components/arena/orbit.jsx";
 import { AgentPanel } from "../components/arena/agent.jsx";
 import { AgentPlan } from "../components/arena/plan.jsx";
 import { TradeLog } from "../components/arena/tradelog.jsx";
-import { showTrade, useAgentLevel, useFeedOwner } from "../components/agentfeed.jsx";
+import { showTrade, useAgentLevel, useAgentStop, useFeedOwner } from "../components/agentfeed.jsx";
 import { agentRun, LEVEL_IDS, levelOf, tradesOn } from "../lib/agent.js";
 
 /*
@@ -66,10 +66,11 @@ export default function Arena({ data, go, embedded = false }) {
   const [count, setCount] = useState(null);
   // The loop: on until the reader takes over (pause or the slider); Play turns it back on.
   const [auto, setAuto] = useState(true);
+  const [stopped, setStopped] = useAgentStop();
   const [seenEnd, setSeenEnd] = useState(reduced);
   const onScreen = useInViewNow(watch, "0px");
   const visible = usePageVisible();
-  const looping = auto && onScreen && visible && !reduced && count == null && (w?.n ?? 0) > 1;
+  const looping = auto && !stopped && onScreen && visible && !reduced && count == null && (w?.n ?? 0) > 1;
   const { playing, ended, play, restart } = clock;
   useEffect(() => {
     if (!looping) return undefined;
@@ -78,6 +79,8 @@ export default function Arena({ data, go, embedded = false }) {
     return undefined;
   }, [looping, playing, ended, play, restart]);
   useEffect(() => { if (ended) setSeenEnd(true); }, [ended]);
+  // STOP pauses the replay; Start lets the loop run again.
+  useEffect(() => { if (stopped) clock.pause(); }, [stopped]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // The demo trader agent plays along: its trades of each replayed day pop up at the top (components/agentfeed.jsx).
   const [level, setLevel] = useAgentLevel();
@@ -93,7 +96,7 @@ export default function Arena({ data, go, embedded = false }) {
   }, [run, w]);
   useEffect(() => { setSeenEnd(reduced); }, [win, reduced]);
   // While the dock shows, the trade pop-ups sit below it.
-  const docked = onScreen && !reduced;
+  const docked = onScreen && !reduced && !stopped;
   useEffect(() => {
     document.documentElement.classList.toggle("has-dock", docked);
     return () => document.documentElement.classList.remove("has-dock");
@@ -167,7 +170,16 @@ export default function Arena({ data, go, embedded = false }) {
             <svg viewBox="0 0 20 20" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true"><path d="M7 5h9M7 10h9M7 15h9M3.5 5h.01M3.5 10h.01M3.5 15h.01" /></svg>
             <span className="max-sm:hidden">{t("log.title")}</span>
           </button>
+          <button type="button" className="arena-dock-stop" onClick={() => { setAuto(false); setStopped(true); }} aria-label={t("agent.stopAria")}>
+            <span aria-hidden="true" className="arena-dock-stop-sq" />{t("agent.stop")}
+          </button>
         </div>,
+        document.body,
+      )}
+      {stopped && onScreen && !reduced && createPortal(
+        <button type="button" className="arena-start" onClick={() => { setStopped(false); setAuto(true); }} aria-label={t("agent.startAria")}>
+          <PlayIcon className="size-3.5" />{t("agent.start")}
+        </button>,
         document.body,
       )}
       <Container className={embedded ? "pt-5 sm:pt-6" : "pt-8 sm:pt-12"}>

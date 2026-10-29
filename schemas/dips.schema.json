@@ -1,0 +1,50 @@
+{
+  "$id": "dips.schema.json",
+  "title": "Big one-day drops and what came next (data/market/dips.json)",
+  "description": "Computed by scripts/routines_code.py dips (scripts/dips.py) from the main list's closes. Percents only: no prices are published. A study, not a rule.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["as_of", "sample", "benchmark", "drop_pct", "horizons", "cooldown_days", "from", "names", "events_total", "summary", "base", "events"],
+  "properties": {
+    "as_of": {"$ref": "common.schema.json#/$defs/date"},
+    "sample": {"type": "boolean"},
+    "benchmark": {"$ref": "common.schema.json#/$defs/ticker"},
+    "drop_pct": {"type": "number", "exclusiveMinimum": 0},
+    "horizons": {"type": "array", "minItems": 1, "items": {"type": "integer", "minimum": 1}},
+    "cooldown_days": {"type": "integer", "minimum": 0},
+    "from": {"$ref": "common.schema.json#/$defs/date"},
+    "names": {"type": "integer", "minimum": 0},
+    "events_total": {"type": "integer", "minimum": 0},
+    "summary": {"type": "object", "additionalProperties": {"$ref": "#/$defs/stats"}},
+    "base": {"type": "object", "additionalProperties": {"$ref": "#/$defs/stats"}},
+    "events": {
+      "type": "array", "maxItems": 200,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["symbol", "date", "drop_pct", "excess", "so_far_excess_pct", "days_since"],
+        "properties": {
+          "symbol": {"$ref": "common.schema.json#/$defs/ticker"},
+          "date": {"$ref": "common.schema.json#/$defs/date"},
+          "drop_pct": {"type": "number", "maximum": 0},
+          "excess": {"type": "object", "additionalProperties": {"type": ["number", "null"]}},
+          "so_far_excess_pct": {"type": ["number", "null"]},
+          "days_since": {"type": "integer", "minimum": 0}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "stats": {
+      "type": "object", "additionalProperties": false,
+      "required": ["n", "avg_excess_pct", "median_excess_pct", "beat_pct", "worst_pct", "best_pct"],
+      "properties": {
+        "n": {"type": "integer", "minimum": 0},
+        "avg_excess_pct": {"type": ["number", "null"]},
+        "median_excess_pct": {"type": ["number", "null"]},
+        "beat_pct": {"type": ["number", "null"], "minimum": 0, "maximum": 100},
+        "worst_pct": {"type": ["number", "null"]},
+        "best_pct": {"type": ["number", "null"]}
+      }
+    }
+  }
+}

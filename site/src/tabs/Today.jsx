@@ -12,6 +12,7 @@ import { WeeklyGame } from "../components/weekly.jsx";
 import { Desk } from "../components/desk.jsx";
 import Arena from "./Arena.jsx";
 import { Showcase } from "../components/showcase.jsx";
+import { AlertBar } from "../components/alerts.jsx";
 import dict from "../text/home.js";
 import { strings } from "../lib/text.js";
 import { rich } from "../lib/rich.jsx";
@@ -51,6 +52,7 @@ export default function Today(props) {
   return (
     <>
       {/* The views are wide, left-aligned pages: the switch lines up with them. */}
+      <AlertBar data={props.data} openTo={(to) => openAt(props.go, to)} className="mx-auto w-full max-w-[1280px] px-4 pt-4 sm:px-8 sm:pt-6 lg:px-12" />
       <div className="mx-auto flex w-full max-w-[1280px] justify-start px-4 pt-4 sm:px-8 sm:pt-6 lg:px-12">
         <Segmented tall label={t("today.howMuch")} value={view} onChange={pickView}
           options={[{ value: "arena", label: t("today.arena") }, { value: "desk", label: t("today.desk") }, { value: "details", label: t("today.details") }]} />

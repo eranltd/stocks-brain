@@ -1,7 +1,7 @@
 ---
-version: 0.30.0
+version: 0.31.0
 updated_at: 2026-10-29
-change_note: A demo trader agent plays along with the Arena (buys, sells, shorts, covers); pop-ups, its plan, a trade log, and a dock with speed and risk level. (Also today: the morning push leads with what to do today.)
+change_note: Learned from Alphabet's fall after its results: a results radar, big-move alerts, and a nightly study of what came after big one-day drops.
 ---
 # Decision log
 
@@ -18,6 +18,25 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Market file size**: `derived.json` is written one line per symbol (compact) and is about 330 KB with 21 names.
   Past roughly 35 names it would hit lint's 512 KB cap and the daily run would fail closed; before that, move the
   per-point dates into one shared array.
+
+## 2026-10-29 (night)
+- **Learned from Alphabet's fall after its results.** On 29 Oct Alphabet fell about 12% the day after its third-quarter
+  results, its worst day since it listed. The owner: "you missed here big time... learn from it". What the site had:
+  the results date (config/outlook.json, confirmed) and a stock already about 19% below its high. What it lacked: any
+  warning before, any loud flag after, and any evidence about whether such a drop is a chance to buy. The lesson is not
+  "buy big drops": studies of results surprises find that a bad surprise is often followed by weeks of further drift,
+  so the site measures instead of guessing. Three changes:
+  - **Results radar** (`site/src/lib/bigmoves.js`): a company reporting today or in the next two days gets an amber
+    flag on Home and leads the news card: "a big move is possible either way".
+  - **Big-move alerts:** a main-list name that moved 7% or more on the latest day gets a red (or green) card at the
+    top of Home, tied to its results when it was the day after them, and opens the stock page's new "Big drops" panel.
+  - **The big-drop study** (`scripts/dips.py`, routine `big_drops`, `data/market/dips.json`): every night, every
+    one-day drop of 8% or more in the main list over the fetched history (one per 20 days per name), bought at the next
+    close, checked 5, 20 and 60 trading days later against the benchmark, beside the same numbers for every day. Below
+    10 drops the site says "too few to tell". Today's list only (survivorship flatters rebounds), no costs, a study and
+    not a rule: it opens no position and earns no real money. Alphabet's drop enters it with tonight's run and is
+    followed as it goes. If the drops ever look like a real edge, the next step is a pre-registered rule in
+    config/rules.json, judged against random baskets like every other rule (a new try).
 
 ## 2026-10-29 (evening)
 - **A demo trader agent, with trade pop-ups and its plan on screen.** The owner wants to show the site as a proof of

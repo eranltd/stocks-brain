@@ -3,7 +3,7 @@
 long-run portfolio statistics, the forward-only paper portfolio, the forward ledger of every rule and the scores of
 the public calls of the people we learn from.
 
-Usage: python3 scripts/routines_code.py derive|score|regime|calibration|longrun|paper|rules|ledger|buywindow|people|checklist|markets|sectors|all
+Usage: python3 scripts/routines_code.py derive|score|regime|calibration|longrun|paper|rules|ledger|buywindow|people|dips|checklist|markets|sectors|all
 `markets` and `sectors` run in their own Action runs (after their fetches) and write data/markets/<id>/ only.
 Each step reads public data, computes with plain arithmetic, validates against its schema,
 and writes under data/kb/. Rules are documented in docs/methodology.md.
@@ -1144,9 +1144,42 @@ def run_markets(run: str = "markets") -> None:
         raise SystemExit(f"markets: failed {failed} (the others were published)")
 
 
+def compute_dips(prices_dir: Path, st: dict, wl: dict, sample: bool) -> dict | None:
+    """data/market/dips.json: every one-day drop of dips.DROP_PCT or more in the main list's names over the fetched
+    history, and how each did against the benchmark afterwards, beside the base rate of all days (scripts/dips.py).
+    Percents only."""
+    import dips
+    import market as mk
+    bench = st["scoring"]["benchmark"]["symbol"]
+    members = [s["symbol"] for s in wl["symbols"] if s["symbol"] != bench]
+    raw = {s: _bars(prices_dir, s) for s in {*members, bench}}
+    if len(raw[bench]) < 61:
+        return None
+    dates = [b["date"] for b in raw[bench]]
+    closes = mk.align_tail({s: raw[s] for s in [*members, bench] if raw[s]}, dates)
+    if bench not in closes or len(closes[bench]) != len(dates):
+        return None
+    names = {s: c for s, c in closes.items() if s != bench and len(c) >= 61}
+    body = dips.study(names, closes[bench], dates)
+    return {"as_of": dates[-1], "sample": sample, "benchmark": bench, "drop_pct": dips.DROP_PCT, "horizons": list(dips.HORIZONS),
+            "cooldown_days": dips.COOLDOWN, "from": dates[0], "names": len(names), **body}
+
+
+def run_dips() -> None:
+    st = settings()
+    doc = compute_dips(PRICES, st, watchlist(), sample=False)
+    if not doc:
+        raise SystemExit("dips: not enough history for the benchmark (nothing written)")
+    _write(MARKET / "dips.json", doc, "dips.schema.json", compact=True)
+    s20 = doc["summary"].get("20", {})
+    print(f"dips: {doc['events_total']} drops of {doc['drop_pct']}%+ in {doc['names']} names since {doc['from']}; "
+          f"20 days later vs {doc['benchmark']}: avg {s20.get('avg_excess_pct')} pts, beat {s20.get('beat_pct')}% "
+          f"(all days: {doc['base'].get('20', {}).get('beat_pct')}%)")
+
+
 STEPS = {"derive": run_derive, "score": run_score, "regime": run_regime, "calibration": run_calibration,
          "longrun": run_longrun, "paper": run_paper, "rules": run_rules, "ledger": run_ledger, "buywindow": run_buy_window,
-         "people": run_people,
+         "people": run_people, "dips": run_dips,
          "checklist": run_checklist, "markets": run_markets, "sectors": lambda: run_markets("sectors")}
 
 if __name__ == "__main__":

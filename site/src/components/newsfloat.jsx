@@ -3,6 +3,8 @@ import { useReducedMotion } from "../lib/motion.js";
 import { NEWS_KIND, shortDay } from "../lib/secnews.js";
 import { strings } from "../lib/text.js";
 import { noteView, usableWhy } from "../lib/why.js";
+import { alertsNow } from "../lib/bigmoves.js";
+import { todayISO } from "../lib/outlook.js";
 import dict from "../text/shell.js";
 import { usePageVisible } from "./motion.jsx";
 import { useAgentStop } from "./agentfeed.jsx";
@@ -58,7 +60,15 @@ function useNewsPool(data) {
           day: shortDay(f.date), badge: NEWS_KIND[f.kind]?.word ?? t("news.sec"), section: "official-news" });
       }
     }
-    return shuffle(out);
+    // Big moves and results coming up lead, in order, before the shuffled news (components/alerts.jsx has the same).
+    const loud = alertsNow(data, todayISO()).map((a) => (a.kind === "move"
+      ? { id: `move:${a.symbol}`, kind: "alert", symbol: a.symbol, who: names[a.symbol] ?? a.symbol, move: a.move, day: shortDay(a.date ?? ""),
+        title: t(a.move < 0 ? "news.fell" : "news.jumped", { move: Math.abs(a.move).toFixed(1) }) + (a.results ? ` ${t("news.afterResults")}` : ""),
+        badge: t("news.big"), section: a.move < 0 ? "big-drop" : "why-it-moved" }
+      : { id: `results:${a.symbol}`, kind: "alert", symbol: a.symbol, who: names[a.symbol] ?? a.name ?? a.symbol, day: shortDay(a.date),
+        title: t(a.days === 0 ? "news.resultsToday" : a.days === 1 ? "news.resultsTomorrow" : "news.resultsIn", { n: a.days }),
+        badge: t("news.results"), section: "whats-next" }));
+    return [...loud, ...shuffle(out)];
   }, [data]);
 }
 

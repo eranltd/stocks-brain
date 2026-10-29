@@ -134,6 +134,12 @@ jobs:
         continue-on-error: true  # research step: a failure is logged but must not discard the day's market data
         run: python3 scripts/routines_code.py people
 
+      - name: Big drops and what came next (derived percents only)
+        id: big_drops
+        if: env.MONTHLY != 'true' && env.MARKETS != 'true' && env.DRY != 'true'
+        continue-on-error: true  # research step: a failure is logged but must not discard the day's market data
+        run: python3 scripts/routines_code.py dips
+
       - name: Technical checklist (derived numbers only)
         id: technical_checklist
         if: env.MONTHLY != 'true' && env.MARKETS != 'true' && env.DRY != 'true'
@@ -202,6 +208,7 @@ jobs:
           ROUTINE_RULE_LEDGER: ${{ steps.rule_ledger.outcome }}
           ROUTINE_BUY_WINDOW: ${{ steps.buy_window.outcome }}
           ROUTINE_SCORE_PEOPLE: ${{ steps.score_people.outcome }}
+          ROUTINE_BIG_DROPS: ${{ steps.big_drops.outcome }}
           ROUTINE_TECHNICAL_CHECKLIST: ${{ steps.technical_checklist.outcome }}
           ROUTINE_CALIBRATION: ${{ steps.calibration.outcome }}
           ROUTINE_FETCH_MARKETS: ${{ steps.fetch_markets.outcome }}

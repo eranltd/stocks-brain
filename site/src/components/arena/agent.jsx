@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { holdingsAt, scoreAt } from "../../lib/agent.js";
+import { holdingPnl, holdingsAt, scoreAt } from "../../lib/agent.js";
 import { BASKET, basketSeries } from "../../lib/arena.js";
 import { fmtDate } from "../../lib/format.js";
 import { strings } from "../../lib/text.js";
@@ -20,7 +20,7 @@ const pct = (v) => `${v > 0 ? "+" : v < 0 ? "−" : ""}${Math.abs(v).toFixed(1)}
 const shortDay = (iso) => (iso ? fmtDate(iso).replace(/^\w+,\s/, "").replace(/\s\d{4}$/, "") : "");
 const tone = (v) => (v > 0.05 ? "up" : v < -0.05 ? "down" : "flat");
 
-export function AgentPanel({ race, run, clock, go, className = "" }) {
+export function AgentPanel({ race, run, clock, go, onLog, className = "" }) {
   const [on, setOn] = useFeedSwitch();
   const [level] = useAgentLevel();
   const basket = useMemo(() => basketSeries(race), [race]);
@@ -45,8 +45,7 @@ export function AgentPanel({ race, run, clock, go, className = "" }) {
 
   useDayTick(clock, (day) => setK(day), []);
 
-  const levelAt = (sym, d) => 1 + (bySym.get(sym)?.values[d] ?? 0) / 100;
-  const held = holdingsAt(run, k).map((h) => ({ ...h, pnl: (levelAt(h.symbol, k) / levelAt(h.symbol, h.since) - 1) * 100 }));
+  const held = holdingsAt(run, k).map((h) => ({ ...h, pnl: holdingPnl(race, h, k) }));
   const log = run.trades.filter((x) => x.day <= k).slice(-5).reverse();
   const made = run.trades.filter((x) => x.day <= k).length;
   const score = scoreAt(run, k);
@@ -57,7 +56,8 @@ export function AgentPanel({ race, run, clock, go, className = "" }) {
         <h2 id="arena-agent-h" className="kicker flex items-center gap-2"><span className="agent-live-dot" aria-hidden="true" />{t("agent.title")}</h2>
         <div className="flex items-center gap-1.5">
           <span className="chip border-desk/55 bg-desk/10 text-desk">{t("agent.chip")}</span>
-          <InfoTip label={t("agent.about")}>{t("agent.rule", { hold: run.opts.hold, days: run.opts.lookback, every: run.opts.every, invest: Math.round(run.opts.invest * 100) })}</InfoTip>
+          <InfoTip label={t("agent.about")}>{t("agent.rule", { hold: run.opts.hold, days: run.opts.lookback, every: run.opts.every, invest: Math.round(run.opts.invest * 100) })}
+            {run.opts.short > 0 ? ` ${t("agent.rule.short", { short: run.opts.short })}` : ""}</InfoTip>
         </div>
       </div>
       <div className="p-4">
@@ -74,7 +74,8 @@ export function AgentPanel({ race, run, clock, go, className = "" }) {
         <p className="micro mt-3">{t("agent.holds")}</p>
         <div className="mt-1.5 flex min-h-[32px] flex-wrap gap-1.5">
           {held.length ? held.map((h) => (
-            <button key={h.symbol} type="button" onClick={() => go(`stock/${h.symbol}`)} className="agent-hold" data-tone={tone(h.pnl)}>
+            <button key={`${h.side}:${h.symbol}`} type="button" onClick={() => go(`stock/${h.symbol}`)} className="agent-hold" data-tone={tone(h.pnl)} data-side={h.side}>
+              {h.side === "short" && <span className="agent-hold-short">{t("agent.shortTag")}</span>}
               <span className="font-bold text-ink">{h.symbol}</span> {pct(h.pnl)}
             </button>
           )) : <span className="font-num text-[12px] text-ink-3 uppercase">{t("agent.cash")}</span>}
@@ -86,13 +87,16 @@ export function AgentPanel({ race, run, clock, go, className = "" }) {
             {log.map((x, i) => (
               <li key={`${x.day}-${x.side}-${x.symbol}-${i}`} data-side={x.side}>
                 <span className="text-ink-3">{shortDay(race.dates[x.day])}</span>
-                <span className="agent-log-side">{t(x.side === "buy" ? "agent.buy" : "agent.sell")}</span>
+                <span className="agent-log-side">{t(`agent.${x.side}`)}</span>
                 <span className="font-bold text-ink">{x.symbol}</span>
-                <span className="ms-auto">{x.side === "sell" ? <span data-tone={tone(x.pnl)} className="arena-tone">{pct(x.pnl)}</span> : money(x.amount)}</span>
+                <span className="ms-auto">{Number.isFinite(x.pnl) ? <span data-tone={tone(x.pnl)} className="arena-tone">{pct(x.pnl)}</span> : money(x.amount)}</span>
               </li>
             ))}
           </ul>
         ) : <p className="mt-1.5 text-[12.5px] text-ink-3">{t("agent.none")}</p>}
+        {onLog && (
+          <button type="button" onClick={onLog} className="agent-all mt-2.5">{t("agent.allTrades")} <span aria-hidden="true">→</span></button>
+        )}
 
         <div className="mt-3 flex items-center justify-between gap-2 border-t border-line pt-3">
           <span className="font-num text-[11px] font-semibold tracking-[0.12em] text-ink-3 uppercase">{t("agent.popups")}</span>

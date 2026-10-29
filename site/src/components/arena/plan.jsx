@@ -24,14 +24,17 @@ export function AgentPlan({ race, run, clock, go, className = "" }) {
   useDayTick(clock, (day) => setK(day), []);
   const mind = useMemo(() => agentMind(race, run, k), [race, run, k]);
   if (!mind) return null;
-  const { hold, every, lookback, invest } = run.opts;
+  const { hold, short = 0, every, lookback, invest } = run.opts;
   const top = mind.ranked.slice(0, SHOW);
-  const extra = mind.ranked.slice(SHOW).filter((r) => r.held);
+  // Below the top: what it still holds, then the coldest names when it shorts (and anything it has shorted).
+  const coldFrom = short > 0 ? Math.max(SHOW, mind.ranked.length - Math.max(short, 2)) : mind.ranked.length;
+  const extra = mind.ranked.slice(SHOW, coldFrom).filter((r) => r.held || r.shorted);
+  const cold = mind.ranked.slice(coldFrom);
   const scale = Math.max(1, ...mind.ranked.map((r) => Math.abs(r.m)));
   const acting = mind.nextIn === 0;
 
   const row = (r) => {
-    const status = r.held ? (r.zone ? "hold" : "sell") : r.zone ? "buy" : null;
+    const status = r.held ? (r.zone ? "hold" : "sell") : r.zone ? "buy" : r.shorted ? (r.low ? "short" : "cover") : r.low ? "wantShort" : null;
     return (
       <li key={r.symbol} className="plan-row" data-zone={r.zone ? "1" : "0"}>
         <span className="plan-rank">{String(r.rank).padStart(2, "0")}</span>
@@ -71,6 +74,8 @@ export function AgentPlan({ race, run, clock, go, className = "" }) {
             ))}
             {extra.length > 0 && <li className="plan-gap" aria-hidden="true">···</li>}
             {extra.map(row)}
+            {cold.length > 0 && <li className="plan-cut plan-cut-cold" aria-hidden="true"><span>{t("plan.coldest")}</span></li>}
+            {cold.map(row)}
           </ol>
         </div>
 
@@ -81,8 +86,8 @@ export function AgentPlan({ race, run, clock, go, className = "" }) {
               <ul className="mt-1.5 grid gap-1">
                 {mind.today.map((x) => (
                   <li key={`${x.side}-${x.symbol}`} className="plan-did" data-side={x.side}>
-                    <b>{t(x.side === "buy" ? "agent.buy" : "agent.sell")}</b> {x.symbol}
-                    <span className="ms-auto">{x.side === "buy" ? money(x.amount) : pct(x.pnl)}</span>
+                    <b>{t(`agent.${x.side}`)}</b> {x.symbol}
+                    <span className="ms-auto">{Number.isFinite(x.pnl) ? pct(x.pnl) : money(x.amount)}</span>
                   </li>
                 ))}
               </ul>
@@ -105,6 +110,17 @@ export function AgentPlan({ race, run, clock, go, className = "" }) {
                   </div>
                 ) : <p className="plan-quiet">{t("plan.noSell")}</p>}
               </div>
+              {short > 0 && (
+                <div className="plan-box" data-kind="short">
+                  <p className="micro">{t("plan.wantShort")}</p>
+                  {mind.wantShort.length || mind.wantCover.length ? (
+                    <div className="mt-1.5 flex flex-wrap gap-1.5">
+                      {mind.wantShort.map((r) => <span key={r.symbol} className="plan-chip" data-kind="short"><b>{r.symbol}</b> {t("plan.coldN", { n: r.cold })} · {pct(r.m)}</span>)}
+                      {mind.wantCover.map((r) => <span key={`c-${r.symbol}`} className="plan-chip" data-kind="cover"><b>{r.symbol}</b> {t("agent.cover")} · {t("plan.rose", { n: r.rank })}</span>)}
+                    </div>
+                  ) : <p className="plan-quiet">{t("plan.noShort")}</p>}
+                </div>
+              )}
             </>
           )}
           <p className="text-[12px] leading-snug text-ink-3">{t("plan.note")}</p>

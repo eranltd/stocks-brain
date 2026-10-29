@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { AGENT_LEVELS, AGENT_START, LEVEL_IDS, agentMind, agentRun, holdingsAt, levelOf, scoreAt, tradesOn } from "./agent.js";
+import { AGENT_LEVELS, AGENT_START, LEVEL_IDS, agentMind, agentRun, holdingPnl, holdingsAt, levelOf, scoreAt, tradesOn } from "./agent.js";
 
 const near = (a, b, eps = 1e-6) => assert.ok(Math.abs(a - b) < eps, `${a} != ${b}`);
 const race = (rows) => ({ n: rows[0][1].length, dates: rows[0][1].map((_, i) => `d${i}`), lines: rows.map(([symbol, values]) => ({ symbol, name: symbol, values })) });
@@ -76,6 +76,34 @@ test("the risk levels: easy spreads wider and keeps cash, hard bets on fewer nam
   const buys = tradesOn(run, 5);
   assert.equal(buys.length, 2);
   near(buys[0].amount + buys[1].amount, 500);
-  assert.deepEqual(run.opts, { hold: 2, every: 5, lookback: 5, invest: 0.5 });
+  assert.deepEqual(run.opts, { hold: 2, short: 0, every: 5, lookback: 5, invest: 0.5 });
   assert.equal(agentMind(r, run, 6).nextIn, null);
+});
+
+test("shorts: bets on the name that fell most, gains as it keeps falling, and covers when it stops being the worst", () => {
+  const r = race([
+    ["AAA", [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 20]],
+    ["BBB", [0, -2, -4, -6, -8, -10, -12, -14, -16, -18, -20, -20]],
+    ["CCC", [0, -1, -1, -1, -1, -1, -1, -1, -1, -1, 5, 5]],
+  ]);
+  const run = agentRun(r, { start: 1000, hold: 1, short: 1, every: 5, lookback: 5 });
+  assert.deepEqual(tradesOn(run, 5).map((x) => [x.side, x.symbol, x.cold]), [["buy", "AAA", 3], ["short", "BBB", 1]]);
+  near(tradesOn(run, 5)[1].amount, 500);
+  // BBB from -10% to -20%: the short gains 1 - 0.8/0.9.
+  const h = holdingsAt(run, 9).find((x) => x.side === "short");
+  near(holdingPnl(r, h, 10), (1 - 0.8 / 0.9) * 100);
+  // Day 10: BBB is still the worst (-20% vs -10% five days back... CCC rose): the short stays; nothing to cover.
+  assert.equal(tradesOn(run, 10).some((x) => x.side === "cover"), false);
+  const mind = agentMind(r, run, 8);
+  assert.deepEqual(mind.ranked.filter((x) => x.shorted).map((x) => x.symbol), ["BBB"]);
+  assert.deepEqual(mind.wantShort, []);
+  const cov = agentRun(race([
+    ["AAA", [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 20]],
+    ["BBB", [0, -2, -4, -6, -8, -10, -9, -8, -7, -6, -5, -5]],
+    ["CCC", [0, 0, 0, 0, 0, 0, -2, -4, -6, -8, -10, -10]],
+  ]), { start: 1000, hold: 1, short: 1, every: 5, lookback: 5 });
+  const d10 = tradesOn(cov, 10);
+  assert.deepEqual(d10.map((x) => [x.side, x.symbol]), [["cover", "BBB"], ["short", "CCC"]]);
+  near(d10[0].pnl, (1 - 0.95 / 0.9) * 100);
+  assert.deepEqual(scoreAt(cov, 10), { wins: 0, closed: 1 });
 });

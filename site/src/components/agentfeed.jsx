@@ -157,13 +157,12 @@ export default function AgentFeed({ data, go }) {
               {t("agent.toast.head", { day: shortDay(x.date) })}
             </span>
             <span className="agent-toast-main">
-              <span className="agent-toast-side">{t(x.side === "buy" ? "agent.buy" : "agent.sell")}</span>
+              <span className="agent-toast-side">{t(`agent.${x.side}`)}</span>
               <span className="agent-toast-sym">{x.symbol}</span>
-              <span className="agent-toast-amt">{x.side === "sell" && Number.isFinite(x.pnl) ? pct(x.pnl) : money(x.amount)}</span>
+              <span className="agent-toast-amt">{Number.isFinite(x.pnl) ? pct(x.pnl) : money(x.amount)}</span>
             </span>
             <span className="agent-toast-sub">
-              {x.side === "buy" ? t("agent.toast.buy", { amount: money(x.amount), move: pct(x.move ?? 0), rank: x.rank ?? "–", days: x.days ?? 20 })
-                : t("agent.toast.sell", { amount: money(x.amount), rank: x.rank ?? "–" })}
+              {t(`agent.toast.${x.side}`, { amount: money(x.amount), move: pct(x.move ?? 0), rank: x.rank ?? "–", cold: x.cold ?? "–", days: x.days ?? 20 })}
             </span>
           </button>
           <button type="button" className="agent-toast-x" aria-label={t("agent.close")} onClick={() => setShown((s) => s.filter((y) => y.id !== x.id))}>×</button>

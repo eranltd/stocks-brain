@@ -21,6 +21,7 @@ import { Basket } from "../components/arena/basket.jsx";
 import { OrbitPanel } from "../components/arena/orbit.jsx";
 import { AgentPanel } from "../components/arena/agent.jsx";
 import { AgentPlan } from "../components/arena/plan.jsx";
+import { TradeLog } from "../components/arena/tradelog.jsx";
 import { showTrade, useAgentLevel, useFeedOwner } from "../components/agentfeed.jsx";
 import { agentRun, LEVEL_IDS, levelOf, tradesOn } from "../lib/agent.js";
 
@@ -80,6 +81,8 @@ export default function Arena({ data, go, embedded = false }) {
 
   // The demo trader agent plays along: its trades of each replayed day pop up at the top (components/agentfeed.jsx).
   const [level, setLevel] = useAgentLevel();
+  const [logOpen, setLogOpen] = useState(false);
+  const closeLog = useCallback(() => setLogOpen(false), []);
   const run = useMemo(() => (w ? agentRun(w, levelOf(level)) : null), [w, level]);
   useFeedOwner(playing);
   const playingNow = useRef(false);
@@ -159,6 +162,11 @@ export default function Arena({ data, go, embedded = false }) {
           <button type="button" className="arena-dock-level" data-level={level} onClick={nextLevel} aria-label={`${t("agent.level")}: ${t(`agent.level.${level}`)}`}>
             {t(`agent.level.short.${level}`)}
           </button>
+          <span className="arena-dock-sep" aria-hidden="true" />
+          <button type="button" className="arena-dock-log" onClick={() => setLogOpen(true)} aria-label={t("log.open")}>
+            <svg viewBox="0 0 20 20" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true"><path d="M7 5h9M7 10h9M7 15h9M3.5 5h.01M3.5 10h.01M3.5 15h.01" /></svg>
+            <span className="max-sm:hidden">{t("log.title")}</span>
+          </button>
         </div>,
         document.body,
       )}
@@ -215,12 +223,13 @@ export default function Arena({ data, go, embedded = false }) {
           </div>
           <aside className="grid content-start gap-4">
             <div className="panel hidden p-5 lg:block"><DateCounter clock={clock} dates={w.dates} big /></div>
-            {run && <AgentPanel race={w} run={run} clock={clock} go={go} />}
+            {run && <AgentPanel race={w} run={run} clock={clock} go={go} onLog={() => setLogOpen(true)} />}
             <Basket race={w} clock={clock} benchName={benchName} />
             {mode !== "wall" && <DayHeat race={w} clock={clock} go={go} />}
           </aside>
         </div>
 
+        {run && <TradeLog open={logOpen} onClose={closeLog} race={w} run={run} clock={clock} go={go} />}
         {(clock.ended || seenEnd) && <Summary race={w} benchName={benchName} />}
         <OrbitPanel race={w} clock={clock} sectors={data.sectors} core={desk.counts.buy} />
 

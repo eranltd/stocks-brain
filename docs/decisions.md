@@ -1,7 +1,7 @@
 ---
 version: 0.29.0
 updated_at: 2026-10-29
-change_note: A demo trader agent plays along with the Arena; its paper trades pop up on every page and its plan shows what it wants to buy and sell.
+change_note: A demo trader agent plays along with the Arena (buys, sells, shorts, covers); pop-ups, its plan, a trade log, and a dock with speed and risk level.
 ---
 # Decision log
 
@@ -35,6 +35,11 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   0.5× to 4× (the 8× speed gave way to 0.5×), and Easy | Medium | Hard. The level sets the demo rule: Easy holds 6
   names, keeps 40% in cash and moves every 10 days (looking back 40); Medium is the plain rule; Hard holds 2 names,
   all in, moving every 3 days (looking back 10). The device remembers the level; the pop-ups and the plan follow it.
+- **Shorts and a trade log.** The owner asked for a log of every buy, sell and short. The demo agent now also shorts
+  (bets on a fall) at Medium (1 name) and Hard (2 names): it shorts the names that fell most over its look-back and
+  covers when they stop being the coldest; a short's paper value is cost × (2 − price now / price then), never below
+  zero. A "Trade log" window (dock and agent panel) lists every buy, sell, short and cover up to the replayed day,
+  with a filter per kind, why each happened and how each closed position ended.
 
 ## 2026-10-29 (later)
 - **Home opens on the Arena, playing by itself on a loop; every replay is slower and softer.** The owner: "the arena

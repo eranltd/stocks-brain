@@ -173,4 +173,11 @@ export default {
   "hole.mistakes": "What did the site's own results teach, with proof?",
   "hole.machine": "How does a robot brain read the market every morning?",
   "hole.arena": "Which company won the year? Watch it replayed as a race.",
+
+  // the news float (components/newsfloat.jsx)
+  "news.label": "News from the list",
+  "news.why": "Why it moved",
+  "news.sec": "Filing",
+  "news.more": "Read more",
+  "news.hide": "Hide the news",
 };

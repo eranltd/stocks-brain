@@ -40,6 +40,10 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   covers when they stop being the coldest; a short's paper value is cost × (2 − price now / price then), never below
   zero. A "Trade log" window (dock and agent panel) lists every buy, sell, short and cover up to the replayed day,
   with a filter per kind, why each happened and how each closed position ended.
+- **A floating news card.** The owner asked for "random news from any stock" to click and read. Bottom left (above
+  the phone's bar), one real item at a time, shuffled, every 9 seconds: a why-it-moved note (our own words, sourced)
+  or a recent SEC filing worth a glance (results, heads-ups, deals, money, people; not routine reports). Tapping opens
+  the stock's page at that item; hovering holds it; × hides it for the visit; nothing under reduced motion.
 
 ## 2026-10-29 (later)
 - **Home opens on the Arena, playing by itself on a loop; every replay is slower and softer.** The owner: "the arena

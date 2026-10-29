@@ -27,6 +27,7 @@ import Admin from "./tabs/Admin.jsx";
 import Stock from "./tabs/Stock.jsx";
 import Arena from "./tabs/Arena.jsx";
 import AgentFeed from "./components/agentfeed.jsx";
+import NewsFloat from "./components/newsfloat.jsx";
 import { strings } from "./lib/text.js";
 import { rich } from "./lib/rich.jsx";
 
@@ -202,6 +203,8 @@ export default function App() {
       {data && <TickerTape data={base} onOpen={go} />}
       {/* The demo trader agent's trades pop up under the header on every page (paper, past data). */}
       {data && <AgentFeed data={base} go={go} />}
+      {/* Real news from any stock, one at a time, bottom left: tap to read it on the stock's page. */}
+      {data && <NewsFloat data={base} go={go} />}
       <main id="main" className="relative min-h-[70vh] [view-transition-name:main]">
         {error && (
           <Container className="py-24">

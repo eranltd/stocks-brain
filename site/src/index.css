@@ -314,3 +314,28 @@
   body { overscroll-behavior-y: none; }
   header, nav, button { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 }
+
+/* === lists === */
+/* The Stocks scanner, Home's Details view and the Details page (tabs/Watchlist.jsx, tabs/Today.jsx, tabs/Details.jsx,
+   components/pulse.jsx): a dense terminal look on top of the kit. Rows glow orange on hover, a row's first cell carries
+   a thin bar in the Desk's call colour, heat tiles lift a little. Motion stays off under reduced motion (rule above). */
+.scan-table tbody tr > * { transition: background-color 160ms, box-shadow 160ms; }
+.scan-table tbody tr:hover > * {
+  background-color: color-mix(in srgb, var(--desk) 6%, var(--surface-2));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--desk) 38%, transparent), inset 0 -1px 0 color-mix(in srgb, var(--desk) 38%, transparent);
+}
+.scan-table tbody tr:hover > :first-child {
+  box-shadow: inset 2px 0 0 var(--desk), inset 0 1px 0 color-mix(in srgb, var(--desk) 38%, transparent), inset 0 -1px 0 color-mix(in srgb, var(--desk) 38%, transparent);
+}
+.scan-table thead th { letter-spacing: 0.16em; }
+/* the Desk's call as a thin bar on a row's first cell (the cell is sticky, so the bar is placed inside it) */
+.call-edge::before { content: ""; position: absolute; left: 0; top: 7px; bottom: 7px; width: 3px; border-radius: 0 2px 2px 0; background: var(--edge); }
+.call-edge-buy { --edge: var(--up); }
+.call-edge-buy::before { box-shadow: 0 0 10px var(--up-glow); }
+.call-edge-wait { --edge: var(--wait); }
+.call-edge-reject { --edge: var(--down); }
+.heat-tile { animation: heat-in 520ms var(--ease-out-expo) both; animation-delay: calc(var(--i, 0) * 22ms); }
+@keyframes heat-in { from { opacity: 0; transform: translateY(6px) scale(0.97); } }
+.heat-tile:hover { box-shadow: 0 0 0 1px color-mix(in srgb, var(--desk) 55%, transparent), 0 8px 24px -12px var(--desk-glow); }
+:root[data-theme="light"] .heat-tile:hover { box-shadow: 0 0 0 1px color-mix(in srgb, var(--desk) 55%, transparent), 0 6px 16px -10px rgb(0 0 0 / 0.3); }
+.kpi-strip { background-image: linear-gradient(180deg, color-mix(in srgb, var(--desk) 5%, transparent), transparent 70%); }

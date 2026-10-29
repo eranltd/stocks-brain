@@ -221,7 +221,6 @@ function Scanner({ data, base, market: mk, go }) {
       <MarketTabs market={mk} />
 
       <Tiles rows={rows} up={counts.up} down={counts.down} total={total} go={go} />
-      {regime && main && <Regime regime={regime} benchName={benchName} above={rows.filter((r) => prices[r.symbol]?.above_sma50).length} total={total} />}
 
       <div ref={watch}>
       <Panel id="wl-table" className="mt-4 scroll-mt-28" info={info} infoLabel={t("wl.about")}
@@ -263,6 +262,7 @@ function Scanner({ data, base, market: mk, go }) {
       </Panel>
       {floor && <Pairs base={base ?? data} loop={loop} n={floor.loopDates.length} go={go} />}
       </div>
+      {regime && main && <Regime regime={regime} benchName={benchName} above={rows.filter((r) => prices[r.symbol]?.above_sma50).length} total={total} />}
     </Container>
   );
 }

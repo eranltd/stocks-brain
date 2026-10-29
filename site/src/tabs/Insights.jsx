@@ -69,10 +69,10 @@ export default function Insights({ data }) {
         <StatTile label={t("ins.s.themes")} value={tags.length} sub={tags.slice(0, 2).map(([x]) => tagWords(x)).join(" · ")} tone="flat" bars={tags.slice(0, 12).map(([, n]) => n)} barsHi={0} />
       </div>
 
-      <Panel id="ins-lessons" className="mt-4 md:mt-8" title={t(`ins.view.${view}`)}
-        badge={<Segmented label={t("ins.view")} value={view} onChange={(v) => { setView(v); setLimit(PAGE); }}
-          options={["sources", "themes", "claims"].map((v) => ({ value: v, label: t(`ins.view.${v}`) }))} />}>
+      <Panel id="ins-lessons" className="mt-4 md:mt-8" title={t(`ins.view.${view}`)}>
         <div className="grid gap-2.5">
+          <div><Segmented label={t("ins.view")} value={view} onChange={(v) => { setView(v); setLimit(PAGE); }}
+            options={["sources", "themes", "claims"].map((v) => ({ value: v, label: t(`ins.view.${v}`) }))} /></div>
           <SearchBox value={q} onChange={(v) => { setQ(v); setLimit(PAGE); }} placeholder={t("ins.search")} label={t("ins.searchLabel")} />
           <FilterChips label={t("ins.themeLabel")} value={tag} onChange={(v) => { setTag(v === tag ? null : v); setLimit(PAGE); }}
             options={[{ value: null, label: t("ins.allThemes"), count: principles.length }, ...tags.slice(0, 30).map(([x, n]) => ({ value: x, label: tagWords(x), count: n }))]} />

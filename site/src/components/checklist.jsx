@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { baseRateLine, edgeWords, fillNote, forwardWords, LEAN_TONE, riskPlan, rowFor, stepRows, VERDICT } from "../lib/checklist.js";
 import dict from "../text/stock.js";
-import { ArrowRight, StepMark } from "./ui.jsx";
+import { ArrowRight, Chip, StepMark } from "./ui.jsx";
 import { useStoredChoice } from "./candles.jsx";
 import { strings } from "../lib/text.js";
 import { rich } from "../lib/rich.jsx";
@@ -147,7 +147,7 @@ export function ChecksView({ data, symbol, go }) {
     <div>
       <div className="tile flex flex-wrap items-end justify-between gap-3 px-3.5 py-3">
         <div className="min-w-0">
-          <div className="micro">{t("ckc.says")}</div>
+          <div className="micro flex flex-wrap items-center gap-2">{t("ckc.says")}{ck.sample && <Chip tone="people">{t("ckc.samplePrices")}</Chip>}</div>
           <div className={`headline mt-1 text-[clamp(28px,7vw,36px)] ${TONE_TEXT[v.tone]}`}>{v.word}</div>
         </div>
         <div className="text-start sm:text-end">

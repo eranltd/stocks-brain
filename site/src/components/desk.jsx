@@ -23,6 +23,10 @@ import { todayCall } from "../tabs/Details.jsx";
 import dict from "../text/home.js";
 import { strings } from "../lib/text.js";
 import { rich } from "../lib/rich.jsx";
+import { BASKET, basketSeries, dayMove, raceTiles, windowed } from "../lib/arena.js";
+import { raceData } from "../lib/replay.js";
+import { HeatGrid, OrbitSphere, TickNumber } from "./motion.jsx";
+import arenaDict from "../text/arena.js";
 
 /*
  * The Desk: Home's default view and the kit's showcase (components/ui.jsx). Six agents in a pipeline, each a panel over
@@ -55,8 +59,8 @@ const toneOf = (v, d = 1) => TONE_TEXT[signTone(v, d)] ?? "text-ink-2";
 /** "+3", "−2", "0": the checklist's net score with a true minus sign. */
 const signed = (n) => (n == null ? "–" : `${n > 0 ? "+" : n < 0 ? "−" : ""}${Math.abs(n)}`);
 
-/** Everything the panels show, from the loaded data (main list only). */
-function useDesk(data) {
+/** Everything the panels show, from the loaded data (main list only). The Arena reads its BUY (paper) count. */
+export function useDesk(data) {
   const todayIso = todayISO();
   return useMemo(() => {
     // A checklist or notes from sample prices on a live site are not a reading of the market.
@@ -170,6 +174,7 @@ export function Desk({ data, go, openTo }) {
   return (
     <div className="pb-6">
       <DeskTop data={data} m={m} openTo={open} />
+      <LiveStrip data={data} m={m} go={go} />
       <PipelineStrip ref={strip} sticky top={headerH} className="mt-6" label={t("desk.pipeline")} steps={steps} active={active} onStep={jump}
         lead={<SimBadge short />}
         trail={<span className="hidden font-num text-[12px] font-bold text-ink-2 sm:inline"><span className={m.fresh.received === total ? "text-desk" : "text-wait"}>{m.fresh.received}/{total}</span></span>} />
@@ -187,6 +192,84 @@ export function Desk({ data, go, openTo }) {
           trail={<span className="font-num text-[11.5px] font-bold tracking-[0.08em] text-ink-2 uppercase"><span className="text-desk">{m.fresh.received}/{total}</span> {t("desk.received")}</span>} />
         <NotAdvice compact className="mx-auto mt-8 text-center" />
       </div>
+    </div>
+  );
+}
+
+
+/* ------------------------------------------------------------------ live strip */
+
+/**
+ * Home's live strip, a small door to the Arena: the paper basket's year as a big ticking number (it rolls from
+ * $10,000 to where the even split ended, once it scrolls into view; clearly paper money from past data), the main list's
+ * last day as a small heat grid, and the turning orbit with the desk's BUY (paper) calls as its core. Real past data
+ * only; tap a tile to open that stock, or the strip's button to enter the Arena.
+ */
+function LiveStrip({ data, m, go }) {
+  const ta = strings(arenaDict);
+  const race = useMemo(() => {
+    const r = raceData(data.market?.symbols, { order: mainListOf(data), bench: data.bench?.symbol, name: (x) => data.names?.[x] ?? x });
+    return r ? windowed(r, 252) : null;
+  }, [data]);
+  const basket = useMemo(() => (race ? basketSeries(race) : []), [race]);
+  const tiles = useMemo(() => (race ? raceTiles(race) : null), [race]);
+  const names = useMemo(() => (race ? race.lines.map((l) => ({ symbol: l.symbol })) : []), [race]);
+  const last = race ? race.n - 1 : 0;
+  const moves = useMemo(() => (race ? Object.fromEntries(race.lines.map((l) => [l.symbol, dayMove(l.values, last)])) : null), [race, last]);
+  const grid = useRef(null);
+  const box = useRef(null);
+  const reduced = useReducedMotion();
+  // The tiles flip in once, when the strip first comes into view.
+  useEffect(() => {
+    const el = box.current;
+    if (!el || reduced || typeof IntersectionObserver === "undefined") return undefined;
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      io.disconnect();
+      grid.current?.setDay(Math.max(0, last - 1));
+      setTimeout(() => grid.current?.setDay(last, { animate: true }), 60);
+    }, { threshold: 0.35 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [last, reduced]);
+  if (!race || race.n < 20 || !basket.length) return null;
+  const end = basket.at(-1);
+  const chg = (end / BASKET - 1) * 100;
+  return (
+    <div className="mx-auto w-full max-w-[1280px] px-4 pt-6 sm:px-8 lg:px-12">
+      <section ref={box} aria-labelledby="live-strip-h" className="panel live-strip p-4 sm:p-5">
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+          <p className="flex items-center gap-2.5">
+            <span className="arena-live"><span aria-hidden="true" className="arena-beacon" />{ta("arena.strip.kicker")}</span>
+            <span id="live-strip-h" className="font-display text-[20px] leading-none font-extrabold tracking-[0.06em] text-ink uppercase">{ta("arena.strip.title")}</span>
+          </p>
+          <button type="button" onClick={() => go("arena")} aria-label={ta("arena.strip.aria")} className="arena-btn arena-btn-main hidden sm:inline-flex">
+            {ta("arena.strip.enter")}<span aria-hidden="true">→</span>
+          </button>
+        </div>
+        <div className="live-strip-grid mt-3">
+          <div className="live-strip-num min-w-0">
+            <p className="text-[12.5px] leading-snug text-ink-2">{ta("arena.strip.basket", { amount: `$${BASKET.toLocaleString("en-US")}`, date: fmtDate(race.dates[0]) })}</p>
+            <TickNumber value={end} from={BASKET} prefix="$" digits={5} base={BASKET} className="live-strip-tick mt-1.5" label={ta("arena.basket.title")}
+              format={(v) => `$${Math.round(v).toLocaleString("en-US")}`} />
+            <p className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
+              <span className={`font-num text-[12.5px] font-bold ${chg >= 0 ? "text-up" : "text-down"}`}>{fmtPct(chg, 1)}</span>
+              <span className="chip border-desk/55 bg-desk/10 text-desk">{ta("arena.strip.paper")}</span>
+            </p>
+            <MiniSpark values={basket} w={220} h={30} tone={chg >= 0 ? "up" : "down"} area fluid className="mt-2 max-w-[260px]" />
+          </div>
+          <div className="live-strip-heat min-w-0">
+            <p className="micro mb-1.5 flex justify-between gap-2"><span>{ta("arena.strip.heat")}</span><span>{fmtDate(race.dates[last])}</span></p>
+            <HeatGrid ref={grid} groups={tiles} day={last} labels={false} compact onOpen={(sym) => go(`stock/${sym}`)} style={{ "--heat-fade": "220ms" }} />
+          </div>
+          <div className="live-strip-orbit">
+            <OrbitSphere names={names} moves={moves} core={m.counts.buy} cloud={130} labels={false} />
+          </div>
+        </div>
+        <button type="button" onClick={() => go("arena")} aria-label={ta("arena.strip.aria")} className="arena-btn arena-btn-main mt-3 w-full sm:hidden">
+          {ta("arena.strip.enter")}<span aria-hidden="true">→</span>
+        </button>
+      </section>
     </div>
   );
 }

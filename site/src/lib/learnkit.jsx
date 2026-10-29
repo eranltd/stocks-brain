@@ -17,8 +17,10 @@ const t = strings(dict);
 export function PageHero({ line1, line2, sub, chips, info, infoLabel, right, size = "lg" }) {
   return (
     <div className="grid gap-5">
-      <HeroTitle line1={line1} line2={line2} sub={sub} size={size} />
-      {(chips || info || right) && (
+      <HeroTitle line1={line1} line2={line2} sub={sub} size={size}>
+        {info && !chips && !right && <InfoTip label={infoLabel ?? t("lx.about")} align="start" className="mt-2 -ms-2.5">{info}</InfoTip>}
+      </HeroTitle>
+      {(chips || right) && (
         <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2.5">
           <div className="flex min-w-0 flex-wrap items-center gap-1.5">
             {info && <InfoTip label={infoLabel ?? t("lx.about")} align="start" className="-ms-2.5">{info}</InfoTip>}

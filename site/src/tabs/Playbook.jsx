@@ -79,6 +79,7 @@ export default function Playbook({ data, go }) {
   const t = strings(dict);
   const rb = data.rulebook;
   const res = data.rulesResult;
+  const [about, setAbout] = useState(false);
   if (!rb) {
     return <Container className="pb-24"><EmptyState title={t("pb.empty.title")}>{t("pb.empty.body")}</EmptyState></Container>;
   }
@@ -107,19 +108,19 @@ export default function Playbook({ data, go }) {
           <div className="flex flex-wrap items-center gap-1.5">
             <SimBadge />
             {res?.frozen && <FrozenChip res={res} name={name} />}
-            <InfoTip label={t("pb.about")} align="start">
-              <span className="grid gap-2">
-                <span>{t("pb.intro1")}{allRejected ? ` ${t("pb.introRejected")}` : ""} {t("pb.intro2")}</span>
-                {rb.trader.split("\n\n").map((p) => <span key={p.slice(0, 40)}>{p}</span>)}
-              </span>
-            </InfoTip>
-            <InfoTip label={t("pb.read.head")} align="start">
-              <span className="grid gap-2">
-                <span>{t("pb.read.p1")} {rich(t, "pb.read.p2", { random: t("pb.read.random"), goal: `+${goal}%` })} {t("pb.read.p3")}</span>
-                <span className="text-ink-3">{rich(t, "pb.read.sure", Object.fromEntries(["replicated", "mixed", "weak", "untested", "contradicted"].map((k) => [k, <b key={k} className="font-semibold text-ink-2">{t(`pb.ev.${k}`)}</b>])))}</span>
-              </span>
-            </InfoTip>
+            <button type="button" onClick={() => setAbout((o) => !o)} aria-expanded={about} aria-controls="pb-about"
+              className={`chip min-h-[32px] transition-colors ${about ? "border-desk/60 bg-desk/10 text-desk" : "border-line-2 text-ink-2 hover:text-ink"}`}>
+              <span aria-hidden="true" className="grid size-4 place-items-center rounded-full border border-current font-display text-[10px] leading-none">i</span>{t("pb.read.head")}
+            </button>
           </div>
+          {about && (
+            <div id="pb-about" className="tile grid max-w-[80ch] gap-2.5 p-4 text-[13.5px] leading-relaxed text-ink-2">
+              <p className="text-ink">{t("pb.intro1")}{allRejected ? ` ${t("pb.introRejected")}` : ""} {t("pb.intro2")}</p>
+              {rb.trader.split("\n\n").map((p) => <p key={p.slice(0, 40)}>{p}</p>)}
+              <p>{t("pb.read.p1")} {rich(t, "pb.read.p2", { random: t("pb.read.random"), goal: `+${goal}%` })} {t("pb.read.p3")}</p>
+              <p className="text-ink-3">{rich(t, "pb.read.sure", Object.fromEntries(["replicated", "mixed", "weak", "untested", "contradicted"].map((k) => [k, <b key={k} className="font-semibold text-ink-2">{t(`pb.ev.${k}`)}</b>])))}</p>
+            </div>
+          )}
         </div>
 
         <KpiStrip label={t("pb.kpi.label")}>
@@ -233,14 +234,14 @@ function RulePanel({ id, r, sat, led, rb, name, weekly, goal }) {
       info={r ? <span className="grid gap-2"><Dashes items={r.reasons} /><span className="text-ink-3">{t("pb.sat.note", { core: fmtPct(sat.controls.core.cagr_pct, 1), ew: fmtPct(sat.controls.equal_weight.cagr_pct, 1), tries: rb.tries_counted })}</span></span> : t("pb.fwd.lede", { min })}
       infoLabel={t("pb.under.method")}>
       {r && (
-        <div className="grid grid-cols-3 gap-2">
-          <StatTile label={t("pb.th.growth")} value={<span className={r.stats.cagr_pct >= goal ? "text-up" : ""}>{fmtPct(r.stats.cagr_pct, 1)}</span>} sub={t("pb.rp.aYear")} spark={path?.length > 1 ? path : undefined} />
-          <StatTile label={t("pb.th.vsCore")} value={<span className={toneText(r.vs_core_cagr_pts)}>{fmtPct(r.vs_core_cagr_pts, 1).replace("%", "")}</span>} unit={t("pb.rp.pts")} sub={t("pb.rp.vsCoreSub")} />
-          <StatTile label={t("pb.th.beatRandomShort")} value={<span className={r.verdict === "rejected" ? "text-down" : r.verdict === "passes_history" ? "text-up" : ""}>{fmtNum(r.percentile, 0)}</span>} unit="/100"
-            sub={t("pb.sat.luckShort", { p: fmtNum(r.p_adjusted, 2) })} />
-          <StatTile label={t("pb.th.halvesShort")} value={`${fmtNum(r.percentile_halves[0], 0)}/${fmtNum(r.percentile_halves[1], 0)}`} sub={t("pb.rp.halvesSub")} bars={r.percentile_halves.map((x) => x - 50)} barsHi={-1} />
-          <StatTile label={t("pb.th.drop")} value={<span className="text-down">{fmtPct(r.stats.max_dd_pct, 0)}</span>} sub={t("pb.sat.coreDrop", { v: fmtPct(sat.controls.core.max_dd_pct, 0) })} />
-          <StatTile label={t("pb.th.swaps")} value={wholePct(r.turnover_pct_year)} sub={`${t("pb.sat.nStocks", { n: fmtNum(r.avg_names, 1) })}${r.stops ? ` · ${t("pb.sat.stops", { count: r.stops, n: r.stops })}` : ""}`} />
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+          <StatTile label={t("pb.rp.l.growth")} value={<span className={r.stats.cagr_pct >= goal ? "text-up" : ""}>{fmtPct(r.stats.cagr_pct, 1)}</span>} sub={t("pb.rp.aYear")} spark={path?.length > 1 ? path : undefined} />
+          <StatTile label={t("pb.rp.l.vsCore")} value={<span className={toneText(r.vs_core_cagr_pts)}>{fmtPct(r.vs_core_cagr_pts, 1).replace("%", "")}</span>} unit={t("pb.rp.pts")} sub={t("pb.rp.vsCoreSub")} />
+          <StatTile label={t("pb.rp.l.random")} value={<span className={r.verdict === "rejected" ? "text-down" : r.verdict === "passes_history" ? "text-up" : ""}>{fmtNum(r.percentile, 0)}</span>} unit="/100"
+            sub={t("pb.rp.luck", { p: fmtNum(r.p_adjusted, 2) })} />
+          <StatTile label={t("pb.rp.l.halves")} value={`${fmtNum(r.percentile_halves[0], 0)}/${fmtNum(r.percentile_halves[1], 0)}`} sub={t("pb.rp.halvesSub")} bars={r.percentile_halves.map((x) => x - 50)} barsHi={-1} />
+          <StatTile label={t("pb.rp.l.drop")} value={<span className="text-down">{fmtPct(r.stats.max_dd_pct, 0)}</span>} sub={t("pb.rp.coreDrop", { v: fmtPct(sat.controls.core.max_dd_pct, 0) })} />
+          <StatTile label={t("pb.rp.l.swaps")} value={wholePct(r.turnover_pct_year)} sub={t("pb.sat.nStocks", { n: fmtNum(r.avg_names, 1) })} />
         </div>
       )}
       {paper ? (
@@ -362,7 +363,7 @@ function Savings({ rb, res, name }) {
     return <span className={d == null ? "text-ink-3" : d >= 0 ? "text-up" : "text-down"}>{d != null ? bpText(t, d) : labelOf(t, "baseline")}</span>;
   };
   const cols = [
-    { key: "rule", label: t("pb.th.rule"), cell: (r) => <span className="block max-w-[150px] text-[13px] leading-snug font-semibold text-ink">{name(r.id)}</span> },
+    { key: "rule", label: t("pb.th.rule"), cell: (r) => <span className="block w-[190px] py-1.5 text-[13px] leading-snug font-semibold text-ink">{name(r.id)}</span> },
     { key: "buys", label: t("pb.th.buys"), num: true, cell: (r) => fmtNum(r.trades_per_year, 0) },
     { key: "typical", label: t("pb.th.typicalShort"), num: true, className: "font-bold text-ink", cell: (r) => fmtPct(r.irr_median_pct, 1) },
     { key: "vs", label: t("pb.th.vsPlain"), num: true, cell: vsCell },
@@ -497,14 +498,14 @@ function TechChecklist({ data }) {
       {br ? (
         <div className="mt-2 grid gap-4 lg:grid-cols-2">
           <div className="min-w-0">
-            <BaseRates br={br} benchLabel={bench} />
+            <div className="thin-scroll overflow-x-auto"><div className="min-w-[440px]"><BaseRates br={br} benchLabel={bench} /></div></div>
             {edge && <p className="mt-3 text-[13.5px] leading-snug text-ink">{edge}</p>}
             {br.house_rule && <p className="mt-2 text-[13px] leading-snug text-ink-2">{t("pb.ck.fits", { fits: fmtPct(br.house_rule.fits.mean ?? 0, 1), fn: br.house_rule.fits.n, fails: fmtPct(br.house_rule.fails.mean ?? 0, 1), xn: br.house_rule.fails.n })}</p>}
           </div>
           {byCheck.length > 0 && (
             <div className="min-w-0">
               <p className="micro mb-1 text-ink-2">{t("pb.ck.each", { bench })}</p>
-              <DataTable columns={cols} rows={byCheck} rowKey={(c) => c.check} minWidth={300} caption={t("pb.ck.each", { bench })} />
+              <DataTable columns={cols} rows={byCheck} rowKey={(c) => c.check} minWidth={300} bleed={false} caption={t("pb.ck.each", { bench })} />
             </div>
           )}
         </div>
@@ -557,12 +558,12 @@ function RuleCard({ r, verdict, go }) {
             <span className={`micro ${EVIDENCE[r.evidence] ?? ""}`}>{t("pb.rc.sure", { ev: t.has(`pb.ev.${r.evidence}`) ? t(`pb.ev.${r.evidence}`) : r.evidence })}</span>
           </span>
           <span className="mt-1.5 block text-[14.5px] leading-snug font-semibold text-ink">{r.name}</span>
-          <span className="mt-0.5 block text-[13px] leading-snug text-ink-2">{r.plain}</span>
         </span>
         <svg viewBox="0 0 24 24" className={`mt-1 size-4 shrink-0 transition-transform duration-300 ${open ? "rotate-180 text-desk" : "text-ink-3"}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
       </button>
       {open && (
         <div id={id} className="grid gap-3 border-t border-line bg-surface/70 p-3.5 text-[13px] leading-relaxed">
+          <p className="text-[13.5px] text-ink">{r.plain}</p>
           <div><p className="micro mb-1">{t("pb.rc.exact")}</p><p className="text-ink-2">{r.definition}</p></div>
           {r.params.length > 0 && (
             <div><p className="micro mb-1">{t("pb.rc.params")}</p>

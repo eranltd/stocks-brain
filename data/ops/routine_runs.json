@@ -1,7 +1,7 @@
 {
   "version": "0.1.0",
-  "updated_at": "2026-10-28",
-  "change_note": "Run 40675038262: success.",
+  "updated_at": "2026-10-29",
+  "change_note": "Run 40808344629: success.",
   "items": [
     {
       "run_id": "37211858847",
@@ -4258,6 +4258,97 @@
         }
       ],
       "url": "https://github.com/eranltd/stocks-brain/actions/runs/40675038262"
+    },
+    {
+      "run_id": "40808344629",
+      "workflow": "daily",
+      "trigger": "schedule",
+      "started_at": "2026-10-29T02:46:38Z",
+      "finished_at": "2026-10-29T02:48:46Z",
+      "status": "success",
+      "steps": [
+        {
+          "routine": "buy_window",
+          "outcome": "success"
+        },
+        {
+          "routine": "calibration",
+          "outcome": "skipped"
+        },
+        {
+          "routine": "derive_market",
+          "outcome": "success"
+        },
+        {
+          "routine": "fetch_markets",
+          "outcome": "skipped"
+        },
+        {
+          "routine": "fetch_prices",
+          "outcome": "success"
+        },
+        {
+          "routine": "fetch_sectors",
+          "outcome": "skipped"
+        },
+        {
+          "routine": "lint",
+          "outcome": "success"
+        },
+        {
+          "routine": "market_lists",
+          "outcome": "skipped"
+        },
+        {
+          "routine": "paper_portfolio",
+          "outcome": "success"
+        },
+        {
+          "routine": "portfolio_rule",
+          "outcome": "success"
+        },
+        {
+          "routine": "price_crosscheck",
+          "outcome": "success"
+        },
+        {
+          "routine": "regime_monitor",
+          "outcome": "success"
+        },
+        {
+          "routine": "rule_backtests",
+          "outcome": "success"
+        },
+        {
+          "routine": "rule_ledger",
+          "outcome": "success"
+        },
+        {
+          "routine": "score_people",
+          "outcome": "success"
+        },
+        {
+          "routine": "score_picks",
+          "outcome": "success"
+        },
+        {
+          "routine": "sector_list",
+          "outcome": "skipped"
+        },
+        {
+          "routine": "sec_fundamentals",
+          "outcome": "success"
+        },
+        {
+          "routine": "sec_news",
+          "outcome": "success"
+        },
+        {
+          "routine": "technical_checklist",
+          "outcome": "success"
+        }
+      ],
+      "url": "https://github.com/eranltd/stocks-brain/actions/runs/40808344629"
     }
   ]
 }

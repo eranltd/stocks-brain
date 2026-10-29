@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-28",
+  "as_of": "2026-10-29",
   "sample": false,
   "source": "SEC EDGAR filings index (company submissions)",
   "window_days": 120,
@@ -50,6 +50,40 @@
       "cik": 789019,
       "name": "MICROSOFT CORP",
       "filings": [
+        {
+          "date": "2026-10-28",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436149/msft-20261028.htm"
+        },
+        {
+          "date": "2026-10-28",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm"
+        },
+        {
+          "date": "2026-10-28",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436122/msft-20261028.htm"
+        },
         {
           "date": "2026-09-02",
           "form": "8-K",
@@ -152,18 +186,6 @@
           ],
           "kind": "people",
           "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000060/nvda-20260628.htm"
-        },
-        {
-          "date": "2026-06-30",
-          "form": "8-K",
-          "items": [
-            "5.07"
-          ],
-          "titles": [
-            "Shareholder vote results"
-          ],
-          "kind": "other",
-          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000056/nvda-20260624.htm"
         }
       ]
     },
@@ -237,6 +259,18 @@
       "cik": 1652044,
       "name": "Alphabet Inc.",
       "filings": [
+        {
+          "date": "2026-10-28",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000080/goog-20261028.htm"
+        },
         {
           "date": "2026-08-10",
           "form": "8-K",
@@ -741,6 +775,28 @@
       "name": "AMERICAN ELECTRIC POWER CO INC",
       "filings": [
         {
+          "date": "2026-10-28",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/4904/000000490426000072/aep-20260930.htm"
+        },
+        {
+          "date": "2026-10-28",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/4904/000000490426000069/aep-20261028.htm"
+        },
+        {
           "date": "2026-09-30",
           "form": "8-K",
           "items": [
@@ -958,6 +1014,16 @@
       "name": "PACCAR INC",
       "filings": [
         {
+          "date": "2026-10-28",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/75362/000119312526436124/pcar-20260930.htm"
+        },
+        {
           "date": "2026-10-27",
           "form": "8-K",
           "items": [
@@ -1085,6 +1151,40 @@
       "cik": 1283699,
       "name": "T-Mobile US, Inc.",
       "filings": [
+        {
+          "date": "2026-10-28",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1283699/000128369926000129/tmus-20260930.htm"
+        },
+        {
+          "date": "2026-10-28",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1283699/000128369926000128/tmus-20261028.htm"
+        },
+        {
+          "date": "2026-10-28",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/1283699/000119312526435233/d130644d8k.htm"
+        },
         {
           "date": "2026-09-03",
           "form": "8-K",
@@ -1458,6 +1558,16 @@
       "name": "ELBIT SYSTEMS LTD",
       "filings": [
         {
+          "date": "2026-10-28",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1027664/000117891326004869/zk2636272.htm"
+        },
+        {
           "date": "2026-10-26",
           "form": "6-K",
           "items": [],
@@ -1526,16 +1636,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/1027664/000117891326003522/zk2635700.htm"
-        },
-        {
-          "date": "2026-07-13",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1027664/000117891326003459/zk2635672.htm"
         }
       ]
     },
@@ -1700,16 +1800,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/941221/000117891326003707/zk2635802.htm"
-        },
-        {
-          "date": "2026-06-30",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/941221/000117891326003372/zk2635628.htm"
         }
       ]
     },
@@ -2262,6 +2352,18 @@
       "name": "ORACLE CORP",
       "filings": [
         {
+          "date": "2026-10-28",
+          "form": "8-K",
+          "items": [
+            "7.01"
+          ],
+          "titles": [
+            "Shared an update with investors"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526435853/d75538d8k.htm"
+        },
+        {
           "date": "2026-09-14",
           "form": "8-K",
           "items": [
@@ -2546,6 +2648,16 @@
       "cik": 87347,
       "name": "SLB LIMITED/NV",
       "filings": [
+        {
+          "date": "2026-10-28",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/87347/000119312526435577/slb-20260930.htm"
+        },
         {
           "date": "2026-10-23",
           "form": "8-K",

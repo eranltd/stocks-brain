@@ -26,7 +26,7 @@ const race = (lines, bench = null) => {
 const near = (a, b, eps = 1e-9) => assert.ok(Math.abs(a - b) < eps, `${a} vs ${b}`);
 
 test("the clock: time-based steps, the whole replay in n-1 days of DAY_MS at 1x, never a leap after a stall", () => {
-  assert.deepEqual(SPEEDS, [1, 2, 4, 8]);
+  assert.deepEqual(SPEEDS, [0.5, 1, 2, 4]);
   assert.deepEqual(WINDOWS.map((w) => w.days), [63, 126, 252]);
   const n = 253;
   let pos = 0, t = 0;
@@ -38,7 +38,8 @@ test("the clock: time-based steps, the whole replay in n-1 days of DAY_MS at 1x,
   assert.ok(Math.abs(t - replayMs(n, 8)) <= 16, `took ${t} at 8x`);
   // A background tab comes back after ten seconds: one capped step.
   near(step(10, 10000, { n }), 10 + MAX_FRAME_MS / DAY_MS);
-  assert.equal(step(250, 1000, { n, speed: 8 }), n - 1);
+  // Near the end a step stops on the last day, whatever the pace.
+  assert.equal(step(n - 1.5, 1000, { n, speed: 8 }), n - 1);
   assert.equal(step(5, -20, { n }), 5);
   assert.equal(step(0, 16, { n: 1 }), 0);
 });

@@ -141,7 +141,7 @@ export function useDayTick(clock, fn, deps = []) {
 }
 
 export const PlayIcon = ({ className = "size-4" }) => <svg viewBox="0 0 20 20" className={className} aria-hidden="true"><path d="M6 4.2v11.6a.8.8 0 0 0 1.2.7l9.4-5.8a.8.8 0 0 0 0-1.4L7.2 3.5A.8.8 0 0 0 6 4.2Z" fill="currentColor" /></svg>;
-const PauseIcon = () => <svg viewBox="0 0 20 20" className="size-4" aria-hidden="true"><rect x="5" y="4" width="3.4" height="12" rx="1" fill="currentColor" /><rect x="11.6" y="4" width="3.4" height="12" rx="1" fill="currentColor" /></svg>;
+export const PauseIcon = () => <svg viewBox="0 0 20 20" className="size-4" aria-hidden="true"><rect x="5" y="4" width="3.4" height="12" rx="1" fill="currentColor" /><rect x="11.6" y="4" width="3.4" height="12" rx="1" fill="currentColor" /></svg>;
 const RestartIcon = () => <svg viewBox="0 0 20 20" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4.5 10a5.5 5.5 0 1 0 1.7-4" /><path d="M4 3.5V7h3.5" /></svg>;
 
 /**

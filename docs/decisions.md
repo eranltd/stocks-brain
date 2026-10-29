@@ -1,7 +1,7 @@
 ---
-version: 0.29.0
+version: 0.30.0
 updated_at: 2026-10-29
-change_note: The morning push leads with what to do today (the weekly buy, or no action and do not sell), computed by code.
+change_note: A demo trader agent plays along with the Arena (buys, sells, shorts, covers); pop-ups, its plan, a trade log, and a dock with speed and risk level. (Also today: the morning push leads with what to do today.)
 ---
 # Decision log
 
@@ -20,6 +20,30 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   per-point dates into one shared array.
 
 ## 2026-10-29 (evening)
+- **A demo trader agent, with trade pop-ups and its plan on screen.** The owner wants to show the site as a proof of
+  concept for a live trading agent: "mock progress of buying and selling on toasts on top", "how our agent works, what
+  it wants to buy and sell on a given day", "it should feel live". `lib/agent.js` replays one plain rule on the real
+  past year: every 5 trading days it holds the 4 names that rose most over the last 20 days (only names that rose),
+  sells what drops out, splits $100,000 of paper money evenly. It is a demo, not one of the tested rules, and every
+  place says paper, demo and past data. While the Arena plays, the trades of each replayed day pop up under the header
+  (`components/agentfeed.jsx`); on other pages a background loop walks the same year of trades, one every few seconds.
+  The Arena shows the agent's plan (ranking with the buy zone, what it holds, wants to buy and to sell, a countdown to
+  its next move) and its paper money against the even split. The reader can switch the pop-ups off; reduced motion
+  turns them off. Home's Arena view is framed as "The trader agent" with an "Everything inside" tile for every part
+  of the app. The Arena now runs 650 ms a day ("still a little fast").
+- **A corner dock with play or pause, speed and the risk level.** Fixed top right while the Arena shows: play/pause,
+  0.5× to 4× (the 8× speed gave way to 0.5×), and Easy | Medium | Hard. The level sets the demo rule: Easy holds 6
+  names, keeps 40% in cash and moves every 10 days (looking back 40); Medium is the plain rule; Hard holds 2 names,
+  all in, moving every 3 days (looking back 10). The device remembers the level; the pop-ups and the plan follow it.
+- **Shorts and a trade log.** The owner asked for a log of every buy, sell and short. The demo agent now also shorts
+  (bets on a fall) at Medium (1 name) and Hard (2 names): it shorts the names that fell most over its look-back and
+  covers when they stop being the coldest; a short's paper value is cost × (2 − price now / price then), never below
+  zero. A "Trade log" window (dock and agent panel) lists every buy, sell, short and cover up to the replayed day,
+  with a filter per kind, why each happened and how each closed position ended.
+- **A floating news card.** The owner asked for "random news from any stock" to click and read. Bottom left (above
+  the phone's bar), one real item at a time, shuffled, every 9 seconds: a why-it-moved note (our own words, sourced)
+  or a recent SEC filing worth a glance (results, heads-ups, deals, money, people; not routine reports). Tapping opens
+  the stock's page at that item; hovering holds it; × hides it for the visit; nothing under reduced motion.
 - **The morning push says what to do today.** The household asked for the system to be proactive. Each recorded
   morning, `scripts/today_action.py` (code, not the model) builds one line that leads the push: on the week's first
   trading day (holidays skipped), "weekly buy day"; on other days "no action needed" and the next buy day; after a
@@ -33,7 +57,7 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   should be the default view", "the animation should be auto looped", and "too fast and not smooth for humans". Home's
   switch is now ARENA | DESK | DETAILS with ARENA first; it shows a short headline so the race starts on the first
   screen. The Arena starts on its own, holds on the result for 5 seconds at the end, then starts again; pause or the
-  slider stop the loop until Play. Pace at 1×: the Arena 400 ms a day (was 140; a year in about 100 seconds), the
+  slider stop the loop until Play. Pace at 1×: the Arena 400 ms a day (was 140; since 650), the
   ticker wall 1 s a day (was 0.4), the floor 1.8 s a day (was 0.7) with a 3.5 s hold. Colours fade over about 1 s,
   numbers roll over 0.65 s, flashes are softer. Reduced motion still shows still frames.
 - **The paper basket starts at $100,000** (was $10,000), at the owner's ask. Still pretend money from past data, labelled

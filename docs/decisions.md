@@ -19,7 +19,7 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   Past roughly 35 names it would hit lint's 512 KB cap and the daily run would fail closed; before that, move the
   per-point dates into one shared array.
 
-## 2026-10-29
+## 2026-10-29 (evening)
 - **The morning push says what to do today.** The household asked for the system to be proactive. Each recorded
   morning, `scripts/today_action.py` (code, not the model) builds one line that leads the push: on the week's first
   trading day (holidays skipped), "weekly buy day"; on other days "no action needed" and the next buy day; after a

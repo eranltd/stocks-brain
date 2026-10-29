@@ -7,8 +7,8 @@ const isNum = (v) => typeof v === "number" && Number.isFinite(v);
 /** Trading days the floor loops through, the bars each square's tape shows, the pace and the pause on the last day. */
 export const LOOP_DAYS = 30;
 export const TAPE = 16;
-export const FLOOR_DAY_MS = 700;
-export const HOLD_MS = 2000;
+export const FLOOR_DAY_MS = 1800;
+export const HOLD_MS = 3500;
 
 /**
  * The floor's days and squares. rows: [{symbol, name, series: [{date, v}], call?}]. The dates are the longest series'

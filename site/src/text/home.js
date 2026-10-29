@@ -476,6 +476,7 @@ export default {
   /* ============================================================ tabs/Today.jsx */
 
   "today.howMuch": "Home view",
+  "today.arena": "Arena",
   "today.desk": "Desk",
   "today.details": "Details",
   "today.marketDetails": "Market details",

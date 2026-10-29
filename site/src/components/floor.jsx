@@ -156,8 +156,8 @@ function paintTile(tile, el, k, tape, calm) {
   el.now = j;
   if (!calm && (h.tone === "up" || h.tone === "down")) {
     el.blip.textContent = h.tone === "up" ? "▲" : h.tone === "down" ? "▼" : "◆";
-    el.blip.animate?.([{ opacity: 0, transform: "translate3d(0,5px,0)" }, { opacity: 1, transform: "none", offset: 0.25 }, { opacity: 0, transform: "translate3d(0,-4px,0)" }], { duration: 620, easing: "ease-out" });
-    el.flash.animate?.([{ opacity: h.level >= 3 ? 0.75 : 0.45 }, { opacity: 0 }], { duration: 420, easing: "ease-out" });
+    el.blip.animate?.([{ opacity: 0, transform: "translate3d(0,5px,0)" }, { opacity: 1, transform: "none", offset: 0.25 }, { opacity: 0, transform: "translate3d(0,-4px,0)" }], { duration: 1300, easing: "ease-out" });
+    el.flash.animate?.([{ opacity: 0 }, { opacity: h.level >= 3 ? 0.4 : 0.22, offset: 0.25 }, { opacity: 0 }], { duration: 1400, easing: "ease-in-out" });
   }
 }
 

@@ -17,7 +17,7 @@ import { useDayTick } from "./clock.jsx";
 
 const t = strings(dict);
 /** The wall's pace: one day every WALL_DAY_MS at 1× (slower than the race, so a day can be read). */
-export const WALL_DAY_MS = 400;
+export const WALL_DAY_MS = 1000;
 /** Tiles flip only while the replay steps at most this many days a second. */
 const FLIP_MAX_PER_S = 3;
 
@@ -58,7 +58,7 @@ export function Wall({ data, race, clock, go, reduced = false }) {
 
   // The colour fade lasts about one day at the current pace, so a fast replay blends instead of flashing.
   // At 1× a colour settles at once, matching its number; faster, it blends over about a day.
-  const fade = clock.speed === 1 ? 120 : Math.max(180, Math.min(420, (WALL_DAY_MS / clock.speed) * 1.2));
+  const fade = clock.speed === 1 ? 160 : Math.max(240, Math.min(700, (WALL_DAY_MS / clock.speed) * 1.2));
 
   if (status === "loading") return <div className="py-6"><p role="status" className="micro mb-3">{t("arena.wall.loading")}</p><SkeletonRows rows={5} /></div>;
   if (status === "error" || !groups?.length) {

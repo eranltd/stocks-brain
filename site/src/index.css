@@ -339,3 +339,15 @@
 .heat-tile:hover { box-shadow: 0 0 0 1px color-mix(in srgb, var(--desk) 55%, transparent), 0 8px 24px -12px var(--desk-glow); }
 :root[data-theme="light"] .heat-tile:hover { box-shadow: 0 0 0 1px color-mix(in srgb, var(--desk) 55%, transparent), 0 6px 16px -10px rgb(0 0 0 / 0.3); }
 .kpi-strip { background-image: linear-gradient(180deg, color-mix(in srgb, var(--desk) 5%, transparent), transparent 70%); }
+/* The big board (components/bigboard.jsx): lit lines draw in from left to right, the grey lines and the benchmark
+   are revealed by a sweeping clip, the fill and end dots fade in after. All of it redraws when the range changes. */
+.bb-draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: bb-draw 1200ms cubic-bezier(.35,.1,.25,1) forwards; animation-delay: calc(var(--k, 0) * 90ms); }
+@keyframes bb-draw { to { stroke-dashoffset: 0; } }
+.bb-reveal { transform-box: fill-box; transform-origin: left center; animation: bb-reveal 1200ms cubic-bezier(.35,.1,.25,1) both; }
+@keyframes bb-reveal { from { transform: scaleX(0); } }
+.bb-fade { animation: fade 600ms ease-out 900ms both; }
+:root[data-theme="light"] .bb-glow { stroke-opacity: 0.1; }
+@media (prefers-reduced-motion: reduce) {
+  .bb-draw, .bb-reveal, .bb-fade { animation: none !important; }
+  .bb-draw { stroke-dashoffset: 0; }
+}

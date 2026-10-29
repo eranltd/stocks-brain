@@ -3,6 +3,7 @@ import { STATUS } from "../components/goal.jsx";
 import { trustStage } from "../components/trust.jsx";
 import { CallChip, Chip, Container, DataTable, EmptyState, HeroTitle, InfoTip, MiniSpark, Panel, Segmented, SimBadge, SkeletonRows } from "../components/ui.jsx";
 import { BreadthBar, Count, DeskHead, HeatTile, KpiStrip, toneText } from "../components/pulse.jsx";
+import { BigBoard } from "../components/bigboard.jsx";
 import { VERDICT } from "../lib/checklist.js";
 import { marketNote, NOT_YET } from "../lib/markets.js";
 import { deskCalls, freshness, houseLimits, unusualToday } from "../lib/desk.js";
@@ -17,7 +18,8 @@ import { fmtDate, fmtPct } from "../lib/format.js";
 /*
  * The Stocks page: a market scanner for the market chosen in the header (or in the page's own market tabs). The hero
  * names the market; a strip of big numbers picks out the day's top gainer, top loser, most unusual volume and the
- * up/down split; the main list adds its market regime. The scanner shows every name as a dense table (LIST: percent
+ * up/down split; the main list adds its market regime. The scanner opens on the big board (CHART, the default: one
+ * line per name over 1M to 1Y, components/bigboard.jsx) and also shows every name as a dense table (LIST: percent
  * moves, never a price or raw volume; the quick checks; the chart checklist; on the main list the Desk's paper call as
  * a coloured edge and a chip) or as a heat grid (HEAT: one tile per name, coloured by the day's move). Filters are chips;
  * long words sit behind (i) buttons. Words in text/stock.js ("wl.*"); the Desk's calls in its own words (text/home.js).
@@ -31,6 +33,15 @@ const signed = (n) => (n == null ? "–" : `${n > 0 ? "+" : n < 0 ? "−" : ""}$
 const CALL_RANK = { buy: 2, wait: 1, reject: 0 };
 const VERDICT_CHIP = { accent: "up", down: "down", flat: "neutral" };
 const UNUSUAL_VOLUME = 1.5;
+// The scanner's view (CHART | LIST | HEAT), remembered on this device only; CHART when nothing is stored.
+const VIEW_KEY = "sb:stocks-view";
+const VIEWS = ["chart", "list", "heat"];
+function readView() {
+  try { const v = window.localStorage.getItem(VIEW_KEY); return VIEWS.includes(v) ? v : "chart"; } catch { return "chart"; }
+}
+function saveView(v) {
+  try { window.localStorage.setItem(VIEW_KEY, v); } catch { /* private mode or blocked storage */ }
+}
 
 /** The Stocks page: the chosen market's scanner, or a calm panel while it loads or before its numbers. */
 export default function Watchlist({ data, market: mk, go }) {
@@ -98,6 +109,7 @@ function rowOf(symbol, name, m, c, extra = {}) {
   return {
     symbol, name,
     spark: (m?.spark ?? []).map((p) => p.v).filter(isNum),
+    series: m?.series ?? null,
     day: num(m?.change_1d_pct), d20: num(m?.ret_20d_pct), d60: num(m?.ret_60d_pct), y1: num(m?.ret_250d_pct ?? m?.risk?.ret_1y_pct),
     vol: num(m?.vol20_pct), volX: num(c?.volume?.vs_avg20),
     checks: m?.setup ? m.setup.passed : null, stretched: Boolean(m?.setup?.stretched),
@@ -143,7 +155,8 @@ function Scanner({ data, market: mk, go }) {
   const benchRow = useMemo(() => (prices[bench.symbol] ? rowOf(bench.symbol, benchName, prices[bench.symbol], null, { bench: true, i: -1 }) : null),
     [prices, bench.symbol, benchName]);
 
-  const [view, setView] = useState("list");
+  const [view, setViewState] = useState(readView);
+  const setView = (v) => { setViewState(v); saveView(v); };
   const [filter, setFilter] = useState("all");
   const [group, setGroup] = useState(null);
   const [sort, setSort] = useState(null); // null: the list's own order
@@ -205,7 +218,7 @@ function Scanner({ data, market: mk, go }) {
       {regime && main && <Regime regime={regime} benchName={benchName} above={rows.filter((r) => prices[r.symbol]?.above_sma50).length} total={total} />}
 
       <Panel id="wl-table" className="mt-4 scroll-mt-28" info={info} infoLabel={t("wl.about")}
-        head={<DeskHead id="wl-table-h" title={t("wl.panel.scan")} sub={t("wl.panel.shown", { shown: shown.length, n: total })} />}
+        head={<DeskHead id="wl-table-h" title={t("wl.panel.scan")} />}
         badge={<ViewSwitch view={view} setView={setView} />}>
         <div className="-mt-2 sm:-mt-3">
           <div role="group" aria-label={t("wl.filter")} className="no-scrollbar rail-fade -mx-1 flex gap-1 overflow-x-auto px-1">
@@ -226,6 +239,8 @@ function Scanner({ data, market: mk, go }) {
             action={<button type="button" onClick={clear} className="btn min-h-[44px] justify-center">{t("wl.none.clear")}</button>}>
             {t("wl.none.body")}
           </EmptyState>
+        ) : view === "chart" ? (
+          <BigBoard rows={shown} bench={benchRow} benchName={benchName} closeDate={market.as_of} />
         ) : view === "heat" ? (
           <HeatGrid rows={shown} calls={Boolean(calls)} go={go} />
         ) : (
@@ -241,12 +256,12 @@ function Scanner({ data, market: mk, go }) {
   );
 }
 
-/** LIST | HEAT. */
+/** CHART | LIST | HEAT. */
 function ViewSwitch({ view, setView }) {
   const t = strings(dict);
   return (
     <div role="group" aria-label={t("wl.view")} className="-my-1 inline-flex rounded-[9px] border border-line-2 bg-surface-2 p-0.5">
-      {["list", "heat"].map((v) => (
+      {VIEWS.map((v) => (
         <button key={v} type="button" aria-pressed={view === v} onClick={() => setView(v)}
           className={`relative min-h-[36px] rounded-[7px] px-2.5 font-mono text-[11px] font-semibold tracking-[0.1em] uppercase sm:px-3 sm:tracking-[0.14em] transition-colors ${view === v ? "bg-surface-3 text-ink shadow-[inset_0_0_0_1px_var(--line-2)]" : "text-ink-3 hover:text-ink"}`}>
           {t(`wl.view.${v}`)}

@@ -20,7 +20,7 @@ export const NOT_YET = t("market.notYet");
 
 /** Pages that read the Nasdaq list only (Home's Desk and live feed, the daily brain, the practice portfolio, the rules, the
  * people, the record). */
-export const NASDAQ_ONLY = ["today", "details", "people", "portfolio", "playbook", "track", "kb", "learnings", "runs"];
+export const NASDAQ_ONLY = ["today", "details", "people", "arena", "portfolio", "playbook", "track", "kb", "learnings", "runs"];
 
 /** The calm line such a page shows while another market is chosen. */
 export const nasdaqOnlyLine = (label) => t("market.nasdaqOnly", { label });

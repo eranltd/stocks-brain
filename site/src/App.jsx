@@ -25,6 +25,7 @@ import Routines from "./tabs/Routines.jsx";
 import HowItWorks from "./tabs/HowItWorks.jsx";
 import Admin from "./tabs/Admin.jsx";
 import Stock from "./tabs/Stock.jsx";
+import Arena from "./tabs/Arena.jsx";
 import { strings } from "./lib/text.js";
 import { rich } from "./lib/rich.jsx";
 
@@ -33,7 +34,7 @@ import { rich } from "./lib/rich.jsx";
 // with "?m=<market>" when a market other than the default is chosen (#today?m=tlv).
 const PAGES = {
   today: Today, details: Details, quiz: Quiz, portfolio: Portfolio, playbook: Playbook, people: People, watchlist: Watchlist, track: TrackRecord,
-  kb: KB, insights: Insights, learnings: Learnings, runs: Runs, verdicts: Verdicts, routines: Routines, how: HowItWorks, admin: Admin,
+  kb: KB, insights: Insights, learnings: Learnings, runs: Runs, verdicts: Verdicts, routines: Routines, how: HowItWorks, admin: Admin, arena: Arena,
 };
 // Pages that show synthetic data until the brain (M3) produces real picks.
 const SAMPLE_TABS = ["track", "kb", "learnings", "runs"];
@@ -186,7 +187,8 @@ export default function App() {
   const openKB = (q) => { setQuery(q); go("kb"); };
   const symbol = tab.startsWith("stock/") ? tab.slice(6) : null;
   const Active = symbol ? Stock : PAGES[tab];
-  const intro = !symbol && tab !== "today";
+  // Home and the Arena open with their own big headline; every other page gets the short "where you are" line.
+  const intro = !symbol && tab !== "today" && tab !== "arena";
   const sampleRoutes = data?.sample ? SAMPLE_TABS : [];
 
   return (

@@ -24,6 +24,7 @@ const SHAPE = [
   { id: "lessons", to: "insights", minutes: 8 },
   { id: "mistakes", to: "learnings", minutes: 5 },
   { id: "machine", to: "how", minutes: 6 },
+  { id: "arena", to: "arena", minutes: 3 },
 ];
 export const HOLES = SHAPE.map((h) => ({ id: h.id, q: t(`hole.${h.id}`), to: h.to, minutes: h.minutes }));
 

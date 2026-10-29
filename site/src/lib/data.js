@@ -139,9 +139,11 @@ export async function loadAll(onProgress = () => {}) {
     ...(manifest.buy_window ? [manifest.buy_window] : []),
     // "Why it moved" notes (data/market/why.json): absent until the first note is recorded.
     ...(manifest.why ? [manifest.why] : []),
+    // Big drops and what came next (data/market/dips.json): absent until the first nightly run that writes it.
+    ...(manifest.dips ? [manifest.dips] : []),
   ];
   // Optional extras: a missing or broken file leaves its part of the site empty instead of failing the whole load.
-  const optional = new Set([manifest.why].filter(Boolean));
+  const optional = new Set([manifest.why, manifest.dips].filter(Boolean));
   let done = 0;
   const entries = await Promise.all(
     paths.map(async (p) => {
@@ -197,6 +199,8 @@ export function derive(manifest, files) {
   // "Why it moved" notes (data/market/why.json): researched by a separate scheduled session, own words, linked; null
   // until the first note (lib/why.js decides what may be shown).
   const why = manifest.why ? files[manifest.why] ?? null : null;
+  // Every big one-day drop in the main list and what came next (data/market/dips.json); null until written.
+  const dips = manifest.dips ? files[manifest.dips] ?? null : null;
   // Company outlook cards (config/outlook.json): researched, paraphrased and linked; may hold no companies yet.
   const outlook = doc("outlook") ? files[doc("outlook").file] : null;
   // The eight-step technical checklist: its steps and house rule (config/checklist.json) and code's daily reading of it.
@@ -252,7 +256,7 @@ export function derive(manifest, files) {
 
   return {
     market, manifest, runs, shownRuns, latest, lastOk, prices, watchlist, settings, learnings, guardrails,
-    outcomes, library, sources, routines, names, bench, kb, docs, regime, calibration, observations, opsLog, longrun, paper, sectors, core, rulebook, rulesResult, ledger, people, peopleScores, fundamentals, priceCheck, secNews, buyWindow, why, outlook, checklist, checklistCfg,
+    outcomes, library, sources, routines, names, bench, kb, docs, regime, calibration, observations, opsLog, longrun, paper, sectors, core, rulebook, rulesResult, ledger, people, peopleScores, fundamentals, priceCheck, secNews, buyWindow, why, dips, outlook, checklist, checklistCfg,
     markets, marketsConfig, funds,
     sample: manifest.source === "sample", livePrices: manifest.price_source === "live",
   };

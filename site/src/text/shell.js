@@ -180,4 +180,12 @@ export default {
   "news.sec": "Filing",
   "news.more": "Read more",
   "news.hide": "Hide the news",
+  "news.big": "Big move",
+  "news.results": "Results",
+  "news.fell": "Fell {move}% in one day.",
+  "news.jumped": "Jumped {move}% in one day.",
+  "news.afterResults": "The day after its results.",
+  "news.resultsToday": "Reports its results today. A big move is possible either way.",
+  "news.resultsTomorrow": "Reports its results tomorrow. A big move is possible either way.",
+  "news.resultsIn": "Reports its results in {n} days. A big move is possible either way.",
 };

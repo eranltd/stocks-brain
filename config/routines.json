@@ -1,7 +1,7 @@
 {
-  "version": "0.15.0",
-  "updated_at": "2026-10-17",
-  "change_note": "Why-it-moved notes (why_notes, a separate Claude session at 06:47 and 09:47 UTC) and a third fetch run for the sector funds (04:40 UTC); buy_window: each stock rule's look as if today were its decision day, weekly first.",
+  "version": "0.16.0",
+  "updated_at": "2026-10-29",
+  "change_note": "Added big_drops: every one-day drop of 8% or more in the main list over the fetched history, and how it did against the benchmark afterwards (a study, learned from Alphabet on 29 Oct 2026).",
   "timezone": "UTC",
   "routines": [
     {
@@ -270,6 +270,25 @@
       ],
       "human_gate": false,
       "why": "History can be re-fitted; a forward record cannot. On the first run of each month every testable rule's holdings are written down with only that day's data and never edited. Months later this is the evidence that decides which rules deserve money."
+    },
+    {
+      "id": "big_drops",
+      "name": "Big drops and what came next",
+      "cadence": "daily",
+      "cron": "40 23 * * 1-5",
+      "runner": "github_actions",
+      "status": "active",
+      "milestone": "M4",
+      "uses_llm": false,
+      "max_cost_usd": 0,
+      "inputs": [
+        ".cache/prices (daily closes, never published)"
+      ],
+      "outputs": [
+        "data/market/dips.json"
+      ],
+      "human_gate": false,
+      "why": "Learned from Alphabet's fall after its results (29 Oct 2026): measure, do not guess, whether a big drop is a chance to buy. Every 8%+ one-day drop in the main list, entered at the next close, followed 5, 20 and 60 days against the benchmark, beside all days. A study, not a rule."
     },
     {
       "id": "buy_window",

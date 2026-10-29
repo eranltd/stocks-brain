@@ -1,7 +1,7 @@
 ---
-version: 0.28.0
+version: 0.29.0
 updated_at: 2026-10-29
-change_note: Home opens on the Arena, which plays by itself and loops; every replay runs slower and softer; the paper basket starts at $100,000.
+change_note: The morning push leads with what to do today (the weekly buy, or no action and do not sell), computed by code.
 ---
 # Decision log
 
@@ -18,6 +18,15 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Market file size**: `derived.json` is written one line per symbol (compact) and is about 330 KB with 21 names.
   Past roughly 35 names it would hit lint's 512 KB cap and the daily run would fail closed; before that, move the
   per-point dates into one shared array.
+
+## 2026-10-29 (evening)
+- **The morning push says what to do today.** The household asked for the system to be proactive. Each recorded
+  morning, `scripts/today_action.py` (code, not the model) builds one line that leads the push: on the week's first
+  trading day (holidays skipped), "weekly buy day"; on other days "no action needed" and the next buy day; after a
+  whole-market fall of two percent or more in a day, or ten percent or more off its high, "no action, don't sell".
+  Then the paper side: a new weekly bet, a brain call that is no longer neutral or changed, or "all neutral". Rejected:
+  single-stock buy or sell alerts for real money (no rule has earned them) and automatic orders (no broker access,
+  and a push the household acts on keeps a person in the loop).
 
 ## 2026-10-29 (later)
 - **Home opens on the Arena, playing by itself on a loop; every replay is slower and softer.** The owner: "the arena

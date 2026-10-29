@@ -100,7 +100,11 @@ message.
    (`method` `get_workflow_run`, `resource_id` the run id). Do not use `sleep` in Bash to wait: use the Monitor tool if
    it is available, otherwise make a few separate checks spaced out by other work (a run usually takes two to four
    minutes). Give up waiting after about fifteen minutes and report the run as still running.
-   - **success**: done.
+   - **success**: work out today's action for the household (code, not you; it reads the overlay, so run it before
+     step 9) and keep its one line for the push:
+     ```bash
+     python3 scripts/today_action.py --picks .cache/brain/picks.json
+     ```
    - **failure**: find which step failed. List the run's jobs with `mcp__github__actions_list` (`method`
      `list_workflow_jobs`, `resource_id` the run id) and read the name of each job's failed step. Then read the log with
      `mcp__github__get_job_logs`: `run_id` the run id, `failed_only` `true`, `return_content` `true`, `tail_lines` `50`.
@@ -119,6 +123,7 @@ message.
 
 ## Final message
 
+- the line from `scripts/today_action.py` first, word for word (it is also the push notification when a run was recorded)
 - `as_of`: the market date
 - each pick as `TICKER stance/conviction`, one per line (or "no picks")
 - the Actions run URL and its result (success, failure with the reason, or still running)

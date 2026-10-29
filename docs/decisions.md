@@ -1,7 +1,7 @@
 ---
-version: 0.29.0
+version: 0.30.0
 updated_at: 2026-10-29
-change_note: A demo trader agent plays along with the Arena (buys, sells, shorts, covers); pop-ups, its plan, a trade log, and a dock with speed and risk level.
+change_note: A demo trader agent plays along with the Arena (buys, sells, shorts, covers); pop-ups, its plan, a trade log, and a dock with speed and risk level. (Also today: the morning push leads with what to do today.)
 ---
 # Decision log
 
@@ -44,6 +44,13 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   the phone's bar), one real item at a time, shuffled, every 9 seconds: a why-it-moved note (our own words, sourced)
   or a recent SEC filing worth a glance (results, heads-ups, deals, money, people; not routine reports). Tapping opens
   the stock's page at that item; hovering holds it; × hides it for the visit; nothing under reduced motion.
+- **The morning push says what to do today.** The household asked for the system to be proactive. Each recorded
+  morning, `scripts/today_action.py` (code, not the model) builds one line that leads the push: on the week's first
+  trading day (holidays skipped), "weekly buy day"; on other days "no action needed" and the next buy day; after a
+  whole-market fall of two percent or more in a day, or ten percent or more off its high, "no action, don't sell".
+  Then the paper side: a new weekly bet, a brain call that is no longer neutral or changed, or "all neutral". Rejected:
+  single-stock buy or sell alerts for real money (no rule has earned them) and automatic orders (no broker access,
+  and a push the household acts on keeps a person in the loop).
 
 ## 2026-10-29 (later)
 - **Home opens on the Arena, playing by itself on a loop; every replay is slower and softer.** The owner: "the arena

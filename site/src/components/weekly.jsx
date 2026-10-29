@@ -149,7 +149,7 @@ function RuleTile({ r, data, go }) {
  * game, two weekly rules recorded forward and checked against random picks. Nothing here is a reason to trade real
  * money in single stocks; that waits until a rule passes history and its paper record.
  */
-export function WeeklyGame({ data, go, className = "" }) {
+export function WeeklyGame({ data, go, compact = false, className = "" }) {
   const t = strings(plan);
   const h = strings(home);
   const today = todayISO();
@@ -178,6 +178,11 @@ export function WeeklyGame({ data, go, className = "" }) {
           </div>
         </div>
       </div>
+      {compact && (
+        <button type="button" onClick={() => go("verdicts")} className="mt-3 inline-flex min-h-[44px] items-center gap-2 font-mono text-[11.5px] font-semibold tracking-[0.1em] text-desk uppercase hover:text-ink">
+          {h("wkc.scoreboard")} <span aria-hidden="true">→</span>
+        </button>
+      )}
     </Panel>
   );
 }

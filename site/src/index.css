@@ -555,3 +555,40 @@ button.heat-tile:hover { border-color: var(--line-3); }
   .tick-strip, .heat-up, .heat-down, .race-crown, .wall-split-up { transition: none !important; }
   .arena-beacon, .arena-summary, .arena-podium, .arena-step, .arena-record, .duel-ko { animation: none !important; }
 }
+
+/* === lists === */
+/* The Stocks scanner, Home's Details view and the Details page (tabs/Watchlist.jsx, tabs/Today.jsx, tabs/Details.jsx,
+   components/pulse.jsx): a dense terminal look on top of the kit. Rows glow orange on hover, a row's first cell carries
+   a thin bar in the Desk's call colour, heat tiles lift a little. Motion stays off under reduced motion (rule above). */
+.scan-table tbody tr > * { transition: background-color 160ms, box-shadow 160ms; }
+.scan-table tbody tr:hover > * {
+  background-color: color-mix(in srgb, var(--desk) 6%, var(--surface-2));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--desk) 38%, transparent), inset 0 -1px 0 color-mix(in srgb, var(--desk) 38%, transparent);
+}
+.scan-table tbody tr:hover > :first-child {
+  box-shadow: inset 2px 0 0 var(--desk), inset 0 1px 0 color-mix(in srgb, var(--desk) 38%, transparent), inset 0 -1px 0 color-mix(in srgb, var(--desk) 38%, transparent);
+}
+.scan-table thead th { letter-spacing: 0.16em; }
+/* the Desk's call as a thin bar on a row's first cell (the cell is sticky, so the bar is placed inside it) */
+.call-edge::before { content: ""; position: absolute; left: 0; top: 7px; bottom: 7px; width: 3px; border-radius: 0 2px 2px 0; background: var(--edge); }
+.call-edge-buy { --edge: var(--up); }
+.call-edge-buy::before { box-shadow: 0 0 10px var(--up-glow); }
+.call-edge-wait { --edge: var(--wait); }
+.call-edge-reject { --edge: var(--down); }
+.heat-tile { animation: heat-in 520ms var(--ease-out-expo) both; animation-delay: calc(var(--i, 0) * 22ms); }
+@keyframes heat-in { from { opacity: 0; transform: translateY(6px) scale(0.97); } }
+.heat-tile:hover { box-shadow: 0 0 0 1px color-mix(in srgb, var(--desk) 55%, transparent), 0 8px 24px -12px var(--desk-glow); }
+:root[data-theme="light"] .heat-tile:hover { box-shadow: 0 0 0 1px color-mix(in srgb, var(--desk) 55%, transparent), 0 6px 16px -10px rgb(0 0 0 / 0.3); }
+.kpi-strip { background-image: linear-gradient(180deg, color-mix(in srgb, var(--desk) 5%, transparent), transparent 70%); }
+/* The big board (components/bigboard.jsx): lit lines draw in from left to right, the grey lines and the benchmark
+   are revealed by a sweeping clip, the fill and end dots fade in after. All of it redraws when the range changes. */
+.bb-draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: bb-draw 1200ms cubic-bezier(.35,.1,.25,1) forwards; animation-delay: calc(var(--k, 0) * 90ms); }
+@keyframes bb-draw { to { stroke-dashoffset: 0; } }
+.bb-reveal { transform-box: fill-box; transform-origin: left center; animation: bb-reveal 1200ms cubic-bezier(.35,.1,.25,1) both; }
+@keyframes bb-reveal { from { transform: scaleX(0); } }
+.bb-fade { animation: fade 600ms ease-out 900ms both; }
+:root[data-theme="light"] .bb-glow { stroke-opacity: 0.1; }
+@media (prefers-reduced-motion: reduce) {
+  .bb-draw, .bb-reveal, .bb-fade { animation: none !important; }
+  .bb-draw { stroke-dashoffset: 0; }
+}

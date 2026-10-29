@@ -5,7 +5,8 @@ import { highlights, leaders, lerp, RACE_MS, raceData, raceSummary, tipLabel, to
 import { mainListOf } from "../lib/buywindow.js";
 import { shortName } from "../lib/simple.js";
 import dict from "../text/home.js";
-import { Reveal } from "./ui.jsx";
+import { Panel } from "./ui.jsx";
+import { DeskHead } from "./pulse.jsx";
 import { monthYear, PlayerControls, PosterPlay, TONE_TEXT, usePlayer, useWidth } from "./replay.jsx";
 import { strings } from "../lib/text.js";
 import { fmtDate, fmtPct, fmtList } from "../lib/format.js";
@@ -25,7 +26,6 @@ const SLOTS = 8; // --race-1 … --race-8 in index.css: a categorical palette ch
 export function MarketRace({ data }) {
   const t = strings(dict);
   const reduced = useReducedMotion();
-  const uid = useId();
   const watch = useRef(null);
   const W = Math.max(280, useWidth(watch));
   const race = useMemo(() => raceData(data.market?.symbols, {
@@ -49,33 +49,28 @@ export function MarketRace({ data }) {
   const half = Math.ceil(hl.length / 2);
 
   return (
-    <Reveal as="section" id="race" aria-labelledby={`${uid}-title`} className="card scroll-mt-28 p-4 sm:p-6">
-      <div className="eyebrow mb-2">{t("race.eyebrow")}</div>
-      <h2 id={`${uid}-title`} className="text-[24px] font-semibold leading-tight tracking-[-0.02em] text-ink">{t("race.title")}</h2>
-      <p className="mt-2 text-[15px] leading-relaxed text-ink-2">{t("race.lede")}</p>
-
-      <div className="mt-5">
-        <div className="num text-[clamp(20px,5.6vw,26px)] font-semibold leading-tight text-ink">{fmtDate(date)}</div>
-        <div className="mt-1 flex flex-wrap items-baseline gap-x-4 gap-y-0.5 text-[13.5px] text-ink-3">
-          <span>{t("race.day", { i: k + 1, n: race.n })}</span>
-          {race.bench && (
-            <span>{t("race.benchSoFar", { bench: benchName })}{" "}
-              <span className={`num font-mono text-[14px] font-semibold ${TONE_TEXT[toneOf(benchNow)]}`}>{fmtPct(benchNow, 1)}</span>
-            </span>
-          )}
-        </div>
+    <Panel id="race" className="scroll-mt-28" head={<DeskHead id="race-h" title={t("race.eyebrow")} sub={t("race.sub")} />}
+      info={<><span className="block font-semibold text-ink">{t("race.title")}</span>{t("race.lede")}</>} infoLabel={t("race.title")}>
+      <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-1">
+        <div className="font-num text-[clamp(20px,5.6vw,26px)] leading-tight font-bold tracking-[-0.03em] text-ink">{fmtDate(date)}</div>
+        <div className="micro tracking-[0.08em]">{t("race.day", { i: k + 1, n: race.n })}</div>
       </div>
+      {race.bench && (
+        <p className="mt-1 text-[13px] text-ink-3">{t("race.benchSoFar", { bench: benchName })}{" "}
+          <span className={`font-num text-[13.5px] font-bold ${TONE_TEXT[toneOf(benchNow)]}`}>{fmtPct(benchNow, 1)}</span>
+        </p>
+      )}
 
-      <div className="mt-4">
-        <h3 className="meta normal-case tracking-[0.04em]">{t("race.leaders")}</h3>
-        <ol className="relative mt-2" style={{ height: top.length * ROW - 4 }}>
+      <div className="mt-3">
+        <h3 className="micro">{t("race.leaders")}</h3>
+        <ol className="relative mt-1.5" style={{ height: top.length * ROW - 4 }}>
           {top.map((r, rank) => (
-            <li key={r.symbol} className="absolute inset-x-0 top-0 flex h-[30px] items-center gap-3 rounded-xl border border-line px-3"
+            <li key={r.symbol} className="absolute inset-x-0 top-0 flex h-[30px] items-center gap-3 rounded-[8px] border border-line bg-surface-2/60 px-3"
               style={{ transform: `translateY(${rank * ROW}px)`, transition: reduced ? "none" : "transform 260ms cubic-bezier(.2,.8,.2,1)" }}>
-              <span className="num w-4 shrink-0 font-mono text-[12.5px] text-ink-3">{rank + 1}</span>
+              <span className={`w-4 shrink-0 font-num text-[11.5px] font-bold ${rank === 0 ? "text-desk" : "text-ink-3"}`}>{String(rank + 1).padStart(2, "0")}</span>
               <span className="size-2.5 shrink-0 rounded-full" style={{ background: colorOf[r.symbol] ?? "var(--ink-3)", opacity: colorOf[r.symbol] ? 1 : 0.5 }} aria-hidden="true" />
-              <span className="min-w-0 flex-1 truncate text-[14.5px] text-ink">{r.name}</span>
-              <span className={`num shrink-0 font-mono text-[13.5px] font-semibold ${TONE_TEXT[toneOf(r.rise)]}`}>{fmtPct(r.rise, 1)}</span>
+              <span className="min-w-0 flex-1 truncate text-[13.5px] text-ink">{r.name}</span>
+              <span className={`shrink-0 font-num text-[13px] font-bold ${TONE_TEXT[toneOf(r.rise)]}`}>{fmtPct(r.rise, 1)}</span>
             </li>
           ))}
         </ol>
@@ -87,14 +82,14 @@ export function MarketRace({ data }) {
         {!player.started && <PosterPlay onClick={player.play} label={words.play} />}
       </div>
 
-      {summary && <p className="mt-4 rounded-2xl border border-line-2 bg-surface-2 px-4 py-3 text-[16px] leading-relaxed text-ink">{summary}</p>}
+      {summary && <p className="tile mt-3 px-3 py-2.5 text-[14px] leading-snug text-ink">{summary}</p>}
 
       <PlayerControls player={player} words={words} reduced={reduced} valueText={fmtDate(date)}
         startLabel={monthYear(race.dates[0])} endLabel={monthYear(race.dates.at(-1))} />
 
       <p className="sr-only" aria-live="polite">{announce}</p>
 
-      <div className="mt-5 grid gap-1.5 text-[13px] leading-snug text-ink-2">
+      <div className="mt-4 grid gap-1.5 text-[12.5px] leading-snug text-ink-2">
         <div className="flex flex-wrap gap-x-3 gap-y-1">
           {hl.map((sym) => {
             const l = race.lines.find((x) => x.symbol === sym);
@@ -119,12 +114,12 @@ export function MarketRace({ data }) {
             <span>{t("race.legendFaint", { count: faint })}</span>
           </p>
         )}
-        <p className="text-[12.5px] text-ink-3">{t("race.axis", { date: fmtDate(race.dates[0]) })}</p>
+        <p className="text-[12px] text-ink-3">{t("race.axis", { date: fmtDate(race.dates[0]) })}</p>
       </div>
 
-      <p className="mt-4 text-[14px] leading-relaxed text-ink-2">{t("race.frame")}</p>
-      {reduced && <p className="mt-2 text-[13.5px] leading-relaxed text-ink-3">{t("race.reduced")}</p>}
-    </Reveal>
+      <p className="mt-3 border-t border-line pt-3 text-[12.5px] leading-snug text-ink-3">{t("race.frame")}</p>
+      {reduced && <p className="mt-1.5 text-[12.5px] leading-snug text-ink-3">{t("race.reduced")}</p>}
+    </Panel>
   );
 }
 

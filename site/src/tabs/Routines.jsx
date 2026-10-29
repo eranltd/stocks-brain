@@ -1,224 +1,310 @@
 import { useMemo, useState } from "react";
-import { pad2, fmtDate, fmtUsd } from "../lib/format.js";
-import { Accent, ArrowRight, Chip, Container, Empty, Reveal, SectionHead, Strip } from "../components/ui.jsx";
+import { fmtShort, fmtUsd } from "../lib/format.js";
+import { Chip, Container, DataTable, EmptyState, Panel, StatTile, StepMark } from "../components/ui.jsx";
+import { clock, dayTimeline, lastByRoutine, nextRun, relTime } from "../lib/routines.js";
+import { DayTrack, FilterChips, PageHero, TipText, useUtcMinute } from "../lib/learnkit.jsx";
 import dict from "../text/learn.js";
 import { strings } from "../lib/text.js";
 
-// Labels are text/learn.js "rt.cad.<id>"; weekdays "rt.dow.<0-6>" (0 is Sunday).
+/*
+ * Routines: every timed job in the open, as an ops console. A weekday's timeline in UTC (each start time a dot: green ran
+ * fine last time, red failed, grey no run yet, dashed planned) with a live "now" line; the other days' jobs; every job
+ * in one table (tap a row for what it reads and saves); and the run log, failures included. Times come from the crons
+ * in config/routines.json, outcomes from data/ops/routine_runs.json.
+ */
+
+const t = strings(dict);
 const CADENCE = ["all", "daily", "weekly", "monthly", "on_demand"];
-// Who starts a routine: a GitHub Actions schedule in the repo, or a scheduled Claude Code session (a Claude routine).
-// Label "rt.runner.<runner>", hover text "rt.runner.<runner>.title".
-const RUNNER = {
-  github_actions: { cls: "text-ink-2" },
-  claude_routine: { cls: "border-ai/40 text-ai" },
-};
-// Routines whose card needs more than the schedule says: a plain line ("rt.note.<id>"), shown while it is active.
-const NOTE = new Set(["close_run"]);
-// A plainer schedule label where the cron alone would mislead (a Tue–Sat UTC cron covers the Mon–Fri US market days):
-// "rt.when.<id>".
-const WHEN = new Set(["close_run"]);
-
-/** "05:23, 08:23 and 11:23 UTC (08:23, 11:23 and 14:23 your time)": UTC from the cron, and the reader's own clock. */
-export function timesLabel(h, m, tz = undefined) {
-  const t = strings(dict);
-  const hours = h.split(",").map(Number);
-  const list = (xs) => (xs.length > 1 ? `${xs.slice(0, -1).join(", ")} and ${xs.at(-1)}` : xs[0]);
-  const utc = list(hours.map((x) => `${pad2(x)}:${pad2(+m)}`));
-  const now = new Date();
-  const local = list(hours.map((x) => new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), x, +m)).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: tz })));
-  return local === utc ? t("rt.utc", { times: utc }) : t("rt.utcLocal", { times: utc, local });
-}
-
-function when(r) {
-  const t = strings(dict);
-  if (!r.cron) return WHEN.has(r.id) ? t(`rt.when.${r.id}`) : t("rt.whenAsked");
-  const [m, h, dom, , dow] = r.cron.split(" ");
-  const tl = timesLabel(h, m);
-  if (WHEN.has(r.id)) return `${t(`rt.when.${r.id}`)} · ${tl}`;
-  if (r.cadence === "daily") return `${days(dow)} · ${tl}`;
-  if (r.cadence === "weekly") return `${t.has(`rt.dow.${+dow}`) ? t("rt.weekly", { day: t(`rt.dow.${+dow}`) }) : dow} · ${tl}`;
-  return `${t("rt.monthly", { dom })} · ${tl}`;
-}
-
-/** Scheduled Claude sessions run on the subscription ($0 per run); the other model routines carry a cost cap. */
-function llmDesc(llm) {
-  const t = strings(dict);
-  const capped = llm.filter((r) => r.runner !== "claude_routine");
-  const sub = llm.length - capped.length;
-  const usd = capped.length ? fmtUsd(Math.max(...capped.map((r) => r.max_cost_usd))) : null;
-  const cap = usd ? t(sub ? "rt.llm.capOthers" : "rt.llm.capEach", { usd }) : "";
-  return [sub ? t("rt.llm.sub", { count: sub }) : "", cap].filter(Boolean).join("; ").replace(/^./, (c) => c.toUpperCase()) + ".";
-}
+/** A status or outcome word, or the raw value when text/learn.js has none. */
+const word = (prefix, v) => (t.has(`${prefix}.${v}`) ? t(`${prefix}.${v}`) : v);
+const OUT_STEP = { success: "done", partial: "wait", failure: "fail", failed: "fail", cancelled: "fail", skipped: "idle" };
+const STATUS_STEP = { active: "done", planned: "wait", disabled: "fail" };
+const STATUS_TONE = { active: "up", planned: "ghost", disabled: "down" };
+/** "22 Oct" from a date or a timestamp. */
+const dayMonth = (iso) => (iso ? fmtShort(iso.slice(0, 10)) : "–");
 
 function days(dow) {
-  const t = strings(dict);
   const name = (d) => (t.has(`rt.dow.${d}`) ? t(`rt.dow.${d}`) : d);
   if (dow === "*") return t("rt.everyDay");
   const [a, b] = dow.split("-").map(Number);
   return b === undefined ? name(a) : `${name(a)}–${name(b)}`;
 }
 
-/** Next fire time for the simple cron shapes in use: "m h * * d-d|d|*" and "m h D * *"; h may be a list ("5,11"). */
-function nextRun(cron, from = new Date()) {
-  if (!cron) return null;
-  const [m, h, dom, , dow] = cron.split(" ");
-  const hours = h.split(",").map(Number).sort((a, b) => a - b);
-  const days = dow === "*" ? null : dow.includes("-") ? (() => { const [a, b] = dow.split("-").map(Number); return Array.from({ length: b - a + 1 }, (_, i) => a + i); })() : [Number(dow)];
-  for (let i = 0; i < 400; i++) {
-    for (const hh of hours) {
-      const d = new Date(Date.UTC(from.getUTCFullYear(), from.getUTCMonth(), from.getUTCDate() + i, hh, +m));
-      if (d <= from) continue;
-      if (dom !== "*" && d.getUTCDate() !== +dom) continue;
-      if (days && !days.includes(d.getUTCDay())) continue;
-      return d;
-    }
-  }
-  return null;
+/** "Mon–Fri 23:40", "Sat 13:00", "Day 1 13:00", "When asked" (UTC). */
+function when(r) {
+  if (!r.cron) return t("rt.whenAsked");
+  const [m, h, dom, , dow] = r.cron.split(" ");
+  const times = h.split(",").map((x) => clock(+x * 60 + +m)).join(" · ");
+  const day = t.has(`rt.when.${r.id}`) ? t(`rt.when.${r.id}`) : dom !== "*" ? t("rt.monthly", { dom }) : days(dow);
+  return `${day} ${times}`;
 }
 
-function relTime(d) {
-  if (!d) return "";
-  const t = strings(dict);
-  const hrs = Math.round((d - new Date()) / 36e5);
-  return hrs < 24 ? t("rt.inHours", { count: hrs }) : t("rt.inDays", { count: Math.round(hrs / 24) });
+/** The reader's own clock for a UTC minute of the day, when it differs ("08:23"). */
+function localOf(mins) {
+  const now = new Date();
+  const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), Math.floor(mins / 60), mins % 60));
+  const local = d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+  return local === clock(mins) ? null : local;
 }
-
-/** A fire time in UTC: "Tue, 20 Oct 2026 05:23 UTC". */
-const utcStamp = (d) => d.toUTCString().replace(":00 GMT", " UTC");
-/** A status or outcome word, or the raw value when text/learn.js has none. */
-const word = (t, prefix, v) => (t.has(`${prefix}.${v}`) ? t(`${prefix}.${v}`) : v);
 
 export default function Routines({ data }) {
   const { routines, opsLog, manifest } = data;
-  const [cad, setCad] = useState("all");
   const all = routines.routines;
-  const list = all.filter((r) => cad === "all" || r.cadence === cad);
+  const [cad, setCad] = useState("all");
+  const [open, setOpen] = useState(null);
+  const runs = useMemo(() => [...(opsLog?.items ?? [])].reverse(), [opsLog]);
+  const last = useMemo(() => lastByRoutine(runs), [runs]);
+  const nameOf = useMemo(() => { const n = Object.fromEntries(all.map((r) => [r.id, r.name])); return (id) => n[id] ?? id; }, [all]);
   const active = all.filter((r) => r.status === "active");
-  const llm = all.filter((r) => r.uses_llm);
-  const runs = [...(opsLog?.items ?? [])].reverse();
-  const last = runs[0];
-  const lastByRoutine = useMemo(() => {
-    const m = {};
-    for (const run of runs) for (const s of run.steps) if (!m[s.routine] && s.outcome !== "skipped") m[s.routine] = { ...s, at: run.finished_at, url: run.url };
-    return m;
-  }, [runs]);
+  const planned = all.filter((r) => r.status === "planned");
+  const llm = all.filter((r) => r.uses_llm && r.status === "active");
   const next = active.map((r) => ({ r, at: nextRun(r.cron) })).filter((x) => x.at).sort((a, b) => a.at - b.at)[0];
+  const lastRun = runs[0];
+  const stops = useMemo(() => dayTimeline(all), [all]);
+  const [stop, setStop] = useState(null);
   const repo = `https://github.com/${manifest.repo}`;
-  const t = strings(dict);
+  const list = all.filter((r) => cad === "all" || r.cadence === cad);
+  const others = all.filter((r) => r.cadence !== "daily");
 
+  const linkCls = "chip min-h-[32px] border-line-2 bg-surface-2 text-ink-2 transition-colors hover:border-line-3 hover:text-ink";
   return (
-    <Container className="pt-20">
-      <SectionHead
-        eyebrow={t("rt.eyebrow", { v: routines.version })}
-        title={<>{t("rt.title.a")} <Accent>{t("rt.title.b")}</Accent></>}
-        lede={<>
-          <span className="block text-ink">{t("rt.lede1")}</span>
-          <span className="mt-3 block">{t("rt.lede2")}</span>
-        </>}
-        right={
-          <div className="flex flex-wrap gap-2">
-            <a className="btn px-5 py-3 text-[14px]" href={`${repo}/blob/main/config/routines.json`} target="_blank" rel="noreferrer">routines.json <ArrowRight className="size-4 -rotate-45" /></a>
-            <a className="btn px-5 py-3 text-[14px]" href={`${repo}/actions`} target="_blank" rel="noreferrer">{t("rt.actions")} <ArrowRight className="size-4 -rotate-45" /></a>
+    <Container className="pt-6 pb-4 sm:pt-8">
+      <PageHero line1={t("rt.hero1")} line2={t("rt.hero2")} sub={t("rt.sub", { on: active.length, planned: planned.length, ai: llm.length })}
+        info={<TipText lead={t("rt.about.lead")} more={t("rt.about.more")} />}
+        chips={<>
+          <a className={linkCls} href={`${repo}/blob/main/config/routines.json`} target="_blank" rel="noreferrer">routines.json <span aria-hidden="true">↗</span></a>
+          <a className={linkCls} href={`${repo}/actions`} target="_blank" rel="noreferrer">{t("rt.actions")} <span aria-hidden="true">↗</span></a>
+        </>} />
+
+      <div className="mt-7 grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:items-start">
+        <Panel id="rt-timeline" hero title={t("rt.tl.title")} sub={t("rt.tl.sub")} info={t("rt.tl.info")}>
+          <DayTrack stops={stops} last={last} picked={stop?.mins} onPick={(s) => { setStop(s); document.getElementById(`rt-at-${s.mins}`)?.scrollIntoView({ block: "nearest", behavior: "smooth" }); }} nameOf={nameOf} />
+          <Timeline routines={all} last={last} picked={stop?.mins} nameOf={nameOf} />
+        </Panel>
+
+        <div className="grid gap-4">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3">
+            <StatTile label={t("rt.s.on")} value={active.length} unit={`/${all.length}`} bars={[active.length, planned.length]} barsHi={0} />
+            <StatTile label={t("rt.s.next")} value={next ? relTime(next.at) : "–"} sub={next ? next.r.name : t("rt.s.nothing")} tone="flat" />
+            <StatTile label={t("rt.s.last")} tone="flat"
+              value={lastRun ? <span className={lastRun.status === "success" ? "text-up" : lastRun.status === "partial" ? "text-wait" : "text-down"}>{word("rt.out", lastRun.status)}</span> : t("rt.s.noneYet")}
+              sub={lastRun ? `${dayMonth(lastRun.finished_at)} · ${lastRun.workflow}` : null} />
+            <StatTile label={t("rt.s.ai")} value={<span className="text-ai">{llm.length}</span>} sub={t("rt.s.aiSub")} tone="flat" />
           </div>
-        }
-      />
-      <Strip
-        cells={[
-          { value: <span>{active.length}/{all.length}</span>, label: t("rt.s.on"), desc: t("rt.s.onDesc") },
-          { value: next ? relTime(next.at) : "—", label: next ? t("rt.s.next", { name: next.r.name }) : t("rt.s.nothing"), tone: "flat", desc: next ? utcStamp(next.at) : "" },
-          { value: last ? word(t, "rt.out", last.status) : t("rt.s.noneYet"), label: t("rt.s.lastRun"), tone: !last ? "flat" : last.status === "success" ? "accent" : last.status === "partial" ? "people" : "down", desc: last ? `${fmtDate(last.finished_at.slice(0, 10))} · ${last.trigger}` : t("rt.s.firstRun") },
-          { value: llm.length, label: t("rt.s.ai"), tone: "ai", desc: llmDesc(llm) },
-        ]}
-      />
-
-      <Reveal className="no-scrollbar mt-10 flex gap-2 overflow-x-auto pb-1">
-        {CADENCE.map((id) => {
-          const n = id === "all" ? all.length : all.filter((r) => r.cadence === id).length;
-          return (
-            <button key={id} type="button" onClick={() => setCad(id)} aria-pressed={cad === id}
-              className={`flex shrink-0 items-center gap-2 rounded-full border px-5 py-2.5 text-[14px] font-medium transition ${cad === id ? "border-transparent bg-ink text-bg" : "border-line-2 text-ink-2 hover:text-ink"}`}>
-              {t(`rt.cad.${id}`)} <span className={`num font-mono text-[12px] ${cad === id ? "text-bg/60" : "text-ink-3"}`}>{n}</span>
-            </button>
-          );
-        })}
-      </Reveal>
-
-      <div key={cad} className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-        {list.map((r, i) => {
-          const lr = lastByRoutine[r.id];
-          const at = r.status === "active" ? nextRun(r.cron) : null;
-          return (
-            <article key={r.id} className={`card card-hover flex animate-rise flex-col p-7 ${r.status !== "active" ? "border-dashed" : ""} ${r.human_gate ? "border-people/50" : ""}`} style={{ animationDelay: `${i * 50}ms` }}>
-              <div className="flex items-center justify-between gap-3">
-                <span className="meta num">{when(r)}</span>
-                <Chip kind={r.status === "active" ? "active" : "planned"} icon={false}>{word(t, "rt.status", r.status)}</Chip>
-              </div>
-              <h3 className="mt-5 text-[21px] font-semibold tracking-[-0.02em]">{r.name}</h3>
-              {NOTE.has(r.id) && r.status === "active"
-                ? <p className="mt-3 border-s-2 border-ai/50 ps-3 text-[14.5px] leading-relaxed text-ink">{t(`rt.note.${r.id}`)}</p>
-                : <p className="mt-3 text-[14.5px] leading-relaxed text-ink-2">{r.why}</p>}
-              <dl className="mt-5 grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1.5 border-t border-line pt-4 text-[13px]">
-                <dt className="meta">{t("rt.dl.step")}</dt><dd>{r.milestone}</dd>
-                <dt className="meta">{t("rt.dl.reads")}</dt>{r.inputs.length ? <dd className="truncate text-start font-mono text-[12px]">{r.inputs.join(", ")}</dd> : <dd>{t("rt.dl.ownOutputs")}</dd>}
-                <dt className="meta">{t("rt.dl.saves")}</dt><dd className="truncate text-start font-mono text-[12px]" title={r.outputs.join(", ")}>{r.outputs.join(", ")}</dd>
-                {at && (<><dt className="meta">{t("rt.dl.next")}</dt><dd>{relTime(at)}</dd></>)}
-                <dt className="meta">{t("rt.dl.last")}</dt>
-                <dd>{lr ? <a href={lr.url} target="_blank" rel="noreferrer" className={`hover:underline ${lr.outcome === "success" ? "text-accent" : "text-down"}`}>{word(t, "rt.out", lr.outcome)} · <span>{lr.at.slice(0, 10)}</span></a> : <span className="text-ink-3">{t("rt.dl.never")}</span>}</dd>
-              </dl>
-              <div className="mt-auto flex flex-wrap items-center gap-2 pt-5 [margin-top:max(1.25rem,auto)]">
-                {RUNNER[r.runner] && <span className={`pill py-1 text-[11px] ${RUNNER[r.runner].cls}`} title={t(`rt.runner.${r.runner}.title`)}>{t(`rt.runner.${r.runner}`)}</span>}
-                {r.uses_llm
-                  ? <span className="pill border-ai/40 bg-ai/10 py-1 text-[11px] text-ai">{r.runner === "claude_routine" ? t("rt.pill.sub") : t("rt.pill.cap", { usd: fmtUsd(r.max_cost_usd) })}</span>
-                  : <span className="pill py-1 text-[11px] text-ink-2">{t("rt.pill.code")}</span>}
-                {r.human_gate && <span className="pill border-dashed border-people/60 py-1 text-[11px] text-people">{t("rt.pill.gate")}</span>}
-              </div>
-            </article>
-          );
-        })}
+          <Panel title={t("rt.other")} titleSize="xs" flush>
+            <ul className="divide-y divide-line">
+              {others.map((r) => (
+                <li key={r.id} className="flex min-h-[48px] items-center gap-3 px-4 py-2 sm:px-5">
+                  <span className="font-num w-[86px] shrink-0 text-[12px] font-semibold text-ink-2">{when(r)}</span>
+                  <span className={`min-w-0 flex-1 truncate text-[13.5px] ${r.status === "active" ? "text-ink" : "text-ink-3"}`}>{r.name}</span>
+                  {r.uses_llm && <Chip tone="ai" className="min-h-[22px] px-1.5 text-[10px]">AI</Chip>}
+                  <Chip tone={STATUS_TONE[r.status] ?? "neutral"} className="min-h-[22px] px-1.5 text-[10px]">{word("rt.status", r.status)}</Chip>
+                </li>
+              ))}
+            </ul>
+          </Panel>
+        </div>
       </div>
 
-      <section className="pt-28">
-        <SectionHead
-          eyebrow={t("rt.hist.eyebrow")}
-          title={<>{t("rt.hist.title.a")} <Accent>{t("rt.hist.title.b")}</Accent></>}
-          lede={t("rt.hist.lede")}
-          size="md"
-          right={<span className="meta">{t("rt.hist.logged", { n: runs.length })}</span>}
-        />
-        {!runs.length ? (
-          <Empty title={t("rt.hist.empty.title")}>{t("rt.hist.empty.body")}</Empty>
-        ) : (
-          <Reveal className="card overflow-hidden">
-            <div className="no-scrollbar overflow-x-auto">
-              <table className="w-full min-w-[760px] text-[13.5px]">
-                <thead>
-                  <tr className="meta border-b border-line text-start">
-                    {["finished", "job", "by", "result", "steps", "log"].map((h) => <th key={h} className="px-5 py-4 text-start font-medium">{t(`rt.th.${h}`)}</th>)}
-                  </tr>
-                </thead>
-                <tbody>
-                  {runs.slice(0, 60).map((r) => (
-                    <tr key={r.run_id} className="border-b border-line last:border-0 hover:bg-ink/[0.03]">
-                      <td className="px-5 py-3.5 font-mono">{r.finished_at.replace("T", " ").replace("Z", "")}</td>
-                      <td className="px-5 py-3.5">{r.workflow}</td>
-                      <td className="px-5 py-3.5 text-ink-2">{r.trigger}</td>
-                      <td className="px-5 py-3.5"><Chip kind={r.status === "success" ? "ok" : r.status === "partial" ? "planned" : r.status === "skipped" ? "retired" : "failed"} icon={false}>{word(t, "rt.out", r.status)}</Chip></td>
-                      <td className="px-5 py-3.5">
-                        <div className="flex flex-wrap gap-1.5">
-                          {r.steps.filter((s) => s.outcome !== "skipped").map((s) => (
-                            <span key={s.routine} className={`rounded-full border px-2 py-0.5 font-mono text-[11px] ${s.outcome === "success" ? "border-accent/30 text-accent" : "border-down/40 text-down"}`}>{s.routine}</span>
-                          ))}
-                        </div>
-                      </td>
-                      <td className="px-5 py-3.5"><a href={r.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-ink-2 hover:text-accent"><span>#{r.run_id.slice(-6)}</span> <ArrowRight className="size-3.5 -rotate-45" /></a></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Reveal>
-        )}
-      </section>
+      <Panel id="rt-all" className="mt-4 md:mt-8" title={t("rt.all.title")} sub={t("rt.all.sub")}
+        badge={<span className="font-num text-[12px] font-bold text-ink-2">{list.length}</span>}>
+        <FilterChips label={t("rt.th.when")} value={cad} onChange={(v) => { setCad(v); setOpen(null); }}
+          options={CADENCE.map((id) => ({ value: id, label: t(`rt.cad.${id}`), count: id === "all" ? all.length : all.filter((r) => r.cadence === id).length }))} />
+        <div className="mt-3">
+          <JobsTable rows={list} last={last} open={open} onOpen={(r) => setOpen((o) => (o === r.id ? null : r.id))} />
+        </div>
+        {open && <JobDetail r={all.find((r) => r.id === open)} last={last[open]} />}
+      </Panel>
+
+      <Panel id="rt-history" className="mt-4 md:mt-8" title={t("rt.hist.title")} sub={t("rt.hist.sub")} info={t("rt.hist.info")}
+        badge={<span className="font-num text-[12px] font-bold text-ink-2">{t("rt.hist.logged", { n: runs.length })}</span>}>
+        {runs.length ? <History runs={runs} nameOf={nameOf} /> : <EmptyState compact title={t("rt.hist.empty.title")}>{t("rt.hist.empty.body")}</EmptyState>}
+      </Panel>
     </Container>
+  );
+}
+
+/* --------------------------------------------------------------- timeline */
+
+const DOT = { done: "bg-up shadow-[0_0_10px_var(--up-glow)]", fail: "bg-down shadow-[0_0_10px_var(--down-glow)]", idle: "bg-ink-3" };
+const ROWS_SHOWN = 3;
+
+/** One stop's state from its jobs' last outcomes (as the track above). */
+function stateOf(ids, last) {
+  const outs = ids.map((id) => last[id]?.outcome).filter(Boolean);
+  if (outs.some((o) => OUT_STEP[o] === "fail")) return "fail";
+  return outs.some((o) => o === "success" || o === "partial") ? "done" : "idle";
+}
+
+/** The day as a vertical list: a mono time, a status dot on the line, the jobs; an orange "now" row in between. */
+function Timeline({ routines, last, picked, nameOf }) {
+  const now = useUtcMinute();
+  const rows = useMemo(() => {
+    const on = dayTimeline(routines);
+    const plan = dayTimeline(routines.filter((r) => r.status === "planned").map((r) => ({ ...r, status: "active" }))).map((s) => ({ ...s, planned: true }));
+    return [...on, ...plan].sort((a, b) => a.mins - b.mins || Number(a.planned ?? 0) - Number(b.planned ?? 0));
+  }, [routines]);
+  const nowAt = rows.findIndex((s) => s.mins > now);
+  const latest = [...rows].reverse().find((s) => !s.planned && s.mins <= now && stateOf(s.ids, last) === "done");
+  const items = [];
+  rows.forEach((s, i) => {
+    if (i === nowAt) items.push(<NowRow key="now" now={now} />);
+    items.push(<Stop key={`${s.mins}-${s.planned ? "p" : "a"}`} s={s} last={last} past={s.mins <= now} live={s === latest} picked={picked === s.mins} nameOf={nameOf} />);
+  });
+  if (nowAt === -1) items.push(<NowRow key="now" now={now} />);
+  return (
+    <ol className="relative mt-3 border-t border-line pt-2">
+      <span aria-hidden="true" className="absolute top-4 bottom-4 left-[68px] w-px bg-line-2" />
+      {items}
+    </ol>
+  );
+}
+
+const ROW = "relative grid grid-cols-[48px_20px_minmax(0,1fr)] gap-x-2.5";
+
+function NowRow({ now }) {
+  return (
+    <li className={`${ROW} items-center py-1.5`} aria-label={`${t("rt.tl.now")} ${clock(now)} UTC`}>
+      <span className="font-num text-[13px] font-bold text-desk">{clock(now)}</span>
+      <span aria-hidden="true" className="relative grid place-items-center">
+        <span className="absolute size-3 animate-ping rounded-full bg-desk/50 motion-reduce:hidden" />
+        <span className="relative size-2.5 rounded-full bg-desk shadow-[0_0_10px_var(--desk)]" />
+      </span>
+      <span aria-hidden="true" className="flex items-center gap-2">
+        <span className="kicker text-[11px]">{t("rt.tl.now")}</span>
+        <span className="h-px flex-1 bg-gradient-to-r from-desk/80 to-transparent" />
+      </span>
+    </li>
+  );
+}
+
+function Stop({ s, last, past, live, picked, nameOf }) {
+  const [more, setMore] = useState(false);
+  const st = s.planned ? "planned" : stateOf(s.ids, last);
+  const shown = more ? s.ids : s.ids.slice(0, ROWS_SHOWN);
+  const local = localOf(s.mins);
+  return (
+    <li id={`rt-at-${s.mins}`} className={`${ROW} items-start rounded-[8px] py-2 transition-colors ${picked ? "bg-desk/8" : ""}`}>
+      <span className="pt-px">
+        <span className={`font-num block text-[13.5px] leading-tight font-bold ${s.planned ? "text-ink-3" : past ? "text-ink-2" : "text-ink"}`}>{clock(s.mins)}</span>
+        {local && <span className="font-num block text-[10px] leading-tight text-ink-3" title={t("rt.utcLocal", { times: clock(s.mins), local })}>{local}</span>}
+      </span>
+      <span aria-hidden="true" className="relative grid h-[19px] place-items-center">
+        {live && <span className="absolute size-3 animate-ping rounded-full bg-up/60 motion-reduce:hidden" />}
+        <span className={`relative block size-3 rounded-full ${st === "planned" ? "border-[1.5px] border-dashed border-ink-3 bg-surface" : DOT[st]} ${s.ai ? "ring-2 ring-ai ring-offset-2 ring-offset-surface" : ""}`} />
+      </span>
+      <div className="min-w-0">
+        <ul className="grid gap-0.5">
+          {shown.map((id) => {
+            const lr = last[id];
+            return (
+              <li key={id} className="flex min-w-0 items-baseline gap-2">
+                <span className={`min-w-0 truncate text-[13.5px] ${s.planned ? "text-ink-3" : "text-ink"}`}>{nameOf(id)}</span>
+                <span className={`font-num shrink-0 text-[10.5px] ${lr ? (OUT_STEP[lr.outcome] === "fail" ? "text-down" : "text-ink-3") : "text-ink-3"}`}>
+                  {s.planned ? t("rt.tl.planned") : lr ? t("rt.tl.ran", { date: dayMonth(lr.at) }) : "–"}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+        {s.ids.length > ROWS_SHOWN && (
+          <button type="button" onClick={() => setMore((v) => !v)} aria-expanded={more}
+            className="font-num -my-1 min-h-[32px] text-[11.5px] font-semibold text-ink-2 hover:text-desk">
+            {more ? t("lx.less") : t("rt.tl.more", { n: s.ids.length - ROWS_SHOWN })}
+          </button>
+        )}
+      </div>
+    </li>
+  );
+}
+
+/* ------------------------------------------------------------------ tables */
+
+function JobsTable({ rows, last, open, onOpen }) {
+  const cols = [
+    { key: "name", label: t("rt.th.job"), sortable: true, firstDir: "asc", sortValue: (r) => r.name, cell: (r) => (
+      <span className="block min-w-0 py-1.5">
+        <span className={`block max-w-[140px] truncate text-[13.5px] font-semibold sm:max-w-[220px] ${open === r.id ? "text-desk" : "text-ink"}`}>{r.name}</span>
+        <span className="font-num block text-[10.5px] text-ink-3">{r.id}</span>
+      </span>
+    ) },
+    { key: "when", label: t("rt.th.when"), align: "start", num: true, className: "text-[12px] text-ink-2", cell: (r) => when(r) },
+    { key: "status", label: t("rt.th.status"), sortable: true, align: "start", sortValue: (r) => r.status, cell: (r) => (
+      <span className="inline-flex items-center gap-1.5 text-[12.5px]"><StepMark state={STATUS_STEP[r.status] ?? "idle"} />{word("rt.status", r.status)}</span>
+    ) },
+    { key: "runner", label: t("rt.th.by"), align: "start", cell: (r) => (
+      <span title={t.has(`rt.runner.${r.runner}.title`) ? t(`rt.runner.${r.runner}.title`) : undefined} className="text-[12.5px] text-ink-2">{word("rt.runner", r.runner)}</span>
+    ) },
+    { key: "cost", label: t("rt.th.cost"), align: "start", cell: (r) => (
+      r.uses_llm ? <Chip tone="ai" className="min-h-[22px] px-1.5 text-[10px]">{r.runner === "claude_routine" ? t("rt.pill.sub") : t("rt.pill.cap", { usd: fmtUsd(r.max_cost_usd) })}</Chip>
+        : <span className="font-num text-[11.5px] text-ink-3">{t("rt.pill.code")}</span>
+    ) },
+    { key: "last", label: t("rt.th.last"), sortable: true, sortValue: (r) => last[r.id]?.at ?? null, cell: (r) => {
+      const lr = last[r.id];
+      return lr ? <span className="font-num inline-flex items-center gap-1.5 text-[12px]"><StepMark state={OUT_STEP[lr.outcome] ?? "idle"} label={word("rt.out", lr.outcome)} />{dayMonth(lr.at)}</span> : <span className="text-ink-3">–</span>;
+    } },
+    { key: "next", label: t("rt.th.next"), sortable: true, sortValue: (r) => (r.status === "active" ? nextRun(r.cron)?.getTime() ?? null : null), firstDir: "asc", num: true,
+      className: "text-[12px] text-ink-2", cell: (r) => (r.status === "active" && r.cron ? relTime(nextRun(r.cron)) : "–") },
+  ];
+  return (
+    <DataTable columns={cols} rows={rows} rowKey={(r) => r.id} minWidth={780} onRowClick={onOpen} rowLabel={(r) => r.name}
+      rowTone={(r) => (r.id === open ? "brand" : null)} scrollClassName="relative md:max-h-[560px] md:overflow-y-auto" caption={t("rt.all.title")} />
+  );
+}
+
+function JobDetail({ r, last }) {
+  if (!r) return null;
+  return (
+    <div className="tile mt-3 grid animate-pop gap-3 p-4 motion-reduce:animate-none md:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]" aria-live="polite">
+      <div className="min-w-0">
+        <p className="kicker">{when(r)}</p>
+        <p className="headline mt-1 text-[22px] text-ink">{r.name}</p>
+        <p className="mt-1.5 text-[14px] leading-snug text-ink-2">{t.has(`rt.note.${r.id}`) && r.status === "active" ? t(`rt.note.${r.id}`) : r.why}</p>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          <Chip tone={STATUS_TONE[r.status] ?? "neutral"}>{word("rt.status", r.status)}</Chip>
+          {r.uses_llm ? <Chip tone="ai">{r.runner === "claude_routine" ? t("rt.pill.sub") : t("rt.pill.cap", { usd: fmtUsd(r.max_cost_usd) })}</Chip> : <Chip tone="neutral">{t("rt.pill.code")}</Chip>}
+          {r.human_gate && <Chip tone="people">{t("rt.pill.gate")}</Chip>}
+          {last && <a href={last.url} target="_blank" rel="noreferrer" className="chip border-line-2 text-ink-2 hover:text-ink"><StepMark state={OUT_STEP[last.outcome] ?? "idle"} />{word("rt.out", last.outcome)} · {dayMonth(last.at)} ↗</a>}
+        </div>
+      </div>
+      <dl className="grid grid-cols-[auto_minmax(0,1fr)] content-start gap-x-4 gap-y-1.5 text-[12.5px]">
+        <dt className="micro pt-0.5">{t("rt.dl.step")}</dt><dd className="font-num text-ink">{r.milestone}</dd>
+        <dt className="micro pt-0.5">{t("rt.dl.reads")}</dt><dd className="font-num break-words text-ink-2">{r.inputs.length ? r.inputs.join(", ") : t("rt.dl.ownOutputs")}</dd>
+        <dt className="micro pt-0.5">{t("rt.dl.saves")}</dt><dd className="font-num break-words text-ink-2">{r.outputs.join(", ")}</dd>
+      </dl>
+    </div>
+  );
+}
+
+function History({ runs, nameOf }) {
+  const cols = [
+    { key: "finished_at", label: t("rt.th.finished"), num: true, cell: (r) => (
+      <span className="font-num text-[12.5px] text-ink">{dayMonth(r.finished_at)} <span className="text-ink-3">{r.finished_at.slice(11, 16)}</span></span>
+    ) },
+    { key: "workflow", label: t("rt.th.workflow"), align: "start", cell: (r) => <span className="font-num text-[12.5px] font-semibold text-ink">{r.workflow}</span> },
+    { key: "trigger", label: t("rt.th.trigger"), align: "start", className: "text-[12.5px] text-ink-2", cell: (r) => word("rt.trig", r.trigger) },
+    { key: "status", label: t("rt.th.result"), align: "start", cell: (r) => (
+      <Chip tone={r.status === "success" ? "up" : r.status === "partial" ? "wait" : r.status === "skipped" ? "ghost" : "down"} className="min-h-[22px] px-1.5 text-[10px]">
+        <StepMark state={OUT_STEP[r.status] ?? "idle"} />{word("rt.out", r.status)}
+      </Chip>
+    ) },
+    { key: "steps", label: t("rt.th.steps"), align: "start", cell: (r) => (
+      <span className="flex flex-wrap gap-1 py-1.5">
+        {r.steps.filter((s) => s.outcome !== "skipped").map((s) => (
+          <span key={s.routine} title={nameOf(s.routine)} className={`font-num inline-flex items-center gap-1 rounded-[6px] border px-1.5 py-0.5 text-[10.5px] ${OUT_STEP[s.outcome] === "fail" ? "border-down/40 text-down" : "border-line-2 text-ink-2"}`}>
+            <StepMark state={OUT_STEP[s.outcome] ?? "idle"} className="size-2.5" />{s.routine}
+          </span>
+        ))}
+      </span>
+    ) },
+    { key: "url", label: t("rt.th.log"), cell: (r) => (
+      <a href={r.url} target="_blank" rel="noreferrer" className="font-num inline-flex min-h-[44px] items-center gap-1 text-[12px] text-ink-2 hover:text-desk">#{r.run_id.slice(-6)} <span aria-hidden="true">↗</span></a>
+    ) },
+  ];
+  return (
+    <div className="-mt-4 -mb-4 sm:-mt-5 sm:-mb-5">
+      <DataTable columns={cols} rows={runs.slice(0, 60)} rowKey={(r) => r.run_id} minWidth={760} caption={t("rt.hist.title")}
+        rowTone={(r) => (OUT_STEP[r.status] === "fail" ? "down" : null)} scrollClassName="relative md:max-h-[560px] md:overflow-y-auto" />
+    </div>
   );
 }

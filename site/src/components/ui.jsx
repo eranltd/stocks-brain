@@ -474,7 +474,7 @@ export function DataTable({ columns, rows, rowKey = (r, i) => i, sort, onSort, d
   const last = columns.length - 1;
   const edge = (i) => `${i === 0 ? "sticky left-0 ps-4 sm:ps-5" : ""} ${i === last ? "pe-4 sm:pe-5" : ""}`;
   return (
-    <div className={`thin-scroll overflow-x-auto ${bleed ? "-mx-4 sm:-mx-5" : ""} ${scrollClassName} ${className}`}>
+    <div className={`thin-scroll relative overflow-x-auto ${bleed ? "-mx-4 sm:-mx-5" : ""} ${scrollClassName} ${className}`}>
       <table className="w-full border-separate border-spacing-0 text-[13px]" style={{ minWidth }}>
         {caption && <caption className="sr-only">{caption}</caption>}
         <thead>

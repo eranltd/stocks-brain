@@ -12,9 +12,9 @@ const isNum = (v) => typeof v === "number" && Number.isFinite(v);
 /* ------------------------------------------------------------------ the clock */
 
 /** Playback speeds. */
-export const SPEEDS = [1, 2, 4, 8];
-/** Milliseconds per trading day at 1×: the whole year (252 days) in about 100 seconds, slow enough to follow. */
-export const DAY_MS = 400;
+export const SPEEDS = [0.5, 1, 2, 4];
+/** Milliseconds per trading day at 1×: the whole year (252 days) in under 3 minutes, slow enough to follow each day. */
+export const DAY_MS = 650;
 /** The longest step one frame may take: after a stalled frame or a background tab the replay never leaps ahead. */
 export const MAX_FRAME_MS = 100;
 /** The windows a reader can pick, in trading days (moves): about three months, six months and a year. */

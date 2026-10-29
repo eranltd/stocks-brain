@@ -11,6 +11,7 @@ import { MarketRace } from "../components/race.jsx";
 import { WeeklyGame } from "../components/weekly.jsx";
 import { Desk } from "../components/desk.jsx";
 import Arena from "./Arena.jsx";
+import { Showcase } from "../components/showcase.jsx";
 import dict from "../text/home.js";
 import { strings } from "../lib/text.js";
 import { rich } from "../lib/rich.jsx";
@@ -54,7 +55,12 @@ export default function Today(props) {
         <Segmented tall label={t("today.howMuch")} value={view} onChange={pickView}
           options={[{ value: "arena", label: t("today.arena") }, { value: "desk", label: t("today.desk") }, { value: "details", label: t("today.details") }]} />
       </div>
-      {view === "arena" ? <Arena data={props.data} go={props.go} embedded />
+      {view === "arena" ? (
+        <>
+          <Arena data={props.data} go={props.go} embedded />
+          <Showcase data={props.data} go={props.go} openTo={(to) => openAt(props.go, to)} onDesk={() => pickView("desk")} />
+        </>
+      )
         : view === "desk" ? <Desk {...props} openTo={(to) => openAt(props.go, to)} /> : <LiveFeed {...props} />}
     </>
   );

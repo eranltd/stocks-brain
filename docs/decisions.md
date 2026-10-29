@@ -1,7 +1,7 @@
 ---
-version: 0.28.0
+version: 0.29.0
 updated_at: 2026-10-29
-change_note: Home opens on the Arena, which plays by itself and loops; every replay runs slower and softer; the paper basket starts at $100,000.
+change_note: A demo trader agent plays along with the Arena; its paper trades pop up on every page and its plan shows what it wants to buy and sell.
 ---
 # Decision log
 
@@ -19,12 +19,29 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   Past roughly 35 names it would hit lint's 512 KB cap and the daily run would fail closed; before that, move the
   per-point dates into one shared array.
 
+## 2026-10-29 (evening)
+- **A demo trader agent, with trade pop-ups and its plan on screen.** The owner wants to show the site as a proof of
+  concept for a live trading agent: "mock progress of buying and selling on toasts on top", "how our agent works, what
+  it wants to buy and sell on a given day", "it should feel live". `lib/agent.js` replays one plain rule on the real
+  past year: every 5 trading days it holds the 4 names that rose most over the last 20 days (only names that rose),
+  sells what drops out, splits $100,000 of paper money evenly. It is a demo, not one of the tested rules, and every
+  place says paper, demo and past data. While the Arena plays, the trades of each replayed day pop up under the header
+  (`components/agentfeed.jsx`); on other pages a background loop walks the same year of trades, one every few seconds.
+  The Arena shows the agent's plan (ranking with the buy zone, what it holds, wants to buy and to sell, a countdown to
+  its next move) and its paper money against the even split. The reader can switch the pop-ups off; reduced motion
+  turns them off. Home's Arena view is framed as "The trader agent" with an "Everything inside" tile for every part
+  of the app. The Arena now runs 650 ms a day ("still a little fast").
+- **A corner dock with play or pause, speed and the risk level.** Fixed top right while the Arena shows: play/pause,
+  0.5× to 4× (the 8× speed gave way to 0.5×), and Easy | Medium | Hard. The level sets the demo rule: Easy holds 6
+  names, keeps 40% in cash and moves every 10 days (looking back 40); Medium is the plain rule; Hard holds 2 names,
+  all in, moving every 3 days (looking back 10). The device remembers the level; the pop-ups and the plan follow it.
+
 ## 2026-10-29 (later)
 - **Home opens on the Arena, playing by itself on a loop; every replay is slower and softer.** The owner: "the arena
   should be the default view", "the animation should be auto looped", and "too fast and not smooth for humans". Home's
   switch is now ARENA | DESK | DETAILS with ARENA first; it shows a short headline so the race starts on the first
   screen. The Arena starts on its own, holds on the result for 5 seconds at the end, then starts again; pause or the
-  slider stop the loop until Play. Pace at 1×: the Arena 400 ms a day (was 140; a year in about 100 seconds), the
+  slider stop the loop until Play. Pace at 1×: the Arena 400 ms a day (was 140; since 650), the
   ticker wall 1 s a day (was 0.4), the floor 1.8 s a day (was 0.7) with a 3.5 s hold. Colours fade over about 1 s,
   numbers roll over 0.65 s, flashes are softer. Reduced motion still shows still frames.
 - **The paper basket starts at $100,000** (was $10,000), at the owner's ask. Still pretend money from past data, labelled

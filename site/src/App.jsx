@@ -26,6 +26,7 @@ import HowItWorks from "./tabs/HowItWorks.jsx";
 import Admin from "./tabs/Admin.jsx";
 import Stock from "./tabs/Stock.jsx";
 import Arena from "./tabs/Arena.jsx";
+import AgentFeed from "./components/agentfeed.jsx";
 import { strings } from "./lib/text.js";
 import { rich } from "./lib/rich.jsx";
 
@@ -199,6 +200,8 @@ export default function App() {
       <Header route={tab} onNav={go} sample={data?.sample} livePrices={data?.livePrices} theme={theme} onTheme={toggleTheme} market={market} sampleRoutes={sampleRoutes} />
       {/* The main list's day moves (percent only), under the header on every page. */}
       {data && <TickerTape data={base} onOpen={go} />}
+      {/* The demo trader agent's trades pop up under the header on every page (paper, past data). */}
+      {data && <AgentFeed data={base} go={go} />}
       <main id="main" className="relative min-h-[70vh] [view-transition-name:main]">
         {error && (
           <Container className="py-24">

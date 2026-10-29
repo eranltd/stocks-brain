@@ -1,7 +1,7 @@
 ---
-version: 0.27.0
+version: 0.28.0
 updated_at: 2026-10-29
-change_note: Every page restyled as a trading terminal; new Arena page, the floor (ARENA view) as the stocks list default, the big board chart, and pair stocks.
+change_note: Home opens on the Arena, which plays by itself and loops; every replay runs slower and softer; the paper basket starts at $100,000.
 ---
 # Decision log
 
@@ -18,6 +18,17 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Market file size**: `derived.json` is written one line per symbol (compact) and is about 330 KB with 21 names.
   Past roughly 35 names it would hit lint's 512 KB cap and the daily run would fail closed; before that, move the
   per-point dates into one shared array.
+
+## 2026-10-29 (later)
+- **Home opens on the Arena, playing by itself on a loop; every replay is slower and softer.** The owner: "the arena
+  should be the default view", "the animation should be auto looped", and "too fast and not smooth for humans". Home's
+  switch is now ARENA | DESK | DETAILS with ARENA first; it shows a short headline so the race starts on the first
+  screen. The Arena starts on its own, holds on the result for 5 seconds at the end, then starts again; pause or the
+  slider stop the loop until Play. Pace at 1×: the Arena 400 ms a day (was 140; a year in about 100 seconds), the
+  ticker wall 1 s a day (was 0.4), the floor 1.8 s a day (was 0.7) with a 3.5 s hold. Colours fade over about 1 s,
+  numbers roll over 0.65 s, flashes are softer. Reduced motion still shows still frames.
+- **The paper basket starts at $100,000** (was $10,000), at the owner's ask. Still pretend money from past data, labelled
+  so on screen.
 
 ## 2026-10-29
 - **Every page restyled as a trading terminal, with motion.** The owner sent screen recordings of animated trading

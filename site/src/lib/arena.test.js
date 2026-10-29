@@ -167,10 +167,10 @@ test("wildest day and the race summary", () => {
 test("the paper basket: an even split left alone, from the same percents", () => {
   const r = race([["AAA", [0, 10, 20]], ["BBB", [0, -10, 0]]]);
   const b = basketSeries(r);
-  assert.equal(BASKET, 10000);
-  near(b[0], 10000);
-  near(b[1], 10000);
-  near(b[2], 11000);
+  assert.equal(BASKET, 100000);
+  near(b[0], 100000);
+  near(b[1], 100000);
+  near(b[2], 110000);
   near(basketSeries(r, 100)[2], 110);
   assert.deepEqual(basketSeries(null), []);
 });

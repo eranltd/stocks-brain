@@ -118,7 +118,7 @@ function paintSquare(el, k, calm) {
   el.root.dataset.tone = h.tone;
   el.tint.style.opacity = String(ALPHA[h.level] ?? 0);
   el.tick?.set(isNum(m) ? Math.max(-99.9, Math.min(99.9, m)) : 0, { instant: calm });
-  if (!calm && (h.tone === "up" || h.tone === "down")) el.flash.animate?.([{ opacity: h.level >= 3 ? 0.7 : 0.4 }, { opacity: 0 }], { duration: 420, easing: "ease-out" });
+  if (!calm && (h.tone === "up" || h.tone === "down")) el.flash.animate?.([{ opacity: 0 }, { opacity: h.level >= 3 ? 0.4 : 0.22, offset: 0.25 }, { opacity: 0 }], { duration: 1400, easing: "ease-in-out" });
 }
 
 function PairCard({ p, go, register, t }) {

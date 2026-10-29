@@ -2,7 +2,7 @@
 // Everything here replays real, published history: the derived file's indexed series (100 = the start of its window),
 // re-based to percent from the first day of the chosen window. Nothing invents a path, fills a day that did not happen
 // or looks ahead of the replay's day. Numbers are percents and percent points; the one dollar figure is the paper
-// basket, a clearly labelled "if you had split $10,000" example computed from the same percents.
+// basket, a clearly labelled "if you had split $100,000" example computed from the same percents.
 
 import { moveBetween } from "./candles.js";
 import { lerp } from "./replay.js";
@@ -13,8 +13,8 @@ const isNum = (v) => typeof v === "number" && Number.isFinite(v);
 
 /** Playback speeds. */
 export const SPEEDS = [1, 2, 4, 8];
-/** Milliseconds per trading day at 1×: the whole year (252 days) in about 35 seconds. */
-export const DAY_MS = 140;
+/** Milliseconds per trading day at 1×: the whole year (252 days) in about 100 seconds, slow enough to follow. */
+export const DAY_MS = 400;
 /** The longest step one frame may take: after a stalled frame or a background tab the replay never leaps ahead. */
 export const MAX_FRAME_MS = 100;
 /** The windows a reader can pick, in trading days (moves): about three months, six months and a year. */
@@ -274,7 +274,7 @@ export function raceSummary(race) {
 /* ------------------------------------------------------------------ the paper basket */
 
 /** The paper basket's starting amount, in dollars. */
-export const BASKET = 10000;
+export const BASKET = 100000;
 
 /**
  * The paper basket: `amount` split evenly across the names on the window's first day and left alone (no trading), day

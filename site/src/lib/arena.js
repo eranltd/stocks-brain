@@ -2,7 +2,7 @@
 // Everything here replays real, published history: the derived file's indexed series (100 = the start of its window),
 // re-based to percent from the first day of the chosen window. Nothing invents a path, fills a day that did not happen
 // or looks ahead of the replay's day. Numbers are percents and percent points; the one dollar figure is the paper
-// basket, a clearly labelled "if you had split $10,000" example computed from the same percents.
+// basket, a clearly labelled "if you had split $100,000" example computed from the same percents.
 
 import { moveBetween } from "./candles.js";
 import { lerp } from "./replay.js";
@@ -274,7 +274,7 @@ export function raceSummary(race) {
 /* ------------------------------------------------------------------ the paper basket */
 
 /** The paper basket's starting amount, in dollars. */
-export const BASKET = 10000;
+export const BASKET = 100000;
 
 /**
  * The paper basket: `amount` split evenly across the names on the window's first day and left alone (no trading), day

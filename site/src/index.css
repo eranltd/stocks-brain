@@ -441,6 +441,8 @@ button.heat-tile:hover { border-color: var(--line-3); }
 .arena-progress > span { position: absolute; inset: 0; background: var(--desk); transform: scaleX(0); transform-origin: left; }
 .arena-dot { position: absolute; top: -4px; left: -4px; width: 8px; height: 8px; border-radius: 99px; background: var(--desk); box-shadow: 0 0 0 3px color-mix(in srgb, var(--desk) 25%, transparent); }
 .arena-basket-num { font-size: clamp(44px, 13vw, 56px); }
+/* money never shows a leading zero ($99,471, not $099,471) */
+.arena-basket-num .tick-cell.tick-lead, .live-strip-tick .tick-cell.tick-lead { width: 0; opacity: 0; }
 
 /* ---- the bar race ---- */
 .race-board { contain: layout paint; }

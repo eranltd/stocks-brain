@@ -201,7 +201,7 @@ export function Desk({ data, go, openTo }) {
 
 /**
  * Home's live strip, a small door to the Arena: the paper basket's year as a big ticking number (it rolls from
- * $10,000 to where the even split ended, once it scrolls into view; clearly paper money from past data), the main list's
+ * $100,000 to where the even split ended, once it scrolls into view; clearly paper money from past data), the main list's
  * last day as a small heat grid, and the turning orbit with the desk's BUY (paper) calls as its core. Real past data
  * only; tap a tile to open that stock, or the strip's button to enter the Arena.
  */
@@ -250,7 +250,7 @@ function LiveStrip({ data, m, go }) {
         <div className="live-strip-grid mt-3">
           <div className="live-strip-num min-w-0">
             <p className="text-[12.5px] leading-snug text-ink-2">{ta("arena.strip.basket", { amount: `$${BASKET.toLocaleString("en-US")}`, date: fmtDate(race.dates[0]) })}</p>
-            <TickNumber value={end} from={BASKET} prefix="$" digits={5} base={BASKET} className="live-strip-tick mt-1.5" label={ta("arena.basket.title")}
+            <TickNumber value={end} from={BASKET} prefix="$" digits={6} base={BASKET} className="live-strip-tick mt-1.5" label={ta("arena.basket.title")}
               format={(v) => `$${Math.round(v).toLocaleString("en-US")}`} />
             <p className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
               <span className={`font-num text-[12.5px] font-bold ${chg >= 0 ? "text-up" : "text-down"}`}>{fmtPct(chg, 1)}</span>

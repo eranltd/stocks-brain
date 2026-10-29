@@ -1,15 +1,16 @@
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { BASKET, basketSeries } from "../../lib/arena.js";
 import { fmtDate, fmtPct } from "../../lib/format.js";
 import { strings } from "../../lib/text.js";
 import dict from "../../text/arena.js";
-import { TickNumber, useSize } from "../motion.jsx";
+import { useSize } from "../motion.jsx";
 import { useDayTick } from "./clock.jsx";
 
 /*
- * The paper basket: "if you had split $10,000 evenly across the list on <the first day>", day by day with the replay,
+ * The paper basket: "if you had split $100,000 evenly across the list on <the first day>", day by day with the replay,
  * from the same real percents as the race (lib/arena.js basketSeries: no trading, nothing invented). The one dollar
- * figure on the page, always labelled as paper money from past data, not a forecast. Below it, its curve so far.
+ * figure on the page, always labelled as paper money from past data, not a forecast. Below it, its curve so far. The
+ * number and the curve glide between days with the clock (every frame), so the count runs smoothly, like a ticker.
  */
 
 const t = strings(dict);
@@ -32,21 +33,34 @@ export function Basket({ race, clock, benchName, className = "" }) {
     return { x, y, d, base: y(BASKET) };
   }, [series, w]);
 
+  // Every frame: the value between two days, so the count and the curve's head glide instead of jumping a day at a time.
+  useEffect(() => clock.subscribe((p) => {
+    if (!series.length) return false;
+    const i = Math.max(0, Math.min(series.length - 1, Math.floor(p)));
+    const j = Math.min(series.length - 1, i + 1);
+    const v = series[i] + (series[j] - series[i]) * Math.max(0, Math.min(1, p - i));
+    if (num.current) {
+      num.current.textContent = dollars(v);
+      num.current.dataset.tone = v > BASKET + 0.5 ? "up" : v < BASKET - 0.5 ? "down" : "flat";
+    }
+    if (geo) {
+      const x = geo.x(Math.max(0, Math.min(series.length - 1, p)));
+      clip.current?.setAttribute("transform", `scale(${((x + 2) / w).toFixed(5)},1)`);
+      if (head.current) head.current.style.transform = `translate3d(${x.toFixed(1)}px,${geo.y(v).toFixed(1)}px,0)`;
+    }
+    return false;
+  }), [clock.subscribe, series, geo, w]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useDayTick(clock, (k) => {
     const v = series[k];
     if (v == null) return;
-    num.current?.set(v);
     if (chg.current) { chg.current.textContent = fmtPct((v / BASKET - 1) * 100, 1); chg.current.dataset.tone = v >= BASKET ? "up" : "down"; }
     if (bench.current && race.bench) {
       const b = race.bench.values[k] ?? 0;
       bench.current.textContent = fmtPct(b, 1);
       bench.current.dataset.tone = b >= 0 ? "up" : "down";
     }
-    if (geo) {
-      clip.current?.setAttribute("transform", `scale(${((geo.x(k) + 2) / w).toFixed(5)},1)`);
-      if (head.current) head.current.style.transform = `translate3d(${geo.x(k).toFixed(1)}px,${geo.y(v).toFixed(1)}px,0)`;
-    }
-  }, [series, geo, race]);
+  }, [series, race]);
 
   return (
     <section aria-labelledby="arena-basket-h" className={`panel overflow-hidden ${className}`}>
@@ -57,7 +71,8 @@ export function Basket({ race, clock, benchName, className = "" }) {
       <div className="p-4">
         <p className="text-[13px] leading-snug text-ink-2">{t("arena.basket.line", { amount: dollars(BASKET), date: fmtDate(race.dates[0]) })}</p>
         <div className="mt-2">
-          <TickNumber ref={num} value={BASKET} prefix="$" digits={5} base={BASKET} className="arena-basket-num" label={t("arena.basket.title")} format={dollars} />
+          <span className="sr-only">{t("arena.basket.title")}</span>
+          <span ref={num} data-tone="flat" className="tick-num arena-basket-num">{dollars(BASKET)}</span>
         </div>
         <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 font-num text-[12px] uppercase">
           <span className="text-ink-3">{t("arena.basket.change")} <span ref={chg} className="arena-tone font-bold">+0.0%</span></span>

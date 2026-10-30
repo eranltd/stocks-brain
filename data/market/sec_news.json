@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-29",
+  "as_of": "2026-10-30",
   "sample": false,
   "source": "SEC EDGAR filings index (company submissions)",
   "window_days": 120,
@@ -195,6 +195,18 @@
       "name": "AMAZON COM INC",
       "filings": [
         {
+          "date": "2026-10-29",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000038/amzn-20261029.htm"
+        },
+        {
           "date": "2026-09-14",
           "form": "8-K",
           "items": [
@@ -260,6 +272,16 @@
       "name": "Alphabet Inc.",
       "filings": [
         {
+          "date": "2026-10-29",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm"
+        },
+        {
           "date": "2026-10-28",
           "form": "8-K",
           "items": [
@@ -312,6 +334,22 @@
       "cik": 1326801,
       "name": "Meta Platforms, Inc.",
       "filings": [
+        {
+          "date": "2026-10-29",
+          "form": "8-K",
+          "items": [
+            "1.01",
+            "3.03",
+            "5.03"
+          ],
+          "titles": [
+            "Signed a major agreement",
+            "Changed shareholders' rights",
+            "Changed its bylaws or fiscal year"
+          ],
+          "kind": "deal",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526438017/d183592d8k.htm"
+        },
         {
           "date": "2026-10-22",
           "form": "10-Q",
@@ -604,6 +642,18 @@
       "name": "GILEAD SCIENCES, INC.",
       "filings": [
         {
+          "date": "2026-10-29",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/882095/000088209526000037/gild-20261029.htm"
+        },
+        {
           "date": "2026-08-06",
           "form": "10-Q",
           "items": [],
@@ -849,6 +899,28 @@
       "cik": 72903,
       "name": "XCEL ENERGY INC",
       "filings": [
+        {
+          "date": "2026-10-29",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/72903/000007290326000181/xel-20260930.htm"
+        },
+        {
+          "date": "2026-10-29",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/72903/000007290326000178/xel-20261029.htm"
+        },
         {
           "date": "2026-10-09",
           "form": "8-K",
@@ -1310,6 +1382,28 @@
       "name": "LINDE PLC",
       "filings": [
         {
+          "date": "2026-10-29",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1707925/000162828026068079/lin-20260930.htm"
+        },
+        {
+          "date": "2026-10-29",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1707925/000165495426009199/lin_8k.htm"
+        },
+        {
           "date": "2026-07-31",
           "form": "10-Q",
           "items": [],
@@ -1350,6 +1444,18 @@
       "cik": 818686,
       "name": "TEVA PHARMACEUTICAL INDUSTRIES LTD",
       "filings": [
+        {
+          "date": "2026-10-29",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/818686/000119312526438019/teva-20261027.htm"
+        },
         {
           "date": "2026-09-16",
           "form": "8-K",
@@ -1443,6 +1549,16 @@
       "cik": 1003935,
       "name": "NICE Ltd.",
       "filings": [
+        {
+          "date": "2026-10-29",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1003935/000117891326004911/zk2636289.htm"
+        },
         {
           "date": "2026-10-07",
           "form": "6-K",
@@ -1901,16 +2017,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/1835963/000117891326004050/zk2635930.htm"
-        },
-        {
-          "date": "2026-07-01",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1835963/000117891326003387/zk2635631.htm"
         }
       ]
     },
@@ -2210,18 +2316,6 @@
           ],
           "kind": "results",
           "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000121/amd-20260804.htm"
-        },
-        {
-          "date": "2026-07-01",
-          "form": "8-K",
-          "items": [
-            "5.02"
-          ],
-          "titles": [
-            "A leadership change (an executive or board member)"
-          ],
-          "kind": "people",
-          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000115/amd-20260626.htm"
         }
       ]
     },

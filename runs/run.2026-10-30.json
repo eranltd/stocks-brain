@@ -1,0 +1,154 @@
+{
+  "schema_version": 1,
+  "run_id": "run.2026-10-30",
+  "date": "2026-10-30",
+  "generated_at": "2026-10-31T05:25:54Z",
+  "status": "ok",
+  "sample": false,
+  "model": "Claude Code routine",
+  "cost": {
+    "usd": 0.0,
+    "input_tokens": 12018,
+    "output_tokens": 1892,
+    "cap_usd": 2.5
+  },
+  "duration_minutes": 4.0,
+  "pack": {
+    "hash": "6c719836cc0f9357733539a1b943eaa2697b0189fb148266601e423ee588bc0a",
+    "tokens": 12018,
+    "cap_tokens": 14000
+  },
+  "doc_versions": {
+    "strategy": "0.2.0",
+    "methodology": "0.17.1",
+    "guardrails": "0.1.0",
+    "learnings": "0.1.0"
+  },
+  "repair_retries": 0,
+  "summary": "The frozen history test rejected every pre-registered stock rule: each beat only a small share of random baskets from the same list, and holding every name equally beat every rule and the core. Setup checks and past strength have shown no edge here. The four calls stay neutral with low conviction; Amgen and Gilead are still stretched after their run, which the house rules say never to chase. Nothing here is expected to beat the index; real money stays in the whole-market plan.",
+  "eli5": "Amgen and Gilead kept sprinting this week while the whole market slipped a little. The house rule says never chase a runner that is out of breath. Picking runners did no better than luck before, so the brain only watches with pretend money, and the family's real money keeps going into the whole-market basket every week.",
+  "letter": "Dear family,\n\nFirst, real money. The weekly buy of the whole-market fund comes on the first trading day of the new week, as always. Money we may need soon stays safe. The market's trend leans down a little; a slow patch simply means the same weekly amount buys a bit more.\n\nSecond, the pretend game. Every stock rule we wrote down in advance lost to baskets picked at random from the same list, so our stock calls stay neutral. The weekly bet game stands at one week won and one lost, and this week's bet ends the week ahead, so it should be scored as a win when the next bet is placed. Two wins out of three would still be what a coin often does.\n\nThird, a lesson. Two of our names have run far ahead of everything else this month. A month like that feels like proof, but it is one month. Pretend money lets us watch how such sprints end without paying to find out.\n\nFourth, what would change our minds: a rule that beats random picks on history and then keeps a paper record ahead of the whole market for at least half a year. Until then we stay patient.\n\nWith care, the brain",
+  "bets": {
+    "best": [
+      "AMGN",
+      "GILD",
+      "MSFT"
+    ],
+    "worst": [
+      "TMUS",
+      "PCAR",
+      "META"
+    ],
+    "why": "This week's bet was already placed and is repeated unchanged: names above their trend passing the setup checks, against names below their trend whose checklist leans down. No rule like this has beaten luck, so it is a learning bet only."
+  },
+  "picks": [
+    {
+      "id": "2026-10-30:AMGN",
+      "ref_date": "2026-10-30",
+      "pick": {
+        "ticker": "AMGN",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Amgen sits at its high for the year and leads the benchmark on every window by a wide margin, with volume confirming. A sharp run over the last month leaves it stretched above its average and no longer calm, so it fails one setup check and the house rule says never to chase it; the checklist slipped back to mixed. Names passing the setup checks did no better in the base rates, and every rule was rejected. Neutral and low, unchanged.",
+        "risks": [
+          "Stretched above its average after a sharp run, and the house rule forbids chasing that.",
+          "Its swings have widened, so a fast pullback is common after a run like this.",
+          "No earnings date in the pack, so a report could land inside the horizon unseen.",
+          "Moves partly with Gilead, which ran up at the same time, so the two are partly one bet."
+        ],
+        "invalidation": "A close back below its fifty-day average that breaks the trend check, or its lead over the benchmark on the half-year window turning into a lag.",
+        "evidence": [
+          "rules_history.verdicts",
+          "base_rates.by_score",
+          "market.amgn.setup",
+          "market.amgn.risk",
+          "checklist.names.amgn",
+          "fundamentals.names.amgn",
+          "library.s-050:p08",
+          "track_record.names.amgn"
+        ],
+        "eli5": "Amgen keeps sprinting and is very out of breath. The house rule says never chase a runner like that, so the brain just watches with pretend money."
+      }
+    },
+    {
+      "id": "2026-10-30:GILD",
+      "ref_date": "2026-10-30",
+      "pick": {
+        "ticker": "GILD",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Gilead rose again on the latest day to its high for the year and leads the benchmark on every window, with the checklist leaning up. But the run has left it stretched and no longer calm, so it fails one setup check and the house rule says never to chase it. Its filing still shows an operating and net loss over the trailing year despite strong free cash flow. The setup gate showed no edge in the base rates and every rule was rejected. Neutral and low, unchanged.",
+        "risks": [
+          "Stretched above its average after a sharp run, and the house rule forbids chasing that.",
+          "The trailing-year filing shows an operating and net loss that the price strength does not explain.",
+          "No earnings date in the pack, so a report could land inside the horizon unseen.",
+          "Moves partly with Amgen, which ran up at the same time."
+        ],
+        "invalidation": "A close below its fifty-day average that fails the trend check, or a fresh filing with wider losses while free cash flow fades.",
+        "evidence": [
+          "rules_history.verdicts",
+          "base_rates.gate",
+          "market.gild.setup",
+          "checklist.names.gild",
+          "fundamentals.names.gild",
+          "track_record.names.gild"
+        ],
+        "eli5": "Gilead jumped again, and its money book still shows a loss. Jumping on after big leaps is how people get hurt, so the brain watches with pretend money."
+      }
+    },
+    {
+      "id": "2026-10-30:AAPL",
+      "ref_date": "2026-10-30",
+      "pick": {
+        "ticker": "AAPL",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Apple passes all four setup checks without being stretched and leads the benchmark over every window shown, but it fell on the latest day and the checklist slipped back to mixed with a reward-to-risk far too thin, another flip with nothing new in the business. Names passing all four checks did no better in the base rates. Earnings are due in about two days, unconfirmed, so one report may decide the next move. Neutral and low, unchanged.",
+        "risks": [
+          "Earnings in about two days and not yet confirmed by the company.",
+          "The checklist reading keeps flipping, so it carries little weight.",
+          "Well above its long average near its high, so a pullback toward it would be ordinary.",
+          "The market's own trend leans down."
+        ],
+        "invalidation": "A close below its fifty-day average, or its lead over the benchmark on the half-year window turning into a lag.",
+        "evidence": [
+          "rules_history.verdicts",
+          "base_rates.by_score",
+          "market.aapl.setup",
+          "checklist.names.aapl",
+          "outlook.next_earnings.aapl",
+          "fundamentals.names.aapl",
+          "track_record.names.aapl"
+        ],
+        "eli5": "Apple brings home its report card in two days. Nobody knows the grade, so the brain just watches with pretend money."
+      }
+    },
+    {
+      "id": "2026-10-30:MSFT",
+      "ref_date": "2026-10-30",
+      "pick": {
+        "ticker": "MSFT",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Microsoft passes all four setup checks, is not stretched and leads the benchmark over the last month and half year, but it still trails over the full year, fell on the latest day and sits below its twenty-day average. The checklist reads mixed, though its reward-to-risk now meets the house rule. The Pershing Square fund's disclosed book holds it; that fund's record is too thin to count and this call neither follows nor fights it. Neutral and low, unchanged.",
+        "risks": [
+          "Below its twenty-day average after the latest day's fall.",
+          "Deepest drop over the past year among the names the rule holds, with swings above the benchmark's.",
+          "Still behind the benchmark over the full year.",
+          "The market's own trend leans down."
+        ],
+        "invalidation": "A close below its fifty-day average that breaks the trend check, or its lead over the benchmark for the half year turning into a lag.",
+        "evidence": [
+          "rules_history.verdicts",
+          "base_rates.by_score",
+          "market.msft.setup",
+          "market.msft.risk",
+          "checklist.names.msft",
+          "people.fund.pershing-square-capital-management",
+          "track_record.names.msft"
+        ],
+        "eli5": "Microsoft slowed down this week. Guessing what it does next did no better than luck before, so the brain keeps watching with pretend money."
+      }
+    }
+  ]
+}

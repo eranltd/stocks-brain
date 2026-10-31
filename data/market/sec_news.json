@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-30",
+  "as_of": "2026-10-31",
   "sample": false,
   "source": "SEC EDGAR filings index (company submissions)",
   "window_days": 120,
@@ -174,18 +174,6 @@
           ],
           "kind": "deal",
           "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000069/nvda-20260817.htm"
-        },
-        {
-          "date": "2026-07-02",
-          "form": "8-K",
-          "items": [
-            "5.02"
-          ],
-          "titles": [
-            "A leadership change (an executive or board member)"
-          ],
-          "kind": "people",
-          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000060/nvda-20260628.htm"
         }
       ]
     },
@@ -194,6 +182,16 @@
       "cik": 1018724,
       "name": "AMAZON COM INC",
       "filings": [
+        {
+          "date": "2026-10-30",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/amzn-20260930.htm"
+        },
         {
           "date": "2026-10-29",
           "form": "8-K",
@@ -642,6 +640,16 @@
       "name": "GILEAD SCIENCES, INC.",
       "filings": [
         {
+          "date": "2026-10-30",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/882095/000088209526000039/gild-20260930.htm"
+        },
+        {
           "date": "2026-10-29",
           "form": "8-K",
           "items": [
@@ -900,6 +908,18 @@
       "name": "XCEL ENERGY INC",
       "filings": [
         {
+          "date": "2026-10-30",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/72903/000119312526441768/d183277d8k.htm"
+        },
+        {
           "date": "2026-10-29",
           "form": "10-Q",
           "items": [],
@@ -978,18 +998,6 @@
           ],
           "kind": "people",
           "url": "https://www.sec.gov/Archives/edgar/data/72903/000007290326000147/xel-20260729.htm"
-        },
-        {
-          "date": "2026-07-14",
-          "form": "8-K",
-          "items": [
-            "8.01"
-          ],
-          "titles": [
-            "Other company news"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/72903/000007290326000144/xel-20260713.htm"
         }
       ]
     },
@@ -998,6 +1006,18 @@
       "cik": 723254,
       "name": "CINTAS CORP",
       "filings": [
+        {
+          "date": "2026-10-30",
+          "form": "8-K",
+          "items": [
+            "5.07"
+          ],
+          "titles": [
+            "Shareholder vote results"
+          ],
+          "kind": "other",
+          "url": "https://www.sec.gov/Archives/edgar/data/723254/000072325426000050/ctas-20261027.htm"
+        },
         {
           "date": "2026-10-07",
           "form": "10-Q",
@@ -1980,16 +2000,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/1845338/000117891326003514/zk2635696.htm"
-        },
-        {
-          "date": "2026-07-02",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1845338/000117891326003403/zk2635639.htm"
         }
       ]
     },
@@ -2074,16 +2084,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/1109345/000117891326003411/zk2635645.htm"
-        },
-        {
-          "date": "2026-07-02",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1109345/000117891326003393/zk2635640.htm"
         }
       ]
     },
@@ -2501,6 +2501,20 @@
       "name": "ExxonMobil Holdings Corp",
       "filings": [
         {
+          "date": "2026-10-30",
+          "form": "8-K",
+          "items": [
+            "2.02",
+            "7.01"
+          ],
+          "titles": [
+            "Quarterly results",
+            "Shared an update with investors"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/2115436/000211543626000018/xom-20261030.htm"
+        },
+        {
           "date": "2026-10-16",
           "form": "8-K",
           "items": [
@@ -2579,6 +2593,18 @@
       "cik": 93410,
       "name": "CHEVRON CORP",
       "filings": [
+        {
+          "date": "2026-10-30",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/93410/000009341026000196/cvx-20261030.htm"
+        },
         {
           "date": "2026-10-06",
           "form": "8-K",

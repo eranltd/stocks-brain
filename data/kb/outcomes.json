@@ -1,7 +1,24 @@
 {
   "version": "0.1.0",
-  "updated_at": "2026-10-04",
-  "change_note": "Scored 0 pick(s).",
+  "updated_at": "2026-10-31",
+  "change_note": "Scored 1 pick(s).",
   "sample": false,
-  "items": []
+  "items": [
+    {
+      "pick_id": "2026-10-02:AAPL",
+      "run_date": "2026-10-02",
+      "ticker": "AAPL",
+      "stance": "bullish",
+      "conviction": "low",
+      "ref_date": "2026-10-02",
+      "horizon_days": 20,
+      "scored_date": "2026-10-30",
+      "benchmark_symbol": "QQQ",
+      "return_pct": 3.278,
+      "benchmark_return_pct": -7.883,
+      "excess_pct": 11.162,
+      "verdict": "hit",
+      "methodology_version": "0.17.1"
+    }
+  ]
 }

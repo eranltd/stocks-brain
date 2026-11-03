@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-31",
+  "as_of": "2026-11-03",
   "sample": false,
   "source": "SEC XBRL company facts: trailing twelve months, or the latest year for yearly filers",
   "companies": [
@@ -24,7 +24,7 @@
     {
       "symbol": "MSFT",
       "cik": 789019,
-      "name": "MICROSOFT CORPORATION",
+      "name": "MICROSOFT CORP",
       "status": "ok",
       "basis": "ttm",
       "period_end": "2026-09-30",
@@ -708,7 +708,7 @@
     {
       "symbol": "ORCL",
       "cik": 1341439,
-      "name": "Oracle Corporation",
+      "name": "ORACLE CORP",
       "status": "ok",
       "basis": "ttm",
       "period_end": "2026-08-31",
@@ -726,7 +726,7 @@
     {
       "symbol": "XOM",
       "cik": 2115436,
-      "name": "ExxonMobil Holdings Corp",
+      "name": "ExxonMobil Holdings Corporation",
       "status": "no_data",
       "missing": [
         "revenue"

@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-31",
+  "as_of": "2026-11-03",
   "sample": false,
   "source": "SEC EDGAR filings index (company submissions)",
   "window_days": 120,
@@ -9,6 +9,18 @@
       "cik": 320193,
       "name": "Apple Inc.",
       "filings": [
+        {
+          "date": "2026-11-02",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000024/aapl-20261102.htm"
+        },
         {
           "date": "2026-09-01",
           "form": "8-K/A",
@@ -577,6 +589,20 @@
       "name": "INTUITIVE SURGICAL INC",
       "filings": [
         {
+          "date": "2026-11-02",
+          "form": "8-K",
+          "items": [
+            "5.02",
+            "7.01"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)",
+            "Shared an update with investors"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/1035267/000103526726000074/isrg-20261029.htm"
+        },
+        {
           "date": "2026-10-21",
           "form": "10-Q",
           "items": [],
@@ -908,6 +934,18 @@
       "name": "XCEL ENERGY INC",
       "filings": [
         {
+          "date": "2026-11-02",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/72903/000119312526442653/d132424d8k.htm"
+        },
+        {
           "date": "2026-10-30",
           "form": "8-K",
           "items": [
@@ -986,18 +1024,6 @@
           ],
           "kind": "results",
           "url": "https://www.sec.gov/Archives/edgar/data/72903/000007290326000149/xel-20260730.htm"
-        },
-        {
-          "date": "2026-07-29",
-          "form": "8-K",
-          "items": [
-            "5.02"
-          ],
-          "titles": [
-            "A leadership change (an executive or board member)"
-          ],
-          "kind": "people",
-          "url": "https://www.sec.gov/Archives/edgar/data/72903/000007290326000147/xel-20260729.htm"
         }
       ]
     },
@@ -1335,6 +1361,18 @@
       "name": "Diamondback Energy, Inc.",
       "filings": [
         {
+          "date": "2026-11-02",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1539838/000153983826000180/fang-20261102.htm"
+        },
+        {
           "date": "2026-10-08",
           "form": "8-K",
           "items": [
@@ -1637,6 +1675,16 @@
       "name": "CHECK POINT SOFTWARE TECHNOLOGIES LTD",
       "filings": [
         {
+          "date": "2026-11-02",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1015922/000117891326004953/zk2636310.htm"
+        },
+        {
           "date": "2026-09-14",
           "form": "6-K",
           "items": [],
@@ -1693,6 +1741,16 @@
       "cik": 1027664,
       "name": "ELBIT SYSTEMS LTD",
       "filings": [
+        {
+          "date": "2026-11-02",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1027664/000117891326004919/zk2636307.htm"
+        },
         {
           "date": "2026-10-28",
           "form": "6-K",
@@ -1762,16 +1820,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/1027664/000117891326003875/zk2635877.htm"
-        },
-        {
-          "date": "2026-07-20",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1027664/000117891326003522/zk2635700.htm"
         }
       ]
     },
@@ -1780,6 +1828,16 @@
       "cik": 928876,
       "name": "TOWER SEMICONDUCTOR LTD",
       "filings": [
+        {
+          "date": "2026-11-02",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/928876/000117891326004949/zk2636309.htm"
+        },
         {
           "date": "2026-10-13",
           "form": "6-K",
@@ -1849,16 +1907,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/928876/000117891326004158/zk2635857.htm"
-        },
-        {
-          "date": "2026-08-12",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/928876/000117891326004045/zk2635939.htm"
         }
       ]
     },
@@ -2035,6 +2083,16 @@
       "cik": 1109345,
       "name": "NOVA LTD.",
       "filings": [
+        {
+          "date": "2026-11-02",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1109345/000117891326004951/zk2636293.htm"
+        },
         {
           "date": "2026-10-15",
           "form": "6-K",
@@ -2500,6 +2558,16 @@
       "cik": 2115436,
       "name": "ExxonMobil Holdings Corp",
       "filings": [
+        {
+          "date": "2026-11-02",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/2115436/000211543626000020/xom-20260930.htm"
+        },
         {
           "date": "2026-10-30",
           "form": "8-K",

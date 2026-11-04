@@ -9,13 +9,16 @@ import dict from "../text/stock.js";
 
 const t = strings(dict);
 
-/** The three windows: 3 months of days (the default), 6 months of days, about a year of weeks. */
+/** The windows: 1 month of days (a close-up), 3 months of days (the default), 6 months of days, about a year of weeks. */
 export const RANGES = [
+  { value: "1m", label: "1M", series: "daily", n: 21 },
   { value: "3m", label: "3M", series: "daily", n: 63 },
   { value: "6m", label: "6M", series: "daily", n: 130 },
   { value: "w", label: "Weekly", series: "weekly", n: 52 },
 ];
 export const RANGE_VALUES = RANGES.map((r) => r.value);
+/** The window a chart opens on, and the fallback for an unknown one. */
+export const DEFAULT_RANGE = "3m";
 
 /** The overlays a reader can toggle, each tied to its checklist step. Order is the legend order. */
 export const OVERLAYS = [
@@ -42,7 +45,7 @@ export function moveBetween(prev, cur) {
  * the close before it (computed on the full series, so the first visible candle still has one).
  */
 export function windowOf(doc, range) {
-  const r = RANGES.find((x) => x.value === range) ?? RANGES[0];
+  const r = RANGES.find((x) => x.value === range) ?? RANGES.find((x) => x.value === DEFAULT_RANGE);
   const s = doc?.[r.series];
   if (!s?.dates?.length) return null;
   const all = s.c.map((c, i) => (i ? moveBetween(s.c[i - 1], c) : null));

@@ -37,7 +37,10 @@ test("windows: 3M is the last 63 days, 6M all of them, weekly about a year; arra
   // The first visible candle still has a move: it is computed on the full series.
   assert.ok(Number.isFinite(w3.move[0]));
   assert.equal(w6.move[0], null);
-  assert.equal(windowOf(doc, "nonsense").range, "3m");
+  assert.equal(windowOf(doc, "nonsense").range, "3m", "an unknown range falls back to the default");
+  const w1 = windowOf(doc, "1m");
+  assert.equal(w1.series, "daily");
+  assert.equal(w1.n, Math.min(21, doc.daily.dates.length), "1M is the last month of daily candles");
   assert.equal(windowOf({ daily: { dates: [] } }, "3m"), null);
 });
 
@@ -189,7 +192,7 @@ test("tooltip rows: percent from the last close, the move, volume and RSI; the w
   assert.equal(first.move, null); assert.equal(first.vol, null); assert.equal(first.rsi, null);
   assert.equal(tipRows(w3, 0).moveLabel, "Day's move");
   assert.ok(chartSummary("XYZ", w3).startsWith("XYZ: 63 daily candles as percent from the last close"));
-  assert.equal(RANGES.length, 3);
+  assert.deepEqual(RANGES.map((r) => r.value), ["1m", "3m", "6m", "w"]);
 });
 
 test("a stop close to the last close keeps its name; the last close's name gives way", () => {

@@ -4,7 +4,7 @@ import { SpotList, SPOT_TONE } from "./zoom.jsx";
 import { loadMarketCandles } from "../lib/data.js";
 import { useInView, useReducedMotion } from "../lib/motion.js";
 import { advance } from "../lib/replay.js";
-import { ALL_ON, bands, candleGeom, chartSummary, fitDomain, indexAt, keepClear, levelWeight, linePath, monthTicks, moveBetween, niceTicks, OVERLAYS, overlayLines, RANGES, RANGE_VALUES, scaleLinear, spreadLabels, tickLabel, volTop, windowOf } from "../lib/candles.js";
+import { ALL_ON, bands, candleGeom, chartSummary, DEFAULT_RANGE, fitDomain, indexAt, keepClear, levelWeight, linePath, monthTicks, moveBetween, niceTicks, OVERLAYS, overlayLines, RANGES, RANGE_VALUES, scaleLinear, spreadLabels, tickLabel, volTop, windowOf } from "../lib/candles.js";
 import dict from "../text/stock.js";
 import { Segmented, Skeleton } from "./ui.jsx";
 import { strings } from "../lib/text.js";
@@ -80,7 +80,7 @@ export function CandlesView({ data, symbol, row, cfg, tools = null }) {
     );
     return () => { live = false; };
   }, [data.manifest, data.marketId, symbol, attempt]);
-  const [range, setRange] = useStoredChoice("sb:candles-range", "3m", RANGE_VALUES);
+  const [range, setRange] = useStoredChoice("sb:candles-range", DEFAULT_RANGE, RANGE_VALUES);
   const [off, setOff] = useState(readOff);
   const on = useMemo(() => Object.fromEntries(Object.keys(ALL_ON).map((k) => [k, !off.includes(k)])), [off]);
   const toggle = (id) => {

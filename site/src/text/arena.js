@@ -16,7 +16,7 @@ export default {
   "arena.noneBody": "The replay needs the main list's past year. It appears after the next nightly run.",
 
   // the demo trader agent (components/arena/agent.jsx) and its pop-ups (components/agentfeed.jsx)
-  "agent.home.kicker": "Trader agent · paper demo · real past data",
+  "agent.home.kicker": "Demo mode · paper money · real past data",
   "agent.home.hero1": "The trader agent",
   "agent.home.hero2": "Watch it trade a year.",
   "agent.title": "The agent",
@@ -234,11 +234,11 @@ export default {
   "arena.sector.other": "Other",
 
   // Home's live strip (components/desk.jsx)
-  "arena.strip.kicker": "Live replay",
-  "arena.strip.title": "The Arena",
+  "arena.strip.kicker": "Demo mode",
+  "arena.strip.title": "The trader agent",
   "arena.strip.basket": "{amount} split across the list on {date}",
   "arena.strip.paper": "Paper · past data",
   "arena.strip.heat": "Last day",
-  "arena.strip.enter": "Enter the Arena",
-  "arena.strip.aria": "The Arena: the year replayed as a game. Open it",
+  "arena.strip.enter": "Open the agent demo",
+  "arena.strip.aria": "The trader agent in demo mode: a real past year replayed. Open it",
 };

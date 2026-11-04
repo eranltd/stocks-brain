@@ -1,7 +1,7 @@
 ---
 version: 0.32.0
 updated_at: 2026-11-04
-change_note: The first push of each week carries the weekly buy (there is no Monday push); the brain checks from 04:23 UTC.
+change_note: The trader agent runs in demo mode in its own tab (Agent demo); Home opens on the Desk again. The stock chart gains a 1M daily close-up. The first push of each week carries the weekly buy (there is no Monday push); the brain checks from 04:23 UTC.
 ---
 # Decision log
 
@@ -20,6 +20,15 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   per-point dates into one shared array.
 
 ## 2026-11-04
+- **The agent demo gets its own tab; Home opens on the Desk again.** The owner: "I want it to run in demo mode in a
+  dedicated tab". The menu (`lib/nav.js`) has a new subject, Agent demo (one tap, `#arena`; a fifth button on the
+  phone bar), holding the replay, the demo agent, its plan, the corner dock and the trade log. The trade pop-ups now
+  live only there (App mounts them on that tab; the background loop on other pages is gone), so the rest of the site
+  stays calm. Home's switch is Desk | Details again, Desk first, with the "Everything inside" tiles under the Desk
+  (the agent demo first). The news card and the alerts stay site-wide: they are real news, not the simulation.
+- **A 1M close-up of daily candles.** The owner asked for a daily view; 3M and 6M were already daily candles but too
+  small to read one day on a phone. 1M shows the last 21 daily candles; 3M stays the default. A one-day (intraday)
+  chart would need prices during the day, a new feed: left for the owner to decide.
 - **The first push of each week carries the weekly buy.** The morning checks run Tuesday to Saturday, each recording the
   close before, so there is never a Monday push and the "weekly buy day" line could not fire. `today_action.py` now
   says "this week's buy is due" on the week's first push once the buy day has passed; later pushes that week say

@@ -495,6 +495,8 @@ export default {
   "show.eyebrow": "Everything inside",
   "show.title1": "One agent.",
   "show.title2": "Every tool.",
+  "show.agent.title": "Agent demo",
+  "show.agent.line": "Watch the trader agent buy, sell and short through a real past year.",
   "show.floor.title": "The floor",
   "show.floor.line": "Every stock as a square that never stops moving.",
   "show.pairs.title": "Pair stocks",

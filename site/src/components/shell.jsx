@@ -264,7 +264,7 @@ export function Header({ route, onNav, sample, livePrices, theme, onTheme, marke
           {SUBJECTS.map((s) => s.direct ? (
             <button key={s.id} type="button" onClick={() => onNav(s.direct)} aria-current={subject === s.id ? "page" : undefined}
               className={`${TAB} ${subject === s.id ? "text-ink" : "text-ink-2 hover:text-ink"}`}>
-              <span className="size-1.5 rounded-full bg-ai shadow-[0_0_8px_var(--ai)]" aria-hidden="true" />{s.label}
+              <span className={`size-1.5 rounded-full ${s.id === "agent" ? "animate-pulse bg-up shadow-[0_0_8px_var(--up)]" : "bg-ai shadow-[0_0_8px_var(--ai)]"}`} aria-hidden="true" />{s.label}
               {subject === s.id && <TabLine />}
             </button>
           ) : (
@@ -425,6 +425,8 @@ const ICONS = {
   today: <><path d="M7.5 3.5v3M7.5 16v4.5M16.5 6v3.5M16.5 17.5v3" /><rect x="5" y="6.5" width="5" height="9.5" rx="1.2" /><rect x="14" y="9.5" width="5" height="8" rx="1.2" /></>,
   // a flask: tests with pretend money
   plan: <><path d="M9 3.5h6M10 3.5v5.8L4.8 18a1.8 1.8 0 0 0 1.6 2.6h11.2a1.8 1.8 0 0 0 1.6-2.6L14 9.3V3.5" /><path d="M7.2 15h9.6" /></>,
+  // a little robot: the trader agent demo
+  agent: <><rect x="5" y="8" width="14" height="11" rx="3" /><path d="M12 4.5V8M9.5 13h.01M14.5 13h.01M9.5 16.2h5" /><circle cx="12" cy="3.8" r="1" /></>,
   // a spark: the brain's verdicts
   verdicts: <><path d="M12 3.5 13.9 9l5.6 1.9-5.6 1.9L12 18.5l-1.9-5.7-5.6-1.9L10.1 9Z" /><path d="M19 3.5v3M17.5 5h3" /></>,
   // an open book: lessons
@@ -460,7 +462,7 @@ export function MobileNav({ route, onNav, sampleRoutes = [] }) {
   return (
     <>
       <nav aria-label={t("header.sections")} className="fixed inset-x-0 bottom-0 z-50 border-t border-line-2 bg-bg/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl sm:hidden">
-        <div className="grid grid-cols-4">
+        <div className="grid grid-cols-5">
           {subjects.map((s) => {
             const on = sheet ? sheet === s.id : subject === s.id;
             return (
@@ -468,7 +470,7 @@ export function MobileNav({ route, onNav, sampleRoutes = [] }) {
                 className={`relative flex min-h-[60px] flex-col items-center justify-center gap-1 transition-colors ${on ? "text-desk" : "text-ink-3 active:text-ink"}`}>
                 {on && <span aria-hidden="true" className="absolute inset-x-5 top-0 h-[2px] rounded-b-full bg-desk shadow-[0_0_14px_var(--desk)]" />}
                 <svg viewBox="0 0 24 24" className={`size-[22px] ${on ? "drop-shadow-[0_0_8px_var(--desk-glow)]" : ""}`} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{ICONS[s.id]}</svg>
-                <span className="font-display text-[12.5px] leading-none font-bold tracking-[0.1em] uppercase">{s.short ?? s.label}</span>
+                <span className="font-display text-[11.5px] leading-none font-bold tracking-[0.06em] uppercase">{s.short ?? s.label}</span>
               </button>
             );
           })}

@@ -8,6 +8,8 @@ code from published data, never by the model, and it is real-money guidance only
 The line, at most PUSH_MAX characters, in this order:
   1. Real money today:
      - the week's first trading day (holidays skipped, us_market_calendar)  -> the weekly buy
+     - the week's first push when that day has passed (there is no Monday
+       push: the checks run Tuesday to Saturday)                             -> the weekly buy is due
      - the whole market fell DROP_DAY_PCT or more on the last close, or sits
        CORRECTION_PCT or more below its high                                 -> no action, do not sell
      - otherwise                                                             -> no action, and the next buy day
@@ -58,9 +60,13 @@ def whole_market(derived: dict | None) -> dict:
     return {"day": None, "from_high": None}
 
 
-def real_money(today: date, market: dict) -> str:
+def real_money(today: date, market: dict, first_of_week: bool = False) -> str:
     if buy_day(today) == today:
         return "TODAY: weekly buy day. Put this week's amount into the whole-market fund."
+    if first_of_week and (buy_day(today) or today) < today:
+        # The morning checks run Tuesday to Saturday (each records the close before), so there is no Monday push: the
+        # week's first push carries the buy instead.
+        return "TODAY: this week's buy is due. Put this week's amount into the whole-market fund if you haven't yet."
     day, high = market.get("day"), market.get("from_high")
     nxt = next_buy_day(today).strftime("%a %-d %b")
     if isinstance(day, (int, float)) and day <= DROP_DAY_PCT:
@@ -87,8 +93,16 @@ def pretend(picks: dict, as_of: str, earlier: list[dict]) -> str:
     return "Paper: all calls neutral."
 
 
+def first_run_of_week(today: date, earlier: list[dict]) -> bool:
+    """True when no run recorded so far was made in today's ISO week (runs are dated by the close they read, which is
+    the trading day before the push, so a run dated in this week means this week already had its push)."""
+    wk = today.isocalendar()[:2]
+    return not any(r.get("status") == "ok" and _week(r["date"]) == wk for r in earlier)
+
+
 def line(today: date, as_of: str, picks: dict, earlier: list[dict], derived: dict | None) -> str:
-    out = f"{real_money(today, whole_market(derived))} {pretend(picks, as_of, earlier)}"
+    first = first_run_of_week(today, [r for r in earlier if r.get("date", "") < as_of])
+    out = f"{real_money(today, whole_market(derived), first)} {pretend(picks, as_of, earlier)}"
     return out if len(out) <= PUSH_MAX else out[: PUSH_MAX - 1] + "…"
 
 

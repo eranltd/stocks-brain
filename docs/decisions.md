@@ -1,7 +1,7 @@
 ---
-version: 0.31.0
-updated_at: 2026-10-29
-change_note: Learned from Alphabet's fall after its results: a results radar, big-move alerts, and a nightly study of what came after big one-day drops.
+version: 0.32.0
+updated_at: 2026-11-04
+change_note: The first push of each week carries the weekly buy (there is no Monday push); the brain checks from 04:23 UTC.
 ---
 # Decision log
 
@@ -18,6 +18,15 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Market file size**: `derived.json` is written one line per symbol (compact) and is about 330 KB with 21 names.
   Past roughly 35 names it would hit lint's 512 KB cap and the daily run would fail closed; before that, move the
   per-point dates into one shared array.
+
+## 2026-11-04
+- **The first push of each week carries the weekly buy.** The morning checks run Tuesday to Saturday, each recording the
+  close before, so there is never a Monday push and the "weekly buy day" line could not fire. `today_action.py` now
+  says "this week's buy is due" on the week's first push once the buy day has passed; later pushes that week say
+  "no action needed".
+- **The brain checks from 04:23 UTC** (then 06:23, 08:23 and 11:23; was 05:23, 08:23 and 11:23). The daily data run is
+  scheduled for 23:40 UTC but GitHub has been starting it around 03:00 to 04:00 UTC, so the first check now follows it
+  by about an hour instead of two.
 
 ## 2026-10-29 (night)
 - **Learned from Alphabet's fall after its results.** On 29 Oct Alphabet fell about 12% the day after its third-quarter

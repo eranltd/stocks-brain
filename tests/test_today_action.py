@@ -40,6 +40,16 @@ class TodayActionTest(unittest.TestCase):
         self.assertEqual(ta.pretend({"picks": [pick("AAA")], "bets": BET}, "2026-10-28", earlier), "Paper: all calls neutral.")
         self.assertEqual(ta.pretend({"picks": [pick("AAA", "bullish")], "bets": BET}, "2026-10-28", earlier), "Paper: AAA bullish.")
 
+    def test_the_first_push_of_the_week_carries_the_buy(self):
+        # Tue 3 Nov reads Monday's close; the last run before it is Friday's, from last week: the buy is due
+        earlier = [run("2026-10-30", [pick("AAA")], BET)]
+        out = ta.line(date(2026, 11, 3), "2026-11-02", {"picks": [pick("AAA")], "bets": BET}, earlier, CALM)
+        self.assertTrue(out.startswith("TODAY: this week's buy is due"), out)
+        # Wed 4 Nov: Monday's close was already recorded this week, so no repeat
+        earlier.append(run("2026-11-02", [pick("AAA")], BET))
+        out = ta.line(date(2026, 11, 4), "2026-11-03", {"picks": [pick("AAA")], "bets": BET}, earlier, CALM)
+        self.assertTrue(out.startswith("TODAY: no action needed"), out)
+
     def test_the_whole_line_fits_a_push(self):
         out = ta.line(date(2026, 11, 2), "2026-10-30", {"picks": [pick("AAA")], "bets": BET}, [], CALM)
         self.assertLessEqual(len(out), ta.PUSH_MAX)

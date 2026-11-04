@@ -1,7 +1,7 @@
 ---
 version: 0.32.0
 updated_at: 2026-11-04
-change_note: The trader agent runs in demo mode in its own tab (Agent demo); Home opens on the Desk again. The stock chart gains a 1M daily close-up.
+change_note: The trader agent runs in demo mode in its own tab (Agent demo); Home opens on the Desk again. The stock chart gains a 1M daily close-up. The first push of each week carries the weekly buy (there is no Monday push); the brain checks from 04:23 UTC.
 ---
 # Decision log
 
@@ -29,6 +29,13 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **A 1M close-up of daily candles.** The owner asked for a daily view; 3M and 6M were already daily candles but too
   small to read one day on a phone. 1M shows the last 21 daily candles; 3M stays the default. A one-day (intraday)
   chart would need prices during the day, a new feed: left for the owner to decide.
+- **The first push of each week carries the weekly buy.** The morning checks run Tuesday to Saturday, each recording the
+  close before, so there is never a Monday push and the "weekly buy day" line could not fire. `today_action.py` now
+  says "this week's buy is due" on the week's first push once the buy day has passed; later pushes that week say
+  "no action needed".
+- **The brain checks from 04:23 UTC** (then 06:23, 08:23 and 11:23; was 05:23, 08:23 and 11:23). The daily data run is
+  scheduled for 23:40 UTC but GitHub has been starting it around 03:00 to 04:00 UTC, so the first check now follows it
+  by about an hour instead of two.
 
 ## 2026-10-29 (night)
 - **Learned from Alphabet's fall after its results.** On 29 Oct Alphabet fell about 12% the day after its third-quarter

@@ -12,6 +12,7 @@ import { Container, SectionTitle } from "./ui.jsx";
 const t = strings(dict);
 
 const ICON = {
+  agent: <><rect x="5" y="8" width="14" height="11" rx="3" /><path d="M12 4.5V8M9.5 13h.01M14.5 13h.01M9.5 16.2h5" /><circle cx="12" cy="3.8" r="1" /></>,
   floor: <><rect x="3" y="3" width="5" height="5" rx="1" /><rect x="10" y="3" width="5" height="5" rx="1" /><rect x="17" y="3" width="4" height="5" rx="1" /><rect x="3" y="10" width="5" height="5" rx="1" /><rect x="10" y="10" width="5" height="5" rx="1" /><rect x="17" y="10" width="4" height="5" rx="1" /><rect x="3" y="17" width="5" height="4" rx="1" /><rect x="10" y="17" width="5" height="4" rx="1" /></>,
   pairs: <><path d="M3 16c3-8 6-8 9 0s6 8 9 0" /><path d="M3 8c3 8 6 8 9 0s6-8 9 0" opacity=".55" /></>,
   desk: <><circle cx="5" cy="12" r="2" /><circle cx="12" cy="6" r="2" /><circle cx="12" cy="18" r="2" /><circle cx="19" cy="12" r="2.4" /><path d="M7 12h3M13.6 7.2 17.4 10.8M13.6 16.8l3.8-3.6M7 11l3.4-3.6M7 13l3.4 3.6" /></>,
@@ -26,6 +27,7 @@ const ICON = {
 export function Showcase({ data, go, openTo, onDesk }) {
   const first = mainListOf(data)?.[0];
   const tiles = [
+    { id: "agent", to: () => go("arena") },
     { id: "floor", to: () => go("watchlist") },
     { id: "pairs", to: () => openTo("watchlist#pairs") },
     { id: "desk", to: onDesk },

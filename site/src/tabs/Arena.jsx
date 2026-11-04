@@ -22,7 +22,7 @@ import { OrbitPanel } from "../components/arena/orbit.jsx";
 import { AgentPanel } from "../components/arena/agent.jsx";
 import { AgentPlan } from "../components/arena/plan.jsx";
 import { TradeLog } from "../components/arena/tradelog.jsx";
-import { showTrade, useAgentLevel, useAgentStop, useFeedOwner } from "../components/agentfeed.jsx";
+import { showTrade, useAgentLevel, useAgentStop } from "../components/agentfeed.jsx";
 import { agentRun, LEVEL_IDS, levelOf, tradesOn } from "../lib/agent.js";
 
 /*
@@ -87,7 +87,6 @@ export default function Arena({ data, go, embedded = false }) {
   const [logOpen, setLogOpen] = useState(false);
   const closeLog = useCallback(() => setLogOpen(false), []);
   const run = useMemo(() => (w ? agentRun(w, levelOf(level)) : null), [w, level]);
-  useFeedOwner(playing);
   const playingNow = useRef(false);
   playingNow.current = playing;
   useDayTick(clock, (k, { snap }) => {
@@ -184,8 +183,7 @@ export default function Arena({ data, go, embedded = false }) {
       )}
       <Container className={embedded ? "pt-5 sm:pt-6" : "pt-8 sm:pt-12"}>
         <header className="arena-hero relative">
-          <HeroTitle eyebrow={t(embedded ? "agent.home.kicker" : "arena.kicker")} line1={t(embedded ? "agent.home.hero1" : "arena.hero1")}
-            line2={t(embedded ? "agent.home.hero2" : "arena.hero2")} size={embedded ? "sm" : "lg"}
+          <HeroTitle eyebrow={t("agent.home.kicker")} line1={t("agent.home.hero1")} line2={t("agent.home.hero2")} size={embedded ? "sm" : "md"}
             sub={embedded ? null : t("arena.sub", { names: w.lines.length, days: w.days })} />
           <div className={`mt-6 flex-wrap items-center gap-x-4 gap-y-3 ${embedded ? "hidden" : "flex"}`}>
             {auto && !reduced ? (

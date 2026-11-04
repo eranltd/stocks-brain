@@ -10,7 +10,6 @@ import { heldAndPicked, todayCall } from "./Details.jsx";
 import { MarketRace } from "../components/race.jsx";
 import { WeeklyGame } from "../components/weekly.jsx";
 import { Desk } from "../components/desk.jsx";
-import Arena from "./Arena.jsx";
 import { Showcase } from "../components/showcase.jsx";
 import { AlertBar } from "../components/alerts.jsx";
 import dict from "../text/home.js";
@@ -32,7 +31,7 @@ const TONE_VAR = { accent: "var(--up)", down: "var(--down)", flat: "var(--ink-2)
 const PAGE = 30;
 const SOON_DAYS = 14;
 
-// The home always opens on the Arena. An older version remembered the last view on the device; forget it so nobody is
+// The home always opens on the Desk. An older version remembered the last view on the device; forget it so nobody is
 // left on "Details". (The words-only "Simple" view the Desk replaced had no route of its own: old links open Home.)
 const OLD_VIEW_KEY = "sb:home-view";
 function forgetOldView() {
@@ -40,13 +39,13 @@ function forgetOldView() {
 }
 
 /**
- * Home. "Arena" (always the default) is the past year replayed on a loop (tabs/Arena.jsx, also its own page);
- * "Desk" is six agents' panels over the main list with a paper call per name (components/desk.jsx); "Details" is the
- * market overview and the live feed. Desk and Details are one tap away for this visit only. All read the main list only.
+ * Home. "Desk" (always the default) is six agents' panels over the main list with a paper call per name
+ * (components/desk.jsx), with the "Everything inside" tiles under it; "Details" is the market overview and the live
+ * feed, one tap away for this visit only. Both read the main list only. The trader agent demo has its own tab (#arena).
  */
 export default function Today(props) {
   const t = strings(dict);
-  const [view, setView] = useState("arena");
+  const [view, setView] = useState("desk");
   useEffect(forgetOldView, []);
   const pickView = (v) => { setView(v); window.scrollTo({ top: 0 }); };
   return (
@@ -55,15 +54,14 @@ export default function Today(props) {
       <AlertBar data={props.data} openTo={(to) => openAt(props.go, to)} className="mx-auto w-full max-w-[1280px] px-4 pt-4 sm:px-8 sm:pt-6 lg:px-12" />
       <div className="mx-auto flex w-full max-w-[1280px] justify-start px-4 pt-4 sm:px-8 sm:pt-6 lg:px-12">
         <Segmented tall label={t("today.howMuch")} value={view} onChange={pickView}
-          options={[{ value: "arena", label: t("today.arena") }, { value: "desk", label: t("today.desk") }, { value: "details", label: t("today.details") }]} />
+          options={[{ value: "desk", label: t("today.desk") }, { value: "details", label: t("today.details") }]} />
       </div>
-      {view === "arena" ? (
+      {view === "desk" ? (
         <>
-          <Arena data={props.data} go={props.go} embedded />
-          <Showcase data={props.data} go={props.go} openTo={(to) => openAt(props.go, to)} onDesk={() => pickView("desk")} />
+          <Desk {...props} openTo={(to) => openAt(props.go, to)} />
+          <Showcase data={props.data} go={props.go} openTo={(to) => openAt(props.go, to)} onDesk={() => window.scrollTo({ top: 0, behavior: "smooth" })} />
         </>
-      )
-        : view === "desk" ? <Desk {...props} openTo={(to) => openAt(props.go, to)} /> : <LiveFeed {...props} />}
+      ) : <LiveFeed {...props} />}
     </>
   );
 }

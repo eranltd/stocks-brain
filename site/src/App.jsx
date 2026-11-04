@@ -201,8 +201,8 @@ export default function App() {
       <Header route={tab} onNav={go} sample={data?.sample} livePrices={data?.livePrices} theme={theme} onTheme={toggleTheme} market={market} sampleRoutes={sampleRoutes} />
       {/* The main list's day moves (percent only), under the header on every page. */}
       {data && <TickerTape data={base} onOpen={go} />}
-      {/* The demo trader agent's trades pop up under the header on every page (paper, past data). */}
-      {data && <AgentFeed data={base} go={go} />}
+      {/* The demo trader agent's trades pop up under the header, in the agent demo tab only (paper, past data). */}
+      {data && tab === "arena" && <AgentFeed go={go} />}
       {/* Real news from any stock, one at a time, bottom left: tap to read it on the stock's page. */}
       {data && <NewsFloat data={base} go={go} />}
       <main id="main" className="relative min-h-[70vh] [view-transition-name:main]">

@@ -1,7 +1,7 @@
 ---
-version: 0.31.0
-updated_at: 2026-10-29
-change_note: Learned from Alphabet's fall after its results: a results radar, big-move alerts, and a nightly study of what came after big one-day drops.
+version: 0.32.0
+updated_at: 2026-11-04
+change_note: The trader agent runs in demo mode in its own tab (Agent demo); Home opens on the Desk again. The stock chart gains a 1M daily close-up.
 ---
 # Decision log
 
@@ -18,6 +18,17 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Market file size**: `derived.json` is written one line per symbol (compact) and is about 330 KB with 21 names.
   Past roughly 35 names it would hit lint's 512 KB cap and the daily run would fail closed; before that, move the
   per-point dates into one shared array.
+
+## 2026-11-04
+- **The agent demo gets its own tab; Home opens on the Desk again.** The owner: "I want it to run in demo mode in a
+  dedicated tab". The menu (`lib/nav.js`) has a new subject, Agent demo (one tap, `#arena`; a fifth button on the
+  phone bar), holding the replay, the demo agent, its plan, the corner dock and the trade log. The trade pop-ups now
+  live only there (App mounts them on that tab; the background loop on other pages is gone), so the rest of the site
+  stays calm. Home's switch is Desk | Details again, Desk first, with the "Everything inside" tiles under the Desk
+  (the agent demo first). The news card and the alerts stay site-wide: they are real news, not the simulation.
+- **A 1M close-up of daily candles.** The owner asked for a daily view; 3M and 6M were already daily candles but too
+  small to read one day on a phone. 1M shows the last 21 daily candles; 3M stays the default. A one-day (intraday)
+  chart would need prices during the day, a new feed: left for the owner to decide.
 
 ## 2026-10-29 (night)
 - **Learned from Alphabet's fall after its results.** On 29 Oct Alphabet fell about 12% the day after its third-quarter

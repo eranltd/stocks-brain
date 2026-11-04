@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-03",
+  "as_of": "2026-11-04",
   "sample": false,
   "source": "SEC EDGAR filings index (company submissions)",
   "window_days": 120,
@@ -9,6 +9,16 @@
       "cik": 320193,
       "name": "Apple Inc.",
       "filings": [
+        {
+          "date": "2026-11-03",
+          "form": "10-K",
+          "items": [],
+          "titles": [
+            "Yearly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm"
+        },
         {
           "date": "2026-11-02",
           "form": "8-K",
@@ -450,18 +460,6 @@
           ],
           "kind": "results",
           "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000076/avgo-20260902.htm"
-        },
-        {
-          "date": "2026-07-06",
-          "form": "8-K",
-          "items": [
-            "8.01"
-          ],
-          "titles": [
-            "Other company news"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000119312526295589/d84378d8k.htm"
         }
       ]
     },
@@ -535,6 +533,18 @@
       "cik": 318154,
       "name": "AMGEN INC",
       "filings": [
+        {
+          "date": "2026-11-03",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/318154/000031815426000153/amgn-20261103.htm"
+        },
         {
           "date": "2026-10-27",
           "form": "8-K",
@@ -934,6 +944,18 @@
       "name": "XCEL ENERGY INC",
       "filings": [
         {
+          "date": "2026-11-03",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/72903/000119312526444394/d205441d8k.htm"
+        },
+        {
           "date": "2026-11-02",
           "form": "8-K",
           "items": [
@@ -1012,18 +1034,6 @@
           ],
           "kind": "report",
           "url": "https://www.sec.gov/Archives/edgar/data/72903/000007290326000154/xel-20260630.htm"
-        },
-        {
-          "date": "2026-07-30",
-          "form": "8-K",
-          "items": [
-            "2.02"
-          ],
-          "titles": [
-            "Quarterly results"
-          ],
-          "kind": "results",
-          "url": "https://www.sec.gov/Archives/edgar/data/72903/000007290326000149/xel-20260730.htm"
         }
       ]
     },
@@ -1503,6 +1513,28 @@
       "name": "TEVA PHARMACEUTICAL INDUSTRIES LTD",
       "filings": [
         {
+          "date": "2026-11-03",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/818686/000081868626000006/teva-20260930.htm"
+        },
+        {
+          "date": "2026-11-03",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/818686/000117184326007054/f8k_110326.htm"
+        },
+        {
           "date": "2026-10-29",
           "form": "8-K",
           "items": [
@@ -1577,28 +1609,6 @@
           ],
           "kind": "other",
           "url": "https://www.sec.gov/Archives/edgar/data/818686/000119312526381879/d174614d8k.htm"
-        },
-        {
-          "date": "2026-07-29",
-          "form": "10-Q",
-          "items": [],
-          "titles": [
-            "Quarterly report"
-          ],
-          "kind": "report",
-          "url": "https://www.sec.gov/Archives/edgar/data/818686/000119312526323619/d118828d10q.htm"
-        },
-        {
-          "date": "2026-07-29",
-          "form": "8-K",
-          "items": [
-            "2.02"
-          ],
-          "titles": [
-            "Quarterly results"
-          ],
-          "kind": "results",
-          "url": "https://www.sec.gov/Archives/edgar/data/818686/000117184326004974/f8k_072926.htm"
         }
       ]
     },
@@ -1829,6 +1839,16 @@
       "name": "TOWER SEMICONDUCTOR LTD",
       "filings": [
         {
+          "date": "2026-11-03",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/928876/000117891326004972/zk2636316.htm"
+        },
+        {
           "date": "2026-11-02",
           "form": "6-K",
           "items": [],
@@ -1897,16 +1917,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/928876/000117891326004500/zk2636113.htm"
-        },
-        {
-          "date": "2026-08-17",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/928876/000117891326004158/zk2635857.htm"
         }
       ]
     },
@@ -2132,16 +2142,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/1109345/000117891326003892/zk2635873.htm"
-        },
-        {
-          "date": "2026-07-06",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1109345/000117891326003411/zk2635645.htm"
         }
       ]
     },
@@ -2313,6 +2313,20 @@
       "cik": 2488,
       "name": "ADVANCED MICRO DEVICES INC",
       "filings": [
+        {
+          "date": "2026-11-03",
+          "form": "8-K",
+          "items": [
+            "2.02",
+            "7.01"
+          ],
+          "titles": [
+            "Quarterly results",
+            "Shared an update with investors"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000188/amd-20261103.htm"
+        },
         {
           "date": "2026-09-28",
           "form": "8-K",

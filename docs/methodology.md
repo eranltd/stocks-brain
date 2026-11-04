@@ -1,7 +1,7 @@
 ---
-version: 0.17.1
-updated_at: 2026-10-17
-change_note: Why-it-moved notes search only hosts our research tools can use, find a blocked story on a listed host that opens, and record a move no opened page explains as an honest unclear note.
+version: 0.17.2
+updated_at: 2026-11-04
+change_note: The brain checks one hour earlier (04:23 UTC) and once more at 06:23 UTC, so the morning call lands sooner after the data run.
 ---
 # Methodology
 
@@ -35,7 +35,7 @@ change_note: Why-it-moved notes search only hosts our research tools can use, fi
      conviction is informative. The idea follows the reflection loop in Tauric Research's TradingAgents, minus the
      model-written lessons: lessons still reach `docs/learnings.json` only by a person's hand.
 3. **brain** (routine `close_run`): a scheduled Claude Code session on the household's Claude subscription, Tuesday to
-   Saturday at 05:23 UTC, and again at 08:23 and 11:23 UTC in case the data run was late (after the Monday to Friday closes are
+   Saturday at 04:23 UTC, and again at 06:23, 08:23 and 11:23 UTC in case the data run was late (after the Monday to Friday closes are
    published), follows `prompts/daily_brain_routine.md`. It
    restores the published data, builds the pack, and stops if `scripts/brain_status.py` says that market day's run already
    exists (so holidays are skipped). Otherwise it runs the saved workflow `.claude/workflows/brain.js` (`prompts/brain.md`:

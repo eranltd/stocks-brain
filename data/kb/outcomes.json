@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "updated_at": "2026-11-04",
+  "updated_at": "2026-11-05",
   "change_note": "Scored 4 pick(s).",
   "sample": false,
   "items": [
@@ -163,6 +163,70 @@
       "excess_pct": -3.814,
       "verdict": "miss",
       "methodology_version": "0.17.1"
+    },
+    {
+      "pick_id": "2026-10-07:AAPL",
+      "run_date": "2026-10-07",
+      "ticker": "AAPL",
+      "stance": "neutral",
+      "conviction": "low",
+      "ref_date": "2026-10-07",
+      "horizon_days": 20,
+      "scored_date": "2026-11-04",
+      "benchmark_symbol": "QQQ",
+      "return_pct": 3.814,
+      "benchmark_return_pct": -8.681,
+      "excess_pct": 12.495,
+      "verdict": "miss",
+      "methodology_version": "0.17.2"
+    },
+    {
+      "pick_id": "2026-10-07:AMGN",
+      "run_date": "2026-10-07",
+      "ticker": "AMGN",
+      "stance": "neutral",
+      "conviction": "low",
+      "ref_date": "2026-10-07",
+      "horizon_days": 20,
+      "scored_date": "2026-11-04",
+      "benchmark_symbol": "QQQ",
+      "return_pct": 15.832,
+      "benchmark_return_pct": -8.681,
+      "excess_pct": 24.513,
+      "verdict": "miss",
+      "methodology_version": "0.17.2"
+    },
+    {
+      "pick_id": "2026-10-07:GILD",
+      "run_date": "2026-10-07",
+      "ticker": "GILD",
+      "stance": "neutral",
+      "conviction": "low",
+      "ref_date": "2026-10-07",
+      "horizon_days": 20,
+      "scored_date": "2026-11-04",
+      "benchmark_symbol": "QQQ",
+      "return_pct": 18.815,
+      "benchmark_return_pct": -8.681,
+      "excess_pct": 27.496,
+      "verdict": "miss",
+      "methodology_version": "0.17.2"
+    },
+    {
+      "pick_id": "2026-10-07:MSFT",
+      "run_date": "2026-10-07",
+      "ticker": "MSFT",
+      "stance": "neutral",
+      "conviction": "low",
+      "ref_date": "2026-10-07",
+      "horizon_days": 20,
+      "scored_date": "2026-11-04",
+      "benchmark_symbol": "QQQ",
+      "return_pct": 4.915,
+      "benchmark_return_pct": -8.681,
+      "excess_pct": 13.597,
+      "verdict": "miss",
+      "methodology_version": "0.17.2"
     }
   ]
 }

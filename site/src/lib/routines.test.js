@@ -37,3 +37,9 @@ test("lastByRoutine: the newest outcome per routine, skipped steps ignored", () 
   ]);
   assert.deepEqual([last.x.outcome, last.x.at, last.y.outcome, last.y.url], ["success", "2026-10-21T09:00:00Z", "failure", "u2"]);
 });
+
+test("an hour range fires every hour in it", () => {
+  assert.deepEqual(minutesOfDay("7 13-15 * * 1-5"), [787, 847, 907]);
+  const from = new Date(Date.UTC(2026, 10, 6, 13, 30)); // a Friday
+  assert.equal(nextRun("7 13-21 * * 1-5", from).toISOString(), "2026-11-06T14:07:00.000Z");
+});

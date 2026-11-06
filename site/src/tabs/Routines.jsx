@@ -14,7 +14,7 @@ import { strings } from "../lib/text.js";
  */
 
 const t = strings(dict);
-const CADENCE = ["all", "daily", "weekly", "monthly", "on_demand"];
+const CADENCE = ["all", "hourly", "daily", "weekly", "monthly", "on_demand"];
 /** A status or outcome word, or the raw value when text/learn.js has none. */
 const word = (prefix, v) => (t.has(`${prefix}.${v}`) ? t(`${prefix}.${v}`) : v);
 const OUT_STEP = { success: "done", partial: "wait", failure: "fail", failed: "fail", cancelled: "fail", skipped: "idle" };

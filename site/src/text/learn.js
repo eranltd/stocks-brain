@@ -466,6 +466,7 @@ export default {
   "rt.cad.daily": "Daily",
   "rt.cad.weekly": "Weekly",
   "rt.cad.monthly": "Monthly",
+  "rt.cad.hourly": "Every hour",
   "rt.cad.on_demand": "When asked",
   "rt.dow.0": "Sun",
   "rt.dow.1": "Mon",

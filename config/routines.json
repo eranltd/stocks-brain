@@ -1,7 +1,7 @@
 {
   "version": "0.17.0",
-  "updated_at": "2026-11-04",
-  "change_note": "close_run checks at 04:23, 06:23, 08:23 and 11:23 UTC (was 05:23, 08:23, 11:23): the data run usually lands about 03:00 to 04:00 UTC.",
+  "updated_at": "2026-11-06",
+  "change_note": "Added live_pulse: every hour while the US market is open, each name's move today, the index funds, a VIX-tracking fear gauge and the latest news (Finnhub free plan).",
   "timezone": "UTC",
   "routines": [
     {
@@ -270,6 +270,26 @@
       ],
       "human_gate": false,
       "why": "History can be re-fitted; a forward record cannot. On the first run of each month every testable rule's holdings are written down with only that day's data and never edited. Months later this is the evidence that decides which rules deserve money."
+    },
+    {
+      "id": "live_pulse",
+      "name": "Market pulse, every hour",
+      "cadence": "hourly",
+      "cron": "7 13-21 * * 1-5",
+      "runner": "github_actions",
+      "status": "active",
+      "milestone": "M4",
+      "uses_llm": false,
+      "max_cost_usd": 0,
+      "inputs": [
+        "Finnhub quotes and news (free plan, key FINNHUB_API_KEY)",
+        "config/settings.json live"
+      ],
+      "outputs": [
+        "data/market/live.json"
+      ],
+      "human_gate": false,
+      "why": "The nightly data lands the next morning, too late for a day like 29 Oct or 5 Nov 2026. Every hour the US market is open: each name's move today, the index funds, a VIX-tracking fear gauge, market and company news. Moves only, never a price."
     },
     {
       "id": "big_drops",

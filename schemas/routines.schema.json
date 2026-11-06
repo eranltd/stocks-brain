@@ -19,7 +19,7 @@
         "properties": {
           "id": {"type": "string", "pattern": "^[a-z][a-z0-9_]{1,40}$"},
           "name": {"type": "string", "minLength": 3, "maxLength": 60},
-          "cadence": {"enum": ["daily", "weekly", "monthly", "on_demand"]},
+          "cadence": {"enum": ["hourly", "daily", "weekly", "monthly", "on_demand"]},
           "cron": {"anyOf": [{"type": "null"}, {"type": "string", "pattern": "^[0-9*/,\\-]+ [0-9*/,\\-]+ [0-9*/,\\-]+ [0-9*/,\\-]+ [0-9*/,\\-]+$"}]},
           "runner": {"enum": ["github_actions", "claude_routine"],
                      "description": "github_actions: the cron lives in a .github/workflows file. claude_routine: a scheduled Claude Code session on the household's subscription follows `prompt` and records through a workflow"},

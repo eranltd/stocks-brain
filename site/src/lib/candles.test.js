@@ -19,7 +19,7 @@ function mkSeries(n, { start = "2026-01-02", weekly = false } = {}) {
   return { dates, o, h, l, c, vol_rel: vol, ma20: ma, rsi };
 }
 const doc = {
-  symbol: "XYZ", as_of: "2026-06-30", sample: true, basis: "percent from the last close",
+  symbol: "ZZY", as_of: "2026-06-30", sample: true, basis: "percent from the last close",
   daily: mkSeries(130), weekly: { ...mkSeries(60, { weekly: true }), partial: true },
   overlays: {
     support: [{ pct: -1.01, touches: 2 }, { pct: -7.37, touches: 1 }], resistance: [{ pct: 3.2, touches: 3 }],
@@ -191,7 +191,7 @@ test("tooltip rows: percent from the last close, the move, volume and RSI; the w
   const first = tipRows(windowOf(doc, "6m"), 0);
   assert.equal(first.move, null); assert.equal(first.vol, null); assert.equal(first.rsi, null);
   assert.equal(tipRows(w3, 0).moveLabel, "Day's move");
-  assert.ok(chartSummary("XYZ", w3).startsWith("XYZ: 63 daily candles as percent from the last close"));
+  assert.ok(chartSummary("ZZY", w3).startsWith("ZZY: 63 daily candles as percent from the last close"));
   assert.deepEqual(RANGES.map((r) => r.value), ["1m", "3m", "6m", "w"]);
 });
 

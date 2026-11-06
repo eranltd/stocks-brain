@@ -41,7 +41,7 @@ class MarketsConfigTest(unittest.TestCase):
         mc = markets_config()
         self.assertEqual(v.validate(mc, "markets.schema.json"), [])
         self.assertEqual(mc["default"], "nasdaq")
-        self.assertEqual([m["id"] for m in mc["markets"]], ["nasdaq", "tlv", "ishares", "chips", "tech", "energy", "sectors"])
+        self.assertEqual([m["id"] for m in mc["markets"]], ["nasdaq", "tlv", "ishares", "chips", "tech", "energy", "sectors", "mine"])
         for m in mc["markets"]:
             self.assertEqual(v.validate(market_watchlist(m), "watchlist.schema.json"), [], m["id"])
         lt = lint_with_markets()
@@ -69,7 +69,11 @@ class MarketsConfigTest(unittest.TestCase):
         self.assertNotIn("XLC", funds)
         self.assertIn(by["energy"]["benchmark"], funds)
         self.assertTrue(all(s.get("category") == "Sector" for s in market_watchlist(sec)["symbols"]))
-        self.assertTrue(all("fetch_run" not in m for m in markets_config()["markets"] if m["id"] != "sectors"))
+        # My list: the owner's own watchlist, against the Nasdaq-100, fetched in the early-morning run beside the sectors.
+        mine = by["mine"]
+        self.assertEqual((mine["kind"], mine["benchmark"], mine["fetch_run"]), ("stocks", "QQQ", "sectors"))
+        self.assertTrue(all("sector" in s for s in market_watchlist(mine)["symbols"]))
+        self.assertTrue(all("fetch_run" not in m for m in markets_config()["markets"] if m["id"] not in ("sectors", "mine")))
 
     def tree(self, mutate_markets=None, mutate_lists=None):
         root = Path(tempfile.mkdtemp())
@@ -144,11 +148,11 @@ class FetchBudgetTest(unittest.TestCase):
         nas, oth, sec = scope_symbols(plan["nasdaq"]), scope_symbols(plan["markets"]), scope_symbols(plan["sectors"])
         self.assertEqual(len(nas), 28)  # 21 names, QQQ and six context funds
         self.assertEqual(len(oth), 42)  # 12 + EIS, 9 funds + SPY (EIS once), 7 chip makers + SOXX, 8 tech (2 shared) + QQQ, 5 energy + XLE
-        self.assertEqual(len(sec), 12)  # 11 sector funds + SPY
-        self.assertEqual(list(plan["sectors"]), ["sectors"])
+        self.assertEqual(len(sec), 35)  # 11 sector funds + SPY, and My list: 22 names + QQQ
+        self.assertEqual(list(plan["sectors"]), ["sectors", "mine"])
         self.assertNotIn("sectors", plan["markets"])
         self.assertEqual(len(set(nas) | set(oth)), 61)  # both in one hour would go over the plan: they run hours apart
-        self.assertEqual(len(set(nas) | set(oth) | set(sec)), 71)  # unique symbols a month: SPY and XLE are already fetched
+        self.assertEqual(len(set(nas) | set(oth) | set(sec)), 84)  # unique symbols a month (shared names fetched once per run)
         self.assertEqual(st["prices"]["requests_per_hour"], 50)
         self.assertLessEqual(max(len(nas), len(oth), len(sec)), st["prices"]["max_requests_per_run"])
         self.assertLess(st["prices"]["max_requests_per_run"], st["prices"]["requests_per_hour"])
@@ -427,7 +431,7 @@ class SiteExportTest(unittest.TestCase):
             self.assertEqual(build_site.main(), 0)
         man = load_json(out / "manifest.json")
         ms = man["markets"]
-        self.assertEqual(list(ms), ["nasdaq", "tlv", "ishares", "chips", "tech", "energy", "sectors"])
+        self.assertEqual(list(ms), ["nasdaq", "tlv", "ishares", "chips", "tech", "energy", "sectors", "mine"])
         keys = {"label", "name", "note", "kind", "benchmark", "benchmark_label", "default", "sample", "derived", "checklist",
                 "candles", "watchlist"}
         for mid, e in ms.items():

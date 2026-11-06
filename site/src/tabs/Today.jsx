@@ -60,7 +60,7 @@ export default function Today(props) {
       </div>
       {view === "now" ? (
         <>
-          <Container className="pt-5 pb-6 sm:pt-6"><MarketNow data={props.data} go={props.go} openTo={(to) => openAt(props.go, to)} /></Container>
+          <Container className="pt-5 pb-6 sm:pt-6"><MarketNow data={props.data} go={props.go} market={props.market} openTo={(to) => openAt(props.go, to)} /></Container>
           <Showcase data={props.data} go={props.go} openTo={(to) => openAt(props.go, to)} onDesk={() => pickView("desk")} />
         </>
       ) : view === "desk" ? (

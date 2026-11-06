@@ -127,7 +127,8 @@ def build(key: str, st: dict, now: datetime) -> dict:
     idx = {s: quotes.get(s) for s in cfg["indexes"]}
     lead = idx.get(cfg["indexes"][0]) or {}
     fear = quotes.get(cfg["fear_proxy"])
-    movers = sorted(rows, key=lambda r: -abs(r["move_pct"]))[: cfg["company_news_names"]]
+    # Headlines for the biggest movers among the companies (the sector funds move with the market and need none).
+    movers = sorted((r for r in rows if r["list"] != "sectors"), key=lambda r: -abs(r["move_pct"]))[: cfg["company_news_names"]]
     day_from = (now - timedelta(days=2)).date().isoformat()
     company: list[dict] = []
     for r in movers:

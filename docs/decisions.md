@@ -1,7 +1,7 @@
 ---
-version: 0.35.0
+version: 0.36.0
 updated_at: 2026-11-06
-change_note: Each stock page opens with its story in five plain chapters. On a phone, wide tables become cards (no sideways scroll). An hourly market pulse (Finnhub free plan) while the US market is open, and a new first screen, Market now, that says in plain words what the market is doing, how scared it is, where it is heading, what moved and the news.
+change_note: My list, the owner's own watchlist, is the focus: first on Market now, second in the list switch, and the list the Stocks page opens on. Each stock page opens with its story in five plain chapters. On a phone, wide tables become cards (no sideways scroll). An hourly market pulse (Finnhub free plan) while the US market is open, and a new first screen, Market now, that says in plain words what the market is doing, how scared it is, where it is heading, what moved and the news.
 ---
 # Decision log
 
@@ -18,6 +18,23 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Market file size**: `derived.json` is written one line per symbol (compact) and is about 330 KB with 21 names.
   Past roughly 35 names it would hit lint's 512 KB cap and the daily run would fail closed; before that, move the
   per-point dates into one shared array.
+
+## 2026-11-06 (later)
+- **My list: the owner's own watchlist is the focus.** The owner shared their broker's watchlist and said "our focus is
+  on these, plus the top 5 companies of the S&P 500 and Nasdaq-100, plus energy like Transocean", and that it is the
+  default view for anyone who opens the app. New market `mine` ("My list", `config/watchlists/mine.json`, 22 names
+  against the Nasdaq-100): the broker's US names (Broadcom, Nvidia, Microsoft, Meta, Amazon, TSMC, ASML, Palantir,
+  CrowdStrike, Shopify, GitLab, Block, SpaceX, Destiny Tech100, the 2x Tesla and Tesla income funds, the 3x Nasdaq fund),
+  the top five (adding Apple and Alphabet), Transocean and the two oil funds (XOP, IEZ). The broker's Tel Aviv funds
+  are not covered by the price provider and are left out. The 2x and 3x daily funds are followed only; the rules never
+  buy them. SpaceX has traded since 12 Jun 2026, so its history is short (handled like a fund that launched later).
+- **Where it shows.** Market now opens with "Your list" (every name's move today, best first, from the hourly pulse
+  while fresh, else the last close); the list switch shows My list right after Nasdaq; the Stocks page opens on it
+  unless a list is asked for. The brain, rules, paper trading and people still read the Nasdaq list (the default market).
+- **Fetched beside the sector funds.** The other markets' run is at 42 of its 45 requests, so My list rides the
+  early-morning sectors run (12 + 23 = 35 requests). The hourly pulse covers it too (`settings.live.lists`), and its
+  company headlines skip the sector funds. Block's real ticker is XYZ, so tests that used it as a made-up name now use
+  ZZY.
 
 ## 2026-11-06
 - **An hourly market pulse.** The owner: "All of the great news land after 24h." The nightly data lands the next

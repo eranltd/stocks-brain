@@ -1,7 +1,7 @@
 {
-  "version": "0.10.0",
+  "version": "0.11.0",
   "updated_at": "2026-11-06",
-  "change_note": "Added live: the hourly market pulse (prices as moves, a VIX-tracking fear gauge, market and company news) while the US market is open.",
+  "change_note": "The hourly pulse also covers My list (the owner's own watchlist).",
   "pack": {
     "token_cap": 14000,
     "recent_runs": 5,
@@ -84,7 +84,7 @@
     "min_history_years": 5
   },
   "site": {
-    "title": "stocks\u00b7brain",
+    "title": "stocks·brain",
     "repo": "eranltd/stocks-brain",
     "runs_shown": 30,
     "sparkline_days": 60,
@@ -98,8 +98,9 @@
     ],
     "lists": [
       "nasdaq",
-      "sectors",
-      "energy"
+      "mine",
+      "energy",
+      "sectors"
     ],
     "big_move_pct": 5,
     "company_news_names": 6,

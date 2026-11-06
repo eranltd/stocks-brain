@@ -1,7 +1,7 @@
 {
-  "version": "1.2.0",
-  "updated_at": "2026-10-17",
-  "change_note": "A Sectors list for looking only: one US fund per industry (telecom carriers, tech, banks, health care and so on) against the S&P 500, fetched in its own early-morning run. Nasdaq stays the default and the only market the brain, rules, paper and people read.",
+  "version": "1.3.0",
+  "updated_at": "2026-11-06",
+  "change_note": "My list: the owner's own watchlist (their broker's names, the top five US companies, Transocean and two oil funds), second in the switch, fetched in the early-morning run beside the sector funds.",
   "default": "nasdaq",
   "markets": [
     {
@@ -81,6 +81,18 @@
       "data": "data/markets/sectors",
       "fetch_run": "sectors",
       "note": "One fund per US industry, to see which parts of the market moved on a day. For looking only: never part of the plan."
+    },
+    {
+      "id": "mine",
+      "label": "My list",
+      "name": "My watchlist",
+      "kind": "stocks",
+      "watchlist": "config/watchlists/mine.json",
+      "benchmark": "QQQ",
+      "benchmark_label": "Nasdaq-100 (QQQ proxy)",
+      "data": "data/markets/mine",
+      "fetch_run": "sectors",
+      "note": "The names the owner follows in their own broker account, plus the top five US companies and offshore energy, each against the Nasdaq-100."
     }
   ]
 }

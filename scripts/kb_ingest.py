@@ -11,7 +11,7 @@ Batch file (JSON):
     "kind": "video", "ref": "youtube:<id>", "title": "...", "author": "...", "year": 2026, "published": "YYYY-MM-DD",
     "principles": [["Our own words, <= 280 chars.", ["tag", "tag"]], ...],
     "observations": [{"as_of": "YYYY-MM-DD", "expires": "YYYY-MM-DD", "kind": "market|company|sector|theme",
-                      "tickers": ["XYZ"], "text": "...", "tags": ["tag"]}, ...]
+                      "tickers": ["ZZY"], "text": "...", "tags": ["tag"]}, ...]
   }]
 }
 Usage: python3 scripts/kb_ingest.py BATCH.json [--dry-run]

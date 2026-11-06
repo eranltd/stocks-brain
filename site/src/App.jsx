@@ -1,7 +1,7 @@
 import { KeepExploring } from "./components/explore.jsx";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
-import { loadAll, loadManifest, loadMarket } from "./lib/data.js";
+import { loadAll, loadManifest, loadMarket, OWN_LIST } from "./lib/data.js";
 import { hashFor, parseHash } from "./lib/nav.js";
 import { DEFAULT_MARKET, defaultId, marketData, nasdaqData, pickMarket, switchChoices } from "./lib/markets.js";
 import { newerBundle } from "./lib/appversion.js";
@@ -115,7 +115,9 @@ export default function App() {
 
   const markets = data?.markets ?? null;
   const defId = markets ? defaultId(markets) : DEFAULT_MARKET;
-  const marketId = markets ? pickMarket(markets, wanted) : (wanted ?? DEFAULT_MARKET);
+  // The Stocks page opens on the owner's own list (once it has data) unless a list was asked for.
+  const ownReady = Boolean(markets?.some((m) => m.id === OWN_LIST && m.available));
+  const marketId = markets ? pickMarket(markets, wanted ?? (tab === "watchlist" && ownReady ? OWN_LIST : null)) : (wanted ?? DEFAULT_MARKET);
 
   // Open a route in a market (the current one unless given); the hash keeps both so the link opens the same view.
   const navigate = useCallback((id, mk = marketId) => {
@@ -131,7 +133,8 @@ export default function App() {
     if (document.startViewTransition && !reduced && id !== tab) document.startViewTransition(() => flushSync(swap));
     else swap();
   }, [tab, marketId, defId]);
-  const go = useCallback((id) => navigate(id), [navigate]);
+  // mk: open the route in another market (optional). The Stocks page opens on the owner's own list by default.
+  const go = useCallback((id, mk) => navigate(id, mk ?? (id === "watchlist" && ownReady ? OWN_LIST : undefined)), [navigate, ownReady]);
 
   // The switch: stay on the page, except a stock page, which belongs to its own market (open the new market's list).
   const chooseMarket = useCallback((id) => {

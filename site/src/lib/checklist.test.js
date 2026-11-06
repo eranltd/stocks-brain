@@ -17,7 +17,7 @@ const cfg = {
 };
 
 const row = {
-  symbol: "XYZ",
+  symbol: "ZZY",
   candle: { lean: "bullish", daily: { lean: "bullish", pattern: "bullish engulfing", close_in_range_pct: 79.1 }, weekly: { lean: "bullish", pattern: "up week", partial: true } },
   trend: { direction: "up", lean: "bullish", points: 4, dist_sma50_pct: 6.23, sma50_above_sma200: true, slope50_pct: 2.25, structure: "higher highs and higher lows" },
   volume: { verdict: "confirms", lean: "bullish", move: "rising", move_pct: 3.27, vs_avg20: 0.84, up_down_ratio_20d: 1.65, trend_pct: -17.5, rising_on_falling_volume: false },
@@ -82,8 +82,8 @@ test("gate reason: missing file, by-construction targets and a real resistance r
   assert.equal(old.ok, false);
   assert.match(old.text, /older than the last close/);
   assert.equal(gateReason(ck, { ...row, as_of: "2026-10-02" }, cfg, "2026-10-02").ok, bc.ok);
-  assert.equal(rowFor(ck, "XYZ"), row);
-  assert.equal(rowFor(null, "XYZ"), null);
+  assert.equal(rowFor(ck, "ZZY"), row);
+  assert.equal(rowFor(null, "ZZY"), null);
 });
 
 const br = {

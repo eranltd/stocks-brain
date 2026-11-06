@@ -580,10 +580,37 @@ function StrategyPanel({ m, openTo, active }) {
   return (
     <AgentPanel agent="strategy" active={active} state={m.fresh.strategy.state} date={m.fresh.strategy.date}>
       {m.strategy.length ? (
-        <div className="-mt-4 sm:-mt-5">
-          <DataTable columns={cols} rows={m.strategy} rowKey={(r) => r.ticker} minWidth={540}
-            onRowClick={(r) => openTo(`stock/${r.ticker}#checklist`)} rowLabel={(r) => r.ticker} caption={t("desk.a.strategy")} />
-        </div>
+        <>
+          {/* Phone: one card per name, no sideways scroll. Bigger screens: the full table. */}
+          <ul className="desk-cards sm:hidden">
+            {m.strategy.map((r) => {
+              const s = stance[r.lean];
+              return (
+                <li key={r.ticker}>
+                  <button type="button" className="desk-card" onClick={() => openTo(`stock/${r.ticker}#checklist`)}>
+                    <span className="desk-card-top">
+                      <b className="font-num text-[15px] text-ink">{r.ticker}</b>
+                      {s ? <Chip tone={s[1]} className="min-h-[22px] px-1.5 text-[10px]">{t(s[0])}</Chip> : <span className="text-ink-3 text-[12px]">{t("desk.stance.none")}</span>}
+                      <span className={`ms-auto inline-flex ${r.fits ? "text-up" : "text-down"}`} role="img" aria-label={t(r.fits ? "desk.fits.yes" : "desk.fits.no")}>
+                        {r.fits ? <CheckIcon className="size-4" /> : <CrossIcon className="size-4" />}
+                      </span>
+                    </span>
+                    <span className="desk-card-nums">
+                      <span><small>{t("desk.card.stop")}</small><b className="text-down">{pct(-r.plan.stop_pct)}</b></span>
+                      <span><small>{t("desk.card.tp1")}</small><b className="text-up">{pct(r.plan.tp1_pct)}</b></span>
+                      <span><small>{t("desk.card.tp2")}</small><b className="text-up">{pct(r.plan.tp2_pct)}</b></span>
+                      <span><small>{t("desk.card.rr")}</small><b className={r.fits ? "text-up" : "text-ink"}>{rrText(r.rr, min)}</b></span>
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+          <div className="-mt-4 hidden sm:-mt-5 sm:block">
+            <DataTable columns={cols} rows={m.strategy} rowKey={(r) => r.ticker} minWidth={540}
+              onRowClick={(r) => openTo(`stock/${r.ticker}#checklist`)} rowLabel={(r) => r.ticker} caption={t("desk.a.strategy")} />
+          </div>
+        </>
       ) : <EmptyState compact title={t("desk.strategy.none")} />}
     </AgentPanel>
   );

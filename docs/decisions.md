@@ -1,7 +1,7 @@
 ---
-version: 0.33.0
+version: 0.34.0
 updated_at: 2026-11-06
-change_note: An hourly market pulse (Finnhub free plan) while the US market is open, and a new first screen, Market now, that says in plain words what the market is doing, how scared it is, where it is heading, what moved and the news.
+change_note: On a phone, wide tables become cards (no sideways scroll). An hourly market pulse (Finnhub free plan) while the US market is open, and a new first screen, Market now, that says in plain words what the market is doing, how scared it is, where it is heading, what moved and the news.
 ---
 # Decision log
 
@@ -33,6 +33,11 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   are heading (the regime's trend and risk, names above their 50-day average) with one line on what to do with real
   money (never "sell"), what moved with its headline, and the news with links. It shows the hourly pulse while it is
   fresh and the last close otherwise, and always says which one and when. Everything else stays where it was.
+- **On a phone, wide tables become cards.** The owner: "the iPhone 17 Pro view is a little lean from the desktop".
+  About ten tables (the Desk's risk plans, the calls, the track record, the portfolio, the playbook) scrolled sideways
+  on a 402 px screen. `DataTable` now shows one card per row under 640 px (the first column as the title, the rest as
+  label and value), eight at a time with "Show all", and a sort menu where the table could sort. The Desk's risk plans
+  use their own cards with plain labels (Exit if, Goal 1, Goal 2, Win : lose). Bigger screens keep the tables.
 
 ## 2026-11-04
 - **The agent demo gets its own tab; Home opens on the Desk again.** The owner: "I want it to run in demo mode in a

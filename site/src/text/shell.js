@@ -144,6 +144,8 @@ export default {
   "ui.stamp.approved": "Approved",
   "ui.stamp.wait": "On hold",
   "ui.sortBy": "Sort by {col}",
+  "ui.showAll": "Show all {n}",
+  "ui.showLess": "Show fewer",
   "ui.loading": "Loading",
 
   // the ticker tape under the header (components/shell.jsx): percent moves only, never a price

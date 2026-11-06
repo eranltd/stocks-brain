@@ -1,0 +1,249 @@
+{
+  "$id": "live.schema.json",
+  "title": "The hourly market pulse (data/market/live.json)",
+  "description": "Written by scripts/live.py every hour while the US market is open. Moves only (percent), never a price; news as headline, source, time and link.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "as_of",
+    "quotes_at",
+    "sample",
+    "provider",
+    "big_move_pct",
+    "indexes",
+    "fear",
+    "breadth",
+    "mood",
+    "symbols",
+    "company_news",
+    "market_news"
+  ],
+  "properties": {
+    "as_of": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+    },
+    "quotes_at": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "sample": {
+      "type": "boolean"
+    },
+    "provider": {
+      "type": "string",
+      "maxLength": 40
+    },
+    "big_move_pct": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "indexes": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/moves"
+      }
+    },
+    "fear": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "symbol",
+        "move_pct",
+        "from_open_pct",
+        "range_pos",
+        "at",
+        "level"
+      ],
+      "properties": {
+        "symbol": {
+          "$ref": "common.schema.json#/$defs/ticker"
+        },
+        "move_pct": {
+          "type": "number"
+        },
+        "from_open_pct": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "range_pos": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "at": {
+          "type": "integer"
+        },
+        "level": {
+          "enum": [
+            "calm",
+            "normal",
+            "nervous",
+            "panic"
+          ]
+        }
+      }
+    },
+    "breadth": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "up",
+        "down",
+        "flat"
+      ],
+      "properties": {
+        "up": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "down": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "flat": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "mood": {
+      "enum": [
+        "selloff",
+        "down",
+        "flat",
+        "mixed",
+        "up",
+        "rally"
+      ]
+    },
+    "symbols": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "symbol",
+          "list",
+          "move_pct",
+          "from_open_pct",
+          "range_pos",
+          "at"
+        ],
+        "properties": {
+          "symbol": {
+            "$ref": "common.schema.json#/$defs/ticker"
+          },
+          "list": {
+            "type": "string",
+            "maxLength": 24
+          },
+          "move_pct": {
+            "type": "number"
+          },
+          "from_open_pct": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "range_pos": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "at": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "company_news": {
+      "type": "array",
+      "maxItems": 60,
+      "items": {
+        "$ref": "#/$defs/news"
+      }
+    },
+    "market_news": {
+      "type": "array",
+      "maxItems": 60,
+      "items": {
+        "$ref": "#/$defs/news"
+      }
+    }
+  },
+  "$defs": {
+    "moves": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "move_pct",
+        "from_open_pct",
+        "range_pos",
+        "at"
+      ],
+      "properties": {
+        "move_pct": {
+          "type": "number"
+        },
+        "from_open_pct": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "range_pos": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "at": {
+          "type": "integer"
+        }
+      }
+    },
+    "news": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "headline",
+        "source",
+        "url",
+        "at"
+      ],
+      "properties": {
+        "headline": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 220
+        },
+        "source": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "url": {
+          "type": "string",
+          "pattern": "^https://",
+          "maxLength": 500
+        },
+        "at": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "symbol": {
+          "$ref": "common.schema.json#/$defs/ticker"
+        }
+      }
+    }
+  }
+}

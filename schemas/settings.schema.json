@@ -483,6 +483,54 @@
           "description": "A name joins the rule only with this much price history; the test window is the span all such names, the core and the benchmark cover."
         }
       }
+    },
+    "live": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fear_proxy",
+        "indexes",
+        "lists",
+        "big_move_pct",
+        "company_news_names",
+        "market_news_max"
+      ],
+      "description": "The hourly market pulse (scripts/live.py, routine live_pulse): what it quotes and how much news it keeps.",
+      "properties": {
+        "fear_proxy": {
+          "$ref": "common.schema.json#/$defs/ticker",
+          "description": "A fund that follows the VIX fear index (the index itself needs a paid plan)."
+        },
+        "indexes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "common.schema.json#/$defs/ticker"
+          }
+        },
+        "lists": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "description": "Market ids (config/markets.json) whose names are quoted every hour."
+        },
+        "big_move_pct": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "company_news_names": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "market_news_max": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 60
+        }
+      }
     }
   }
 }

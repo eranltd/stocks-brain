@@ -17,11 +17,19 @@ function cronDays(dow) {
   return dow.split(",").map(Number);
 }
 
-/** Next fire time for the simple cron shapes in use: "m h * * d-d|d|*" and "m h D * *"; h may be a list ("5,11"). */
+/** The hours of a cron's hour field: a list and ranges ("5,11", "13-21"), sorted. */
+function cronHours(h) {
+  return h.split(",").flatMap((part) => {
+    const [a, b] = part.split("-").map(Number);
+    return Number.isFinite(b) ? Array.from({ length: b - a + 1 }, (_, i) => a + i) : [a];
+  }).filter(Number.isFinite).sort((x, y) => x - y);
+}
+
+/** Next fire time for the simple cron shapes in use: "m h * * d-d|d|*" and "m h D * *"; h may be a list or a range ("5,11", "13-21"). */
 export function nextRun(cron, from = new Date()) {
   if (!cron) return null;
   const [m, h, dom, , dow] = cron.split(" ");
-  const hours = h.split(",").map(Number).sort((a, b) => a - b);
+  const hours = cronHours(h);
   const days = cronDays(dow);
   for (let i = 0; i < 400; i++) {
     for (const hh of hours) {
@@ -46,7 +54,7 @@ export function relTime(d, now = new Date()) {
 export function minutesOfDay(cron) {
   if (!cron) return [];
   const [m, h] = cron.split(" ");
-  return h.split(",").map((x) => Number(x) * 60 + Number(m)).filter(Number.isFinite).sort((a, b) => a - b);
+  return cronHours(h).map((x) => x * 60 + Number(m)).filter(Number.isFinite);
 }
 
 /** "05:23" for minutes after midnight. */

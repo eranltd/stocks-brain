@@ -12,6 +12,7 @@ import { WeeklyGame } from "../components/weekly.jsx";
 import { Desk } from "../components/desk.jsx";
 import { Showcase } from "../components/showcase.jsx";
 import { AlertBar } from "../components/alerts.jsx";
+import { MarketNow } from "../components/marketnow.jsx";
 import dict from "../text/home.js";
 import { strings } from "../lib/text.js";
 import { rich } from "../lib/rich.jsx";
@@ -31,7 +32,7 @@ const TONE_VAR = { accent: "var(--up)", down: "var(--down)", flat: "var(--ink-2)
 const PAGE = 30;
 const SOON_DAYS = 14;
 
-// The home always opens on the Desk. An older version remembered the last view on the device; forget it so nobody is
+// The home always opens on Now. An older version remembered the last view on the device; forget it so nobody is
 // left on "Details". (The words-only "Simple" view the Desk replaced had no route of its own: old links open Home.)
 const OLD_VIEW_KEY = "sb:home-view";
 function forgetOldView() {
@@ -39,13 +40,14 @@ function forgetOldView() {
 }
 
 /**
- * Home. "Desk" (always the default) is six agents' panels over the main list with a paper call per name
+ * Home. "Now" (always the default) is the market right now in plain words (components/marketnow.jsx), with the
+ * "Everything inside" tiles under it; "Desk" is six agents' panels over the main list with a paper call per name
  * (components/desk.jsx), with the "Everything inside" tiles under it; "Details" is the market overview and the live
  * feed, one tap away for this visit only. Both read the main list only. The trader agent demo has its own tab (#arena).
  */
 export default function Today(props) {
   const t = strings(dict);
-  const [view, setView] = useState("desk");
+  const [view, setView] = useState("now");
   useEffect(forgetOldView, []);
   const pickView = (v) => { setView(v); window.scrollTo({ top: 0 }); };
   return (
@@ -54,9 +56,14 @@ export default function Today(props) {
       <AlertBar data={props.data} openTo={(to) => openAt(props.go, to)} className="mx-auto w-full max-w-[1280px] px-4 pt-4 sm:px-8 sm:pt-6 lg:px-12" />
       <div className="mx-auto flex w-full max-w-[1280px] justify-start px-4 pt-4 sm:px-8 sm:pt-6 lg:px-12">
         <Segmented tall label={t("today.howMuch")} value={view} onChange={pickView}
-          options={[{ value: "desk", label: t("today.desk") }, { value: "details", label: t("today.details") }]} />
+          options={[{ value: "now", label: t("today.now") }, { value: "desk", label: t("today.desk") }, { value: "details", label: t("today.details") }]} />
       </div>
-      {view === "desk" ? (
+      {view === "now" ? (
+        <>
+          <Container className="pt-5 pb-6 sm:pt-6"><MarketNow data={props.data} go={props.go} openTo={(to) => openAt(props.go, to)} /></Container>
+          <Showcase data={props.data} go={props.go} openTo={(to) => openAt(props.go, to)} onDesk={() => pickView("desk")} />
+        </>
+      ) : view === "desk" ? (
         <>
           <Desk {...props} openTo={(to) => openAt(props.go, to)} />
           <Showcase data={props.data} go={props.go} openTo={(to) => openAt(props.go, to)} onDesk={() => window.scrollTo({ top: 0, behavior: "smooth" })} />

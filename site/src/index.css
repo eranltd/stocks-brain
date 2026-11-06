@@ -1009,3 +1009,25 @@ button.floor-tile:hover { transform: translateY(-1px); border-color: var(--line-
 .now-note { font-size: 12px; color: var(--ink-3); }
 @media (min-width: 900px) { .now-movers ul { grid-template-columns: 1fr 1fr; column-gap: 28px; } .now-movers li:nth-last-child(2) .now-mover { border-bottom: 0; } }
 @media (prefers-reduced-motion: reduce) { .now-card, .now-needle, .now-dot { animation: none !important; } .now-needle, .now-bar i { transition: none; } }
+/* The Desk's risk plans as cards on a phone (components/desk.jsx StrategyPanel). */
+.desk-cards { display: grid; gap: 8px; }
+.desk-card { display: grid; width: 100%; gap: 8px; border-radius: var(--r-tile); border: 1px solid var(--line-2); background: var(--surface-2); padding: 10px 12px; text-align: start; }
+.desk-card-top { display: flex; align-items: center; gap: 8px; }
+.desk-card-nums { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.desk-card-nums > span { display: grid; gap: 1px; }
+.desk-card-nums small { font-family: var(--font-num); font-size: 9.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.desk-card-nums b { font-family: var(--font-num); font-size: 14px; font-weight: 800; }
+/* A wide table on a phone, as one card per row (components/ui.jsx DataTable). */
+.dt-cards { display: grid; gap: 10px; }
+.dt-sort { display: flex; align-items: center; gap: 8px; font-family: var(--font-num); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
+.dt-sort select { min-height: 36px; flex: 1; border-radius: var(--r-chip); border: 1px solid var(--line-2); background: var(--surface-2); padding: 0 10px; font-size: 14px; letter-spacing: 0; text-transform: none; color: var(--ink); }
+.dt-list { display: grid; gap: 8px; }
+.dt-card { overflow: hidden; border-radius: var(--r-tile); border: 1px solid var(--line-2); background: var(--surface-2); }
+.dt-card[data-tone="up"] { border-color: color-mix(in srgb, var(--up) 40%, var(--line-2)); }
+.dt-card[data-tone="down"] { border-color: color-mix(in srgb, var(--down) 40%, var(--line-2)); }
+.dt-card[data-tone="brand"] { border-color: color-mix(in srgb, var(--desk) 45%, var(--line-2)); }
+.dt-card-head { display: flex; width: 100%; min-height: 44px; align-items: center; gap: 8px; border-bottom: 1px solid var(--line); padding: 8px 12px; text-align: start; font-size: 14.5px; font-weight: 600; color: var(--ink); }
+.dt-card-body { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; padding: 10px 12px 12px; }
+.dt-card-body dt { font-family: var(--font-num); font-size: 9.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
+.dt-card-body dd { margin-top: 2px; min-width: 0; overflow-wrap: anywhere; font-size: 13.5px; color: var(--ink); }
+.dt-more { min-height: 44px; border-radius: var(--r-tile); border: 1px dashed var(--line-3); font-family: var(--font-num); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--desk); }

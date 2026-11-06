@@ -450,8 +450,31 @@ const missing = (v) => v == null || (typeof v === "number" && !Number.isFinite(v
  * first column is sticky and holds a button when `onRowClick` is given, so a row opens from the keyboard too. The box
  * scrolls sideways on a narrow screen; give `scrollClassName` a max height (md:max-h-[520px]) to pin the header.
  */
+const CARD_PAGE = 8; // cards shown on a phone before "Show all"
+
+/** True on a phone-size screen (under 640 px), following the screen as it turns or resizes. */
+export function usePhone() {
+  const q = "(max-width: 639px)";
+  const [on, setOn] = useState(() => typeof window !== "undefined" && window.matchMedia?.(q).matches);
+  useEffect(() => {
+    const m = window.matchMedia?.(q);
+    if (!m) return undefined;
+    const sync = () => setOn(m.matches);
+    sync();
+    m.addEventListener("change", sync);
+    return () => m.removeEventListener("change", sync);
+  }, []);
+  return Boolean(on);
+}
+
+/**
+ * A table. On a phone, a table wider than the screen turns into one card per row (the first column as the card's
+ * title, the others as label and value), so nothing needs a sideways scroll; `cards={false}` keeps the table.
+ */
 export function DataTable({ columns, rows, rowKey = (r, i) => i, sort, onSort, defaultSort = null, onRowClick, rowLabel, rowTone, minWidth = 560,
-  scrollClassName = "", caption, bleed = true, className = "" }) {
+  scrollClassName = "", caption, bleed = true, className = "", cards = true }) {
+  const phone = usePhone();
+  const [allCards, setAllCards] = useState(false);
   const t = tx();
   const [own, setOwn] = useState(defaultSort);
   const controlled = sort !== undefined;
@@ -472,6 +495,54 @@ export function DataTable({ columns, rows, rowKey = (r, i) => i, sort, onSort, d
     setOwn((s) => ({ key: c.key, dir: s?.key === c.key ? (s.dir === "desc" ? "asc" : "desc") : c.firstDir ?? "desc" }));
   };
   const last = columns.length - 1;
+  if (phone && cards && columns.length > 2 && minWidth > 400) {
+    const sortable = columns.filter((c) => c.sortable);
+    return (
+      <div className={`dt-cards ${className}`}>
+        {caption && <p className="sr-only">{caption}</p>}
+        {sortable.length > 1 && (
+          <label className="dt-sort">
+            <span>{t("ui.sortBy", { col: "" }).trim()}</span>
+            <select value={cur?.key ?? ""} onChange={(e) => { const c = columns.find((x) => x.key === e.target.value); if (c) by(c); }}>
+              {!cur && <option value="">–</option>}
+              {sortable.map((c) => <option key={c.key} value={c.key}>{typeof c.label === "string" ? c.label : c.key}</option>)}
+            </select>
+          </label>
+        )}
+        <ul className="dt-list">
+          {(allCards ? shown : shown.slice(0, CARD_PAGE)).map((r, ri) => {
+            const [head, ...rest] = columns;
+            const headContent = head.cell ? head.cell(r) : r[head.key];
+            return (
+              <li key={rowKey(r, ri)} className="dt-card" data-tone={rowTone?.(r) ?? undefined}>
+                {onRowClick ? (
+                  <button type="button" className="dt-card-head" onClick={() => onRowClick(r)} aria-label={rowLabel?.(r)}>
+                    <span className="min-w-0 flex-1">{headContent}</span><span aria-hidden="true" className="text-ink-3">→</span>
+                  </button>
+                ) : <div className="dt-card-head">{headContent}</div>}
+                <dl className="dt-card-body">
+                  {rest.map((c, i) => {
+                    const extra = typeof c.className === "function" ? c.className(r) : c.className ?? "";
+                    return (
+                      <div key={c.key ?? `c${i}`} className={c.wide ? "col-span-2" : ""}>
+                        <dt>{c.label}</dt>
+                        <dd className={`${c.num ? "font-num" : ""} ${extra}`}>{c.cell ? c.cell(r) : r[c.key]}</dd>
+                      </div>
+                    );
+                  })}
+                </dl>
+              </li>
+            );
+          })}
+        </ul>
+        {shown.length > CARD_PAGE && (
+          <button type="button" className="dt-more" onClick={() => setAllCards((v) => !v)} aria-expanded={allCards}>
+            {allCards ? t("ui.showLess") : t("ui.showAll", { n: shown.length })}
+          </button>
+        )}
+      </div>
+    );
+  }
   const edge = (i) => `${i === 0 ? "sticky left-0 ps-4 sm:ps-5" : ""} ${i === last ? "pe-4 sm:pe-5" : ""}`;
   return (
     <div className={`thin-scroll relative overflow-x-auto ${bleed ? "-mx-4 sm:-mx-5" : ""} ${scrollClassName} ${className}`}>

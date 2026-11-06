@@ -1,7 +1,7 @@
 ---
-version: 0.32.0
-updated_at: 2026-11-04
-change_note: The trader agent runs in demo mode in its own tab (Agent demo); Home opens on the Desk again. The stock chart gains a 1M daily close-up. The first push of each week carries the weekly buy (there is no Monday push); the brain checks from 04:23 UTC.
+version: 0.33.0
+updated_at: 2026-11-06
+change_note: An hourly market pulse (Finnhub free plan) while the US market is open, and a new first screen, Market now, that says in plain words what the market is doing, how scared it is, where it is heading, what moved and the news.
 ---
 # Decision log
 
@@ -18,6 +18,21 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Market file size**: `derived.json` is written one line per symbol (compact) and is about 330 KB with 21 names.
   Past roughly 35 names it would hit lint's 512 KB cap and the daily run would fail closed; before that, move the
   per-point dates into one shared array.
+
+## 2026-11-06
+- **An hourly market pulse.** The owner: "All of the great news land after 24h." The nightly data lands the next
+  morning, too late for a day like 29 Oct (Alphabet -12%) or 5 Nov (the Nasdaq-100 fund -6.5%). `scripts/live.py`
+  (routine `live_pulse`, workflow `live.yml`, every hour 13:07 to 21:07 UTC on weekdays) reads Finnhub's free plan
+  (the owner approved it; the key is the Actions secret `FINNHUB_API_KEY`, never in the repo) and writes
+  `data/market/live.json`: each name's move today, the two index funds, a fear gauge, the market's mood, and the latest
+  market and company headlines. Moves only, never a price. The VIX itself needs a paid plan, so the fear gauge is a
+  fund that follows it (VIXY), shown as its own move and named as such. With no key the script does nothing.
+- **Home opens on "Now".** The owner: "I open the app at any hour and want to know what is happening, the news, where
+  we are heading, the panic index", and "worth nothing if people can't access it". Home's switch is Now | Desk |
+  Details, Now first: the mood in one sentence with the index funds and how many names are up, a fear dial, where we
+  are heading (the regime's trend and risk, names above their 50-day average) with one line on what to do with real
+  money (never "sell"), what moved with its headline, and the news with links. It shows the hourly pulse while it is
+  fresh and the last close otherwise, and always says which one and when. Everything else stays where it was.
 
 ## 2026-11-04
 - **The agent demo gets its own tab; Home opens on the Desk again.** The owner: "I want it to run in demo mode in a

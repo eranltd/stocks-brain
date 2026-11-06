@@ -367,7 +367,6 @@ export default {
   "now.mineEyebrow": "Your list",
   "now.mineAll": "Open the list",
   "now.mineLine": "{up} of {n} of your names are up today.",
-  "now.mineSoon": "Moves show up after the next update.",
   "now.moversEyebrow": "What moved and why",
   "now.allStocks": "All stocks",
   "now.moversFoot": "Tap a name to see its full story.",

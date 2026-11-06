@@ -178,6 +178,8 @@ function MyList({ data, pulse, go, openTo, market }) {
   }).sort((a, b) => (b.move ?? -1e9) - (a.move ?? -1e9));
   const up = rows.filter((r) => r.move > 0).length;
   const known = rows.filter((r) => r.move != null).length;
+  // Nothing to show until the list has its first numbers (a wall of dashes reads as broken).
+  if (known === 0) return null;
   return (
     <article className="now-card now-mine">
       <div className="now-row-h">
@@ -195,7 +197,6 @@ function MyList({ data, pulse, go, openTo, market }) {
           </li>
         ))}
       </ul>
-      {known === 0 && <p className="now-foot">{t("now.mineSoon")}</p>}
     </article>
   );
 }

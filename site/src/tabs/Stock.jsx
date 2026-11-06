@@ -16,6 +16,7 @@ import { notesForSymbol, noteView, plainName, usableWhy } from "../lib/why.js";
 import { NoteSources, WhyFooter } from "../components/why.jsx";
 import { CandleZoom } from "../components/zoom.jsx";
 import { cardFor, daysUntil, growthWords, inDays, splitWhatsNext, staleness, todayISO, KIND_LABEL } from "../lib/outlook.js";
+import { StoryPanel } from "../components/story.jsx";
 import { gateReason, riskPlan, rowFor, stepRows, VERDICT } from "../lib/checklist.js";
 import { ChecksView, useChecklistView } from "../components/checklist.jsx";
 import { CandlesView } from "../components/candles.jsx";
@@ -547,6 +548,7 @@ function StockView({ data, row, symbol, go, mk }) {
   };
   const seeCandles = hasCandles ? () => { pickTab("candles"); requestAnimationFrame(() => jump("checklist")); } : null;
 
+  const storyNotes = useMemo(() => notesForSymbol(usableWhy(data.why, Boolean(data.livePrices)), symbol, { today }), [data.why, data.livePrices, symbol, today]);
   let num = 0;
   const no = () => ++num;
   const name = plainName(names?.[symbol] ?? symbol);
@@ -558,6 +560,10 @@ function StockView({ data, row, symbol, go, mk }) {
       <Container className="pt-4 sm:pt-6">
         <StockHero data={data} row={row} symbol={symbol} name={name} group={group} entry={entry} isDefault={isDefault} fund={fund} isBench={isBench}
           prev={prev} next={next} go={go} />
+        {!isBench && (
+          <StoryPanel symbol={symbol} name={name} row={row} data={data} notes={storyNotes} card={fund ? null : cardFor(data.outlook, symbol)}
+            call={desk?.call.call ?? null} buyTone={buy?.tone ?? null} today={today} jump={jump} />
+        )}
       </Container>
 
       <PipelineStrip ref={strip} sticky top={headerH} className="mt-4" label={t("sp.nav.label", { symbol })} steps={sections} active={active} onStep={jump}

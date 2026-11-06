@@ -1,7 +1,7 @@
 ---
-version: 0.34.0
+version: 0.35.0
 updated_at: 2026-11-06
-change_note: On a phone, wide tables become cards (no sideways scroll). An hourly market pulse (Finnhub free plan) while the US market is open, and a new first screen, Market now, that says in plain words what the market is doing, how scared it is, where it is heading, what moved and the news.
+change_note: Each stock page opens with its story in five plain chapters. On a phone, wide tables become cards (no sideways scroll). An hourly market pulse (Finnhub free plan) while the US market is open, and a new first screen, Market now, that says in plain words what the market is doing, how scared it is, where it is heading, what moved and the news.
 ---
 # Decision log
 
@@ -38,6 +38,12 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   on a 402 px screen. `DataTable` now shows one card per row under 640 px (the first column as the title, the rest as
   label and value), eight at a time with "Show all", and a sort menu where the table could sort. The Desk's risk plans
   use their own cards with plain labels (Exit if, Goal 1, Goal 2, Win : lose). Bigger screens keep the tables.
+- **Each stock page tells its story.** The owner: "diving into each stock tells the story". Under the name, five short
+  chapters in plain words (`lib/story.js`, `components/story.jsx`): today (the hourly pulse's move and headline while
+  fresh, else the last close), the trend (this month, this year, from its high, against the market), what is coming
+  (the next results date, from the outlook card), what the news says (the latest why-it-moved note and the card's
+  summary), and what the system thinks (the Desk's call on paper and what the rules say for real money). A tap opens
+  the section with the detail; every section below stays as it was. Moves only, never a price.
 
 ## 2026-11-04
 - **The agent demo gets its own tab; Home opens on the Desk again.** The owner: "I want it to run in demo mode in a

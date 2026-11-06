@@ -1031,3 +1031,29 @@ button.floor-tile:hover { transform: translateY(-1px); border-color: var(--line-
 .dt-card-body dt { font-family: var(--font-num); font-size: 9.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
 .dt-card-body dd { margin-top: 2px; min-width: 0; overflow-wrap: anywhere; font-size: 13.5px; color: var(--ink); }
 .dt-more { min-height: 44px; border-radius: var(--r-tile); border: 1px dashed var(--line-3); font-family: var(--font-num); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--desk); }
+
+/* === the story === */
+/* The top of a stock's page (components/story.jsx): five short chapters in plain words. */
+.story { margin-top: 14px; border-radius: var(--r-panel); border: 1px solid var(--line-2); background: linear-gradient(160deg, color-mix(in srgb, var(--desk) 7%, var(--surface)), var(--surface) 60%);
+  padding: 16px 16px 6px; box-shadow: var(--shadow-panel); }
+.story-title { font-family: var(--font-display); font-size: clamp(22px, 5.4vw, 30px); font-weight: 800; line-height: 1.1; color: var(--ink); }
+.story-list { margin-top: 10px; display: grid; }
+@media (min-width: 900px) { .story-list { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); column-gap: 18px; } }
+.story-ch { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; border-top: 1px solid var(--line); padding: 12px 0; animation: arena-rise 500ms var(--ease-out-expo) both; }
+@media (min-width: 900px) { .story-ch { border-top: 0; } }
+.story-icon { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 9px; background: color-mix(in srgb, var(--desk) 14%, transparent); color: var(--desk); font-size: 14px; }
+.story-ch[data-id="system"] .story-icon { background: color-mix(in srgb, var(--ai) 16%, transparent); color: var(--ai); }
+.story-h { font-family: var(--font-num); font-size: 10.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+.story-p { margin-top: 3px; font-size: 15px; line-height: 1.4; color: var(--ink); }
+.story-sub { margin-top: 3px; display: block; font-size: 13px; line-height: 1.4; color: var(--ink-2); }
+.story-link:hover { color: var(--desk); }
+.story-date { color: var(--ink-3); font-size: 13px; }
+.story-move { font-family: var(--font-num); font-size: 18px; font-weight: 800; }
+.story-move[data-tone="up"] { color: var(--up); }
+.story-move[data-tone="down"] { color: var(--down); }
+.story-btn { display: block; width: 100%; text-align: start; }
+.story-btn:hover .story-p { color: var(--desk); }
+.story-call { font-family: var(--font-num); font-weight: 800; color: var(--wait); }
+.story-call[data-call="buy"] { color: var(--up); }
+.story-call[data-call="reject"] { color: var(--down); }
+@media (prefers-reduced-motion: reduce) { .story-ch { animation: none !important; } }

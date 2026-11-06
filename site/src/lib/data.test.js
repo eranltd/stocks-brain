@@ -7,18 +7,18 @@ test("loadCandles fetches one symbol's file on demand, once, and null when none 
   const realFetch = globalThis.fetch;
   globalThis.fetch = async (url) => {
     calls.push(url);
-    return { ok: true, json: async () => ({ symbol: "XYZ", basis: "percent from the last close" }) };
+    return { ok: true, json: async () => ({ symbol: "ZZY", basis: "percent from the last close" }) };
   };
   try {
-    const manifest = { candles: { XYZ: "market/candles/XYZ.json" } };
+    const manifest = { candles: { ZZY: "market/candles/ZZY.json" } };
     assert.equal(await loadCandles(manifest, "ABC"), null);
-    assert.equal(await loadCandles({ candles: null }, "XYZ"), null);
-    assert.equal(await loadCandles({}, "XYZ"), null);
-    const a = await loadCandles(manifest, "XYZ");
-    const b = await loadCandles(manifest, "XYZ");
-    assert.equal(a.symbol, "XYZ");
+    assert.equal(await loadCandles({ candles: null }, "ZZY"), null);
+    assert.equal(await loadCandles({}, "ZZY"), null);
+    const a = await loadCandles(manifest, "ZZY");
+    const b = await loadCandles(manifest, "ZZY");
+    assert.equal(a.symbol, "ZZY");
     assert.equal(a, b);
-    assert.deepEqual(calls, ["./data/market/candles/XYZ.json"]);
+    assert.deepEqual(calls, ["./data/market/candles/ZZY.json"]);
   } finally {
     globalThis.fetch = realFetch;
   }

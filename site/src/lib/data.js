@@ -45,6 +45,9 @@ export function loadCandles(manifest, symbol) {
 
 /** The markets in config order, each its config entry merged with its manifest entry; `available` is true when its
  * derived numbers exist. A build from before markets existed gives one default market built from the manifest. */
+/** The owner's own watchlist (config/markets.json "mine"): second in the switch, and the list the Stocks page opens on. */
+export const OWN_LIST = "mine";
+
 export function marketsFrom(manifest, config = null) {
   const exported = manifest?.markets;
   if (!exported) {
@@ -55,7 +58,9 @@ export function marketsFrom(manifest, config = null) {
       available: Boolean(manifest?.market),
     }];
   }
-  const order = config?.markets?.map((m) => m.id) ?? Object.keys(exported);
+  const listed = config?.markets?.map((m) => m.id) ?? Object.keys(exported);
+  // The owner's own list (OWN_LIST) shows right after the default market in every switch.
+  const order = listed.includes(OWN_LIST) ? [listed[0], OWN_LIST, ...listed.slice(1).filter((id) => id !== OWN_LIST)] : listed;
   const cfg = Object.fromEntries((config?.markets ?? []).map((m) => [m.id, m]));
   return order
     .filter((id) => exported[id])

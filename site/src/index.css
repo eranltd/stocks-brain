@@ -1057,3 +1057,16 @@ button.floor-tile:hover { transform: translateY(-1px); border-color: var(--line-
 .story-call[data-call="buy"] { color: var(--up); }
 .story-call[data-call="reject"] { color: var(--down); }
 @media (prefers-reduced-motion: reduce) { .story-ch { animation: none !important; } }
+/* Market now: the owner's own list as tiles (components/marketnow.jsx MyList). */
+.now-mine { border-color: color-mix(in srgb, var(--desk) 35%, var(--line-2)); }
+.now-mine-grid { margin-top: 12px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+@media (min-width: 640px) { .now-mine-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+@media (min-width: 1100px) { .now-mine-grid { grid-template-columns: repeat(11, minmax(0, 1fr)); } }
+.now-tile { --t: var(--ink-3); display: grid; width: 100%; gap: 2px; border-radius: var(--r-tile); border: 1px solid color-mix(in srgb, var(--t) 35%, var(--line-2));
+  background: color-mix(in srgb, var(--t) 12%, var(--surface)); padding: 8px 6px; text-align: center; transition: transform 160ms; }
+.now-tile:hover { transform: translateY(-2px); }
+.now-tile[data-tone="up"] { --t: var(--up); }
+.now-tile[data-tone="down"] { --t: var(--down); }
+.now-tile-sym { font-family: var(--font-num); font-size: 13px; font-weight: 800; color: var(--ink); }
+.now-tile-move { font-family: var(--font-num); font-size: 13.5px; font-weight: 800; color: var(--t); }
+.now-tile[data-tone="none"] .now-tile-move, .now-tile[data-tone="flat"] .now-tile-move { color: var(--ink-2); }

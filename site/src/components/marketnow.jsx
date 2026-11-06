@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { fearNeedle, headingOf, newsOf, pulseOf, realMoneyKey } from "../lib/marketnow.js";
 import { ago } from "../lib/feed.js";
+import { loadMarket } from "../lib/data.js";
 import { fmtDate } from "../lib/format.js";
 import { strings } from "../lib/text.js";
 import dict from "../text/home.js";
@@ -24,7 +25,7 @@ function useMinute() {
   return now;
 }
 
-export function MarketNow({ data, go, openTo }) {
+export function MarketNow({ data, go, openTo, market }) {
   const now = useMinute();
   const pulse = useMemo(() => pulseOf(data, now), [data, now]);
   const heading = useMemo(() => headingOf(data), [data]);
@@ -42,6 +43,8 @@ export function MarketNow({ data, go, openTo }) {
             : pulse.at ? t("now.close", { day: day(pulse.at) }) : t("now.noData")}
         </span>
       </header>
+
+      <MyList data={data} pulse={pulse} go={go} openTo={openTo} market={market} />
 
       <div className="now-grid">
         <article className="now-card now-mood" data-mood={pulse.mood}>
@@ -150,6 +153,49 @@ function FearCard({ fear, heading }) {
       <p className="now-line">
         {fear ? t("now.fearLine", { symbol: fear.symbol, move: pct(fear.move) }) : t("now.fearNone")}
       </p>
+    </article>
+  );
+}
+
+/** The owner's own watchlist (the "mine" market): every name's move today, best first; the hourly pulse while fresh,
+ * else the last close of that list. Tapping a name opens its page. */
+const MINE = "mine";
+function MyList({ data, pulse, go, openTo, market }) {
+  const [view, setView] = useState(null);
+  const has = (data?.markets ?? []).some((m) => m.id === MINE);
+  useEffect(() => {
+    if (!has) return undefined;
+    let on = true;
+    loadMarket(data.manifest, MINE, data).then((v) => { if (on) setView(v); }).catch(() => {});
+    return () => { on = false; };
+  }, [has, data]);
+  if (!has || !view?.watchlist) return null;
+  const liveMove = new Map(pulse.source === "live" && pulse.fresh ? (data.live?.symbols ?? []).map((r) => [r.symbol, r.move_pct]) : []);
+  const close = new Map((view.market?.symbols ?? []).map((r) => [r.symbol, r.change_1d_pct]));
+  const rows = view.watchlist.symbols.map((s) => {
+    const m = liveMove.has(s.symbol) ? liveMove.get(s.symbol) : close.get(s.symbol);
+    return { symbol: s.symbol, name: s.name, move: Number.isFinite(m) ? m : null };
+  }).sort((a, b) => (b.move ?? -1e9) - (a.move ?? -1e9));
+  const up = rows.filter((r) => r.move > 0).length;
+  const known = rows.filter((r) => r.move != null).length;
+  return (
+    <article className="now-card now-mine">
+      <div className="now-row-h">
+        <p className="now-eyebrow">{t("now.mineEyebrow")}</p>
+        <button type="button" className="now-more" onClick={() => go("watchlist", MINE)}>{t("now.mineAll")} →</button>
+      </div>
+      {known > 0 && <p className="now-line">{t("now.mineLine", { up, n: known })}</p>}
+      <ul className="now-mine-grid">
+        {rows.map((r) => (
+          <li key={r.symbol}>
+            <button type="button" className="now-tile" data-tone={r.move == null ? "none" : tone(r.move)} onClick={() => openTo(`stock/${r.symbol}`)} title={r.name}>
+              <span className="now-tile-sym">{r.symbol}</span>
+              <b className="now-tile-move">{r.move == null ? "–" : pct(r.move)}</b>
+            </button>
+          </li>
+        ))}
+      </ul>
+      {known === 0 && <p className="now-foot">{t("now.mineSoon")}</p>}
     </article>
   );
 }

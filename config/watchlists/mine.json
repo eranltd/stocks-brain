@@ -1,0 +1,139 @@
+{
+ "version": "1.0.0",
+ "updated_at": "2026-11-06",
+ "change_note": "The owner's own watchlist (from their broker's list), with the top five S&P 500 and Nasdaq-100 companies and offshore energy (Transocean). The 2x and 3x daily funds are followed, never bought by the rules. S&P 500 membership checked by hand on this date.",
+ "symbols": [
+  {
+   "symbol": "NVDA",
+   "name": "NVIDIA",
+   "sector": "Information Technology",
+   "sp500": true
+  },
+  {
+   "symbol": "MSFT",
+   "name": "Microsoft",
+   "sector": "Information Technology",
+   "sp500": true
+  },
+  {
+   "symbol": "AAPL",
+   "name": "Apple",
+   "sector": "Information Technology",
+   "sp500": true
+  },
+  {
+   "symbol": "AMZN",
+   "name": "Amazon",
+   "sector": "Consumer Discretionary",
+   "sp500": true
+  },
+  {
+   "symbol": "GOOGL",
+   "name": "Alphabet",
+   "sector": "Communication Services",
+   "sp500": true
+  },
+  {
+   "symbol": "META",
+   "name": "Meta Platforms",
+   "sector": "Communication Services",
+   "sp500": true
+  },
+  {
+   "symbol": "AVGO",
+   "name": "Broadcom",
+   "sector": "Information Technology",
+   "sp500": true
+  },
+  {
+   "symbol": "TSM",
+   "name": "Taiwan Semiconductor (TSMC)",
+   "sector": "Information Technology",
+   "sp500": false
+  },
+  {
+   "symbol": "ASML",
+   "name": "ASML",
+   "sector": "Information Technology",
+   "sp500": false
+  },
+  {
+   "symbol": "PLTR",
+   "name": "Palantir",
+   "sector": "Information Technology",
+   "sp500": true
+  },
+  {
+   "symbol": "CRWD",
+   "name": "CrowdStrike",
+   "sector": "Information Technology",
+   "sp500": true
+  },
+  {
+   "symbol": "SHOP",
+   "name": "Shopify",
+   "sector": "Information Technology",
+   "sp500": false
+  },
+  {
+   "symbol": "GTLB",
+   "name": "GitLab",
+   "sector": "Information Technology",
+   "sp500": false
+  },
+  {
+   "symbol": "XYZ",
+   "name": "Block",
+   "sector": "Financials",
+   "sp500": true
+  },
+  {
+   "symbol": "SPCX",
+   "name": "SpaceX (Space Exploration Technologies)",
+   "sector": "Communication Services",
+   "sp500": false
+  },
+  {
+   "symbol": "DXYZ",
+   "name": "Destiny Tech100 (private tech companies fund)",
+   "sector": "Financials",
+   "sp500": false
+  },
+  {
+   "symbol": "TSLR",
+   "name": "GraniteShares 2x Long Tesla (2x daily fund)",
+   "sector": "Consumer Discretionary",
+   "sp500": false
+  },
+  {
+   "symbol": "TSYY",
+   "name": "GraniteShares YieldBOOST Tesla (income fund)",
+   "sector": "Consumer Discretionary",
+   "sp500": false
+  },
+  {
+   "symbol": "TQQQ",
+   "name": "ProShares UltraPro QQQ (3x daily Nasdaq-100)",
+   "sector": "Information Technology",
+   "sp500": false
+  },
+  {
+   "symbol": "RIG",
+   "name": "Transocean (offshore drilling)",
+   "sector": "Energy",
+   "sp500": false
+  },
+  {
+   "symbol": "XOP",
+   "name": "SPDR Oil & Gas Exploration fund",
+   "sector": "Energy",
+   "sp500": false
+  },
+  {
+   "symbol": "IEZ",
+   "name": "iShares Oil Equipment & Services fund",
+   "sector": "Energy",
+   "sp500": false
+  }
+ ]
+}

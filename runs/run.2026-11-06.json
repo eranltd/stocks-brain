@@ -1,0 +1,178 @@
+{
+  "schema_version": 1,
+  "run_id": "run.2026-11-06",
+  "date": "2026-11-06",
+  "generated_at": "2026-11-07T04:24:52Z",
+  "status": "ok",
+  "sample": false,
+  "model": "Claude Code routine",
+  "cost": {
+    "usd": 0.0,
+    "input_tokens": 12493,
+    "output_tokens": 2158,
+    "cap_usd": 2.5
+  },
+  "duration_minutes": 3.0,
+  "pack": {
+    "hash": "9e1de0e09b438d7b5f587f293a69b6dfca5358c3e114781b8777f0c1f20c8eb4",
+    "tokens": 12493,
+    "cap_tokens": 14000
+  },
+  "doc_versions": {
+    "strategy": "0.2.0",
+    "methodology": "0.17.2",
+    "guardrails": "0.1.0",
+    "learnings": "0.1.0"
+  },
+  "repair_retries": 0,
+  "summary": "The frozen history test rejected every pre-registered stock rule: each beat only a small share of random baskets from the same list, and holding every name equally beat every rule and the core. Setup checks and past strength have shown no edge here. The market steadied on the latest day after its sharp fall, but its mood stays stressed and its trend down. All five calls stay neutral with low conviction. Nothing here is expected to beat the index; real money stays in the whole-market plan.",
+  "eli5": "After a big stumble, the whole field of runners caught its breath and walked a little. The brain does not guess who sprints next, because guessing did no better than luck before. It watches with pretend money, and the family's real money keeps going into the whole-market basket every week.",
+  "letter": "Dear family,\n\nFirst, real money. Nothing to do today, and nothing to sell. The market steadied after its sharp fall, but its mood is still stressed. Monday's buy of the whole-market fund goes in as always; a weak patch means the same amount buys a bit more. Money we may need soon stays safe.\n\nSecond, the pretend game. Every stock rule we wrote down in advance lost to baskets picked at random from the same list, so our stock calls stay neutral. The weekly bet game stood at two weeks won and one lost, and this week's bet looks set to lose, mostly because Monster fell hard on the latest day. Luck alone wins about half the weeks, so this means little.\n\nThird, a lesson. A quiet day after a loud one feels like relief, but one calm day tells us no more than one bad day did. The plan does not change with the weather.\n\nFourth, what would change our minds: a rule that beats random picks on history and then keeps a paper record ahead of the whole market for at least half a year. Until then we stay patient.\n\nWith care, the brain",
+  "bets": {
+    "best": [
+      "MNST",
+      "AAPL",
+      "FANG"
+    ],
+    "worst": [
+      "META",
+      "AVGO",
+      "MSFT"
+    ],
+    "why": "This week's bet was already placed and is repeated unchanged: names above their trend passing every setup check, against names below their trend whose checklist leaned down. No rule like this has beaten luck, so it is a learning bet only."
+  },
+  "picks": [
+    {
+      "id": "2026-11-06:GOOGL",
+      "ref_date": "2026-11-06",
+      "pick": {
+        "ticker": "GOOGL",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Alphabet edged up on the latest day but sits far below its high for the year and well below its fifty-day average, behind the benchmark on every window; the checklist reads mixed and calls it oversold. Its filing shows strong growth but thin free cash flow. The house rule says never to buy only because a stock fell a lot, and no tested rule shows that deep falls on this list bounce back. Berkshire's disclosed book holds it and is behind; that record is the firm's and too thin to count. Neutral and low, unchanged.",
+        "risks": [
+          "The downtrend is intact; a small up day does not change it.",
+          "Thin free cash flow against strong profits, so heavy spending is eating the cash.",
+          "The market's mood is stressed, which tends to hit names already falling.",
+          "Its swings have grown much larger lately."
+        ],
+        "invalidation": "A close back above its fifty-day average that restores the trend check would make a bullish case worth testing on paper; a new low would confirm the fall is not done.",
+        "evidence": [
+          "rules_history.verdicts",
+          "base_rates.by_score",
+          "market.googl.setup",
+          "market.googl.risk",
+          "checklist.names.googl",
+          "fundamentals.names.googl",
+          "people.fund.berkshire-hathaway",
+          "regime"
+        ],
+        "eli5": "Alphabet stood up a little after tripping, but it is still far behind. The brain does not jump in, and only watches with pretend money."
+      }
+    },
+    {
+      "id": "2026-11-06:MSFT",
+      "ref_date": "2026-11-06",
+      "pick": {
+        "ticker": "MSFT",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Microsoft slipped again on the latest day but still passes all four setup checks without being stretched and leads the benchmark over the last month, quarter and half year. It sits below its twenty-day average and the checklist reads mixed with weakening volume and a reward-to-risk too thin. The Pershing Square fund's disclosed book holds it; that record is too thin to count. It is also this week's bet against, which is a learning bet only. Neutral and low, unchanged.",
+        "risks": [
+          "Below its twenty-day average after two down days.",
+          "Volume weakening, and the checklist reward-to-risk is too thin.",
+          "Deepest drop over the past year among the names the rule holds.",
+          "The trend check has flipped several times, so it carries little weight."
+        ],
+        "invalidation": "A close back below its fifty-day average, or its lead over the benchmark on the half-year window turning into a lag.",
+        "evidence": [
+          "rules_history.verdicts",
+          "base_rates.by_score",
+          "market.msft.setup",
+          "market.msft.risk",
+          "checklist.names.msft",
+          "people.fund.pershing-square-capital-management",
+          "regime"
+        ],
+        "eli5": "Microsoft took another small step back. It keeps changing pace, so the brain just watches with pretend money."
+      }
+    },
+    {
+      "id": "2026-11-06:AAPL",
+      "ref_date": "2026-11-06",
+      "pick": {
+        "ticker": "AAPL",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Apple slipped on the latest day but stays near its high for the year, passes all four setup checks without being stretched, and leads the benchmark over every window shown. It dipped below its twenty-day average and the checklist reads mixed with a reward-to-risk far too thin. Names passing all four checks did no better in the base rates, and every rule was rejected. Neutral and low, unchanged.",
+        "risks": [
+          "Checklist reward-to-risk is far too thin for a new paper entry.",
+          "Below its twenty-day average while the market's mood is stressed.",
+          "Well above its long average, so a pullback toward it would be ordinary."
+        ],
+        "invalidation": "A close back below its fifty-day average, or its lead over the benchmark on the half-year window turning into a lag.",
+        "evidence": [
+          "rules_history.verdicts",
+          "base_rates.by_score",
+          "market.aapl.setup",
+          "checklist.names.aapl",
+          "fundamentals.names.aapl",
+          "regime"
+        ],
+        "eli5": "Apple is still near the top of its hill but took a small step back. The brain only watches with pretend money."
+      }
+    },
+    {
+      "id": "2026-11-06:AMGN",
+      "ref_date": "2026-11-06",
+      "pick": {
+        "ticker": "AMGN",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Amgen was flat on the latest day and still leads the benchmark on every window by a wide margin. The checklist now leans up and its reward-to-risk meets the house rule, but it is stretched above its average and no longer calm, so it fails one setup check and the house rule says never to chase it. The checklist is unproven here, names passing the setup checks did no better in the base rates, and every rule was rejected. Neutral and low, unchanged.",
+        "risks": [
+          "Stretched above its average after a sharp run, and the house rule forbids chasing that.",
+          "Its swings have risen, so the setup no longer reads calm.",
+          "No earnings date in the pack, so a report could land inside the horizon unseen.",
+          "Moves partly with Gilead, so the two health care names are partly one bet."
+        ],
+        "invalidation": "A close back below its fifty-day average that breaks the trend check, or its lead over the benchmark on the half-year window turning into a lag.",
+        "evidence": [
+          "rules_history.verdicts",
+          "base_rates.by_score",
+          "market.amgn.setup",
+          "market.amgn.risk",
+          "checklist.names.amgn",
+          "fundamentals.names.amgn",
+          "library.s-050:p08"
+        ],
+        "eli5": "Amgen is catching its breath after a long sprint. The house rule says never chase a runner like that, so the brain just watches with pretend money."
+      }
+    },
+    {
+      "id": "2026-11-06:GILD",
+      "ref_date": "2026-11-06",
+      "pick": {
+        "ticker": "GILD",
+        "stance": "neutral",
+        "conviction": "low",
+        "thesis": "Gilead dipped on the latest day but still leads the benchmark on every window. The checklist now leans up with a reward-to-risk that meets the house rule, but it is stretched and no longer calm, so it fails one setup check and the house rule says never to chase it. Its newest filing still shows an operating and net loss over the trailing year despite strong free cash flow. The setup gate showed no edge in the base rates and every rule was rejected. Neutral and low, unchanged.",
+        "risks": [
+          "Stretched above its average after a sharp run, and the house rule forbids chasing that.",
+          "The newest filing still shows an operating and net loss over the trailing year.",
+          "No earnings date in the pack, so a report could land inside the horizon unseen.",
+          "Moves partly with Amgen, so the two are partly one bet."
+        ],
+        "invalidation": "A close below its fifty-day average that fails the trend check, or a fresh filing with wider losses while free cash flow fades.",
+        "evidence": [
+          "rules_history.verdicts",
+          "base_rates.gate",
+          "market.gild.setup",
+          "checklist.names.gild",
+          "fundamentals.names.gild"
+        ],
+        "eli5": "Gilead is catching its breath after a long sprint, and its money book still shows a loss. The brain watches with pretend money."
+      }
+    }
+  ]
+}

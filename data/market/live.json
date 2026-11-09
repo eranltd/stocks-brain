@@ -1,10 +1,10 @@
 {
-"as_of":"2026-11-09T21:12:57Z",
+"as_of":"2026-11-09T22:57:50Z",
 "quotes_at":1794258000,
 "sample":false,
 "provider":"finnhub",
 "big_move_pct":5,
-"indexes":{"SPY":{"move_pct":2.37,"from_open_pct":1.45,"range_pos":81,"at":1794258000},"QQQ":{"move_pct":3.44,"from_open_pct":2.42,"range_pos":81,"at":1794258000}},
+"indexes":{"SPY":{"move_pct":2.37,"from_open_pct":1.45,"range_pos":81,"at":1794258000},"QQQ":{"move_pct":3.54,"from_open_pct":2.52,"range_pos":85,"at":1794258000}},
 "fear":{"symbol":"VIXY","move_pct":-13.41,"from_open_pct":-8.45,"range_pos":13,"at":1794258000,"level":"calm"},
 "breadth":{"up":17,"down":4,"flat":0},
 "mood":"rally",
@@ -63,23 +63,24 @@
 {"symbol":"XLE","list":"sectors","move_pct":0.52,"from_open_pct":1.13,"range_pos":76,"at":1794258000}
 ],
 "company_news":[
+{"headline":"Where To Buy The Dip","source":"SeekingAlpha","url":"https://finnhub.io/api/news?id=1de6de4f66d69d15239bb692fe7ff113bf3716dc7fe15f652fa5dff1254b200e","at":1794240240,"symbol":"TQQQ"},
 {"headline":"Proshares Trust (TQQQ) Buys $83.0 Million More Apple on Thursday","source":"Yahoo","url":"https://finnhub.io/api/news?id=461786aba11e2580fa4dba45ef1349825f9e4413d1e02d60ad190a2a7999ad85","at":1794222300,"symbol":"TQQQ"},
 {"headline":"NXP Semiconductors (NXPI) Sees $10.4 Million in Net ETF Buying on Nov. 5","source":"Yahoo","url":"https://finnhub.io/api/news?id=9b4153b5f96205ddadb4039cc3d28dfb819721ed9885040d33c913ba561a8b60","at":1794222146,"symbol":"TQQQ"},
-{"headline":"ETFs Bought $13.1 Million of Marvell (MRVL) on Thursday","source":"Yahoo","url":"https://finnhub.io/api/news?id=59061a112b2b844c3a2dc13cf53d820f9a6b47ada440dea9247b4460b2a57491","at":1794222131,"symbol":"TQQQ"},
+{"headline":"The Real Winner of Google’s $135 Billion Chip Forecast: Broadcom","source":"Yahoo","url":"https://finnhub.io/api/news?id=a065a8051441fa680ca88a0ec2258e95c9f66aaa4b769a9737e929fd1099284b","at":1794257131,"symbol":"AVGO"},
 {"headline":"Unless Nvidia Removes Jensen Huang, the Stock Is Worth Holding","source":"Yahoo","url":"https://finnhub.io/api/news?id=ff1f5e82a0b56aed13a89473450541705b11f42443f0be9a89500181a7e99723","at":1794251280,"symbol":"AVGO"},
 {"headline":"Broadcom Stocks Jump 8.21% as Investors Eye $21.7 Billion AI Revenue Guide","source":"Yahoo","url":"https://finnhub.io/api/news?id=64ad890bd7f0d75385cc0a2999fbfe387d759715b8199bc043890c2b50057bb5","at":1794247538,"symbol":"AVGO"},
-{"headline":"Broadcom makes surprising move in battle for AI software","source":"Yahoo","url":"https://finnhub.io/api/news?id=a2c4a86c34bd8e5d32a01ededb538b2d6f90a1bd4f0f12a3079da10b8569c651","at":1794242715,"symbol":"AVGO"},
+{"headline":"Top Research Reports for ASML, Alibaba & Intuitive Surgical","source":"Yahoo","url":"https://finnhub.io/api/news?id=8997313777850e60e73f1cdf370abadfa53a7d6fea09b3fe69ff661dd51bff50","at":1794256380,"symbol":"ASML"},
 {"headline":"Why ASML Bounced Back Today","source":"Yahoo","url":"https://finnhub.io/api/news?id=85b498ece5eddfe0911a0404b0de152678cbae953f60ad303b0b59047378b943","at":1794252603,"symbol":"ASML"},
 {"headline":"ASML Raises 2026 Guidance as AI Demand Accelerates Capacity Expansion","source":"Yahoo","url":"https://finnhub.io/api/news?id=d4653c4445685f35941630154a468e96f53c27edb5ccc26e02e0595409da9bef","at":1794235440,"symbol":"ASML"},
-{"headline":"ASML Falls 20% in the Past Month as AI Growth Meets Execution Risk","source":"Yahoo","url":"https://finnhub.io/api/news?id=b2142805d39dc3e377d12d33b408108d2c88f9635cdade2bfb5aaf1c6f9122b9","at":1794234780,"symbol":"ASML"},
-{"headline":"SpaceX plans $24 billion power plant in Starbase, Texas","source":"Yahoo","url":"https://finnhub.io/api/news?id=5779cde78208d4969c5f0dce26b097476999db9a106cb7431cb7123143e7b12e","at":1794253619,"symbol":"SPCX"},
-{"headline":"Why Voyager Technologies Stock Went to the Moon on Monday","source":"Yahoo","url":"https://finnhub.io/api/news?id=9d627c05b0dc215999fb7272bb76d0e1ce6ab30143f756617deb5b60c48a914f","at":1794253543,"symbol":"SPCX"},
-{"headline":"Anthropic's IPO May No Longer Value the Company Anywhere Near $2 Trillion. Does That Make it Worth Buying?","source":"Yahoo","url":"https://finnhub.io/api/news?id=927b51cb3f11600e523b2f512d4a41dc565cac19c647b29e8f39223f91b992fa","at":1794253262,"symbol":"SPCX"},
+{"headline":"SPCX Stock Rises As SpaceX Advances $24B Texas Data Center And Gas Plant Plans","source":"Yahoo","url":"https://finnhub.io/api/news?id=0fa6513a9c895604a4628ad4e9f0ecf56f0e0c5825b7c98ae7bb913ecd3ecd0c","at":1794260807,"symbol":"SPCX"},
+{"headline":"AST SpaceMobile Provides Business Update and Third Quarter 2026 Results","source":"Yahoo","url":"https://finnhub.io/api/news?id=6af6e44c33b8b1ebd801979722a537f28e22e670e8a2e329dd78b3f06f463e75","at":1794259800,"symbol":"SPCX"},
+{"headline":"SpaceX Wants to Rule Wireless. Buying a Phone Carrier Is the Fastest Shortcut.","source":"Yahoo","url":"https://finnhub.io/api/news?id=4f83fbf20baa1c41f1980b216b4538bbfd417223518a48ec85e364dd165e6df6","at":1794258780,"symbol":"SPCX"},
 {"headline":"Palantir Stocks Rise 5.96% as Former Senator Jon Tester Joins as Adviser","source":"Yahoo","url":"https://finnhub.io/api/news?id=448af44b9c0bc84f9a8f98e4ef11a35f814d6cbbb3047c32b9e27f60c88c347d","at":1794249503,"symbol":"PLTR"},
 {"headline":"Palantir Rises 5%, Snowflake Up 6% as AI Stocks Rebound After Market Was “Freaking Out”","source":"Yahoo","url":"https://finnhub.io/api/news?id=cd3d8294a3324b2017582a1cc7eb0b7d23c51fcab839895a1a239d1bfb0bae96","at":1794248990,"symbol":"PLTR"},
 {"headline":"Defense Realignment: Lockheed Martin vs. Palantir","source":"Yahoo","url":"https://finnhub.io/api/news?id=d804865af3409be22ea4b3a2f33d9623690d297f1920c29a05a77d21bb79e131","at":1794246351,"symbol":"PLTR"}
 ],
 "market_news":[
+{"headline":"Skydance outlines its $6 billion in planned cost savings. Here's the breakdown","source":"CNBC","url":"https://www.cnbc.com/2026/11/09/skydance-cost-savings-breakdown.html","at":1794259720},
 {"headline":"Children’s Place files for bankruptcy protection, seeks buyer","source":"CNBC","url":"https://www.cnbc.com/2026/11/09/childrens-place-chapter-11-sale.html","at":1794257866},
 {"headline":"This beaten-down data center stock could be worth a look, says Mike Khouw","source":"CNBC","url":"https://www.cnbc.com/2026/11/09/this-beaten-down-data-center-stock-could-be-worth-a-look-says-mike-khouw.html","at":1794252237},
 {"headline":"Boeing to cut 5% of commercial airplane workforce as production increase is slower than expected","source":"CNBC","url":"https://www.cnbc.com/2026/11/09/boeing-layoffs-commercial-airplane.html","at":1794247078},
@@ -108,7 +109,6 @@
 {"headline":"Iraq has reached understandings with US to allow oil exports through Hormuz, minister says - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMiwgFBVV95cUxQcVp2dDBwekFJVEtlai1lemtaZVNTb2FaallsZHhyT2FHTlZHdmpwY3B0SU9HRUpQV2JQQ3E0NWo0VEJpS3B4N1JCTGhkTUhJTHFYUUY3ZkttWmc2RUl1V2dicHdLODBaUEFQSmdySXdHcTJ2VGpIeUlOTlZZd05LZ29wYVdWajhrMzVYa1ZJQl9FTnNjZjFQRmNGc1FoV1dmOFZyOWYzTE1pRndvaGxzSTg1S1B1Z1lxSDZNM3hZWEZmZw?oc=5","at":1794165969},
 {"headline":"US asks Iraq to shut most Iran border crossings, Iraqi foreign minister says - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMixAFBVV95cUxOaVVxWlAwOFI0ZGd4TUdTNFozbzE5TXN5UGx3R0NnX0JRdExfcVhSb21iYklFOXJ2QUpncXdoSFB3eE1NS0FFeHljZXQxeWlEVTNKVWd1eFVLWTZmbVpsSUs5Q3NqNUk2b1JYQVNxSFIyTTMxZERFdDBWVUFfUFZ2MkFtOUlIYm5VbE9kQ2kzVmdUTV9pZHFxNWNvUVFhYkI1WHc5LTZSS0JMR1Nka3gwSjgzWWFZZXN6OFFTRHB5Rzk1THIz?oc=5","at":1794164503},
 {"headline":"Trump says he is unlikely to order Iran attack if talks progress, CNN reports - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMixgFBVV95cUxQbV96cm81eEtLUU91T0xKaWxycHdBV3c4VGNZb2dCbzA0M2M0V2ZPZXp2R1NRcmJ1Wl9TLUxZZWtQRDRtazg2dHVzRWlIdGpmWVRJTUl3cU95cUNheHJtMFJFU2lKM2c2cndGc2ZTbmFqZUpaT0hWRFRyZ1VPYzFFbXlSZUVCR1NuLWFqM0dFaUo2UHI4dWFKZlRoUHEwZ2UwNF95T0NzUGNHME15MFQtMWpMeXZaWDhGQnNkZDNRYnQyTjlQcUE?oc=5","at":1794160809},
-{"headline":"Netanyahu rival Eisenkot seeks 'wide' government but path to power uncertain - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMivgFBVV95cUxQejJnOTcwYVNEbnpEdVN4M0cwM3BsNEVBbXBpd21YUEcyM3RfX0FKUWsxaHk2dDVmc2NZZXR5cmNZY1NyY0o2MzlMSzU3SW1oVFpadFRLWjlTWHlWY3UxN2FXbUNQeFB4TlZrNlRyRW5jal9zQ2NaQWE2aGNfbHQxb1Zxb3VHcjRxcnNFaDZpdEw0Vm14eHNPLTVhM2l1ejJiYkMyQU51YzZRWEZSdm51ck5HOUh2NFNaQW5ONnhn?oc=5","at":1794159621},
-{"headline":"Here are the 2 big things we're watching in the stock market in the week ahead","source":"CNBC","url":"https://www.cnbc.com/investingclub/2026/11/08/here-are-the-2-big-things-were-watching-in-the-stock-market-in-the-week-ahead.html","at":1794159615}
+{"headline":"Netanyahu rival Eisenkot seeks 'wide' government but path to power uncertain - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMivgFBVV95cUxQejJnOTcwYVNEbnpEdVN4M0cwM3BsNEVBbXBpd21YUEcyM3RfX0FKUWsxaHk2dDVmc2NZZXR5cmNZY1NyY0o2MzlMSzU3SW1oVFpadFRLWjlTWHlWY3UxN2FXbUNQeFB4TlZrNlRyRW5jal9zQ2NaQWE2aGNfbHQxb1Zxb3VHcjRxcnNFaDZpdEw0Vm14eHNPLTVhM2l1ejJiYkMyQU51YzZRWEZSdm51ck5HOUh2NFNaQW5ONnhn?oc=5","at":1794159621}
 ]
 }

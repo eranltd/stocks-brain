@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-07",
+  "as_of": "2026-11-10",
   "sample": false,
   "source": "SEC EDGAR filings index (company submissions)",
   "window_days": 120,
@@ -9,6 +9,18 @@
       "cik": 320193,
       "name": "Apple Inc.",
       "filings": [
+        {
+          "date": "2026-11-09",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000114036126042798/ef20085077_8k.htm"
+        },
         {
           "date": "2026-11-03",
           "form": "10-K",
@@ -2043,6 +2055,16 @@
       "cik": 1845338,
       "name": "monday.com Ltd.",
       "filings": [
+        {
+          "date": "2026-11-09",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1845338/000117891326005085/zk2636355.htm"
+        },
         {
           "date": "2026-08-10",
           "form": "6-K",

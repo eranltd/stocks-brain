@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-10",
+  "as_of": "2026-11-11",
   "sample": false,
   "source": "SEC EDGAR filings index (company submissions)",
   "window_days": 120,
@@ -516,6 +516,20 @@
       "cik": 909832,
       "name": "COSTCO WHOLESALE CORP /NEW",
       "filings": [
+        {
+          "date": "2026-11-10",
+          "form": "8-K",
+          "items": [
+            "5.02",
+            "8.01"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)",
+            "Other company news"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/909832/000090983226000134/cost-20261107.htm"
+        },
         {
           "date": "2026-10-16",
           "form": "8-K",
@@ -1465,18 +1479,6 @@
           ],
           "kind": "results",
           "url": "https://www.sec.gov/Archives/edgar/data/1539838/000153983826000137/fang-20260803.htm"
-        },
-        {
-          "date": "2026-07-13",
-          "form": "8-K",
-          "items": [
-            "2.02"
-          ],
-          "titles": [
-            "Quarterly results"
-          ],
-          "kind": "results",
-          "url": "https://www.sec.gov/Archives/edgar/data/1539838/000153983826000134/fang-20260713.htm"
         }
       ]
     },
@@ -1962,6 +1964,46 @@
       "name": "ICL Group Ltd.",
       "filings": [
         {
+          "date": "2026-11-10",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/941221/000117891326005128/zk2636381.htm"
+        },
+        {
+          "date": "2026-11-10",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/941221/000117891326005127/zk2636382.htm"
+        },
+        {
+          "date": "2026-11-10",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/941221/000117891326005126/zk2636351.htm"
+        },
+        {
+          "date": "2026-11-10",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/941221/000117891326005125/zk2636385.htm"
+        },
+        {
           "date": "2026-09-17",
           "form": "6-K",
           "items": [],
@@ -2000,36 +2042,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/941221/000117891326003810/zk2635840.htm"
-        },
-        {
-          "date": "2026-08-05",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/941221/000117891326003807/zk2635842.htm"
-        },
-        {
-          "date": "2026-08-05",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/941221/000117891326003801/zk2635826.htm"
-        },
-        {
-          "date": "2026-07-30",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/941221/000117891326003707/zk2635802.htm"
         }
       ]
     },
@@ -2038,6 +2050,16 @@
       "cik": 1576789,
       "name": "Wix.com Ltd.",
       "filings": [
+        {
+          "date": "2026-11-10",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1576789/000162828026072477/wix-6xkxthirdquarter2026.htm"
+        },
         {
           "date": "2026-08-04",
           "form": "6-K",
@@ -2139,6 +2161,16 @@
       "cik": 1109345,
       "name": "NOVA LTD.",
       "filings": [
+        {
+          "date": "2026-11-10",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1109345/000117891326005111/zk2636368.htm"
+        },
         {
           "date": "2026-11-05",
           "form": "6-K",
@@ -2315,6 +2347,26 @@
       "name": "TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
       "filings": [
         {
+          "date": "2026-11-10",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000797/tsm-boardx202611xx.htm"
+        },
+        {
+          "date": "2026-11-10",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000796/tsm-revenue20261110.htm"
+        },
+        {
           "date": "2026-10-22",
           "form": "6-K",
           "items": [],
@@ -2373,26 +2425,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000552/tsm-dividendadjustmentx202.htm"
-        },
-        {
-          "date": "2026-08-25",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000545/tsm-monthend6kx20260825.htm"
-        },
-        {
-          "date": "2026-08-14",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000541/tsm-fsx20260814x6k.htm"
         }
       ]
     },

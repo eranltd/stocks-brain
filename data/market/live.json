@@ -1,5 +1,5 @@
 {
-"as_of":"2026-11-12T21:12:39Z",
+"as_of":"2026-11-13T01:46:26Z",
 "quotes_at":1794517200,
 "sample":false,
 "provider":"finnhub",
@@ -9,7 +9,7 @@
 "breadth":{"up":9,"down":12,"flat":0},
 "mood":"down",
 "symbols":[
-{"symbol":"AAPL","list":"nasdaq","move_pct":-0.22,"from_open_pct":-0.83,"range_pos":9,"at":1794517200},
+{"symbol":"AAPL","list":"nasdaq","move_pct":-0.21,"from_open_pct":-0.82,"range_pos":9,"at":1794517200},
 {"symbol":"MSFT","list":"nasdaq","move_pct":0.36,"from_open_pct":0.36,"range_pos":31,"at":1794517200},
 {"symbol":"NVDA","list":"nasdaq","move_pct":-4.34,"from_open_pct":10.06,"range_pos":95,"at":1794517200},
 {"symbol":"AMZN","list":"nasdaq","move_pct":0.48,"from_open_pct":-0.18,"range_pos":4,"at":1794517200},
@@ -40,7 +40,7 @@
 {"symbol":"SPCX","list":"mine","move_pct":0.14,"from_open_pct":1.52,"range_pos":22,"at":1794517200},
 {"symbol":"DXYZ","list":"mine","move_pct":-2.58,"from_open_pct":3.1,"range_pos":66,"at":1794517200},
 {"symbol":"TSLR","list":"mine","move_pct":3.54,"from_open_pct":5.88,"range_pos":78,"at":1794517200},
-{"symbol":"TSYY","list":"mine","move_pct":0.29,"from_open_pct":0.53,"range_pos":100,"at":1794516015},
+{"symbol":"TSYY","list":"mine","move_pct":0.31,"from_open_pct":0.55,"range_pos":100,"at":1794517200},
 {"symbol":"TQQQ","list":"mine","move_pct":-0.93,"from_open_pct":3.58,"range_pos":57,"at":1794517200},
 {"symbol":"RIG","list":"mine","move_pct":0.19,"from_open_pct":0.0,"range_pos":65,"at":1794517200},
 {"symbol":"XOP","list":"mine","move_pct":1.65,"from_open_pct":1.08,"range_pos":65,"at":1794517200},
@@ -63,23 +63,28 @@
 {"symbol":"XLE","list":"sectors","move_pct":1.51,"from_open_pct":0.7,"range_pos":65,"at":1794517200}
 ],
 "company_news":[
-{"headline":"Marvell makes major board move ahead of $115 billion AI deal","source":"Yahoo","url":"https://finnhub.io/api/news?id=5f7b91e4ce34e1f3b948f3cfe93f31d903fe42f161c72ed5700b07b924c666ab","at":1794512690,"symbol":"AVGO"},
-{"headline":"Ranking NVIDIA, Taiwan Semiconductor And Other AI Compute Stocks","source":"Yahoo","url":"https://finnhub.io/api/news?id=4a020257dca4269f941ae62708f7f6b4302b057918cc2ba5a9d09a072453f7af","at":1794511603,"symbol":"AVGO"},
-{"headline":"Nvidia succession uncertainty opens door for Google TPU and Broadcom, analyst says","source":"Yahoo","url":"https://finnhub.io/api/news?id=9f2dc50514f525a10dd1ec74ebe6bc1a0ec58e090c99e00b513f4ddd9532f76d","at":1794507990,"symbol":"AVGO"},
-{"headline":"Stock Market Today: Nasdaq Higher Amid Nvidia CEO Change; Software Name Jumps (Live Coverage)","source":"Yahoo","url":"https://finnhub.io/api/news?id=f3c9c08a4ebd04a5e93050c5400718e3959d4a31e4da57d4a47418ff1ccd64be","at":1794512950,"symbol":"NVDA"},
-{"headline":"Retail investors are buying Nvidia's stock crash like never before — history urges patience","source":"Yahoo","url":"https://finnhub.io/api/news?id=fb1f8261682cc3ae4e41206aacd3d0164ca57ce287fbef2ad95d594bb14cb9ba","at":1794512888,"symbol":"NVDA"},
-{"headline":"S&P 500 and Nasdaq Recover From Early Losses -- AI Fears Still Hang Over Tech Stocks","source":"Yahoo","url":"https://finnhub.io/api/news?id=2b05d2b97f524f9c6d80661f7ddfd9b897b4c3a2834bae91e4f9f530112f3bc2","at":1794512778,"symbol":"NVDA"},
+{"headline":"5 Best Growth Stocks for the Next 5 Years","source":"Yahoo","url":"https://finnhub.io/api/news?id=a8170d393f8411b3994d19b0a3b40bb67ffb013d4c8ab2473b4b5a30d256b0d7","at":1794525079,"symbol":"AVGO"},
+{"headline":"Can Huang's Exit Create Chip Competition","source":"Yahoo","url":"https://finnhub.io/api/news?id=86c761c898c0936982bf6391253c9845d1d438f475c968d05759d78a72b635a1","at":1794524439,"symbol":"AVGO"},
+{"headline":"Now Comes the Hard Part for the Stock Market","source":"Yahoo","url":"https://finnhub.io/api/news?id=0e1d618381f3b22e16ac4a799c7d672956a74ffb518d09b50f4878e3aa34aeaf","at":1794523980,"symbol":"AVGO"},
+{"headline":"Nvidia Stock Shock Puts These AI Infrastructure Chip Shares In Focus","source":"Yahoo","url":"https://finnhub.io/api/news?id=f22d663d31eb1752b449e842f7f4a04630a5df1f38e72cd93692f2e91fd79467","at":1794529203,"symbol":"NVDA"},
+{"headline":"Who Will Replace Jensen Huang? Here's What Prediction Markets Think.","source":"Yahoo","url":"https://finnhub.io/api/news?id=c9cba0dd2c74bb8fd1978ceb12b272e67ddd40a1595b045aef3a1f635da320e5","at":1794529202,"symbol":"NVDA"},
+{"headline":"S&P 500, Dow, Nasdaq Futures Recover After Markets End Lower On Jensen Huang’s Exit, Oil Price Pressure  —  CRWV, CBRS, NVDA, TSLA In Focus","source":"Yahoo","url":"https://finnhub.io/api/news?id=383ecf6f897beec4320ed48bd9da1a155c4211611ff169f0435fe4be0923459c","at":1794529140,"symbol":"NVDA"},
+{"headline":"Bank of America’s Matthew O’Neill Is Positive on Block (XYZ) for Early 2027. One Question Remains","source":"Yahoo","url":"https://finnhub.io/api/news?id=5f3fc9033e570c87e78a02dcd108a7eb373ac14a2542be01015f998394e2b3d8","at":1794525187,"symbol":"XYZ"},
 {"headline":"PayPal's Venmo Grows in Q3: Can Rising Monetization Fuel Earnings?","source":"Yahoo","url":"https://finnhub.io/api/news?id=07defc999a7b024c5eac72765c8e70d25ed40bc3fa0a74cc52e68ee141b8bc30","at":1794502860,"symbol":"XYZ"},
 {"headline":"XYZ vs. PLTR: Which Stock Should Value Investors Buy Now?","source":"Yahoo","url":"https://finnhub.io/api/news?id=fe183dc9e599149b766e4ab7e3a80787bd617c3cc17ecb53bd557649abba8f84","at":1794498001,"symbol":"XYZ"},
-{"headline":"Square Expands its Agentic Platform with Squaremates and Powerful New AI Tools","source":"Yahoo","url":"https://finnhub.io/api/news?id=9d1a8811c36d492c74d51b6519eeff8973dd0bcbfe8669f538531e89e2a43613","at":1794492000,"symbol":"XYZ"},
-{"headline":"Weekly Closed-End Fund Roundup (November 1, 2026)","source":"SeekingAlpha","url":"https://finnhub.io/api/news?id=e8ca9481c285de1fe3a8ce9660174b0cb5d34b24e7928aa580ec8d675588b687","at":1794322663,"symbol":"DXYZ"},
+{"headline":"5 Unrivaled Stocks to Buy for the Next Decade","source":"Yahoo","url":"https://finnhub.io/api/news?id=cb77d3e0b5eb8217ac9779f53d7dc1aa7e42a080403b7014d557254896406ca1","at":1794522801,"symbol":"ASML"},
 {"headline":"Applied Materials Sits 47% Below Its High. Here’s What the November 12 Report Has to Prove","source":"Yahoo","url":"https://finnhub.io/api/news?id=18d730563a4448ae9b0b7cc1dbe341823fac6b24f858968bcfc70f035ce9871c","at":1794499313,"symbol":"ASML"},
-{"headline":"Silicon Motion Vs. Qualcomm: Which Chipmaker Has More Potential?","source":"Yahoo","url":"https://finnhub.io/api/news?id=ba1f1a9e97541f1c4f4d4d506eeb59318fc81052355cde2895653d89373ef7e0","at":1794492420,"symbol":"ASML"},
-{"headline":"Wall Street's Next Blockbuster Stock Split Could Come From This Chip Equipment Giant","source":"Yahoo","url":"https://finnhub.io/api/news?id=30894a16260656575efd185bf69ed322f66d9aa87b7913374774b7252db1fc45","at":1794491460,"symbol":"ASML"}
+{"headline":"Silicon Motion Vs. Qualcomm: Which Chipmaker Has More Potential?","source":"Yahoo","url":"https://finnhub.io/api/news?id=ba1f1a9e97541f1c4f4d4d506eeb59318fc81052355cde2895653d89373ef7e0","at":1794492420,"symbol":"ASML"}
 ],
 "market_news":[
+{"headline":"Microsoft outage drags on for hours, disrupting Outlook, Teams for thousands - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMisAFBVV95cUxPQWpWeUZnbllhcFk4WktZS0s3T1N6T3k3Vnhhd3pfSE9SWF9iRmRIQUljdHZXN0UtWS1uZS1rbUNZSlVPd1NXLXRtVUVtc3NQNTgxMVFMWjVnT3pPb09EX1g1YUx3WkF2VHk0bUMwWlhkRHdpT0JFRE5SQ3pQRkdmSnpUOHNXLUo1dXNSY3lFdkpSdU5laDdwSlhWRDVnNjBFcUh2Y0FwMXNldE8tSFpPaw?oc=5","at":1794526310},
+{"headline":"COMMENTARY: Just like the US, Iran has squandered its good options to end the war - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMixAFBVV95cUxNbjNkU1dtRi1ZR0lyQmplWGZON1QwakF5Wk82UzhRSzR6ZlJfVFlpTkJLWEVBdGFsc21GbEVNMURkRDhaWm9tRHhwZGhUclFxXzdzUlZUU0VUYi10U1MtVzF5djhHNFVCSEhUa1dMN0pvWjktV2JQVGJTa01lSl9lM1RkY1RGdmJmOWVGUkd6MUw2WjBDZ0NPQ3pfYzh2ZXkwNDF3YXppNlBIcEhIUWlQcVhoZXpEOUZpNXYzZHVrdlVybVYz?oc=5","at":1794526039},
+{"headline":"Without Jensen Huang, Nvidia's organizational structure isn't 'built to last,' management expert says","source":"CNBC","url":"https://www.cnbc.com/make-it/2026/11/12/nvidia-jensen-huang-management-structure.html","at":1794521168},
+{"headline":"Cerebras surges 13% after beating on quarterly revenue and announcing Microsoft deal","source":"CNBC","url":"https://www.cnbc.com/2026/11/12/cerebras-systems-cbrs-q3-earnings-report-2026.html","at":1794518613},
+{"headline":"Cisco beats on earnings, says AI infrastructure revenue will double this fiscal year","source":"CNBC","url":"https://www.cnbc.com/2026/11/12/cisco-csco-q1-2027-earnings.html","at":1794518435},
 {"headline":"Microsoft outage hits Outlook. AWS and Google users also report issues","source":"CNBC","url":"https://www.cnbc.com/2026/11/12/microsoft-outage-outlook-aws-google.html","at":1794517074},
 {"headline":"United Airlines won’t let AI agents book your flight. Expert says you shouldn't let a bot do that for you, anyway","source":"CNBC","url":"https://www.cnbc.com/make-it/2026/11/12/ai-agents-human-in-loop.html","at":1794515099},
+{"headline":"Yemen's Houthis say they attacked pumping station on Saudi Arabia's East-West oil pipeline - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMiygFBVV95cUxPOHNyWUhKaHR2QmJXUjJ6S0xNdDZnZmpKRzJQak9SWVc3cmttUGVfbk13NzBZclpqNnp5N1JFc0JYakw2Wl9hV3BYdm1mMnJQR3BKRFI2Zzh3cVRhTFFxejBSVWtTMkt2WTRGRUxFSkVocF83aFlIOU10Vk11d29TRERPcnFVWHRJYktFOUlGU0x4c0Q0UWVtT3JkUE91ZVNPQ09NTnhaMGxJajZxQnkwWTFvTzN4WnNpMTBYalNZOHFZdnUtX1VHeUVR?oc=5","at":1794514701},
 {"headline":"Alice Huang tied to Nvidia’s biggest Chinese competitor","source":"CNBC","url":"https://www.cnbc.com/2026/11/12/alice-huang-jensen-huang-nvidia-huawei.html","at":1794514249},
 {"headline":"Jensen Huang is out and Nvidia stock is down—what market pros say about buying dips","source":"CNBC","url":"https://www.cnbc.com/make-it/2026/11/12/nvidia-what-market-pros-say-about-buying-dips.html","at":1794513689},
 {"headline":"Who will replace Jensen Huang? Here's our early thoughts on the search for Nvidia's next CEO","source":"CNBC","url":"https://www.cnbc.com/investingclub/2026/11/12/jensen-huang-ceo-replacement-jim-cramer.html","at":1794513642},
@@ -87,7 +92,6 @@
 {"headline":"Trump says US does not need Iran deal, directs Vance to focus on domestic corruption - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMivwFBVV95cUxNTkdBWnZVWXZqcEFwdWFkTmw5XzVHVndjNzBhdW1GZVFfT2d2OFBzVDlLbC1pdmNvZTY5X01iRE01eGktRlh0b0s2bXJSTm9ZS19CZkdnVzR6bmEzOFJlQjNET2NvTl9yVGZjeHg5SkxVcmZ5UHFkLXcxQ1M3N1dRU3R5R05raV9VOVRsUDRFZE9sT1B6NmZ0ZTA4SFB0TlNYTUNhUHdMWVNKV0tDSmd4d19IRERyblE2QkgxSlpzSQ?oc=5","at":1794508013},
 {"headline":"Two Iranian men found guilty in UK of assisting Iranian intelligence - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMisgFBVV95cUxOaWdPVmJKU0hSSFFKaHZqSjhkbmswNjdjN0V5ak1BZHdna1AzWk1YeXlsdHd0WEFxSEppRlpadHY4UTBQTWV1MVliRTVtN005WTdHNTdOWndramJPbXFCYnZQNmJTcldoM3FMbTFmU0RTcGt4TTBETnVqTGFiNDkxNnhYaUlZU2QyeTJPZ2QtR2FPaXFqR3MwamRKRkpON0VFR1NUN0dOaUFYRUxidWJ4M2F3?oc=5","at":1794507770},
 {"headline":"In a policy switch, the Fed says its October 2027 meeting will not see a vote on interest rates","source":"CNBC","url":"https://www.cnbc.com/2026/11/12/in-policy-switch-fed-says-its-october-2027-meeting-will-not-see-a-vote-on-interest-rates.html","at":1794507092},
-{"headline":"Yemen's Houthis say they attacked pumping station on Saudi Arabia's East-West oil pipeline - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMiygFBVV95cUxPOHNyWUhKaHR2QmJXUjJ6S0xNdDZnZmpKRzJQak9SWVc3cmttUGVfbk13NzBZclpqNnp5N1JFc0JYakw2Wl9hV3BYdm1mMnJQR3BKRFI2Zzh3cVRhTFFxejBSVWtTMkt2WTRGRUxFSkVocF83aFlIOU10Vk11d29TRERPcnFVWHRJYktFOUlGU0x4c0Q0UWVtT3JkUE91ZVNPQ09NTnhaMGxJajZxQnkwWTFvTzN4WnNpMTBYalNZOHFZdnUtX1VHeUVR?oc=5","at":1794506743},
 {"headline":"Here's what Colette Kress and Harvey Jones wrote to Nvidia employees","source":"CNBC","url":"https://www.cnbc.com/2026/11/12/nvidia-kress-jones-employee-emails.html","at":1794503251},
 {"headline":"Sitting on big gains in Nvidia? Jim Cramer's advice on what to do next","source":"CNBC","url":"https://www.cnbc.com/investingclub/2026/11/12/sitting-on-big-gains-in-nvidia-jim-cramers-advice-on-what-to-do-next.html","at":1794502792},
 {"headline":"Four died in military helicopter crash in eastern Turkey, defence ministry says - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMiugFBVV95cUxQZFRDcndTTjFHZDZsUWgwMnZZWXhNdmtEMjFaQTVVMWk4dTVqMEQwXzE0SXZZLXZXQ3d3dThPQjUyVkxiVmJIZjRMOEFSbC1BNmoyWDJjSERIYjIybEZjazVOTzcxYXNSV2VFTWVlTG5IQmgxMnBkeW9WQTFPTUVZVHRYQm13aDNLelVRalVMX3R5NU1GcFRfVFVma1JNMFpSZHViaW5LOTNsbUlrekpndFFNblVSNTFGd0E?oc=5","at":1794502469},
@@ -102,11 +106,6 @@
 {"headline":"Disney's 'Star Wars' is coming to Cosm domes ahead of 50th anniversary as part of multiyear film deal","source":"CNBC","url":"https://www.cnbc.com/2026/11/12/star-wars-cosm-dome-screenings.html","at":1794492001},
 {"headline":"Unions helped Democrats win big in 2026. Now they want action","source":"CNBC","url":"https://www.cnbc.com/2026/11/12/democrats-unions-midterms-2026.html","at":1794488973},
 {"headline":"Can a new US Congress mean an end to the Iran war? - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMijgFBVV95cUxNdmRaejBnMHp1QkhibDEzU1hQLVhZZWlaeXV2d1dGcHF5OU1CbGUzTWtVYXpLT1hFcUh5SzVJbWg2eHZpRy1oU1IxZzByY2hhQmpyTDNHTUh4U1NVVE1DWktWMlU1ZUMtNy1xZk1TN3dXVzBXY1dXVDV2aFhuNURkTWpteWpUblljY3p0QjN3?oc=5","at":1794483773},
-{"headline":"Scout Motors has 212,000 vehicle reservations as $2 billion South Carolina plant nears completion","source":"CNBC","url":"https://www.cnbc.com/2026/11/12/scout-motors-reservations-south-carolina-plant.html","at":1794483001},
-{"headline":"South Africa's citrus exports fall on Iran war disruption, bad weather - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMitAFBVV95cUxQSEdMeVJPU1FqTUdleG5McVVJdTBkTXpIbng3bnEzRi1ZWUlSNWFfUExHbnZsc1h4Tm5Nb2k5b1JoWllINEhReExZbndMbTFXZ0JhcUNQWHZrYjlzcGFoRWNuc1FELUk0ekRTVmJub1dYUkNYdzIyZWowRWpITERUWXVScnhBVjlQU2ozWmdmNkhOUUY2U3dQQ1R2OVN5WHNLaFc0NWdVUndrZVRjanpEbVo1Z3o?oc=5","at":1794473650},
-{"headline":"Gold drops 3% to over one-year low as fading Middle East peace hopes fan inflation fears - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMiqwFBVV95cUxPc09mRGRCVmlxTnVTdDR2Y0ktNjVkZE1xUHhyTnZWUGZvbFZFS2hsTFk1SkVfNE82SVZlMTFXbUFtckZMaDIwbzA5RlgxWUxKbE5ZMGhrRkl1UWFrVG9ibW9mdWlGM0NYRTVlQnZramhHSTVadmtEaFhWMDRFY1dYVWRPX1RzNm9YNURTVUVzeGo2aEo4UzZReXRCVlQ0amhjVGFWTU1BVFVQR1k?oc=5","at":1794454800},
-{"headline":"Oil settles $3 higher on attacks on Saudi energy sites, Strait of Hormuz disruptions - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMixgFBVV95cUxNSVNfOWE4dnhlMzA3cExiOE1nR0FNQXFJejNsQTExRExKTlVKNjNjcFRGMWQxMGNmYnNOWFdLaUp0OUo2SHFlNVoxMUo0Y21WazFhVmhZU1VxYlRuWVRfZEtiQ0NGWENEejFpMFRzaUtNbVV3TEhKUHp2aUc0SHJ2VkNzM1BHNU5VeGNNbnRldWZaZUFkTWdDNm9ibk5kQXlOQlRRWHRhdGk5ZEtPZjVjMjE1Q1BJaTZ1NmplRWJVSDlvRFBUQnc?oc=5","at":1794448320},
-{"headline":"COMMENTARY: Just like the US, Iran has squandered its good options to end the war - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMixAFBVV95cUxNbjNkU1dtRi1ZR0lyQmplWGZON1QwakF5Wk82UzhRSzR6ZlJfVFlpTkJLWEVBdGFsc21GbEVNMURkRDhaWm9tRHhwZGhUclFxXzdzUlZUU0VUYi10U1MtVzF5djhHNFVCSEhUa1dMN0pvWjktV2JQVGJTa01lSl9lM1RkY1RGdmJmOWVGUkd6MUw2WjBDZ0NPQ3pfYzh2ZXkwNDF3YXppNlBIcEhIUWlQcVhoZXpEOUZpNXYzZHVrdlVybVYz?oc=5","at":1794448290},
-{"headline":"Cramer's stance on Nvidia's stock amid reports that CEO Jensen Huang may be ousted","source":"CNBC","url":"https://www.cnbc.com/investingclub/2026/11/11/jim-cramer-jensen-huang-nvidia-stock-advice.html","at":1794446061}
+{"headline":"Scout Motors has 212,000 vehicle reservations as $2 billion South Carolina plant nears completion","source":"CNBC","url":"https://www.cnbc.com/2026/11/12/scout-motors-reservations-south-carolina-plant.html","at":1794483001}
 ]
 }

@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-11",
+  "as_of": "2026-11-12",
   "sample": false,
   "benchmark": "QQQ",
   "state": "stressed",
@@ -7,9 +7,9 @@
   "label": "stressed · downtrend",
   "metrics": {
     "vol_ann_pct": 36.7,
-    "drawdown_pct": -9.12,
-    "dist_sma_pct": -3.963,
-    "sma_slope_pct": -0.86
+    "drawdown_pct": -9.41,
+    "dist_sma_pct": -4.216,
+    "sma_slope_pct": -0.916
   },
   "params": {
     "vol_days": 20,

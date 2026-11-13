@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-12",
+  "as_of": "2026-11-13",
   "sample": false,
   "source": "SEC EDGAR filings index (company submissions)",
   "window_days": 120,
@@ -183,6 +183,18 @@
       "cik": 1045810,
       "name": "NVIDIA CORP",
       "filings": [
+        {
+          "date": "2026-11-12",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000082/nvda-20261111.htm"
+        },
         {
           "date": "2026-09-03",
           "form": "8-K",
@@ -390,6 +402,18 @@
       "cik": 1326801,
       "name": "Meta Platforms, Inc.",
       "filings": [
+        {
+          "date": "2026-11-12",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526458525/d177728d8k.htm"
+        },
         {
           "date": "2026-11-05",
           "form": "8-K",
@@ -1175,18 +1199,6 @@
           ],
           "kind": "report",
           "url": "https://www.sec.gov/Archives/edgar/data/723254/000072325426000028/ctas-20260531.htm"
-        },
-        {
-          "date": "2026-07-15",
-          "form": "8-K",
-          "items": [
-            "2.02"
-          ],
-          "titles": [
-            "Quarterly results"
-          ],
-          "kind": "results",
-          "url": "https://www.sec.gov/Archives/edgar/data/723254/000072325426000025/ctas-20260715.htm"
         }
       ]
     },
@@ -1487,6 +1499,18 @@
       "cik": 1707925,
       "name": "LINDE PLC",
       "filings": [
+        {
+          "date": "2026-11-12",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1707925/000119312526458288/d147693d8k.htm"
+        },
         {
           "date": "2026-10-29",
           "form": "10-Q",
@@ -1790,6 +1814,16 @@
       "name": "ELBIT SYSTEMS LTD",
       "filings": [
         {
+          "date": "2026-11-12",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1027664/000117891326005140/zk2636407.htm"
+        },
+        {
           "date": "2026-11-02",
           "form": "6-K",
           "items": [],
@@ -1858,16 +1892,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/1027664/000102766426000023/coveresltq220266k.htm"
-        },
-        {
-          "date": "2026-08-06",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1027664/000117891326003875/zk2635877.htm"
         }
       ]
     },
@@ -2347,6 +2371,16 @@
       "name": "TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
       "filings": [
         {
+          "date": "2026-11-12",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000800/a20261112statementregardin.htm"
+        },
+        {
           "date": "2026-11-10",
           "form": "6-K",
           "items": [],
@@ -2415,16 +2449,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000658/tsm-revenue20260910.htm"
-        },
-        {
-          "date": "2026-09-01",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000552/tsm-dividendadjustmentx202.htm"
         }
       ]
     },
@@ -2535,16 +2559,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/937966/000162828026065813/form6-kquarterlyfilings.htm"
-        },
-        {
-          "date": "2026-07-15",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/937966/000162828026048235/form6-kquarterlyfilings.htm"
         }
       ]
     },

@@ -68,7 +68,7 @@ export function ViewSwitch({ to, onView, className = "" }) {
 }
 
 /** The whole Simple site. */
-export function SimpleApp({ data, onView, theme, onTheme, swipe, setSwipe }) {
+export function SimpleApp({ data, onView, theme, onTheme, swipe, setSwipe, onFullStock }) {
   const now = useMemo(() => new Date(), [data]);
   const pulse = useMemo(() => pulseOf(data, now), [data, now]);
   const heading = useMemo(() => headingOf(data), [data]);
@@ -188,7 +188,8 @@ export function SimpleApp({ data, onView, theme, onTheme, swipe, setSwipe }) {
         <p className="easy-foot">{t("foot")}</p>
       </main>
 
-      {swipe && <SwipeMode data={data} onClose={() => setSwipe(false)} onOpen={(s) => { setSwipe(false); setOpen(s); }} />}
+      {swipe && <SwipeMode data={data} onClose={() => setSwipe(false)} onQuick={(s) => { setSwipe(false); setOpen(s); }}
+        onOpen={onFullStock ? (s) => { setSwipe(false); onFullStock(s); } : null} />}
       {open && <StockCard data={data} view={view} symbol={open} liveRows={liveRows} onClose={() => setOpen(null)} />}
     </div>
   );

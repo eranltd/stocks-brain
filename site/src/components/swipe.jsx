@@ -35,7 +35,7 @@ export function SwipeButton({ on, onToggle, className = "" }) {
   );
 }
 
-export function SwipeMode({ data, onClose, onOpen }) {
+export function SwipeMode({ data, onClose, onOpen, onQuick = null }) {
   useScrollLock(true);
   const [mine, setMine] = useState(null);
   useEffect(() => {
@@ -93,7 +93,7 @@ export function SwipeMode({ data, onClose, onOpen }) {
       <div ref={feed} className="swipe-feed" tabIndex={-1} onScroll={onScroll} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
         {/* data-on marks the card on screen, so its entrance animation plays when it arrives (index.css). */}
         <section className="swipe-slide" data-on={i === 0 ? "" : undefined}><MarketCard data={data} /><Hint show={i === 0} /></section>
-        {stocks.map((c, k) => <section key={c.symbol} className="swipe-slide" data-on={i === k + 1 ? "" : undefined}><StockCard c={c} onOpen={onOpen} /></section>)}
+        {stocks.map((c, k) => <section key={c.symbol} className="swipe-slide" data-on={i === k + 1 ? "" : undefined}><StockCard c={c} onOpen={onOpen} onQuick={onQuick} /></section>)}
         <section className="swipe-slide" data-on={i === total - 1 ? "" : undefined}>
           <div className="swipe-card swipe-done">
             <p className="swipe-done-h">{t("done.h")}</p>
@@ -148,7 +148,7 @@ function MarketCard({ data }) {
   );
 }
 
-function StockCard({ c, onOpen }) {
+function StockCard({ c, onOpen, onQuick }) {
   return (
     <article className="swipe-card" data-tone={tone(c.move)}>
       <div className="swipe-card-head">
@@ -172,7 +172,11 @@ function StockCard({ c, onOpen }) {
         {c.analysts && <span><b>{t("analysts", { buy: c.analysts.buy, n: c.analysts.n })}</b></span>}
         {c.moat && <span>{t("theme", { theme: c.moat.theme })}</span>}
       </div>
-      {onOpen && <button type="button" className="swipe-read" onClick={() => onOpen(c.symbol)}>{t("read")} →</button>}
+      {/* The full analysis is the stock's own page; the quick look (Simple only) is its short card. */}
+      <div className="swipe-btns">
+        {onQuick && <button type="button" className="swipe-quick" onClick={() => onQuick(c.symbol)}>{t("quick")}</button>}
+        {onOpen && <button type="button" className="swipe-read" onClick={() => onOpen(c.symbol)}>{t("read")} →</button>}
+      </div>
     </article>
   );
 }

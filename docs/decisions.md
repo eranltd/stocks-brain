@@ -45,6 +45,9 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   Each card animates in as it arrives (the number pops, the chart draws itself, facts rise one by one); nothing moves
   under reduced motion. A first try with left/right "like" swiping was dropped: the owner wanted reading, not liking.
   On narrow phones the header shows the logo without the name so the extra button fits on one row.
+- **Swipe cards: Full analysis and Quick look.** The owner: "Read the full story" should jump to our own full stock
+  analysis. Each card now has "Full analysis", which opens the stock's own page (switching Simple to Full on the way),
+  and in Simple also "Quick look", the short plain card.
 - **Calls in terms of risk.** The owner: BUY / WAIT / REJECT reads like orders; say it as risk ("it is OK to buy with
   risk x"). Every call now reads Low risk (paper) / Medium risk / High risk (the stock page: "Low risk · OK to buy
   (paper)", "Medium risk · not yet", "High risk · stay away"), and the brain's verdicts likewise. Where the name has a

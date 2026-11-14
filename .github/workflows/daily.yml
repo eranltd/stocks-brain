@@ -10,6 +10,7 @@ on:
                               # two fetches never share one hour of Tiingo's free-plan cap (50 requests an hour)
     - cron: "40 4 * * 2-6"    # fetch_sectors, sector_list: the sector funds, two hours after the other markets (that run
                               # is near the per-run request cap, so the sectors have their own hour)
+    - cron: "40 6 * * 2-6"    # fetch_themes, theme_lists: the theme lists (space, AI, software), two hours after the sectors
     - cron: "0 13 1 * *"      # calibration
   workflow_dispatch:
     inputs:
@@ -18,9 +19,9 @@ on:
         type: boolean
         default: true
       scope:
-        description: "nasdaq: the main list and every routine; markets: the other markets (TLV, iShares, ...) only; sectors: the sector funds only. Leave an hour between any two."
+        description: "nasdaq: the main list and every routine; markets: the other markets (TLV, iShares, ...) only; sectors: the sector funds only; themes: the theme lists only. Leave an hour between any two."
         type: choice
-        options: [nasdaq, markets, sectors]
+        options: [nasdaq, markets, sectors, themes]
         default: nasdaq
 
 permissions:
@@ -38,8 +39,9 @@ jobs:
       MONTHLY: ${{ github.event.schedule == '0 13 1 * *' }}
       DRY: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
       # The other markets' and the sectors' runs touch data/markets/ only; every Nasdaq step below is skipped in them.
-      MARKETS: ${{ github.event.schedule == '40 2 * * 2-6' || github.event.schedule == '40 4 * * 2-6' || (github.event_name == 'workflow_dispatch' && (inputs.scope == 'markets' || inputs.scope == 'sectors')) }}
+      MARKETS: ${{ github.event.schedule == '40 2 * * 2-6' || github.event.schedule == '40 4 * * 2-6' || github.event.schedule == '40 6 * * 2-6' || (github.event_name == 'workflow_dispatch' && (inputs.scope == 'markets' || inputs.scope == 'sectors' || inputs.scope == 'themes')) }}
       SECTORS: ${{ github.event.schedule == '40 4 * * 2-6' || (github.event_name == 'workflow_dispatch' && inputs.scope == 'sectors') }}
+      THEMES: ${{ github.event.schedule == '40 6 * * 2-6' || (github.event_name == 'workflow_dispatch' && inputs.scope == 'themes') }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -164,7 +166,7 @@ jobs:
       # leaves a failed market's files as they were. Neither step reads or writes data/market/.
       - name: Fetch the other markets' prices (per market)
         id: fetch_markets
-        if: env.MARKETS == 'true' && env.SECTORS != 'true'
+        if: env.MARKETS == 'true' && env.SECTORS != 'true' && env.THEMES != 'true'
         continue-on-error: true  # a failed market is logged; the markets that passed are still published
         env:
           TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
@@ -172,7 +174,7 @@ jobs:
 
       - name: Other markets' numbers, checklist and candles (derived only)
         id: market_lists
-        if: env.MARKETS == 'true' && env.SECTORS != 'true' && env.DRY != 'true'
+        if: env.MARKETS == 'true' && env.SECTORS != 'true' && env.THEMES != 'true' && env.DRY != 'true'
         continue-on-error: true  # same: one market's failure keeps its old files and never stops the others
         run: python3 scripts/routines_code.py markets
 
@@ -190,6 +192,21 @@ jobs:
         if: env.SECTORS == 'true' && env.DRY != 'true'
         continue-on-error: true
         run: python3 scripts/routines_code.py sectors
+
+      # The theme lists (config/markets.json fetch_run "themes"): the same fail-closed steps in their own run.
+      - name: Fetch the theme lists' prices
+        id: fetch_themes
+        if: env.THEMES == 'true'
+        continue-on-error: true  # a failure is logged; the theme lists' published files stay as they were
+        env:
+          TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
+        run: python3 scripts/fetch_prices.py --scope themes ${{ env.DRY == 'true' && '--dry-run' || '' }}
+
+      - name: Theme lists' numbers, checklist and candles (derived only)
+        id: theme_lists
+        if: env.THEMES == 'true' && env.DRY != 'true'
+        continue-on-error: true
+        run: python3 scripts/routines_code.py themes
 
       # The Nasdaq run never writes data/markets/, so a problem there is a warning in it and cannot discard the day's
       # main data; the markets run lints everything strictly. No run here writes the why notes (data/market/why.json),
@@ -224,6 +241,8 @@ jobs:
           ROUTINE_MARKET_LISTS: ${{ steps.market_lists.outcome }}
           ROUTINE_FETCH_SECTORS: ${{ steps.fetch_sectors.outcome }}
           ROUTINE_SECTOR_LIST: ${{ steps.sector_list.outcome }}
+          ROUTINE_FETCH_THEMES: ${{ steps.fetch_themes.outcome }}
+          ROUTINE_THEME_LISTS: ${{ steps.theme_lists.outcome }}
           ROUTINE_LINT: ${{ steps.lint.outcome }}
         run: |
           if [ "${{ steps.lint.outcome }}" != "success" ]; then bash scripts/data_branch.sh reset "${{ steps.restore.outputs.base }}"; fi

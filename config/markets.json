@@ -1,7 +1,7 @@
 {
-  "version": "1.3.0",
-  "updated_at": "2026-11-06",
-  "change_note": "My list: the owner's own watchlist (their broker's names, the top five US companies, Transocean and two oil funds), second in the switch, fetched in the early-morning run beside the sector funds.",
+  "version": "1.4.0",
+  "updated_at": "2026-11-14",
+  "change_note": "Three theme lists for the Theme hunter (Space, AI, Software), fetched in their own early-morning run (themes).",
   "default": "nasdaq",
   "markets": [
     {
@@ -93,6 +93,42 @@
       "data": "data/markets/mine",
       "fetch_run": "sectors",
       "note": "The names the owner follows in their own broker account, plus the top five US companies and offshore energy, each against the Nasdaq-100."
+    },
+    {
+      "id": "space",
+      "label": "Space",
+      "name": "Space companies",
+      "kind": "stocks",
+      "watchlist": "config/watchlists/space.json",
+      "benchmark": "QQQ",
+      "benchmark_label": "Nasdaq-100 (QQQ proxy)",
+      "data": "data/markets/space",
+      "fetch_run": "themes",
+      "note": "Rockets, satellites and internet from space, each against the Nasdaq-100."
+    },
+    {
+      "id": "ai",
+      "label": "AI",
+      "name": "AI builders",
+      "kind": "stocks",
+      "watchlist": "config/watchlists/ai.json",
+      "benchmark": "QQQ",
+      "benchmark_label": "Nasdaq-100 (QQQ proxy)",
+      "data": "data/markets/ai",
+      "fetch_run": "themes",
+      "note": "The companies building AI: software, chip designs, networks, power and servers, each against the Nasdaq-100."
+    },
+    {
+      "id": "software",
+      "label": "Software",
+      "name": "Software companies",
+      "kind": "stocks",
+      "watchlist": "config/watchlists/software.json",
+      "benchmark": "QQQ",
+      "benchmark_label": "Nasdaq-100 (QQQ proxy)",
+      "data": "data/markets/software",
+      "fetch_run": "themes",
+      "note": "Business software and cybersecurity, each against the Nasdaq-100."
     }
   ]
 }

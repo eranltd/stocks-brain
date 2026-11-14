@@ -1,0 +1,79 @@
+{
+ "version": "1.0.0",
+ "updated_at": "2026-11-14",
+ "change_note": "The Software theme list for the Theme hunter. S&P 500 membership checked by hand where marked.",
+ "symbols": [
+  {
+   "symbol": "CRM",
+   "name": "Salesforce",
+   "sector": "Information Technology",
+   "sp500": true
+  },
+  {
+   "symbol": "NOW",
+   "name": "ServiceNow",
+   "sector": "Information Technology",
+   "sp500": true
+  },
+  {
+   "symbol": "ADBE",
+   "name": "Adobe",
+   "sector": "Information Technology",
+   "sp500": true
+  },
+  {
+   "symbol": "SNOW",
+   "name": "Snowflake",
+   "sector": "Information Technology",
+   "sp500": false
+  },
+  {
+   "symbol": "DDOG",
+   "name": "Datadog",
+   "sector": "Information Technology",
+   "sp500": true
+  },
+  {
+   "symbol": "NET",
+   "name": "Cloudflare",
+   "sector": "Information Technology",
+   "sp500": false
+  },
+  {
+   "symbol": "PANW",
+   "name": "Palo Alto Networks",
+   "sector": "Information Technology",
+   "sp500": true
+  },
+  {
+   "symbol": "CRWD",
+   "name": "CrowdStrike",
+   "sector": "Information Technology",
+   "sp500": true
+  },
+  {
+   "symbol": "SHOP",
+   "name": "Shopify",
+   "sector": "Information Technology",
+   "sp500": false
+  },
+  {
+   "symbol": "GTLB",
+   "name": "GitLab",
+   "sector": "Information Technology",
+   "sp500": false
+  },
+  {
+   "symbol": "INTU",
+   "name": "Intuit",
+   "sector": "Information Technology",
+   "sp500": true
+  },
+  {
+   "symbol": "MDB",
+   "name": "MongoDB",
+   "sector": "Information Technology",
+   "sp500": false
+  }
+ ]
+}

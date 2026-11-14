@@ -7,7 +7,7 @@ import text from "../text/shell.js";
 
 /** The menu's shape: subjects in order, each with its pages (routes); the words live in text/shell.js ("nav.*"). */
 const MENU = [
-  { id: "today", pages: ["today", "watchlist", "details", "people"] },
+  { id: "today", pages: ["today", "watchlist", "themes", "details", "people"] },
   // The trader agent in demo mode (the Arena with the agent, its pop-ups, plan and log): its own tab, so the simulation
   // runs there and nowhere else.
   { id: "agent", direct: "arena", short: true, pages: ["arena"] },

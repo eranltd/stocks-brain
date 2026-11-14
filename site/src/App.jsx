@@ -26,6 +26,7 @@ import HowItWorks from "./tabs/HowItWorks.jsx";
 import Admin from "./tabs/Admin.jsx";
 import Stock from "./tabs/Stock.jsx";
 import Arena from "./tabs/Arena.jsx";
+import Themes from "./tabs/Themes.jsx";
 import AgentFeed from "./components/agentfeed.jsx";
 import NewsFloat from "./components/newsfloat.jsx";
 import { strings } from "./lib/text.js";
@@ -36,7 +37,7 @@ import { rich } from "./lib/rich.jsx";
 // with "?m=<market>" when a market other than the default is chosen (#today?m=tlv).
 const PAGES = {
   today: Today, details: Details, quiz: Quiz, portfolio: Portfolio, playbook: Playbook, people: People, watchlist: Watchlist, track: TrackRecord,
-  kb: KB, insights: Insights, learnings: Learnings, runs: Runs, verdicts: Verdicts, routines: Routines, how: HowItWorks, admin: Admin, arena: Arena,
+  kb: KB, insights: Insights, learnings: Learnings, runs: Runs, verdicts: Verdicts, routines: Routines, how: HowItWorks, admin: Admin, arena: Arena, themes: Themes,
 };
 // Pages that show synthetic data until the brain (M3) produces real picks.
 const SAMPLE_TABS = ["track", "kb", "learnings", "runs"];

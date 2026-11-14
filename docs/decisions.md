@@ -1,7 +1,7 @@
 ---
-version: 0.37.0
+version: 0.38.0
 updated_at: 2026-11-14
-change_note: Each stock page shows who is betting what: the share of trading sold short against its usual level (FINRA), what analysts say and whether insiders bought or sold (Finnhub). Free, nightly, no new key.
+change_note: The Theme hunter: pick a field (space, AI, chips, software, energy), see who leads it and how the whole field did over a year, losers included. Three theme lists in their own early-morning price run.
 ---
 # Decision log
 
@@ -20,6 +20,19 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   per-point dates into one shared array.
 
 ## 2026-11-14
+- **The Theme hunter.** The owner heard from a friend at an investment house how he looks for opportunities: take a
+  field (space, energy, chips, AI, software), see which companies have a monopoly or no real rivals, and hold them
+  while the field grows. New page `#themes` (under Today): pick a theme, read its companies with our one-line reading
+  of their competition (Leader, Few rivals, Crowded; `config/themes.json`, labelled as our reading, not a fact), and
+  see the whole field's year: the average move, against the Nasdaq-100, best and worst, and "$1,000 in each a year
+  ago is worth this now". That last line answers "some went up thousands of percent" honestly: you hear about those,
+  not the ones that went to almost zero, so every company counts. Names listed under a year are left out of the
+  yearly sums and say so.
+- **Three theme lists, a fourth price run.** Space (14 companies), AI (7) and Software (12) are new lists against the
+  Nasdaq-100; Chips and Energy reuse their lists (Energy gains Transocean). The new lists ride their own early-morning
+  run (`fetch_themes` and `theme_lists`, 06:40 UTC, two hours after the sectors): 34 requests, under the per-run cap;
+  the other markets' run is at 43 of 45. They also appear in the list switch like any other list.
+
 - **Who is betting what, per stock.** The owner asked for a free source of "what people did yesterday, like 85% bought
   NVDA and 15% sold". That number does not exist for free (every share bought is a share sold; brokers show only their
   own customers' orders). The closest free signals, nightly in `scripts/flows.py` (routine `flows`, in the daily run)

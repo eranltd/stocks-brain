@@ -9,6 +9,7 @@ Three scopes, each its own Action run at least two hours apart, because Tiingo's
   nasdaq   the default market: watchlist, benchmark and market-context instruments (the daily run)
   markets  every other market in config/markets.json: its list and its benchmark (the markets run)
   sectors  the markets whose fetch_run is "sectors" (the sector funds; the sectors run)
+  themes   the markets whose fetch_run is "themes" (the theme lists; the themes run)
 A run makes at most prices.max_requests_per_run HTTP requests, retries included, and logs how many it used.
 
 Fail closed per market: every symbol is fetched once, merged with what is on disk, trimmed to prices.keep_days,
@@ -16,7 +17,7 @@ sanity-checked and schema-validated in memory. A market is written only if all i
 writes nothing and the others still do (the nasdaq scope is one market, so it stays all-or-nothing). Exit 1 if any
 market failed.
 
-Usage: python3 scripts/fetch_prices.py [--scope nasdaq|markets|sectors] [--dry-run] [--fixtures DIR]
+Usage: python3 scripts/fetch_prices.py [--scope nasdaq|markets|sectors|themes] [--dry-run] [--fixtures DIR]
   --fixtures DIR  read <DIR>/<SYMBOL>.json|.csv (the provider's raw format) instead of the network
 """
 from __future__ import annotations

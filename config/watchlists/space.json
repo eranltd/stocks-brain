@@ -1,0 +1,90 @@
+{
+ "version": "1.0.0",
+ "updated_at": "2026-11-14",
+ "change_note": "The Space theme list for the Theme hunter. S&P 500 membership checked by hand where marked.",
+ "symbols": [
+  {
+   "symbol": "SPCX",
+   "name": "SpaceX",
+   "sector": "Communication Services",
+   "sp500": false
+  },
+  {
+   "symbol": "RKLB",
+   "name": "Rocket Lab",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "ASTS",
+   "name": "AST SpaceMobile",
+   "sector": "Communication Services",
+   "sp500": false
+  },
+  {
+   "symbol": "LUNR",
+   "name": "Intuitive Machines",
+   "sector": "Industrials",
+   "sp500": false
+  },
+  {
+   "symbol": "PL",
+   "name": "Planet Labs",
+   "sector": "Industrials",
+   "sp500": false
+  },
+  {
+   "symbol": "FLY",
+   "name": "Firefly Aerospace",
+   "sector": "Industrials",
+   "sp500": false
+  },
+  {
+   "symbol": "IRDM",
+   "name": "Iridium",
+   "sector": "Communication Services",
+   "sp500": false
+  },
+  {
+   "symbol": "RDW",
+   "name": "Redwire",
+   "sector": "Industrials",
+   "sp500": false
+  },
+  {
+   "symbol": "BKSY",
+   "name": "BlackSky",
+   "sector": "Industrials",
+   "sp500": false
+  },
+  {
+   "symbol": "GSAT",
+   "name": "Globalstar",
+   "sector": "Communication Services",
+   "sp500": false
+  },
+  {
+   "symbol": "VSAT",
+   "name": "Viasat",
+   "sector": "Information Technology",
+   "sp500": false
+  },
+  {
+   "symbol": "VOYG",
+   "name": "Voyager Technologies",
+   "sector": "Industrials",
+   "sp500": false
+  },
+  {
+   "symbol": "KRMN",
+   "name": "Karman Space & Defense",
+   "sector": "Industrials",
+   "sp500": false
+  },
+  {
+   "symbol": "SPIR",
+   "name": "Spire Global",
+   "sector": "Industrials",
+   "sp500": false
+  }
+ ]
+}

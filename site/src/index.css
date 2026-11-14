@@ -1089,3 +1089,33 @@ button.floor-tile:hover { transform: translateY(-1px); border-color: var(--line-
 .flows-split i[data-k="buy"] { background: var(--up); }
 .flows-split i[data-k="hold"] { background: var(--wait); }
 .flows-split i[data-k="sell"] { background: var(--down); }
+
+/* === theme hunter === */
+/* tabs/Themes.jsx: a field's year and its companies with our reading of their competition. */
+.theme-hero { border-radius: var(--r-panel); border: 1px solid var(--line-2); background: linear-gradient(150deg, color-mix(in srgb, var(--desk) 9%, var(--surface)), var(--surface) 60%); padding: 16px; box-shadow: var(--shadow-panel); }
+.theme-why { font-size: 15.5px; line-height: 1.45; color: var(--ink); }
+.theme-stats { margin-top: 14px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+@media (min-width: 900px) { .theme-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.theme-stat { border-radius: var(--r-tile); border: 1px solid var(--line); background: var(--surface-2); padding: 10px 12px; }
+.theme-big { margin-top: 4px; font-family: var(--font-num); font-size: 24px; font-weight: 800; line-height: 1.1; color: var(--ink); }
+.theme-line { margin-top: 4px; font-size: 13px; line-height: 1.4; color: var(--ink-2); }
+.theme-line b { font-family: var(--font-num); color: var(--ink); }
+.theme-note { margin-top: 8px; font-size: 12.5px; line-height: 1.45; color: var(--ink-3); }
+.theme-hero [data-tone="up"], .theme-list [data-tone="up"] { color: var(--up); }
+.theme-hero [data-tone="down"], .theme-list [data-tone="down"] { color: var(--down); }
+.theme-list { display: grid; gap: 8px; }
+@media (min-width: 900px) { .theme-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.theme-co { display: grid; width: 100%; gap: 6px; border-radius: var(--r-tile); border: 1px solid var(--line-2); background: var(--surface); padding: 12px 14px; text-align: start; transition: transform 160ms, border-color 160ms; }
+.theme-co:hover { transform: translateY(-2px); border-color: var(--line-3); }
+.theme-co-top { display: flex; min-width: 0; align-items: center; gap: 8px; }
+.theme-sym { font-family: var(--font-num); font-size: 15px; font-weight: 800; color: var(--ink); }
+.theme-name { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; color: var(--ink-2); }
+.theme-moat { --m: var(--ink-3); flex-shrink: 0; border-radius: 6px; background: color-mix(in srgb, var(--m) 16%, transparent); padding: 2px 8px; font-family: var(--font-num); font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--m); }
+.theme-moat[data-moat="dominant"] { --m: var(--up); }
+.theme-moat[data-moat="few_rivals"] { --m: var(--desk); }
+.theme-moat[data-moat="crowded"] { --m: var(--down); }
+.theme-note-line { font-size: 13.5px; line-height: 1.4; color: var(--ink); }
+.theme-nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.theme-nums > span { display: grid; gap: 1px; }
+.theme-nums small { font-family: var(--font-num); font-size: 9.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+.theme-nums b { font-family: var(--font-num); font-size: 14px; font-weight: 800; color: var(--ink); }

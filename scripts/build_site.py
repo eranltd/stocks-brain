@@ -168,6 +168,7 @@ def main() -> int:
                 *(("people",) if people_cfg.exists() else ()), *(("outlook",) if (CONFIG / "outlook.json").exists() else ()),
                 *(("checklist",) if checklist_cfg.exists() else ()), *(("markets",) if (CONFIG / "markets.json").exists() else ()),
                 *(("funds",) if (CONFIG / "funds.json").exists() else ()),
+                *(("themes",) if (CONFIG / "themes.json").exists() else ()),
                 *(("news_sources",) if (CONFIG / "news_sources.json").exists() else ()))
     for name in cfg_docs:
         _copy(CONFIG / f"{name}.json", OUT / "config" / f"{name}.json")

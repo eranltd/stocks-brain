@@ -4,7 +4,7 @@ import { bottomTap, GROUP_LABEL, hashFor, isRoute, menuGroups, pageOf, parseHash
 
 // Every route the site had before the three-subject menu; old links must keep opening the right page. NEW: added since.
 const OLD = ["today", "details", "portfolio", "playbook", "people", "watchlist", "track", "kb", "insights", "learnings", "runs", "routines", "how", "admin"];
-const NEW = ["verdicts", "quiz", "arena"];
+const NEW = ["verdicts", "quiz", "arena", "themes"];
 
 test("three subjects hold every old route exactly once, each page with a label and a one-line what's this", () => {
   assert.deepEqual(SUBJECTS.map((s) => s.label), ["Today", "Agent demo", "Brain's verdicts", "Experiments", "Learn"]);
@@ -23,7 +23,7 @@ test("three subjects hold every old route exactly once, each page with a label a
 
 test("menu grouping: Learn ends with a small Behind the scenes group, the others have one group", () => {
   assert.deepEqual(menuGroups("today").map((g) => [g.id, g.label, g.pages.map((p) => p.label)]), [
-    ["main", null, ["Home", "Stocks", "Market details", "People to learn from"]],
+    ["main", null, ["Home", "Stocks", "Theme hunter", "Market details", "People to learn from"]],
   ]);
   assert.deepEqual(menuGroups("plan")[0].pages.map((p) => p.route), ["portfolio", "playbook", "track"]);
   const learn = menuGroups("learn");
@@ -34,7 +34,7 @@ test("menu grouping: Learn ends with a small Behind the scenes group, the others
 });
 
 test("route to subject: every page, a stock page under Today (Stocks), unknown routes Home", () => {
-  const want = { today: "today", watchlist: "today", details: "today", people: "today", arena: "agent", portfolio: "plan", playbook: "plan", track: "plan",
+  const want = { today: "today", watchlist: "today", themes: "today", details: "today", people: "today", arena: "agent", portfolio: "plan", playbook: "plan", track: "plan",
     insights: "learn", quiz: "learn", kb: "learn", learnings: "learn", how: "learn", runs: "learn", routines: "learn", admin: "learn" };
   for (const [r, s] of Object.entries(want)) assert.equal(subjectOf(r), s, r);
   assert.equal(subjectOf("stock/TEVA"), "today");

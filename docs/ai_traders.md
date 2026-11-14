@@ -1,7 +1,7 @@
 ---
-version: 0.1.0
+version: 0.2.0
 updated_at: 2026-11-14
-change_note: First version. What the best-known open-source AI trader projects do, what the evidence says about them, and the lessons this site takes from them.
+change_note: Built in: the bull and bear debate before every BUY (lib/debate.js).
 ---
 # Lessons from open-source AI traders
 
@@ -60,6 +60,14 @@ site takes from them. Ideas below are ideas to test, not rules: a rule joins the
 8. **Watch the falling markets.** Agents did worst in the early-2025 fall. Score every rule separately in up and
    down markets (the regime monitor already labels them).
 9. **Fewer names is easier.** Agents did worse as the list grew. A short list the system knows well beats a long one.
+
+## Built in
+
+- **The bull and the bear** (from TradingAgents' bull and bear researchers and AI Hedge Fund's risk manager). Before any
+  paper BUY on the Desk, two agents list the facts for and against the name: its trend, how it did against the market,
+  how far it is from its high, a big drop, what analysts say, short selling against its usual level, insiders buying or
+  selling, results due within a week, and its field's competition. A BUY whose bear case is clearly stronger waits.
+  Every stock page shows both sides in words (`lib/debate.js`).
 
 ## Ideas to test (not rules yet)
 

@@ -25,7 +25,8 @@
 
 import { dayMoves, UNUSUAL } from "./feed.js";
 import { recentFilings } from "./secnews.js";
-import { comingUp } from "./outlook.js";
+import { comingUp, todayISO } from "./outlook.js";
+import { debates } from "./debate.js";
 
 const isNum = (v) => typeof v === "number" && Number.isFinite(v);
 const isDate = (s) => typeof s === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s);
@@ -287,7 +288,7 @@ export const HARD_RISK = new Set(["plan", "stop"]);
  * The Boss's final call for one name from the other agents' reports (the table at the top of the file):
  * {call: "buy" | "wait" | "reject", by: "risk" | "strategy" | "execution" | "boss", reason: {id, ...values}}.
  */
-export function bossCall({ stance = null, risk, exec, received = 0, total = REPORTERS.length }) {
+export function bossCall({ stance = null, risk, exec, received = 0, total = REPORTERS.length, debate = null }) {
   const lean = stanceLean(stance);
   const reasons = risk?.pass ? [] : risk?.reasons?.length ? risk.reasons : [{ id: "plan" }];
   const hard = reasons.find((r) => HARD_RISK.has(r.id));
@@ -298,6 +299,8 @@ export function bossCall({ stance = null, risk, exec, received = 0, total = REPO
   if (lean !== "up") return { call: "wait", by: "strategy", reason: { id: lean ? "neutral" : "noView" } };
   if (exec?.call !== "enter") return { call: "wait", by: "execution", reason: { id: exec?.call === "skip" ? (exec.downtrend ? "downtrend" : "skip") : "confirm", n: exec?.n ?? 0 } };
   if (received < total) return { call: "wait", by: "boss", reason: { id: "reports", n: received, total } };
+  // The bull and the bear (lib/debate.js): a BUY that the bear case outweighs waits.
+  if (debate?.verdict === "bear") return { call: "wait", by: "debate", reason: { id: "debate", bear: debate.bear.length, bull: debate.bull.length } };
   return { call: "buy", by: "boss", reason: { id: "all" } };
 }
 
@@ -306,8 +309,9 @@ export function bossCall({ stance = null, risk, exec, received = 0, total = REPO
  * checklist score, then ticker). Each: {ticker, name, stance, lean, risk, exec, score, plan (the checklist's risk plan or
  * null), entry (the nearest support, percent below), ...bossCall}.
  */
-export function deskCalls({ market = null, checklist = null, run = null, members = [], names = {}, limits = {}, received = 0 } = {}) {
+export function deskCalls({ market = null, checklist = null, run = null, members = [], names = {}, limits = {}, received = 0, extra = null } = {}) {
   const dv = bySymbol(market), cl = bySymbol(checklist);
+  const deb = extra ? debates(members, { market, ...extra }) : {};
   return members.map((ticker) => {
     const c = cl[ticker] ?? null, d = dv[ticker] ?? null;
     const stance = stanceFor(run, ticker);
@@ -317,9 +321,15 @@ export function deskCalls({ market = null, checklist = null, run = null, members
     return {
       ticker, name: names[ticker] ?? ticker, stance, lean: stanceLean(stance), risk, exec,
       score: isNum(c?.score?.net) ? c.score.net : null, plan: c?.risk_plan ?? null, entry: isNum(sup) ? sup : null,
-      ...bossCall({ stance, risk, exec, received }),
+      debate: deb[ticker] ?? null,
+      ...bossCall({ stance, risk, exec, received, debate: deb[ticker] ?? null }),
     };
   }).sort((a, b) => CALL_ORDER[a.call] - CALL_ORDER[b.call] || b.exec.n - a.exec.n || (b.score ?? -99) - (a.score ?? -99) || a.ticker.localeCompare(b.ticker));
+}
+
+/** The debate's inputs from the site's data (lib/debate.js): short selling, analysts, insiders, results dates, themes. */
+export function deskExtra(data) {
+  return { flows: data?.flows ?? null, outlook: data?.outlookAll ?? data?.outlook ?? null, themes: data?.themes ?? null, today: todayISO() };
 }
 
 /** {buy, wait, reject} counts of deskCalls rows. */

@@ -1314,3 +1314,16 @@ html[data-menu="open"] .news-float { display: none; }
 .swipe-what { margin-top: 8px; font-size: 16px; line-height: 1.45; color: var(--ink-2); }
 .swipe-slide[data-on] .swipe-what { animation: tt-rise 520ms var(--ease-out-expo) 100ms both; }
 .swipe-facts b { color: var(--ink); }
+/* The bull and the bear on a stock's Desk call (tabs/Stock.jsx Debate, lib/debate.js). */
+.debate { border-radius: var(--r-tile); border: 1px solid var(--line-2); background: var(--surface-2); padding: 12px 14px; }
+.debate[data-verdict="bear"] { border-color: color-mix(in srgb, var(--down) 45%, var(--line-2)); }
+.debate[data-verdict="bull"] { border-color: color-mix(in srgb, var(--up) 45%, var(--line-2)); }
+.debate .micro b { color: var(--ink); }
+.debate-cols { margin-top: 8px; display: grid; gap: 10px; }
+@media (min-width: 640px) { .debate-cols { grid-template-columns: 1fr 1fr; } }
+.debate-side { border-radius: 8px; padding: 8px 10px; box-shadow: inset 3px 0 0 var(--s); background: color-mix(in srgb, var(--s) 7%, transparent); }
+.debate-side[data-side="bull"] { --s: var(--up); }
+.debate-side[data-side="bear"] { --s: var(--down); }
+.debate-h { font-family: var(--font-num); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--s); }
+.debate-side ul { margin-top: 4px; display: grid; gap: 4px; }
+.debate-side li { font-size: 13.5px; line-height: 1.4; color: var(--ink); }

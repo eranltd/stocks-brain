@@ -45,6 +45,14 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   Each card animates in as it arrives (the number pops, the chart draws itself, facts rise one by one); nothing moves
   under reduced motion. A first try with left/right "like" swiping was dropped: the owner wanted reading, not liking.
   On narrow phones the header shows the logo without the name so the extra button fits on one row.
+- **The bull and the bear before every BUY** (from TradingAgents and AI Hedge Fund, `docs/ai_traders.md`). The owner
+  asked to make the agent smarter with what the open-source AI traders do. `lib/debate.js` lists the facts for and
+  against each name (trend, against the market, distance from the high, a big drop, analysts, short selling against its
+  usual level, insiders, results within a week, the field's competition); the bear wins with three or more points and
+  more than the bull, or two more. The Boss now holds a BUY at WAIT when the bear wins ("Bull vs Bear" decided it), on
+  every page that shows Desk calls; the stock page's Desk call shows both sides in words. On 13 Nov: 13 names bull, 6
+  close, 2 bear (NVDA among them: a downtrend, lagging the market, 32% off its high, insiders selling). No BUY that
+  day, so no call changed.
 - **Swipe four ways, and what each company does.** The owner, on an ASML card: swipe right, left, up and down, and
   "what is ASML, give me two lines". Up or left goes to the next card, down or right goes back. New
   `config/companies.json`: two plain lines on what each of the 85 companies on the stock lists does (hand-written from

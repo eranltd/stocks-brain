@@ -9,7 +9,7 @@ import { Pairs } from "../components/pairs.jsx";
 import { floorData } from "../lib/floor.js";
 import { VERDICT } from "../lib/checklist.js";
 import { marketNote, NOT_YET } from "../lib/markets.js";
-import { deskCalls, freshness, houseLimits, unusualToday } from "../lib/desk.js";
+import { deskCalls, deskExtra, freshness, houseLimits, unusualToday } from "../lib/desk.js";
 import { mainListOf } from "../lib/buywindow.js";
 import { stocksEarned } from "../lib/money.js";
 import { plainName, usableWhy } from "../lib/why.js";
@@ -105,7 +105,7 @@ function deskCallMap(data) {
   const earned = stocksEarned(data.rulesResult, trustStage(data).stage);
   const limits = houseLimits({ settings: data.settings, checklistCfg: data.checklistCfg, checklist, rulebook: data.rulebook, household, earned });
   const fresh = freshness({ market, checklist, why, secNews, run });
-  const calls = deskCalls({ market, checklist, run, members, names: data.names ?? {}, limits, received: fresh.received });
+  const calls = deskCalls({ market, checklist, run, members, names: data.names ?? {}, limits, received: fresh.received, extra: deskExtra(data) });
   return Object.fromEntries(calls.map((r) => [r.ticker, r.call]));
 }
 

@@ -1,7 +1,7 @@
 {
-  "version": "0.17.0",
-  "updated_at": "2026-11-06",
-  "change_note": "Added live_pulse: every hour while the US market is open, each name's move today, the index funds, a VIX-tracking fear gauge and the latest news (Finnhub free plan).",
+  "version": "0.18.0",
+  "updated_at": "2026-11-14",
+  "change_note": "Added flows: each night, per stock, the share of trading sold short (FINRA), analysts' buy/hold/sell counts and insiders' buying or selling (Finnhub free plan).",
   "timezone": "UTC",
   "routines": [
     {
@@ -309,6 +309,26 @@
       ],
       "human_gate": false,
       "why": "Learned from Alphabet's fall after its results (29 Oct 2026): measure, do not guess, whether a big drop is a chance to buy. Every 8%+ one-day drop in the main list, entered at the next close, followed 5, 20 and 60 days against the benchmark, beside all days. A study, not a rule."
+    },
+    {
+      "id": "flows",
+      "name": "Who is betting what",
+      "cadence": "daily",
+      "cron": "40 23 * * 1-5",
+      "runner": "github_actions",
+      "status": "active",
+      "milestone": "M4",
+      "uses_llm": false,
+      "max_cost_usd": 0,
+      "inputs": [
+        "FINRA daily short sale volume (free, no key)",
+        "Finnhub: analysts, insiders (FINNHUB_API_KEY)"
+      ],
+      "outputs": [
+        "data/market/flows.json"
+      ],
+      "human_gate": false,
+      "why": "The owner asked what people did yesterday with each stock. Nobody publishes buyers against sellers for free (every share bought is sold), so: the share of trading sold short against its usual level, what analysts say, and whether insiders bought or sold."
     },
     {
       "id": "buy_window",

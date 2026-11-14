@@ -1,7 +1,7 @@
 ---
-version: 0.36.0
-updated_at: 2026-11-06
-change_note: My list, the owner's own watchlist, is the focus: first on Market now, second in the list switch, and the list the Stocks page opens on. Each stock page opens with its story in five plain chapters. On a phone, wide tables become cards (no sideways scroll). An hourly market pulse (Finnhub free plan) while the US market is open, and a new first screen, Market now, that says in plain words what the market is doing, how scared it is, where it is heading, what moved and the news.
+version: 0.37.0
+updated_at: 2026-11-14
+change_note: Each stock page shows who is betting what: the share of trading sold short against its usual level (FINRA), what analysts say and whether insiders bought or sold (Finnhub). Free, nightly, no new key.
 ---
 # Decision log
 
@@ -18,6 +18,22 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Market file size**: `derived.json` is written one line per symbol (compact) and is about 330 KB with 21 names.
   Past roughly 35 names it would hit lint's 512 KB cap and the daily run would fail closed; before that, move the
   per-point dates into one shared array.
+
+## 2026-11-14
+- **Who is betting what, per stock.** The owner asked for a free source of "what people did yesterday, like 85% bought
+  NVDA and 15% sold". That number does not exist for free (every share bought is a share sold; brokers show only their
+  own customers' orders). The closest free signals, nightly in `scripts/flows.py` (routine `flows`, in the daily run)
+  for the main list and My list, written to `data/market/flows.json`:
+  - **Short selling:** the share of each day's volume sold short, from FINRA's free daily short-sale volume file (no
+    key), against the name's own average of the 20 days before. Market makers sell short as part of normal trading
+    (30 to 45% is common), so the page flags only a day 10+ points above or below the usual level. Percent per day
+    only, never volumes.
+  - **Analysts:** strong buy / buy / hold / sell / strong sell counts for the latest month (Finnhub free plan).
+  - **Insiders:** net shares bought or sold by officers and directors in the last three months, from their SEC
+    filings, with Finnhub's insider sentiment score (Finnhub free plan). Funds have no analysts or insiders.
+  No new key: FINRA needs none and Finnhub uses the existing `FINNHUB_API_KEY` secret. The stock page shows the three
+  as "Who is betting what" with the last 20 days of short selling as bars. Social-media mood and options bets need
+  paid plans and are left out.
 
 ## 2026-11-06 (later)
 - **My list: the owner's own watchlist is the focus.** The owner shared their broker's watchlist and said "our focus is

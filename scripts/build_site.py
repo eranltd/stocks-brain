@@ -191,7 +191,7 @@ def main() -> int:
     # Company numbers and official news from SEC filings and the second-source price check: live files only (no sample stand-ins).
     extra = {}
     for key, rel in (("fundamentals", "market/fundamentals.json"), ("price_check", "market/price_check.json"), ("sec_news", "market/sec_news.json"),
-                     ("dips", "market/dips.json"), ("live", "market/live.json")):
+                     ("dips", "market/dips.json"), ("live", "market/live.json"), ("flows", "market/flows.json")):
         if (DATA / rel).exists():
             _copy(DATA / rel, OUT / rel)
             extra[key] = rel
@@ -231,6 +231,7 @@ def main() -> int:
         "sec_news": extra.get("sec_news"),
         "dips": extra.get("dips"),
         "live": extra.get("live"),
+        "flows": extra.get("flows"),
         "why": why,
         "checklist": checklist,
         "candles": candles or None,

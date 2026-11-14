@@ -6,7 +6,7 @@ export default {
   "count": "{i} of {n}",
   "close": "Close",
   "read": "Read the full story",
-  "hint": "Swipe up",
+  "hint": "Swipe up or left",
   "market.kicker": "The market today",
   "market.lead": "The big US companies together ({name}): {move}.",
   "market.breadth": "{up} of {n} big names went up.",

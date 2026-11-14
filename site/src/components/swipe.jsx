@@ -9,7 +9,8 @@ import { useScrollLock } from "./shell.jsx";
 import dict from "../text/swipe.js";
 
 /*
- * Swipe mode: the day as a vertical feed of full-screen cards, the way short-video apps work: swipe up for the next.
+ * Swipe mode: the day as a feed of full-screen cards, the way short-video apps work: swipe up or left for the next,
+ * down or right to go back.
  * The first card is the market (a traffic light and what to do), then one card per stock, the owner's own list first,
  * biggest move today first (lib/swipe.js), then "all caught up". Native scroll snapping does the swiping (no custom
  * drag code); arrow keys and Page Up/Down work too. Each stock card opens its full story. Toggled from the top bar like
@@ -46,7 +47,7 @@ export function SwipeMode({ data, onClose, onOpen }) {
   }, [data]);
   const stocks = useMemo(() => buildDeck({
     lists: [mine, { watchlist: data.watchlist, market: data.market }].filter(Boolean),
-    outlook: data.outlookAll ?? data.outlook, flows: data.flows, themes: data.themes, funds: data.funds,
+    outlook: data.outlookAll ?? data.outlook, flows: data.flows, themes: data.themes, funds: data.funds, companies: data.companies,
   }), [mine, data]);
   const total = stocks.length + 2; // the market, the stocks, the end
   const feed = useRef(null);
@@ -55,6 +56,16 @@ export function SwipeMode({ data, onClose, onOpen }) {
   const onScroll = () => {
     const el = feed.current;
     if (el) setI(Math.min(total - 1, Math.round(el.scrollTop / Math.max(1, el.clientHeight))));
+  };
+  // Left and right flicks move too (up/down is the feed's own scroll): left = next, right = back.
+  const touch = useRef(null);
+  const onTouchStart = (e) => { const p = e.touches[0]; touch.current = { x: p.clientX, y: p.clientY }; };
+  const onTouchEnd = (e) => {
+    const s = touch.current; touch.current = null;
+    const p = e.changedTouches[0];
+    if (!s || !p) return;
+    const dx = p.clientX - s.x, dy = p.clientY - s.y;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) to(i + (dx < 0 ? 1 : -1));
   };
   const to = useCallback((n) => {
     const el = feed.current;
@@ -79,7 +90,7 @@ export function SwipeMode({ data, onClose, onOpen }) {
         <button type="button" className="swipe-close" onClick={onClose}>{t("close")}</button>
         <div className="swipe-dots" aria-hidden="true"><i style={{ width: `${((i + 1) / total) * 100}%` }} /></div>
       </div>
-      <div ref={feed} className="swipe-feed" tabIndex={-1} onScroll={onScroll}>
+      <div ref={feed} className="swipe-feed" tabIndex={-1} onScroll={onScroll} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
         {/* data-on marks the card on screen, so its entrance animation plays when it arrives (index.css). */}
         <section className="swipe-slide" data-on={i === 0 ? "" : undefined}><MarketCard data={data} /><Hint show={i === 0} /></section>
         {stocks.map((c, k) => <section key={c.symbol} className="swipe-slide" data-on={i === k + 1 ? "" : undefined}><StockCard c={c} onOpen={onOpen} /></section>)}
@@ -147,6 +158,7 @@ function StockCard({ c, onOpen }) {
         </div>
         {c.moat && <span className="swipe-moat" data-moat={c.moat.level}>{t(`moat.${c.moat.level}`)}</span>}
       </div>
+      {c.what && <p className="swipe-what">{c.what}</p>}
       <p className="swipe-move" data-tone={tone(c.move)}>{pct(c.move)}</p>
       <p className="swipe-word">{t("today", { word: t(`move.${moveWord(c.move)}`) })}</p>
       {c.spark && c.spark.length > 1 && (
@@ -155,7 +167,7 @@ function StockCard({ c, onOpen }) {
           <small>{t("spark")} · {pct(c.spark[c.spark.length - 1] - c.spark[0])}</small>
         </div>
       )}
-      {c.about && <p className="swipe-about">{c.about}</p>}
+      {c.about && c.about !== c.what && <p className="swipe-about">{c.about}</p>}
       <div className="swipe-facts">
         {c.analysts && <span><b>{t("analysts", { buy: c.analysts.buy, n: c.analysts.n })}</b></span>}
         {c.moat && <span>{t("theme", { theme: c.moat.theme })}</span>}

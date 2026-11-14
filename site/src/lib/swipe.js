@@ -7,7 +7,7 @@ const isNum = (v) => typeof v === "number" && Number.isFinite(v);
  * The deck: the owner's own list first (when loaded), then the main list, each name once, biggest move today first.
  * Each card: {symbol, name, move, spark (index values), about (one line), analysts ({buy, n}) | null, moat | null}.
  */
-export function buildDeck({ lists = [], outlook = null, flows = null, themes = null, funds = null }) {
+export function buildDeck({ lists = [], outlook = null, flows = null, themes = null, funds = null, companies = null }) {
   const seen = new Map();
   for (const l of lists) {
     const rows = new Map((l?.market?.symbols ?? []).map((r) => [r.symbol, r]));
@@ -26,7 +26,9 @@ export function buildDeck({ lists = [], outlook = null, flows = null, themes = n
   return [...seen.values()].map((c) => {
     const a = fl.get(c.symbol)?.analysts ?? null;
     const m = moat.get(c.symbol) ?? null;
-    return { ...c, about: plain.get(c.symbol) ?? m?.note ?? fundPlain.get(c.symbol) ?? null,
+    return { ...c, what: companies?.[c.symbol] ?? null,
+      // The latest from the company's card; the theme's one-liner only when there is no "what it does" line already.
+      about: plain.get(c.symbol) ?? (companies?.[c.symbol] ? null : m?.note) ?? fundPlain.get(c.symbol) ?? null,
       analysts: a ? { buy: a.strong_buy + a.buy, n: a.n } : null, moat: m ? { level: m.moat, theme: m.theme } : null };
   }).sort((a, b) => Math.abs(b.move) - Math.abs(a.move));
 }

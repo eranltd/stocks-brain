@@ -183,6 +183,16 @@ class Lint:
             fc = self.schema(funds_path, "funds.schema.json")
             if fc:
                 self.check_funds(funds_path, fc)
+        companies_path = CONFIG / "companies.json"
+        if companies_path.exists():
+            cc2 = self.schema(companies_path, "companies.schema.json")
+            if cc2:
+                known = self.all_market_symbols(include_bench=False)
+                for sym in cc2["companies"]:
+                    if not re.fullmatch(r"[A-Z][A-Z0-9.\-]{0,9}", sym):
+                        self.err(companies_path, f"{sym}: not a ticker")
+                    elif known is not None and sym not in known:
+                        self.err(companies_path, f"{sym}: not on any market's list")
         themes_path = CONFIG / "themes.json"
         if themes_path.exists():
             tc = self.schema(themes_path, "themes.schema.json")

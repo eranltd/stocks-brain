@@ -26,7 +26,7 @@ import { loadMarket } from "../lib/data.js";
 import { candlesOf, costWords, fundCard, resolveSymbolMarket, NOT_YET } from "../lib/markets.js";
 import { buyWindowFor, mainListOf, mainWatchlistOf, sp500Of } from "../lib/buywindow.js";
 import { stocksEarned } from "../lib/money.js";
-import { AGENTS, deskCalls, freshness, HARD_RISK, houseLimits, REPORTERS, rrText } from "../lib/desk.js";
+import { AGENTS, deskCalls, deskExtra, freshness, HARD_RISK, houseLimits, REPORTERS, rrText } from "../lib/desk.js";
 import { BuyWindowBody, BW_TONE } from "../components/buywindow.jsx";
 import { StockReplay } from "../components/replay.jsx";
 import { strings } from "../lib/text.js";
@@ -300,7 +300,7 @@ function useDeskCall(data, symbol, on) {
     const earned = stocksEarned(data.rulesResult, trustStage(data).stage);
     const limits = houseLimits({ settings: data.settings, checklistCfg: data.checklistCfg, checklist, rulebook: data.rulebook, household, earned });
     const fresh = freshness({ market: data.market, checklist, why, secNews, run });
-    const [call] = deskCalls({ market: data.market, checklist, run, members: [symbol], names: data.names ?? {}, limits, received: fresh.received });
+    const [call] = deskCalls({ market: data.market, checklist, run, members: [symbol], names: data.names ?? {}, limits, received: fresh.received, extra: deskExtra(data) });
     return call ? { call, fresh, limits } : null;
   }, [data, symbol, on]);
 }
@@ -322,6 +322,7 @@ function whyText(t, x = {}) {
     stretch: () => t("sp.desk.why.stretch", { pct: pct(x.pct), max: x.max }),
     confirm: () => t("sp.desk.why.confirm", { n: x.n }),
     reports: () => t("sp.desk.why.reports", { n: x.n, total: x.total }),
+    debate: () => t("sp.desk.why.debate", { bear: x.bear, bull: x.bull }),
   }[x.id];
   return v ? v() : t(`sp.desk.why.${x.id}`);
 }
@@ -388,11 +389,33 @@ function DeskCall({ desk, go, n, className = "" }) {
             <span className="font-num mt-1 block text-[11px] text-ink-3">{noYear(fresh.marketDate)}</span>
           </AgentCell>
         </div>
+        {r.debate && (r.debate.bull.length > 0 || r.debate.bear.length > 0) && <Debate d={r.debate} />}
         <button type="button" onClick={() => go("today")} className="micro mt-2 inline-flex min-h-[44px] items-center gap-1.5 text-ink-2 hover:text-ink">
           {t("sp.desk.open")} <ArrowRight className="size-3.5" />
         </button>
       </div>
     </Panel>
+  );
+}
+
+/** The bull and the bear (lib/debate.js): every reason for and against, in words, and who wins. */
+function Debate({ d }) {
+  const t = strings(dict);
+  const say = (p) => t(`sp.debate.${p.id}`, { pct: Number.isFinite(p.pct) ? pct(p.pct) : "", abs: Number.isFinite(p.pct) ? `${Math.abs(p.pct).toFixed(1)}%` : "", base: Number.isFinite(p.base) ? Math.round(p.base) : "", buy: p.buy, n: p.n, days: p.days });
+  return (
+    <div className="debate mt-3" data-verdict={d.verdict}>
+      <p className="micro">{t("sp.debate.title")} · <b>{t(`sp.debate.verdict.${d.verdict}`)}</b></p>
+      <div className="debate-cols">
+        <div className="debate-side" data-side="bull">
+          <p className="debate-h">{t("sp.debate.bull", { n: d.bull.length })}</p>
+          <ul>{d.bull.length ? d.bull.map((p) => <li key={p.id}>{say(p)}</li>) : <li className="text-ink-3">{t("sp.debate.none")}</li>}</ul>
+        </div>
+        <div className="debate-side" data-side="bear">
+          <p className="debate-h">{t("sp.debate.bear", { n: d.bear.length })}</p>
+          <ul>{d.bear.length ? d.bear.map((p) => <li key={p.id}>{say(p)}</li>) : <li className="text-ink-3">{t("sp.debate.none")}</li>}</ul>
+        </div>
+      </div>
+    </div>
   );
 }
 

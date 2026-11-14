@@ -9,7 +9,7 @@ import { loadCandles } from "../lib/data.js";
 import { miniGeometry, miniWindow } from "../lib/carousel.js";
 import { useReducedMotion } from "../lib/motion.js";
 import {
-  AGENTS, PANEL_ORDER, REPORTERS, callCounts, deskCalls, execCandidates, freshness, houseLimits, newsCards, rrText, scannerRows,
+  AGENTS, PANEL_ORDER, REPORTERS, callCounts, deskCalls, deskExtra, execCandidates, freshness, houseLimits, newsCards, rrText, scannerRows,
   sortScanner, statTiles, strategyRows,
 } from "../lib/desk.js";
 import { trustStage } from "./trust.jsx";
@@ -75,7 +75,7 @@ export function useDesk(data) {
     const earned = stocksEarned(data.rulesResult, trustStage(data).stage);
     const limits = houseLimits({ settings: data.settings, checklistCfg: data.checklistCfg, checklist, rulebook: data.rulebook, household, earned });
     const fresh = freshness({ market, checklist, why, secNews, run });
-    const calls = deskCalls({ market, checklist, run, members, names, limits, received: fresh.received });
+    const calls = deskCalls({ market, checklist, run, members, names, limits, received: fresh.received, extra: deskExtra(data) });
     const scan = scannerRows({ market, checklist, members, names });
     return {
       todayIso, checklist, run, limits, fresh, calls, scan,
@@ -348,6 +348,7 @@ function whyText(t, x = {}) {
     stretch: () => t("desk.why.stretch", { pct: pct(x.pct), max: x.max }),
     confirm: () => t("desk.why.confirm", { n: x.n }),
     reports: () => t("desk.why.reports", { n: x.n, total: x.total }),
+    debate: () => t("desk.why.debate", { bear: x.bear, bull: x.bull }),
   }[x.id];
   return v ? v() : t(`desk.why.${x.id}`);
 }

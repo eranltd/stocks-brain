@@ -4,7 +4,7 @@ import { fmtDate, fmtPct } from "../lib/format.js";
 import { mainListOf } from "../lib/buywindow.js";
 import { stocksEarned } from "../lib/money.js";
 import { usableWhy } from "../lib/why.js";
-import { REPORTERS, callCounts, deskCalls, freshness, houseLimits } from "../lib/desk.js";
+import { REPORTERS, callCounts, deskCalls, deskExtra, freshness, houseLimits } from "../lib/desk.js";
 import { dayTimeline, lastByRoutine } from "../lib/routines.js";
 import { trustStage } from "../components/trust.jsx";
 import { NotAdvice } from "../components/shell.jsx";
@@ -58,7 +58,7 @@ function useModel(data) {
     const earned = stocksEarned(data.rulesResult, trustStage(data).stage);
     const limits = houseLimits({ settings: data.settings, checklistCfg: data.checklistCfg, checklist, rulebook: data.rulebook, household, earned });
     const fresh = freshness({ market, checklist, why, secNews, run });
-    const calls = deskCalls({ market, checklist, run, members, names: data.names ?? {}, limits, received: fresh.received });
+    const calls = deskCalls({ market, checklist, run, members, names: data.names ?? {}, limits, received: fresh.received, extra: deskExtra(data) });
 
     // Prices: the main list as one equal-weight line (each name's indexed closes, averaged) and its average day move.
     const set = new Set(members);

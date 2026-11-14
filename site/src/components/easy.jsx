@@ -240,6 +240,12 @@ function StockCard({ data, view, symbol, liveRows, onClose }) {
             <p className="easy-text">{t(co.days <= 1 ? "card.resultsSoon" : "card.results", { n: co.days, day: day(co.date) })}</p>
           </div>
         )}
+        {data.companies?.[symbol] && (
+          <div className="easy-sheet-part">
+            <p className="easy-q">{t("card.what")}</p>
+            <p className="easy-text">{data.companies[symbol]}</p>
+          </div>
+        )}
         {nw && (nw.plain || nw.headline) && (
           <div className="easy-sheet-part">
             <p className="easy-q">{t("card.about")}</p>

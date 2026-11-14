@@ -75,7 +75,7 @@ export function Spark({ points, tone = "flat", className = "easy-spark" }) {
         </linearGradient>
       </defs>
       <path d={`${d} L${w} ${h} L0 ${h} Z`} fill={`url(#spark-fill-${tone})`} />
-      <path d={d} fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" pathLength="400" />
+      <path d={d} fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
     </svg>
   );
 }

@@ -169,6 +169,7 @@ def main() -> int:
                 *(("checklist",) if checklist_cfg.exists() else ()), *(("markets",) if (CONFIG / "markets.json").exists() else ()),
                 *(("funds",) if (CONFIG / "funds.json").exists() else ()),
                 *(("themes",) if (CONFIG / "themes.json").exists() else ()),
+                *(("companies",) if (CONFIG / "companies.json").exists() else ()),
                 *(("news_sources",) if (CONFIG / "news_sources.json").exists() else ()))
     for name in cfg_docs:
         _copy(CONFIG / f"{name}.json", OUT / "config" / f"{name}.json")

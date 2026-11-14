@@ -226,6 +226,8 @@ export function derive(manifest, files) {
   const funds = doc("funds") ? files[doc("funds").file] : null;
   // The Theme hunter's themes (config/themes.json): each company's competition and the market that carries its numbers.
   const themes = doc("themes") ? files[doc("themes").file] : null;
+  // What each company does, in two short lines (config/companies.json), for Swipe mode and the simple cards.
+  const companies = doc("companies") ? files[doc("companies").file]?.companies ?? null : null;
   const outcomes = manifest.kb.outcomes ? files[manifest.kb.outcomes].items : [];
   // Library titles are shown in English only (the stored original stays the citation).
   const libraryRaw = manifest.kb.library ? files[manifest.kb.library] : null;
@@ -272,7 +274,7 @@ export function derive(manifest, files) {
   return {
     market, manifest, runs, shownRuns, latest, lastOk, prices, watchlist, settings, learnings, guardrails,
     outcomes, library, sources, routines, names, bench, kb, docs, regime, calibration, observations, opsLog, longrun, paper, sectors, core, rulebook, rulesResult, ledger, people, peopleScores, fundamentals, priceCheck, secNews, buyWindow, why, dips, live, flows, outlook, checklist, checklistCfg,
-    markets, marketsConfig, funds, themes,
+    markets, marketsConfig, funds, themes, companies,
     sample: manifest.source === "sample", livePrices: manifest.price_source === "live",
   };
 }

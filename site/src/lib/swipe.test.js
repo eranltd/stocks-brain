@@ -12,7 +12,10 @@ test("the deck: my list first, each name once, biggest move first, with its fact
     outlook: { companies: [{ ticker: "AAA", plain: "Makes things." }] },
     flows: { sample: false, symbols: [{ symbol: "BBB", analysts: { strong_buy: 2, buy: 3, n: 8 } }] },
     themes: { themes: [{ name: "Space", companies: [{ symbol: "CCC", moat: "dominant", note: "The leader." }] }] },
+    companies: { AAA: "Makes widgets for everyone." },
   });
+  assert.equal(deck.find((c) => c.symbol === "AAA").what, "Makes widgets for everyone.");
+  assert.equal(deck.find((c) => c.symbol === "BBB").what, null);
   assert.deepEqual(deck.map((c) => c.symbol), ["BBB", "CCC", "AAA"]); // DDD has no numbers
   assert.equal(deck.find((c) => c.symbol === "AAA").name, "Aaa"); // my list's row wins
   assert.equal(deck.find((c) => c.symbol === "AAA").about, "Makes things.");

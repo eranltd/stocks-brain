@@ -1,0 +1,36 @@
+{
+  "$id": "companies.schema.json",
+  "title": "What each company does (config/companies.json)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "updated_at",
+    "change_note",
+    "how_to_read",
+    "companies"
+  ],
+  "properties": {
+    "version": {
+      "$ref": "common.schema.json#/$defs/semver"
+    },
+    "updated_at": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "change_note": {
+      "$ref": "common.schema.json#/$defs/change_note"
+    },
+    "how_to_read": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "companies": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 20,
+        "maxLength": 180
+      }
+    }
+  }
+}

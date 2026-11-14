@@ -68,6 +68,7 @@ export default {
   "card.coming": "Coming up",
   "card.results": "The company shares its results in {n} days ({day}). Prices can move a lot on that day.",
   "card.resultsSoon": "The company shares its results very soon ({day}). Prices can move a lot on that day.",
-  "card.about": "About the company",
+  "card.what": "What the company does",
+  "card.about": "The latest",
   "card.foot": "For learning only. Not advice.",
 };

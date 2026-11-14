@@ -1166,8 +1166,8 @@ html[data-menu="open"] .news-float { display: none; }
 .easy-row-name small, .easy-row-move small { font-size: 15px; color: var(--ink-2); }
 .easy-row-move { display: grid; justify-items: end; text-align: end; }
 .easy-row-move b { font-size: 19px; }
-.easy [data-tone="up"] b, .easy .easy-answer[data-tone="up"] { color: var(--up); }
-.easy [data-tone="down"] b, .easy .easy-answer[data-tone="down"] { color: var(--down); }
+.easy .easy-row-move[data-tone="up"] b, .easy .easy-answer[data-tone="up"] { color: var(--up); }
+.easy .easy-row-move[data-tone="down"] b, .easy .easy-answer[data-tone="down"] { color: var(--down); }
 .easy-more { margin-top: 10px; min-height: 56px; width: 100%; border-radius: 14px; border: 1.5px solid var(--line-3); font-size: 18px; font-weight: 700; color: var(--ink); }
 .easy-todo { border-color: color-mix(in srgb, var(--desk) 45%, var(--line-2)); }
 .easy-news { margin-top: 8px; display: grid; }
@@ -1270,13 +1270,9 @@ html[data-menu="open"] .news-float { display: none; }
 .swipe-slide[data-on] .swipe-facts > * { animation: tt-rise 520ms var(--ease-out-expo) both; }
 .swipe-slide[data-on] .swipe-facts > *:nth-child(1) { animation-delay: 560ms; }
 .swipe-slide[data-on] .swipe-facts > *:nth-child(2) { animation-delay: 660ms; }
-.swipe-slide[data-on] .swipe-read { animation: tt-rise 520ms var(--ease-out-expo) 760ms both; }
 .swipe-slide[data-on] .swipe-moat { animation: tt-stamp 500ms cubic-bezier(.2, 1.6, .4, 1) 300ms both; }
 @keyframes tt-rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 @keyframes tt-stamp { from { opacity: 0; transform: scale(1.6) rotate(-8deg); } to { opacity: 1; transform: none; } }
-.swipe-slide .easy-spark path:last-child { stroke-dasharray: 400; stroke-dashoffset: 0; }
-.swipe-slide[data-on] .easy-spark path:last-child { animation: tt-draw 1100ms ease-out 260ms both; }
-.swipe-slide[data-on] .easy-spark path:first-child { animation: tt-fade 600ms ease-out 900ms both; }
 @keyframes tt-draw { from { stroke-dashoffset: 400; } to { stroke-dashoffset: 0; } }
 @keyframes tt-fade { from { opacity: 0; } }
 .swipe-slide[data-on] .easy-traffic circle[filter] { animation: tt-breathe 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
@@ -1288,9 +1284,9 @@ html[data-menu="open"] .news-float { display: none; }
 .swipe-chart { margin-top: 18px; flex: 1; min-height: 120px; max-height: 260px; display: flex; flex-direction: column; gap: 6px; }
 .swipe-chart-svg { width: 100%; flex: 1; min-height: 0; }
 .swipe-chart small { font-size: 13px; color: var(--ink-3); }
-.swipe-slide .swipe-chart-svg path:last-child { stroke-width: 2.6; stroke-dasharray: 400; stroke-dashoffset: 0; }
-.swipe-slide[data-on] .swipe-chart-svg path:last-child { animation: tt-draw 1300ms ease-out 240ms both; }
-.swipe-slide[data-on] .swipe-chart-svg path:first-child { animation: tt-fade 700ms ease-out 1000ms both; }
+.swipe-slide .swipe-chart-svg path:last-child { stroke-width: 2.6; }
+.swipe-slide[data-on] .swipe-chart-svg { animation: tt-wipe 1200ms ease-out 200ms both; }
+@keyframes tt-wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
 .swipe-breadth { margin-top: 10px; }
 .swipe-breadth-bar { margin-top: 12px; display: flex; height: 18px; gap: 3px; overflow: hidden; border-radius: 99px; }
 .swipe-breadth-bar i[data-k="up"] { background: var(--up); }
@@ -1315,3 +1311,6 @@ html[data-menu="open"] .news-float { display: none; }
 .easy-toggle[aria-checked="true"] .easy-toggle-track i { transform: translateX(24px); background: #fff; }
 .easy-choice em { justify-self: start; margin-top: 4px; border-radius: 6px; background: color-mix(in srgb, var(--desk) 16%, transparent); padding: 2px 8px; font-style: normal; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--desk); }
 .easy-choice[data-last] { border-color: color-mix(in srgb, var(--desk) 55%, var(--line-3)); }
+.swipe-what { margin-top: 8px; font-size: 16px; line-height: 1.45; color: var(--ink-2); }
+.swipe-slide[data-on] .swipe-what { animation: tt-rise 520ms var(--ease-out-expo) 100ms both; }
+.swipe-facts b { color: var(--ink); }

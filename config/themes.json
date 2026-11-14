@@ -1,0 +1,319 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-11-14",
+  "change_note": "First themes for the Theme hunter: Space, AI, Chips, Software and Energy.",
+  "how_to_read": "Our own short reading of how much competition each company has: dominant (one clear leader), few rivals, or crowded. A starting point to read further, not a fact and not advice.",
+  "themes": [
+    {
+      "id": "space",
+      "name": "Space",
+      "why": "Rockets, satellites and internet from space. A young industry: a few winners can grow many times over, and many small companies fail.",
+      "companies": [
+        {
+          "symbol": "SPCX",
+          "market": "space",
+          "moat": "dominant",
+          "note": "Launches most of the world's satellites and runs the biggest internet satellite network (Starlink)."
+        },
+        {
+          "symbol": "RKLB",
+          "market": "space",
+          "moat": "few_rivals",
+          "note": "The busiest US launcher after SpaceX, and it builds satellites too. A bigger rocket (Neutron) is its next step."
+        },
+        {
+          "symbol": "ASTS",
+          "market": "space",
+          "moat": "few_rivals",
+          "note": "Satellites that talk straight to ordinary phones, with big phone carriers as partners. SpaceX is building the same."
+        },
+        {
+          "symbol": "LUNR",
+          "market": "space",
+          "moat": "few_rivals",
+          "note": "One of a handful of companies NASA pays to land on the Moon."
+        },
+        {
+          "symbol": "PL",
+          "market": "space",
+          "moat": "few_rivals",
+          "note": "Takes pictures of the whole Earth every day with its own satellites; few do it at that scale."
+        },
+        {
+          "symbol": "FLY",
+          "market": "space",
+          "moat": "crowded",
+          "note": "Small rockets and Moon landers; strong rivals in both."
+        },
+        {
+          "symbol": "IRDM",
+          "market": "space",
+          "moat": "few_rivals",
+          "note": "The only network that covers the whole globe on its frequencies, for ships, planes and the military."
+        },
+        {
+          "symbol": "RDW",
+          "market": "space",
+          "moat": "crowded",
+          "note": "Parts and systems for spacecraft; many suppliers do similar work."
+        },
+        {
+          "symbol": "BKSY",
+          "market": "space",
+          "moat": "crowded",
+          "note": "Fast satellite pictures for governments; several rivals."
+        },
+        {
+          "symbol": "GSAT",
+          "market": "space",
+          "moat": "few_rivals",
+          "note": "Runs the satellites behind iPhone emergency texts; much depends on Apple."
+        },
+        {
+          "symbol": "VSAT",
+          "market": "space",
+          "moat": "crowded",
+          "note": "Satellite internet for planes and ships; losing ground to Starlink."
+        },
+        {
+          "symbol": "VOYG",
+          "market": "space",
+          "moat": "crowded",
+          "note": "Space station and defense technology; a young company with rivals."
+        },
+        {
+          "symbol": "KRMN",
+          "market": "space",
+          "moat": "few_rivals",
+          "note": "Makes parts for missiles and rockets that few suppliers can make."
+        },
+        {
+          "symbol": "SPIR",
+          "market": "space",
+          "moat": "crowded",
+          "note": "Small satellites that collect weather and ship data; a small company in a crowded field."
+        }
+      ]
+    },
+    {
+      "id": "ai",
+      "name": "AI",
+      "why": "The companies building artificial intelligence: the software, chip designs, networks, power and servers behind it.",
+      "companies": [
+        {
+          "symbol": "PLTR",
+          "market": "ai",
+          "moat": "few_rivals",
+          "note": "Software governments and big companies use to run AI on their own data; hard to replace once in."
+        },
+        {
+          "symbol": "ARM",
+          "market": "ai",
+          "moat": "dominant",
+          "note": "Its chip designs are in nearly every phone and growing in data centers; it earns a fee on each chip."
+        },
+        {
+          "symbol": "ANET",
+          "market": "ai",
+          "moat": "few_rivals",
+          "note": "Fast network switches for AI data centers; Cisco and Nvidia compete."
+        },
+        {
+          "symbol": "VRT",
+          "market": "ai",
+          "moat": "few_rivals",
+          "note": "Power and cooling for data centers; AI chips run hot, so demand grew."
+        },
+        {
+          "symbol": "SMCI",
+          "market": "ai",
+          "moat": "crowded",
+          "note": "Builds AI servers; Dell and others sell similar machines. Has had accounting troubles."
+        },
+        {
+          "symbol": "CRWV",
+          "market": "ai",
+          "moat": "crowded",
+          "note": "Rents out AI chips in the cloud; the big cloud companies compete, and it carries a lot of debt."
+        },
+        {
+          "symbol": "DELL",
+          "market": "ai",
+          "moat": "crowded",
+          "note": "Servers and PCs; AI servers are its growth, with close rivals."
+        }
+      ]
+    },
+    {
+      "id": "chips",
+      "name": "Chips",
+      "why": "The chips inside every phone, computer and AI data center, and the machines that make them.",
+      "companies": [
+        {
+          "symbol": "NVDA",
+          "market": "chips",
+          "moat": "dominant",
+          "note": "Makes most AI chips, and its software keeps developers with it."
+        },
+        {
+          "symbol": "AVGO",
+          "market": "chips",
+          "moat": "few_rivals",
+          "note": "Custom AI chips for Google and others, plus network chips."
+        },
+        {
+          "symbol": "TSM",
+          "market": "chips",
+          "moat": "dominant",
+          "note": "Makes the most advanced chips for almost everyone, Apple and Nvidia included."
+        },
+        {
+          "symbol": "AMD",
+          "market": "chips",
+          "moat": "few_rivals",
+          "note": "The main rival to Intel in computer chips and to Nvidia in AI chips."
+        },
+        {
+          "symbol": "ASML",
+          "market": "chips",
+          "moat": "dominant",
+          "note": "The only maker of the machines needed for the most advanced chips."
+        },
+        {
+          "symbol": "QCOM",
+          "market": "chips",
+          "moat": "few_rivals",
+          "note": "Phone chips and modem patents; Apple is moving to its own modem."
+        },
+        {
+          "symbol": "MU",
+          "market": "chips",
+          "moat": "crowded",
+          "note": "Memory chips; three big makers, and prices swing with supply."
+        }
+      ]
+    },
+    {
+      "id": "software",
+      "name": "Software",
+      "why": "Business software and cybersecurity: once a company runs on it, it rarely leaves.",
+      "companies": [
+        {
+          "symbol": "CRM",
+          "market": "software",
+          "moat": "dominant",
+          "note": "The biggest sales and customer software; hard to leave once a company runs on it."
+        },
+        {
+          "symbol": "NOW",
+          "market": "software",
+          "moat": "few_rivals",
+          "note": "Workflow software big companies run their IT and HR on."
+        },
+        {
+          "symbol": "ADBE",
+          "market": "software",
+          "moat": "dominant",
+          "note": "Photoshop and PDF, the standard for designers, though AI tools bring new rivals."
+        },
+        {
+          "symbol": "SNOW",
+          "market": "software",
+          "moat": "crowded",
+          "note": "Cloud data storage and analysis; Databricks and the big clouds compete."
+        },
+        {
+          "symbol": "DDOG",
+          "market": "software",
+          "moat": "crowded",
+          "note": "Watches companies' apps and servers for problems; many rivals."
+        },
+        {
+          "symbol": "NET",
+          "market": "software",
+          "moat": "few_rivals",
+          "note": "Runs a huge network that makes websites fast and safe; few have one as big."
+        },
+        {
+          "symbol": "PANW",
+          "market": "software",
+          "moat": "few_rivals",
+          "note": "One of the largest cybersecurity companies; customers buy many products from it."
+        },
+        {
+          "symbol": "CRWD",
+          "market": "software",
+          "moat": "few_rivals",
+          "note": "A leader in protecting company computers from hackers."
+        },
+        {
+          "symbol": "SHOP",
+          "market": "software",
+          "moat": "few_rivals",
+          "note": "The online store platform behind millions of shops outside Amazon."
+        },
+        {
+          "symbol": "GTLB",
+          "market": "software",
+          "moat": "crowded",
+          "note": "Software for writing and shipping code; Microsoft's GitHub is much bigger."
+        },
+        {
+          "symbol": "INTU",
+          "market": "software",
+          "moat": "dominant",
+          "note": "TurboTax and QuickBooks; most US small firms and filers use it."
+        },
+        {
+          "symbol": "MDB",
+          "market": "software",
+          "moat": "crowded",
+          "note": "A popular database; the cloud giants offer similar ones."
+        }
+      ]
+    },
+    {
+      "id": "energy",
+      "name": "Energy",
+      "why": "Oil, gas and the companies that drill for them. Results follow oil prices more than anything else.",
+      "companies": [
+        {
+          "symbol": "XOM",
+          "market": "energy",
+          "moat": "crowded",
+          "note": "The largest US oil company; oil prices decide most of its results."
+        },
+        {
+          "symbol": "CVX",
+          "market": "energy",
+          "moat": "crowded",
+          "note": "A big oil company; results follow oil prices."
+        },
+        {
+          "symbol": "COP",
+          "market": "energy",
+          "moat": "crowded",
+          "note": "Pumps oil and gas; results follow prices."
+        },
+        {
+          "symbol": "EOG",
+          "market": "energy",
+          "moat": "crowded",
+          "note": "A US shale oil producer; results follow prices."
+        },
+        {
+          "symbol": "SLB",
+          "market": "energy",
+          "moat": "few_rivals",
+          "note": "The largest oilfield services company; few can match its reach."
+        },
+        {
+          "symbol": "RIG",
+          "market": "energy",
+          "moat": "few_rivals",
+          "note": "Owns many of the world's deepest-water drilling rigs; few rivals can drill there, but it carries a lot of debt."
+        }
+      ]
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 {
- "version": "1.1.0",
- "updated_at": "2026-10-17",
- "change_note": "Each company says whether it is in the S&P 500 (checked by hand), so the buy card says the weekly whole-market buy holds a piece of it only where true.",
+ "version": "1.2.0",
+ "updated_at": "2026-11-14",
+ "change_note": "Added Transocean (offshore drilling) for the Energy theme.",
  "symbols": [
   {
    "symbol": "XOM",
@@ -32,6 +32,12 @@
    "name": "SLB (Schlumberger)",
    "sector": "Energy",
    "sp500": true
+  },
+  {
+   "symbol": "RIG",
+   "name": "Transocean (offshore drilling)",
+   "sector": "Energy",
+   "sp500": false
   }
  ]
 }

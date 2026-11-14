@@ -80,6 +80,8 @@ export default {
   "nav.p.today.what": "The desk: six agents read the list and code makes a pretend-money call on each name. The Details switch shows everything that happened, newest first.",
   "nav.p.watchlist": "Stocks",
   "nav.p.watchlist.what": "The companies on the list, and how each did lately.",
+  "nav.p.themes": "Theme hunter",
+  "nav.p.themes.what": "Space, AI, chips, software, energy: who leads each field and how the field did.",
   "nav.p.details": "Market details",
   "nav.p.details.what": "All the numbers about the market's day, for when you want more.",
   "nav.p.people": "People to learn from",

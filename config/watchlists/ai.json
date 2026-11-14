@@ -1,0 +1,48 @@
+{
+ "version": "1.0.0",
+ "updated_at": "2026-11-14",
+ "change_note": "The AI theme list for the Theme hunter. S&P 500 membership checked by hand where marked.",
+ "symbols": [
+  {
+   "symbol": "PLTR",
+   "name": "Palantir",
+   "sector": "Information Technology",
+   "sp500": true
+  },
+  {
+   "symbol": "ARM",
+   "name": "Arm Holdings",
+   "sector": "Information Technology",
+   "sp500": false
+  },
+  {
+   "symbol": "ANET",
+   "name": "Arista Networks",
+   "sector": "Information Technology",
+   "sp500": true
+  },
+  {
+   "symbol": "VRT",
+   "name": "Vertiv",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "SMCI",
+   "name": "Super Micro Computer",
+   "sector": "Information Technology",
+   "sp500": true
+  },
+  {
+   "symbol": "CRWV",
+   "name": "CoreWeave",
+   "sector": "Information Technology",
+   "sp500": false
+  },
+  {
+   "symbol": "DELL",
+   "name": "Dell Technologies",
+   "sector": "Information Technology",
+   "sp500": true
+  }
+ ]
+}

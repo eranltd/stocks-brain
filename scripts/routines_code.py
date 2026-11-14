@@ -3,7 +3,7 @@
 long-run portfolio statistics, the forward-only paper portfolio, the forward ledger of every rule and the scores of
 the public calls of the people we learn from.
 
-Usage: python3 scripts/routines_code.py derive|score|regime|calibration|longrun|paper|rules|ledger|buywindow|people|dips|checklist|markets|sectors|all
+Usage: python3 scripts/routines_code.py derive|score|regime|calibration|longrun|paper|rules|ledger|buywindow|people|dips|checklist|markets|sectors|themes|all
 `markets` and `sectors` run in their own Action runs (after their fetches) and write data/markets/<id>/ only.
 Each step reads public data, computes with plain arithmetic, validates against its schema,
 and writes under data/kb/. Rules are documented in docs/methodology.md.
@@ -1180,12 +1180,12 @@ def run_dips() -> None:
 STEPS = {"derive": run_derive, "score": run_score, "regime": run_regime, "calibration": run_calibration,
          "longrun": run_longrun, "paper": run_paper, "rules": run_rules, "ledger": run_ledger, "buywindow": run_buy_window,
          "people": run_people, "dips": run_dips,
-         "checklist": run_checklist, "markets": run_markets, "sectors": lambda: run_markets("sectors")}
+         "checklist": run_checklist, "markets": run_markets, "sectors": lambda: run_markets("sectors"), "themes": lambda: run_markets("themes")}
 
 if __name__ == "__main__":
     which = sys.argv[1] if len(sys.argv) > 1 else "all"
     if which not in (*STEPS, "all"):
         raise SystemExit(f"usage: routines_code.py {'|'.join(STEPS)}|all")
     for name, fn in STEPS.items():
-        if which == name or (which == "all" and name not in ("markets", "sectors")):  # the other markets have their own runs
+        if which == name or (which == "all" and name not in ("markets", "sectors", "themes")):  # the other markets have their own runs
             fn()

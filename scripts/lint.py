@@ -183,6 +183,11 @@ class Lint:
             fc = self.schema(funds_path, "funds.schema.json")
             if fc:
                 self.check_funds(funds_path, fc)
+        themes_path = CONFIG / "themes.json"
+        if themes_path.exists():
+            tc = self.schema(themes_path, "themes.schema.json")
+            if tc:
+                self.check_themes(themes_path, tc)
         checklist_path = CONFIG / "checklist.json"
         if checklist_path.exists():
             cc = self.schema(checklist_path, "checklist_config.schema.json")
@@ -420,7 +425,7 @@ class Lint:
         rt_path = root / "config" / "routines.json"
         if not rt_path.exists():
             return
-        routine = {"nasdaq": "fetch_prices", "markets": "fetch_markets", "sectors": "fetch_sectors"}
+        routine = {"nasdaq": "fetch_prices", "markets": "fetch_markets", "sectors": "fetch_sectors", "themes": "fetch_themes"}
         crons = {r["id"]: r["cron"] for r in load_json(rt_path)["routines"] if r["id"] in routine.values()}
         used = [routine[sc] for sc, groups in plan.items() if groups]
         for rid in used:
@@ -442,6 +447,25 @@ class Lint:
         if include_bench:
             out |= {m["benchmark"] for m in self.markets["config"]["markets"]}
         return out
+
+    def check_themes(self, path: Path, tc: dict) -> None:
+        """Themes: unique ids, each company once per theme and on the list of the market it names (its numbers come from
+        that market's files)."""
+        markets = getattr(self, "markets", None)
+        lists = {m["id"]: {s["symbol"] for s in markets["lists"].get(m["id"], {"symbols": []})["symbols"]}
+                 for m in markets["config"]["markets"]} if markets else None
+        ids = [t["id"] for t in tc["themes"]]
+        if len(ids) != len(set(ids)):
+            self.err(path, "duplicate theme ids")
+        for t in tc["themes"]:
+            syms = [c["symbol"] for c in t["companies"]]
+            if len(syms) != len(set(syms)):
+                self.err(path, f"{t['id']}: a company is listed twice")
+            for c in t["companies"]:
+                if lists is not None and c["market"] not in lists:
+                    self.err(path, f"{t['id']} {c['symbol']}: market {c['market']} does not exist")
+                elif lists is not None and c["symbol"] not in lists[c["market"]]:
+                    self.err(path, f"{t['id']} {c['symbol']}: not on the {c['market']} list")
 
     def check_funds(self, path: Path, fc: dict, today: str | None = None) -> None:
         """Fund cards: one per fund on a funds market's list, dated (never in the future), holds and plain in words (no

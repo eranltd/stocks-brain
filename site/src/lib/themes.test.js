@@ -27,6 +27,7 @@ test("the year: winners and losers both count; names listed under a year are lef
   assert.equal(y.now, 2500);
   assert.equal(y.up, 1);
   assert.equal(themeYear([]).n, 0);
+  assert.equal(themeYear(themeRows(theme, {})).short, 0); // no numbers yet is not "listed under a year"
 });
 
 test("the markets the themes read, once each", () => {

@@ -207,7 +207,8 @@ export default function App() {
     return (
       <>
         <Loader progress={progress} done />
-        <SimpleApp data={base} onView={setView} theme={theme} onTheme={toggleTheme} swipe={swipe} setSwipe={setSwipe} />
+        <SimpleApp data={base} onView={setView} theme={theme} onTheme={toggleTheme} swipe={swipe} setSwipe={setSwipe}
+          onFullStock={(s) => { setView("full"); go(`stock/${s}`); }} />
       </>
     );
   }

@@ -1,5 +1,5 @@
 {
-"as_of":"2026-11-12",
+"as_of":"2026-11-13",
 "sample":false,
 "started":"2026-10-02",
 "note":"Paper only: no money. Holdings are recorded on the first run of each month and never edited.",
@@ -37,14 +37,15 @@
 {"date":"2026-11-09","v":101.252,"core_v":97.798,"bench_v":90.631},
 {"date":"2026-11-10","v":100.684,"core_v":97.438,"bench_v":90.018},
 {"date":"2026-11-11","v":100.815,"core_v":98.723,"bench_v":92.102},
-{"date":"2026-11-12","v":100.966,"core_v":98.373,"bench_v":91.807}
+{"date":"2026-11-12","v":100.966,"core_v":98.373,"bench_v":91.807},
+{"date":"2026-11-13","v":101.762,"core_v":98.016,"bench_v":90.703}
 ],
 "diversification":{"names":5,"core_pct":0,"sectors":4,"avg_pair_corr":0.04,"vol_1y_pct":13.66,"loss_95_20d_pct":-6.33,"diversification_ratio":2.13},
 "if_rebalanced_today":[
 "MSFT",
 "AAPL",
-"GILD",
 "MNST",
-"AMZN"
+"GILD",
+"FANG"
 ]
 }

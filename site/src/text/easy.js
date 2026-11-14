@@ -1,0 +1,71 @@
+// Simple mode (components/easy.jsx). Plain words, short sentences, every number with words beside it. Format: see
+// shell.js.
+export default {
+  "choose.h": "How do you want to see the market?",
+  "choose.simple": "Simple",
+  "choose.simpleSub": "Just tell me what is going on.",
+  "choose.full": "Full",
+  "choose.fullSub": "Show me everything: charts, agents, numbers.",
+  "choose.note": "You can switch at any time.",
+
+  "switch.toSimple": "Simple view",
+  "switch.toFull": "Full view",
+  "theme.light": "Light colors",
+  "theme.dark": "Dark colors",
+
+  "when.live": "Updated {ago}",
+  "when.close": "From the last market day, {day}. The market is closed now.",
+
+  "q.ok": "Is the market OK today?",
+  "light.green": "Calm",
+  "light.yellow": "Nervous",
+  "light.red": "Scared",
+  "light.say.calm": "A normal, quiet day.",
+  "light.say.up": "A good day. Most stocks went up.",
+  "light.say.rally": "A very good day. Almost everything went up.",
+  "light.say.down": "A down day. Many stocks fell a little.",
+  "light.say.nervous": "People are a bit worried today.",
+  "light.say.selloff": "A big drop. Most stocks fell.",
+  "light.say.panic": "People are scared today. Prices swing a lot.",
+  "light.lead": "The big US companies together ({name}): {move}, {word}.",
+  "light.calm": "Days like this happen a few times a year. In the past the market came back over time, though not always quickly.",
+
+  "q.mine": "Your stocks",
+  "q.list": "The big stocks",
+  "mine.count": "{up} of {n} went up.",
+  "mine.all": "See all {n}",
+  "mine.less": "Show fewer",
+
+  "move.bigJump": "a big jump",
+  "move.up": "up",
+  "move.littleUp": "a little up",
+  "move.same": "about the same",
+  "move.littleDown": "a little down",
+  "move.down": "down",
+  "move.bigDrop": "a big drop",
+
+  "q.do": "What should I do?",
+  "do.noPanic": "Nothing. Do not sell in a panic.",
+  "do.steady": "Nothing. Stay steady.",
+  "do.nothing": "Nothing. Everything is on plan.",
+  "do.why": "The plan buys the whole market a little every week, in good days and bad.",
+  "do.next": "Next weekly buy: {day}",
+
+  "q.news": "In the news",
+  "news.open": "opens the article",
+
+  "full.h": "More",
+  "full.text": "Want charts, every stock, the AI agents and all the numbers?",
+  "foot": "This site is for learning. It is not advice to buy or sell.",
+
+  "card.close": "Close",
+  "card.today": "Today",
+  "card.lately": "Lately",
+  "card.month": "This month: {move}, {word}.",
+  "card.year": "This year: {move}, {word}.",
+  "card.coming": "Coming up",
+  "card.results": "The company shares its results in {n} days ({day}). Prices can move a lot on that day.",
+  "card.resultsSoon": "The company shares its results very soon ({day}). Prices can move a lot on that day.",
+  "card.about": "About the company",
+  "card.foot": "For learning only. Not advice.",
+};

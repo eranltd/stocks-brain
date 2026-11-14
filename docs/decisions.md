@@ -1,7 +1,7 @@
 ---
-version: 0.38.0
+version: 0.39.0
 updated_at: 2026-11-14
-change_note: The Theme hunter: pick a field (space, AI, chips, software, energy), see who leads it and how the whole field did over a year, losers included. Three theme lists in their own early-morning price run.
+change_note: Simple mode: the first visit asks once (Simple or Full); Simple is one calm screen in plain words (a traffic light, your stocks, what to do, the news), switchable to Full at any time.
 ---
 # Decision log
 
@@ -20,6 +20,21 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   per-point dates into one shared array.
 
 ## 2026-11-14
+- **Simple mode, asked once.** The owner: the app "is adjusted to smart guys like me"; it should ask who the user is and
+  offer a version "my mother can read and use", because people who open it do not know where to look. The first visit
+  now asks one question (Simple or Full, `components/easy.jsx` ModeChooser), remembered on the device (`lib/view.js`);
+  Full at any time from Simple's top bar, Simple at any time from Home, the Today menu and the desktop header. English.
+  Built on researched guidance: show the few most important things and reveal more on request (NN/g progressive
+  disclosure); plain words at a 6th to 8th grade level (US state plain-language standards; an SEC 2026 study found
+  plain terms improve understanding of fund costs); numbers with words beside them (EU easy-to-read guidance); big
+  text (18 to 20px) and big buttons (about 60px), one column, few choices per screen (older-adult UX guidance); one
+  onboarding question about what the person wants, not who they are. Simple is one screen of four cards: is the
+  market OK (a green, yellow or red light from the fear gauge and the mood, with a calming line on red days), your
+  stocks (My list, how many went up, the three biggest moves in words, "see all"), what to do (almost always nothing:
+  keep the weekly buy; the next buy day), and three headlines about your own names first. A stock opens a plain card
+  (today, this month and year in words, results coming up, what the company does). No bottom bar, ticker, agents or
+  pop-ups in Simple; Full is unchanged.
+
 - **The Theme hunter.** The owner heard from a friend at an investment house how he looks for opportunities: take a
   field (space, energy, chips, AI, software), see which companies have a monopoly or no real rivals, and hold them
   while the field grows. New page `#themes` (under Today): pick a theme, read its companies with our one-line reading

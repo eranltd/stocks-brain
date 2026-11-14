@@ -33,6 +33,8 @@ export default {
   "menu.pages": "{label} pages",
   "menu.sample": "sample",
   "menu.close": "Close",
+  "header.simple": "Simple view",
+  "header.simpleWhat": "The market in plain words, big and calm. Switch back at any time.",
 
   // market switch (components/shell.jsx) and its words (lib/markets.js)
   "market.word": "Market",

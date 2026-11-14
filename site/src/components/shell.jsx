@@ -59,6 +59,29 @@ export function Field() {
 /* ----------------------------------------------------------------- header */
 
 /** Close a popover on a tap outside `refs` or on Escape (`close(true)` asks for focus back on its button). */
+/**
+ * While a menu or sheet is open the page behind it stays put: the body is pinned where it was (the way that also holds
+ * on iPhone Safari, where overflow: hidden alone does not stop the page scrolling) and put back on close.
+ */
+let locks = 0;
+let lockedAt = 0;
+export function useScrollLock(active) {
+  useEffect(() => {
+    if (!active) return undefined;
+    const b = document.body.style;
+    if (locks++ === 0) {
+      lockedAt = window.scrollY;
+      Object.assign(b, { position: "fixed", top: `-${lockedAt}px`, left: "0", right: "0", width: "100%" });
+    }
+    return () => {
+      if (--locks === 0) {
+        Object.assign(b, { position: "", top: "", left: "", right: "", width: "" });
+        window.scrollTo({ top: lockedAt, behavior: "instant" });
+      }
+    };
+  }, [active]);
+}
+
 function useDismiss(open, close, refs) {
   useEffect(() => {
     if (!open) return;
@@ -115,6 +138,13 @@ export function MarketSwitch({ market, locked = false }) {
   const close = useCallback((refocus) => { setOpen(false); if (refocus) btn.current?.focus(); }, []);
   useDismiss(open, close, refs);
   useFocusOnOpen(open, panel, viaKeys);
+  useScrollLock(open);
+  // While the menu is open the floating news card (above the header's layer) steps aside so it covers no list.
+  useEffect(() => {
+    if (!open) return undefined;
+    document.documentElement.dataset.menu = "open";
+    return () => { delete document.documentElement.dataset.menu; };
+  }, [open]);
   const choices = market?.choices ?? [];
   if (!choices.length) return null;
   const current = choices.find((c) => c.id === market.id) ?? choices[0];
@@ -143,7 +173,7 @@ export function MarketSwitch({ market, locked = false }) {
       </button>
       {open && (
         <div ref={panel} id="market-menu" role="group" aria-label={t("market.menu")} onKeyDown={onListKeys}
-          className="absolute top-full end-4 start-4 z-50 mt-2 animate-pop rounded-panel border border-line-2 bg-surface p-2 shadow-2xl motion-reduce:animate-none sm:end-auto sm:start-0 sm:w-[340px]">
+          className="market-menu absolute top-full end-4 start-4 z-[90] mt-2 animate-pop overflow-y-auto overscroll-contain rounded-panel border border-line-2 bg-surface p-2 shadow-2xl motion-reduce:animate-none sm:end-auto sm:start-0 sm:w-[340px]">
           <p className="px-3 pt-2 pb-1 text-[13.5px] leading-snug text-ink-2">{t("market.intro")}</p>
           <ul className="mt-1 grid gap-1">
             {choices.map((c) => {
@@ -452,6 +482,7 @@ export function MobileNav({ route, onNav, sampleRoutes = [] }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [sheet]);
   useEffect(() => setSheet(null), [route]);
+  useScrollLock(Boolean(sheet));
   const tap = (id, e) => {
     if (sheet === id) { setSheet(null); return; }
     const next = bottomTap(id, route);
@@ -470,7 +501,13 @@ export function MobileNav({ route, onNav, sampleRoutes = [] }) {
                 className={`relative flex min-h-[60px] flex-col items-center justify-center gap-1 transition-colors ${on ? "text-desk" : "text-ink-3 active:text-ink"}`}>
                 {on && <span aria-hidden="true" className="absolute inset-x-5 top-0 h-[2px] rounded-b-full bg-desk shadow-[0_0_14px_var(--desk)]" />}
                 <svg viewBox="0 0 24 24" className={`size-[22px] ${on ? "drop-shadow-[0_0_8px_var(--desk-glow)]" : ""}`} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{ICONS[s.id]}</svg>
-                <span className="font-display text-[11.5px] leading-none font-bold tracking-[0.06em] uppercase">{s.short ?? s.label}</span>
+                <span className="inline-flex items-center gap-0.5 font-display text-[11.5px] leading-none font-bold tracking-[0.06em] uppercase">
+                  {s.short ?? s.label}
+                  {/* A small arrow on the tabs that open a menu of pages (the others go straight to their page). */}
+                  {!s.direct && (
+                    <svg viewBox="0 0 24 24" aria-hidden="true" className={`size-2.5 shrink-0 transition-transform duration-300 ${sheet === s.id ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m6 15 6-6 6 6" /></svg>
+                  )}
+                </span>
               </button>
             );
           })}

@@ -20,7 +20,8 @@ export function themeRows(theme, views) {
  */
 export function themeYear(rows, each = 1000) {
   const full = rows.filter((r) => isNum(r.row?.ret_250d_pct));
-  const short = rows.length - full.length;
+  // Listed under a year: the name has numbers but no full year yet (a name with no numbers at all is not "short").
+  const short = rows.filter((r) => r.row && !isNum(r.row.ret_250d_pct)).length;
   if (!full.length) return { n: 0, short, avg: null, vsMarket: null, best: null, worst: null, start: 0, now: 0, up: 0 };
   const rets = full.map((r) => r.row.ret_250d_pct);
   const vs = full.map((r) => r.row.vs_bench_250d_pct).filter(isNum);

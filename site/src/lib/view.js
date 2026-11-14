@@ -1,17 +1,28 @@
 import { useCallback, useEffect, useState } from "react";
 
-// Simple or Full: how this device shows the site. Asked once on the first visit (components/easy.jsx ModeChooser),
-// remembered here, switchable at any time. null = not chosen yet.
+// Simple or Full, and Swipe on or off: asked every time the app opens (components/easy.jsx ModeChooser). The last
+// answers are remembered on the device so the question opens with them already chosen. null = not answered yet.
 const KEY = "sb:view";
-let memo = null; // this visit's choice when storage is blocked (private mode)
-const read = () => {
-  try { const v = window.localStorage.getItem(KEY); return v === "simple" || v === "full" ? v : memo; } catch { return memo; }
-};
+const SWIPE_KEY = "sb:swipe";
+let memo = null; // this visit's answer (the question is asked again on the next open)
+
+/** The answers given last time on this device: {view: "simple" | "full" | null, swipe: boolean}. */
+export function lastChoice() {
+  try {
+    const v = window.localStorage.getItem(KEY);
+    return { view: v === "simple" || v === "full" ? v : null, swipe: window.localStorage.getItem(SWIPE_KEY) === "1" };
+  } catch { return { view: null, swipe: false }; }
+}
+
+/** Remember this open's Swipe answer for next time. */
+export function rememberSwipe(on) {
+  try { window.localStorage.setItem(SWIPE_KEY, on ? "1" : "0"); } catch { /* storage unavailable */ }
+}
 
 export function useView() {
-  const [view, setState] = useState(read);
+  const [view, setState] = useState(() => memo);
   useEffect(() => {
-    const sync = () => setState(read());
+    const sync = () => setState(memo);
     window.addEventListener("sb-view", sync);
     return () => window.removeEventListener("sb-view", sync);
   }, []);

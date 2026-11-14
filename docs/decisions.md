@@ -1,7 +1,7 @@
 ---
 version: 0.39.0
 updated_at: 2026-11-14
-change_note: Simple mode: the first visit asks once (Simple or Full); Simple is one calm screen in plain words (a traffic light, your stocks, what to do, the news), switchable to Full at any time.
+change_note: The app asks on every open: Simple or Full, and Swipe mode on or off (last answers preselected). Swipe mode: the day as a vertical feed of full-screen cards with small entrance animations.
 ---
 # Decision log
 
@@ -34,6 +34,17 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   keep the weekly buy; the next buy day), and three headlines about your own names first. A stock opens a plain card
   (today, this month and year in words, results coming up, what the company does). No bottom bar, ticker, agents or
   pop-ups in Simple; Full is unchanged.
+- **Asked on every open, with Swipe.** The owner then asked for the question every time the app opens, with Swipe mode
+  on or off as well. The question opens with the last answers chosen ("Last time"), so it is one tap; `lib/view.js`
+  keeps the answer for the visit only and remembers it for next time.
+- **Swipe mode: the day as a vertical feed.** The owner: "a way to consume data", like the short-video apps. A button
+  beside the dark-mode button (top bar of Full and Simple) opens it: full-screen cards that snap one at a time with
+  the phone's own scrolling (no custom drag code): the market today (a traffic light, the Nasdaq move, an up/down
+  bar, what to do), then one card per stock (My list first, biggest move today first; `lib/swipe.js`): the move in
+  words, a large 3-month chart, one line about the company, analysts, the theme's reading, and "Read the full story".
+  Each card animates in as it arrives (the number pops, the chart draws itself, facts rise one by one); nothing moves
+  under reduced motion. A first try with left/right "like" swiping was dropped: the owner wanted reading, not liking.
+  On narrow phones the header shows the logo without the name so the extra button fits on one row.
 
 - **The Theme hunter.** The owner heard from a friend at an investment house how he looks for opportunities: take a
   field (space, energy, chips, AI, software), see which companies have a monopoly or no real rivals, and hold them

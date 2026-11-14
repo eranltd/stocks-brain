@@ -1197,3 +1197,121 @@ html[data-menu="open"] .news-float { display: none; }
 .easy-close { min-height: 52px; border-radius: 999px; border: 1.5px solid var(--line-3); padding: 0 20px; font-size: 17px; font-weight: 700; color: var(--ink); }
 .easy-sheet-part { margin-top: 18px; border-top: 1px solid var(--line); padding-top: 14px; }
 @media (prefers-reduced-motion: reduce) { .easy-sheet { animation: none; } .easy-choice { transition: none; } }
+
+/* === swipe mode === */
+/* components/swipe.jsx: one stock at a time; drag right to like, left to pass. */
+.swipe-btn { display: grid; width: 44px; height: 44px; flex-shrink: 0; place-items: center; border-radius: 999px; border: 1px solid var(--line-2); background: color-mix(in srgb, var(--surface-2) 80%, transparent); color: var(--ink-2); transition: border-color 200ms, color 200ms; }
+.swipe-btn:hover { border-color: var(--line-3); color: var(--ink); }
+.swipe-btn.is-on { border-color: var(--desk); color: var(--desk); box-shadow: 0 0 18px -6px var(--desk-glow); }
+.easy-icon.swipe-btn { width: 48px; height: 48px; }
+.swipe { position: fixed; inset: 0; z-index: 92; overflow: hidden; background: var(--bg); }
+.swipe-top { position: absolute; inset-inline: 0; top: 0; z-index: 3; margin: 0 auto; display: flex; max-width: 492px; flex-wrap: wrap; align-items: center; gap: 10px;
+  background: linear-gradient(var(--bg) 70%, transparent); padding: calc(env(safe-area-inset-top, 0px) + 10px) 16px 14px; }
+.swipe-title { font-family: var(--font-display); font-size: 26px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); }
+.swipe-count { font-family: var(--font-num); font-size: 13px; color: var(--ink-3); }
+.swipe-close { margin-inline-start: auto; min-height: 48px; border-radius: 999px; border: 1.5px solid var(--line-3); padding: 0 20px; font-size: 16px; font-weight: 700; color: var(--ink); }
+.swipe-card { --t: var(--ink-3); position: relative; height: 100%; display: flex; flex-direction: column; overflow: hidden; border-radius: 24px; border: 1px solid color-mix(in srgb, var(--t) 40%, var(--line-2));
+  background: radial-gradient(120% 70% at 100% 0%, color-mix(in srgb, var(--t) 16%, transparent), transparent 60%), var(--surface); padding: 22px; box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.6); }
+.swipe-card[data-tone="up"] { --t: var(--up); }
+.swipe-card[data-tone="down"] { --t: var(--down); }
+.swipe-card-head { display: flex; align-items: flex-start; gap: 10px; }
+.swipe-name { font-family: var(--font-display); font-size: 34px; font-weight: 800; line-height: 1.05; color: var(--ink); }
+.swipe-sym { margin-top: 4px; font-family: var(--font-num); font-size: 14px; color: var(--ink-2); }
+.swipe-moat { --m: var(--ink-3); margin-inline-start: auto; flex-shrink: 0; border-radius: 8px; background: color-mix(in srgb, var(--m) 16%, transparent); padding: 4px 10px; font-family: var(--font-num); font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--m); }
+.swipe-moat[data-moat="dominant"] { --m: var(--up); }
+.swipe-moat[data-moat="few_rivals"] { --m: var(--desk); }
+.swipe-moat[data-moat="crowded"] { --m: var(--down); }
+.swipe-move { margin-top: 14px; font-family: var(--font-num); font-size: 46px; font-weight: 800; line-height: 1; color: var(--t); }
+.swipe-word { margin-top: 6px; font-size: 19px; font-weight: 600; color: var(--ink); }
+.swipe-spark { margin-top: 16px; display: flex; align-items: center; gap: 10px; }
+.swipe-spark .easy-spark { width: 140px; height: 42px; }
+.swipe-spark small { font-size: 13px; color: var(--ink-3); }
+.swipe-about { margin-top: 14px; font-size: 17px; line-height: 1.45; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.swipe-facts { margin-top: auto; display: flex; flex-wrap: wrap; gap: 8px; padding-top: 14px; }
+.swipe-facts span { border-radius: 999px; border: 1px solid var(--line-2); background: var(--surface-2); padding: 6px 12px; font-size: 14px; color: var(--ink-2); }
+.swipe-facts b { color: var(--ink); font-weight: 600; }
+.swipe-done-h { font-family: var(--font-display); font-size: 36px; font-weight: 800; text-transform: uppercase; color: var(--ink); }
+.swipe-done-sub { margin-top: 6px; font-size: 17px; color: var(--ink-2); }
+.swipe-again { margin-top: 16px; min-height: 56px; width: 100%; border-radius: 14px; border: 1.5px solid var(--desk); background: color-mix(in srgb, var(--desk) 12%, var(--surface)); font-size: 18px; font-weight: 700; color: var(--ink); }
+.swipe-dots { flex-basis: 100%; height: 4px; overflow: hidden; border-radius: 99px; background: var(--line-2); }
+.swipe-dots i { display: block; height: 100%; border-radius: 99px; background: var(--desk); transition: width 300ms; }
+
+.swipe-kicker { font-family: var(--font-display); font-size: 16px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); }
+.swipe-market { --l: var(--up); border-color: color-mix(in srgb, var(--l) 45%, var(--line-2)); background: radial-gradient(120% 70% at 0% 0%, color-mix(in srgb, var(--l) 16%, transparent), transparent 60%), var(--surface); }
+.swipe-market[data-light="yellow"] { --l: var(--wait); }
+.swipe-market[data-light="red"] { --l: var(--down); }
+.swipe-market-row { margin-top: 16px; display: flex; align-items: center; gap: 18px; }
+.swipe-market-row .easy-traffic { width: 64px; }
+.swipe-market .swipe-name { font-size: 44px; text-transform: uppercase; color: var(--l); }
+.swipe-read { margin-top: 14px; min-height: 52px; flex-shrink: 0; border-radius: 14px; border: 1.5px solid var(--desk); background: color-mix(in srgb, var(--desk) 10%, transparent); font-size: 17px; font-weight: 700; color: var(--ink); }
+.swipe-close-big { margin-top: 10px; width: 100%; min-height: 56px; }
+.swipe-feed { position: absolute; inset: 0; overflow-y: auto; overscroll-behavior: contain; scroll-snap-type: y mandatory; outline: none; scrollbar-width: none; }
+.swipe-feed::-webkit-scrollbar { display: none; }
+.swipe-slide { position: relative; margin: 0 auto; height: 100%; max-width: 492px; scroll-snap-align: start; scroll-snap-stop: always;
+  padding: calc(env(safe-area-inset-top, 0px) + 92px) 16px calc(env(safe-area-inset-bottom, 0px) + 18px); }
+.swipe-done { justify-content: center; }
+.swipe-hint { position: absolute; inset-inline: 0; bottom: calc(env(safe-area-inset-bottom, 0px) + 26px); display: grid; justify-items: center; gap: 2px; pointer-events: none;
+  font-family: var(--font-display); font-size: 14px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-2); animation: hint-bob 1.6s ease-in-out infinite; }
+.swipe-hint svg { width: 26px; height: 26px; color: var(--desk); }
+@keyframes hint-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@media (prefers-reduced-motion: reduce) { .swipe-hint { animation: none; } .swipe-feed { scroll-behavior: auto; } }
+/* Swipe: each card comes alive as it arrives (data-on). The number pops, the 3-month line draws itself, the facts rise
+   one by one, the lamp breathes and the glow drifts. Nothing moves under reduced motion. */
+.swipe-card::before { content: ""; position: absolute; inset: -30%; z-index: 0; pointer-events: none;
+  background: radial-gradient(40% 30% at 70% 20%, color-mix(in srgb, var(--t) 22%, transparent), transparent 70%); opacity: 0.8; animation: tt-drift 9s ease-in-out infinite alternate; }
+.swipe-market::before { background: radial-gradient(40% 30% at 25% 20%, color-mix(in srgb, var(--l) 24%, transparent), transparent 70%); }
+.swipe-card > * { position: relative; z-index: 1; }
+@keyframes tt-drift { from { transform: translate(-6%, -4%) scale(1); } to { transform: translate(6%, 5%) scale(1.15); } }
+.swipe-slide[data-on] .swipe-move, .swipe-slide[data-on] .swipe-market .swipe-name { animation: tt-pop 620ms cubic-bezier(.2, 1.4, .4, 1) both; }
+@keyframes tt-pop { 0% { opacity: 0; transform: scale(0.6) translateY(10px); filter: blur(6px); } 100% { opacity: 1; transform: none; filter: none; } }
+.swipe-slide[data-on] .swipe-name, .swipe-slide[data-on] .swipe-kicker { animation: tt-rise 520ms var(--ease-out-expo) both; }
+.swipe-slide[data-on] .swipe-word { animation: tt-rise 520ms var(--ease-out-expo) 140ms both; }
+.swipe-slide[data-on] .swipe-about { animation: tt-rise 560ms var(--ease-out-expo) 420ms both; }
+.swipe-slide[data-on] .swipe-facts > * { animation: tt-rise 520ms var(--ease-out-expo) both; }
+.swipe-slide[data-on] .swipe-facts > *:nth-child(1) { animation-delay: 560ms; }
+.swipe-slide[data-on] .swipe-facts > *:nth-child(2) { animation-delay: 660ms; }
+.swipe-slide[data-on] .swipe-read { animation: tt-rise 520ms var(--ease-out-expo) 760ms both; }
+.swipe-slide[data-on] .swipe-moat { animation: tt-stamp 500ms cubic-bezier(.2, 1.6, .4, 1) 300ms both; }
+@keyframes tt-rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes tt-stamp { from { opacity: 0; transform: scale(1.6) rotate(-8deg); } to { opacity: 1; transform: none; } }
+.swipe-slide .easy-spark path:last-child { stroke-dasharray: 400; stroke-dashoffset: 0; }
+.swipe-slide[data-on] .easy-spark path:last-child { animation: tt-draw 1100ms ease-out 260ms both; }
+.swipe-slide[data-on] .easy-spark path:first-child { animation: tt-fade 600ms ease-out 900ms both; }
+@keyframes tt-draw { from { stroke-dashoffset: 400; } to { stroke-dashoffset: 0; } }
+@keyframes tt-fade { from { opacity: 0; } }
+.swipe-slide[data-on] .easy-traffic circle[filter] { animation: tt-breathe 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes tt-breathe { 0%, 100% { opacity: 0.55; transform: scale(1); } 50% { opacity: 0.95; transform: scale(1.25); } }
+.swipe-slide[data-on] .swipe-done-h { animation: tt-pop 620ms cubic-bezier(.2, 1.4, .4, 1) both; }
+@media (prefers-reduced-motion: reduce) {
+  .swipe-card::before, .swipe-slide[data-on] *, .swipe-slide[data-on] .easy-spark path { animation: none !important; }
+}
+.swipe-chart { margin-top: 18px; flex: 1; min-height: 120px; max-height: 260px; display: flex; flex-direction: column; gap: 6px; }
+.swipe-chart-svg { width: 100%; flex: 1; min-height: 0; }
+.swipe-chart small { font-size: 13px; color: var(--ink-3); }
+.swipe-slide .swipe-chart-svg path:last-child { stroke-width: 2.6; stroke-dasharray: 400; stroke-dashoffset: 0; }
+.swipe-slide[data-on] .swipe-chart-svg path:last-child { animation: tt-draw 1300ms ease-out 240ms both; }
+.swipe-slide[data-on] .swipe-chart-svg path:first-child { animation: tt-fade 700ms ease-out 1000ms both; }
+.swipe-breadth { margin-top: 10px; }
+.swipe-breadth-bar { margin-top: 12px; display: flex; height: 18px; gap: 3px; overflow: hidden; border-radius: 99px; }
+.swipe-breadth-bar i[data-k="up"] { background: var(--up); }
+.swipe-breadth-bar i[data-k="down"] { background: var(--down); }
+.swipe-slide[data-on] .swipe-breadth-bar i { animation: tt-grow 900ms var(--ease-out-expo) 300ms both; transform-origin: left; }
+@keyframes tt-grow { from { transform: scaleX(0); } to { transform: none; } }
+.swipe-breadth-key { margin-top: 8px; display: flex; justify-content: space-between; font-family: var(--font-num); font-size: 13px; font-weight: 700; }
+.swipe-breadth-key [data-k="up"] { color: var(--up); }
+.swipe-breadth-key [data-k="down"] { color: var(--down); }
+.swipe-slide:first-child { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 64px); }
+.swipe-hint { bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); }
+.swipe-market .swipe-facts { margin-top: auto; }
+/* The open question's Swipe switch and the "last time" tag (components/easy.jsx ModeChooser). */
+.easy-toggle { display: flex; min-height: 72px; align-items: center; gap: 14px; border-radius: 18px; border: 1.5px solid var(--line-3); background: var(--surface); padding: 12px 18px; text-align: start; }
+.easy-toggle-text { display: grid; flex: 1; gap: 2px; }
+.easy-toggle-text b { font-family: var(--font-display); font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink); }
+.easy-toggle-text span { font-size: 15px; color: var(--ink-2); }
+.easy-toggle-track { position: relative; width: 58px; height: 34px; flex-shrink: 0; border-radius: 99px; background: var(--surface-3); border: 1px solid var(--line-3); transition: background 200ms; }
+.easy-toggle-track i { position: absolute; top: 3px; left: 3px; width: 26px; height: 26px; border-radius: 50%; background: var(--ink-2); transition: transform 220ms var(--ease-out-expo), background 200ms; }
+.easy-toggle[aria-checked="true"] { border-color: var(--desk); }
+.easy-toggle[aria-checked="true"] .easy-toggle-track { background: var(--desk); border-color: var(--desk); }
+.easy-toggle[aria-checked="true"] .easy-toggle-track i { transform: translateX(24px); background: #fff; }
+.easy-choice em { justify-self: start; margin-top: 4px; border-radius: 6px; background: color-mix(in srgb, var(--desk) 16%, transparent); padding: 2px 8px; font-style: normal; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--desk); }
+.easy-choice[data-last] { border-color: color-mix(in srgb, var(--desk) 55%, var(--line-3)); }

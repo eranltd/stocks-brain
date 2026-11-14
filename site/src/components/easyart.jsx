@@ -61,16 +61,21 @@ export function FullArt() {
 }
 
 /** A tiny line of the last months, coloured by today's direction. `points` are index values (first = 100). */
-export function Spark({ points, tone = "flat" }) {
+export function Spark({ points, tone = "flat", className = "easy-spark" }) {
   if (!Array.isArray(points) || points.length < 2) return null;
   const lo = Math.min(...points), hi = Math.max(...points), span = hi - lo || 1;
   const w = 72, h = 26;
   const d = points.map((v, i) => `${i ? "L" : "M"}${((i / (points.length - 1)) * w).toFixed(1)} ${(h - 2 - ((v - lo) / span) * (h - 4)).toFixed(1)}`).join(" ");
   const c = tone === "up" ? "var(--up)" : tone === "down" ? "var(--down)" : "var(--ink-3)";
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="easy-spark" aria-hidden="true">
-      <path d={`${d} L${w} ${h} L0 ${h} Z`} fill={c} opacity="0.1" />
-      <path d={d} fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    <svg viewBox={`0 0 ${w} ${h}`} className={className} preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id={`spark-fill-${tone}`} x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" stopColor={c} stopOpacity="0.28" /><stop offset="1" stopColor={c} stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <path d={`${d} L${w} ${h} L0 ${h} Z`} fill={`url(#spark-fill-${tone})`} />
+      <path d={d} fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" pathLength="400" />
     </svg>
   );
 }

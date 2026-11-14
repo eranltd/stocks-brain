@@ -268,7 +268,7 @@ function SubjectMenu({ subject, current, open, setOpen, route, onNav, sampleRout
   );
 }
 
-export function Header({ route, onNav, sample, livePrices, theme, onTheme, market, sampleRoutes = [], onSimple }) {
+export function Header({ route, onNav, sample, livePrices, theme, onTheme, market, sampleRoutes = [], onSimple, swipeButton = null }) {
   const t = strings(shellText);
   const [scrolled, setScrolled] = useState(false);
   const [openSubject, setOpenSubject] = useState(null);
@@ -286,7 +286,8 @@ export function Header({ route, onNav, sample, livePrices, theme, onTheme, marke
       <Container className="relative flex flex-wrap items-center gap-x-2.5 sm:gap-x-4">
         <a href="#today" aria-label={t("header.home")} className="flex min-h-[56px] shrink-0 items-center gap-2.5 lg:min-h-[64px]" onClick={(e) => { e.preventDefault(); onNav("today"); }}>
           <Logo />
-          <Wordmark />
+          {/* On a narrow phone the name gives way to the buttons (the logo stays). */}
+          <span className="hidden min-[440px]:inline"><Wordmark /></span>
         </a>
         <MarketSwitch market={market} locked={NASDAQ_ONLY.includes(route)} />
 
@@ -314,6 +315,7 @@ export function Header({ route, onNav, sample, livePrices, theme, onTheme, marke
               <span aria-hidden="true">🙂</span>{t("header.simple")}
             </button>
           )}
+          {swipeButton}
           <button
             type="button"
             onClick={onTheme}

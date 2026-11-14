@@ -6,7 +6,9 @@ export default {
   "choose.simpleSub": "Just tell me what is going on.",
   "choose.full": "Full",
   "choose.fullSub": "Show me everything: charts, agents, numbers.",
-  "choose.note": "You can switch at any time.",
+  "choose.swipe": "Swipe mode",
+  "choose.swipeSub": "The day as cards: swipe up for the next.",
+  "choose.last": "Last time",
 
   "switch.toSimple": "Simple view",
   "switch.toFull": "Full view",

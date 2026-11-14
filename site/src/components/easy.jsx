@@ -11,6 +11,8 @@ import { strings } from "../lib/text.js";
 import { Logo, useScrollLock, Wordmark } from "./shell.jsx";
 import { CalendarMark, FullArt, IconCheck, IconFull, IconList, IconMoon, IconNews, IconSimple, IconSun, SimpleArt, Spark, TrafficLight } from "./easyart.jsx";
 import dict from "../text/easy.js";
+import { lastChoice, rememberSwipe } from "../lib/view.js";
+import { SwipeButton, SwipeMode } from "./swipe.jsx";
 
 /*
  * Simple mode: the whole site as one calm screen anyone can read, for the owner's mother as much as for him on a busy
@@ -26,25 +28,31 @@ const day = (iso) => (iso ? fmtDate(iso).replace(/\s\d{4}$/, "") : "");
 const tone = (v) => (v > 0.05 ? "up" : v < -0.05 ? "down" : "flat");
 const ARROW = { up: "▲", down: "▼", flat: "■" };
 
-/** The one question on the first visit: Simple or Full. */
+/** The question asked every time the app opens: Simple or Full, and Swipe mode on or off (last answers preselected). */
 export function ModeChooser({ onPick }) {
   useScrollLock(true);
+  const last = useMemo(() => lastChoice(), []);
+  const [swipe, setSwipe] = useState(last.swipe);
   const first = useRef(null);
   useEffect(() => { first.current?.focus(); }, []);
+  const pick = (v) => { rememberSwipe(swipe); onPick(v, swipe); };
   return (
     <div className="easy-choose" role="dialog" aria-modal="true" aria-labelledby="easy-choose-h">
       <div className="easy-choose-box">
         <p className="easy-brand"><Logo /><Wordmark /></p>
         <h1 id="easy-choose-h" className="easy-choose-h">{t("choose.h")}</h1>
-        <button ref={first} type="button" className="easy-choice" onClick={() => onPick("simple")}>
+        <button type="button" role="switch" aria-checked={swipe} className="easy-toggle" onClick={() => setSwipe((v) => !v)}>
+          <span className="easy-toggle-text"><b>{t("choose.swipe")}</b><span>{t("choose.swipeSub")}</span></span>
+          <span className="easy-toggle-track" aria-hidden="true"><i /></span>
+        </button>
+        <button ref={first} type="button" className="easy-choice" data-last={last.view === "simple" ? "" : undefined} onClick={() => pick("simple")}>
           <SimpleArt />
-          <span><b>{t("choose.simple")}</b><span>{t("choose.simpleSub")}</span></span>
+          <span><b>{t("choose.simple")}</b><span>{t("choose.simpleSub")}</span>{last.view === "simple" && <em>{t("choose.last")}</em>}</span>
         </button>
-        <button type="button" className="easy-choice" onClick={() => onPick("full")}>
+        <button type="button" className="easy-choice" data-last={last.view === "full" ? "" : undefined} onClick={() => pick("full")}>
           <FullArt />
-          <span><b>{t("choose.full")}</b><span>{t("choose.fullSub")}</span></span>
+          <span><b>{t("choose.full")}</b><span>{t("choose.fullSub")}</span>{last.view === "full" && <em>{t("choose.last")}</em>}</span>
         </button>
-        <p className="easy-choose-note">{t("choose.note")}</p>
       </div>
     </div>
   );
@@ -60,7 +68,7 @@ export function ViewSwitch({ to, onView, className = "" }) {
 }
 
 /** The whole Simple site. */
-export function SimpleApp({ data, onView, theme, onTheme }) {
+export function SimpleApp({ data, onView, theme, onTheme, swipe, setSwipe }) {
   const now = useMemo(() => new Date(), [data]);
   const pulse = useMemo(() => pulseOf(data, now), [data, now]);
   const heading = useMemo(() => headingOf(data), [data]);
@@ -93,8 +101,9 @@ export function SimpleApp({ data, onView, theme, onTheme }) {
   return (
     <div className="easy">
       <header className="easy-top">
-        <span className="easy-brand"><Logo /><Wordmark /></span>
+        <span className="easy-brand"><Logo /><span className="hidden min-[440px]:inline"><Wordmark /></span></span>
         <span className="ms-auto flex items-center gap-2">
+          <SwipeButton on={swipe} onToggle={() => setSwipe((v) => !v)} className="easy-icon" />
           <button type="button" className="easy-icon" onClick={onTheme} aria-label={t(theme === "dark" ? "theme.light" : "theme.dark")}>{theme === "dark" ? <IconSun /> : <IconMoon />}</button>
           <ViewSwitch to="full" onView={onView} />
         </span>
@@ -179,6 +188,7 @@ export function SimpleApp({ data, onView, theme, onTheme }) {
         <p className="easy-foot">{t("foot")}</p>
       </main>
 
+      {swipe && <SwipeMode data={data} onClose={() => setSwipe(false)} onOpen={(s) => { setSwipe(false); setOpen(s); }} />}
       {open && <StockCard data={data} view={view} symbol={open} liveRows={liveRows} onClose={() => setOpen(null)} />}
     </div>
   );

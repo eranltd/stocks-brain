@@ -3149,6 +3149,113 @@
       ]
     },
     {
+      "symbol": "RIG",
+      "cik": 1451505,
+      "name": "Transocean Ltd.",
+      "filings": [
+        {
+          "date": "2026-11-03",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1451505/000145150526000085/rig-20260930x10q.htm"
+        },
+        {
+          "date": "2026-11-02",
+          "form": "8-K",
+          "items": [
+            "2.02",
+            "7.01"
+          ],
+          "titles": [
+            "Quarterly results",
+            "Shared an update with investors"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1451505/000145150526000083/rig-20261102x8k.htm"
+        },
+        {
+          "date": "2026-10-23",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1451505/000110465926118513/tm2628162d1_8k.htm"
+        },
+        {
+          "date": "2026-10-19",
+          "form": "8-K",
+          "items": [
+            "7.01"
+          ],
+          "titles": [
+            "Shared an update with investors"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1451505/000145150526000077/rig-20261019x8k.htm"
+        },
+        {
+          "date": "2026-10-15",
+          "form": "8-K",
+          "items": [
+            "1.01",
+            "2.03",
+            "7.01"
+          ],
+          "titles": [
+            "Signed a major agreement",
+            "Took on new debt",
+            "Shared an update with investors"
+          ],
+          "kind": "deal",
+          "url": "https://www.sec.gov/Archives/edgar/data/1451505/000145150526000075/rig-20261015x8k.htm"
+        },
+        {
+          "date": "2026-10-14",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1451505/000110465926115871/tm269762d11_8k.htm"
+        },
+        {
+          "date": "2026-10-09",
+          "form": "8-K",
+          "items": [
+            "7.01"
+          ],
+          "titles": [
+            "Shared an update with investors"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1451505/000145150526000072/rig-20261009x8k.htm"
+        },
+        {
+          "date": "2026-09-30",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1451505/000110465926112402/tm2626691d1_8k.htm"
+        }
+      ]
+    },
+    {
       "symbol": "PLTR",
       "cik": 1321655,
       "name": "Palantir Technologies Inc.",
@@ -3475,22 +3582,139 @@
       "filings": []
     },
     {
-      "symbol": "RIG",
-      "cik": 1451505,
-      "name": "Transocean Ltd.",
+      "symbol": "RKLB",
+      "cik": 1819994,
+      "name": "Rocket Lab Corp",
       "filings": [
         {
-          "date": "2026-11-03",
+          "date": "2026-11-09",
           "form": "10-Q",
           "items": [],
           "titles": [
             "Quarterly report"
           ],
           "kind": "report",
-          "url": "https://www.sec.gov/Archives/edgar/data/1451505/000145150526000085/rig-20260930x10q.htm"
+          "url": "https://www.sec.gov/Archives/edgar/data/1819994/000181999426000074/rklb-20260930.htm"
         },
         {
-          "date": "2026-11-02",
+          "date": "2026-11-09",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1819994/000181999426000073/rklb-20261109.htm"
+        },
+        {
+          "date": "2026-10-14",
+          "form": "8-K",
+          "items": [
+            "7.01",
+            "8.01"
+          ],
+          "titles": [
+            "Shared an update with investors",
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1819994/000181999426000067/rklb-20261014.htm"
+        },
+        {
+          "date": "2026-09-15",
+          "form": "8-K",
+          "items": [
+            "7.01",
+            "8.01"
+          ],
+          "titles": [
+            "Shared an update with investors",
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1819994/000175392626001769/g085951_8k.htm"
+        },
+        {
+          "date": "2026-08-13",
+          "form": "8-K",
+          "items": [
+            "7.01",
+            "8.01"
+          ],
+          "titles": [
+            "Shared an update with investors",
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1819994/000175392626001463/g085846_8k.htm"
+        },
+        {
+          "date": "2026-08-13",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1819994/000175392626001454/g085841_8k.htm"
+        },
+        {
+          "date": "2026-08-10",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1819994/000181999426000062/rklb-20260630.htm"
+        },
+        {
+          "date": "2026-08-10",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1819994/000181999426000061/rklb-20260810.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "ASTS",
+      "cik": 1780312,
+      "name": "AST SpaceMobile, Inc.",
+      "filings": [
+        {
+          "date": "2026-11-10",
+          "form": "8-K",
+          "items": [
+            "7.01"
+          ],
+          "titles": [
+            "Shared an update with investors"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226050865/form8-k.htm"
+        },
+        {
+          "date": "2026-11-09",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312526453759/asts-20260930.htm"
+        },
+        {
+          "date": "2026-11-09",
           "form": "8-K",
           "items": [
             "2.02",
@@ -3501,22 +3725,10 @@
             "Shared an update with investors"
           ],
           "kind": "results",
-          "url": "https://www.sec.gov/Archives/edgar/data/1451505/000145150526000083/rig-20261102x8k.htm"
+          "url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312526453758/asts-20261109.htm"
         },
         {
-          "date": "2026-10-23",
-          "form": "8-K",
-          "items": [
-            "8.01"
-          ],
-          "titles": [
-            "Other company news"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1451505/000110465926118513/tm2628162d1_8k.htm"
-        },
-        {
-          "date": "2026-10-19",
+          "date": "2026-11-06",
           "form": "8-K",
           "items": [
             "7.01"
@@ -3525,10 +3737,1292 @@
             "Shared an update with investors"
           ],
           "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1451505/000145150526000077/rig-20261019x8k.htm"
+          "url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226050513/form8-k.htm"
+        },
+        {
+          "date": "2026-10-20",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226047766/form8-k.htm"
+        },
+        {
+          "date": "2026-09-28",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226044647/form8-k.htm"
+        },
+        {
+          "date": "2026-08-10",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312526342550/asts-20260630.htm"
+        },
+        {
+          "date": "2026-08-10",
+          "form": "8-K",
+          "items": [
+            "2.02",
+            "7.01"
+          ],
+          "titles": [
+            "Quarterly results",
+            "Shared an update with investors"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312526342540/asts-20260810.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "LUNR",
+      "cik": 1844452,
+      "name": "Intuitive Machines, Inc.",
+      "filings": [
+        {
+          "date": "2026-11-13",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1844452/000162828026073512/lunr-20260930.htm"
+        },
+        {
+          "date": "2026-11-12",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1844452/000162828026073106/lunr-20261112.htm"
+        },
+        {
+          "date": "2026-10-22",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/1844452/000162828026066926/lunr-20261021.htm"
+        },
+        {
+          "date": "2026-08-13",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1844452/000162828026056821/lunr-20260630.htm"
+        },
+        {
+          "date": "2026-08-13",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1844452/000162828026056476/lunr-20260813.htm"
+        },
+        {
+          "date": "2026-08-03",
+          "form": "8-K",
+          "items": [
+            "1.01",
+            "7.01",
+            "8.01"
+          ],
+          "titles": [
+            "Signed a major agreement",
+            "Shared an update with investors",
+            "Other company news"
+          ],
+          "kind": "deal",
+          "url": "https://www.sec.gov/Archives/edgar/data/1844452/000119312526330778/d323986d8k.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "PL",
+      "cik": 1836833,
+      "name": "Planet Labs PBC",
+      "filings": [
+        {
+          "date": "2026-09-03",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1836833/000119312526382016/pl-20260731.htm"
+        },
+        {
+          "date": "2026-09-03",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1836833/000119312526381874/pl-20260903.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "FLY",
+      "cik": 1860160,
+      "name": "Firefly Aerospace Inc.",
+      "filings": [
+        {
+          "date": "2026-11-10",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1860160/000186016026000031/fly-20260930.htm"
+        },
+        {
+          "date": "2026-11-10",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1860160/000186016026000030/fly-20261110.htm"
+        },
+        {
+          "date": "2026-10-06",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/1860160/000119312526415543/fly-20260930.htm"
+        },
+        {
+          "date": "2026-08-11",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1860160/000186016026000023/fly-20260630.htm"
+        },
+        {
+          "date": "2026-08-11",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1860160/000186016026000022/fly-20260811.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "IRDM",
+      "cik": 1418819,
+      "name": "Iridium Communications Inc.",
+      "filings": [
+        {
+          "date": "2026-10-20",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1418819/000141881926000052/irdm-20260930.htm"
+        },
+        {
+          "date": "2026-10-20",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1418819/000141881926000053/irdm-20261020.htm"
+        },
+        {
+          "date": "2026-09-24",
+          "form": "8-K",
+          "items": [
+            "5.07",
+            "8.01"
+          ],
+          "titles": [
+            "Shareholder vote results",
+            "Other company news"
+          ],
+          "kind": "other",
+          "url": "https://www.sec.gov/Archives/edgar/data/1418819/000095010326014464/dp253851_8k.htm"
+        },
+        {
+          "date": "2026-09-18",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1418819/000095010326014197/dp253526_8k.htm"
+        },
+        {
+          "date": "2026-09-15",
+          "form": "8-K",
+          "items": [
+            "1.01"
+          ],
+          "titles": [
+            "Signed a major agreement"
+          ],
+          "kind": "deal",
+          "url": "https://www.sec.gov/Archives/edgar/data/1418819/000095010326013945/dp253331_8k.htm"
+        },
+        {
+          "date": "2026-08-10",
+          "form": "8-K",
+          "items": [
+            "5.03",
+            "7.01"
+          ],
+          "titles": [
+            "Changed its bylaws or fiscal year",
+            "Shared an update with investors"
+          ],
+          "kind": "other",
+          "url": "https://www.sec.gov/Archives/edgar/data/1418819/000141881926000048/irdm-20260810.htm"
+        },
+        {
+          "date": "2026-07-22",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1418819/000141881926000046/irdm-20260722.htm"
+        },
+        {
+          "date": "2026-07-22",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1418819/000141881926000045/irdm-20260630.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "RDW",
+      "cik": 1819810,
+      "name": "Redwire Corp",
+      "filings": [
+        {
+          "date": "2026-11-05",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1819810/000181981026000142/rdw-20260930.htm"
+        },
+        {
+          "date": "2026-11-04",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1819810/000181981026000139/rdw-20261104.htm"
+        },
+        {
+          "date": "2026-10-08",
+          "form": "8-K/A",
+          "items": [
+            "5.07"
+          ],
+          "titles": [
+            "Correction to an earlier filing: shareholder vote results"
+          ],
+          "kind": "other",
+          "url": "https://www.sec.gov/Archives/edgar/data/1819810/000181981026000133/rdw-20260520.htm"
+        },
+        {
+          "date": "2026-08-06",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1819810/000181981026000124/rdw-20260630.htm"
+        },
+        {
+          "date": "2026-08-05",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1819810/000181981026000121/rdw-20260805.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "BKSY",
+      "cik": 1753539,
+      "name": "BlackSky Technology Inc.",
+      "filings": [
+        {
+          "date": "2026-11-05",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1753539/000175353926000161/bksy-20260930.htm"
+        },
+        {
+          "date": "2026-11-05",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1753539/000175353926000154/bksy-20261105.htm"
+        },
+        {
+          "date": "2026-09-14",
+          "form": "8-K",
+          "items": [
+            "5.07"
+          ],
+          "titles": [
+            "Shareholder vote results"
+          ],
+          "kind": "other",
+          "url": "https://www.sec.gov/Archives/edgar/data/1753539/000175353926000143/bksy-20260910.htm"
+        },
+        {
+          "date": "2026-08-13",
+          "form": "8-K",
+          "items": [
+            "3.01"
+          ],
+          "titles": [
+            "A notice about its stock exchange listing"
+          ],
+          "kind": "warning",
+          "url": "https://www.sec.gov/Archives/edgar/data/1753539/000175353926000128/bksy-20260807.htm"
+        },
+        {
+          "date": "2026-08-06",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1753539/000175353926000124/bksy-20260630.htm"
+        },
+        {
+          "date": "2026-08-06",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1753539/000175353926000118/bksy-20260806.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "GSAT",
+      "cik": 1366868,
+      "name": "Globalstar, Inc.",
+      "filings": [
+        {
+          "date": "2026-11-05",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1366868/000136686826000046/gsat-20260930.htm"
+        },
+        {
+          "date": "2026-11-05",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1366868/000136686826000045/gsat-20261105.htm"
+        },
+        {
+          "date": "2026-08-06",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1366868/000136686826000039/gsat-20260630.htm"
+        },
+        {
+          "date": "2026-08-06",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1366868/000136686826000037/gsat-20260806.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "VSAT",
+      "cik": 797721,
+      "name": "VIASAT INC",
+      "filings": [
+        {
+          "date": "2026-11-06",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/797721/000119312526452035/vsat-20260930.htm"
+        },
+        {
+          "date": "2026-11-05",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/797721/000119312526449775/d179648d8k.htm"
+        },
+        {
+          "date": "2026-11-04",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/797721/000119312526447204/d182744d8k.htm"
+        },
+        {
+          "date": "2026-09-04",
+          "form": "8-K",
+          "items": [
+            "5.07"
+          ],
+          "titles": [
+            "Shareholder vote results"
+          ],
+          "kind": "other",
+          "url": "https://www.sec.gov/Archives/edgar/data/797721/000119312526383834/d156314d8k.htm"
+        },
+        {
+          "date": "2026-08-06",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/797721/000119312526337903/vsat-20260630.htm"
+        },
+        {
+          "date": "2026-08-04",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/797721/000119312526332896/d131434d8k.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "VOYG",
+      "cik": 1788060,
+      "name": "Voyager Technologies, Inc./TX",
+      "filings": [
+        {
+          "date": "2026-11-03",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1788060/000162828026069548/voyg-20260930.htm"
+        },
+        {
+          "date": "2026-11-02",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1788060/000162828026068886/voyg-20261102.htm"
+        },
+        {
+          "date": "2026-09-28",
+          "form": "8-K",
+          "items": [
+            "1.01",
+            "2.03",
+            "3.02",
+            "8.01"
+          ],
+          "titles": [
+            "Signed a major agreement",
+            "Took on new debt",
+            "Sold new shares",
+            "Other company news"
+          ],
+          "kind": "deal",
+          "url": "https://www.sec.gov/Archives/edgar/data/1788060/000162828026063717/voyg-20260922.htm"
+        },
+        {
+          "date": "2026-08-14",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1788060/000162828026057100/voyg-20260814.htm"
+        },
+        {
+          "date": "2026-08-04",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1788060/000162828026052292/voyg-20260630.htm"
+        },
+        {
+          "date": "2026-08-03",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1788060/000162828026051870/voyg-20260803.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "KRMN",
+      "cik": 2040127,
+      "name": "Karman Holdings Inc.",
+      "filings": [
+        {
+          "date": "2026-11-06",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/2040127/000119312526450476/krmn-20260930.htm"
+        },
+        {
+          "date": "2026-11-05",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/2040127/000119312526449899/krmn-20261105.htm"
+        },
+        {
+          "date": "2026-09-16",
+          "form": "8-K",
+          "items": [
+            "7.01"
+          ],
+          "titles": [
+            "Shared an update with investors"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/2040127/000119312526392480/d98785d8k.htm"
+        },
+        {
+          "date": "2026-08-28",
+          "form": "8-K",
+          "items": [
+            "1.01",
+            "2.03",
+            "7.01",
+            "8.01"
+          ],
+          "titles": [
+            "Signed a major agreement",
+            "Took on new debt",
+            "Shared an update with investors",
+            "Other company news"
+          ],
+          "kind": "deal",
+          "url": "https://www.sec.gov/Archives/edgar/data/2040127/000119312526374378/d10296d8k.htm"
+        },
+        {
+          "date": "2026-08-27",
+          "form": "8-K",
+          "items": [
+            "5.02",
+            "7.01"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)",
+            "Shared an update with investors"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/2040127/000119312526369561/d116376d8k.htm"
+        },
+        {
+          "date": "2026-08-11",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/2040127/000204012726000024/krmn-20260630.htm"
+        },
+        {
+          "date": "2026-08-06",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/2040127/000204012726000018/krmn-20260806.htm"
+        },
+        {
+          "date": "2026-08-06",
+          "form": "8-K",
+          "items": [
+            "1.01",
+            "2.03"
+          ],
+          "titles": [
+            "Signed a major agreement",
+            "Took on new debt"
+          ],
+          "kind": "deal",
+          "url": "https://www.sec.gov/Archives/edgar/data/2040127/000119312526336486/d147675d8k.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "SPIR",
+      "cik": 1816017,
+      "name": "Spire Global, Inc.",
+      "filings": [
+        {
+          "date": "2026-11-10",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1816017/000162828026072823/spir-20260930.htm"
+        },
+        {
+          "date": "2026-11-10",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1816017/000162828026072744/spir-20261110.htm"
+        },
+        {
+          "date": "2026-08-13",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1816017/000119312526347865/spir-20260630.htm"
+        },
+        {
+          "date": "2026-08-12",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1816017/000119312526346835/spir-20260812.htm"
+        },
+        {
+          "date": "2026-08-06",
+          "form": "8-K/A",
+          "items": [
+            "5.07"
+          ],
+          "titles": [
+            "Correction to an earlier filing: shareholder vote results"
+          ],
+          "kind": "other",
+          "url": "https://www.sec.gov/Archives/edgar/data/1816017/000119312526338263/spir-20260527.htm"
+        },
+        {
+          "date": "2026-08-05",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1816017/000119312526335313/spir-20260731.htm"
+        },
+        {
+          "date": "2026-07-17",
+          "form": "8-K",
+          "items": [
+            "5.02",
+            "7.01"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)",
+            "Shared an update with investors"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/1816017/000119312526307824/spir-20260713.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "ARM",
+      "cik": 1973239,
+      "name": "ARM HOLDINGS PLC /UK",
+      "filings": [
+        {
+          "date": "2026-11-04",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1973239/000197323926000142/arm-20260930.htm"
+        },
+        {
+          "date": "2026-11-04",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1973239/000197323926000141/arm-20261104.htm"
+        },
+        {
+          "date": "2026-09-18",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1973239/000197323926000135/arm-20260918.htm"
+        },
+        {
+          "date": "2026-09-10",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1973239/000197323926000128/arm-20260910.htm"
+        },
+        {
+          "date": "2026-08-10",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1973239/000197323926000117/arm-20260810.htm"
+        },
+        {
+          "date": "2026-07-29",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1973239/000197323926000114/arm-20260630.htm"
+        },
+        {
+          "date": "2026-07-29",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1973239/000197323926000113/arm-20260729.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "ANET",
+      "cik": 1596532,
+      "name": "Arista Networks, Inc.",
+      "filings": [
+        {
+          "date": "2026-11-04",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1596532/000159653226000254/anet-20260930.htm"
+        },
+        {
+          "date": "2026-11-03",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1596532/000159653226000252/anet-20261103.htm"
+        },
+        {
+          "date": "2026-08-05",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1596532/000159653226000175/anet-20260630.htm"
+        },
+        {
+          "date": "2026-08-04",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1596532/000159653226000174/anet-20260804.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "VRT",
+      "cik": 1674101,
+      "name": "Vertiv Holdings Co",
+      "filings": [
+        {
+          "date": "2026-11-13",
+          "form": "8-K",
+          "items": [
+            "7.01"
+          ],
+          "titles": [
+            "Shared an update with investors"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026073564/vrt-20261113.htm"
+        },
+        {
+          "date": "2026-10-28",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026067893/vrt-20260930.htm"
+        },
+        {
+          "date": "2026-10-28",
+          "form": "8-K",
+          "items": [
+            "2.02",
+            "7.01"
+          ],
+          "titles": [
+            "Quarterly results",
+            "Shared an update with investors"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026067707/vrt-20261028.htm"
+        },
+        {
+          "date": "2026-10-27",
+          "form": "8-K",
+          "items": [
+            "2.01",
+            "7.01"
+          ],
+          "titles": [
+            "Bought or sold a business or major assets",
+            "Shared an update with investors"
+          ],
+          "kind": "deal",
+          "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026067393/vrt-20261027.htm"
+        },
+        {
+          "date": "2026-10-26",
+          "form": "8-K",
+          "items": [
+            "7.01"
+          ],
+          "titles": [
+            "Shared an update with investors"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026067127/vrt-20261026.htm"
+        },
+        {
+          "date": "2026-09-24",
+          "form": "8-K",
+          "items": [
+            "7.01"
+          ],
+          "titles": [
+            "Shared an update with investors"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026063311/vrt-20260924.htm"
+        },
+        {
+          "date": "2026-09-02",
+          "form": "8-K",
+          "items": [
+            "1.01",
+            "7.01"
+          ],
+          "titles": [
+            "Signed a major agreement",
+            "Shared an update with investors"
+          ],
+          "kind": "deal",
+          "url": "https://www.sec.gov/Archives/edgar/data/1674101/000119312526379306/d472406d8k.htm"
+        },
+        {
+          "date": "2026-09-02",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026059961/vrt-20260902.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "SMCI",
+      "cik": 1375365,
+      "name": "Super Micro Computer, Inc.",
+      "filings": [
+        {
+          "date": "2026-11-06",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1375365/000137536526000027/smci-20260930.htm"
+        },
+        {
+          "date": "2026-11-03",
+          "form": "8-K",
+          "items": [
+            "2.02",
+            "8.01"
+          ],
+          "titles": [
+            "Quarterly results",
+            "Other company news"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1375365/000137536526000026/smci-20261103.htm"
+        },
+        {
+          "date": "2026-10-20",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1375365/000137536526000025/smci-20261020.htm"
         },
         {
           "date": "2026-10-15",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/1375365/000137536526000024/smci-20261014.htm"
+        },
+        {
+          "date": "2026-10-08",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/1375365/000137536526000023/smci-20261007.htm"
+        },
+        {
+          "date": "2026-08-31",
+          "form": "10-K",
+          "items": [],
+          "titles": [
+            "Yearly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1375365/000137536526000022/smci-20260630.htm"
+        },
+        {
+          "date": "2026-08-11",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1375365/000137536526000021/smci-20260811.htm"
+        },
+        {
+          "date": "2026-08-05",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1375365/000137536526000020/smci-20260805.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "CRWV",
+      "cik": 1769628,
+      "name": "CoreWeave, Inc.",
+      "filings": [
+        {
+          "date": "2026-11-12",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000465/crwv-20260930.htm"
+        },
+        {
+          "date": "2026-11-10",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000461/crwv-20261110.htm"
+        },
+        {
+          "date": "2026-09-22",
+          "form": "8-K",
+          "items": [
+            "1.01",
+            "3.02",
+            "8.01"
+          ],
+          "titles": [
+            "Signed a major agreement",
+            "Sold new shares",
+            "Other company news"
+          ],
+          "kind": "deal",
+          "url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000432/crwv-20260917.htm"
+        },
+        {
+          "date": "2026-09-17",
+          "form": "8-K",
+          "items": [
+            "7.01",
+            "8.01"
+          ],
+          "titles": [
+            "Shared an update with investors",
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000429/crwv-20260917.htm"
+        },
+        {
+          "date": "2026-08-12",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000366/crwv-20260630.htm"
+        },
+        {
+          "date": "2026-08-11",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000362/crwv-20260811.htm"
+        },
+        {
+          "date": "2026-08-10",
           "form": "8-K",
           "items": [
             "1.01",
@@ -3541,10 +5035,43 @@
             "Shared an update with investors"
           ],
           "kind": "deal",
-          "url": "https://www.sec.gov/Archives/edgar/data/1451505/000145150526000075/rig-20261015x8k.htm"
+          "url": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000357/crwv-20260807.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "DELL",
+      "cik": 1571996,
+      "name": "Dell Technologies Inc.",
+      "filings": [
+        {
+          "date": "2026-10-21",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/1571996/000119312526427920/d163575d8k.htm"
         },
         {
-          "date": "2026-10-14",
+          "date": "2026-09-15",
+          "form": "8-K",
+          "items": [
+            "1.01",
+            "2.03"
+          ],
+          "titles": [
+            "Signed a major agreement",
+            "Took on new debt"
+          ],
+          "kind": "deal",
+          "url": "https://www.sec.gov/Archives/edgar/data/1571996/000119312526391976/d172674d8k.htm"
+        },
+        {
+          "date": "2026-09-10",
           "form": "8-K",
           "items": [
             "8.01"
@@ -3553,10 +5080,39 @@
             "Other company news"
           ],
           "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1451505/000110465926115871/tm269762d11_8k.htm"
+          "url": "https://www.sec.gov/Archives/edgar/data/1571996/000119312526387958/d150030d8k.htm"
         },
         {
-          "date": "2026-10-09",
+          "date": "2026-09-08",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1571996/000157199626000046/dell-20260731.htm"
+        },
+        {
+          "date": "2026-09-01",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1571996/000157199626000039/dell-20260901.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "CRM",
+      "cik": 1108524,
+      "name": "Salesforce, Inc.",
+      "filings": [
+        {
+          "date": "2026-10-20",
           "form": "8-K",
           "items": [
             "7.01"
@@ -3565,19 +5121,497 @@
             "Shared an update with investors"
           ],
           "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1451505/000145150526000072/rig-20261009x8k.htm"
+          "url": "https://www.sec.gov/Archives/edgar/data/1108524/000119312526425881/d516983d8k.htm"
         },
         {
-          "date": "2026-09-30",
+          "date": "2026-09-17",
           "form": "8-K",
           "items": [
+            "7.01"
+          ],
+          "titles": [
+            "Shared an update with investors"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000210/crm-20260916.htm"
+        },
+        {
+          "date": "2026-09-04",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000197/crm-20260902.htm"
+        },
+        {
+          "date": "2026-08-27",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000190/crm-20260731.htm"
+        },
+        {
+          "date": "2026-08-26",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000187/crm-20260826.htm"
+        },
+        {
+          "date": "2026-08-05",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000160/crm-20260805.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "NOW",
+      "cik": 1373715,
+      "name": "ServiceNow, Inc.",
+      "filings": [
+        {
+          "date": "2026-10-28",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1373715/000137371526000096/now-20260930.htm"
+        },
+        {
+          "date": "2026-10-28",
+          "form": "8-K/A",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Correction to an earlier filing: quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1373715/000137371526000095/now-20261028.htm"
+        },
+        {
+          "date": "2026-10-28",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1373715/000137371526000092/erq3fy26-8xk.htm"
+        },
+        {
+          "date": "2026-07-23",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1373715/000137371526000076/now-20260630.htm"
+        },
+        {
+          "date": "2026-07-22",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1373715/000137371526000072/now-20260722.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "ADBE",
+      "cik": 796343,
+      "name": "ADOBE INC.",
+      "filings": [
+        {
+          "date": "2026-09-22",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/796343/000079634326000156/adbe-20260828.htm"
+        },
+        {
+          "date": "2026-09-10",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/796343/000079634326000147/adbe-20260910.htm"
+        },
+        {
+          "date": "2026-09-08",
+          "form": "8-K",
+          "items": [
+            "5.02",
+            "7.01"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)",
+            "Shared an update with investors"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/796343/000079634326000144/adbe-20260902.htm"
+        },
+        {
+          "date": "2026-07-17",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/796343/000079634326000120/adbe-20260714.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "SNOW",
+      "cik": 1640147,
+      "name": "Snowflake Inc.",
+      "filings": [
+        {
+          "date": "2026-10-02",
+          "form": "8-K",
+          "items": [
+            "1.01",
+            "2.03",
+            "3.02",
             "8.01"
           ],
           "titles": [
+            "Signed a major agreement",
+            "Took on new debt",
+            "Sold new shares",
+            "Other company news"
+          ],
+          "kind": "deal",
+          "url": "https://www.sec.gov/Archives/edgar/data/1640147/000164014726000043/snow-20260928.htm"
+        },
+        {
+          "date": "2026-09-04",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1640147/000164014726000037/snow-20260731.htm"
+        },
+        {
+          "date": "2026-09-02",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1640147/000164014726000033/snow-20260902.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "DDOG",
+      "cik": 1561550,
+      "name": "Datadog, Inc.",
+      "filings": [
+        {
+          "date": "2026-11-04",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1561550/000162828026070292/ddog-20260930.htm"
+        },
+        {
+          "date": "2026-11-04",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1561550/000162828026069792/ddog-20261104.htm"
+        },
+        {
+          "date": "2026-08-06",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1561550/000162828026054458/ddog-20260630.htm"
+        },
+        {
+          "date": "2026-08-06",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1561550/000162828026053829/ddog-20260806.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "NET",
+      "cik": 1477333,
+      "name": "Cloudflare, Inc.",
+      "filings": [
+        {
+          "date": "2026-11-05",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733326000061/cloud-20260930.htm"
+        },
+        {
+          "date": "2026-11-05",
+          "form": "8-K",
+          "items": [
+            "2.02",
+            "7.01"
+          ],
+          "titles": [
+            "Quarterly results",
+            "Shared an update with investors"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733326000060/cloud-20261105.htm"
+        },
+        {
+          "date": "2026-08-13",
+          "form": "8-K",
+          "items": [
+            "1.01",
+            "2.03",
+            "3.02",
+            "8.01"
+          ],
+          "titles": [
+            "Signed a major agreement",
+            "Took on new debt",
+            "Sold new shares",
+            "Other company news"
+          ],
+          "kind": "deal",
+          "url": "https://www.sec.gov/Archives/edgar/data/1477333/000095010326012340/dp251721_8k.htm"
+        },
+        {
+          "date": "2026-08-06",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733326000054/cloud-20260630.htm"
+        },
+        {
+          "date": "2026-08-06",
+          "form": "8-K",
+          "items": [
+            "2.02",
+            "7.01"
+          ],
+          "titles": [
+            "Quarterly results",
+            "Shared an update with investors"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733326000053/cloud-20260806.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "PANW",
+      "cik": 1327567,
+      "name": "Palo Alto Networks Inc",
+      "filings": [
+        {
+          "date": "2026-09-10",
+          "form": "10-K",
+          "items": [],
+          "titles": [
+            "Yearly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756726000023/panw-20260731.htm"
+        },
+        {
+          "date": "2026-09-01",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756726000019/panw-20260901.htm"
+        },
+        {
+          "date": "2026-08-21",
+          "form": "8-K",
+          "items": [
+            "5.02",
+            "5.03"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)",
+            "Changed its bylaws or fiscal year"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/1327567/000119312526361122/d180372d8k.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "INTU",
+      "cik": 896878,
+      "name": "INTUIT INC.",
+      "filings": [
+        {
+          "date": "2026-09-09",
+          "form": "10-K",
+          "items": [],
+          "titles": [
+            "Yearly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/896878/000089687826000037/intu-20260731.htm"
+        },
+        {
+          "date": "2026-08-25",
+          "form": "8-K",
+          "items": [
+            "2.02",
+            "8.01"
+          ],
+          "titles": [
+            "Quarterly results",
+            "Other company news"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/896878/000089687826000029/intu-20260825.htm"
+        }
+      ]
+    },
+    {
+      "symbol": "MDB",
+      "cik": 1441816,
+      "name": "MongoDB, Inc.",
+      "filings": [
+        {
+          "date": "2026-10-15",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/1441816/000162828026065934/mdb-20261012.htm"
+        },
+        {
+          "date": "2026-09-29",
+          "form": "8-K",
+          "items": [
+            "7.01",
+            "8.01"
+          ],
+          "titles": [
+            "Shared an update with investors",
             "Other company news"
           ],
           "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1451505/000110465926112402/tm2626691d1_8k.htm"
+          "url": "https://www.sec.gov/Archives/edgar/data/1441816/000162828026063850/mdb-20260925.htm"
+        },
+        {
+          "date": "2026-09-28",
+          "form": "8-K",
+          "items": [
+            "5.02",
+            "7.01"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)",
+            "Shared an update with investors"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/1441816/000162828026063657/mdb-20260924.htm"
+        },
+        {
+          "date": "2026-09-01",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1441816/000162828026059830/mdb-20260731.htm"
+        },
+        {
+          "date": "2026-09-01",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1441816/000162828026059794/mdb-20260901.htm"
         }
       ]
     }

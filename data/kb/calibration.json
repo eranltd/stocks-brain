@@ -1,15 +1,15 @@
 {
-  "as_of": "2026-11-01",
+  "as_of": "2026-11-14",
   "sample": false,
-  "n": 1,
+  "n": 42,
   "min_n": 10,
   "conviction_verdict": "insufficient_data",
   "by_conviction": [
     {
       "conviction": "low",
-      "n": 1,
-      "hit_rate_pct": 100.0,
-      "avg_signed_excess_pct": 11.162
+      "n": 42,
+      "hit_rate_pct": 2.4,
+      "avg_signed_excess_pct": -12.999
     },
     {
       "conviction": "medium",
@@ -39,9 +39,9 @@
     },
     {
       "stance": "neutral",
-      "n": 0,
-      "hit_rate_pct": null,
-      "avg_signed_excess_pct": null
+      "n": 41,
+      "hit_rate_pct": 0.0,
+      "avg_signed_excess_pct": -13.589
     }
   ]
 }

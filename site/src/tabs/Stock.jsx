@@ -17,6 +17,7 @@ import { NoteSources, WhyFooter } from "../components/why.jsx";
 import { CandleZoom } from "../components/zoom.jsx";
 import { cardFor, daysUntil, growthWords, inDays, splitWhatsNext, staleness, todayISO, KIND_LABEL } from "../lib/outlook.js";
 import { StoryPanel } from "../components/story.jsx";
+import { FlowsPanel } from "../components/flows.jsx";
 import { gateReason, riskPlan, rowFor, stepRows, VERDICT } from "../lib/checklist.js";
 import { ChecksView, useChecklistView } from "../components/checklist.jsx";
 import { CandlesView } from "../components/candles.jsx";
@@ -594,6 +595,7 @@ function StockView({ data, row, symbol, go, mk }) {
             : <WhatsNext card={cardFor(data.outlook, symbol)} symbol={symbol} today={today} hasFile={Boolean(data.outlook)} n={no()} className="md:col-span-2 lg:col-span-8" />)}
           {!isBench && <WhyItMoved notes={notesForSymbol(usableWhy(data.why, Boolean(data.livePrices)), symbol, { today })} names={names} n={no()} className="lg:col-span-4" />}
           {!isBench && isDefault && <BigDrops dips={data.dips} symbol={symbol} move={row?.change_1d_pct ?? null} className="lg:col-span-4" />}
+          {!isBench && <FlowsPanel flows={data.flows} symbol={symbol} className="md:col-span-2 lg:col-span-8 lg:self-start" />}
           {!isBench && !fund && <OfficialNews rows={newsRows(data.secNews, symbol, 6)} n={no()} className="lg:col-span-4" />}
           {!isBench && !fund && <CompanyNumbers c={companyNumbers(data.fundamentals, symbol)} n={no()} className="lg:col-span-4" />}
           {long && <LongRun long={long} data={data} row={row} bench={bench} n={no()} className="lg:col-span-4" />}

@@ -1,0 +1,210 @@
+{
+  "$id": "flows.schema.json",
+  "title": "Who is betting what, per stock (data/market/flows.json)",
+  "description": "Written nightly by scripts/flows.py: the share of each day's volume sold short (FINRA, percent only), analysts' buy/hold/sell counts and insiders' net buying or selling (Finnhub). No prices, no volumes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "as_of",
+    "built_at",
+    "sample",
+    "sources",
+    "symbols"
+  ],
+  "properties": {
+    "as_of": {
+      "$ref": "common.schema.json#/$defs/date"
+    },
+    "built_at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+    },
+    "sample": {
+      "type": "boolean"
+    },
+    "sources": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "maxLength": 80
+      }
+    },
+    "symbols": {
+      "type": "array",
+      "maxItems": 80,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "symbol",
+          "short",
+          "analysts",
+          "insiders"
+        ],
+        "properties": {
+          "symbol": {
+            "$ref": "common.schema.json#/$defs/ticker"
+          },
+          "short": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "required": [
+              "date",
+              "pct",
+              "base_pct",
+              "diff",
+              "level",
+              "history"
+            ],
+            "properties": {
+              "date": {
+                "$ref": "common.schema.json#/$defs/date"
+              },
+              "pct": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "base_pct": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "diff": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "level": {
+                "enum": [
+                  "high",
+                  "usual",
+                  "low",
+                  null
+                ]
+              },
+              "history": {
+                "type": "array",
+                "maxItems": 30,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "d",
+                    "p"
+                  ],
+                  "properties": {
+                    "d": {
+                      "$ref": "common.schema.json#/$defs/date"
+                    },
+                    "p": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "analysts": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "required": [
+              "period",
+              "n",
+              "strong_buy",
+              "buy",
+              "hold",
+              "sell",
+              "strong_sell",
+              "buy_pct"
+            ],
+            "properties": {
+              "period": {
+                "$ref": "common.schema.json#/$defs/date"
+              },
+              "n": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "strong_buy": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "buy": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "hold": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "sell": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "strong_sell": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "buy_pct": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100
+              }
+            }
+          },
+          "insiders": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "required": [
+              "months",
+              "net_shares",
+              "mspr",
+              "last_month",
+              "side"
+            ],
+            "properties": {
+              "months": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "net_shares": {
+                "type": "integer"
+              },
+              "mspr": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "last_month": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}$"
+              },
+              "side": {
+                "enum": [
+                  "bought",
+                  "sold",
+                  "none"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

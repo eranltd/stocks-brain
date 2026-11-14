@@ -393,7 +393,7 @@ export function PageIntro({ route, market }) {
 }
 
 /** The mark: an orange pulse line in a small glowing square. */
-function Logo() {
+export function Logo() {
   return (
     <span aria-hidden="true" className="relative grid size-8 shrink-0 place-items-center rounded-[9px] border border-desk/60 bg-desk/10 shadow-[0_0_20px_-4px_var(--desk-glow)]">
       <svg viewBox="0 0 20 20" className="size-[18px]" fill="none" stroke="var(--desk)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -404,7 +404,7 @@ function Logo() {
 }
 
 /** STOCKS·BRAIN in the display face (the name itself is not translated). */
-function Wordmark() {
+export function Wordmark() {
   return (
     <span aria-hidden="true" className="font-display text-[21px] leading-none font-extrabold tracking-[0.06em] uppercase">
       stocks<span className="text-desk">·</span>brain

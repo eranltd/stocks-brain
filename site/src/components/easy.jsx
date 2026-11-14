@@ -8,7 +8,8 @@ import { loadMarket, OWN_LIST } from "../lib/data.js";
 import { ago } from "../lib/feed.js";
 import { fmtDate } from "../lib/format.js";
 import { strings } from "../lib/text.js";
-import { useScrollLock } from "./shell.jsx";
+import { Logo, useScrollLock, Wordmark } from "./shell.jsx";
+import { CalendarMark, FullArt, IconCheck, IconFull, IconList, IconMoon, IconNews, IconSimple, IconSun, SimpleArt, Spark, TrafficLight } from "./easyart.jsx";
 import dict from "../text/easy.js";
 
 /*
@@ -33,14 +34,14 @@ export function ModeChooser({ onPick }) {
   return (
     <div className="easy-choose" role="dialog" aria-modal="true" aria-labelledby="easy-choose-h">
       <div className="easy-choose-box">
-        <p className="easy-brand">STOCKS·BRAIN</p>
+        <p className="easy-brand"><Logo /><Wordmark /></p>
         <h1 id="easy-choose-h" className="easy-choose-h">{t("choose.h")}</h1>
         <button ref={first} type="button" className="easy-choice" onClick={() => onPick("simple")}>
-          <span className="easy-choice-icon" aria-hidden="true">🙂</span>
+          <SimpleArt />
           <span><b>{t("choose.simple")}</b><span>{t("choose.simpleSub")}</span></span>
         </button>
         <button type="button" className="easy-choice" onClick={() => onPick("full")}>
-          <span className="easy-choice-icon" aria-hidden="true">🧠</span>
+          <FullArt />
           <span><b>{t("choose.full")}</b><span>{t("choose.fullSub")}</span></span>
         </button>
         <p className="easy-choose-note">{t("choose.note")}</p>
@@ -53,7 +54,7 @@ export function ModeChooser({ onPick }) {
 export function ViewSwitch({ to, onView, className = "" }) {
   return (
     <button type="button" className={`easy-switch ${className}`} onClick={() => onView(to)}>
-      <span aria-hidden="true">{to === "simple" ? "🙂" : "🧠"}</span>{t(to === "simple" ? "switch.toSimple" : "switch.toFull")}
+      {to === "simple" ? <IconSimple /> : <IconFull />}{t(to === "simple" ? "switch.toSimple" : "switch.toFull")}
     </button>
   );
 }
@@ -92,9 +93,9 @@ export function SimpleApp({ data, onView, theme, onTheme }) {
   return (
     <div className="easy">
       <header className="easy-top">
-        <span className="easy-brand">STOCKS·BRAIN</span>
+        <span className="easy-brand"><Logo /><Wordmark /></span>
         <span className="ms-auto flex items-center gap-2">
-          <button type="button" className="easy-icon" onClick={onTheme} aria-label={t(theme === "dark" ? "theme.light" : "theme.dark")}>{theme === "dark" ? "☀️" : "🌙"}</button>
+          <button type="button" className="easy-icon" onClick={onTheme} aria-label={t(theme === "dark" ? "theme.light" : "theme.dark")}>{theme === "dark" ? <IconSun /> : <IconMoon />}</button>
           <ViewSwitch to="full" onView={onView} />
         </span>
       </header>
@@ -103,12 +104,14 @@ export function SimpleApp({ data, onView, theme, onTheme }) {
         <p className="easy-when">{when}</p>
 
         <section className="easy-card easy-light" data-light={light.light} aria-labelledby="easy-q1">
-          <h2 id="easy-q1" className="easy-q">{t("q.ok")}</h2>
           <div className="easy-light-row">
-            <span className="easy-lamp" aria-hidden="true" />
-            <p className="easy-answer">{t(`light.${light.light}`)}</p>
+            <TrafficLight light={light.light} />
+            <div className="min-w-0">
+              <h2 id="easy-q1" className="easy-q">{t("q.ok")}</h2>
+              <p className="easy-answer">{t(`light.${light.light}`)}</p>
+              <p className="easy-text">{t(`light.say.${light.key}`)}</p>
+            </div>
           </div>
-          <p className="easy-text">{t(`light.say.${light.key}`)}</p>
           {lead && Number.isFinite(lead.move) && (
             <p className="easy-text">{t("light.lead", { name: plainIndex(lead.name), move: pct(lead.move), word: t(`move.${moveWord(lead.move)}`) })}</p>
           )}
@@ -117,13 +120,14 @@ export function SimpleApp({ data, onView, theme, onTheme }) {
 
         {stocks.n > 0 && (
           <section className="easy-card" aria-labelledby="easy-q2">
-            <h2 id="easy-q2" className="easy-q">{t(mine?.market ? "q.mine" : "q.list")}</h2>
+            <h2 id="easy-q2" className="easy-q"><IconList />{t(mine?.market ? "q.mine" : "q.list")}</h2>
             <p className="easy-answer">{t("mine.count", { up: stocks.up, n: stocks.n })}</p>
             <ul className="easy-rows">
               {(all ? stocks.rows : stocks.top).map((r) => (
                 <li key={r.symbol}>
                   <button type="button" className="easy-row" onClick={() => setOpen(r.symbol)}>
                     <span className="easy-row-name"><b>{r.name}</b><small>{r.symbol}</small></span>
+                    <Spark points={r.spark} tone={tone(r.move)} />
                     <span className="easy-row-move" data-tone={tone(r.move)}>
                       <b>{ARROW[tone(r.move)]} {pct(r.move)}</b><small>{t(`move.${moveWord(r.move)}`)}</small>
                     </span>
@@ -140,15 +144,20 @@ export function SimpleApp({ data, onView, theme, onTheme }) {
         )}
 
         <section className="easy-card easy-todo" aria-labelledby="easy-q3">
-          <h2 id="easy-q3" className="easy-q">{t("q.do")}</h2>
+          <h2 id="easy-q3" className="easy-q"><IconCheck />{t("q.do")}</h2>
           <p className="easy-answer">{t(`do.${realMoneyKey(pulse, heading)}`)}</p>
           <p className="easy-text">{t("do.why")}</p>
-          {next && <p className="easy-text"><b>{t("do.next", { day: day(next) })}</b></p>}
+          {next && (
+            <div className="easy-next">
+              <CalendarMark dow={new Date(`${next}T12:00:00Z`).toLocaleDateString("en-US", { weekday: "short", timeZone: "UTC" }).toUpperCase()} date={Number(next.slice(8, 10))} />
+              <p className="easy-text"><b>{t("do.next", { day: day(next) })}</b></p>
+            </div>
+          )}
         </section>
 
         {news.length > 0 && (
           <section className="easy-card" aria-labelledby="easy-q4">
-            <h2 id="easy-q4" className="easy-q">{t("q.news")}</h2>
+            <h2 id="easy-q4" className="easy-q"><IconNews />{t("q.news")}</h2>
             <ul className="easy-news">
               {news.map((n, i) => (
                 <li key={`${n.headline}-${i}`}>

@@ -46,9 +46,10 @@ export const plainIndex = (name) => String(name ?? "").replace(/\s*\([^)]*proxy\
 export function myStocks(watch, closeRows, liveRows = null) {
   const live = new Map((liveRows ?? []).map((r) => [r.symbol, r.move_pct]));
   const close = new Map((closeRows ?? []).map((r) => [r.symbol, r.change_1d_pct]));
+  const spark = new Map((closeRows ?? []).map((r) => [r.symbol, Array.isArray(r.spark) ? r.spark.map((p) => p.v) : null]));
   const rows = (watch ?? []).map((s) => {
     const m = live.has(s.symbol) ? live.get(s.symbol) : close.get(s.symbol);
-    return { symbol: s.symbol, name: s.name ?? s.symbol, move: isNum(m) ? m : null };
+    return { symbol: s.symbol, name: s.name ?? s.symbol, move: isNum(m) ? m : null, spark: spark.get(s.symbol) ?? null };
   }).filter((r) => r.move != null).sort((a, b) => b.move - a.move);
   const top = [...rows].sort((a, b) => Math.abs(b.move) - Math.abs(a.move)).slice(0, 3);
   return { rows, top, up: rows.filter((r) => r.move > 0).length, down: rows.filter((r) => r.move < 0).length, n: rows.length };

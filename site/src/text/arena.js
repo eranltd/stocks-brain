@@ -216,8 +216,8 @@ export default {
 
   // the orbit and the flow lines
   "arena.orbit.title": "The orbit",
-  "arena.orbit.info": "One bright dot per name on the main list. A day up pushes its dot out, a day down pulls it in. The lines flow in from each sector's average. The orange core is today's BUY (paper) calls from the desk.",
-  "arena.orbit.core": { zero: "Core: no BUY (paper) calls today", one: "Core: 1 BUY (paper) call today", other: "Core: {count} BUY (paper) calls today" },
+  "arena.orbit.info": "One bright dot per name on the main list. A day up pushes its dot out, a day down pulls it in. The lines flow in from each sector's average. The orange core is today's low-risk calls from the desk.",
+  "arena.orbit.core": { zero: "Core: no low-risk calls today", one: "Core: 1 low-risk call today", other: "Core: {count} low-risk calls today" },
   "arena.orbit.flows": "Sectors",
   "arena.orbit.aria": "A turning ball of dots, one per name; it moves with the replay.",
   "arena.sector.Information Technology": "Tech",

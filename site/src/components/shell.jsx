@@ -115,6 +115,12 @@ export function MarketSwitch({ market, locked = false }) {
   const close = useCallback((refocus) => { setOpen(false); if (refocus) btn.current?.focus(); }, []);
   useDismiss(open, close, refs);
   useFocusOnOpen(open, panel, viaKeys);
+  // While the menu is open the floating news card (above the header's layer) steps aside so it covers no list.
+  useEffect(() => {
+    if (!open) return undefined;
+    document.documentElement.dataset.menu = "open";
+    return () => { delete document.documentElement.dataset.menu; };
+  }, [open]);
   const choices = market?.choices ?? [];
   if (!choices.length) return null;
   const current = choices.find((c) => c.id === market.id) ?? choices[0];
@@ -143,7 +149,7 @@ export function MarketSwitch({ market, locked = false }) {
       </button>
       {open && (
         <div ref={panel} id="market-menu" role="group" aria-label={t("market.menu")} onKeyDown={onListKeys}
-          className="absolute top-full end-4 start-4 z-50 mt-2 animate-pop rounded-panel border border-line-2 bg-surface p-2 shadow-2xl motion-reduce:animate-none sm:end-auto sm:start-0 sm:w-[340px]">
+          className="market-menu absolute top-full end-4 start-4 z-[90] mt-2 animate-pop overflow-y-auto overscroll-contain rounded-panel border border-line-2 bg-surface p-2 shadow-2xl motion-reduce:animate-none sm:end-auto sm:start-0 sm:w-[340px]">
           <p className="px-3 pt-2 pb-1 text-[13.5px] leading-snug text-ink-2">{t("market.intro")}</p>
           <ul className="mt-1 grid gap-1">
             {choices.map((c) => {

@@ -361,6 +361,13 @@ function DeskCall({ desk, go, n, className = "" }) {
             <p className="micro">{t("sp.desk.decided")}</p>
             <p className="headline mt-1 text-[28px] text-desk">{t(`sp.desk.by.${r.by}`)}</p>
             <p className="font-num mt-1 text-[12.5px] text-ink-2">{whyText(t, r.reason)}</p>
+            {/* The size of the risk, from the name's own risk plan: where it exits if wrong, the first goal if right. */}
+            {Number.isFinite(r.plan?.stop_pct) && Number.isFinite(r.plan?.tp1_pct) && (
+              <p className="mt-2 text-[14px] leading-snug text-ink">
+                {t("sp.desk.riskSize", { stop: pct(-r.plan.stop_pct), tp1: pct(r.plan.tp1_pct) })}
+                {r.plan.stop_pct > 0 && <> {t("sp.desk.riskSizeRR", { rr: (r.plan.tp1_pct / r.plan.stop_pct).toFixed(1) })}</>}
+              </p>
+            )}
           </div>
         </div>
         <div className="tile mt-4 px-1">

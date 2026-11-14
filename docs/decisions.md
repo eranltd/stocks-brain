@@ -45,6 +45,12 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   Each card animates in as it arrives (the number pops, the chart draws itself, facts rise one by one); nothing moves
   under reduced motion. A first try with left/right "like" swiping was dropped: the owner wanted reading, not liking.
   On narrow phones the header shows the logo without the name so the extra button fits on one row.
+- **Calls in terms of risk.** The owner: BUY / WAIT / REJECT reads like orders; say it as risk ("it is OK to buy with
+  risk x"). Every call now reads Low risk (paper) / Medium risk / High risk (the stock page: "Low risk · OK to buy
+  (paper)", "Medium risk · not yet", "High risk · stay away"), and the brain's verdicts likewise. Where the name has a
+  risk plan, the call shows the size of the risk: "If wrong, the plan exits at −1.8%. If right, the first goal is
+  +3.5%. That is 2.0 to gain for every 1 at risk." The rules behind the calls did not change; a low-risk call still
+  always says paper.
 - **The bull and the bear before every BUY** (from TradingAgents and AI Hedge Fund, `docs/ai_traders.md`). The owner
   asked to make the agent smarter with what the open-source AI traders do. `lib/debate.js` lists the facts for and
   against each name (trend, against the market, distance from the high, a big drop, analysts, short selling against its

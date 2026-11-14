@@ -45,6 +45,11 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   Each card animates in as it arrives (the number pops, the chart draws itself, facts rise one by one); nothing moves
   under reduced motion. A first try with left/right "like" swiping was dropped: the owner wanted reading, not liking.
   On narrow phones the header shows the logo without the name so the extra button fits on one row.
+- **Lessons from open-source AI traders** (`docs/ai_traders.md`, on the rule book page). The owner asked to learn from
+  AI trader projects on GitHub. Read: AI Hedge Fund, TradingAgents, FinRL, Qlib, Freqtrade, and the 2025 StockBench
+  study (most AI trading agents did not beat buy-and-hold). Kept: the weekly whole-market buy stays the real-money
+  plan; costs, no look-ahead and counted tries in every test; risk beside return; up and down markets scored apart.
+  Three ideas to test are listed there (a look-ahead check, a cost stress column, an up/down split); none is a rule.
 
 - **The Theme hunter.** The owner heard from a friend at an investment house how he looks for opportunities: take a
   field (space, energy, chips, AI, software), see which companies have a monopoly or no real rivals, and hold them

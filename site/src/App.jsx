@@ -27,6 +27,9 @@ import Admin from "./tabs/Admin.jsx";
 import Stock from "./tabs/Stock.jsx";
 import Arena from "./tabs/Arena.jsx";
 import Themes from "./tabs/Themes.jsx";
+import { ModeChooser, SimpleApp } from "./components/easy.jsx";
+import { SwipeButton, SwipeMode } from "./components/swipe.jsx";
+import { useView } from "./lib/view.js";
 import AgentFeed from "./components/agentfeed.jsx";
 import NewsFloat from "./components/newsfloat.jsx";
 import { strings } from "./lib/text.js";
@@ -190,6 +193,8 @@ export default function App() {
     setTheme(next);
   };
 
+  const [view, setView] = useView();
+  const [swipe, setSwipe] = useState(false);
   const openKB = (q) => { setQuery(q); go("kb"); };
   const symbol = tab.startsWith("stock/") ? tab.slice(6) : null;
   const Active = symbol ? Stock : PAGES[tab];
@@ -197,12 +202,25 @@ export default function App() {
   const intro = !symbol && tab !== "today" && tab !== "arena";
   const sampleRoutes = data?.sample ? SAMPLE_TABS : [];
 
+  // Simple mode: one calm screen (components/easy.jsx); the first visit asks once, Simple or Full.
+  if (data && view === "simple") {
+    return (
+      <>
+        <Loader progress={progress} done />
+        <SimpleApp data={base} onView={setView} theme={theme} onTheme={toggleTheme} swipe={swipe} setSwipe={setSwipe} />
+      </>
+    );
+  }
+
   return (
     <>
       <Field />
       <Loader progress={progress} done={Boolean(data || error)} />
+      {data && view === null && <ModeChooser onPick={(v, sw) => { setView(v); setSwipe(sw); }} />}
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:start-2 focus:z-50 focus:rounded-lg focus:bg-ink focus:px-3 focus:py-2 focus:text-bg">{t("app.skip")}</a>
-      <Header route={tab} onNav={go} sample={data?.sample} livePrices={data?.livePrices} theme={theme} onTheme={toggleTheme} market={market} sampleRoutes={sampleRoutes} />
+      <Header route={tab} onNav={go} sample={data?.sample} livePrices={data?.livePrices} theme={theme} onTheme={toggleTheme} market={market} sampleRoutes={sampleRoutes} onSimple={() => setView("simple")}
+        swipeButton={data ? <SwipeButton on={swipe} onToggle={() => setSwipe((v) => !v)} /> : null} />
+      {data && swipe && <SwipeMode data={base} onClose={() => setSwipe(false)} onOpen={(s) => { setSwipe(false); go(`stock/${s}`); }} />}
       {/* The main list's day moves (percent only), under the header on every page. */}
       {data && <TickerTape data={base} onOpen={go} />}
       {/* The demo trader agent's trades pop up under the header, in the agent demo tab only (paper, past data). */}
@@ -226,7 +244,7 @@ export default function App() {
         {data && (
           // Under the page's own heading line the page starts closer to the top.
           <div className={intro ? "[&>*:first-child]:pt-10" : ""}>
-            <Active key={tab} data={base} market={market} go={go} query={query} setQuery={setQuery} openKB={openKB} symbol={symbol} live={live} checkNow={checkNow} />
+            <Active key={tab} data={base} market={market} go={go} query={query} setQuery={setQuery} openKB={openKB} symbol={symbol} live={live} checkNow={checkNow} onSimple={() => setView("simple")} />
           </div>
         )}
         {data && tab !== "today" && <KeepExploring key={`ke-${tab}`} data={base} route={tab} go={go} />}
@@ -239,7 +257,7 @@ export default function App() {
           <span className="block text-ink-2">{t("app.updateTap")}</span>
         </button>
       )}
-      <MobileNav route={tab} onNav={go} sampleRoutes={sampleRoutes} />
+      <MobileNav route={tab} onNav={go} sampleRoutes={sampleRoutes} onSimple={() => setView("simple")} />
     </>
   );
 }

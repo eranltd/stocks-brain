@@ -1,7 +1,7 @@
 ---
-version: 0.38.0
+version: 0.39.0
 updated_at: 2026-11-14
-change_note: The Theme hunter: pick a field (space, AI, chips, software, energy), see who leads it and how the whole field did over a year, losers included. Three theme lists in their own early-morning price run.
+change_note: The app asks on every open: Simple or Full, and Swipe mode on or off (last answers preselected). Swipe mode: the day as a vertical feed of full-screen cards with small entrance animations.
 ---
 # Decision log
 
@@ -20,6 +20,37 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
   per-point dates into one shared array.
 
 ## 2026-11-14
+- **Simple mode, asked once.** The owner: the app "is adjusted to smart guys like me"; it should ask who the user is and
+  offer a version "my mother can read and use", because people who open it do not know where to look. The first visit
+  now asks one question (Simple or Full, `components/easy.jsx` ModeChooser), remembered on the device (`lib/view.js`);
+  Full at any time from Simple's top bar, Simple at any time from Home, the Today menu and the desktop header. English.
+  Built on researched guidance: show the few most important things and reveal more on request (NN/g progressive
+  disclosure); plain words at a 6th to 8th grade level (US state plain-language standards; an SEC 2026 study found
+  plain terms improve understanding of fund costs); numbers with words beside them (EU easy-to-read guidance); big
+  text (18 to 20px) and big buttons (about 60px), one column, few choices per screen (older-adult UX guidance); one
+  onboarding question about what the person wants, not who they are. Simple is one screen of four cards: is the
+  market OK (a green, yellow or red light from the fear gauge and the mood, with a calming line on red days), your
+  stocks (My list, how many went up, the three biggest moves in words, "see all"), what to do (almost always nothing:
+  keep the weekly buy; the next buy day), and three headlines about your own names first. A stock opens a plain card
+  (today, this month and year in words, results coming up, what the company does). No bottom bar, ticker, agents or
+  pop-ups in Simple; Full is unchanged.
+- **Asked on every open, with Swipe.** The owner then asked for the question every time the app opens, with Swipe mode
+  on or off as well. The question opens with the last answers chosen ("Last time"), so it is one tap; `lib/view.js`
+  keeps the answer for the visit only and remembers it for next time.
+- **Swipe mode: the day as a vertical feed.** The owner: "a way to consume data", like the short-video apps. A button
+  beside the dark-mode button (top bar of Full and Simple) opens it: full-screen cards that snap one at a time with
+  the phone's own scrolling (no custom drag code): the market today (a traffic light, the Nasdaq move, an up/down
+  bar, what to do), then one card per stock (My list first, biggest move today first; `lib/swipe.js`): the move in
+  words, a large 3-month chart, one line about the company, analysts, the theme's reading, and "Read the full story".
+  Each card animates in as it arrives (the number pops, the chart draws itself, facts rise one by one); nothing moves
+  under reduced motion. A first try with left/right "like" swiping was dropped: the owner wanted reading, not liking.
+  On narrow phones the header shows the logo without the name so the extra button fits on one row.
+- **Lessons from open-source AI traders** (`docs/ai_traders.md`, on the rule book page). The owner asked to learn from
+  AI trader projects on GitHub. Read: AI Hedge Fund, TradingAgents, FinRL, Qlib, Freqtrade, and the 2025 StockBench
+  study (most AI trading agents did not beat buy-and-hold). Kept: the weekly whole-market buy stays the real-money
+  plan; costs, no look-ahead and counted tries in every test; risk beside return; up and down markets scored apart.
+  Three ideas to test are listed there (a look-ahead check, a cost stress column, an up/down split); none is a rule.
+
 - **The Theme hunter.** The owner heard from a friend at an investment house how he looks for opportunities: take a
   field (space, energy, chips, AI, software), see which companies have a monopoly or no real rivals, and hold them
   while the field grows. New page `#themes` (under Today): pick a theme, read its companies with our one-line reading

@@ -557,6 +557,8 @@ export default {
   "adm.about.household": "When and how much real money acts on anything here, under the plan.",
   "adm.name.shelf": "Shelf",
   "adm.about.shelf": "What a 119-book library supports, disputes and rejects.",
+  "adm.name.ai_traders": "AI traders",
+  "adm.about.ai_traders": "What open-source AI trader projects do, what the evidence says, and the lessons kept here.",
   "adm.name.strategy": "Strategy",
   "adm.about.strategy": "What a guess is, and what the brain looks for.",
   "adm.name.guardrails": "Guardrails",

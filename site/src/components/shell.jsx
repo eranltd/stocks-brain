@@ -268,7 +268,7 @@ function SubjectMenu({ subject, current, open, setOpen, route, onNav, sampleRout
   );
 }
 
-export function Header({ route, onNav, sample, livePrices, theme, onTheme, market, sampleRoutes = [] }) {
+export function Header({ route, onNav, sample, livePrices, theme, onTheme, market, sampleRoutes = [], onSimple, swipeButton = null }) {
   const t = strings(shellText);
   const [scrolled, setScrolled] = useState(false);
   const [openSubject, setOpenSubject] = useState(null);
@@ -286,7 +286,8 @@ export function Header({ route, onNav, sample, livePrices, theme, onTheme, marke
       <Container className="relative flex flex-wrap items-center gap-x-2.5 sm:gap-x-4">
         <a href="#today" aria-label={t("header.home")} className="flex min-h-[56px] shrink-0 items-center gap-2.5 lg:min-h-[64px]" onClick={(e) => { e.preventDefault(); onNav("today"); }}>
           <Logo />
-          <Wordmark />
+          {/* On a narrow phone the name gives way to the buttons (the logo stays). */}
+          <span className="hidden min-[440px]:inline"><Wordmark /></span>
         </a>
         <MarketSwitch market={market} locked={NASDAQ_ONLY.includes(route)} />
 
@@ -309,6 +310,12 @@ export function Header({ route, onNav, sample, livePrices, theme, onTheme, marke
               <span className="size-1.5 animate-pulse rounded-full bg-current" /> <span className="sm:hidden lg:inline">{t("header.sample")}</span><span className="hidden sm:inline lg:hidden">{livePrices ? t("header.samplePicks") : t("header.samplePricesPicks")}</span>
             </span>
           )}
+          {onSimple && (
+            <button type="button" onClick={onSimple} className="hidden min-h-[44px] items-center gap-1.5 rounded-full border border-line-2 bg-surface-2/80 px-3.5 font-display text-[14px] font-bold tracking-[0.08em] text-ink-2 uppercase transition-colors hover:border-line-3 hover:text-ink sm:inline-flex">
+              <span aria-hidden="true">🙂</span>{t("header.simple")}
+            </button>
+          )}
+          {swipeButton}
           <button
             type="button"
             onClick={onTheme}
@@ -388,7 +395,7 @@ export function PageIntro({ route, market }) {
 }
 
 /** The mark: an orange pulse line in a small glowing square. */
-function Logo() {
+export function Logo() {
   return (
     <span aria-hidden="true" className="relative grid size-8 shrink-0 place-items-center rounded-[9px] border border-desk/60 bg-desk/10 shadow-[0_0_20px_-4px_var(--desk-glow)]">
       <svg viewBox="0 0 20 20" className="size-[18px]" fill="none" stroke="var(--desk)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -399,7 +406,7 @@ function Logo() {
 }
 
 /** STOCKS·BRAIN in the display face (the name itself is not translated). */
-function Wordmark() {
+export function Wordmark() {
   return (
     <span aria-hidden="true" className="font-display text-[21px] leading-none font-extrabold tracking-[0.06em] uppercase">
       stocks<span className="text-desk">·</span>brain
@@ -467,7 +474,7 @@ const ICONS = {
  * Phone: the bottom bar is the three subjects. Today goes straight Home from elsewhere (one tap); tapping the subject
  * you are in, or Experiments or Learn, opens a sheet of its pages.
  */
-export function MobileNav({ route, onNav, sampleRoutes = [] }) {
+export function MobileNav({ route, onNav, sampleRoutes = [], onSimple }) {
   const t = strings(shellText);
   const subjects = SUBJECTS;
   const [sheet, setSheet] = useState(null);
@@ -522,6 +529,16 @@ export function MobileNav({ route, onNav, sampleRoutes = [] }) {
             <h2 id="sheet-title" className="headline px-4 text-[30px]">{open.label}</h2>
             <p className="px-4 pt-1.5 pb-3 text-[14px] leading-snug text-ink-2">{open.what}</p>
             <SubjectList subject={open} route={route} sampleRoutes={sampleRoutes} onPick={(r) => { setSheet(null); onNav(r); }} />
+            {open.id === "today" && onSimple && (
+              <button type="button" data-item="" onClick={() => { setSheet(null); onSimple(); }}
+                className="mt-2 flex min-h-[60px] w-full items-center gap-3 rounded-[10px] border border-dashed border-line-3 px-4 py-3 text-start text-ink">
+                <span aria-hidden="true" className="text-[22px]">🙂</span>
+                <span className="min-w-0 flex-1">
+                  <span className="block font-display text-[18px] font-bold tracking-[0.06em] uppercase">{t("header.simple")}</span>
+                  <span className="block text-[14.5px] leading-snug text-ink-2">{t("header.simpleWhat")}</span>
+                </span>
+              </button>
+            )}
           </div>
         </div>
       )}

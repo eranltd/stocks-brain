@@ -13,7 +13,7 @@ import { strings } from "../lib/text.js";
  * read-only: changes go through pull requests.
  */
 
-const ORDER = ["household", "shelf", "strategy", "guardrails", "methodology", "learnings", "watchlist", "settings", "sources", "people", "outlook", "checklist", "routines", "library", "decisions"];
+const ORDER = ["household", "shelf", "ai_traders", "strategy", "guardrails", "methodology", "learnings", "watchlist", "settings", "sources", "people", "outlook", "checklist", "routines", "library", "decisions"];
 // Each doc's display name and one-line description are text/learn.js "adm.name.<name>" and "adm.about.<name>".
 const t = strings(dict);
 const STATUS_STEP = { active: "done", planned: "wait", disabled: "fail" };

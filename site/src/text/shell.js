@@ -65,7 +65,7 @@ export default {
 
   // the menu (lib/nav.js): subjects, then pages by route
   "nav.s.today": "Today",
-  "nav.s.today.what": "The day at a glance: the desk, the stocks on the list and the news.",
+  "nav.s.today.what": "The day at a glance: the market now, your stocks, the themes and the news.",
   "nav.s.agent": "Agent demo",
   "nav.s.agent.short": "Agent",
   "nav.s.agent.what": "The trader agent in demo mode: a real past year replayed, with its paper trades popping up as it goes.",
@@ -77,7 +77,7 @@ export default {
   "nav.s.learn": "Learn",
   "nav.s.learn.what": "Lessons about money, and how this site works.",
   "nav.p.today": "Home",
-  "nav.p.today.what": "The desk: six agents read the list and code makes a pretend-money call on each name. The Details switch shows everything that happened, newest first.",
+  "nav.p.today.what": "Market now: the mood, the fear gauge, your list, what moved and the news. Desk and Details are one tap away.",
   "nav.p.watchlist": "Stocks",
   "nav.p.watchlist.what": "The companies on the list, and how each did lately.",
   "nav.p.themes": "Theme hunter",

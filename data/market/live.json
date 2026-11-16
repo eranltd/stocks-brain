@@ -1,5 +1,5 @@
 {
-"as_of":"2026-11-16T21:12:45Z",
+"as_of":"2026-11-16T22:51:17Z",
 "quotes_at":1794862800,
 "sample":false,
 "provider":"finnhub",
@@ -40,7 +40,7 @@
 {"symbol":"SPCX","list":"mine","move_pct":-1.26,"from_open_pct":-0.82,"range_pos":47,"at":1794862800},
 {"symbol":"DXYZ","list":"mine","move_pct":2.61,"from_open_pct":2.18,"range_pos":69,"at":1794862800},
 {"symbol":"TSLR","list":"mine","move_pct":-5.44,"from_open_pct":-4.11,"range_pos":29,"at":1794862800},
-{"symbol":"TSYY","list":"mine","move_pct":-0.21,"from_open_pct":-0.27,"range_pos":55,"at":1794862500},
+{"symbol":"TSYY","list":"mine","move_pct":-0.19,"from_open_pct":-0.24,"range_pos":59,"at":1794862800},
 {"symbol":"TQQQ","list":"mine","move_pct":-8.06,"from_open_pct":-4.25,"range_pos":11,"at":1794862800},
 {"symbol":"RIG","list":"mine","move_pct":-5.78,"from_open_pct":-3.69,"range_pos":9,"at":1794862800},
 {"symbol":"XOP","list":"mine","move_pct":-2.61,"from_open_pct":-1.43,"range_pos":15,"at":1794862800},
@@ -69,11 +69,14 @@
 {"headline":"ASML Plunged 17% Lower Over 3 Months: This Wall Street Desk Expects 88% Gains Over the Next 12","source":"Yahoo","url":"https://finnhub.io/api/news?id=a393b1b2b14b662b565f551549115a9414abfa713626b6fa1baa6c873a0737bf","at":1794851127,"symbol":"ASML"},
 {"headline":"Is It Worth Investing in ASML (ASML) Based on Wall Street's Bullish Views?","source":"Yahoo","url":"https://finnhub.io/api/news?id=2de68cb49ca5db5194767db6fc7ca63a3869efc3722c1550d5e1db3040b60369","at":1794835804,"symbol":"ASML"},
 {"headline":"ASML reports transactions under its current share buyback program","source":"Yahoo","url":"https://finnhub.io/api/news?id=d64d152c3b98da25a61d03204caebfa77dc0585c4225aec0f26d7a9bc59bd067","at":1794834000,"symbol":"ASML"},
-{"headline":"Cathie Wood Just Bought $16 Million of Tumbling AI Stock","source":"Yahoo","url":"https://finnhub.io/api/news?id=315050fa5fb173a2b144a200208e9f4f82c04fdc9e6ac9595dc78aaa48524b44","at":1794858831,"symbol":"PLTR"},
-{"headline":"Cathie Wood Just Sold $11.8 Million of Palantir Stock","source":"Yahoo","url":"https://finnhub.io/api/news?id=a74335d5c4a5d32e33c0216f5fc147f8c8da10ca1d366197c91e13920c80c8e8","at":1794858317,"symbol":"PLTR"},
-{"headline":"Why Does Palantir Stock Keep Going Down?","source":"Yahoo","url":"https://finnhub.io/api/news?id=56886dcc57e3292979853dd9275e7b3cbec91e7e6e4147445bea45932ae79e05","at":1794857776,"symbol":"PLTR"}
+{"headline":"Top 3 Growth Stocks To Watch In November 2026","source":"Yahoo","url":"https://finnhub.io/api/news?id=c2914eb58b5706d4977d906bb6fc0f6c552d7315ef29a01355f0cf194a403ad3","at":1794863758,"symbol":"PLTR"},
+{"headline":"Direxion and Anthony Pompliano's Silvia Join Forces to Help Investors Rethink Income","source":"Yahoo","url":"https://finnhub.io/api/news?id=a3f5087a794d25eefb10fe2b9ebe7ba696b273ee8307192ea6f0aa85c8ed468f","at":1794862980,"symbol":"PLTR"},
+{"headline":"Cathie Wood Just Bought $16 Million of Tumbling AI Stock","source":"Yahoo","url":"https://finnhub.io/api/news?id=315050fa5fb173a2b144a200208e9f4f82c04fdc9e6ac9595dc78aaa48524b44","at":1794858831,"symbol":"PLTR"}
 ],
 "market_news":[
+{"headline":"United Airlines reports system outage affecting departing flights","source":"CNBC","url":"https://www.cnbc.com/2026/11/16/united-airlines-outage-faa.html","at":1794868968},
+{"headline":"Berkshire Hathaway raised its stake in Delta in the third quarter. It also trimmed a key bank holding","source":"CNBC","url":"https://www.cnbc.com/2026/11/16/berkshire-hathaway-raised-its-stake-in-delta-air-in-the-third-quarter.html","at":1794867772},
+{"headline":"JPMorgan Chase says temporary software bug is affecting consumer banking","source":"CNBC","url":"https://www.cnbc.com/2026/11/16/jpmorgan-chase-technical-issue.html","at":1794865370},
 {"headline":"Eli Lilly makes a deal outside obesity. Plus, another word of caution on Nvidia","source":"CNBC","url":"https://www.cnbc.com/investingclub/2026/11/16/eli-lilly-makes-a-deal-outside-obesity-plus-another-word-of-caution-on-nvidia.html","at":1794859666},
 {"headline":"Jim Cramer says J&J is a 'metaphor for what's working' in the stock market","source":"CNBC","url":"https://www.cnbc.com/investingclub/2026/11/16/jim-cramer-says-jj-is-a-metaphor-for-whats-working-in-the-stock-market.html","at":1794858265},
 {"headline":"Market's Nvidia obsession obscuring an opportunity in this name","source":"CNBC","url":"https://www.cnbc.com/2026/11/16/disney-options-trade-before-earnings.html","at":1794855409},
@@ -99,10 +102,7 @@
 {"headline":"PODCAST: Trump in Asia, Bahrain and Ukraine's fading EU accession hopes - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMinwFBVV95cUxPRGQyZXZ3UFM5bWs0cDNVSllOQ3RJc3NaWEVOa3BjSHNHWEQzb242LUROZjJlTkFMVzN5Qm11TUJ6Z2hFYW92TWRhamJMVTVaVmNqMWxuenYtVm9HbVlHRlB2VUcyRTAyY3FubHBFSU1rZEVSOFk0X2dPOHp2NThrVm9xWEJHYy1wRy1TSVQ2bU9Hd3FCTG9yaU5hZVp6SkU?oc=5","at":1794829732},
 {"headline":"Republican 2028 field takes shape after midterm drubbing - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMiowFBVV95cUxNWVVFemZtYVJhX3pLSHkwQUhWanhyT1YybzVwOS1XbU1feTNBM3NKcVdWUVp6YXZQb2ZGYTFPem9xcU5fdUJ6dy1WbVh5TUo3QlYxY0FmV1JORHM2dEpkSVlHMTB0MlB5bHl2cm9FY3NESUJuYmxQN1Z2UjN3ajB2M2dnWkVuVlNrRzAtaU1mNVFVZFBZZ2gzUU1wWHlJM0ZndDYw?oc=5","at":1794828006},
 {"headline":"France temporarily bans firework mortars amid school protests - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMipgFBVV95cUxNZUFvQmRoWHRyMlFlNFRTc3hCTDJWQXFGd2dacHJGTThMQnFWNVJ6cDRTeHFPdDY2S3Q2RmYxLV9DNnZTcVdOMlgxT0VDM0FGZlgtZm42aXJMS0V2NWJFMnFUN2lfTzA0a0RRaHpGVVVwY3ZsN2dpNWVKZjF4a1Q0T3M1UXgzU2Zyc05taFFhWnI1VDV2MmRKYk5zQkJpR3ViR09FckNn?oc=5","at":1794818264},
-{"headline":"China says Xi-Putin-Trump meeting has 'groundbreaking significance' - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMiswFBVV95cUxQWXU1Wlg2cExOMXk1YUpOSUNEazJkdmhmczM5cnExb1ZVZExBX0VCOElDdmpQaVAzYnpGVDB5LWRtS1I1SHpxdWdDUFIwZkhXVmRUNk9vQWJ0NU12MXUyVTR6NVFIOFgxWF9UZklfMFN2TTNRMFVFNEt3RnVCZXRnUWwwNE1aNExZd1FOTnd2MFZBNTkwMVhSUHJnRHpzeDBfbFRVS2pDWFVZVGltcHRhZjFIbw?oc=5","at":1794815100},
-{"headline":"Latvia's pro-Ukraine prime minister agrees to form government with nationalist National Alliance - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMiwAFBVV95cUxQZlVIVEJTd2NlZjBRUEoyaGE3MExBZGdNQUtPdHlzeldKbkFlOGdGUG9WZHRnZ2JUZURVVFVEZkdJZzNxdEUzQXdYQTVHYTd2Q3JpY1lEUzZ3ZkJPWTVoakZZRWpoVDJkUlRVM3I1R0J4bFZLa0Q1d21jYXAyVnQxb2xyRjFNMURBdVE2TjhxaXE0S0l6VFZSeXJXSUxGdnVfUnRPOENOampXcFpkNkFZa1BQVTQ0ZmVMcmNGTzRoTzI?oc=5","at":1794813300},
-{"headline":"COMMENTARY: War-torn present clouds Saudi Arabia's post-oil future - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMivwFBVV95cUxQek1oaDQwcHhPSlhNTmNsZDhJc1dSQ1BwODVvWDBsdlhpUUxfVUJnUUdlQnNmTUFtYWlhblk4N1c1YWJFdEVqNmIzYjZSWTFsSjRXc1FhRzRIME90alJDb2pMeHlzbjVjWWdYb2FUbGIza3NkWmhLOFE4WHhOeXdhaHh6NjhtS0pENGtzc1RUMmVIZ0t2cnJ2WHA1alNwMzgzWEVZR3RnU0ZJMFVxcWNOWUdwOFRlRXhhQllPZmd6MA?oc=5","at":1794812400},
-{"headline":"For investors, a truly safe haven is hard to find - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMikgFBVV95cUxQLWhsZ01HeXgxX09FRFotT2JPWlJrSkdGOG9lblVxR1ExM2lPTkh1MExjU2Vfci01ZzI0NzlGSVFXTjBHcUhBdDJ1cVJneU9PNUUxaldjbHRZZndFRFRJYmluVDN0NHlxNUJoVXFWWTdzRG9ScTlITURqMi1wLXN0dFl6ZktNUkVxcVpjVlBhbDYwUQ?oc=5","at":1794808980},
-{"headline":"Chinese premier lauds 'extraordinary' ties with ASEAN ahead of Trump visit - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMiuAFBVV95cUxPS0MyZ3lxSkpUNXBvTUJuRGgta0lValdjb1dfQmpMVGJVdGNjVDU4ck9aZ1NtOGlUN0NkeXpsZklCcm1LeEJfRy02ZENUMHIxWkRHbVZ0YUxlNjNGTzBaUmhLOVIxVVZHcldFY2FZV1diOFFzSGJycjFPVk1UUkJBYUNza1RGNHhTYndPaVdUU21xempNRTZSMGFUdUdVZC1aM1QzSGtNakRudldZYjNkZG9oR1pLWkhW?oc=5","at":1794807600}
+{"headline":"US air travel disruptions to persist until late on Sunday, FAA head says - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMi0gFBVV95cUxOVXZEZWRocXp0dXdaSC1HaHpfRDdJdlU2WG9IbndjZnN0M0JBd05qbDlrdmtkOFpnalRoejZsWktJSlRkZERUZ29WbVBCWkw1WjlzbVpqODV3anFPLXNJNlJJNWlraGdLWmIyMWpsM2NrVTdqNWFmaFFDNkQ5M1BRWkJNN2xYSTRwMmVkZ1J6NjE5dVcwd0N2QjFGVEFrTWZzLUJQVWQ4TWFQcVI1d01FZk5ndW9qVjVsbGNrMHE2UlVIUUh2RklVeV9jMEw5WkFsSGc?oc=5","at":1794816228},
+{"headline":"China says Xi-Putin-Trump meeting has 'groundbreaking significance' - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMiswFBVV95cUxQWXU1Wlg2cExOMXk1YUpOSUNEazJkdmhmczM5cnExb1ZVZExBX0VCOElDdmpQaVAzYnpGVDB5LWRtS1I1SHpxdWdDUFIwZkhXVmRUNk9vQWJ0NU12MXUyVTR6NVFIOFgxWF9UZklfMFN2TTNRMFVFNEt3RnVCZXRnUWwwNE1aNExZd1FOTnd2MFZBNTkwMVhSUHJnRHpzeDBfbFRVS2pDWFVZVGltcHRhZjFIbw?oc=5","at":1794815100}
 ]
 }

@@ -1,5 +1,5 @@
 {
-"as_of":"2026-11-17T21:13:15Z",
+"as_of":"2026-11-17T21:44:17Z",
 "quotes_at":1794949200,
 "sample":false,
 "provider":"finnhub",
@@ -11,7 +11,7 @@
 "symbols":[
 {"symbol":"AAPL","list":"nasdaq","move_pct":-0.25,"from_open_pct":-0.26,"range_pos":39,"at":1794949200},
 {"symbol":"MSFT","list":"nasdaq","move_pct":-2.27,"from_open_pct":-1.62,"range_pos":51,"at":1794949200},
-{"symbol":"NVDA","list":"nasdaq","move_pct":-0.48,"from_open_pct":-0.96,"range_pos":64,"at":1794949200},
+{"symbol":"NVDA","list":"nasdaq","move_pct":-0.44,"from_open_pct":-0.91,"range_pos":65,"at":1794949200},
 {"symbol":"AMZN","list":"nasdaq","move_pct":0.05,"from_open_pct":0.13,"range_pos":66,"at":1794949200},
 {"symbol":"GOOGL","list":"nasdaq","move_pct":-1.24,"from_open_pct":-1.13,"range_pos":31,"at":1794949200},
 {"symbol":"META","list":"nasdaq","move_pct":-1.2,"from_open_pct":-0.86,"range_pos":38,"at":1794949200},
@@ -40,7 +40,7 @@
 {"symbol":"SPCX","list":"mine","move_pct":3.16,"from_open_pct":2.27,"range_pos":91,"at":1794949200},
 {"symbol":"DXYZ","list":"mine","move_pct":-2.5,"from_open_pct":-4.58,"range_pos":46,"at":1794949200},
 {"symbol":"TSLR","list":"mine","move_pct":0.12,"from_open_pct":-1.16,"range_pos":68,"at":1794949200},
-{"symbol":"TSYY","list":"mine","move_pct":0.03,"from_open_pct":0.05,"range_pos":75,"at":1794947845},
+{"symbol":"TSYY","list":"mine","move_pct":-0.07,"from_open_pct":-0.05,"range_pos":51,"at":1794949200},
 {"symbol":"TQQQ","list":"mine","move_pct":-2.3,"from_open_pct":-2.85,"range_pos":61,"at":1794949200},
 {"symbol":"RIG","list":"mine","move_pct":-3.45,"from_open_pct":-3.82,"range_pos":0,"at":1794949200},
 {"symbol":"XOP","list":"mine","move_pct":-1.32,"from_open_pct":-1.81,"range_pos":10,"at":1794949200},
@@ -79,9 +79,10 @@
 {"headline":"There's 'no difference' between buying Anthropic's IPO and Amazon's IPO: Kevin O'Leary","source":"Yahoo","url":"https://finnhub.io/api/news?id=a01f57ec33612e2c6d5c8fe3adc4f8f7c287037f34f8f32814f6efe11be10d9e","at":1794942427,"symbol":"SPCX"}
 ],
 "market_news":[
+{"headline":"Wall Street ends lower ahead of Nvidia earnings, Anthropic debut - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMiqgFBVV95cUxOemNySVhGbms1VkxVYXFsTFdtdVh1MjNQQk16Y1ZfNGFHMFhDRWUtZldZRzJzSWxpNlBLWVpTenJnU2FHZndaVUlEclFtQVNvTzJBWTNpM1p0N3dmWjlyMEFKbkowZkpSanhVcEVLUjZfOWxNcW5OZVFuLTNFNF93ZDd4b0wxX1VzNlJPODdqc0xob1ZrR0xuQkJ6bExvNDdQMk5saFVSdkVBZw?oc=5","at":1794949315},
 {"headline":"A generational flight from tech to defensive stocks is underway. How we’re capitalizing","source":"CNBC","url":"https://www.cnbc.com/investingclub/2026/11/17/a-generational-flight-from-tech-to-defensive-stocks-is-underway-how-were-capitalizing.html","at":1794947487},
 {"headline":"Wall Street's fear gauge is surging again and this time it's not just about AI jitters","source":"CNBC","url":"https://www.cnbc.com/2026/11/17/wall-streets-fear-gauge-is-surging-again-and-this-time-its-not-just-about-ai-jitters.html","at":1794947287},
-{"headline":"Wall Street falters ahead of Nvidia earnings, Anthropic debut - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMiqgFBVV95cUxOemNySVhGbms1VkxVYXFsTFdtdVh1MjNQQk16Y1ZfNGFHMFhDRWUtZldZRzJzSWxpNlBLWVpTenJnU2FHZndaVUlEclFtQVNvTzJBWTNpM1p0N3dmWjlyMEFKbkowZkpSanhVcEVLUjZfOWxNcW5OZVFuLTNFNF93ZDd4b0wxX1VzNlJPODdqc0xob1ZrR0xuQkJ6bExvNDdQMk5saFVSdkVBZw?oc=5","at":1794943770},
+{"headline":"US strikes Iranian missile launch site on Qeshm Island, US official says - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMivwFBVV95cUxNWENzVXNRVjR0NU9lejlJWll3U01GOENvbnlKVWJuZG9ZSmwtdVRXSDRPZ3JGcGZnSGhfQmYzNnFRQ0p4d2ZaZk80Q0NKUEgtdTI3cmFwb2JxT1FOamJYVllwTFR3UV9ZN2xfMTNTTFZiS0gtSjU2Q3B6dkVLUmgyYzlpcHprNXdCMEdST0RqNkdkTEgycGFEQkVwY01yWENOcVNpYWpFYlRrRG1waGlwVHNKM3h5UHBidHpMcXlkcw?oc=5","at":1794944413},
 {"headline":"We’re watching Cramer’s favorite market indicator for a signal to buy stocks","source":"CNBC","url":"https://www.cnbc.com/investingclub/2026/11/17/were-watching-cramers-favorite-indicator-for-a-signal-to-buy-stocks.html","at":1794942927},
 {"headline":"Crew abandons gas tanker off Oman after being hit by projectile, sources say - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMiygFBVV95cUxNU0ZTTkw2LWNabWNsdzBOM1FzRF9nWk45NHcybXI1RHk2RF8wZDRDeDRiNE9uT202T2RWRHRqd1AzcFg5LWtlY3M2dlo4eTIzZHRVaUZKX21FUE5tcVNzR2VnT3RWRHdXbmU4QXlRUmZzWFZIZVZ0M2hXeFR6RE1QM1U0OWlDMi1SLUQ2V2tBVDFlU3lxM2lpeXRNa21CNjFMQTlOZV9MekM0WWUtREZHWmZ4TGJUa2dhNUxObDBIcTRRSGgwSUg0MXVB?oc=5","at":1794941164},
 {"headline":"Yemen's Houthis say they launched drones towards Saudi East-West pipeline - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMixAFBVV95cUxPa1JWbURTTkJ4Z29LYnJBSXgtalBTYm56SVUyU2l2a0tDdnRBQ2hjdHRqZHFiVnFIbG9xUHBzM2EwZ2NINFhJUncxazNCSUMwUlJkRDVDTFlvU1dLR0Z3NktuSWpMRXJkUWZuRFJQRnRRbmxTVEdyZzNQd2lyd2dWbjVhUnNUUGtKVExlMzlIY0dET0NrZ0xpUW1KTWk3YkR3S2loZEpTcWdaOUxfd1FnMzFWWFlsZmJoTFowOW9JZWxYZVVq?oc=5","at":1794939654},
@@ -107,7 +108,6 @@
 {"headline":"Railway traffic between Hungary and Ukraine suspended after Russian drone attack on western Ukraine - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMiugFBVV95cUxNZjljMzhpemJKX1paenMwWTFRRDhrYnp3QU1lV1NZVDZ3QnNXU181UHQxSnV0WXM0TklPZUNJSXZzLU9Ja1pxN0s4S1p5Yk1GQTNBSVotTWg1b3UwTDRtbS1lQXBsMDQ5QWJ5MzZSNlQ3OHEzV3RjVUJEZkxDNG1aVjN5cW9rQ0dOelFDSm9JdnJGMkhCU2RxQldadlRfVTZXWWcteVppelAwaXdxT2xHS2ptaFE2QWR1MEE?oc=5","at":1794916608},
 {"headline":"JD Vance says he'll decide 'sometime next year' about 2028 presidential run","source":"CNBC","url":"https://www.cnbc.com/2026/11/17/jd-vance-2028-presidential-run-decision.html","at":1794912056},
 {"headline":"Iraq resumes crude oil pumping for export purposes via pipeline to Turkey, oil minister says - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMiywFBVV95cUxNOEZmQVphZVUyV05SUmZOazhJeVRrUGZneGhyX2xTT0g5SkM0eEQwS2ZjVE1YUjQyR1l4WDAxMURzV19QeUk5dFRVU0R3eVF0TjZRZTlJUDk4TGVXMHJmOWVUVEJjX1k3UnF0b0hzemRLZGtQaFRCTXJoNFA3bVZVZjhPZndwYzRxQlpvcDVFRDZ5ZWhRX21FN2FWQzVSckZoYl8xWWJ6anVsd092eFRZVno5ZWJvVmJKRmJ4THJXREt0ZEF6WlFYQjFVTQ?oc=5","at":1794911646},
-{"headline":"Mexico keen to strengthen cooperation with China, president says - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMirAFBVV95cUxNc0NsLVVIdkF1Xzh6WmVwWWhuNkhXODlPcTRDLTFRc3ctNTlmVUxtVlkyRGNiNDhsRlpRMXhqdks1X2VNeGRCMGtKODFRc1A2OEV0bXdVb2pTNHVBa0h0Qk1TSDl5LVdUV2kteDRDcjNDYXVaYXo5NWJnMnpZWjBlWG1KMm05YUJOcVhoZU1BN3hvZHRxM3pIT0o5VVg5UGp6RkRMRWs4UEZMckRV?oc=5","at":1794911075},
-{"headline":"Crew of tanker unaccounted for after second attack north of Oman's Khasab, UKMTO says - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMixgFBVV95cUxQYW55RnRFY2o3QVQ5M0ZRRElNUGhWUlhPaDkyODFYbEprTWw5NHhyTUFKSDQ5RE1TOWZWaElmSkY0UnZZeGUyMnFRbXpaOHo2SkxyaTFDUEowd3ZVUS1VaG9TRF9aTmNldHJyUGZtNnFuc2E2NGd0c0NNeDB5ai1rUTVQXzhZNzA5QUlUcTFINUJBZEYzMVRtREg5TTdCWjA2aEFXdWoydENMbTJyTlo3MDJxSHJTTnhlSm53YjJaTmFrRHV3ZEE?oc=5","at":1794908868}
+{"headline":"Mexico keen to strengthen cooperation with China, president says - Reuters","source":"Reuters","url":"https://news.google.com/rss/articles/CBMirAFBVV95cUxNc0NsLVVIdkF1Xzh6WmVwWWhuNkhXODlPcTRDLTFRc3ctNTlmVUxtVlkyRGNiNDhsRlpRMXhqdks1X2VNeGRCMGtKODFRc1A2OEV0bXdVb2pTNHVBa0h0Qk1TSDl5LVdUV2kteDRDcjNDYXVaYXo5NWJnMnpZWjBlWG1KMm05YUJOcVhoZU1BN3hvZHRxM3pIT0o5VVg5UGp6RkRMRWs4UEZMckRV?oc=5","at":1794911075}
 ]
 }

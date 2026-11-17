@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-14",
+  "as_of": "2026-11-17",
   "sample": false,
   "source": "SEC EDGAR filings index (company submissions)",
   "window_days": 120,
@@ -1411,6 +1411,20 @@
       "name": "Diamondback Energy, Inc.",
       "filings": [
         {
+          "date": "2026-11-16",
+          "form": "8-K",
+          "items": [
+            "3.02",
+            "7.01"
+          ],
+          "titles": [
+            "Sold new shares",
+            "Shared an update with investors"
+          ],
+          "kind": "money",
+          "url": "https://www.sec.gov/Archives/edgar/data/1539838/000110465926128377/tm2629913d1_8k.htm"
+        },
+        {
           "date": "2026-11-04",
           "form": "10-Q",
           "items": [],
@@ -2128,16 +2142,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/1845338/000117891326003553/zk2635715.htm"
-        },
-        {
-          "date": "2026-07-17",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1845338/000117891326003514/zk2635696.htm"
         }
       ]
     },
@@ -2445,6 +2449,18 @@
       "cik": 2488,
       "name": "ADVANCED MICRO DEVICES INC",
       "filings": [
+        {
+          "date": "2026-11-16",
+          "form": "8-K/A",
+          "items": [
+            "3.02"
+          ],
+          "titles": [
+            "Correction to an earlier filing: sold new shares"
+          ],
+          "kind": "money",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000119312526462340/d105780d8ka.htm"
+        },
         {
           "date": "2026-11-04",
           "form": "10-Q",
@@ -4589,20 +4605,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/1816017/000119312526335313/spir-20260731.htm"
-        },
-        {
-          "date": "2026-07-17",
-          "form": "8-K",
-          "items": [
-            "5.02",
-            "7.01"
-          ],
-          "titles": [
-            "A leadership change (an executive or board member)",
-            "Shared an update with investors"
-          ],
-          "kind": "people",
-          "url": "https://www.sec.gov/Archives/edgar/data/1816017/000119312526307824/spir-20260713.htm"
         }
       ]
     },
@@ -5286,18 +5288,6 @@
           ],
           "kind": "people",
           "url": "https://www.sec.gov/Archives/edgar/data/796343/000079634326000144/adbe-20260902.htm"
-        },
-        {
-          "date": "2026-07-17",
-          "form": "8-K",
-          "items": [
-            "5.02"
-          ],
-          "titles": [
-            "A leadership change (an executive or board member)"
-          ],
-          "kind": "people",
-          "url": "https://www.sec.gov/Archives/edgar/data/796343/000079634326000120/adbe-20260714.htm"
         }
       ]
     },

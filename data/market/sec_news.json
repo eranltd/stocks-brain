@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-17",
+  "as_of": "2026-11-18",
   "sample": false,
   "source": "SEC EDGAR filings index (company submissions)",
   "window_days": 120,
@@ -183,6 +183,18 @@
       "cik": 1045810,
       "name": "NVIDIA CORP",
       "filings": [
+        {
+          "date": "2026-11-17",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000088/nvda-20261117.htm"
+        },
         {
           "date": "2026-11-12",
           "form": "8-K",
@@ -1816,6 +1828,16 @@
       "name": "ELBIT SYSTEMS LTD",
       "filings": [
         {
+          "date": "2026-11-17",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1027664/000102766426000025/coveresltq320266k.htm"
+        },
+        {
           "date": "2026-11-12",
           "form": "6-K",
           "items": [],
@@ -1884,16 +1906,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/1027664/000117891326004362/zk2636055.htm"
-        },
-        {
-          "date": "2026-08-11",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1027664/000102766426000023/coveresltq220266k.htm"
         }
       ]
     },
@@ -3170,6 +3182,18 @@
       "name": "Transocean Ltd.",
       "filings": [
         {
+          "date": "2026-11-17",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1451505/000110465926129165/tm2630105d1_8k.htm"
+        },
+        {
           "date": "2026-11-03",
           "form": "10-Q",
           "items": [],
@@ -3256,18 +3280,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/1451505/000145150526000072/rig-20261009x8k.htm"
-        },
-        {
-          "date": "2026-09-30",
-          "form": "8-K",
-          "items": [
-            "8.01"
-          ],
-          "titles": [
-            "Other company news"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1451505/000110465926112402/tm2626691d1_8k.htm"
         }
       ]
     },
@@ -3708,6 +3720,18 @@
       "name": "AST SpaceMobile, Inc.",
       "filings": [
         {
+          "date": "2026-11-17",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226052865/form8-k.htm"
+        },
+        {
           "date": "2026-11-10",
           "form": "8-K",
           "items": [
@@ -3788,20 +3812,6 @@
           ],
           "kind": "report",
           "url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312526342550/asts-20260630.htm"
-        },
-        {
-          "date": "2026-08-10",
-          "form": "8-K",
-          "items": [
-            "2.02",
-            "7.01"
-          ],
-          "titles": [
-            "Quarterly results",
-            "Shared an update with investors"
-          ],
-          "kind": "results",
-          "url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312526342540/asts-20260810.htm"
         }
       ]
     },
@@ -5541,6 +5551,18 @@
       "cik": 1441816,
       "name": "MongoDB, Inc.",
       "filings": [
+        {
+          "date": "2026-11-17",
+          "form": "8-K",
+          "items": [
+            "7.01"
+          ],
+          "titles": [
+            "Shared an update with investors"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1441816/000162828026074373/mdb-20261117.htm"
+        },
         {
           "date": "2026-10-15",
           "form": "8-K",

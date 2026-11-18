@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-17",
+  "as_of": "2026-11-18",
   "sample": false,
   "source": "SEC XBRL company facts: trailing twelve months, or the latest year for yearly filers",
   "companies": [
@@ -1005,7 +1005,7 @@
     {
       "symbol": "ASTS",
       "cik": 1780312,
-      "name": "AST SPACEMOBILE, INC.",
+      "name": "AST SpaceMobile, Inc.",
       "status": "ok",
       "basis": "ttm",
       "period_end": "2026-09-30",

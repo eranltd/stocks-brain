@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-18",
+  "as_of": "2026-11-19",
   "sample": false,
   "source": "SEC EDGAR filings index (company submissions)",
   "window_days": 120,
@@ -741,16 +741,6 @@
           ],
           "kind": "other",
           "url": "https://www.sec.gov/Archives/edgar/data/1035267/000103526726000063/isrg-20260723.htm"
-        },
-        {
-          "date": "2026-07-21",
-          "form": "10-Q",
-          "items": [],
-          "titles": [
-            "Quarterly report"
-          ],
-          "kind": "report",
-          "url": "https://www.sec.gov/Archives/edgar/data/1035267/000103526726000058/isrg-20260630.htm"
         }
       ]
     },
@@ -997,18 +987,6 @@
           ],
           "kind": "results",
           "url": "https://www.sec.gov/Archives/edgar/data/4904/000000490426000055/aep-20260730.htm"
-        },
-        {
-          "date": "2026-07-21",
-          "form": "8-K",
-          "items": [
-            "5.02"
-          ],
-          "titles": [
-            "A leadership change (an executive or board member)"
-          ],
-          "kind": "people",
-          "url": "https://www.sec.gov/Archives/edgar/data/4904/000000490426000048/aep-20260720.htm"
         }
       ]
     },
@@ -1589,6 +1567,20 @@
       "name": "TEVA PHARMACEUTICAL INDUSTRIES LTD",
       "filings": [
         {
+          "date": "2026-11-18",
+          "form": "8-K",
+          "items": [
+            "5.02",
+            "7.01"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)",
+            "Shared an update with investors"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/818686/000119312526467276/teva-20261117.htm"
+        },
+        {
           "date": "2026-11-03",
           "form": "10-Q",
           "items": [],
@@ -1673,18 +1665,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/818686/000119312526381899/d153033d8k.htm"
-        },
-        {
-          "date": "2026-09-03",
-          "form": "8-K",
-          "items": [
-            "3.03"
-          ],
-          "titles": [
-            "Changed shareholders' rights"
-          ],
-          "kind": "other",
-          "url": "https://www.sec.gov/Archives/edgar/data/818686/000119312526381879/d174614d8k.htm"
         }
       ]
     },
@@ -2089,6 +2069,16 @@
       "name": "Wix.com Ltd.",
       "filings": [
         {
+          "date": "2026-11-18",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1576789/000162828026074714/wix-6xkx2026agm.htm"
+        },
+        {
           "date": "2026-11-10",
           "form": "6-K",
           "items": [],
@@ -2162,6 +2152,16 @@
       "cik": 1835963,
       "name": "Global-E Online Ltd.",
       "filings": [
+        {
+          "date": "2026-11-18",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1835963/000117891326005272/zk2636439.htm"
+        },
         {
           "date": "2026-10-01",
           "form": "6-K",
@@ -3720,6 +3720,18 @@
       "name": "AST SpaceMobile, Inc.",
       "filings": [
         {
+          "date": "2026-11-18",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226053080/form8-k.htm"
+        },
+        {
           "date": "2026-11-17",
           "form": "8-K",
           "items": [
@@ -3802,16 +3814,6 @@
           ],
           "kind": "people",
           "url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226044647/form8-k.htm"
-        },
-        {
-          "date": "2026-08-10",
-          "form": "10-Q",
-          "items": [],
-          "titles": [
-            "Quarterly report"
-          ],
-          "kind": "report",
-          "url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312526342550/asts-20260630.htm"
         }
       ]
     },
@@ -5477,6 +5479,24 @@
       "cik": 1327567,
       "name": "Palo Alto Networks Inc",
       "filings": [
+        {
+          "date": "2026-11-18",
+          "form": "8-K",
+          "items": [
+            "2.02",
+            "3.02",
+            "7.01",
+            "8.01"
+          ],
+          "titles": [
+            "Quarterly results",
+            "Sold new shares",
+            "Shared an update with investors",
+            "Other company news"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756726000030/panw-20261117.htm"
+        },
         {
           "date": "2026-09-10",
           "form": "10-K",

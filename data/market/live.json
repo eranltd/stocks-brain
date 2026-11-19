@@ -1,5 +1,5 @@
 {
-"as_of":"2026-11-19T21:12:59Z",
+"as_of":"2026-11-19T21:26:11Z",
 "quotes_at":1795122000,
 "sample":false,
 "provider":"finnhub",
@@ -40,7 +40,7 @@
 {"symbol":"SPCX","list":"mine","move_pct":-3.53,"from_open_pct":-4.47,"range_pos":25,"at":1795122000},
 {"symbol":"DXYZ","list":"mine","move_pct":-2.02,"from_open_pct":0.98,"range_pos":70,"at":1795122000},
 {"symbol":"TSLR","list":"mine","move_pct":-4.95,"from_open_pct":-8.06,"range_pos":15,"at":1795122000},
-{"symbol":"TSYY","list":"mine","move_pct":-0.63,"from_open_pct":-1.06,"range_pos":5,"at":1795120419},
+{"symbol":"TSYY","list":"mine","move_pct":-0.63,"from_open_pct":-1.05,"range_pos":5,"at":1795122000},
 {"symbol":"TQQQ","list":"mine","move_pct":-6.54,"from_open_pct":-11.21,"range_pos":3,"at":1795122000},
 {"symbol":"RIG","list":"mine","move_pct":-5.17,"from_open_pct":-5.92,"range_pos":0,"at":1795122000},
 {"symbol":"XOP","list":"mine","move_pct":-0.95,"from_open_pct":-1.52,"range_pos":10,"at":1795122000},

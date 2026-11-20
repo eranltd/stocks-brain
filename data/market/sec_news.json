@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-19",
+  "as_of": "2026-11-20",
   "sample": false,
   "source": "SEC EDGAR filings index (company submissions)",
   "window_days": 120,
@@ -394,18 +394,6 @@
           ],
           "kind": "report",
           "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm"
-        },
-        {
-          "date": "2026-07-22",
-          "form": "8-K",
-          "items": [
-            "2.02"
-          ],
-          "titles": [
-            "Quarterly results"
-          ],
-          "kind": "results",
-          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000066/goog-20260722.htm"
         }
       ]
     },
@@ -1303,18 +1291,6 @@
           ],
           "kind": "report",
           "url": "https://www.sec.gov/Archives/edgar/data/1156375/000115637526000047/cme-20260630.htm"
-        },
-        {
-          "date": "2026-07-22",
-          "form": "8-K",
-          "items": [
-            "2.02"
-          ],
-          "titles": [
-            "Quarterly results"
-          ],
-          "kind": "results",
-          "url": "https://www.sec.gov/Archives/edgar/data/1156375/000115637526000042/cme-20260722.htm"
         }
       ]
     },
@@ -1789,16 +1765,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/1015922/000117891326003696/zk2635799.htm"
-        },
-        {
-          "date": "2026-07-22",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1015922/000117891326003557/zk2635717.htm"
         }
       ]
     },
@@ -2134,16 +2100,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/1845338/000117891326003915/zk2635889.htm"
-        },
-        {
-          "date": "2026-07-22",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1845338/000117891326003553/zk2635715.htm"
         }
       ]
     },
@@ -4066,28 +4022,6 @@
           ],
           "kind": "other",
           "url": "https://www.sec.gov/Archives/edgar/data/1418819/000141881926000048/irdm-20260810.htm"
-        },
-        {
-          "date": "2026-07-22",
-          "form": "8-K",
-          "items": [
-            "2.02"
-          ],
-          "titles": [
-            "Quarterly results"
-          ],
-          "kind": "results",
-          "url": "https://www.sec.gov/Archives/edgar/data/1418819/000141881926000046/irdm-20260722.htm"
-        },
-        {
-          "date": "2026-07-22",
-          "form": "10-Q",
-          "items": [],
-          "titles": [
-            "Quarterly report"
-          ],
-          "kind": "report",
-          "url": "https://www.sec.gov/Archives/edgar/data/1418819/000141881926000045/irdm-20260630.htm"
         }
       ]
     },
@@ -5245,18 +5179,6 @@
           ],
           "kind": "report",
           "url": "https://www.sec.gov/Archives/edgar/data/1373715/000137371526000076/now-20260630.htm"
-        },
-        {
-          "date": "2026-07-22",
-          "form": "8-K",
-          "items": [
-            "2.02"
-          ],
-          "titles": [
-            "Quarterly results"
-          ],
-          "kind": "results",
-          "url": "https://www.sec.gov/Archives/edgar/data/1373715/000137371526000072/now-20260722.htm"
         }
       ]
     },
@@ -5480,6 +5402,16 @@
       "name": "Palo Alto Networks Inc",
       "filings": [
         {
+          "date": "2026-11-19",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756726000033/panw-20261031.htm"
+        },
+        {
           "date": "2026-11-18",
           "form": "8-K",
           "items": [
@@ -5540,6 +5472,56 @@
       "cik": 896878,
       "name": "INTUIT INC.",
       "filings": [
+        {
+          "date": "2026-11-19",
+          "form": "8-K",
+          "items": [
+            "1.01",
+            "8.01"
+          ],
+          "titles": [
+            "Signed a major agreement",
+            "Other company news"
+          ],
+          "kind": "deal",
+          "url": "https://www.sec.gov/Archives/edgar/data/896878/000119312526468834/d182669d8k.htm"
+        },
+        {
+          "date": "2026-11-19",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/896878/000089687826000047/intu-20261119.htm"
+        },
+        {
+          "date": "2026-11-19",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/896878/000089687826000045/intu-20261031.htm"
+        },
+        {
+          "date": "2026-11-19",
+          "form": "8-K",
+          "items": [
+            "2.02",
+            "8.01"
+          ],
+          "titles": [
+            "Quarterly results",
+            "Other company news"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/896878/000089687826000043/intu-20261119.htm"
+        },
         {
           "date": "2026-09-09",
           "form": "10-K",

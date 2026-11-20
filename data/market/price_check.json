@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-14",
+  "as_of": "2026-11-20",
   "sample": false,
   "primary": "tiingo",
   "second": "polygon",
@@ -19,259 +19,259 @@
   "symbols": [
     {
       "symbol": "AAPL",
-      "days": 500,
+      "days": 501,
       "verdict": "agree",
       "return_corr": 1.0,
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.5154,
-        0.5148
+        0.5148,
+        0.5142
       ]
     },
     {
       "symbol": "MSFT",
-      "days": 500,
+      "days": 501,
       "verdict": "agree",
       "return_corr": 0.9999,
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.5197,
-        0.5207
+        0.5193,
+        0.5204
       ]
     },
     {
       "symbol": "NVDA",
-      "days": 500,
+      "days": 501,
       "verdict": "agree",
       "return_corr": 1.0,
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.7382,
-        0.7381
+        0.7398,
+        0.7396
       ]
     },
     {
       "symbol": "AMZN",
-      "days": 500,
+      "days": 501,
       "verdict": "agree",
       "return_corr": 1.0,
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.6319,
-        0.6323
+        0.6325,
+        0.633
       ]
     },
     {
       "symbol": "GOOGL",
-      "days": 500,
+      "days": 501,
       "verdict": "agree",
       "return_corr": 1.0,
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.5649,
-        0.5655
+        0.5695,
+        0.5701
       ]
     },
     {
       "symbol": "META",
-      "days": 500,
+      "days": 501,
       "verdict": "agree",
       "return_corr": 1.0,
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.5682,
-        0.5674
+        0.5687,
+        0.5679
       ]
     },
     {
       "symbol": "AVGO",
-      "days": 500,
+      "days": 501,
       "verdict": "agree",
       "return_corr": 1.0,
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.6971,
-        0.6971
+        0.6962,
+        0.6963
       ]
     },
     {
       "symbol": "COST",
-      "days": 500,
+      "days": 501,
       "verdict": "agree",
       "return_corr": 0.9999,
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.1224,
-        0.1233
+        0.1146,
+        0.1155
       ]
     },
     {
       "symbol": "AMGN",
-      "days": 500,
+      "days": 501,
       "verdict": "agree",
-      "return_corr": 0.9986,
+      "return_corr": 0.9988,
       "median_diff_bp": 0.0,
-      "big_diff_days": 8,
+      "big_diff_days": 7,
       "bench_corr": [
-        0.1604,
-        0.159
+        0.1562,
+        0.1553
       ]
     },
     {
       "symbol": "ISRG",
-      "days": 500,
+      "days": 501,
       "verdict": "agree",
       "return_corr": 1.0,
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.4478,
-        0.4475
+        0.4486,
+        0.4483
       ]
     },
     {
       "symbol": "GILD",
-      "days": 500,
+      "days": 501,
       "verdict": "agree",
       "return_corr": 0.9988,
       "median_diff_bp": 0.0,
       "big_diff_days": 8,
       "bench_corr": [
-        0.1301,
-        0.1279
+        0.1252,
+        0.123
       ]
     },
     {
       "symbol": "PEP",
-      "days": 500,
+      "days": 501,
       "verdict": "agree",
       "return_corr": 0.9963,
       "median_diff_bp": 0.0,
       "big_diff_days": 8,
       "bench_corr": [
-        -0.1151,
-        -0.111
+        -0.1188,
+        -0.1147
       ]
     },
     {
       "symbol": "MNST",
-      "days": 500,
+      "days": 501,
       "verdict": "agree",
       "return_corr": 1.0,
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.1455,
-        0.1454
+        0.1408,
+        0.1406
       ]
     },
     {
       "symbol": "AEP",
-      "days": 500,
+      "days": 501,
       "verdict": "agree",
       "return_corr": 0.9964,
       "median_diff_bp": 0.0,
       "big_diff_days": 8,
       "bench_corr": [
-        -0.0768,
-        -0.0817
+        -0.0632,
+        -0.0682
       ]
     },
     {
       "symbol": "XEL",
-      "days": 500,
+      "days": 501,
       "verdict": "agree",
       "return_corr": 0.9967,
       "median_diff_bp": 0.0,
       "big_diff_days": 9,
       "bench_corr": [
-        0.0114,
-        0.0083
+        0.0194,
+        0.0163
       ]
     },
     {
       "symbol": "CTAS",
-      "days": 500,
+      "days": 501,
       "verdict": "agree",
       "return_corr": 0.9998,
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.1644,
-        0.1648
+        0.1673,
+        0.1673
       ]
     },
     {
       "symbol": "PCAR",
-      "days": 500,
+      "days": 501,
       "verdict": "agree",
       "return_corr": 0.9967,
       "median_diff_bp": 0.0,
       "big_diff_days": 2,
       "bench_corr": [
-        0.4198,
-        0.4155
+        0.4174,
+        0.4131
       ]
     },
     {
       "symbol": "CME",
-      "days": 500,
+      "days": 501,
       "verdict": "agree",
       "return_corr": 0.9934,
       "median_diff_bp": 0.0,
       "big_diff_days": 3,
       "bench_corr": [
-        -0.2226,
-        -0.2151
+        -0.2164,
+        -0.2091
       ]
     },
     {
       "symbol": "TMUS",
-      "days": 500,
+      "days": 501,
       "verdict": "agree",
       "return_corr": 0.9995,
       "median_diff_bp": 0.0,
       "big_diff_days": 3,
       "bench_corr": [
-        -0.0568,
-        -0.0569
+        -0.0563,
+        -0.0564
       ]
     },
     {
       "symbol": "FANG",
-      "days": 500,
+      "days": 501,
       "verdict": "agree",
       "return_corr": 0.9994,
       "median_diff_bp": 0.0,
       "big_diff_days": 8,
       "bench_corr": [
-        0.2139,
-        0.2161
+        0.2124,
+        0.2145
       ]
     },
     {
       "symbol": "LIN",
-      "days": 500,
+      "days": 501,
       "verdict": "agree",
       "return_corr": 0.9994,
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.2454,
-        0.246
+        0.2465,
+        0.2471
       ]
     },
     {
       "symbol": "QQQ",
-      "days": 500,
+      "days": 501,
       "verdict": "agree",
       "return_corr": 0.9999,
       "median_diff_bp": 0.0,
@@ -283,74 +283,74 @@
     },
     {
       "symbol": "SPY",
-      "days": 500,
+      "days": 501,
       "verdict": "agree",
       "return_corr": 0.9994,
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.9471,
-        0.9461
+        0.9473,
+        0.9462
       ]
     },
     {
       "symbol": "SGOV",
-      "days": 500,
+      "days": 501,
       "verdict": "differ",
-      "return_corr": 0.0315,
+      "return_corr": 0.0278,
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        -0.0724,
-        0.0213
+        -0.0618,
+        0.0218
       ]
     },
     {
       "symbol": "QQQE",
-      "days": 500,
+      "days": 501,
       "verdict": "agree",
       "return_corr": 0.9999,
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.935,
-        0.9347
+        0.9351,
+        0.9349
       ]
     },
     {
       "symbol": "RSP",
-      "days": 500,
+      "days": 501,
       "verdict": "agree",
       "return_corr": 0.9985,
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.715,
-        0.7124
+        0.7172,
+        0.7146
       ]
     },
     {
       "symbol": "IEF",
-      "days": 500,
+      "days": 501,
       "verdict": "differ",
-      "return_corr": 0.981,
+      "return_corr": 0.9811,
       "median_diff_bp": 0.0,
       "big_diff_days": 0,
       "bench_corr": [
-        0.015,
-        0.0206
+        0.0102,
+        0.0157
       ]
     },
     {
       "symbol": "HYG",
-      "days": 500,
+      "days": 501,
       "verdict": "differ",
       "return_corr": 0.949,
       "median_diff_bp": 0.0,
       "big_diff_days": 8,
       "bench_corr": [
-        0.7243,
-        0.6827
+        0.726,
+        0.6842
       ]
     }
   ],

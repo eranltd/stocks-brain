@@ -677,6 +677,168 @@
               }
             }
           }
+        },
+        "swing": {
+          "$ref": "#/$defs/swing_row"
+        }
+      }
+    },
+    "swing_stats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "n",
+        "mean",
+        "ci_low",
+        "ci_high",
+        "hit_pct",
+        "exits",
+        "avg_days"
+      ],
+      "properties": {
+        "n": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mean": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "ci_low": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "ci_high": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "hit_pct": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 100
+        },
+        "exits": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "target",
+            "stop",
+            "time"
+          ],
+          "properties": {
+            "target": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "stop": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "time": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "avg_days": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        }
+      }
+    },
+    "swing_row": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The swing setup at the last close (config/swing.json): percent distances from the close, ratios, counts and labels only.",
+      "required": [
+        "state",
+        "checks",
+        "dist_trend_avg_pct",
+        "trend_avg_slope_pct",
+        "dist_pullback_avg_pct",
+        "depth_pct",
+        "days_since_low",
+        "stop_pct",
+        "target_pct",
+        "high_pct",
+        "rr_high"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "setup",
+            "watch",
+            "none"
+          ]
+        },
+        "checks": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "uptrend",
+            "pullback",
+            "trigger",
+            "risk_ok"
+          ],
+          "properties": {
+            "uptrend": {
+              "type": "boolean"
+            },
+            "pullback": {
+              "type": "boolean"
+            },
+            "trigger": {
+              "type": "boolean"
+            },
+            "risk_ok": {
+              "type": "boolean"
+            }
+          }
+        },
+        "dist_trend_avg_pct": {
+          "type": "number"
+        },
+        "trend_avg_slope_pct": {
+          "type": "number"
+        },
+        "dist_pullback_avg_pct": {
+          "type": "number"
+        },
+        "depth_pct": {
+          "type": "number",
+          "minimum": 0
+        },
+        "days_since_low": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "stop_pct": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "target_pct": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "high_pct": {
+          "type": "number",
+          "minimum": 0
+        },
+        "rr_high": {
+          "type": "number",
+          "minimum": 0
         }
       }
     }
@@ -1104,6 +1266,162 @@
             },
             "fails": {
               "$ref": "#/$defs/stats"
+            }
+          }
+        }
+      }
+    },
+    "swing": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The swing setup's numbers, history and forward record (config/swing.json). Pretend money only.",
+      "required": [
+        "config_version",
+        "status",
+        "note",
+        "params",
+        "base_rates",
+        "forward"
+      ],
+      "properties": {
+        "config_version": {
+          "$ref": "common.schema.json#/$defs/semver"
+        },
+        "status": {
+          "enum": [
+            "unproven",
+            "rejected",
+            "passes_history",
+            "retired"
+          ]
+        },
+        "note": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 600
+        },
+        "params": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number"
+          }
+        },
+        "base_rates": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "from",
+                "to",
+                "names",
+                "setup",
+                "uptrend",
+                "note"
+              ],
+              "properties": {
+                "from": {
+                  "$ref": "common.schema.json#/$defs/date"
+                },
+                "to": {
+                  "$ref": "common.schema.json#/$defs/date"
+                },
+                "names": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "setup": {
+                  "$ref": "#/$defs/swing_stats"
+                },
+                "uptrend": {
+                  "$ref": "#/$defs/swing_stats"
+                },
+                "note": {
+                  "type": "string",
+                  "minLength": 10,
+                  "maxLength": 600
+                }
+              }
+            }
+          ]
+        },
+        "forward": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "note",
+            "started",
+            "signals",
+            "running",
+            "stats"
+          ],
+          "properties": {
+            "note": {
+              "type": "string",
+              "minLength": 10,
+              "maxLength": 600
+            },
+            "started": {
+              "$ref": "common.schema.json#/$defs/date"
+            },
+            "signals": {
+              "type": "array",
+              "maxItems": 3000,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "date",
+                  "symbol",
+                  "stop_pct",
+                  "target_pct",
+                  "status"
+                ],
+                "properties": {
+                  "date": {
+                    "$ref": "common.schema.json#/$defs/date"
+                  },
+                  "symbol": {
+                    "type": "string",
+                    "pattern": "^[A-Z][A-Z0-9.\\-]{0,9}$"
+                  },
+                  "stop_pct": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "target_pct": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "status": {
+                    "enum": [
+                      "running",
+                      "target",
+                      "stop",
+                      "time",
+                      "skipped",
+                      "no_data"
+                    ]
+                  },
+                  "days": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "r": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "running": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "stats": {
+              "$ref": "#/$defs/swing_stats"
             }
           }
         }

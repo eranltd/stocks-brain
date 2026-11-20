@@ -1,7 +1,7 @@
 ---
-version: 0.39.0
-updated_at: 2026-11-14
-change_note: The app asks on every open: Simple or Full, and Swipe mode on or off (last answers preselected). Swipe mode: the day as a vertical feed of full-screen cards with small entrance animations.
+version: 0.40.0
+updated_at: 2026-11-20
+change_note: A daily swing-setup scan (a pullback in an uptrend) on every list, with its history and forward record, on the Stock and Stocks pages. Pretend money only.
 ---
 # Decision log
 
@@ -18,6 +18,24 @@ Every decision that shapes the system, with the reason. Newest first. Nothing li
 - **Market file size**: `derived.json` is written one line per symbol (compact) and is about 330 KB with 21 names.
   Past roughly 35 names it would hit lint's 512 KB cap and the daily run would fail closed; before that, move the
   per-point dates into one shared array.
+
+## 2026-11-20
+- **A daily swing-setup scan, pretend money.** The owner is learning swing trading in a chat with Claude (practising on
+  a private paper-trade journal, outside this public repo) and asked for the agent to find the setups. The scan is the
+  textbook beginner setup, a pullback in an uptrend: above a rising 50-day average, a dip to the 20-day average in the
+  last five days, then a close above the day before's high, with a stop just under the pullback's low (skipped when
+  wider than 8%) and a target of twice the risk (`config/swing.json`, `docs/methodology.md` "Swing setup"). It runs in
+  the checklist step, so every list gets it with no new routine, cron or fetch. Each row says setup, on watch or not
+  now; the Stock page has a Swing setup card (the four checks, the plan as percents, a warning when results are due
+  inside the ten-day window or the recent high is nearer than the target) and the Stocks page lists the day's setups.
+- **Measured the house way.** The history buys at the next open (the dashboard updates after the close) and compares
+  the setup with the same exits on every uptrend day, so it shows whether waiting for the pullback and bounce adds
+  anything. It is in-sample on survivors and labelled so. The forward record writes every setup on its day and never
+  edits it. The status stays `unproven`.
+- **Not a rule, no money.** It is not in `config/rules.json`, never feeds the brain's pack and changes no house rule:
+  real money still follows the weekly index buy. The setup checks prices daily and uses a stop, unlike the rules'
+  review days; that is fine for pretend money only. Turning it into a rule would be a counted try with the
+  random-basket test first.
 
 ## 2026-11-14
 - **Simple mode, asked once.** The owner: the app "is adjusted to smart guys like me"; it should ask who the user is and

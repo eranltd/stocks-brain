@@ -31,6 +31,9 @@ import { BuyWindowBody, BW_TONE } from "../components/buywindow.jsx";
 import { StockReplay } from "../components/replay.jsx";
 import { strings } from "../lib/text.js";
 import { rich } from "../lib/rich.jsx";
+import { SwingPanel } from "../components/swing.jsx";
+import { earningsInWindow, swingDoc, swingView, SWING_NAV } from "../lib/swing.js";
+import swingDict from "../text/swing.js";
 
 /*
  * One stock's (or fund's) page, laid out like a trading terminal: a header with the ticker, the day's move and the
@@ -529,6 +532,13 @@ function StockView({ data, row, symbol, go, mk }) {
   const read = readable(data.checklist, ckRow, row.last_date, { sampleSite: data.sample });
   const reading = read.ok ? ckRow : null;
   const rp = reading ? riskPlan(reading.risk_plan, cfg) : null;
+  // The swing setup (lib/swing.js): only with a checklist file that has it, and read like the checklist.
+  const ts = strings(swingDict);
+  const swDoc = swingDoc(data.checklist);
+  const sw = reading?.swing ?? null;
+  const swCard = cardFor(data.outlook, symbol);
+  const swEarnings = sw ? earningsInWindow(swCard, today, swDoc?.params) : null;
+  const swState = sw ? swingView(sw, swDoc?.params, { earnings: swEarnings }).state : null;
   const aliases = [symbol, ...((watchlist.symbols ?? []).find((s) => s.symbol === symbol)?.aliases ?? [])];
   const claims = (observations?.items ?? []).filter((o) => o.tickers.some((x) => aliases.includes(x))).sort((a, b) => b.as_of.localeCompare(a.as_of));
   const liveClaims = claims.filter((c) => c.expires >= today);
@@ -564,6 +574,7 @@ function StockView({ data, row, symbol, go, mk }) {
     { id: "checklist", label: t("sp.nav.chart"), state: "idle" },
     !isBench && { id: "ck-steps", label: t("sp.nav.steps"), state: reading ? VERDICT_STATE[reading.score.verdict] ?? "idle" : "idle" },
     !isBench && { id: "risk-plan", label: t("sp.nav.risk"), state: rp ? (rp.fits ? "done" : "wait") : "idle" },
+    !isBench && swDoc && { id: "swing-setup", label: ts("sw.nav"), state: swState ? SWING_NAV[swState] : "idle" },
     buy && { id: "buy-window", label: t("sp.nav.when"), state: buy.tone === "rules_allow" ? "done" : buy.tone === "wait" ? "wait" : "idle" },
     !isBench && { id: fund ? "whats-inside" : "whats-next", label: t(fund ? "sp.nav.inside" : "sp.nav.news"), state: "idle" },
   ].filter(Boolean).filter((s) => s.id !== "desk-call" || !isBench).map((s) => ({ ...s, stateLabel: t(`sp.nav.st.${s.state}`) }));
@@ -613,6 +624,10 @@ function StockView({ data, row, symbol, go, mk }) {
           <KeyNumbers row={row} bench={bench} isBench={isBench} className="md:col-span-2 lg:col-span-12 lg:row-start-1" />
           {!isBench && <StepsPanel data={data} reading={reading} read={read} cfg={cfg} seeCandles={seeCandles} n={no()} className={`${right} lg:row-start-3`} />}
           {!isBench && <RiskTicket symbol={symbol} reading={reading} rp={rp} n={no()} className="lg:col-span-4" />}
+          {!isBench && swDoc && (
+            <SwingPanel sw={sw} doc={swDoc} earnings={swEarnings} hasEarningsDate={Boolean(swCard?.next_earnings?.date)} className="lg:col-span-4"
+              head={<TermHead id="swing-setup-h" n={no()} title={ts("sw.title")} sub={ts("sw.sub")} />} />
+          )}
           {buy && (
             <Panel id="buy-window" className="scroll-mt-32 md:col-span-2 lg:col-span-8" info={buy.note} infoLabel={t("sp.info")}
               head={<TermHead id="buy-window-h" n={no()} title={t("sp.when.title")} />}

@@ -1,0 +1,76 @@
+{
+  "$id": "swing_config.schema.json",
+  "title": "Swing setup (config/swing.json)",
+  "description": "The pullback-in-an-uptrend swing setup: what each check means, the parameters code reads, the exits used to measure it, and how it is measured. Pretend money only; never a signal that beats the index.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "updated_at", "change_note", "purpose", "status", "origin", "steps", "params", "exits", "measure", "notes"],
+  "properties": {
+    "version": {"$ref": "common.schema.json#/$defs/semver"},
+    "updated_at": {"$ref": "common.schema.json#/$defs/date"},
+    "change_note": {"$ref": "common.schema.json#/$defs/change_note"},
+    "purpose": {"type": "string", "minLength": 20, "maxLength": 400},
+    "status": {"enum": ["unproven", "rejected", "passes_history", "retired"]},
+    "origin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "description", "added"],
+      "properties": {
+        "kind": {"enum": ["chat", "video", "book", "course", "article"]},
+        "description": {"type": "string", "minLength": 10, "maxLength": 400},
+        "added": {"$ref": "common.schema.json#/$defs/date"}
+      }
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "checks"],
+        "properties": {
+          "id": {"enum": ["uptrend", "pullback", "trigger", "risk_ok"]},
+          "name": {"type": "string", "minLength": 3, "maxLength": 40},
+          "checks": {"type": "string", "minLength": 20, "maxLength": 300}
+        }
+      }
+    },
+    "params": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trend_sma_days", "trend_slope_days", "pullback_sma_days", "pullback_days", "near_sma_pct", "high_days",
+                   "min_depth_pct", "stop_buffer_pct", "max_stop_pct", "target_r", "time_stop_days", "cost_bps"],
+      "properties": {
+        "trend_sma_days": {"type": "integer", "minimum": 2, "maximum": 250},
+        "trend_slope_days": {"type": "integer", "minimum": 1, "maximum": 60},
+        "pullback_sma_days": {"type": "integer", "minimum": 2, "maximum": 100},
+        "pullback_days": {"type": "integer", "minimum": 1, "maximum": 20},
+        "near_sma_pct": {"type": "number", "minimum": 0, "maximum": 10},
+        "high_days": {"type": "integer", "minimum": 2, "maximum": 120},
+        "min_depth_pct": {"type": "number", "minimum": 0, "maximum": 50},
+        "stop_buffer_pct": {"type": "number", "minimum": 0, "maximum": 5},
+        "max_stop_pct": {"type": "number", "exclusiveMinimum": 0, "maximum": 30},
+        "target_r": {"type": "number", "exclusiveMinimum": 0, "maximum": 10},
+        "time_stop_days": {"type": "integer", "minimum": 1, "maximum": 60},
+        "cost_bps": {"type": "number", "minimum": 0, "maximum": 100}
+      }
+    },
+    "exits": {"type": "string", "minLength": 20, "maxLength": 600},
+    "measure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["from", "text"],
+      "properties": {
+        "from": {"$ref": "common.schema.json#/$defs/date"},
+        "text": {"type": "string", "minLength": 20, "maxLength": 600}
+      }
+    },
+    "notes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {"type": "string", "minLength": 10, "maxLength": 400}
+    }
+  }
+}

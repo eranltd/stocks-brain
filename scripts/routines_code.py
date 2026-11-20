@@ -948,19 +948,24 @@ def forward_problems(fw) -> list[str]:
 
 
 def compute_checklist(prices_dir: Path, st: dict, wl: dict, cfg: dict, sample: bool, provider: str,
-                      prev: dict | None = None, bench: str | None = None) -> dict | None:
+                      prev: dict | None = None, bench: str | None = None, prev_swing: dict | None = None) -> dict | None:
     """The technical checklist for every watchlist name and the benchmark at the last close, what flipped since the day
-    before, the last `history_days` verdicts, the history base rates and the forward record. Derived numbers only."""
-    return checklist_and_candles(prices_dir, st, wl, cfg, sample, provider, prev, bench)[0]
+    before, the last `history_days` verdicts, the history base rates and the forward record (with config/swing.json, the
+    swing setup too). Derived numbers only."""
+    return checklist_and_candles(prices_dir, st, wl, cfg, sample, provider, prev, bench, prev_swing)[0]
 
 
 def checklist_and_candles(prices_dir: Path, st: dict, wl: dict, cfg: dict, sample: bool, provider: str,
-                          prev: dict | None = None, bench: str | None = None) -> tuple[dict | None, dict[str, dict]]:
+                          prev: dict | None = None, bench: str | None = None,
+                          prev_swing: dict | None = None) -> tuple[dict | None, dict[str, dict]]:
     """compute_checklist's document and, from the same bars on the same run, each checked symbol's indexed candles
     (market.candles: {symbol, as_of, sample, basis, daily, weekly, overlays}), whose overlays are that day's checklist.
-    `bench` as in compute_derived (a market's benchmark; the main list's by default)."""
+    `bench` as in compute_derived (a market's benchmark; the main list's by default). With config/swing.json, each row
+    also carries the swing setup and the document its history and forward record (`prev_swing`: the published one)."""
     import market as mk
     P, house = checklist_params(cfg)
+    swing_cfg = swing_config()
+    S = swing_cfg["params"] if swing_cfg else None
     measure = cfg["measure"]
     bench = bench or st["scoring"]["benchmark"]["symbol"]
     members = [s["symbol"] for s in wl["symbols"] if s["symbol"] != bench]
@@ -980,21 +985,112 @@ def checklist_and_candles(prices_dir: Path, st: dict, wl: dict, cfg: dict, sampl
         days = [mk.checklist_at(B, pre, i, P, house) for i in range(n - hist - 1, n)]
         history = [{"date": B["dates"][n - hist + j], "verdict": cur["score"]["verdict"], "net": cur["score"]["net"],
                     "changes": mk.checklist_changes(days[j], cur)} for j, cur in enumerate(days[1:])]
-        rows.append({"symbol": sym, "as_of": B["dates"][-1], **mk.public(days[-1]), "changes": history[-1]["changes"],
-                     "history": history})
+        row = {"symbol": sym, "as_of": B["dates"][-1], **mk.public(days[-1]), "changes": history[-1]["changes"],
+               "history": history}
+        if S is not None:
+            row["swing"] = mk.public(mk.swing_at(B, mk.prep_swing(B, S), n - 1, S))
+        rows.append(row)
         charts[sym] = {"symbol": sym, "as_of": B["dates"][-1], "sample": sample, "basis": mk.CANDLES_BASIS,
                        **mk.candles(B, pre, P, days[-1])}
     if bench not in preps:
         return None, {}
     full = {s: series[s] for s in preps}
     rates = mk.checklist_base_rates(full, bench, P, house, measure, preps)
-    return ({"as_of": series[bench]["dates"][-1], "sample": sample, "provider": provider, "benchmark": bench,
-            "config_version": cfg["version"], "status": cfg["status"], "note": CHECKLIST_NOTE,
-            "house_rule": {"min_reward_to_risk": house["min_reward_to_risk"], "target": cfg["house_rule"]["target"]},
-            "lean_threshold": house["lean_threshold"], "symbols": rows, "skipped": skipped,
-            "base_rates": {**rates, "note": BASE_RATES_NOTE.format(step=rates["step_days"])}
-            if rates["all"]["n"] else None,
-            "forward": checklist_forward(prev, rows, full, bench, measure)}, charts)
+    doc = {"as_of": series[bench]["dates"][-1], "sample": sample, "provider": provider, "benchmark": bench,
+           "config_version": cfg["version"], "status": cfg["status"], "note": CHECKLIST_NOTE,
+           "house_rule": {"min_reward_to_risk": house["min_reward_to_risk"], "target": cfg["house_rule"]["target"]},
+           "lean_threshold": house["lean_threshold"], "symbols": rows, "skipped": skipped,
+           "base_rates": {**rates, "note": BASE_RATES_NOTE.format(step=rates["step_days"])}
+           if rates["all"]["n"] else None,
+           "forward": checklist_forward(prev, rows, full, bench, measure)}
+    if swing_cfg is not None:
+        doc["swing"] = swing_section(swing_cfg, full, bench, rows, prev_swing)
+    return doc, charts
+
+
+SWING_NOTE = ("A pullback in an uptrend, the classic beginner swing setup, read by code from end-of-day bars for every name. "
+              "Pretend money only: a description of the chart with a written stop and target, never the only reason for a "
+              "trade, never ahead of the index core and never a reason to break the house rules.")
+SWING_HISTORY_NOTE = ("In-sample and on today's list of survivors, so it flatters the setup. Each name holds one trade at a "
+                      "time, but names move together, so the real uncertainty is wider than the 90% ranges shown. R is the "
+                      "result in multiples of the risk taken, after costs.")
+SWING_FORWARD_NOTE = ("Forward only: every setup from the first run on, written on its day with its stop and never edited; "
+                      "code scores each one from the bars as it plays out (in at the next open).")
+
+
+def swing_config() -> dict | None:
+    """config/swing.json, schema-checked, or None when the file does not exist."""
+    path = CONFIG / "swing.json"
+    if not path.exists():
+        return None
+    cfg = load_json(path)
+    errs = Validator().validate(cfg, "swing_config.schema.json")
+    if errs:
+        raise SystemExit(f"swing: config/swing.json fails its schema (nothing written): {errs[:5]}")
+    return cfg
+
+
+def swing_forward(prev: dict | None, rows: list[dict], series: dict[str, dict], bench: str, S: dict) -> dict:
+    """The forward record: every setup of every run, written on its day (date, symbol, stop as percent under that close)
+    and never edited; each scored from today's bars. Recomputed from the record each run."""
+    import market as mk
+    today = series[bench]["dates"][-1]
+    signals = [{k: r[k] for k in ("date", "symbol", "stop_pct", "target_pct")} for r in (prev or {}).get("signals", [])]
+    seen = {(r["date"], r["symbol"]) for r in signals}
+    for r in rows:
+        sw = r.get("swing")
+        if r["symbol"] != bench and sw and sw["state"] == "setup" and (today, r["symbol"]) not in seen:
+            signals.append({"date": today, "symbol": r["symbol"], "stop_pct": sw["stop_pct"], "target_pct": sw["target_pct"]})
+    out, done = [], []
+    for r in signals:
+        B = series.get(r["symbol"])
+        res = mk.swing_score(B, r["date"], r["stop_pct"], S) if B else {"status": "no_data"}
+        out.append({**r, **res})
+        if res["status"] in mk.SWING_EXITS:
+            done.append({"exit": res["status"], "days": res["days"], "r": res["r"]})
+    return {"note": SWING_FORWARD_NOTE, "started": (prev or {}).get("started") or today, "signals": out,
+            "running": sum(r["status"] == "running" for r in out), "stats": mk._swing_stats(done)}
+
+
+def swing_section(swing_cfg: dict, series: dict[str, dict], bench: str, rows: list[dict], prev: dict | None) -> dict:
+    """The document's swing part: the numbers the setup uses, its history and its forward record."""
+    import market as mk
+    S = swing_cfg["params"]
+    rates = mk.swing_base_rates(series, bench, S, swing_cfg["measure"]["from"])
+    return {"config_version": swing_cfg["version"], "status": swing_cfg["status"], "note": SWING_NOTE, "params": dict(S),
+            "base_rates": {**rates, "note": SWING_HISTORY_NOTE} if rates["setup"]["n"] else None,
+            "forward": swing_forward(prev, rows, series, bench, S)}
+
+
+def swing_forward_problems(fw) -> list[str]:
+    """Shape of a published swing forward record (checked on its own, like forward_problems)."""
+    if not isinstance(fw, dict) or not isinstance(fw.get("signals"), list) or not isinstance(fw.get("started"), str):
+        return ["swing.forward needs started and signals"]
+    out, last = [], ""
+    for k, r in enumerate(fw["signals"]):
+        if (not isinstance(r, dict) or not isinstance(r.get("date"), str) or not isinstance(r.get("symbol"), str)
+                or not isinstance(r.get("stop_pct"), (int, float)) or not isinstance(r.get("target_pct"), (int, float))):
+            out.append(f"signal {k}: needs date, symbol, stop_pct and target_pct")
+            continue
+        if r["date"] < last:
+            out.append(f"signal {k}: dates must not go back")
+        last = r["date"]
+    return out
+
+
+def published_swing(path: Path) -> dict | None:
+    """The swing forward record of a published checklist file, or None when there is none yet. Append-only: an
+    unreadable one stops the run instead of starting over."""
+    if not path.exists():
+        return None
+    prev = (load_json(path).get("swing") or {}).get("forward")
+    if prev is None:
+        return None
+    bad = swing_forward_problems(prev)
+    if bad:
+        raise SystemExit(f"swing: the published forward record in {path.name} is unreadable, so it would be lost "
+                         f"(nothing written): {bad[:3]}")
+    return prev
 
 
 def candle_files(charts: dict[str, dict]) -> tuple[dict[str, dict], list[str]]:
@@ -1057,7 +1153,8 @@ def run_checklist() -> None:
     st = settings()
     path = MARKET / "checklist.json"
     prev = published_forward(path)
-    doc, charts = checklist_and_candles(PRICES, st, watchlist(), cfg, sample=False, provider=st["prices"]["provider"], prev=prev)
+    doc, charts = checklist_and_candles(PRICES, st, watchlist(), cfg, sample=False, provider=st["prices"]["provider"], prev=prev,
+                                        prev_swing=published_swing(path))
     if not doc:
         raise SystemExit("checklist: no benchmark prices in .cache/prices (run fetch_prices first)")
     files, refused = candle_files(charts)
@@ -1069,12 +1166,17 @@ def run_checklist() -> None:
     print(f"checklist: {len(doc['symbols'])} symbols as of {doc['as_of']}, verdicts {counts}, skipped {doc['skipped']}; "
           f"forward {len(doc['forward']['records'])} record(s), {doc['forward']['scored_records']} scored"
           + (f"; history {br['from']}..{br['to']} n={br['all']['n']}" if br else ""))
+    if doc.get("swing"):
+        sw = doc["swing"]
+        print(f"swing: setups today {[r['symbol'] for r in doc['symbols'] if r.get('swing', {}).get('state') == 'setup']}; "
+              f"forward {len(sw['forward']['signals'])} signal(s), {sw['forward']['running']} running"
+              + (f"; history n={sw['base_rates']['setup']['n']} avg R {sw['base_rates']['setup']['mean']}" if sw["base_rates"] else ""))
 
 
 # ------------------------------------------------------- other markets
 
 def compute_market(m: dict, prices_dir: Path, st: dict, cfg: dict | None, sample: bool, provider: str,
-                   prev_forward: dict | None = None, wl: dict | None = None) -> dict:
+                   prev_forward: dict | None = None, wl: dict | None = None, prev_swing: dict | None = None) -> dict:
     """One non-default market of config/markets.json: the same derived numbers, checklist and candles as the main list,
     against the market's own benchmark. Returns {"derived", "checklist" (None without config/checklist.json),
     "candles": {symbol: doc}, "refused": [...]}; raises SystemExit when the market cannot be published today.
@@ -1094,7 +1196,8 @@ def compute_market(m: dict, prices_dir: Path, st: dict, cfg: dict | None, sample
         raise SystemExit(f"{m['id']}: derived.json fails its schema (nothing written): {errs[:5]}")
     out = {"derived": derived, "checklist": None, "candles": {}, "refused": []}
     if cfg is not None:
-        doc, charts = checklist_and_candles(prices_dir, st, wl, cfg, sample=sample, provider=provider, prev=prev_forward, bench=bench)
+        doc, charts = checklist_and_candles(prices_dir, st, wl, cfg, sample=sample, provider=provider, prev=prev_forward, bench=bench,
+                                            prev_swing=prev_swing)
         if not doc:
             raise SystemExit(f"{m['id']}: the checklist could not be computed for the benchmark {bench}; nothing written")
         errs = Validator().validate(doc, "checklist.schema.json")
@@ -1112,7 +1215,8 @@ def publish_market(m: dict, prices_dir: Path, st: dict, cfg: dict | None, provid
     Nothing is written unless everything computed and passed its schema."""
     out_dir = ROOT_DIR / m["data"]
     res = compute_market(m, prices_dir, st, cfg, sample=False, provider=provider,
-                         prev_forward=published_forward(out_dir / "checklist.json") if cfg is not None else None)
+                         prev_forward=published_forward(out_dir / "checklist.json") if cfg is not None else None,
+                         prev_swing=published_swing(out_dir / "checklist.json") if cfg is not None else None)
     dump_json(out_dir / "derived.json", res["derived"], compact=True)
     if res["checklist"] is not None:
         dump_json(out_dir / "checklist.json", res["checklist"], compact=True)

@@ -17,6 +17,8 @@ import dict from "../text/stock.js";
 import homeDict from "../text/home.js";
 import { strings } from "../lib/text.js";
 import { fmtDate, fmtPct } from "../lib/format.js";
+import { SwingStrip } from "../components/swing.jsx";
+import swingDict from "../text/swing.js";
 
 /*
  * The Stocks page: a market scanner for the market chosen in the header (or in the page's own market tabs). The hero
@@ -221,6 +223,9 @@ function Scanner({ data, base, market: mk, go }) {
       <MarketTabs market={mk} />
 
       <Tiles rows={rows} up={counts.up} down={counts.down} total={total} go={go} />
+      {/* The day's swing setups (components/swing.jsx); a checklist from sample prices on a live site is not shown. */}
+      <SwingStrip checklist={checklist && (!checklist.sample || data.sample) ? checklist : null} go={go} className="mt-4"
+        head={<DeskHead id="wl-swing-h" title={strings(swingDict)("sw.strip.title")} sub={strings(swingDict)("sw.strip.sub")} />} />
 
       <div ref={watch}>
       <Panel id="wl-table" className="mt-4 scroll-mt-28" info={info} infoLabel={t("wl.about")}

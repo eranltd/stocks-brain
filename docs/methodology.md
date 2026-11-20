@@ -1,7 +1,7 @@
 ---
-version: 0.17.2
-updated_at: 2026-11-04
-change_note: The brain checks one hour earlier (04:23 UTC) and once more at 06:23 UTC, so the morning call lands sooner after the data run.
+version: 0.18.0
+updated_at: 2026-11-20
+change_note: New section, Swing setup - a pullback in an uptrend scanned every day for every list, with its history (in at the next open) and an append-only forward record. Pretend money only.
 ---
 # Methodology
 
@@ -231,6 +231,36 @@ stays `unproven` until the forward record, not the history, says otherwise, and 
 checklist is read with the same doubt. It never moves money, never replaces the index core and is never the only reason
 for a pick. The pack carries a compact `checklist` block (verdict, net, RSI zone, trend, side of the 20-day average,
 volume verdict, reward-to-risk to TP1, house-rule fit; base rates and forward by verdict).
+
+## Swing setup (code only, pretend money)
+`config/swing.json` (schema `swing_config.schema.json`, lint `check_swing`), computed by `market.swing_at` in the same run
+as the checklist, for every list. Each checklist row gets `swing`; the document gets `swing` with the parameters, the
+history and the forward record. Percent distances from the last close only.
+
+**The setup** (the textbook pullback in an uptrend, fixed before any test and not tuned), at the last close:
+1. **Uptrend**: the close above its 50-day average, and that average above where it was 10 trading days ago.
+2. **Pullback**: the lowest low of the last 5 days came within 1.5% of that day's 20-day average (or under it), and
+   the highest high of the last 20 days is at least 3% above that low.
+3. **Bounce**: the close above the previous day's high.
+4. **Stop not too wide**: the stop, 0.5% under the pullback's lowest low, is at most 8% under the close.
+
+`setup` when all four hold, `watch` when 1 and 2 hold, `none` otherwise. The card also shows the target (twice the risk)
+and the distance to the 20-day high with its multiple of the risk; the site warns when that high is nearer than the
+target, and turns a setup into a skip when the company's next results date (`config/outlook.json`) falls inside the
+trade's window (the next day plus ten trading days, counted as calendar days).
+
+**The trade** (`market.swing_trade`): in at the next day's open; out at the stop, at the target (twice the risk from the
+entry) or at the close of the tenth trading day held. A day that opens past a level exits at its open; a day that
+touches both counts the stop; a next open already at or under the stop is no trade. Costs of 10 basis points each way,
+taken off in R (multiples of the risk).
+
+**Measurement.** History (`swing.base_rates`): every setup of every name from 2017, one trade at a time per name, beside
+the same exits on every uptrend day (no pullback or bounce needed, the same stop rule and width cap), one at a time.
+Mean R, 90% interval (z = 1.645), share of winners, exits by kind and average days held. In-sample and on today's
+survivors, so it flatters the setup. Forward (`swing.forward`): every setup from the first run on, written on its day
+(date, symbol, stop and target as percent of that close) and never edited; scored from the bars each run as it plays
+out. A published record that cannot be read stops the run instead of starting over. It is not a rule in
+`config/rules.json` and never moves money; making it one would be a counted try with the random-basket test.
 
 ## The household goal check (code only)
 `settings.goal.annual_return_pct` (+20%) is compared with history, never used to pick stocks. For the rule, holding

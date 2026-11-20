@@ -7,8 +7,9 @@ import stock from "../text/stock.js";
 import plan from "../text/plan.js";
 import learn from "../text/learn.js";
 import arena from "../text/arena.js";
+import swing from "../text/swing.js";
 
-const TABLES = { shell, home, stock, plan, learn, arena };
+const TABLES = { shell, home, stock, plan, learn, arena, swing };
 const textOf = (v) => (typeof v === "string" ? v : Object.values(v).join(" "));
 
 const TABLE = { hi: "Hello {name}", days: { one: "{count} day", other: "{count} days" }, picks: { zero: "No picks", one: "One pick", other: "{count} picks" } };

@@ -866,3 +866,158 @@ def overlay_mismatch(ov: dict, row: dict) -> list[str]:
     want = overlays_from_row(row)
     got = {**ov, "gaps": [(g["where"], g["to_pct"] if g["where"] == "below" else g["from_pct"]) for g in ov.get("gaps", [])]}
     return [k for k in want if got.get(k) != want[k]]
+
+
+# --------------------------------------------------------------- swing setup: a pullback in an uptrend (config/swing.json)
+# Pretend money only. Every number is a percent distance from the last close, a ratio, a count or a label; the raw
+# levels (pullback low, stop) stay in memory. The trades below are simulated on adjusted end-of-day bars.
+
+SWING_PARAMS = ("trend_sma_days", "trend_slope_days", "pullback_sma_days", "pullback_days", "near_sma_pct", "high_days",
+                "min_depth_pct", "stop_buffer_pct", "max_stop_pct", "target_r", "time_stop_days", "cost_bps")
+SWING_CHECKS = ("uptrend", "pullback", "trigger", "risk_ok")
+SWING_STATES = ("setup", "watch", "none")
+SWING_EXITS = ("target", "stop", "time")
+
+
+def prep_swing(B: dict, S: dict) -> dict:
+    """The averages the setup reads at every index (each value uses data up to its index). S = config/swing.json params."""
+    return {"sma_t": sma_series(B["c"], S["trend_sma_days"]), "sma_p": sma_series(B["c"], S["pullback_sma_days"])}
+
+
+def swing_warmup(S: dict) -> int:
+    """Bars needed before the first index the setup can be read at."""
+    return max(S["trend_sma_days"] + S["trend_slope_days"], S["pullback_sma_days"] + S["pullback_days"],
+               S["high_days"], S["pullback_days"] + 1) + 1
+
+
+def swing_at(B: dict, pre: dict, i: int, S: dict) -> dict:
+    """The setup at index i, read from bars up to i only.
+
+    uptrend   the close above its trend average, and that average above where it was trend_slope_days ago
+    pullback  the lowest low of the last pullback_days came within near_sma_pct of the pullback average of that day (or
+              under it), and the highest high of the last high_days is at least min_depth_pct above that low
+    trigger   the close above the previous day's high (the bounce)
+    risk_ok   the stop (stop_buffer_pct under the pullback's lowest low) is at most max_stop_pct under the close
+
+    state: setup when all four hold, watch when uptrend and pullback hold (waiting for a bounce, or a stop too wide),
+    none otherwise. Fields starting with '_' are raw levels for the trade simulation; public() drops them."""
+    h, lo, c = B["h"], B["l"], B["c"]
+    x = c[i]
+    st, st_then = pre["sma_t"][i], pre["sma_t"][i - S["trend_slope_days"]]
+    k0 = i - S["pullback_days"] + 1
+    low_k = min(range(k0, i + 1), key=lambda k: (lo[k], -k))  # the pullback's lowest bar (the latest when tied)
+    pb_low = lo[low_k]
+    high = max(h[i - S["high_days"] + 1:i + 1])
+    sp_low = pre["sma_p"][low_k]
+    depth = pct(pb_low, high)
+    stop = pb_low * (1 - S["stop_buffer_pct"] / 100)
+    stop_pct = (x - stop) / x * 100
+    checks = {"uptrend": x > st and st > st_then,
+              "pullback": pb_low <= sp_low * (1 + S["near_sma_pct"] / 100) and depth >= S["min_depth_pct"],
+              "trigger": x > h[i - 1],
+              "risk_ok": stop_pct <= S["max_stop_pct"]}
+    state = ("setup" if all(checks.values()) else "watch" if checks["uptrend"] and checks["pullback"] else "none")
+    high_pct = pct(x, high)
+    return {"state": state, "checks": checks,
+            "dist_trend_avg_pct": round(pct(st, x), 2), "trend_avg_slope_pct": round(pct(st_then, st), 2),
+            "dist_pullback_avg_pct": round(pct(pre["sma_p"][i], x), 2),
+            "depth_pct": round(depth, 2), "days_since_low": i - low_k,
+            "stop_pct": round(stop_pct, 2), "target_pct": round(S["target_r"] * stop_pct, 2),
+            "high_pct": round(high_pct, 2), "rr_high": round(high_pct / stop_pct, 2),
+            "_stop": stop}
+
+
+def swing_trade(B: dict, i: int, stop: float, S: dict) -> dict | None:
+    """A long trade on the setup of day i: in at the next day's open, out at the stop level `stop`, at the target
+    (target_r times the risk from the entry) or at the close of the time_stop_days-th day held, whichever comes first.
+    A day that opens past a level exits at its open; a day that touches both counts the stop. Costs of cost_bps each way
+    are taken off the result, in R (multiples of the risk). None while the trade is still open (or not yet entered);
+    {"exit": "skipped"} when the next open is already at or under the stop (no trade)."""
+    o, h, lo, c = B["o"], B["h"], B["l"], B["c"]
+    if i + 1 >= len(c):
+        return None
+    e = o[i + 1]
+    if e <= stop:
+        return {"exit": "skipped", "days": 0, "r": None}
+    risk = e - stop
+    tgt = e + S["target_r"] * risk
+    cost_r = 2 * S["cost_bps"] / 10000 * e / risk
+
+    def done(reason: str, px: float, k: int) -> dict:
+        return {"exit": reason, "days": k - i, "r": round((px - e) / risk - cost_r, 3)}
+    last = i + S["time_stop_days"]
+    for k in range(i + 1, min(last, len(c) - 1) + 1):
+        op = e if k == i + 1 else o[k]
+        if op <= stop:
+            return done("stop", op, k)
+        if op >= tgt:
+            return done("target", op, k)
+        if lo[k] <= stop:
+            return done("stop", stop, k)
+        if h[k] >= tgt:
+            return done("target", tgt, k)
+    if last <= len(c) - 1:
+        return done("time", c[last], last)
+    return None
+
+
+def _swing_stats(trades: list[dict]) -> dict:
+    rs = [t["r"] for t in trades]
+    s = _stats(rs)
+    return {**s, "exits": {k: sum(t["exit"] == k for t in trades) for k in SWING_EXITS},
+            "avg_days": round(sum(t["days"] for t in trades) / len(trades), 1) if trades else None}
+
+
+def swing_base_rates(series: dict, bench: str, S: dict, start: str, preps: dict | None = None) -> dict:
+    """History of the setup: every setup day of every name from `start` on, traded with swing_trade, one trade at a time
+    per name; beside it the same exits on every uptrend day (no pullback or bounce needed, the same stop rule and width
+    cap), one trade at a time. In-sample, on today's list of survivors; the benchmark is left out. R per trade."""
+    warm = swing_warmup(S)
+    setups: list[dict] = []
+    uptrend: list[dict] = []
+    first = last = None
+    names = 0
+    for sym, B in series.items():
+        if sym == bench:
+            continue
+        pre = (preps or {}).get(sym) or prep_swing(B, S)
+        n = len(B["c"])
+        begin = max(warm, next((k for k, d in enumerate(B["dates"]) if d >= start), n))
+        free_s = free_u = 0
+        used = False
+        for i in range(begin, n - 1):
+            sw = swing_at(B, pre, i, S)
+            if not sw["checks"]["uptrend"] or not sw["checks"]["risk_ok"]:
+                continue
+            if i >= free_u:
+                t = swing_trade(B, i, sw["_stop"], S)
+                if t and t["exit"] != "skipped":
+                    uptrend.append(t)
+                    free_u = i + t["days"] + 1
+            if sw["state"] == "setup" and i >= free_s:
+                t = swing_trade(B, i, sw["_stop"], S)
+                if t and t["exit"] != "skipped":
+                    setups.append(t)
+                    free_s = i + t["days"] + 1
+                    d = B["dates"][i]
+                    first = d if first is None or d < first else first
+                    last = d if last is None or d > last else last
+                    used = True
+        names += used
+    return {"from": first, "to": last, "names": names, "setup": _swing_stats(setups), "uptrend": _swing_stats(uptrend)}
+
+
+def swing_score(B: dict, date: str, stop_pct: float, S: dict) -> dict:
+    """A recorded setup scored from today's bars: its outcome so far. The stop level comes back from the recorded percent
+    under that day's close. {"status": "running"} until it exits; "no_data" when the day is no longer in the bars.
+    (Never "open": that word is kept out of published files, where it would read as a price field.)"""
+    try:
+        i = B["dates"].index(date)
+    except ValueError:
+        return {"status": "no_data"}
+    t = swing_trade(B, i, B["c"][i] * (1 - stop_pct / 100), S)
+    if t is None:
+        return {"status": "running"}
+    if t["exit"] == "skipped":
+        return {"status": "skipped"}
+    return {"status": t["exit"], "days": t["days"], "r": t["r"]}

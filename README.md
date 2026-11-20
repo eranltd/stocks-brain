@@ -165,6 +165,14 @@ then dispatches `why.yml` with the notes, which checks them again, fills each mo
 `data/market/why.json` (thirty days). A note explains a move; it is never a reason to trade and never enters the pack.
 To stop it, pause the scheduled task or set `why_notes` to `paused` in `config/routines.json`.
 
+## Swing setup (pretend money)
+
+The checklist step also scans every list for the textbook beginner swing setup, a pullback in an uptrend
+(`config/swing.json`): setup, on watch or not now, with a stop and a target as percent distances from the last close.
+The Stock page has a Swing setup card and the Stocks page lists the day's setups. Each list's `checklist.json` carries
+the setup's history (in at the next open, against the same exits on any uptrend day) and an append-only forward
+record. Never a rule, never money (see `docs/decisions.md`, 2026-11-20).
+
 ## Connectors and routines
 
 - `config/sources.json` declares every data source: prices, X accounts, news, filings, 13F holdings (planned), library,

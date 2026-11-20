@@ -1,0 +1,58 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-11-20",
+  "change_note": "First version: the pullback-in-an-uptrend swing setup the owner is practising on pretend money, scanned every day for every list.",
+  "purpose": "Flags names in a pullback inside an uptrend, the classic beginner swing setup, with a written stop and target as percent distances from the last close. Pretend money only: it is shown with its own history and forward record, never moves money and never overrides the house rules.",
+  "status": "unproven",
+  "origin": {
+    "kind": "chat",
+    "description": "The owner asked Claude to teach swing trading and to scan for the setup on the agent. The rules are the textbook version of the setup, fixed before any test and not tuned.",
+    "added": "2026-11-20"
+  },
+  "steps": [
+    {
+      "id": "uptrend",
+      "name": "Uptrend",
+      "checks": "The close is above its fifty-day average, and that average is higher than ten trading days ago."
+    },
+    {
+      "id": "pullback",
+      "name": "Pullback",
+      "checks": "In the last five days the price dipped to within one and a half percent of its twenty-day average (or below it), at least three percent under the highest high of the last twenty days."
+    },
+    {
+      "id": "trigger",
+      "name": "Bounce",
+      "checks": "The day closed above the previous day's high: buyers are back. Without it the name is only on watch."
+    },
+    {
+      "id": "risk_ok",
+      "name": "Stop not too wide",
+      "checks": "The stop sits just under the pullback's lowest low (half a percent below it). If that is more than eight percent below the close, the trade is skipped."
+    }
+  ],
+  "params": {
+    "trend_sma_days": 50,
+    "trend_slope_days": 10,
+    "pullback_sma_days": 20,
+    "pullback_days": 5,
+    "near_sma_pct": 1.5,
+    "high_days": 20,
+    "min_depth_pct": 3,
+    "stop_buffer_pct": 0.5,
+    "max_stop_pct": 8,
+    "target_r": 2,
+    "time_stop_days": 10,
+    "cost_bps": 10
+  },
+  "exits": "Long at the next day's open after the bounce day (the dashboard updates after the close). Out at the stop, at the target (twice the risk from the entry) or at the close of the tenth trading day, whichever comes first. A day that opens past a level exits at its open; a day that touches both counts the stop (we cannot see the order inside a day). A next open already under the stop means no trade. Costs of ten basis points each way.",
+  "measure": {
+    "from": "2017-01-01",
+    "text": "History: every bounce day of every name since 2017, traded with the exits above, one trade at a time per name, against the same exits on every uptrend day (no pullback or bounce needed). In-sample, on today's list of survivors. Forward: every setup from the first run on, written on its day and never edited, scored by code as it plays out."
+  },
+  "notes": [
+    "End-of-day data only: the bounce is known at the close, so both the history and the forward record buy at the next open, as someone reading the dashboard that evening could. The history is still in-sample and on survivors, so it flatters the setup.",
+    "Stops and targets are percent distances from the last close, never prices (provider licence).",
+    "Earnings dates are not in the bars. The Stock page warns when the company's next results date falls inside the ten-day window; check it by hand when there is none."
+  ]
+}

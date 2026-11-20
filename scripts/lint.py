@@ -203,6 +203,11 @@ class Lint:
             cc = self.schema(checklist_path, "checklist_config.schema.json")
             if cc:
                 self.check_checklist(checklist_path, cc)
+        swing_path = CONFIG / "swing.json"
+        if swing_path.exists():
+            sc = self.schema(swing_path, "swing_config.schema.json")
+            if sc:
+                self.check_swing(swing_path, sc)
         rules_path = CONFIG / "rules.json"
         if rules_path.exists():
             rc = self.schema(rules_path, "rules.schema.json")
@@ -559,6 +564,31 @@ class Lint:
             self.err(path, "updated_at and source.added must not be in the future")
         if cc["measure"]["step_days"] < cc["measure"]["horizon_days"]:
             self.err(path, "measure.step_days must be at least horizon_days, so measured samples do not overlap")
+
+    def check_swing(self, path: Path, sc: dict, today: str | None = None) -> None:
+        """The swing setup: the four checks once each, in order; every parameter the code reads; sane numbers; texts in
+        our own words and free of prices."""
+        import market as mk
+        today = today or date.today().isoformat()
+        ids = [s["id"] for s in sc["steps"]]
+        if ids != list(mk.SWING_CHECKS):
+            self.err(path, f"steps must be {list(mk.SWING_CHECKS)} in that order, got {ids}")
+        if sorted(sc["params"]) != sorted(mk.SWING_PARAMS):
+            self.err(path, f"params must be exactly {sorted(mk.SWING_PARAMS)}")
+        texts = [(f"{s['id']}.checks", s["checks"]) for s in sc["steps"]] + [("exits", sc["exits"]), ("purpose", sc["purpose"])]
+        texts += [(f"notes[{k}]", t) for k, t in enumerate(sc["notes"])]
+        for where, text in texts:
+            if sum(text.count(q) for q in QUOTE_MARKS) >= 2 or SINGLE_QUOTED.search(text):
+                self.err(path, f"{where}: looks like a quotation; paraphrase in our own words")
+            if PRICE_LIKE.search(text):
+                self.err(path, f"{where}: looks like a price")
+        p = sc["params"]
+        if p.get("pullback_sma_days", 0) >= p.get("trend_sma_days", 0):
+            self.err(path, "pullback_sma_days must be shorter than trend_sma_days")
+        if p.get("pullback_days", 0) > p.get("high_days", 0):
+            self.err(path, "pullback_days must be at most high_days")
+        if sc["updated_at"] > today or sc["origin"]["added"] > today:
+            self.err(path, "updated_at and origin.added must not be in the future")
 
     def check_rules(self, path: Path, rc: dict) -> None:
         """The registry must match what the engine can run, cite real library ids, and count its tries honestly."""
@@ -973,6 +1003,15 @@ class Lint:
             self.err(path, "forward records must be in strictly ascending date order (append-only)")
         if dates and dates[-1] > cl["as_of"]:
             self.err(path, "a forward record is dated after as_of")
+        sw = cl.get("swing")
+        if sw:
+            sig = [(r["date"], r["symbol"]) for r in sw["forward"]["signals"]]
+            if [d for d, _ in sig] != sorted(d for d, _ in sig) or len(sig) != len(set(sig)):
+                self.err(path, "swing forward signals must be in date order, one per name and day (append-only)")
+            if sig and sig[-1][0] > cl["as_of"]:
+                self.err(path, "a swing signal is dated after as_of")
+            if sw["forward"]["started"] > cl["as_of"]:
+                self.err(path, "the swing forward record starts after as_of")
 
     def check_candles_data(self, path: Path, doc: dict, cl: dict | None, allowed: set | None = None,
                            checklist_name: str = "data/market/checklist.json") -> None:

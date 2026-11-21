@@ -1,5 +1,5 @@
 {
-"as_of":"2026-11-19",
+"as_of":"2026-11-20",
 "sample":false,
 "started":"2026-10-02",
 "note":"Paper only: no money. Holdings are recorded on the first run of each month and never edited.",
@@ -42,9 +42,10 @@
 {"date":"2026-11-16","v":100.196,"core_v":96.142,"bench_v":88.283},
 {"date":"2026-11-17","v":99.377,"core_v":95.167,"bench_v":87.642},
 {"date":"2026-11-18","v":99.255,"core_v":94.876,"bench_v":87.984},
-{"date":"2026-11-19","v":98.24,"core_v":93.014,"bench_v":86.054}
+{"date":"2026-11-19","v":98.24,"core_v":93.014,"bench_v":86.054},
+{"date":"2026-11-20","v":97.057,"core_v":89.628,"bench_v":81.172}
 ],
-"diversification":{"names":5,"core_pct":0,"sectors":4,"avg_pair_corr":0.04,"vol_1y_pct":13.77,"loss_95_20d_pct":-6.38,"diversification_ratio":2.12},
+"diversification":{"names":5,"core_pct":0,"sectors":4,"avg_pair_corr":0.04,"vol_1y_pct":13.82,"loss_95_20d_pct":-6.4,"diversification_ratio":2.11},
 "if_rebalanced_today":[
 "GILD",
 "AAPL",

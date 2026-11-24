@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-21",
+  "as_of": "2026-11-24",
   "sample": false,
   "source": "SEC XBRL company facts: trailing twelve months, or the latest year for yearly filers",
   "companies": [
@@ -635,7 +635,7 @@
     {
       "symbol": "AMD",
       "cik": 2488,
-      "name": "ADVANCED MICRO DEVICES, INC",
+      "name": "ADVANCED MICRO DEVICES INC",
       "status": "ok",
       "basis": "ttm",
       "period_end": "2026-09-26",
@@ -852,19 +852,19 @@
     {
       "symbol": "CRWD",
       "cik": 1535527,
-      "name": "CrowdStrike Holdings, Inc.",
+      "name": "CROWDSTRIKE HOLDINGS, INC.",
       "status": "ok",
       "basis": "ttm",
-      "period_end": "2026-07-31",
-      "filed": "2026-08-27",
+      "period_end": "2026-10-31",
+      "filed": "2026-11-23",
       "revenue_concept": "RevenueFromContractWithCustomerIncludingAssessedTax",
-      "revenue_ttm": 5396145000,
-      "revenue_growth_yoy_pct": 24.3,
-      "quarter_revenue_growth_yoy_pct": 25.8,
-      "operating_margin_pct": -2.2,
-      "net_margin_pct": 1.1,
-      "free_cash_flow_ttm": 1608718000,
-      "fcf_margin_pct": 29.8,
+      "revenue_ttm": 5745320000,
+      "revenue_growth_yoy_pct": 25.9,
+      "quarter_revenue_growth_yoy_pct": 28.3,
+      "operating_margin_pct": -1.2,
+      "net_margin_pct": 1.7,
+      "free_cash_flow_ttm": 1796992000,
+      "fcf_margin_pct": 31.3,
       "missing": []
     },
     {

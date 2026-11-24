@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-21",
+  "as_of": "2026-11-24",
   "sample": false,
   "source": "SEC EDGAR filings index (company submissions)",
   "window_days": 120,
@@ -183,6 +183,18 @@
       "cik": 1045810,
       "name": "NVIDIA CORP",
       "filings": [
+        {
+          "date": "2026-11-23",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000090/nvda-20261122.htm"
+        },
         {
           "date": "2026-11-17",
           "form": "8-K",
@@ -392,6 +404,18 @@
       "cik": 1326801,
       "name": "Meta Platforms, Inc.",
       "filings": [
+        {
+          "date": "2026-11-23",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026075541/meta-20261118.htm"
+        },
         {
           "date": "2026-11-12",
           "form": "8-K",
@@ -1271,16 +1295,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/1156375/000115637526000051/cme-20260811.htm"
-        },
-        {
-          "date": "2026-07-24",
-          "form": "10-Q",
-          "items": [],
-          "titles": [
-            "Quarterly report"
-          ],
-          "kind": "report",
-          "url": "https://www.sec.gov/Archives/edgar/data/1156375/000115637526000047/cme-20260630.htm"
         }
       ]
     },
@@ -3093,20 +3107,6 @@
           ],
           "kind": "report",
           "url": "https://www.sec.gov/Archives/edgar/data/87347/000119312526322595/slb-20260630.htm"
-        },
-        {
-          "date": "2026-07-24",
-          "form": "8-K",
-          "items": [
-            "2.02",
-            "7.01"
-          ],
-          "titles": [
-            "Quarterly results",
-            "Shared an update with investors"
-          ],
-          "kind": "results",
-          "url": "https://www.sec.gov/Archives/edgar/data/87347/000119312526315068/d122193d8k.htm"
         }
       ]
     },
@@ -3277,6 +3277,42 @@
       "cik": 1535527,
       "name": "CrowdStrike Holdings, Inc.",
       "filings": [
+        {
+          "date": "2026-11-23",
+          "form": "10-Q",
+          "items": [],
+          "titles": [
+            "Quarterly report"
+          ],
+          "kind": "report",
+          "url": "https://www.sec.gov/Archives/edgar/data/1535527/000153552726000038/crwd-20261031.htm"
+        },
+        {
+          "date": "2026-11-23",
+          "form": "8-K",
+          "items": [
+            "1.01",
+            "7.01"
+          ],
+          "titles": [
+            "Signed a major agreement",
+            "Shared an update with investors"
+          ],
+          "kind": "deal",
+          "url": "https://www.sec.gov/Archives/edgar/data/1535527/000110465926130785/tm2630454d1_8k.htm"
+        },
+        {
+          "date": "2026-11-23",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1535527/000153552726000035/crwd-20261123.htm"
+        },
         {
           "date": "2026-08-27",
           "form": "10-Q",
@@ -4537,6 +4573,16 @@
       "cik": 1973239,
       "name": "ARM HOLDINGS PLC /UK",
       "filings": [
+        {
+          "date": "2026-11-23",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1973239/000197323926000155/arm-20261123.htm"
+        },
         {
           "date": "2026-11-04",
           "form": "6-K",

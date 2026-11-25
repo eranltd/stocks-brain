@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-24",
+  "as_of": "2026-11-25",
   "sample": false,
   "source": "SEC XBRL company facts: trailing twelve months, or the latest year for yearly filers",
   "companies": [
@@ -690,7 +690,7 @@
     {
       "symbol": "MU",
       "cik": 723125,
-      "name": "Micron Technology, Inc.",
+      "name": "Micron Technology, Inc.",
       "status": "ok",
       "basis": "ttm",
       "period_end": "2026-09-03",
@@ -1115,7 +1115,7 @@
     {
       "symbol": "BKSY",
       "cik": 1753539,
-      "name": "BLACKSKY TECHNOLOGY INC",
+      "name": "BlackSky Technology Inc.",
       "status": "ok",
       "basis": "ttm",
       "period_end": "2026-09-30",

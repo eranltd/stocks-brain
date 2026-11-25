@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-24",
+  "as_of": "2026-11-25",
   "sample": false,
   "source": "SEC EDGAR filings index (company submissions)",
   "window_days": 120,
@@ -352,6 +352,18 @@
       "name": "Alphabet Inc.",
       "filings": [
         {
+          "date": "2026-11-24",
+          "form": "8-K",
+          "items": [
+            "8.01"
+          ],
+          "titles": [
+            "Other company news"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526475973/d91615d8k.htm"
+        },
+        {
           "date": "2026-11-05",
           "form": "8-K",
           "items": [
@@ -622,6 +634,18 @@
       "name": "AMGEN INC",
       "filings": [
         {
+          "date": "2026-11-24",
+          "form": "8-K",
+          "items": [
+            "7.01"
+          ],
+          "titles": [
+            "Shared an update with investors"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/318154/000119312526475833/amgn-20261124.htm"
+        },
+        {
           "date": "2026-11-04",
           "form": "10-Q",
           "items": [],
@@ -731,18 +755,6 @@
           ],
           "kind": "results",
           "url": "https://www.sec.gov/Archives/edgar/data/1035267/000103526726000067/isrg-20261020.htm"
-        },
-        {
-          "date": "2026-07-27",
-          "form": "8-K",
-          "items": [
-            "5.03"
-          ],
-          "titles": [
-            "Changed its bylaws or fiscal year"
-          ],
-          "kind": "other",
-          "url": "https://www.sec.gov/Archives/edgar/data/1035267/000103526726000063/isrg-20260723.htm"
         }
       ]
     },
@@ -2520,6 +2532,18 @@
       "name": "QUALCOMM INC/DE",
       "filings": [
         {
+          "date": "2026-11-24",
+          "form": "8-K",
+          "items": [
+            "5.02"
+          ],
+          "titles": [
+            "A leadership change (an executive or board member)"
+          ],
+          "kind": "people",
+          "url": "https://www.sec.gov/Archives/edgar/data/804328/000080432826000138/qcom-20261120.htm"
+        },
+        {
           "date": "2026-11-13",
           "form": "8-K",
           "items": [
@@ -3116,6 +3140,18 @@
       "name": "Transocean Ltd.",
       "filings": [
         {
+          "date": "2026-11-24",
+          "form": "8-K",
+          "items": [
+            "5.07"
+          ],
+          "titles": [
+            "Shareholder vote results"
+          ],
+          "kind": "other",
+          "url": "https://www.sec.gov/Archives/edgar/data/1451505/000110465926131672/tm2630557d1_8k.htm"
+        },
+        {
           "date": "2026-11-17",
           "form": "8-K",
           "items": [
@@ -3202,18 +3238,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/1451505/000110465926115871/tm269762d11_8k.htm"
-        },
-        {
-          "date": "2026-10-09",
-          "form": "8-K",
-          "items": [
-            "7.01"
-          ],
-          "titles": [
-            "Shared an update with investors"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1451505/000145150526000072/rig-20261009x8k.htm"
         }
       ]
     },
@@ -5016,6 +5040,18 @@
       "cik": 1571996,
       "name": "Dell Technologies Inc.",
       "filings": [
+        {
+          "date": "2026-11-24",
+          "form": "8-K",
+          "items": [
+            "2.02"
+          ],
+          "titles": [
+            "Quarterly results"
+          ],
+          "kind": "results",
+          "url": "https://www.sec.gov/Archives/edgar/data/1571996/000157199626000050/dell-20261124.htm"
+        },
         {
           "date": "2026-10-21",
           "form": "8-K",

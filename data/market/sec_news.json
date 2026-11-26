@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-25",
+  "as_of": "2026-11-26",
   "sample": false,
   "source": "SEC EDGAR filings index (company submissions)",
   "window_days": 120,
@@ -1230,18 +1230,6 @@
           ],
           "kind": "report",
           "url": "https://www.sec.gov/Archives/edgar/data/75362/000119312526323642/pcar-20260630.htm"
-        },
-        {
-          "date": "2026-07-28",
-          "form": "8-K",
-          "items": [
-            "2.02"
-          ],
-          "titles": [
-            "Quarterly results"
-          ],
-          "kind": "results",
-          "url": "https://www.sec.gov/Archives/edgar/data/75362/000119312526318918/pcar-20260728.htm"
         }
       ]
     },
@@ -1855,6 +1843,16 @@
       "name": "TOWER SEMICONDUCTOR LTD",
       "filings": [
         {
+          "date": "2026-11-25",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/928876/000117891326005369/zk2636493.htm"
+        },
+        {
           "date": "2026-11-03",
           "form": "6-K",
           "items": [],
@@ -1923,16 +1921,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/928876/000117891326004535/zk2636128.htm"
-        },
-        {
-          "date": "2026-09-15",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/928876/000117891326004500/zk2636113.htm"
         }
       ]
     },
@@ -2325,6 +2313,26 @@
       "name": "TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
       "filings": [
         {
+          "date": "2026-11-25",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000807/tsm-dividendadjustmentx202.htm"
+        },
+        {
+          "date": "2026-11-25",
+          "form": "6-K",
+          "items": [],
+          "titles": [
+            "Company update (a foreign company's report)"
+          ],
+          "kind": "update",
+          "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000805/tsm-monthend6kx20261125.htm"
+        },
+        {
           "date": "2026-11-13",
           "form": "6-K",
           "items": [],
@@ -2383,26 +2391,6 @@
           ],
           "kind": "update",
           "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000726/tsm-20261015x6k.htm"
-        },
-        {
-          "date": "2026-10-08",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000680/tsm-revenue20261008.htm"
-        },
-        {
-          "date": "2026-09-24",
-          "form": "6-K",
-          "items": [],
-          "titles": [
-            "Company update (a foreign company's report)"
-          ],
-          "kind": "update",
-          "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000660/tsm-monthend6kx20260924.htm"
         }
       ]
     },
